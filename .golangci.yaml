@@ -1,0 +1,36 @@
+linters-settings:
+  govet:
+    check-shadowing: true
+linters:
+  enable:
+    - bidichk
+    - durationcheck
+    - errcheck
+    - errorlint
+    - exportloopref
+    - goimports
+    - goconst
+    - gocritic
+    - godot
+    - godox
+    - goheader
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - ineffassign
+    - gosimple
+    - govet
+    - nolintlint
+    - predeclared
+    - sqlclosecheck
+    - staticcheck
+    - tenv
+    - testpackage
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - wastedassign
+    - whitespace
+issues:
+  fix: true
