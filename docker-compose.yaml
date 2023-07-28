@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  auth:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        BUILD_TARGET: auth
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      PORT: 3000
+      ENVIRONMENT: development
+      BASE_URL: http://localhost:3000
+      REDIS_CONNECTION_STRING: redis://redis:6379
