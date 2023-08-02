@@ -5,18 +5,39 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-  auth:
+  db:
+    image: postgres:latest
+    volumes:
+      - db:/var/lib/postrgresql/data/
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: basemind
+      POSTGRES_DB: basemind
+      POSTGRES_USER: basemind
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -d $${POSTGRES_DB} -U basemind' ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+  api-gateway:
     build:
       dockerfile: Dockerfile
       context: .
       args:
-        BUILD_TARGET: auth
+        BUILD_TARGET: api-gateway
     ports:
       - "3000:3000"
-    env_file:
-      - .env
+    volumes:
+        - ./.secrets:/.secrets:cached
     environment:
       PORT: 3000
       ENVIRONMENT: development
       BASE_URL: http://localhost:3000
       REDIS_CONNECTION_STRING: redis://redis:6379
+      POSTGRES_CONNECTION_STRING: postgresql://basemind:basemind@db:5432/basemind
+      GOOGLE_APPLICATION_CREDENTIALS: /.secrets/serviceAccountKey.json
+
+volumes:
+  db:

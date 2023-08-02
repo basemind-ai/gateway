@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/services/auth/config"
+	"github.com/basemind-ai/backend-services/services/api-gateway/config"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -22,7 +22,5 @@ func TestConfigGet(t *testing.T) {
 		assert.Equal(t, cfg.Port, 3000)
 		assert.Equal(t, cfg.Environment, "development")
 		assert.Equal(t, cfg.BaseUrl, "http://localhost")
-		assert.Equal(t, cfg.GithubClientId, "githubClientId")
-		assert.Equal(t, cfg.GithubClientSecret, "githubClientSecret")
 	})
 }

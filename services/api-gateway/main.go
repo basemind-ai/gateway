@@ -8,10 +8,10 @@ import (
 	"syscall"
 
 	"github.com/basemind-ai/backend-services/lib/server"
-	"github.com/basemind-ai/backend-services/services/auth/api"
+	"github.com/basemind-ai/backend-services/services/api-gateway/api"
 
 	"github.com/basemind-ai/backend-services/lib/logging"
-	"github.com/basemind-ai/backend-services/services/auth/config"
+	"github.com/basemind-ai/backend-services/services/api-gateway/config"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 )

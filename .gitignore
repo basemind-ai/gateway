@@ -7,3 +7,5 @@
 *.test
 .env
 .idea/sonarlint/*
+.secrets/*
+!.secrets/README.md
