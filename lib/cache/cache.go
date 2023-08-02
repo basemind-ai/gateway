@@ -4,6 +4,8 @@ import (
 	"os"
 	"sync"
 
+	"github.com/go-redis/redismock/v9"
+
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
 )
@@ -24,4 +26,10 @@ func Get() *redis.Client {
 		client = redis.NewClient(opt)
 	})
 	return client
+}
+
+func CreatMockClient() redismock.ClientMock {
+	db, mock := redismock.NewClientMock()
+	client = db
+	return mock
 }

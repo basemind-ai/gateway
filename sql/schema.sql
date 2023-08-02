@@ -1,14 +1,9 @@
 -- user
 CREATE TABLE "user"
 (
-    id           uuid PRIMARY KEY      DEFAULT gen_random_uuid(),
-    firebase_id  varchar(128) NOT NULL,
-    display_name text         NOT NULL,
-    email        text         NOT NULL,
-    phone_number varchar(128) NOT NULL,
-    photo_url    text         NOT NULL,
-    provider_id  text         NOT NULL,
-    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    id          uuid PRIMARY KEY      DEFAULT gen_random_uuid(),
+    firebase_id varchar(128) NOT NULL,
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 CREATE UNIQUE INDEX idx_firebase_id ON "user" (firebase_id);
@@ -51,4 +46,3 @@ CREATE TABLE api_token
     expiry_date TIMESTAMPTZ,
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
-

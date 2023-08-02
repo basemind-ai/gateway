@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"github.com/basemind-ai/backend-services/db"
+	"github.com/basemind-ai/backend-services/lib/cache"
+	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
-	"github.com/basemind-ai/backend-services/lib/server"
+	"github.com/basemind-ai/backend-services/lib/router"
 	"github.com/basemind-ai/backend-services/services/api-gateway/api"
 
 	"github.com/basemind-ai/backend-services/lib/logging"
@@ -35,21 +38,35 @@ func main() {
 
 	logging.Configure(cfg.Environment != "production")
 
-	srv := server.CreateServer(server.Options{
+	conn := db.CreateConnection(ctx, cfg.DatabaseUrl)
+
+	defer func() {
+		_ = conn.Close(ctx)
+	}()
+
+	mux := router.New(router.Options[config.Config]{
 		Environment:      cfg.Environment,
+		ServiceName:      "api-gateway",
 		RegisterHandlers: api.RegisterHandlers,
+		Cache:            cache.Get(),
+		Config:           cfg,
 	})
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", cfg.Port),
+		Handler: mux,
+	}
 
 	g, gCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		log.Info().Msg("server starting up")
-		return srv.Listen(":" + strconv.Itoa(cfg.Port))
+		return srv.ListenAndServe()
 	})
 
 	g.Go(func() error {
 		<-gCtx.Done()
-		return srv.Shutdown()
+		return srv.Shutdown(ctx)
 	})
 
 	if err := g.Wait(); err != nil {

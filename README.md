@@ -14,9 +14,9 @@ We use pre-commit to orchestrate linting.
 - `pre-commit autoupdate` to update the hooks
 - `pre-commit run --all-files` to execute against all files
 
-### sqlc
+### SQLC
 
-We use SQLC to generate typesafe SQL queries. 
+We use SQLC to generate typesafe SQL queries.
 
-1. install [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) on your machine.
-2. 
+1. install [SQLC](https://docs.sqlc.dev/en/latest/overview/install.html) on your machine.
+2.
