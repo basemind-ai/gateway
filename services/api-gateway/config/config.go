@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Port        int    `env:"PORT"`
-	Environment string `env:"ENVIRONMENT"`
-	BaseUrl     string `env:"BASE_URL"`
-	DatabaseUrl string `env:"DATABASE_URL"`
-	JWTSecret   string `env:"JWT_SECRET"`
+	BaseUrl     string `env:"BASE_URL,required"`
+	DatabaseUrl string `env:"DATABASE_URL,required"`
+	Environment string `env:"ENVIRONMENT,default=test"`
+	JWTSecret   string `env:"JWT_SECRET,required"`
+	Port        int    `env:"PORT,required"`
+	RedisUrl    string `env:"REDIS_CONNECTION_STRING,required"`
 }
 
 var (

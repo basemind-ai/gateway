@@ -7,7 +7,7 @@ import (
 
 	"github.com/basemind-ai/backend-services/services/api-gateway/types"
 
-	"github.com/basemind-ai/backend-services/lib/apiutils"
+	"github.com/basemind-ai/backend-services/lib/apierror"
 	"github.com/basemind-ai/backend-services/lib/firebaseutils"
 	"github.com/go-chi/render"
 	"github.com/rs/zerolog/log"
@@ -19,16 +19,18 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 
 		if !strings.HasPrefix(authHeader, "Bearer ") {
 			log.Error().Msg("malformed firebase auth header")
-			_ = render.Render(w, r, apiutils.Unauthorized("invalid auth header"))
+			_ = render.Render(w, r, apierror.Unauthorized("invalid auth header"))
 			return
 		}
 
-		token, tokenErr := firebaseutils.GetFirebaseAuth(r.Context()).
+		firebaseAuth := firebaseutils.GetFirebaseAuth(r.Context())
+
+		token, tokenErr := firebaseAuth.
 			VerifyIDToken(r.Context(), strings.Replace(authHeader, "Bearer ", "", 1))
 
 		if tokenErr != nil {
 			log.Error().Err(tokenErr).Msg("malformed firebase auth header")
-			_ = render.Render(w, r, apiutils.Unauthorized("invalid auth header"))
+			_ = render.Render(w, r, apierror.Unauthorized("invalid auth header"))
 			return
 		}
 

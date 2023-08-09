@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/basemind-ai/backend-services/db"
-	"github.com/basemind-ai/backend-services/lib/cache"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/basemind-ai/backend-services/db"
+	"github.com/basemind-ai/backend-services/lib/rediscache"
 
 	"github.com/basemind-ai/backend-services/lib/router"
 	"github.com/basemind-ai/backend-services/services/api-gateway/api"
@@ -38,9 +39,16 @@ func main() {
 
 	logging.Configure(cfg.Environment != "production")
 
+	cacheClient, cacheClientErr := rediscache.New(cfg.RedisUrl)
+
+	if cacheClientErr != nil {
+		log.Fatal().Err(cacheClientErr).Msg("failed to init redis")
+	}
+
 	conn := db.CreateConnection(ctx, cfg.DatabaseUrl)
 
 	defer func() {
+		_ = cacheClient.Close()
 		_ = conn.Close(ctx)
 	}()
 
@@ -48,7 +56,7 @@ func main() {
 		Environment:      cfg.Environment,
 		ServiceName:      "api-gateway",
 		RegisterHandlers: api.RegisterHandlers,
-		Cache:            cache.Get(),
+		Cache:            cacheClient,
 		Config:           cfg,
 	})
 

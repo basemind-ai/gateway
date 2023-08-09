@@ -10,12 +10,16 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type FirebaseAuth interface {
+	VerifyIDToken(ctx context.Context, idToken string) (*auth.Token, error)
+}
+
 var (
 	once         sync.Once
-	firebaseAuth *auth.Client
+	firebaseAuth FirebaseAuth
 )
 
-func GetFirebaseAuth(ctx context.Context) *auth.Client {
+func GetFirebaseAuth(ctx context.Context) FirebaseAuth {
 	once.Do(func() {
 		app, appInitErr := firebase.NewApp(ctx, nil)
 		if appInitErr != nil {
@@ -26,7 +30,11 @@ func GetFirebaseAuth(ctx context.Context) *auth.Client {
 		if authInitErr != nil {
 			log.Fatal().Err(fmt.Errorf("error initializing firebase auth: %w", authInitErr)).Msg("error initializing firebase auth")
 		}
-		firebaseAuth = authInstance
+		SetFirebaseAuth(authInstance)
 	})
 	return firebaseAuth
+}
+
+func SetFirebaseAuth(auth FirebaseAuth) {
+	firebaseAuth = auth
 }

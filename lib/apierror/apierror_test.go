@@ -1,13 +1,13 @@
-package apiutils_test
+package apierror_test
 
 import (
 	"context"
 	"net/http"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/lib/apiutils"
-	"github.com/basemind-ai/backend-services/lib/httpclient"
+	"github.com/basemind-ai/backend-services/testingutils"
 
+	"github.com/basemind-ai/backend-services/lib/apierror"
 	"github.com/go-chi/render"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,23 +18,23 @@ func TestApiError(t *testing.T) {
 		ExpectedStatus int
 	}{
 		{
-			ApiErrType:     apiutils.BadRequest("err"),
+			ApiErrType:     apierror.BadRequest("err"),
 			ExpectedStatus: http.StatusBadRequest,
 		},
 		{
-			ApiErrType:     apiutils.Unauthorized("err"),
+			ApiErrType:     apierror.Unauthorized("err"),
 			ExpectedStatus: http.StatusUnauthorized,
 		},
 		{
-			ApiErrType:     apiutils.UnprocessableContent("err"),
+			ApiErrType:     apierror.UnprocessableContent("err"),
 			ExpectedStatus: http.StatusUnprocessableEntity,
 		},
 		{
-			ApiErrType:     apiutils.InternalServerError("err"),
+			ApiErrType:     apierror.InternalServerError("err"),
 			ExpectedStatus: http.StatusInternalServerError,
 		},
 	} {
-		client := httpclient.CreateTestClient(t, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		client := testingutils.CreateTestClient(t, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			_ = render.Render(writer, request, testCase.ApiErrType)
 		}))
 		res, err := client.Get(context.TODO(), "/")
