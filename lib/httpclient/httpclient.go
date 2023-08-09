@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/basemind-ai/backend-services/lib/serialization"
 )
 
 type Client struct {
@@ -59,7 +61,7 @@ func (client *Client) Request(ctx context.Context, method string, path string, b
 		return nil, responseErr
 	}
 
-	data, readResponseErr := ReadResponseBody(response)
+	data, readResponseErr := serialization.ReadResponseBody(response)
 	if readResponseErr != nil {
 		return nil, readResponseErr
 	}
