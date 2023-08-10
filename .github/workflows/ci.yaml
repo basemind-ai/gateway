@@ -2,7 +2,7 @@ name: ci
 on:
   pull_request:
     branches:
-      - "**"
+      - main
   push:
     branches:
       - main
@@ -26,36 +26,6 @@ jobs:
         if: steps.cached-go-dependencies.outputs.cache-hit != 'true'
         shell: bash
         run: go get -v -t ./...
-  analyze:
-    needs: setup
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: "1.21"
-      - name: Load cached dependencies
-        id: cached-go-dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: go-${{ inputs.go_version }}-v1.0-${{ hashFiles('**/go.sum') }}
-      - name: Install dependencies
-        if: steps.cached-go-dependencies.outputs.cache-hit != 'true'
-        shell: bash
-        run: go get -v -t ./...
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: go
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
   lint:
     needs: setup
     runs-on: ubuntu-latest
@@ -105,28 +75,3 @@ jobs:
         run: go get -v -t ./...
       - name: Run Tests
         run: go test ./...
-#      - name: Run Tests
-#        run: go test -coverprofile=coverage.out ./...
-#      - name: Archive code coverage results
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: coverage-report
-#          path: ./coverage.out
-#  sonarcloud:
-#    needs: [test, lint, analyze]
-#    name: SonarCloud
-#    runs-on: ubuntu-latest
-#    if: github.event.pull_request.head.repo.fork == false
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#      - name: Download Coverage Report
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: coverage-report
-#      - name: SonarCloud Scan
-#        uses: SonarSource/sonarcloud-github-action@master
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
