@@ -6,6 +6,12 @@ on:
   push:
     branches:
       - main
+env:
+  GCP_OIDC_PROVIDER_NAME: github-provider
+  GCP_PROJECT_ID: basemind-ai-development
+  GCP_PROJECT_NUMBER: 78794879644
+  GCP_SERVICE_ACCOUNT_NAME: firebase-adminsdk-frgvx
+  GCP_WORKLOAD_IDENTITY_POOL: dev-pool
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -56,6 +62,9 @@ jobs:
   test:
     needs: setup
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -73,5 +82,11 @@ jobs:
         if: steps.cached-go-dependencies.outputs.cache-hit != 'true'
         shell: bash
         run: go get -v -t ./...
+      - id: auth
+        name: Authenticate with GCP
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: "projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GCP_WORKLOAD_IDENTITY_POOL}/providers/${GCP_OIDC_PROVIDER_NAME}"
+          service_account: "${GCP_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com"
       - name: Run Tests
         run: go test ./...
