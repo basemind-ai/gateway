@@ -6,12 +6,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/testingutils"
+	"github.com/basemind-ai/backend-services/lib/firebaseutils/testutils"
 
 	"firebase.google.com/go/v4/auth"
-	"github.com/basemind-ai/backend-services/services/api-gateway/types"
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/constants"
 
-	"github.com/basemind-ai/backend-services/services/api-gateway/middleware"
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/middleware"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -49,7 +49,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 	})
 
 	t.Run("returns Unauthorized for token error raised by firebase", func(t *testing.T) {
-		mockAuth := testingutils.MockFirebaseAuth()
+		mockAuth := testutils.MockFirebaseAuth()
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{}, fmt.Errorf("test"))
 
@@ -64,7 +64,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 	})
 
 	t.Run("sets the firebase UID in the request context on success", func(t *testing.T) {
-		mockAuth := testingutils.MockFirebaseAuth()
+		mockAuth := testutils.MockFirebaseAuth()
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{UID: "123"}, nil)
 
@@ -79,7 +79,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 		assert.Equal(t, 1, len(mockNext.Calls))
 
 		newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
-		ctxValue := newRequest.Context().Value(types.FireBaseIdContextKex)
+		ctxValue := newRequest.Context().Value(constants.FireBaseIdContextKey)
 		assert.Equal(t, ctxValue, "123")
 	})
 }

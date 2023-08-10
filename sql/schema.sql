@@ -25,9 +25,10 @@ CREATE TABLE project
 -- user-project many-to-many
 CREATE TABLE user_project
 (
-    user_id    uuid                   NOT NULL,
-    project_id uuid                   NOT NULL,
-    permission access_permission_type NOT NULL,
+    user_id                 uuid                   NOT NULL,
+    project_id              uuid                   NOT NULL,
+    permission              access_permission_type NOT NULL,
+    is_user_default_project boolean                NOT NULL DEFAULT FALSE,
     PRIMARY KEY (user_id, project_id),
     FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE

@@ -21,12 +21,12 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
-  api-gateway:
+  dashboard-backend:
     build:
       dockerfile: Dockerfile
       context: .
       args:
-        BUILD_TARGET: api-gateway
+        BUILD_TARGET: dashboard-backend
     ports:
       - "3000:3000"
     volumes:

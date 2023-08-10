@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,13 +13,15 @@ import (
 	"github.com/basemind-ai/backend-services/lib/rediscache"
 
 	"github.com/basemind-ai/backend-services/lib/router"
-	"github.com/basemind-ai/backend-services/services/api-gateway/api"
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/api"
 
 	"github.com/basemind-ai/backend-services/lib/logging"
-	"github.com/basemind-ai/backend-services/services/api-gateway/config"
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/config"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 )
+
+var middlewares = []func(next http.Handler) http.Handler{middleware.FirebaseAuthMiddleware}
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -54,10 +57,11 @@ func main() {
 
 	mux := router.New(router.Options[config.Config]{
 		Environment:      cfg.Environment,
-		ServiceName:      "api-gateway",
+		ServiceName:      "dashboard-backend",
 		RegisterHandlers: api.RegisterHandlers,
 		Cache:            cacheClient,
 		Config:           cfg,
+		Middlewares:      middlewares,
 	})
 
 	srv := &http.Server{

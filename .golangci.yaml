@@ -29,7 +29,6 @@ linters:
     - typecheck
     - unconvert
     - unparam
-    - unused
     - wastedassign
     - whitespace
 issues:

@@ -77,7 +77,8 @@ type User struct {
 }
 
 type UserProject struct {
-	UserID     pgtype.UUID          `json:"user_id"`
-	ProjectID  pgtype.UUID          `json:"project_id"`
-	Permission AccessPermissionType `json:"permission"`
+	UserID               pgtype.UUID          `json:"user_id"`
+	ProjectID            pgtype.UUID          `json:"project_id"`
+	Permission           AccessPermissionType `json:"permission"`
+	IsUserDefaultProject bool                 `json:"is_user_default_project"`
 }

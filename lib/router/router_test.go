@@ -1,10 +1,11 @@
 package router_test
 
 import (
+	"testing"
+
 	"github.com/basemind-ai/backend-services/lib/router"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNew(t *testing.T) {

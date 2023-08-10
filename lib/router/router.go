@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/basemind-ai/backend-services/lib/rediscache"
 	"github.com/go-chi/chi/v5"
 	chiMiddlewares "github.com/go-chi/chi/v5/middleware"
@@ -14,6 +16,7 @@ type Options[T any] struct {
 	Config           T
 	RegisterHandlers func(mux *chi.Mux, config T)
 	Cache            *rediscache.Client
+	Middlewares      []func(next http.Handler) http.Handler
 }
 
 func New[T interface{}](opts Options[T]) chi.Router {
@@ -25,6 +28,10 @@ func New[T interface{}](opts Options[T]) chi.Router {
 		router.Use(httplog.RequestLogger(log.With().Str("service", opts.ServiceName).Logger()))
 		router.Use(chiMiddlewares.Recoverer)
 		router.Use(chiMiddlewares.Heartbeat("/health-check"))
+	}
+
+	for _, middleware := range opts.Middlewares {
+		router.Use(middleware)
 	}
 
 	opts.RegisterHandlers(router, opts.Config)

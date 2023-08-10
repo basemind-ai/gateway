@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/services/api-gateway/config"
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/config"
 
 	"github.com/stretchr/testify/assert"
 )

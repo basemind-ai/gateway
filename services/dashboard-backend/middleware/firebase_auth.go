@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/basemind-ai/backend-services/services/api-gateway/types"
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/constants"
 
 	"github.com/basemind-ai/backend-services/lib/apierror"
 	"github.com/basemind-ai/backend-services/lib/firebaseutils"
@@ -34,7 +34,7 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), types.FireBaseIdContextKex, token.UID)
+		ctx := context.WithValue(r.Context(), constants.FireBaseIdContextKey, token.UID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

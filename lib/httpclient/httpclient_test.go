@@ -3,11 +3,10 @@ package httpclient_test
 import (
 	"context"
 	"encoding/json"
+	"github.com/basemind-ai/backend-services/lib/httpclient/testutils"
 	"io"
 	"net/http"
 	"testing"
-
-	"github.com/basemind-ai/backend-services/testingutils"
 
 	"github.com/basemind-ai/backend-services/lib/httpclient"
 
@@ -44,7 +43,7 @@ func TestClient(t *testing.T) {
 			Body:   &Body{Message: "ABC"},
 		},
 	} {
-		client := testingutils.CreateTestClient(t, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		client := testutils.CreateTestClient(t, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, request.Method, testCase.Method)
 
 			defer func() {

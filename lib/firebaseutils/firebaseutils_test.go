@@ -2,9 +2,10 @@ package firebaseutils_test
 
 import (
 	"context"
+	"testing"
+
 	"github.com/basemind-ai/backend-services/lib/firebaseutils"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestGetFirebaseAuth(t *testing.T) {

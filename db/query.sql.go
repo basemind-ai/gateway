@@ -7,130 +7,15 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const getUserByFirebaseId = `-- name: GetUserByFirebaseId :one
-SELECT id, firebase_id, created_at
-FROM "user"
-WHERE firebase_id = $1
-LIMIT 1
+const checkUserExists = `-- name: CheckUserExists :one
+SELECT EXISTS(SELECT 1 FROM "user" WHERE firebase_id = $1)
 `
 
-func (q *Queries) GetUserByFirebaseId(ctx context.Context, firebaseID string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByFirebaseId, firebaseID)
-	var i User
-	err := row.Scan(&i.ID, &i.FirebaseID, &i.CreatedAt)
-	return i, err
-}
-
-const getUserById = `-- name: GetUserById :one
-SELECT id, firebase_id, created_at
-FROM "user"
-WHERE id = $1
-LIMIT 1
-`
-
-func (q *Queries) GetUserById(ctx context.Context, id pgtype.UUID) (User, error) {
-	row := q.db.QueryRow(ctx, getUserById, id)
-	var i User
-	err := row.Scan(&i.ID, &i.FirebaseID, &i.CreatedAt)
-	return i, err
-}
-
-const getUserProjects = `-- name: GetUserProjects :many
-SELECT id, name, description, user_id, project_id, permission
-FROM "project"
-         LEFT JOIN "user_project" ON "project".id = "user_project".project_id
-WHERE "user_project".user_id = $1
-`
-
-type GetUserProjectsRow struct {
-	ID          pgtype.UUID              `json:"id"`
-	Name        string                   `json:"name"`
-	Description string                   `json:"description"`
-	UserID      pgtype.UUID              `json:"user_id"`
-	ProjectID   pgtype.UUID              `json:"project_id"`
-	Permission  NullAccessPermissionType `json:"permission"`
-}
-
-func (q *Queries) GetUserProjects(ctx context.Context, userID pgtype.UUID) ([]GetUserProjectsRow, error) {
-	rows, err := q.db.Query(ctx, getUserProjects, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetUserProjectsRow
-	for rows.Next() {
-		var i GetUserProjectsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Description,
-			&i.UserID,
-			&i.ProjectID,
-			&i.Permission,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const upsertUser = `-- name: UpsertUser :one
-INSERT INTO "user" (firebase_id)
-VALUES ($1)
-RETURNING "user".id
-`
-
-func (q *Queries) UpsertUser(ctx context.Context, firebaseID string) (pgtype.UUID, error) {
-	row := q.db.QueryRow(ctx, upsertUser, firebaseID)
-	var id pgtype.UUID
-	err := row.Scan(&id)
-	return id, err
-}
-
-const getProjectApiTokensPublicData = `-- name: getProjectApiTokensPublicData :many
-SELECT "name", "description", "is_revoked", "created_at", "expiry_date"
-FROM "api_token"
-WHERE "project_id" = $1
-`
-
-type getProjectApiTokensPublicDataRow struct {
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	IsRevoked   bool               `json:"is_revoked"`
-	CreatedAt   pgtype.Timestamptz `json:"created_at"`
-	ExpiryDate  pgtype.Timestamptz `json:"expiry_date"`
-}
-
-func (q *Queries) getProjectApiTokensPublicData(ctx context.Context, projectID pgtype.UUID) ([]getProjectApiTokensPublicDataRow, error) {
-	rows, err := q.db.Query(ctx, getProjectApiTokensPublicData, projectID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []getProjectApiTokensPublicDataRow
-	for rows.Next() {
-		var i getProjectApiTokensPublicDataRow
-		if err := rows.Scan(
-			&i.Name,
-			&i.Description,
-			&i.IsRevoked,
-			&i.CreatedAt,
-			&i.ExpiryDate,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) CheckUserExists(ctx context.Context, firebaseID string) (bool, error) {
+	row := q.db.QueryRow(ctx, checkUserExists, firebaseID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }

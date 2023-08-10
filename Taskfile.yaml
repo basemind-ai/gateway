@@ -1,0 +1,16 @@
+version: "3"
+
+tasks:
+  db-up:
+    cmds:
+      - docker compose stop && docker compose up db --detach
+  apply-migrations:
+    cmds:
+      - task: db-up
+      - sleep 2
+      - atlas migrate apply --dir "file://sql/migrations" --url "postgresql://basemind:basemind@localhost:5432/basemind?search_path=public&sslmode=disable"
+  create-migration:
+    cmds:
+      - task: db-up
+      - sleep 2
+      - atlas migrate diff {{.CLI_ARGS}} --dir "file://sql/migrations" --to "file://sql/schema.sql" --dev-url "postgresql://basemind:basemind@localhost:5432/basemind?search_path=public&sslmode=disable"

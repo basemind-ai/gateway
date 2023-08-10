@@ -3,6 +3,7 @@ WORKDIR /go/src/app
 ARG BUILD_TARGET
 COPY go.mod go.sum ./
 RUN go mod download
+COPY db db
 COPY lib lib
 COPY services/$BUILD_TARGET services/$BUILD_TARGET
 RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/backend-services/services/$BUILD_TARGET
