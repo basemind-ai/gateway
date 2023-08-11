@@ -2,18 +2,18 @@ package apierror_test
 
 import (
 	"context"
-	"github.com/basemind-ai/backend-services/lib/httpclient/testutils"
 	"net/http"
 	"testing"
 
+	"github.com/basemind-ai/backend-services/lib/httpclient/testutils"
+
 	"github.com/basemind-ai/backend-services/lib/apierror"
-	"github.com/go-chi/render"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestApiError(t *testing.T) {
 	for _, testCase := range []struct {
-		ApiErrType     render.Renderer
+		ApiErrType     *apierror.ApiError
 		ExpectedStatus int
 	}{
 		{
@@ -33,8 +33,8 @@ func TestApiError(t *testing.T) {
 			ExpectedStatus: http.StatusInternalServerError,
 		},
 	} {
-		client := testutils.CreateTestClient(t, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-			_ = render.Render(writer, request, testCase.ApiErrType)
+		client := testutils.CreateTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_ = testCase.ApiErrType.Render(w, r)
 		}))
 		res, err := client.Get(context.TODO(), "/")
 		assert.Nil(t, err)

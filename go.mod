@@ -6,7 +6,6 @@ require (
 	firebase.google.com/go/v4 v4.12.0
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-chi/httplog v0.3.1
-	github.com/go-chi/render v1.0.3
 	github.com/go-redis/redismock/v9 v9.0.3
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/redis/go-redis/v9 v9.0.5
@@ -25,7 +24,6 @@ require (
 	cloud.google.com/go/longrunning v0.5.1 // indirect
 	cloud.google.com/go/storage v1.31.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
-	github.com/ajg/form v1.5.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -33,7 +31,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/google/s2a-go v0.1.4 // indirect
+	github.com/google/s2a-go v0.1.5 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.5 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect

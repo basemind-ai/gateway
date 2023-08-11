@@ -26,3 +26,9 @@ func DeserializeJson[T any](response *http.Response, targetType T) error {
 	}
 	return json.Unmarshal(data, targetType)
 }
+
+func RenderJsonResponse(w http.ResponseWriter, statusCode int, body any) error {
+	w.WriteHeader(statusCode)
+	w.Header().Set("Content-Type", "application/json")
+	return json.NewEncoder(w).Encode(body)
+}
