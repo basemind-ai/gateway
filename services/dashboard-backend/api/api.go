@@ -20,7 +20,7 @@ func HandleDashboardUserPostLogin(w http.ResponseWriter, r *http.Request) {
 		// response with the user (DB id, project and project permission)
 		panic("not implemented")
 	} else {
-		// retrieve the user and project from the db and return them as a response
+		// retrieve the user and project from the db and return them as a response with the permission
 		panic("not implemented")
 	}
 }

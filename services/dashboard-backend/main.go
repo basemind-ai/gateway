@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/basemind-ai/backend-services/services/dashboard-backend/middleware"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/basemind-ai/backend-services/services/dashboard-backend/middleware"
 
 	"github.com/basemind-ai/backend-services/db"
 	"github.com/basemind-ai/backend-services/lib/rediscache"

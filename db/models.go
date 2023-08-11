@@ -53,21 +53,11 @@ func (ns NullAccessPermissionType) Value() (driver.Value, error) {
 	return string(ns.AccessPermissionType), nil
 }
 
-type ApiToken struct {
+type Project struct {
 	ID          pgtype.UUID        `json:"id"`
-	ProjectID   pgtype.UUID        `json:"project_id"`
-	Token       string             `json:"token"`
 	Name        string             `json:"name"`
 	Description string             `json:"description"`
-	IsRevoked   bool               `json:"is_revoked"`
 	CreatedAt   pgtype.Timestamptz `json:"created_at"`
-	ExpiryDate  pgtype.Timestamptz `json:"expiry_date"`
-}
-
-type Project struct {
-	ID          pgtype.UUID `json:"id"`
-	Name        string      `json:"name"`
-	Description string      `json:"description"`
 }
 
 type User struct {
