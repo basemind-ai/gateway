@@ -10,18 +10,18 @@ linters:
         - errcheck
         - errorlint
         - exportloopref
-        - goimports
         - goconst
         - gocritic
         - godot
         - godox
         - goheader
+        - goimports
         - gomodguard
         - goprintffuncname
         - gosec
-        - ineffassign
         - gosimple
         - govet
+        - ineffassign
         - nolintlint
         - predeclared
         - sqlclosecheck
@@ -31,8 +31,8 @@ linters:
         - typecheck
         - unconvert
         - unparam
+        - unused
         - wastedassign
         - whitespace
-        - unused
 issues:
     fix: true

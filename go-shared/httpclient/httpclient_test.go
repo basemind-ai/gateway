@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/basemind-ai/monorepo/go-shared/httpclient/testutils"
+
 	"github.com/basemind-ai/monorepo/go-shared/httpclient"
 
 	"github.com/stretchr/testify/assert"
