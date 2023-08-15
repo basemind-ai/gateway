@@ -1,5 +1,7 @@
 version: '3'
 
+includes:
+    win: ./Taskfile_windows.yaml
 tasks:
     # repository management
     install-pre-commit:
