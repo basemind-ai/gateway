@@ -3,7 +3,7 @@ package router_test
 import (
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-shared/router"
+	"github.com/basemind-ai/monorepo/go-shared/router"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 )

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-shared/serialization"
+	"github.com/basemind-ai/monorepo/go-shared/serialization"
 	"github.com/stretchr/testify/assert"
 )
 

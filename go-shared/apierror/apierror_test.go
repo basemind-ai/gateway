@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-shared/httpclient/testutils"
+	"github.com/basemind-ai/monorepo/go-shared/httpclient/testutils"
 
-	"github.com/basemind-ai/backend-services/go-shared/apierror"
+	"github.com/basemind-ai/monorepo/go-shared/apierror"
 	"github.com/stretchr/testify/assert"
 )
 

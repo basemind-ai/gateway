@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/config"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/config"
 
 	"github.com/stretchr/testify/assert"
 )

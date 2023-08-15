@@ -3,7 +3,7 @@ package router
 import (
 	"net/http"
 
-	"github.com/basemind-ai/backend-services/go-shared/rediscache"
+	"github.com/basemind-ai/monorepo/go-shared/rediscache"
 	"github.com/go-chi/chi/v5"
 	chiMiddlewares "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog"

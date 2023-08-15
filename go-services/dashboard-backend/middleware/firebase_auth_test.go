@@ -6,12 +6,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-shared/firebaseutils/testutils"
+	"github.com/basemind-ai/monorepo/go-shared/firebaseutils/testutils"
 
 	"firebase.google.com/go/v4/auth"
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/constants"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/constants"
 
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/middleware"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/middleware"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

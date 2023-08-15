@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-shared/firebaseutils"
+	"github.com/basemind-ai/monorepo/go-shared/firebaseutils"
 	"github.com/stretchr/testify/assert"
 )
 

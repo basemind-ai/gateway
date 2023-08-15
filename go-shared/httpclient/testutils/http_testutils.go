@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-shared/httpclient"
+	"github.com/basemind-ai/monorepo/go-shared/httpclient"
 )
 
 func CreateTestClient(t *testing.T, handler http.Handler) httpclient.Client {

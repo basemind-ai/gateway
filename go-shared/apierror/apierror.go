@@ -3,7 +3,7 @@ package apierror
 import (
 	"net/http"
 
-	"github.com/basemind-ai/backend-services/go-shared/serialization"
+	"github.com/basemind-ai/monorepo/go-shared/serialization"
 )
 
 type ApiError struct {

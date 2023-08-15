@@ -8,16 +8,16 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/middleware"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/middleware"
 
-	"github.com/basemind-ai/backend-services/go-shared/db"
-	"github.com/basemind-ai/backend-services/go-shared/rediscache"
+	"github.com/basemind-ai/monorepo/go-shared/db"
+	"github.com/basemind-ai/monorepo/go-shared/rediscache"
 
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/api"
-	"github.com/basemind-ai/backend-services/go-shared/router"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/api"
+	"github.com/basemind-ai/monorepo/go-shared/router"
 
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/config"
-	"github.com/basemind-ai/backend-services/go-shared/logging"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/config"
+	"github.com/basemind-ai/monorepo/go-shared/logging"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 )

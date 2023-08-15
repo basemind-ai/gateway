@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/basemind-ai/backend-services/go-shared/httpclient"
+	"github.com/basemind-ai/monorepo/go-shared/httpclient"
 
 	"github.com/stretchr/testify/assert"
 )

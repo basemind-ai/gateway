@@ -1,5 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="go test workspace" type="GoTestRunConfiguration" factoryName="Go Test">
+  <configuration
+		default="false"
+		name="go test workspace"
+		type="GoTestRunConfiguration"
+		factoryName="Go Test"
+	>
     <module name="backend" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="DIRECTORY" />

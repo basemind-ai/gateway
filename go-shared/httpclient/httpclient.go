@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/basemind-ai/backend-services/go-shared/serialization"
+	"github.com/basemind-ai/monorepo/go-shared/serialization"
 )
 
 type Client struct {

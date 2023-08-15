@@ -3,7 +3,7 @@ package testutils
 import (
 	"context"
 
-	"github.com/basemind-ai/backend-services/go-shared/firebaseutils"
+	"github.com/basemind-ai/monorepo/go-shared/firebaseutils"
 
 	"firebase.google.com/go/v4/auth"
 	"github.com/stretchr/testify/mock"

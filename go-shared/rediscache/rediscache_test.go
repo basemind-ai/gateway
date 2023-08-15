@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/basemind-ai/backend-services/go-shared/rediscache"
+	"github.com/basemind-ai/monorepo/go-shared/rediscache"
 	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
 )

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/constants"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/constants"
 
-	"github.com/basemind-ai/backend-services/go-shared/apierror"
-	"github.com/basemind-ai/backend-services/go-shared/firebaseutils"
+	"github.com/basemind-ai/monorepo/go-shared/apierror"
+	"github.com/basemind-ai/monorepo/go-shared/firebaseutils"
 	"github.com/rs/zerolog/log"
 )
 

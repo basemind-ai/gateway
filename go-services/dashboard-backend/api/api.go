@@ -3,9 +3,9 @@ package api
 import (
 	"net/http"
 
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/config"
-	"github.com/basemind-ai/backend-services/go-services/dashboard-backend/constants"
-	"github.com/basemind-ai/backend-services/go-shared/db"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/config"
+	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/constants"
+	"github.com/basemind-ai/monorepo/go-shared/db"
 	"github.com/go-chi/chi/v5"
 )
 

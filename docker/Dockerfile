@@ -6,7 +6,7 @@ RUN go mod download
 COPY db db
 COPY go-shared lib
 COPY go-services/$BUILD_TARGET services/$BUILD_TARGET
-RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/backend-services/go-services/$BUILD_TARGET
+RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/monorepo/go-services/$BUILD_TARGET
 RUN chmod +x /go/bin/app
 
 FROM gcr.io/distroless/static-debian11
