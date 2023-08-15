@@ -4,9 +4,6 @@
 	"description": "monorepo for basemind services",
 	"private": true,
 	"scripts": {
-		"check": "eslint '**/*.ts' --max-warnings 0",
-		"format": "prettier --write '**/*.{yml,yaml,json,md,js,html,svg,xml}'",
-		"lint": "eslint --fix '**/*.ts' --max-warnings 0",
 		"test:coverage": "vitest run --coverage",
 		"test": "vitest"
 	},

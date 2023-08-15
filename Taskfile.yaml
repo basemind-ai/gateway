@@ -12,27 +12,40 @@ tasks:
                 fi
         status:
             - command -v pre-commit &> /dev/null || exit 0
-    setup:
+    deps:setup:
+        desc: Setup the project dependencies
         cmds:
             - task: install-pre-commit
             - pre-commit install && pre-commit install --hook-type commit-msg
             - pnpm install --frozen-lockfile
             - go mod download
-    update:
+    deps:update:
+        desc: Update the project dependencies
         cmds:
             - pnpm update -r --latest
             - go mod tidy && go get -u ./... &> /dev/null
             - pre-commit autoupdate
+    lint:
+        desc: Lint the project
+        cmds:
+            - pre-commit run --all-files
     # database
-    db-up:
+    db:up:
+        desc: Bring up the local database
         cmds:
             - docker compose stop && docker compose up db --detach
-    apply-migrations:
+    db:down:
+        desc: Tear down the local database
+        cmds:
+            - docker compose down db
+    migrations:apply:
+        desc: Apply the migrations to the local database
         cmds:
             - task: db-up
             - sleep 2
             - atlas migrate apply --dir "file://sql/migrations" --url "postgresql://basemind:basemind@localhost:5432/basemind?search_path=public&sslmode=disable"
-    create-migration:
+    migrations:create:
+        desc: Create a new migration
         cmds:
             - task: db-up
             - sleep 2
