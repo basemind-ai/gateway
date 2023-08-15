@@ -1,0 +1,53 @@
+name: 'Tests (TS)'
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+        paths:
+            - 'ts-services/**'
+            - 'ts-shared/**'
+            - 'tsconfig.json'
+            - 'package.json'
+            - 'pnpm-lock.yaml'
+            - 'pnpm-workspace.yaml'
+            - 'vitest.*'
+env:
+    NODE_OPTIONS: '--max_old_space_size=4096'
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pull-requests: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20
+            - name: Install pnpm
+              uses: pnpm/action-setup@v2.4.0
+              id: pnpm-install
+              with:
+                  version: 8
+            - name: Setup pnpm cache
+              id: pnpm-cache
+              run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v3
+              name: Load cached Node dependencies
+              with:
+                  path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-pnpm-store-
+            - name: Install Node dependencies
+              run: pnpm install -r
+
+            - name: Test
+              run: pnpm run test:coverage
+            - name: Coverage
+              uses: davelosert/vitest-coverage-report-action@v2

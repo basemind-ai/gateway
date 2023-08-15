@@ -1,1 +1,1 @@
-export default ['services/*', 'ts-shared'];
+export default ['ts-services/*', 'ts-shared'];

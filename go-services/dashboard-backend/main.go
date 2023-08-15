@@ -73,7 +73,7 @@ func main() {
 	g, gCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		log.Info().Msg("server starting up")
+		log.Info().Msg("server starting")
 		return srv.ListenAndServe()
 	})
 

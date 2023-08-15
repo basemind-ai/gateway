@@ -1,0 +1,52 @@
+name: 'Tests (Golang)'
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+        paths:
+            - 'go-services/**'
+            - 'go-shared/**'
+            - 'go.*'
+env:
+    GCP_OIDC_PROVIDER_NAME: github-provider
+    GCP_PROJECT_ID: basemind-ai-development
+    GCP_PROJECT_NUMBER: 78794879644
+    GCP_SERVICE_ACCOUNT_NAME: firebase-adminsdk-frgvx
+    GCP_WORKLOAD_IDENTITY_POOL: dev-pool
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            id-token: write
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Golang
+              uses: actions/setup-go@v4
+              with:
+                  go-version: '1.21'
+            - name: Load cached Golang dependencies
+              id: cached-go-dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.cache/go-build
+                      ~/go/pkg/mod
+                  key: go-${{ inputs.go_version }}-v1.0-${{ hashFiles('**/go.sum') }}
+            - name: Install Golang dependencies
+              if: steps.cached-go-dependencies.outputs.cache-hit != 'true'
+              shell: bash
+              run: go get -v -t ./...
+
+            - name: Authenticate with GCP
+              id: auth
+              uses: google-github-actions/auth@v1.1.1
+              with:
+                  workload_identity_provider: 'projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GCP_WORKLOAD_IDENTITY_POOL}/providers/${GCP_OIDC_PROVIDER_NAME}'
+                  service_account: '${GCP_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com'
+            - name: Test
+              run: go test ./...

@@ -1,1 +1,3 @@
-throw new Error('not implemented');
+export function placeholder(): never {
+	throw new Error('Not implemented');
+}
