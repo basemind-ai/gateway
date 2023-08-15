@@ -1,6 +1,29 @@
 version: '3'
 
 tasks:
+    # repository management
+    install-pre-commit:
+        cmds:
+            - |
+                if command -v brew &> /dev/null; then
+                    brew install pre-commit
+                else
+                    pip install pre-commit
+                fi
+        status:
+            - command -v pre-commit &> /dev/null || exit 0
+    setup:
+        cmds:
+            - task: install-pre-commit
+            - pre-commit install && pre-commit install --hook-type commit-msg
+            - pnpm install --frozen-lockfile
+            - go mod download
+    update:
+        cmds:
+            - pnpm update -r --latest
+            - go mod tidy && go get -u ./... &> /dev/null
+            - pre-commit autoupdate
+    # database
     db-up:
         cmds:
             - docker compose stop && docker compose up db --detach

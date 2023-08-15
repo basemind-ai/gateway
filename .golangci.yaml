@@ -1,3 +1,5 @@
+run:
+    go: '1.21'
 linters-settings:
     govet:
         check-shadowing: true
@@ -31,5 +33,6 @@ linters:
         - unparam
         - wastedassign
         - whitespace
+        - unused
 issues:
     fix: true

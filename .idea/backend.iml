@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<module type="JAVA_MODULE" version="4">
+<module version="4">
   <component name="Go" enabled="true" />
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/.idea/sonarlint/issuestore" />
-      <excludeFolder
-				url="file://$MODULE_DIR$/.idea/sonarlint/securityhotspotstore"
-			/>
-      <excludeFolder url="file://$MODULE_DIR$/.secrets" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
   <component name="SonarLintModuleSettings">
-    <option name="uniqueId" value="a7fd31e9-cf33-4821-a6f9-0cefbf2de8cb" />
+    <option name="uniqueId" value="962d9d8f-726e-4931-acbf-82c0f4b49584" />
   </component>
 </module>
