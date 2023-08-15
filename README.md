@@ -1,58 +1,44 @@
 # BaseMind.AI Monorepo
 
-## Installation:
+This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend services.
 
-1. make sure to have `pnpm` installed globally (`npm i -g pnpm`)
-2. run `pnpm install -r`
+## Structure
 
-To update dependencies:
+-   `ts-services` - TypeScript based microservices.
+-   `ts-shared` - TypeScript shared code.
+-   `go-services` - Golang based microservices.
+-   `go-shared` - Golang shared code.
+-   `sql` - SQL schema and query files from which we generate the DB DAL (Data Access Layer) and migrations.
+-   `docker` - Dockerfiles.
+-   `.secrets` - secret values that are gitignored.
 
--   run `pnpm up -r --latest`
+The repository root has all tooling and other configurations.
 
-To lunch the dev environment, use docker - `docker compose up`.
-Make sure to have an up to date `.env` file in the root of your repository.
+## Installation
 
-### env file
+1. Install [TaskFile](https://taskfile.dev/) and the following prerequisites:
 
-Make sure to have the following values in your .env file
+    - Node >= 20
+    - Go >= 1.21
+    - Docker >= 24.0
+    - Python >= 3.11
 
-```dotenv
+    Notes: - Its recommended to use [nvm](https://github.com/nvm-sh/nvm) to manage Node versions. - Its recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage Python versions.
 
+2. Execute the setup task with:
+
+```shell
+task deps:setup
 ```
 
-The `<secret>` values should be given to you by someone with access and communicated securely.
+### TaskFile
 
-## Git
+We use [TaskFile](https://taskfile.dev/) to orchestrate tooling and commands.
+To see all the available commands run:
 
-### Commits and Branches
-
-The repository follows [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) which are enforced using
-[CommitLint](https://github.com/conventional-changelog/commitlint) (executed via husky on commit). This should also be the
-format of the PR title - this is enforced using a github action.
-
-## Commands
-
-### Test commands:
-
-`pnpm run test` - run tests.
-`pnpm run coverage` - run tests with coverage.
-
-### Linting commands:
-
-`pnpm run lint` - lint with auto fix using ESLint.
-`pnpm run check` - lint with only check using ESLint.
-`pnpm run format` - format all supported files using prettier.
-
-This repository contains the BaseMind.AI backend services. Each service is a Golang microservice.
-
-We use [go-chi](https://github.com/go-chi/chi) as an HTTP 1.1 REST router and [grpc](https://grpc.io/) for
-service to service communication.
-
-For databases we use Postgres SQL for which we are writing schemas and queries in SQL. We use [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html)
-to generate a Golang DAL (Data Access Layer) from the SQL, and [atlas](https://github.com/ariga/atlas) to manage
-migrations.
-
-## setup
+```shell
+task --list
+```
 
 ### Docker
 
@@ -64,32 +50,11 @@ which should be used for local development.
 -   `docker compose up --build` to build and start all microservices.
 -   `docker compose up --build <service-name>` to build and start a single service.
 
-Note: ass `--detach` to run docker compose in the background.
-
-### TaskFile
-
-We use [taskfile](https://taskfile.dev/) to manage local commands.
-
-1. Install [taskfile](https://taskfile.dev/) on your machine.
-2. Execute one of the defined commands.
-
-### pre-commit
-
-We use [pre-commit](https://pre-commit.com/) to orchestrate linting and formatting.
-
-1. Install [pre-commit](https://pre-commit.com/) on your machine.
-2. install the pre-commit hooks by executing `pre-commit install` in the repository root.
-
-#### pre-commit commands
-
--   `pre-commit autoupdate` to update the hooks.
--   `pre-commit run --all-files` to execute against all files in the repository.
-
-Note: do the above commands often.
+Note: add `--detach` to run docker compose in the background.
 
 ### Development Database
 
-We use Postgres as our database, to bring up the database for local development, execute `docker compose up db`.
+We use Postgres as our database, to bring up the database for local development, execute `task db:up`.
 
 ### SQLC
 
@@ -104,6 +69,6 @@ We use SQLC to generate typesafe GO out of SQL queries.
 We use [atlas](https://github.com/ariga/atlas) for migrating the database.
 
 1. install [atlas](https://github.com/ariga/atlas) on your machine.
-2. migrate the database locally for development by executing `task apply-migrations` in the repository root.
+2. migrate the database locally for development by executing `task migrations:apply` in the repository root.
 
-Note: you can create new migrations using the task command: `task create-migration -- <migration_name>`
+Note: you can create new migrations using the task command: `task migrations:create -- <migration_name>`
