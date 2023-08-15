@@ -1,4 +1,47 @@
-# backend-services
+# BaseMind.AI Monorepo
+
+## Installation:
+
+1. make sure to have `pnpm` installed globally (`npm i -g pnpm`)
+2. run `pnpm install -r`
+
+To update dependencies:
+
+-   run `pnpm up -r --latest`
+
+To lunch the dev environment, use docker - `docker compose up`.
+Make sure to have an up to date `.env` file in the root of your repository.
+
+### env file
+
+Make sure to have the following values in your .env file
+
+```dotenv
+
+```
+
+The `<secret>` values should be given to you by someone with access and communicated securely.
+
+## Git
+
+### Commits and Branches
+
+The repository follows [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) which are enforced using
+[CommitLint](https://github.com/conventional-changelog/commitlint) (executed via husky on commit). This should also be the
+format of the PR title - this is enforced using a github action.
+
+## Commands
+
+### Test commands:
+
+`pnpm run test` - run tests.
+`pnpm run coverage` - run tests with coverage.
+
+### Linting commands:
+
+`pnpm run lint` - lint with auto fix using ESLint.
+`pnpm run check` - lint with only check using ESLint.
+`pnpm run format` - format all supported files using prettier.
 
 This repository contains the BaseMind.AI backend services. Each service is a Golang microservice.
 
@@ -18,8 +61,8 @@ which should be used for local development.
 
 #### Docker Compose Commands
 
-- `docker compose up --build` to build and start all microservices.
-- `docker compose up --build <service-name>` to build and start a single service.
+-   `docker compose up --build` to build and start all microservices.
+-   `docker compose up --build <service-name>` to build and start a single service.
 
 Note: ass `--detach` to run docker compose in the background.
 
@@ -39,8 +82,8 @@ We use [pre-commit](https://pre-commit.com/) to orchestrate linting and formatti
 
 #### pre-commit commands
 
-- `pre-commit autoupdate` to update the hooks.
-- `pre-commit run --all-files` to execute against all files in the repository.
+-   `pre-commit autoupdate` to update the hooks.
+-   `pre-commit run --all-files` to execute against all files in the repository.
 
 Note: do the above commands often.
 

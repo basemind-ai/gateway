@@ -1,0 +1,12 @@
+{
+	"name": "openai-connector",
+	"private": true,
+	"version": "1.0.0",
+	"description": "Connector microservice for OpenAI",
+	"scripts": {},
+	"keywords": [],
+	"author": "BaseMind.AI",
+	"license": "UNLICENSED",
+	"dependencies": {},
+	"devDependencies": {}
+}

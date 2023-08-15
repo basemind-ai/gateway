@@ -1,0 +1,33 @@
+{
+	"include": ["*.ts", "ts-shared/**/*.ts"],
+	"exclude": ["node_modules"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"allowJs": false,
+		"allowSyntheticDefaultImports": true,
+		"declaration": false,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"incremental": true,
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"sourceMap": true,
+		"isolatedModules": true,
+		"strict": true,
+		"strictBindCallApply": true,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"target": "esnext",
+		"removeComments": true,
+		"paths": {
+			"shared/*": ["ts-shared/src/*"]
+		},
+		"types": ["vitest/globals"]
+	}
+}
