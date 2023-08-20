@@ -23,7 +23,7 @@ services:
             start_period: 5s
     dashboard-backend:
         build:
-            dockerfile: Dockerfile
+            dockerfile: docker/Dockerfile
             context: .
             args:
                 BUILD_TARGET: dashboard-backend
