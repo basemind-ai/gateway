@@ -13,7 +13,7 @@ repos:
           - id: check-yaml
           - id: check-added-large-files
     - repo: https://github.com/pre-commit/mirrors-prettier
-      rev: 'v3.0.1'
+      rev: 'v3.0.2'
       hooks:
           - id: prettier
             exclude: 'go.mod'
@@ -24,7 +24,7 @@ repos:
             files: \.ts$
             types: [file]
     - repo: https://github.com/golangci/golangci-lint
-      rev: 'v1.54.1'
+      rev: 'v1.54.2'
       hooks:
           - id: golangci-lint
             args: ['--timeout', '3m0s']

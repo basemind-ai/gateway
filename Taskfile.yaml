@@ -14,10 +14,16 @@ tasks:
                 fi
         status:
             - command -v pre-commit &> /dev/null || exit 0
+    install-sqlc:
+        cmds:
+            - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+        status:
+            - command -v sqlc &> /dev/null || exit 0
     deps:setup:
         desc: Setup the project dependencies
         cmds:
             - task: install-pre-commit
+            - task: install-sqlc
             - pre-commit install && pre-commit install --hook-type commit-msg
             - pnpm install --frozen-lockfile
             - go mod download
