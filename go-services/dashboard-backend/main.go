@@ -49,7 +49,10 @@ func main() {
 		log.Fatal().Err(cacheClientErr).Msg("failed to init redis")
 	}
 
-	conn := db.CreateConnection(ctx, cfg.DatabaseUrl)
+	conn, connErr := db.CreateConnection(ctx, cfg.DatabaseUrl)
+	if connErr != nil {
+		log.Fatal().Err(connErr).Msg("failed to connect to DB")
+	}
 
 	defer func() {
 		_ = cacheClient.Close()

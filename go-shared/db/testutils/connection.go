@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"os/exec"
 	"testing"
-	"time"
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 
@@ -42,26 +40,15 @@ func CreateTestDB(t *testing.T) {
 		config.RestartPolicy = docker.RestartPolicy{Name: "no"}
 	})
 
-	_ = resource.Expire(120)
-
 	if dockerErr != nil {
 		log.Fatal().Err(dockerErr).Msg("failed to start docker container")
 	}
 
-	hostAndPort := resource.GetHostPort("5432/tcp")
-	dbUrl := fmt.Sprintf("postgres://test:test@%s/test?sslmode=disable", hostAndPort)
+	_ = resource.Expire(120)
 
-	connectionPool.MaxWait = 20 * time.Second
-	connectionErr := connectionPool.Retry(func() error {
-		connection, pgxErr := pgx.Connect(context.TODO(), dbUrl)
+	dbUrl := fmt.Sprintf("postgres://test:test@%s/test?sslmode=disable", resource.GetHostPort("5432/tcp"))
 
-		if pgxErr != nil {
-			return pgxErr
-		}
-		db.SetConnection(connection)
-		return connection.Ping(context.TODO())
-	})
-
+	connection, connectionErr := db.CreateConnection(context.TODO(), dbUrl)
 	if connectionErr != nil {
 		log.Fatal().Err(connectionErr).Msg("failed to connect to test database")
 	}
@@ -79,6 +66,7 @@ func CreateTestDB(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
+		_ = connection.Close(context.TODO())
 		if purgeErr := connectionPool.Purge(resource); purgeErr != nil {
 			log.Fatal().Err(purgeErr).Msg("failed to purge test database")
 		}

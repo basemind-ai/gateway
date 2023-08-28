@@ -171,10 +171,6 @@ github.com/opencontainers/runc v1.1.9 h1:XR0VIHTGce5eWPkaPesqTBrhW2yAcaraWfsEalN
 github.com/opencontainers/runc v1.1.9/go.mod h1:CbUumNnWCuTGFukNXahoo/RFBZvDAgRh/smNYNOhA50=
 github.com/ory/dockertest/v3 v3.10.0 h1:4K3z2VMe8Woe++invjaTB7VRyQXQy5UY+loujO4aNE4=
 github.com/ory/dockertest/v3 v3.10.0/go.mod h1:nr57ZbRWMqfsdGdFNLHz5jjNdDb7VVFnzAeW1n5N1Lg=
-github.com/peterldowns/pgtestdb v0.0.11 h1:dDr+UDB/wWtl+1zv6hN5BV4sIQbnMFr9g79Id0VfeCY=
-github.com/peterldowns/pgtestdb v0.0.11/go.mod h1:c4kia5Amk5PUHqk10zg4x3a/vDqajjhAmKIjgxCEIM4=
-github.com/peterldowns/pgtestdb/migrators/atlasmigrator v0.0.11 h1:NGm04vZRF79fy8kqHECZPqXdAdYF+qNjP2IW8gSWuoE=
-github.com/peterldowns/pgtestdb/migrators/atlasmigrator v0.0.11/go.mod h1:ZxEHITZiV64i59alREafBu7XOweEeGZYGgEJJY4V+ec=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
