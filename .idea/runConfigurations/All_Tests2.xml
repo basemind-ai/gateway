@@ -2,16 +2,14 @@
   <configuration
 		default="false"
 		name="All Tests"
-		type="GoTestRunConfiguration"
-		factoryName="Go Test"
+		type="JavaScriptTestRunnerVitest"
+		nameIsGenerated="true"
 	>
-    <module name="monorepo" />
-    <working_directory value="$PROJECT_DIR$" />
-    <kind value="DIRECTORY" />
-    <package value="github.com/basemind-ai/monorepo" />
-    <directory value="$PROJECT_DIR$" />
-    <filePath value="$PROJECT_DIR$" />
-    <framework value="gotest" />
+    <node-interpreter value="project" />
+    <vitest-package value="$PROJECT_DIR$/node_modules/vitest" />
+    <working-dir value="$PROJECT_DIR$" />
+    <envs />
+    <scope-kind value="ALL" />
     <method v="2" />
   </configuration>
 </component>
