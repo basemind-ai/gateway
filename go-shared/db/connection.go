@@ -38,3 +38,7 @@ func GetQueries() *Queries {
 	})
 	return queries
 }
+
+func SetConnection(conn *pgx.Conn) {
+	connection = conn
+}

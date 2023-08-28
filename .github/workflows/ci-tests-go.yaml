@@ -24,7 +24,6 @@ jobs:
             id-token: write
         steps:
             - uses: actions/checkout@v3
-
             - name: Setup Golang
               uses: actions/setup-go@v4
               with:
@@ -41,7 +40,9 @@ jobs:
               if: steps.cached-go-dependencies.outputs.cache-hit != 'true'
               shell: bash
               run: go get -v -t ./...
-
+            - name: Install Atlas
+              shell: bash
+              run: curl -sSf https://atlasgo.sh | sh
             - name: Authenticate with GCP
               id: auth
               uses: google-github-actions/auth@v1.1.1

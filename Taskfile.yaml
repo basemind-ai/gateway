@@ -49,12 +49,12 @@ tasks:
     migrations:apply:
         desc: Apply the migrations to the local database
         cmds:
-            - task: db-up
+            - task: db:up
             - sleep 2
             - atlas migrate apply --dir "file://sql/migrations" --url "postgresql://basemind:basemind@localhost:5432/basemind?search_path=public&sslmode=disable"
     migrations:create:
         desc: Create a new migration
         cmds:
-            - task: db-up
+            - task: db:up
             - sleep 2
             - atlas migrate diff {{.CLI_ARGS}} --dir "file://sql/migrations" --to "file://sql/schema.sql" --dev-url "postgresql://basemind:basemind@localhost:5432/basemind?search_path=public&sslmode=disable"
