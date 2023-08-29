@@ -12,6 +12,7 @@ export default defineConfig({
 				'services/**/src/main.ts',
 				'services/**/tests/**/*.*',
 				'ts-shared/tests/**/*.*',
+				'ts-web/tests/**/*.*',
 			],
 		},
 		alias: {

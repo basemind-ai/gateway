@@ -53,13 +53,15 @@ func CreateTestDB(t *testing.T) {
 		log.Fatal().Err(connectionErr).Msg("failed to connect to test database")
 	}
 
-	cmd := exec.Command("atlas",
+	cmd := exec.Command(
+		"atlas",
 		"migrate",
 		"apply",
 		"--url",
 		dbUrl,
 		"--dir",
-		"file://../../../sql/migrations")
+		"file://../../../sql/migrations",
+	)
 
 	if _, migrationCommandErr := cmd.Output(); migrationCommandErr != nil {
 		log.Fatal().Err(migrationCommandErr).Msg("failed to migrate the test database")
