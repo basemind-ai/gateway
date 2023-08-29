@@ -1,6 +1,0 @@
-version: '3'
-
-tasks:
-    sqlc-generate:
-        cmds:
-            - docker run --rm -v ${PWD}:/src -w /src kjconroy/sqlc generate

@@ -4,8 +4,6 @@
 	"exclude": ["node_modules"],
 	"compilerOptions": {
 		"baseUrl": ".",
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
 		"paths": {
 			"@/*": ["src/*"],
 			"tests/*": ["tests/*"],

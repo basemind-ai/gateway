@@ -1,9 +1,7 @@
 version: '3'
 
-includes:
-    win: ./Taskfile_windows.yaml
 tasks:
-    # repository management
+    # project dependencies
     install-pre-commit:
         cmds:
             - |
@@ -19,15 +17,33 @@ tasks:
             - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
         status:
             - command -v sqlc &> /dev/null || exit 0
-    deps:setup:
+    install-atlas:
+        cmds:
+            - curl -sSf https://atlasgo.sh | sh
+        status:
+            - command -v atlas &> /dev/null || exit 0
+    install-buf:
+        cmds:
+            - |
+                if command -v brew &> /dev/null; then
+                    brew install bufbuild/buf/buf
+                else
+                    npm install -g @bufbuild/buf
+                fi
+        status:
+            - command -v buf &> /dev/null || exit 0
+    setup:
         desc: Setup the project dependencies
         cmds:
             - task: install-pre-commit
             - task: install-sqlc
+            - task: install-atlas
+            - task: install-buf
             - pre-commit install && pre-commit install --hook-type commit-msg
-            - pnpm install
+            - pnpm install -r
             - go mod download
-    deps:update:
+    # repository management
+    update:
         desc: Update the project dependencies
         cmds:
             - pnpm update -r --latest

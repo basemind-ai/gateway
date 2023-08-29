@@ -27,6 +27,8 @@
 		"eslint": "^8.48.0",
 		"eslint-import-resolver-typescript": "^3.6.0",
 		"eslint-plugin-vitest": "^0.2.8",
+		"grpc-tools": "^1.12.4",
+		"grpc_tools_node_protoc_ts": "^5.3.3",
 		"interface-forge": "^1.5.1",
 		"prettier": "^3.0.2",
 		"rimraf": "^5.0.1",

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "com/language/v1/language.proto";
+
+package services.openai.v1;
+
+service OpenAIService {
+  rpc Prompt(PromptRequest) returns (PromptResponse) {}
+}
+
+message PromptRequest {
+  string model = 1;
+  string content = 2;
+}
+
+message PromptResponse {
+  string content = 1;
+}

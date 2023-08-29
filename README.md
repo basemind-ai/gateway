@@ -29,7 +29,7 @@ The repository root has all tooling and other configurations.
 2. Execute the setup task with:
 
 ```shell
-task deps:setup
+task setup
 ```
 
 ### TaskFile
