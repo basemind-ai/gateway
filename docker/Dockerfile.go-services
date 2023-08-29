@@ -3,6 +3,7 @@ WORKDIR /go/src/app
 ARG BUILD_TARGET
 COPY go.mod go.sum ./
 RUN go mod download
+RUN go install github.com/mitranim/gow@latest
 
 FROM install AS build
 COPY go-shared go-shared
