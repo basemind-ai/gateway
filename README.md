@@ -6,6 +6,7 @@ This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend servic
 
 -   `ts-services` - TypeScript based microservices.
 -   `ts-shared` - TypeScript shared code.
+-   `ts-web` - TypeScript based ts-web application.
 -   `go-services` - Golang based microservices.
 -   `go-shared` - Golang shared code.
 -   `sql` - SQL schema and query files from which we generate the DB DAL (Data Access Layer) and migrations.
@@ -72,3 +73,15 @@ We use [atlas](https://github.com/ariga/atlas) for migrating the database.
 2. migrate the database locally for development by executing `task migrations:apply` in the repository root.
 
 Note: you can create new migrations using the task command: `task migrations:create -- <migration_name>`
+
+### secrets
+
+Configuration files that should not be committed into git are stored under the `.secrets` folder.
+
+You will need to receive them from another developer and they must be communicated securely using a service such
+as [yopass](https://yopass.se/).
+
+You will need to add the following files:
+
+-   `.env.frontend` - this is an ENV file for the frontend application.
+-   `serviceAccountKey.json` - this is a GCP / firebase configuration file for backend applications.

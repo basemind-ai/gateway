@@ -23,7 +23,7 @@ services:
             start_period: 5s
     dashboard-backend:
         build:
-            dockerfile: docker/Dockerfile
+            dockerfile: docker/Dockerfile.go-services
             context: .
             args:
                 BUILD_TARGET: dashboard-backend
@@ -38,6 +38,23 @@ services:
             REDIS_CONNECTION_STRING: redis://redis:6379
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
             GOOGLE_APPLICATION_CREDENTIALS: /.secrets/serviceAccountKey.json
-
+    ts-web:
+        build:
+            dockerfile: docker/Dockerfile.ts-web
+            context: .
+            target: install
+            args:
+                - NODE_ENV=development
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./ts-web/src:/app/ts-web/src:cached
+            - ./ts-web/public:/app/ts-web/public:cached
+        environment:
+            NEXT_PUBLIC_BACKEND_BASE_URL: http://0.0.0.0:8000/v1
+            NODE_ENV: development
+        working_dir: /app/ts-web
+        command: ['pnpm', 'run', 'dev']
+        env_file: '.secrets/.env.frontend'
 volumes:
     db:

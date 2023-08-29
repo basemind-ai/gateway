@@ -21,7 +21,7 @@ repos:
       rev: 'v8.48.0'
       hooks:
           - id: eslint
-            files: \.ts$
+            files: \.tsx?$
             types: [file]
     - repo: https://github.com/golangci/golangci-lint
       rev: 'v1.54.2'

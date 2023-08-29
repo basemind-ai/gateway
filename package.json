@@ -7,15 +7,22 @@
 		"test:coverage": "vitest run --coverage",
 		"test": "vitest"
 	},
+	"dependencies": {
+		"dayjs": "^1.11.9",
+		"deepmerge-ts": "^5.1.0",
+		"uuid": "^9.0.0"
+	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.7.1",
 		"@commitlint/config-conventional": "^17.7.0",
 		"@faker-js/faker": "^8.0.2",
+		"@next/eslint-plugin-next": "^13.4.19",
 		"@prettier/plugin-xml": "^3.2.0",
 		"@tool-belt/eslint-config": "^3.0.4",
 		"@types/node": "20.5.7",
-		"@typescript-eslint/eslint-plugin": "^6.4.1",
-		"@typescript-eslint/parser": "^6.4.1",
+		"@types/uuid": "^9.0.2",
+		"@typescript-eslint/eslint-plugin": "^6.5.0",
+		"@typescript-eslint/parser": "^6.5.0",
 		"@vitest/coverage-v8": "^0.34.3",
 		"eslint": "^8.48.0",
 		"eslint-import-resolver-typescript": "^3.6.0",
@@ -24,7 +31,8 @@
 		"prettier": "^3.0.2",
 		"rimraf": "^5.0.1",
 		"typescript": "^5.2.2",
-		"vitest": "^0.34.3"
+		"vitest": "^0.34.3",
+		"vitest-mock-extended": "^1.2.0"
 	},
 	"keywords": [],
 	"author": "BaseMind.AI",

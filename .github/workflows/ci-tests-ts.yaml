@@ -9,6 +9,7 @@ on:
         paths:
             - 'ts-services/**'
             - 'ts-shared/**'
+            - 'ts-web/**'
             - 'tsconfig.json'
             - 'package.json'
             - 'pnpm-lock.yaml'
