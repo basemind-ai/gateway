@@ -7,7 +7,8 @@
 		"paths": {
 			"@/*": ["src/*"],
 			"tests/*": ["tests/*"],
-			"shared/*": ["../../ts-shared/src/*"]
+			"shared/*": ["../../ts-shared/src/*"],
+			"gen/*": ["../../gen/ts/*"]
 		},
 		"types": ["vitest/globals"]
 	}

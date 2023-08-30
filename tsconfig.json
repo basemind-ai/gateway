@@ -26,7 +26,8 @@
 		"target": "esnext",
 		"removeComments": true,
 		"paths": {
-			"shared/*": ["ts-shared/src/*"]
+			"shared/*": ["ts-shared/src/*"],
+			"gen/*": ["gen/ts/*"]
 		},
 		"types": ["vitest/globals"]
 	}

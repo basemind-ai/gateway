@@ -8,6 +8,8 @@
 	"author": "BaseMind.AI",
 	"license": "UNLICENSED",
 	"dependencies": {
-		"@grpc/grpc-js": "^1.9.1"
+		"@grpc/grpc-js": "^1.9.2",
+		"@protobuf-ts/runtime": "^2.9.1",
+		"@protobuf-ts/runtime-rpc": "^2.9.1"
 	}
 }
