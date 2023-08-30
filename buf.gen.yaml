@@ -1,0 +1,7 @@
+version: v1
+plugins:
+    - plugin: buf.build/community/stephenh-ts-proto
+      out: gen
+      opt:
+          - esModuleInterop=true
+          - outputServices=grpc-js

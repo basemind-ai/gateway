@@ -1,3 +1,3 @@
-export function placeholder(): never {
-	throw new Error('Not implemented');
-}
+import { createServer } from 'shared/utils';
+
+const server = createServer();
