@@ -8,13 +8,12 @@
 	"license": "UNLICENSED",
 	"scripts": {
 		"build": "rm -rf dist && webpack build --mode=production",
-		"watch": "webpack --watch --mode=development",
-		"dev": "concurrently \"pnpm run watch\" \"pnpm run serve\"",
-		"serve": "nodemon \"./dist/index.js\" --watch \"./dist\""
+		"dev": "webpack --watch"
 	},
 	"dependencies": {
 		"@grpc/grpc-js": "^1.9.2",
 		"@protobuf-ts/runtime": "^2.9.1",
-		"@protobuf-ts/runtime-rpc": "^2.9.1"
+		"@protobuf-ts/runtime-rpc": "^2.9.1",
+		"pino": "^8.15.0"
 	}
 }

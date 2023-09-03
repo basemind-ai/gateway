@@ -1,6 +1,8 @@
 import path from 'node:path';
 
-import tsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
+import NodemonPlugin from 'nodemon-webpack-plugin';
+import { PinoWebpackPlugin } from 'pino-webpack-plugin';
+import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import type { Configuration } from 'webpack';
 import nodeExternals from 'webpack-node-externals';
 
@@ -11,11 +13,24 @@ const config: Configuration = {
 	devtool: isDevelopment ? 'eval-source-map' : 'inline-source-map',
 	externalsPresets: { node: true },
 	externals: [nodeExternals()],
+	plugins: [
+		new NodemonPlugin(),
+		new PinoWebpackPlugin({
+			transports: isDevelopment ? ['pino-pretty'] : [],
+		}),
+	],
 	module: {
 		rules: [
 			{
 				test: /\.tsx?$/,
-				use: 'ts-loader',
+				use: [
+					{
+						loader: 'ts-loader',
+						options: {
+							configFile: 'tsconfig.build.json',
+						},
+					},
+				],
 				exclude: /node_modules/,
 			},
 		],
@@ -29,11 +44,16 @@ const config: Configuration = {
 			path.resolve(__dirname, '../../gen/ts'),
 		],
 		extensions: ['.ts', '.js', '.json'],
-		plugins: [new tsconfigPathsPlugin()],
+		plugins: [new TsconfigPathsPlugin()],
+	},
+	optimization: {
+		splitChunks: false,
+		nodeEnv: process.env.NODE_ENV ?? 'production',
 	},
 	output: {
-		filename: 'index.js',
+		filename: '[name].js',
 		path: path.resolve(__dirname, 'dist'),
 	},
 };
+
 export default config;

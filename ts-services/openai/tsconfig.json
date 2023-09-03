@@ -1,6 +1,6 @@
 {
 	"extends": "../../tsconfig.json",
-	"include": ["*.d.ts", "**/*.ts", "*.ts", "../../gen/ts/**/*.ts"],
+	"include": ["*.d.ts", "**/*.ts", "*.ts", "../../gen/ts/openai/**/*.ts"],
 	"exclude": ["node_modules"],
 	"compilerOptions": {
 		"baseUrl": ".",
