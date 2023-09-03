@@ -11,6 +11,7 @@ export default defineConfig({
 			'@': resolve(__dirname, 'src'),
 			'tests': resolve(__dirname, 'tests'),
 			'shared': resolve(__dirname, '../../ts-shared/src'),
+			'::gen': resolve(__dirname, '../../gen/ts'),
 		},
 	},
 });

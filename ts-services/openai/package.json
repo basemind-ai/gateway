@@ -3,10 +3,15 @@
 	"private": true,
 	"version": "1.0.0",
 	"description": "Connector microservice for OpenAI",
-	"scripts": {},
 	"keywords": [],
 	"author": "BaseMind.AI",
 	"license": "UNLICENSED",
+	"scripts": {
+		"build": "rm -rf dist && webpack build --mode=production",
+		"watch": "webpack --watch --mode=development",
+		"dev": "concurrently \"pnpm run watch\" \"pnpm run serve\"",
+		"serve": "nodemon \"./dist/index.js\" --watch \"./dist\""
+	},
 	"dependencies": {
 		"@grpc/grpc-js": "^1.9.2",
 		"@protobuf-ts/runtime": "^2.9.1",

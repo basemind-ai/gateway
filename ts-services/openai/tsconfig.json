@@ -1,6 +1,6 @@
 {
 	"extends": "../../tsconfig.json",
-	"include": ["*.d.ts", "**/*.ts", "*.ts"],
+	"include": ["*.d.ts", "**/*.ts", "*.ts", "../../gen/ts/**/*.ts"],
 	"exclude": ["node_modules"],
 	"compilerOptions": {
 		"baseUrl": ".",
@@ -11,5 +11,12 @@
 			"gen/*": ["../../gen/ts/*"]
 		},
 		"types": ["vitest/globals"]
+	},
+	"ts-node": {
+		"compilerOptions": {
+			"sourceMap": true,
+			"module": "CommonJS",
+			"moduleResolution": "node"
+		}
 	}
 }
