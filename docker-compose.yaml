@@ -50,6 +50,27 @@ services:
                 'run',
                 '/go/src/app/go-services/dashboard-backend/main.go',
             ]
+    openai:
+        build:
+            dockerfile: docker/Dockerfile.ts-services
+            context: .
+            target: install
+            args:
+                BUILD_TARGET: openai
+                NODE_ENV: development
+                PORT: 8000
+        ports:
+            - '8000:8000'
+        volumes:
+            - ./ts-services/openai/src:/app/ts-services/openai/src:cached
+            - ./ts-shared/src:/app/ts-shared/src:cached
+            - ./gen/ts:/app/gen/ts:cached
+        environment:
+            NODE_ENV: development
+            GRPC_VERBOSITY: debug
+            GRPC_TRACE: channel,subchannel,call_stream
+        working_dir: /app/ts-services/openai
+        command: ['pnpm', 'run', 'dev']
     ts-web:
         build:
             dockerfile: docker/Dockerfile.ts-web
@@ -62,6 +83,7 @@ services:
         volumes:
             - ./ts-web/src:/app/ts-web/src:cached
             - ./ts-web/public:/app/ts-web/public:cached
+            - ./ts-shared/src:/app/ts-shared/src:cached
         environment:
             NEXT_PUBLIC_BACKEND_BASE_URL: http://0.0.0.0:8000/v1
             NODE_ENV: development

@@ -36,12 +36,7 @@ module.exports = {
 		project,
 	},
 	settings,
-	ignorePatterns: [
-		'.eslintrc.js',
-		'**/*.js',
-		'*.js',
-		'ts-services/**/gen/**/*.*',
-	],
+	ignorePatterns: ['.eslintrc.js', '**/*.js', '*.js', 'gen/**/*.*'],
 	extends: ['@tool-belt/eslint-config'],
 	rules,
 	overrides: [

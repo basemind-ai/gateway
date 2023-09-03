@@ -1,7 +1,5 @@
 import { resolve } from 'node:path';
-
 import { defineConfig } from 'vitest/config';
-
 export default defineConfig({
 	plugins: [],
 	test: {
@@ -15,3 +13,4 @@ export default defineConfig({
 		},
 	},
 });
+//# sourceMappingURL=vitest.config.js.map

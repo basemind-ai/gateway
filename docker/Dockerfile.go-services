@@ -1,11 +1,11 @@
 FROM golang:1.21 AS install
 WORKDIR /go/src/app
-ARG BUILD_TARGET
 COPY go.mod go.sum ./
 RUN go mod download
 RUN go install github.com/mitranim/gow@latest
 
 FROM install AS build
+ARG BUILD_TARGET
 COPY go-shared go-shared
 COPY go-services/$BUILD_TARGET services/$BUILD_TARGET
 RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/monorepo/go-services/$BUILD_TARGET

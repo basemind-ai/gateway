@@ -9,7 +9,7 @@ export default defineConfig({
 			reporter: ['text', 'json-summary', 'json'],
 			exclude: [
 				...(configDefaults.coverage.exclude ?? []),
-				'services/**/src/main.ts',
+				'services/**/src/index.ts',
 				'services/**/tests/**/*.*',
 				'ts-shared/tests/**/*.*',
 				'ts-web/tests/**/*.*',

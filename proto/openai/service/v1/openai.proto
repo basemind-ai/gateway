@@ -1,18 +1,23 @@
 syntax = "proto3";
 
-import "com/language/v1/language.proto";
+package openai.service.v1;
 
-package services.openai.v1;
-
+// The OpenAIService service definition.
 service OpenAIService {
+  // Request a prompt
   rpc Prompt(PromptRequest) returns (PromptResponse) {}
 }
 
+// A Prompt Request
 message PromptRequest {
+  // Model name
   string model = 1;
+  // Prompt Content
   string content = 2;
 }
 
+// A Prompt Response
 message PromptResponse {
+  // Prompt Content
   string content = 1;
 }

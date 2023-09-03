@@ -24,5 +24,4 @@
 .idea/workspace.xml
 coverage/
 dist/
-gen/
 node_modules/
