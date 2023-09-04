@@ -7,11 +7,6 @@
 		"test:coverage": "vitest run --coverage",
 		"test": "vitest"
 	},
-	"dependencies": {
-		"dayjs": "^1.11.9",
-		"deepmerge-ts": "^5.1.0",
-		"uuid": "^9.0.0"
-	},
 	"devDependencies": {
 		"@bufbuild/buf": "^1.26.1",
 		"@commitlint/cli": "^17.7.1",
@@ -25,7 +20,6 @@
 		"@protobuf-ts/runtime-rpc": "^2.9.1",
 		"@tool-belt/eslint-config": "^3.0.4",
 		"@types/node": "20.5.9",
-		"@types/uuid": "^9.0.3",
 		"@types/webpack": "^5.28.2",
 		"@types/webpack-node-externals": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^6.5.0",
@@ -40,7 +34,6 @@
 		"pino-pretty": "^10.2.0",
 		"pino-webpack-plugin": "^2.0.0",
 		"prettier": "^3.0.3",
-		"rimraf": "^5.0.1",
 		"ts-loader": "^9.4.4",
 		"ts-node": "^10.9.1",
 		"tsconfig-paths-webpack-plugin": "^4.1.0",

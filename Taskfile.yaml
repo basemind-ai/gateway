@@ -72,3 +72,7 @@ tasks:
         desc: Lint the protobuf files
         cmds:
             - npx buf lint
+    buf:format:
+        desc: Format the protobuf files
+        cmds:
+            - npx buf format

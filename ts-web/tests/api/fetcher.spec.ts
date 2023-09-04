@@ -23,7 +23,7 @@ describe('fetcher tests', () => {
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
-					'X-Request-Id': 'uuidv4_value',
+					'X-Request-Id': expect.any(String),
 				},
 			},
 		);
@@ -45,7 +45,7 @@ describe('fetcher tests', () => {
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
-					'X-Request-Id': 'uuidv4_value',
+					'X-Request-Id': expect.any(String),
 				},
 			},
 		);
@@ -89,7 +89,7 @@ describe('fetcher tests', () => {
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
-					'X-Request-Id': 'uuidv4_value',
+					'X-Request-Id': expect.any(String),
 				},
 			},
 		);
@@ -115,7 +115,7 @@ describe('fetcher tests', () => {
 				headers: {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
-					'X-Request-Id': 'uuidv4_value',
+					'X-Request-Id': expect.any(String),
 					'X-Test': 'test',
 				},
 			},

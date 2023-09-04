@@ -4,14 +4,16 @@ This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend servic
 
 ## Structure
 
--   `ts-services` - TypeScript based microservices.
--   `ts-shared` - TypeScript shared code.
--   `ts-web` - TypeScript based ts-web application.
+-   `.secrets` - secret values that are gitignored.
+-   `docker` - Dockerfiles.
 -   `go-services` - Golang based microservices.
 -   `go-shared` - Golang shared code.
 -   `sql` - SQL schema and query files from which we generate the DB DAL (Data Access Layer) and migrations.
--   `docker` - Dockerfiles.
--   `.secrets` - secret values that are gitignored.
+-   `ts-services` - TypeScript based microservices.
+-   `ts-shared` - TypeScript shared code.
+-   `ts-web` - TypeScript based ts-web application.
+-   `gen` - generated code.
+-   `proto` - gRPC and protobuf files.
 
 The repository root has all tooling and other configurations.
 
@@ -74,7 +76,7 @@ We use [atlas](https://github.com/ariga/atlas) for migrating the database.
 
 Note: you can create new migrations using the task command: `task migrations:create -- <migration_name>`
 
-### secrets
+### Secrets
 
 Configuration files that should not be committed into git are stored under the `.secrets` folder.
 
@@ -85,3 +87,9 @@ You will need to add the following files:
 
 -   `.env.frontend` - this is an ENV file for the frontend application.
 -   `serviceAccountKey.json` - this is a GCP / firebase configuration file for backend applications.
+
+### Proto Files
+
+We use gRPC and protobuf files. The proto files are located under the `proto` folder and the generated code is stored
+under the `gen` folder. We use the [buf](https://buf.build/product/cli) cli tool to generate the code, as well as lint
+and format the proto files (done via pre-commit).

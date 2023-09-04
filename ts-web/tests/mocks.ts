@@ -1,10 +1,6 @@
+import { faker } from '@faker-js/faker';
 import { NextRouter } from 'next/router';
-import { v4 as uuidv4 } from 'uuid';
 import { beforeEach } from 'vitest';
-
-vi.mock('uuid', () => ({
-	v4: vi.fn().mockReturnValue('uuidv4_value'),
-}));
 
 export const mockFetch = vi.fn().mockResolvedValue({
 	ok: true,
@@ -14,14 +10,14 @@ export const mockFetch = vi.fn().mockResolvedValue({
 
 const env = {
 	NEXT_PUBLIC_BACKEND_BASE_URL: 'http://www.example.com',
-	NEXT_PUBLIC_FIREBASE_API_KEY: uuidv4(),
+	NEXT_PUBLIC_FIREBASE_API_KEY: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'devlingo-demo.firebaseapp.com',
 	NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'devlingo-demo',
 	NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'devlingo-demo.appspot.com',
 	NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 12_345_678_910,
-	NEXT_PUBLIC_FIREBASE_APP_ID: uuidv4(),
-	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: uuidv4(),
-	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: uuidv4(),
+	NEXT_PUBLIC_FIREBASE_APP_ID: faker.string.uuid(),
+	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: faker.string.uuid(),
+	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
 };
 
 export const setEnv = (key: keyof typeof env, value: string) => {

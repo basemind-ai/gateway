@@ -4,7 +4,6 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"baseUrl": ".",
-		"sourceMap": false,
 		"declaration": false,
 		"module": "CommonJS",
 		"moduleResolution": "node",
