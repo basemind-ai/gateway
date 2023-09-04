@@ -15,6 +15,7 @@
 	"ts-node": {
 		"compilerOptions": {
 			"sourceMap": true,
+			"noEmit": false,
 			"module": "CommonJS",
 			"moduleResolution": "node"
 		}

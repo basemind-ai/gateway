@@ -2,6 +2,8 @@ const rules = {
 	'@typescript-eslint/no-extraneous-class': 0,
 	'@typescript-eslint/no-magic-numbers': 0,
 	'sonarjs/elseif-without-else': 0,
+	'n/no-process-exit': 0,
+	'unicorn/no-process-exit': 0,
 };
 
 const tsWebRules = {

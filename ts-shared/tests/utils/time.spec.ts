@@ -1,4 +1,4 @@
-import { wait } from '@/utils/time';
+import { wait } from 'shared/utils/time';
 
 describe('time util tests', () => {
 	describe('wait tests', () => {

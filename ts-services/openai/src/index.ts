@@ -1,17 +1,22 @@
 import { ServerCredentials } from '@grpc/grpc-js';
-import { openAIServiceDefinition } from 'gen/openai/service/v1/openai.grpc-server';
-import logger from 'shared/logger';
+import {
+	IOpenAIService,
+	openAIServiceDefinition,
+} from 'gen/openai/service/v1/openai.grpc-server';
 import { createServer } from 'shared/utils';
+import logger from 'shared/utils/logger';
 
 const port = process.env.PORT ?? 50_051;
 
+const implementation = {
+	prompt: () => {
+		return null;
+	},
+} satisfies IOpenAIService;
+
 const server = createServer({
 	service: openAIServiceDefinition,
-	implementation: {
-		prompt: () => {
-			return null;
-		},
-	},
+	implementation,
 });
 
 server.bindAsync(
@@ -20,10 +25,21 @@ server.bindAsync(
 	(error: Error | null) => {
 		if (error) {
 			logger.error('Server failed to start');
-			throw error;
+			process.exit(1);
 		}
 		logger.info('Server starting');
 		logger.info(`Listening on port ${port}`);
 		server.start();
 	},
 );
+
+process.on('SIGTERM', () => {
+	server.tryShutdown((error?: Error) => {
+		if (error) {
+			logger.error('Server failed to shutdown');
+			process.exit(1);
+		}
+		logger.info('Server shutdown complete');
+		process.exit(0);
+	});
+});

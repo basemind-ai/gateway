@@ -1,5 +1,5 @@
-/.secrets
-!.secrets/README.md
+/.secrets/*
+!/.secrets/README.md
 
 **/*.log
 **/*.map

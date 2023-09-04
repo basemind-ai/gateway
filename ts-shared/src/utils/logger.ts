@@ -2,12 +2,13 @@ import { LoggerOptions, pino } from 'pino';
 
 export const createLogger = (options?: LoggerOptions) =>
 	process.env.NODE_ENV === 'production'
-		? pino(options)
+		? pino({ level: 'info', ...options })
 		: pino({
-				...options,
+				level: 'debug',
 				transport: {
 					target: 'pino-pretty',
 				},
+				...options,
 		  });
 
 export default createLogger();

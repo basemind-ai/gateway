@@ -5,6 +5,8 @@
 		"allowJs": true,
 		"baseUrl": ".",
 		"declaration": false,
+		"noEmit": false,
+		"sourceMap": true,
 		"module": "CommonJS",
 		"moduleResolution": "node",
 		"outDir": "dist"

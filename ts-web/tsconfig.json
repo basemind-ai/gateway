@@ -11,6 +11,8 @@
 		"isolatedModules": true,
 		"module": "ESNext",
 		"moduleResolution": "bundler",
+		"sourceMap": true,
+		"noEmit": false,
 		"paths": {
 			"@/*": ["src/*"],
 			"tests/*": ["tests/*"],
