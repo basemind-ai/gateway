@@ -18,7 +18,6 @@
         <option value="staticcheck" />
         <option value="govet" />
         <option value="errorlint" />
-        <option value="typecheck" />
         <option value="wastedassign" />
         <option value="testpackage" />
         <option value="nolintlint" />
@@ -34,7 +33,10 @@
         <option value="gosimple" />
       </list>
     </option>
-    <option name="goLinterExe" value="$USER_HOME$/go/bin/golangci-lint" />
+    <option
+			name="goLinterExe"
+			value="\\wsl$\Ubuntu\home\master\go\bin\golangci-lint"
+		/>
     <option name="linterSelected" value="true" />
   </component>
 </project>

@@ -18,3 +18,12 @@ RETURNING *;
 -- name: CreateUserProject :one
 INSERT INTO user_project (user_id, project_id, permission, is_user_default_project) values ($1, $2, $3, $4)
 RETURNING *;
+
+-- name: DeleteUser :exec
+DELETE FROM "user" where firebase_id = $1;
+
+-- name: DeleteUserProject :exec
+DELETE FROM "user_project" WHERE project_id = $1;
+
+-- name: DeleteProject :exec
+DELETE FROM "project" WHERE id = $1;
