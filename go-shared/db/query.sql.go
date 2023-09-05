@@ -85,6 +85,33 @@ func (q *Queries) CreateUserProject(ctx context.Context, arg CreateUserProjectPa
 	return i, err
 }
 
+const deleteProject = `-- name: DeleteProject :exec
+DELETE FROM "project" WHERE id = $1
+`
+
+func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteProject, id)
+	return err
+}
+
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM "user" where firebase_id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, firebaseID string) error {
+	_, err := q.db.Exec(ctx, deleteUser, firebaseID)
+	return err
+}
+
+const deleteUserProject = `-- name: DeleteUserProject :exec
+DELETE FROM "user_project" WHERE project_id = $1
+`
+
+func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteUserProject, projectID)
+	return err
+}
+
 const findProjectsByUserId = `-- name: FindProjectsByUserId :many
 Select id, name, description, permission, is_user_default_project, created_at from project p inner join user_project up on p.id = up.project_id where up.user_id = $1
 `

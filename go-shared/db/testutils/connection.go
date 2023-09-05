@@ -14,7 +14,8 @@ import (
 	"github.com/basemind-ai/monorepo/go-shared/db"
 )
 
-func CreateTestDB(t *testing.T) {
+// CreateTestDB TODO: find a better approach to locate relativeMigrationsPath.
+func CreateTestDB(t *testing.T, relativeMigrationsPath string) {
 	connectionPool, poolInitErr := dockertest.NewPool("")
 	if poolInitErr != nil {
 		log.Fatal().Err(poolInitErr).Msg("failed to construct dockertest pool")
@@ -60,7 +61,7 @@ func CreateTestDB(t *testing.T) {
 		"--url",
 		dbUrl,
 		"--dir",
-		"file://../../../sql/migrations",
+		relativeMigrationsPath,
 	)
 
 	if _, migrationCommandErr := cmd.Output(); migrationCommandErr != nil {

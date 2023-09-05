@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/config"
@@ -61,6 +62,12 @@ func HandleRetrieveUserProjects(ctx context.Context, dbQueries *db.Queries, fire
 	if findProjectsErr != nil {
 		log.Error().Err(findProjectsErr).Msg("failed to find user projects")
 		return nil, findProjectsErr
+	}
+
+	if len(userProjects) == 0 {
+		errMessage := "user does not have any projects"
+		log.Error().Err(findProjectsErr).Msg(errMessage)
+		return nil, errors.New(errMessage)
 	}
 
 	return &HandleDashboardUserPostLoginDTO{User: user, Projects: userProjects}, nil
