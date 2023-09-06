@@ -5,8 +5,8 @@
 // @generated from protobuf file "proto/openai/service/v1/openai.proto" (package "openai.service.v1", syntax proto3)
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -51,47 +51,169 @@ export var OpenAIModel;
 /**
  * Type of OpenAI Message
  *
- * @generated from protobuf enum openai.service.v1.OpenAIMessage
+ * @generated from protobuf enum openai.service.v1.OpenAIMessageRole
  */
-export var OpenAIMessage;
-(function (OpenAIMessage) {
+export var OpenAIMessageRole;
+(function (OpenAIMessageRole) {
     /**
      * OpenAI Message type is not Specified
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_UNSPECIFIED = 0;
      */
-    OpenAIMessage[OpenAIMessage["OPEN_AI_MESSAGE_UNSPECIFIED"] = 0] = "OPEN_AI_MESSAGE_UNSPECIFIED";
+    OpenAIMessageRole[OpenAIMessageRole["OPEN_AI_MESSAGE_ROLE_UNSPECIFIED"] = 0] = "OPEN_AI_MESSAGE_ROLE_UNSPECIFIED";
     /**
      * OpenAI System message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_SYSTEM = 1;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_SYSTEM = 1;
      */
-    OpenAIMessage[OpenAIMessage["OPEN_AI_MESSAGE_SYSTEM"] = 1] = "OPEN_AI_MESSAGE_SYSTEM";
+    OpenAIMessageRole[OpenAIMessageRole["OPEN_AI_MESSAGE_ROLE_SYSTEM"] = 1] = "OPEN_AI_MESSAGE_ROLE_SYSTEM";
     /**
      * OpenAI User message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_USER = 2;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_USER = 2;
      */
-    OpenAIMessage[OpenAIMessage["OPEN_AI_MESSAGE_USER"] = 2] = "OPEN_AI_MESSAGE_USER";
+    OpenAIMessageRole[OpenAIMessageRole["OPEN_AI_MESSAGE_ROLE_USER"] = 2] = "OPEN_AI_MESSAGE_ROLE_USER";
     /**
      * OpenAI Assistant message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ASSISTANT = 3;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_ASSISTANT = 3;
      */
-    OpenAIMessage[OpenAIMessage["OPEN_AI_MESSAGE_ASSISTANT"] = 3] = "OPEN_AI_MESSAGE_ASSISTANT";
+    OpenAIMessageRole[OpenAIMessageRole["OPEN_AI_MESSAGE_ROLE_ASSISTANT"] = 3] = "OPEN_AI_MESSAGE_ROLE_ASSISTANT";
     /**
      * OpenAI Function message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_FUNCTION = 4;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_FUNCTION = 4;
      */
-    OpenAIMessage[OpenAIMessage["OPEN_AI_MESSAGE_FUNCTION"] = 4] = "OPEN_AI_MESSAGE_FUNCTION";
-})(OpenAIMessage || (OpenAIMessage = {}));
+    OpenAIMessageRole[OpenAIMessageRole["OPEN_AI_MESSAGE_ROLE_FUNCTION"] = 4] = "OPEN_AI_MESSAGE_ROLE_FUNCTION";
+})(OpenAIMessageRole || (OpenAIMessageRole = {}));
+// @generated message type with reflection information, may provide speed optimized methods
+class OpenAIFunctionCall$Type extends MessageType {
+    constructor() {
+        super("openai.service.v1.OpenAIFunctionCall", [
+            { no: 1, name: "arguments", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value) {
+        const message = { arguments: "", name: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string arguments */ 1:
+                    message.arguments = reader.string();
+                    break;
+                case /* string name */ 2:
+                    message.name = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* string arguments = 1; */
+        if (message.arguments !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.arguments);
+        /* string name = 2; */
+        if (message.name !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIFunctionCall
+ */
+export const OpenAIFunctionCall = new OpenAIFunctionCall$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class OpenAIMessage$Type extends MessageType {
+    constructor() {
+        super("openai.service.v1.OpenAIMessage", [
+            { no: 1, name: "content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "role", kind: "enum", T: () => ["openai.service.v1.OpenAIMessageRole", OpenAIMessageRole] },
+            { no: 3, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "function_call", kind: "message", T: () => OpenAIFunctionCall }
+        ]);
+    }
+    create(value) {
+        const message = { role: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string content */ 1:
+                    message.content = reader.string();
+                    break;
+                case /* openai.service.v1.OpenAIMessageRole role */ 2:
+                    message.role = reader.int32();
+                    break;
+                case /* optional string name */ 3:
+                    message.name = reader.string();
+                    break;
+                case /* optional openai.service.v1.OpenAIFunctionCall function_call */ 4:
+                    message.functionCall = OpenAIFunctionCall.internalBinaryRead(reader, reader.uint32(), options, message.functionCall);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* optional string content = 1; */
+        if (message.content !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.content);
+        /* openai.service.v1.OpenAIMessageRole role = 2; */
+        if (message.role !== 0)
+            writer.tag(2, WireType.Varint).int32(message.role);
+        /* optional string name = 3; */
+        if (message.name !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.name);
+        /* optional openai.service.v1.OpenAIFunctionCall function_call = 4; */
+        if (message.functionCall)
+            OpenAIFunctionCall.internalBinaryWrite(message.functionCall, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIMessage
+ */
+export const OpenAIMessage = new OpenAIMessage$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class OpenAIPromptRequest$Type extends MessageType {
     constructor() {
         super("openai.service.v1.OpenAIPromptRequest", [
             { no: 1, name: "model", kind: "enum", T: () => ["openai.service.v1.OpenAIModel", OpenAIModel] },
-            { no: 2, name: "content", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["openai.service.v1.OpenAIMessage", OpenAIMessage] },
+            { no: 2, name: "messages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => OpenAIMessage },
             { no: 3, name: "temperature", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
             { no: 4, name: "top_p", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
             { no: 5, name: "max_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
@@ -101,7 +223,7 @@ class OpenAIPromptRequest$Type extends MessageType {
         ]);
     }
     create(value) {
-        const message = { model: 0, content: [] };
+        const message = { model: 0, messages: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial(this, message, value);
@@ -115,12 +237,8 @@ class OpenAIPromptRequest$Type extends MessageType {
                 case /* openai.service.v1.OpenAIModel model */ 1:
                     message.model = reader.int32();
                     break;
-                case /* repeated openai.service.v1.OpenAIMessage content = 2 [packed = true];*/ 2:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.content.push(reader.int32());
-                    else
-                        message.content.push(reader.int32());
+                case /* repeated openai.service.v1.OpenAIMessage messages = 2 [packed = true];*/ 2:
+                    message.messages.push(OpenAIMessage.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional float temperature */ 3:
                     message.temperature = reader.float();
@@ -155,13 +273,9 @@ class OpenAIPromptRequest$Type extends MessageType {
         /* openai.service.v1.OpenAIModel model = 1; */
         if (message.model !== 0)
             writer.tag(1, WireType.Varint).int32(message.model);
-        /* repeated openai.service.v1.OpenAIMessage content = 2 [packed = true]; */
-        if (message.content.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.content.length; i++)
-                writer.int32(message.content[i]);
-            writer.join();
-        }
+        /* repeated openai.service.v1.OpenAIMessage messages = 2 [packed = true]; */
+        for (let i = 0; i < message.messages.length; i++)
+            OpenAIMessage.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional float temperature = 3; */
         if (message.temperature !== undefined)
             writer.tag(3, WireType.Bit32).float(message.temperature);
@@ -191,9 +305,9 @@ class OpenAIPromptRequest$Type extends MessageType {
  */
 export const OpenAIPromptRequest = new OpenAIPromptRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class PromptResponse$Type extends MessageType {
+class OpenAIPromptResponse$Type extends MessageType {
     constructor() {
-        super("openai.service.v1.PromptResponse", [
+        super("openai.service.v1.OpenAIPromptResponse", [
             { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "prompt_tokens", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
             { no: 3, name: "completion_tokens", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
@@ -255,13 +369,13 @@ class PromptResponse$Type extends MessageType {
     }
 }
 /**
- * @generated MessageType for protobuf message openai.service.v1.PromptResponse
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIPromptResponse
  */
-export const PromptResponse = new PromptResponse$Type();
+export const OpenAIPromptResponse = new OpenAIPromptResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class StreamResponse$Type extends MessageType {
+class OpenAIStreamResponse$Type extends MessageType {
     constructor() {
-        super("openai.service.v1.StreamResponse", [
+        super("openai.service.v1.OpenAIStreamResponse", [
             { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "finish_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
@@ -309,13 +423,13 @@ class StreamResponse$Type extends MessageType {
     }
 }
 /**
- * @generated MessageType for protobuf message openai.service.v1.StreamResponse
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIStreamResponse
  */
-export const StreamResponse = new StreamResponse$Type();
+export const OpenAIStreamResponse = new OpenAIStreamResponse$Type();
 /**
  * @generated ServiceType for protobuf service openai.service.v1.OpenAIService
  */
 export const OpenAIService = new ServiceType("openai.service.v1.OpenAIService", [
-    { name: "OpenAIPrompt", options: {}, I: OpenAIPromptRequest, O: PromptResponse },
-    { name: "OpenAIStream", serverStreaming: true, options: {}, I: OpenAIPromptRequest, O: PromptResponse }
+    { name: "OpenAIPrompt", options: {}, I: OpenAIPromptRequest, O: OpenAIPromptResponse },
+    { name: "OpenAIStream", serverStreaming: true, options: {}, I: OpenAIPromptRequest, O: OpenAIStreamResponse }
 ]);

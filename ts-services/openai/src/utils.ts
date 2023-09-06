@@ -1,0 +1,90 @@
+import {
+	OpenAIMessageRole,
+	OpenAIModel,
+	OpenAIPromptRequest,
+} from 'gen/openai/service/v1/openai';
+import {
+	ChatCompletionCreateParamsNonStreaming,
+	ChatCompletionCreateParamsStreaming,
+	ChatCompletionMessageParam,
+} from 'openai/src/resources/chat/completions';
+
+const modelMap: Record<
+	OpenAIModel,
+	'gpt-4' | 'gpt-4-32k' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k'
+> = {
+	[OpenAIModel.OPEN_AI_MODEL_UNSPECIFIED]: 'gpt-3.5-turbo',
+	[OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K]: 'gpt-3.5-turbo',
+	[OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_16K]: 'gpt-3.5-turbo-16k',
+	[OpenAIModel.OPEN_AI_MODEL_GPT4_8K]: 'gpt-4',
+	[OpenAIModel.OPEN_AI_MODEL_GPT4_32K]: 'gpt-4-32k',
+};
+
+const messageRoleMap: Record<
+	OpenAIMessageRole,
+	ChatCompletionMessageParam['role']
+> = {
+	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_UNSPECIFIED]: 'system',
+	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER]: 'user',
+	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_SYSTEM]: 'system',
+	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_ASSISTANT]: 'assistant',
+	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_FUNCTION]: 'function',
+};
+
+export function getOpenAIModel(
+	requestModel: OpenAIModel,
+): 'gpt-4' | 'gpt-4-32k' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' {
+	return modelMap[requestModel];
+}
+
+export function getOpenAIMessageRole(
+	requestRole: OpenAIMessageRole,
+): ChatCompletionMessageParam['role'] {
+	return messageRoleMap[requestRole];
+}
+
+export function createOpenAIRequest(
+	request: OpenAIPromptRequest,
+	stream: true,
+): ChatCompletionCreateParamsStreaming;
+
+export function createOpenAIRequest(
+	request: OpenAIPromptRequest,
+	stream: false,
+): ChatCompletionCreateParamsNonStreaming;
+
+export function createOpenAIRequest(
+	request: OpenAIPromptRequest,
+	stream: boolean,
+):
+	| ChatCompletionCreateParamsStreaming
+	| ChatCompletionCreateParamsNonStreaming {
+	const {
+		frequencyPenalty,
+		maxTokens,
+		messages,
+		model,
+		presencePenalty,
+		temperature,
+		topP,
+		userId,
+	} = request;
+	return {
+		stream,
+		temperature,
+		user: userId,
+		top_p: topP,
+		max_tokens: maxTokens,
+		frequency_penalty: frequencyPenalty,
+		presence_penalty: presencePenalty,
+		model: getOpenAIModel(model),
+		messages: messages.map<ChatCompletionMessageParam>((msg) => {
+			const { content, role, ...rest } = msg;
+			return {
+				content: content ?? null,
+				role: getOpenAIMessageRole(role),
+				...rest,
+			} satisfies ChatCompletionMessageParam;
+		}),
+	};
+}

@@ -8,6 +8,56 @@ import type { IBinaryReader } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
+ * An OpenAI function call
+ *
+ * @generated from protobuf message openai.service.v1.OpenAIFunctionCall
+ */
+export interface OpenAIFunctionCall {
+    /**
+     * The signature of the function arguments
+     *
+     * @generated from protobuf field: string arguments = 1;
+     */
+    arguments: string;
+    /**
+     * The function name
+     *
+     * @generated from protobuf field: string name = 2;
+     */
+    name: string;
+}
+/**
+ * An OpenAI Chat Message
+ *
+ * @generated from protobuf message openai.service.v1.OpenAIMessage
+ */
+export interface OpenAIMessage {
+    /**
+     * The content of the message
+     *
+     * @generated from protobuf field: optional string content = 1;
+     */
+    content?: string;
+    /**
+     * The role of the message
+     *
+     * @generated from protobuf field: openai.service.v1.OpenAIMessageRole role = 2;
+     */
+    role: OpenAIMessageRole;
+    /**
+     * Name of the message author or function name
+     *
+     * @generated from protobuf field: optional string name = 3;
+     */
+    name?: string;
+    /**
+     * The signature function to invoke, if any
+     *
+     * @generated from protobuf field: optional openai.service.v1.OpenAIFunctionCall function_call = 4;
+     */
+    functionCall?: OpenAIFunctionCall;
+}
+/**
  * A Request for an OpenAI regular LLM Prompt
  *
  * @generated from protobuf message openai.service.v1.OpenAIPromptRequest
@@ -20,11 +70,11 @@ export interface OpenAIPromptRequest {
      */
     model: OpenAIModel;
     /**
-     * Prompt Content
+     * Prompt Messages
      *
-     * @generated from protobuf field: repeated openai.service.v1.OpenAIMessage content = 2 [packed = true];
+     * @generated from protobuf field: repeated openai.service.v1.OpenAIMessage messages = 2 [packed = true];
      */
-    content: OpenAIMessage[];
+    messages: OpenAIMessage[];
     /**
      * Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
      *
@@ -65,9 +115,9 @@ export interface OpenAIPromptRequest {
 /**
  * An OpenAI Prompt Response Message
  *
- * @generated from protobuf message openai.service.v1.PromptResponse
+ * @generated from protobuf message openai.service.v1.OpenAIPromptResponse
  */
-export interface PromptResponse {
+export interface OpenAIPromptResponse {
     /**
      * Prompt Content
      *
@@ -96,9 +146,9 @@ export interface PromptResponse {
 /**
  * An OpenAI Streaming Response Message
  *
- * @generated from protobuf message openai.service.v1.StreamResponse
+ * @generated from protobuf message openai.service.v1.OpenAIStreamResponse
  */
-export interface StreamResponse {
+export interface OpenAIStreamResponse {
     /**
      * Prompt Content
      *
@@ -152,40 +202,60 @@ export declare enum OpenAIModel {
 /**
  * Type of OpenAI Message
  *
- * @generated from protobuf enum openai.service.v1.OpenAIMessage
+ * @generated from protobuf enum openai.service.v1.OpenAIMessageRole
  */
-export declare enum OpenAIMessage {
+export declare enum OpenAIMessageRole {
     /**
      * OpenAI Message type is not Specified
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_UNSPECIFIED = 0;
      */
-    OPEN_AI_MESSAGE_UNSPECIFIED = 0,
+    OPEN_AI_MESSAGE_ROLE_UNSPECIFIED = 0,
     /**
      * OpenAI System message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_SYSTEM = 1;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_SYSTEM = 1;
      */
-    OPEN_AI_MESSAGE_SYSTEM = 1,
+    OPEN_AI_MESSAGE_ROLE_SYSTEM = 1,
     /**
      * OpenAI User message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_USER = 2;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_USER = 2;
      */
-    OPEN_AI_MESSAGE_USER = 2,
+    OPEN_AI_MESSAGE_ROLE_USER = 2,
     /**
      * OpenAI Assistant message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ASSISTANT = 3;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_ASSISTANT = 3;
      */
-    OPEN_AI_MESSAGE_ASSISTANT = 3,
+    OPEN_AI_MESSAGE_ROLE_ASSISTANT = 3,
     /**
      * OpenAI Function message
      *
-     * @generated from protobuf enum value: OPEN_AI_MESSAGE_FUNCTION = 4;
+     * @generated from protobuf enum value: OPEN_AI_MESSAGE_ROLE_FUNCTION = 4;
      */
-    OPEN_AI_MESSAGE_FUNCTION = 4
+    OPEN_AI_MESSAGE_ROLE_FUNCTION = 4
 }
+declare class OpenAIFunctionCall$Type extends MessageType<OpenAIFunctionCall> {
+    constructor();
+    create(value?: PartialMessage<OpenAIFunctionCall>): OpenAIFunctionCall;
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OpenAIFunctionCall): OpenAIFunctionCall;
+    internalBinaryWrite(message: OpenAIFunctionCall, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter;
+}
+/**
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIFunctionCall
+ */
+export declare const OpenAIFunctionCall: OpenAIFunctionCall$Type;
+declare class OpenAIMessage$Type extends MessageType<OpenAIMessage> {
+    constructor();
+    create(value?: PartialMessage<OpenAIMessage>): OpenAIMessage;
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OpenAIMessage): OpenAIMessage;
+    internalBinaryWrite(message: OpenAIMessage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter;
+}
+/**
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIMessage
+ */
+export declare const OpenAIMessage: OpenAIMessage$Type;
 declare class OpenAIPromptRequest$Type extends MessageType<OpenAIPromptRequest> {
     constructor();
     create(value?: PartialMessage<OpenAIPromptRequest>): OpenAIPromptRequest;
@@ -196,26 +266,26 @@ declare class OpenAIPromptRequest$Type extends MessageType<OpenAIPromptRequest> 
  * @generated MessageType for protobuf message openai.service.v1.OpenAIPromptRequest
  */
 export declare const OpenAIPromptRequest: OpenAIPromptRequest$Type;
-declare class PromptResponse$Type extends MessageType<PromptResponse> {
+declare class OpenAIPromptResponse$Type extends MessageType<OpenAIPromptResponse> {
     constructor();
-    create(value?: PartialMessage<PromptResponse>): PromptResponse;
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PromptResponse): PromptResponse;
-    internalBinaryWrite(message: PromptResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter;
+    create(value?: PartialMessage<OpenAIPromptResponse>): OpenAIPromptResponse;
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OpenAIPromptResponse): OpenAIPromptResponse;
+    internalBinaryWrite(message: OpenAIPromptResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter;
 }
 /**
- * @generated MessageType for protobuf message openai.service.v1.PromptResponse
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIPromptResponse
  */
-export declare const PromptResponse: PromptResponse$Type;
-declare class StreamResponse$Type extends MessageType<StreamResponse> {
+export declare const OpenAIPromptResponse: OpenAIPromptResponse$Type;
+declare class OpenAIStreamResponse$Type extends MessageType<OpenAIStreamResponse> {
     constructor();
-    create(value?: PartialMessage<StreamResponse>): StreamResponse;
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamResponse): StreamResponse;
-    internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter;
+    create(value?: PartialMessage<OpenAIStreamResponse>): OpenAIStreamResponse;
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OpenAIStreamResponse): OpenAIStreamResponse;
+    internalBinaryWrite(message: OpenAIStreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter;
 }
 /**
- * @generated MessageType for protobuf message openai.service.v1.StreamResponse
+ * @generated MessageType for protobuf message openai.service.v1.OpenAIStreamResponse
  */
-export declare const StreamResponse: StreamResponse$Type;
+export declare const OpenAIStreamResponse: OpenAIStreamResponse$Type;
 /**
  * @generated ServiceType for protobuf service openai.service.v1.OpenAIService
  */

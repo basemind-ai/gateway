@@ -3,6 +3,8 @@ syntax = "proto3";
 // buf:lint:ignore PACKAGE_DIRECTORY_MATCH
 package openai.service.v1;
 
+option go_package = "github.com/basemind-ai/monorepo/openaiservice";
+
 // Type of OpenAI Model
 enum OpenAIModel {
   // OpenAI Model is not Specified
@@ -18,33 +20,53 @@ enum OpenAIModel {
 }
 
 // Type of OpenAI Message
-enum OpenAIMessage {
+enum OpenAIMessageRole {
   // OpenAI Message type is not Specified
-  OPEN_AI_MESSAGE_UNSPECIFIED = 0;
+  OPEN_AI_MESSAGE_ROLE_UNSPECIFIED = 0;
   // OpenAI System message
-  OPEN_AI_MESSAGE_SYSTEM = 1;
+  OPEN_AI_MESSAGE_ROLE_SYSTEM = 1;
   // OpenAI User message
-  OPEN_AI_MESSAGE_USER = 2;
+  OPEN_AI_MESSAGE_ROLE_USER = 2;
   // OpenAI Assistant message
-  OPEN_AI_MESSAGE_ASSISTANT = 3;
+  OPEN_AI_MESSAGE_ROLE_ASSISTANT = 3;
   // OpenAI Function message
-  OPEN_AI_MESSAGE_FUNCTION = 4;
+  OPEN_AI_MESSAGE_ROLE_FUNCTION = 4;
 }
 
 // The OpenAIService service definition.
 service OpenAIService {
   // Request a regular LLM prompt
-  rpc OpenAIPrompt(OpenAIPromptRequest) returns (PromptResponse) {}
+  rpc OpenAIPrompt(OpenAIPromptRequest) returns (OpenAIPromptResponse) {}
   // Request a streaming LLM prompt
-  rpc OpenAIStream(OpenAIPromptRequest) returns (stream PromptResponse) {}
+  rpc OpenAIStream(OpenAIPromptRequest) returns (stream OpenAIStreamResponse) {}
+}
+
+// An OpenAI function call
+message OpenAIFunctionCall {
+  // The signature of the function arguments
+  string arguments = 1;
+  // The function name
+  string name = 2;
+}
+
+// An OpenAI Chat Message
+message OpenAIMessage {
+  // The content of the message
+  optional string content = 1;
+  // The role of the message
+  OpenAIMessageRole role = 2;
+  // Name of the message author or function name
+  optional string name = 3;
+  // The signature function to invoke, if any
+  optional OpenAIFunctionCall function_call = 4;
 }
 
 // A Request for an OpenAI regular LLM Prompt
 message OpenAIPromptRequest {
   // OpenAI Model identifier
   OpenAIModel model = 1;
-  // Prompt Content
-  repeated OpenAIMessage content = 2 [packed = true];
+  // Prompt Messages
+  repeated OpenAIMessage messages = 2 [packed = true];
   // Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
   optional float temperature = 3;
   // Nucleus Sampling: https://platform.openai.com/docs/api-reference/chat/create#top_p
@@ -60,7 +82,7 @@ message OpenAIPromptRequest {
 }
 
 // An OpenAI Prompt Response Message
-message PromptResponse {
+message OpenAIPromptResponse {
   // Prompt Content
   string content = 1;
   // Number of tokens used for the prompt
@@ -69,12 +91,14 @@ message PromptResponse {
   uint32 completion_tokens = 3;
   // Total number of tokens used to generate the response
   uint32 total_tokens = 4;
+  // Timestamp of request start
 }
 
 // An OpenAI Streaming Response Message
-message StreamResponse {
+message OpenAIStreamResponse {
   // Prompt Content
   string content = 1;
   // Finish reason, if this is the last message
   optional string finish_reason = 2;
+  // Timestamp of request start, if this is the last message
 }

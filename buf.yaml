@@ -12,7 +12,6 @@ lint:
         - RPC_RESPONSE_STANDARD_NAME
     service_suffix: Service
     allow_comment_ignores: true
-    allow_comment_ignores: true
 breaking:
     use:
         - FILE

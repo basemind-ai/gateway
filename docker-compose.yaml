@@ -31,11 +31,11 @@ services:
         ports:
             - '4000:4000'
         volumes:
-            - ./go.mod:/go/src/app/go.mod:cached
-            - ./go.sum:/go/src/app/go.sum:cached
             - ./.secrets:/go/src/app/.secrets:cached
             - ./go-services/dashboard-backend:/go/src/app/go-services/dashboard-backend:cached
             - ./go-shared:/go/src/app/go-shared:cached
+            - ./go.mod:/go/src/app/go.mod:cached
+            - ./go.sum:/go/src/app/go.sum:cached
         environment:
             PORT: 4000
             ENVIRONMENT: development
@@ -62,13 +62,14 @@ services:
         ports:
             - '8000:8000'
         volumes:
+            - ./gen/ts:/app/gen/ts:cached
             - ./ts-services/openai/src:/app/ts-services/openai/src:cached
             - ./ts-shared/src:/app/ts-shared/src:cached
-            - ./gen/ts:/app/gen/ts:cached
         environment:
             NODE_ENV: development
             GRPC_VERBOSITY: debug
             GRPC_TRACE: channel,subchannel,call_stream
+            PORT: 8000
         working_dir: /app/ts-services/openai
         command: ['pnpm', 'run', 'dev']
     ts-web:
@@ -81,9 +82,9 @@ services:
         ports:
             - '3000:3000'
         volumes:
-            - ./ts-web/src:/app/ts-web/src:cached
-            - ./ts-web/public:/app/ts-web/public:cached
             - ./ts-shared/src:/app/ts-shared/src:cached
+            - ./ts-web/public:/app/ts-web/public:cached
+            - ./ts-web/src:/app/ts-web/src:cached
         environment:
             NEXT_PUBLIC_BACKEND_BASE_URL: http://0.0.0.0:8000/v1
             NODE_ENV: development

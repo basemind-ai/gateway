@@ -37,11 +37,11 @@ const config: Configuration = {
 	},
 	resolve: {
 		alias: {
-			gen: path.resolve(__dirname, '../../gen/ts'),
+			gen: path.resolve(__dirname, '../../gen/ts/proto'),
 		},
 		modules: [
 			path.resolve(__dirname, '../../node_modules'),
-			path.resolve(__dirname, '../../gen/ts'),
+			path.resolve(__dirname, '../../gen/ts/proto'),
 		],
 		extensions: ['.ts', '.js', '.json'],
 		plugins: [new TsconfigPathsPlugin()],
