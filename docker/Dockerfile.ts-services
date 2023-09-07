@@ -13,7 +13,7 @@ RUN pnpm install -r --ignore-scripts
 FROM install AS build
 WORKDIR /app/
 COPY gen/ts gen/ts
-COPY ts-shared ts-shared
+COPY ts-shared/src ts-shared/src
 COPY ts-services/${BUILD_TARGET}/src ts-services/${BUILD_TARGET}/src
 WORKDIR /app/ts-services/${BUILD_TARGET}
 RUN pnpm run build

@@ -28,7 +28,7 @@
 		"target": "esnext",
 		"paths": {
 			"shared/*": ["ts-shared/src/*"],
-			"gen/*": ["gen/ts/*"]
+			"gen/*": ["gen/ts/proto/*"]
 		},
 		"types": ["vitest/globals"]
 	}

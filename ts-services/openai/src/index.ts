@@ -6,12 +6,15 @@ import {
 import { createServer } from 'shared/utils';
 import logger from 'shared/utils/logger';
 
+import { openAIPrompt, openAIStream } from '@/handlers';
+
 const port = process.env.PORT ?? 50_051;
 
 const implementation = {
-	prompt: () => {
-		return null;
-	},
+	// eslint-disable-next-line @typescript-eslint/no-misused-promises
+	openAIPrompt,
+	// eslint-disable-next-line @typescript-eslint/no-misused-promises
+	openAIStream,
 } satisfies IOpenAIService;
 
 const server = createServer({

@@ -1,23 +1,104 @@
 syntax = "proto3";
 
+// buf:lint:ignore PACKAGE_DIRECTORY_MATCH
 package openai.service.v1;
+
+option go_package = "github.com/basemind-ai/monorepo/openaiservice";
+
+// Type of OpenAI Model
+enum OpenAIModel {
+  // OpenAI Model is not Specified
+  OPEN_AI_MODEL_UNSPECIFIED = 0;
+  // OpenAI GPT3.5 Turbo 4K
+  OPEN_AI_MODEL_GPT3_5_TURBO_4K = 1;
+  // OpenAI GPT3.5 Turbo 16K
+  OPEN_AI_MODEL_GPT3_5_TURBO_16K = 2;
+  // OpenAI GPT4 8K
+  OPEN_AI_MODEL_GPT4_8K = 3;
+  // OpenAI GPT4 32K
+  OPEN_AI_MODEL_GPT4_32K = 4;
+}
+
+// Type of OpenAI Message
+enum OpenAIMessageRole {
+  // OpenAI Message type is not Specified
+  OPEN_AI_MESSAGE_ROLE_UNSPECIFIED = 0;
+  // OpenAI System message
+  OPEN_AI_MESSAGE_ROLE_SYSTEM = 1;
+  // OpenAI User message
+  OPEN_AI_MESSAGE_ROLE_USER = 2;
+  // OpenAI Assistant message
+  OPEN_AI_MESSAGE_ROLE_ASSISTANT = 3;
+  // OpenAI Function message
+  OPEN_AI_MESSAGE_ROLE_FUNCTION = 4;
+}
 
 // The OpenAIService service definition.
 service OpenAIService {
-  // Request a prompt
-  rpc Prompt(PromptRequest) returns (PromptResponse) {}
+  // Request a regular LLM prompt
+  rpc OpenAIPrompt(OpenAIPromptRequest) returns (OpenAIPromptResponse) {}
+  // Request a streaming LLM prompt
+  rpc OpenAIStream(OpenAIPromptRequest) returns (stream OpenAIStreamResponse) {}
 }
 
-// A Prompt Request
-message PromptRequest {
-  // Model name
-  string model = 1;
-  // Prompt Content
-  string content = 2;
+// An OpenAI function call
+message OpenAIFunctionCall {
+  // The signature of the function arguments
+  string arguments = 1;
+  // The function name
+  string name = 2;
 }
 
-// A Prompt Response
-message PromptResponse {
+// An OpenAI Chat Message
+message OpenAIMessage {
+  // The content of the message
+  optional string content = 1;
+  // The role of the message
+  OpenAIMessageRole role = 2;
+  // Name of the message author or function name
+  optional string name = 3;
+  // The signature function to invoke, if any
+  optional OpenAIFunctionCall function_call = 4;
+}
+
+// A Request for an OpenAI regular LLM Prompt
+message OpenAIPromptRequest {
+  // OpenAI Model identifier
+  OpenAIModel model = 1;
+  // Prompt Messages
+  repeated OpenAIMessage messages = 2 [packed = true];
+  // Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
+  optional float temperature = 3;
+  // Nucleus Sampling: https://platform.openai.com/docs/api-reference/chat/create#top_p
+  optional float top_p = 4;
+  // Maximum Tokens after which the prompt will stop generating a response;
+  optional uint32 max_tokens = 5;
+  // Unique user ID to keep track of conversations;
+  optional string user_id = 6;
+  // Penalize New tokens: https://platform.openai.com/docs/api-reference/chat/create#presence_penalty
+  optional float presence_penalty = 7;
+  // Penalize Repeated tokens: https://platform.openai.com/docs/api-reference/chat/create#frequency_penalty
+  optional float frequency_penalty = 8;
+}
+
+// An OpenAI Prompt Response Message
+message OpenAIPromptResponse {
   // Prompt Content
   string content = 1;
+  // Number of tokens used for the prompt
+  uint32 prompt_tokens = 2;
+  // Number of tokens used to generate the completion
+  uint32 completion_tokens = 3;
+  // Total number of tokens used to generate the response
+  uint32 total_tokens = 4;
+  // Timestamp of request start
+}
+
+// An OpenAI Streaming Response Message
+message OpenAIStreamResponse {
+  // Prompt Content
+  string content = 1;
+  // Finish reason, if this is the last message
+  optional string finish_reason = 2;
+  // Timestamp of request start, if this is the last message
 }
