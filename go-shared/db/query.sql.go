@@ -22,8 +22,74 @@ func (q *Queries) CheckUserExists(ctx context.Context, firebaseID string) (bool,
 	return exists, err
 }
 
+const createApplication = `-- name: CreateApplication :one
+INSERT INTO "application" (
+    app_id,
+    description,
+    name,
+    project_id,
+    public_key,
+    version
+)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, app_id, version, description, name, public_key, project_id, created_at, updated_at
+`
+
+type CreateApplicationParams struct {
+	AppID       string      `json:"app_id"`
+	Description string      `json:"description"`
+	Name        string      `json:"name"`
+	ProjectID   pgtype.UUID `json:"project_id"`
+	PublicKey   string      `json:"public_key"`
+	Version     string      `json:"version"`
+}
+
+func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationParams) (Application, error) {
+	row := q.db.QueryRow(ctx, createApplication,
+		arg.AppID,
+		arg.Description,
+		arg.Name,
+		arg.ProjectID,
+		arg.PublicKey,
+		arg.Version,
+	)
+	var i Application
+	err := row.Scan(
+		&i.ID,
+		&i.AppID,
+		&i.Version,
+		&i.Description,
+		&i.Name,
+		&i.PublicKey,
+		&i.ProjectID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const createApplicationPromptConfig = `-- name: CreateApplicationPromptConfig :one
+INSERT INTO "application_prompt_config" (
+    application_id,
+    prompt_config_id
+) VALUES ($1, $2) RETURNING application_id, prompt_config_id
+`
+
+type CreateApplicationPromptConfigParams struct {
+	ApplicationID  pgtype.UUID `json:"application_id"`
+	PromptConfigID pgtype.UUID `json:"prompt_config_id"`
+}
+
+func (q *Queries) CreateApplicationPromptConfig(ctx context.Context, arg CreateApplicationPromptConfigParams) (ApplicationPromptConfig, error) {
+	row := q.db.QueryRow(ctx, createApplicationPromptConfig, arg.ApplicationID, arg.PromptConfigID)
+	var i ApplicationPromptConfig
+	err := row.Scan(&i.ApplicationID, &i.PromptConfigID)
+	return i, err
+}
+
 const createProject = `-- name: CreateProject :one
-INSERT INTO project (name, description)  values ($1, $2)
+INSERT INTO project (name, description)
+VALUES ($1, $2)
 RETURNING id, name, description, created_at
 `
 
@@ -44,8 +110,49 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 	return i, err
 }
 
+const createPromptConfig = `-- name: CreatePromptConfig :one
+INSERT INTO "prompt_config" (
+    model_type,
+    model_vendor,
+    model_parameters,
+    prompt_template,
+    template_variables
+) VALUES ($1, $2, $3, $4, $5) RETURNING id, model_type, model_vendor, model_parameters, prompt_template, template_variables, created_at, updated_at
+`
+
+type CreatePromptConfigParams struct {
+	ModelType         ModelType   `json:"model_type"`
+	ModelVendor       ModelVendor `json:"model_vendor"`
+	ModelParameters   []byte      `json:"model_parameters"`
+	PromptTemplate    []byte      `json:"prompt_template"`
+	TemplateVariables []byte      `json:"template_variables"`
+}
+
+func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfigParams) (PromptConfig, error) {
+	row := q.db.QueryRow(ctx, createPromptConfig,
+		arg.ModelType,
+		arg.ModelVendor,
+		arg.ModelParameters,
+		arg.PromptTemplate,
+		arg.TemplateVariables,
+	)
+	var i PromptConfig
+	err := row.Scan(
+		&i.ID,
+		&i.ModelType,
+		&i.ModelVendor,
+		&i.ModelParameters,
+		&i.PromptTemplate,
+		&i.TemplateVariables,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const createUser = `-- name: CreateUser :one
-INSERT INTO  "user" (firebase_id) values ($1)
+INSERT INTO "user" (firebase_id)
+VALUES ($1)
 RETURNING id, firebase_id, created_at
 `
 
@@ -57,7 +164,10 @@ func (q *Queries) CreateUser(ctx context.Context, firebaseID string) (User, erro
 }
 
 const createUserProject = `-- name: CreateUserProject :one
-INSERT INTO user_project (user_id, project_id, permission, is_user_default_project) values ($1, $2, $3, $4)
+INSERT INTO user_project (
+    user_id, project_id, permission, is_user_default_project
+)
+VALUES ($1, $2, $3, $4)
 RETURNING user_id, project_id, permission, is_user_default_project
 `
 
@@ -85,8 +195,20 @@ func (q *Queries) CreateUserProject(ctx context.Context, arg CreateUserProjectPa
 	return i, err
 }
 
+const deleteApplication = `-- name: DeleteApplication :exec
+DELETE FROM "application"
+WHERE id = $1
+`
+
+func (q *Queries) DeleteApplication(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteApplication, id)
+	return err
+}
+
 const deleteProject = `-- name: DeleteProject :exec
-DELETE FROM "project" WHERE id = $1
+DELETE
+FROM "project"
+WHERE id = $1
 `
 
 func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
@@ -94,8 +216,20 @@ func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const deletePromptConfig = `-- name: DeletePromptConfig :exec
+DELETE FROM "prompt_config"
+WHERE id = $1
+`
+
+func (q *Queries) DeletePromptConfig(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deletePromptConfig, id)
+	return err
+}
+
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM "user" where firebase_id = $1
+DELETE
+FROM "user"
+WHERE firebase_id = $1
 `
 
 func (q *Queries) DeleteUser(ctx context.Context, firebaseID string) error {
@@ -104,7 +238,9 @@ func (q *Queries) DeleteUser(ctx context.Context, firebaseID string) error {
 }
 
 const deleteUserProject = `-- name: DeleteUserProject :exec
-DELETE FROM "user_project" WHERE project_id = $1
+DELETE
+FROM "user_project"
+WHERE project_id = $1
 `
 
 func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) error {
@@ -112,17 +248,147 @@ func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) 
 	return err
 }
 
+const findApplicationByAppAndVersionId = `-- name: FindApplicationByAppAndVersionId :one
+SELECT
+    id,
+    app_id,
+    version,
+    description,
+    name,
+    public_key
+FROM "application"
+WHERE app_id = $1 AND version = $2 AND project_id = $3
+`
+
+type FindApplicationByAppAndVersionIdParams struct {
+	AppID     string      `json:"app_id"`
+	Version   string      `json:"version"`
+	ProjectID pgtype.UUID `json:"project_id"`
+}
+
+type FindApplicationByAppAndVersionIdRow struct {
+	ID          pgtype.UUID `json:"id"`
+	AppID       string      `json:"app_id"`
+	Version     string      `json:"version"`
+	Description string      `json:"description"`
+	Name        string      `json:"name"`
+	PublicKey   string      `json:"public_key"`
+}
+
+func (q *Queries) FindApplicationByAppAndVersionId(ctx context.Context, arg FindApplicationByAppAndVersionIdParams) (FindApplicationByAppAndVersionIdRow, error) {
+	row := q.db.QueryRow(ctx, findApplicationByAppAndVersionId, arg.AppID, arg.Version, arg.ProjectID)
+	var i FindApplicationByAppAndVersionIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.AppID,
+		&i.Version,
+		&i.Description,
+		&i.Name,
+		&i.PublicKey,
+	)
+	return i, err
+}
+
+const findApplicationById = `-- name: FindApplicationById :one
+SELECT
+    id,
+    app_id,
+    version,
+    description,
+    name,
+    public_key
+FROM "application"
+WHERE id = $1
+`
+
+type FindApplicationByIdRow struct {
+	ID          pgtype.UUID `json:"id"`
+	AppID       string      `json:"app_id"`
+	Version     string      `json:"version"`
+	Description string      `json:"description"`
+	Name        string      `json:"name"`
+	PublicKey   string      `json:"public_key"`
+}
+
+func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (FindApplicationByIdRow, error) {
+	row := q.db.QueryRow(ctx, findApplicationById, id)
+	var i FindApplicationByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.AppID,
+		&i.Version,
+		&i.Description,
+		&i.Name,
+		&i.PublicKey,
+	)
+	return i, err
+}
+
+const findProjectApplications = `-- name: FindProjectApplications :many
+SELECT
+    id,
+    app_id,
+    version,
+    description,
+    name
+FROM "application"
+WHERE project_id = $1
+`
+
+type FindProjectApplicationsRow struct {
+	ID          pgtype.UUID `json:"id"`
+	AppID       string      `json:"app_id"`
+	Version     string      `json:"version"`
+	Description string      `json:"description"`
+	Name        string      `json:"name"`
+}
+
+func (q *Queries) FindProjectApplications(ctx context.Context, projectID pgtype.UUID) ([]FindProjectApplicationsRow, error) {
+	rows, err := q.db.Query(ctx, findProjectApplications, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindProjectApplicationsRow
+	for rows.Next() {
+		var i FindProjectApplicationsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.AppID,
+			&i.Version,
+			&i.Description,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const findProjectsByUserId = `-- name: FindProjectsByUserId :many
-Select id, name, description, permission, is_user_default_project, created_at from project p inner join user_project up on p.id = up.project_id where up.user_id = $1
+SELECT
+    p.created_at,
+    p.description,
+    p.id,
+    p.name,
+    up.is_user_default_project,
+    up.permission
+FROM project AS p
+INNER JOIN user_project AS up ON p.id = up.project_id
+WHERE up.user_id = $1
 `
 
 type FindProjectsByUserIdRow struct {
+	CreatedAt            pgtype.Timestamptz   `json:"created_at"`
+	Description          string               `json:"description"`
 	ID                   pgtype.UUID          `json:"id"`
 	Name                 string               `json:"name"`
-	Description          string               `json:"description"`
-	Permission           AccessPermissionType `json:"permission"`
 	IsUserDefaultProject bool                 `json:"is_user_default_project"`
-	CreatedAt            pgtype.Timestamptz   `json:"created_at"`
+	Permission           AccessPermissionType `json:"permission"`
 }
 
 func (q *Queries) FindProjectsByUserId(ctx context.Context, userID pgtype.UUID) ([]FindProjectsByUserIdRow, error) {
@@ -135,12 +401,12 @@ func (q *Queries) FindProjectsByUserId(ctx context.Context, userID pgtype.UUID) 
 	for rows.Next() {
 		var i FindProjectsByUserIdRow
 		if err := rows.Scan(
+			&i.CreatedAt,
+			&i.Description,
 			&i.ID,
 			&i.Name,
-			&i.Description,
-			&i.Permission,
 			&i.IsUserDefaultProject,
-			&i.CreatedAt,
+			&i.Permission,
 		); err != nil {
 			return nil, err
 		}
@@ -153,12 +419,105 @@ func (q *Queries) FindProjectsByUserId(ctx context.Context, userID pgtype.UUID) 
 }
 
 const findUserByFirebaseId = `-- name: FindUserByFirebaseId :one
-SELECT id, firebase_id, created_at from "user" where firebase_id = $1
+SELECT
+    id,
+    firebase_id,
+    created_at
+FROM "user"
+WHERE firebase_id = $1
 `
 
 func (q *Queries) FindUserByFirebaseId(ctx context.Context, firebaseID string) (User, error) {
 	row := q.db.QueryRow(ctx, findUserByFirebaseId, firebaseID)
 	var i User
 	err := row.Scan(&i.ID, &i.FirebaseID, &i.CreatedAt)
+	return i, err
+}
+
+const updateApplication = `-- name: UpdateApplication :one
+UPDATE "application"
+SET
+    app_id = $1,
+    version = $2,
+    description = $3,
+    name = $4,
+    public_key = $5,
+    updated_at = NOW()
+WHERE id = $6 RETURNING id, app_id, version, description, name, public_key, project_id, created_at, updated_at
+`
+
+type UpdateApplicationParams struct {
+	AppID       string      `json:"app_id"`
+	Version     string      `json:"version"`
+	Description string      `json:"description"`
+	Name        string      `json:"name"`
+	PublicKey   string      `json:"public_key"`
+	ID          pgtype.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationParams) (Application, error) {
+	row := q.db.QueryRow(ctx, updateApplication,
+		arg.AppID,
+		arg.Version,
+		arg.Description,
+		arg.Name,
+		arg.PublicKey,
+		arg.ID,
+	)
+	var i Application
+	err := row.Scan(
+		&i.ID,
+		&i.AppID,
+		&i.Version,
+		&i.Description,
+		&i.Name,
+		&i.PublicKey,
+		&i.ProjectID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updatePromptConfig = `-- name: UpdatePromptConfig :one
+UPDATE "prompt_config"
+SET
+    model_type = $1,
+    model_vendor = $2,
+    model_parameters = $3,
+    prompt_template = $4,
+    template_variables = $5
+WHERE id = $6 RETURNING id, model_type, model_vendor, model_parameters, prompt_template, template_variables, created_at, updated_at
+`
+
+type UpdatePromptConfigParams struct {
+	ModelType         ModelType   `json:"model_type"`
+	ModelVendor       ModelVendor `json:"model_vendor"`
+	ModelParameters   []byte      `json:"model_parameters"`
+	PromptTemplate    []byte      `json:"prompt_template"`
+	TemplateVariables []byte      `json:"template_variables"`
+	ID                pgtype.UUID `json:"id"`
+}
+
+func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfigParams) (PromptConfig, error) {
+	row := q.db.QueryRow(ctx, updatePromptConfig,
+		arg.ModelType,
+		arg.ModelVendor,
+		arg.ModelParameters,
+		arg.PromptTemplate,
+		arg.TemplateVariables,
+		arg.ID,
+	)
+	var i PromptConfig
+	err := row.Scan(
+		&i.ID,
+		&i.ModelType,
+		&i.ModelVendor,
+		&i.ModelParameters,
+		&i.PromptTemplate,
+		&i.TemplateVariables,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
 	return i, err
 }
