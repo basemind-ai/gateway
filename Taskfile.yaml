@@ -22,12 +22,23 @@ tasks:
             - curl -sSf https://atlasgo.sh | sh
         status:
             - command -v atlas &> /dev/null || exit 0
+    install-buf:
+        cmds:
+            - |
+                if command -v brew &> /dev/null; then
+                    brew install bufbuild/buf/buf
+                else
+                    npm install -g @bufbuild/buf
+                fi
+        status:
+            - command -v buf &> /dev/null || exit 0
     setup:
         desc: Setup the project dependencies
         cmds:
             - task: install-pre-commit
             - task: install-sqlc
             - task: install-atlas
+            - task: install-buf
             - pre-commit install && pre-commit install --hook-type commit-msg
             - pnpm install -r
             - go mod download

@@ -72,7 +72,7 @@ export interface OpenAIPromptRequest {
     /**
      * Prompt Messages
      *
-     * @generated from protobuf field: repeated openai.service.v1.OpenAIMessage messages = 2 [packed = true];
+     * @generated from protobuf field: repeated openai.service.v1.OpenAIMessage messages = 2;
      */
     messages: OpenAIMessage[];
     /**
