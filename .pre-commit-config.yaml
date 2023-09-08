@@ -37,6 +37,8 @@ repos:
       rev: 2.3.1
       hooks:
           - id: sqlfluff-lint
+            exclude: 'sql/migrations'
             args: ['--dialect', 'postgres']
           - id: sqlfluff-fix
+            exclude: 'sql/migrations'
             args: ['--dialect', 'postgres']

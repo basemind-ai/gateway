@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/rs/zerolog/log"
@@ -14,8 +16,7 @@ import (
 	"github.com/basemind-ai/monorepo/go-shared/db"
 )
 
-// CreateTestDB TODO: find a better approach to locate relativeMigrationsPath.
-func CreateTestDB(t *testing.T, relativeMigrationsPath string) {
+func CreateTestDB(t *testing.T) {
 	connectionPool, poolInitErr := dockertest.NewPool("")
 	if poolInitErr != nil {
 		log.Fatal().Err(poolInitErr).Msg("failed to construct dockertest pool")
@@ -54,18 +55,10 @@ func CreateTestDB(t *testing.T, relativeMigrationsPath string) {
 		log.Fatal().Err(connectionErr).Msg("failed to connect to test database")
 	}
 
-	cmd := exec.Command(
-		"atlas",
-		"migrate",
-		"apply",
-		"--url",
-		dbUrl,
-		"--dir",
-		relativeMigrationsPath,
-	)
-
-	if _, migrationCommandErr := cmd.Output(); migrationCommandErr != nil {
-		log.Fatal().Err(migrationCommandErr).Msg("failed to migrate the test database")
+	if migrationsErr := MigrateTestDb(dbUrl); migrationsErr != nil {
+		log.Error().Err(migrationsErr).Send()
+		_ = connectionPool.Purge(resource)
+		t.Fatal("failed to migrate test database")
 	}
 
 	t.Cleanup(func() {
@@ -74,4 +67,23 @@ func CreateTestDB(t *testing.T, relativeMigrationsPath string) {
 			log.Fatal().Err(purgeErr).Msg("failed to purge test database")
 		}
 	})
+}
+
+func MigrateTestDb(dbUrl string) error {
+	_, filePath, _, _ := runtime.Caller(1)
+	repositoryRoot, _ := filepath.Abs(filePath + "/../../../../")
+	migrationsPath := fmt.Sprintf("file://%s/sql/migrations", repositoryRoot)
+
+	cmd := exec.Command(
+		"atlas",
+		"migrate",
+		"apply",
+		"--url",
+		dbUrl,
+		"--dir",
+		migrationsPath,
+	)
+
+	_, migrationCommandErr := cmd.Output()
+	return migrationCommandErr
 }

@@ -33,7 +33,7 @@ func deleteUserData(ctx context.Context, dbQueries *db.Queries, userID pgtype.UU
 }
 
 func TestHandleDashboardUserPostLogin(t *testing.T) {
-	dbTestUtils.CreateTestDB(t, "file://../../../sql/migrations")
+	dbTestUtils.CreateTestDB(t)
 
 	t.Run("Create New User tests", func(t *testing.T) {
 		t.Run("success case", func(t *testing.T) {
