@@ -169,6 +169,9 @@ importers:
             react-dom:
                 specifier: 18.2.0
                 version: 18.2.0(react@18.2.0)
+            uuid:
+                specifier: ^9.0.1
+                version: 9.0.1
             zustand:
                 specifier: ^4.4.1
                 version: 4.4.1(@types/react@18.2.22)(react@18.2.0)
@@ -197,6 +200,9 @@ importers:
             '@types/testing-library__jest-dom':
                 specifier: ^6.0.0
                 version: 6.0.0(vitest@0.34.4)
+            '@types/uuid':
+                specifier: ^9.0.4
+                version: 9.0.4
             '@vitejs/plugin-react':
                 specifier: ^4.0.4
                 version: 4.0.4(vite@4.4.9)
@@ -4122,6 +4128,13 @@ packages:
             - '@types/jest'
             - jest
             - vitest
+        dev: true
+
+    /@types/uuid@9.0.4:
+        resolution:
+            {
+                integrity: sha512-zAuJWQflfx6dYJM62vna+Sn5aeSWhh3OB+wfUEACNcqUSc0AGc5JKl+ycL1vrH7frGTXhJchYjE1Hak8L819dA==,
+            }
         dev: true
 
     /@types/webpack-node-externals@3.0.1(webpack-cli@5.1.4):
@@ -11947,6 +11960,14 @@ packages:
                 integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==,
             }
         dev: true
+
+    /uuid@9.0.1:
+        resolution:
+            {
+                integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==,
+            }
+        hasBin: true
+        dev: false
 
     /v8-compile-cache-lib@3.0.1:
         resolution:

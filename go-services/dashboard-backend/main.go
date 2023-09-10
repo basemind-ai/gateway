@@ -22,7 +22,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-var middlewares = []func(next http.Handler) http.Handler{middleware.FirebaseAuthMiddleware}
+var middlewares = []func(next http.Handler) http.Handler{middleware.CORS, middleware.FirebaseAuthMiddleware}
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())

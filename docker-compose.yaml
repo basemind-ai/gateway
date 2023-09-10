@@ -43,7 +43,7 @@ services:
             BASE_URL: http://localhost:4000
             REDIS_CONNECTION_STRING: redis://redis:6379
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
-            GOOGLE_APPLICATION_CREDENTIALS: /.secrets/serviceAccountKey.json
+            GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
         command:
             [
                 'gow',
@@ -116,8 +116,11 @@ services:
             - ./ts-web/public:/app/ts-web/public:cached
             - ./ts-web/src:/app/ts-web/src:cached
         environment:
-            NEXT_PUBLIC_BACKEND_BASE_URL: http://0.0.0.0:8000/v1
+            NEXT_PUBLIC_BACKEND_BASE_URL: http://localhost:4000/v1
             NODE_ENV: development
+            WDS_SOCKET_HOST: 127.0.0.1
+            CHOKIDAR_USEPOLLING: true
+            WATCHPACK_POLLING: true
         working_dir: /app/ts-web
         command: ['pnpm', 'run', 'dev']
         env_file: '.secrets/.env.frontend'

@@ -1,6 +1,5 @@
-import crypto from 'node:crypto';
-
 import { deepmerge } from 'deepmerge-ts';
+import { v4 as uuid } from 'uuid';
 
 import { HttpMethod } from '@/constants';
 import { ApiError, ConfigurationError, TokenError } from '@/errors';
@@ -34,7 +33,7 @@ export async function fetcher<T>({
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': `Bearer ${token}`,
-			'X-Request-Id': crypto.randomUUID(),
+			'X-Request-Id': uuid(),
 		},
 		body: data ? JSON.stringify(data) : undefined,
 	}) satisfies RequestInit;
