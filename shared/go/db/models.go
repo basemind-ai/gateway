@@ -31,7 +31,7 @@ func (e *AccessPermissionType) Scan(src interface{}) error {
 }
 
 type NullAccessPermissionType struct {
-	AccessPermissionType AccessPermissionType `json:"access_permission_type"`
+	AccessPermissionType AccessPermissionType `json:"accessPermissionType"`
 	Valid                bool                 `json:"valid"` // Valid is true if AccessPermissionType is not NULL
 }
 
@@ -75,7 +75,7 @@ func (e *ModelType) Scan(src interface{}) error {
 }
 
 type NullModelType struct {
-	ModelType ModelType `json:"model_type"`
+	ModelType ModelType `json:"modelType"`
 	Valid     bool      `json:"valid"` // Valid is true if ModelType is not NULL
 }
 
@@ -116,7 +116,7 @@ func (e *ModelVendor) Scan(src interface{}) error {
 }
 
 type NullModelVendor struct {
-	ModelVendor ModelVendor `json:"model_vendor"`
+	ModelVendor ModelVendor `json:"modelVendor"`
 	Valid       bool        `json:"valid"` // Valid is true if ModelVendor is not NULL
 }
 
@@ -142,59 +142,59 @@ type Application struct {
 	ID          pgtype.UUID        `json:"id"`
 	Description string             `json:"description"`
 	Name        string             `json:"name"`
-	CreatedAt   pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
-	ProjectID   pgtype.UUID        `json:"project_id"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	ProjectID   pgtype.UUID        `json:"projectId"`
 }
 
 type Project struct {
 	ID          pgtype.UUID        `json:"id"`
 	Name        string             `json:"name"`
 	Description string             `json:"description"`
-	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 }
 
 type PromptConfig struct {
 	ID                pgtype.UUID        `json:"id"`
 	Name              string             `json:"name"`
-	ModelParameters   []byte             `json:"model_parameters"`
-	ModelType         ModelType          `json:"model_type"`
-	ModelVendor       ModelVendor        `json:"model_vendor"`
-	PromptMessages    []byte             `json:"prompt_messages"`
-	TemplateVariables []string           `json:"template_variables"`
-	IsActive          bool               `json:"is_active"`
-	CreatedAt         pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
-	ApplicationID     pgtype.UUID        `json:"application_id"`
+	ModelParameters   []byte             `json:"modelParameters"`
+	ModelType         ModelType          `json:"modelType"`
+	ModelVendor       ModelVendor        `json:"modelVendor"`
+	PromptMessages    []byte             `json:"promptMessages"`
+	TemplateVariables []string           `json:"templateVariables"`
+	IsActive          bool               `json:"isActive"`
+	CreatedAt         pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt         pgtype.Timestamptz `json:"updatedAt"`
+	ApplicationID     pgtype.UUID        `json:"applicationId"`
 }
 
 type PromptRequestRecord struct {
 	ID               pgtype.UUID        `json:"id"`
-	IsStreamResponse bool               `json:"is_stream_response"`
-	RequestTokens    int32              `json:"request_tokens"`
-	StartTime        pgtype.Timestamptz `json:"start_time"`
-	FinishTime       pgtype.Timestamptz `json:"finish_time"`
-	PromptConfigID   pgtype.UUID        `json:"prompt_config_id"`
+	IsStreamResponse bool               `json:"isStreamResponse"`
+	RequestTokens    int32              `json:"requestTokens"`
+	StartTime        pgtype.Timestamptz `json:"startTime"`
+	FinishTime       pgtype.Timestamptz `json:"finishTime"`
+	PromptConfigID   pgtype.UUID        `json:"promptConfigId"`
 }
 
 type PromptTest struct {
 	ID                    pgtype.UUID        `json:"id"`
 	Name                  string             `json:"name"`
-	VariableValues        []byte             `json:"variable_values"`
+	VariableValues        []byte             `json:"variableValues"`
 	Response              string             `json:"response"`
-	CreatedAt             pgtype.Timestamptz `json:"created_at"`
-	PromptRequestRecordID pgtype.UUID        `json:"prompt_request_record_id"`
+	CreatedAt             pgtype.Timestamptz `json:"createdAt"`
+	PromptRequestRecordID pgtype.UUID        `json:"promptRequestRecordId"`
 }
 
 type User struct {
 	ID         pgtype.UUID        `json:"id"`
-	FirebaseID string             `json:"firebase_id"`
-	CreatedAt  pgtype.Timestamptz `json:"created_at"`
+	FirebaseID string             `json:"firebaseId"`
+	CreatedAt  pgtype.Timestamptz `json:"createdAt"`
 }
 
 type UserProject struct {
-	UserID               pgtype.UUID          `json:"user_id"`
-	ProjectID            pgtype.UUID          `json:"project_id"`
+	UserID               pgtype.UUID          `json:"userId"`
+	ProjectID            pgtype.UUID          `json:"projectId"`
 	Permission           AccessPermissionType `json:"permission"`
-	IsUserDefaultProject bool                 `json:"is_user_default_project"`
+	IsUserDefaultProject bool                 `json:"isUserDefaultProject"`
 }

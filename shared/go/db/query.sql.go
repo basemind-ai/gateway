@@ -33,7 +33,7 @@ RETURNING id, description, name, created_at, updated_at, project_id
 `
 
 type CreateApplicationParams struct {
-	ProjectID   pgtype.UUID `json:"project_id"`
+	ProjectID   pgtype.UUID `json:"projectId"`
 	Name        string      `json:"name"`
 	Description string      `json:"description"`
 }
@@ -92,13 +92,13 @@ RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages,
 
 type CreatePromptConfigParams struct {
 	Name              string      `json:"name"`
-	ModelParameters   []byte      `json:"model_parameters"`
-	ModelType         ModelType   `json:"model_type"`
-	ModelVendor       ModelVendor `json:"model_vendor"`
-	PromptMessages    []byte      `json:"prompt_messages"`
-	TemplateVariables []string    `json:"template_variables"`
-	IsActive          bool        `json:"is_active"`
-	ApplicationID     pgtype.UUID `json:"application_id"`
+	ModelParameters   []byte      `json:"modelParameters"`
+	ModelType         ModelType   `json:"modelType"`
+	ModelVendor       ModelVendor `json:"modelVendor"`
+	PromptMessages    []byte      `json:"promptMessages"`
+	TemplateVariables []string    `json:"templateVariables"`
+	IsActive          bool        `json:"isActive"`
+	ApplicationID     pgtype.UUID `json:"applicationId"`
 }
 
 func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfigParams) (PromptConfig, error) {
@@ -142,11 +142,11 @@ RETURNING id, is_stream_response, request_tokens, start_time, finish_time, promp
 `
 
 type CreatePromptRequestRecordParams struct {
-	IsStreamResponse bool               `json:"is_stream_response"`
-	RequestTokens    int32              `json:"request_tokens"`
-	StartTime        pgtype.Timestamptz `json:"start_time"`
-	FinishTime       pgtype.Timestamptz `json:"finish_time"`
-	PromptConfigID   pgtype.UUID        `json:"prompt_config_id"`
+	IsStreamResponse bool               `json:"isStreamResponse"`
+	RequestTokens    int32              `json:"requestTokens"`
+	StartTime        pgtype.Timestamptz `json:"startTime"`
+	FinishTime       pgtype.Timestamptz `json:"finishTime"`
+	PromptConfigID   pgtype.UUID        `json:"promptConfigId"`
 }
 
 func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromptRequestRecordParams) (PromptRequestRecord, error) {
@@ -183,10 +183,10 @@ RETURNING id, name, variable_values, response, created_at, prompt_request_record
 
 type CreatePromptTestParams struct {
 	Name                  string             `json:"name"`
-	VariableValues        []byte             `json:"variable_values"`
+	VariableValues        []byte             `json:"variableValues"`
 	Response              string             `json:"response"`
-	CreatedAt             pgtype.Timestamptz `json:"created_at"`
-	PromptRequestRecordID pgtype.UUID        `json:"prompt_request_record_id"`
+	CreatedAt             pgtype.Timestamptz `json:"createdAt"`
+	PromptRequestRecordID pgtype.UUID        `json:"promptRequestRecordId"`
 }
 
 func (q *Queries) CreatePromptTest(ctx context.Context, arg CreatePromptTestParams) (PromptTest, error) {
@@ -231,10 +231,10 @@ RETURNING user_id, project_id, permission, is_user_default_project
 `
 
 type CreateUserProjectParams struct {
-	UserID               pgtype.UUID          `json:"user_id"`
-	ProjectID            pgtype.UUID          `json:"project_id"`
+	UserID               pgtype.UUID          `json:"userId"`
+	ProjectID            pgtype.UUID          `json:"projectId"`
 	Permission           AccessPermissionType `json:"permission"`
-	IsUserDefaultProject bool                 `json:"is_user_default_project"`
+	IsUserDefaultProject bool                 `json:"isUserDefaultProject"`
 }
 
 func (q *Queries) CreateUserProject(ctx context.Context, arg CreateUserProjectParams) (UserProject, error) {
@@ -346,7 +346,7 @@ func (q *Queries) FindActivePromptConfigByApplicationId(ctx context.Context, app
 }
 
 const findApplicationById = `-- name: FindApplicationById :one
-SELECT id, description, name, created_at, updated_at, project_id
+SELECT id, description, name, created_at, updated_at, project_id -- noqa: L044
 FROM application
 WHERE id = $1
 `
@@ -379,11 +379,11 @@ WHERE up.user_id = $1
 `
 
 type FindProjectsByUserIdRow struct {
-	CreatedAt            pgtype.Timestamptz   `json:"created_at"`
+	CreatedAt            pgtype.Timestamptz   `json:"createdAt"`
 	Description          string               `json:"description"`
 	ID                   pgtype.UUID          `json:"id"`
 	Name                 string               `json:"name"`
-	IsUserDefaultProject bool                 `json:"is_user_default_project"`
+	IsUserDefaultProject bool                 `json:"isUserDefaultProject"`
 	Permission           AccessPermissionType `json:"permission"`
 }
 
@@ -509,15 +509,15 @@ ORDER BY pt.created_at
 `
 
 type FindPromptTestsRow struct {
-	FinishTime       pgtype.Timestamptz `json:"finish_time"`
-	RequestTokens    pgtype.Int4        `json:"request_tokens"`
-	StartTime        pgtype.Timestamptz `json:"start_time"`
-	IsStreamResponse pgtype.Bool        `json:"is_stream_response"`
-	CreatedAt        pgtype.Timestamptz `json:"created_at"`
+	FinishTime       pgtype.Timestamptz `json:"finishTime"`
+	RequestTokens    pgtype.Int4        `json:"requestTokens"`
+	StartTime        pgtype.Timestamptz `json:"startTime"`
+	IsStreamResponse pgtype.Bool        `json:"isStreamResponse"`
+	CreatedAt        pgtype.Timestamptz `json:"createdAt"`
 	ID               pgtype.UUID        `json:"id"`
 	Name             string             `json:"name"`
 	Response         string             `json:"response"`
-	VariableValues   []byte             `json:"variable_values"`
+	VariableValues   []byte             `json:"variableValues"`
 }
 
 func (q *Queries) FindPromptTests(ctx context.Context, promptConfigID pgtype.UUID) ([]FindPromptTestsRow, error) {
@@ -614,12 +614,12 @@ RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages,
 type UpdatePromptConfigParams struct {
 	ID                pgtype.UUID `json:"id"`
 	Name              string      `json:"name"`
-	ModelParameters   []byte      `json:"model_parameters"`
-	ModelType         ModelType   `json:"model_type"`
-	ModelVendor       ModelVendor `json:"model_vendor"`
-	PromptMessages    []byte      `json:"prompt_messages"`
-	TemplateVariables []string    `json:"template_variables"`
-	IsActive          bool        `json:"is_active"`
+	ModelParameters   []byte      `json:"modelParameters"`
+	ModelType         ModelType   `json:"modelType"`
+	ModelVendor       ModelVendor `json:"modelVendor"`
+	PromptMessages    []byte      `json:"promptMessages"`
+	TemplateVariables []string    `json:"templateVariables"`
+	IsActive          bool        `json:"isActive"`
 }
 
 func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfigParams) (PromptConfig, error) {

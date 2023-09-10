@@ -1,9 +1,10 @@
 import useTranslation from 'next-translate/useTranslation';
 import { ChevronRight } from 'react-bootstrap-icons';
 
-import NavRailFooter from '@/app/dashboard/nav-rail-footer';
-import NavRailList from '@/app/dashboard/navrail-list';
 import { Logo } from '@/components/logo';
+import NavRailFooter from '@/components/nav-rail/nav-rail-footer';
+import NavRailList from '@/components/nav-rail/nav-rail-list';
+import { Navigation } from '@/constants';
 
 export default function NavRail() {
 	const { t } = useTranslation('dashboard-navrail');
@@ -12,14 +13,7 @@ export default function NavRail() {
 		<div className="flex flex-col pt-6 px-8 w-1/6 h-full bg-base-200 justify-between">
 			<div>
 				<Logo />
-				<NavRailList
-					item1={t('overview')}
-					item2={t('testing')}
-					item3={t('api')}
-					item4={t('persistence')}
-					item5={t('middleware')}
-					item6={t('abTesting')}
-				/>
+				<NavRailList />
 			</div>
 			<div>
 				<div className="items-center text-center  mb-12 flex flex-col bg-base-300 shadow-sm rounded-3xl ">
@@ -32,7 +26,7 @@ export default function NavRail() {
 						</p>
 						<a
 							className="inline-flex items-center gap-2 mt-5 text-sm font-medium text-secondary hover:underline"
-							href="#"
+							href={Navigation.Support}
 						>
 							{t('bannerCTA')}
 							<ChevronRight />

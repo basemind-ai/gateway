@@ -72,8 +72,9 @@ Object.defineProperties(global.HTMLElement.prototype, {
 	},
 });
 
-export const usePathnameMock = vi.fn();
 export const routerReplaceMock = vi.fn();
+export const useParamsMock = vi.fn();
+export const usePathnameMock = vi.fn();
 
 export const nextRouterMock = {
 	basePath: '',
@@ -109,6 +110,7 @@ vi.mock(
 			...original,
 			useRouter: () => nextRouterMock,
 			usePathname: usePathnameMock,
+			useParams: useParamsMock,
 		};
 	},
 );

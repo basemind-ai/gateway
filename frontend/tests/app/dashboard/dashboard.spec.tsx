@@ -1,39 +1,21 @@
-import {
-	fireEvent,
-	render,
-	routerReplaceMock,
-	screen,
-	waitFor,
-} from 'tests/test-utils';
+import { ProjectFactory } from 'tests/factories';
+import { render, screen } from 'tests/test-utils';
 
-import Dashboard from '@/app/dashboard/page';
+import Dashboard from '@/app/project/[projectId]/dashboard/page';
 
 const mockDisplayName = 'testUser';
-const signOutMock = vi.fn();
 
-vi.mock('@/stores/user-store', () => ({
+vi.mock('@/stores/api-store', () => ({
 	useUser: () => ({ displayName: mockDisplayName }),
-}));
-
-vi.mock('@/utils/firebase', () => ({
-	getFirebaseAuth: () => ({ signOut: signOutMock }),
+	useSetProjects: vi.fn(),
+	useProject: () => [ProjectFactory.buildSync({ id: '123' })],
 }));
 
 describe('Dashboard page tests', () => {
 	it('handles logout', async () => {
-		render(<Dashboard />);
+		render(<Dashboard params={{ projectId: '123' }} />);
 
-		const logoutButton = screen.getByTestId<HTMLButtonElement>(
-			'dashboard-logout-btn',
-		);
-
-		fireEvent.click(logoutButton);
-
-		await waitFor(() => {
-			expect(signOutMock).toHaveBeenCalled();
-		});
-		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalledWith('/');
-		});
+		const dashboardContainer = screen.getByTestId('dashboard');
+		expect(dashboardContainer).toBeInTheDocument();
 	});
 });

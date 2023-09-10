@@ -37,9 +37,9 @@ export default function NavRailFooter() {
 				<Bank2 />
 			</a>
 			<a
-				href={Navigation.Help}
+				href={Navigation.Support}
 				className={`${
-					Navigation.Help === pathname
+					Navigation.Support === pathname
 						? 'text-primary'
 						: 'text-base-content'
 				} hover:text-primary`}

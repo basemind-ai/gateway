@@ -1,9 +1,7 @@
-'use client';
-
 import 'firebaseui/dist/firebaseui.css';
 
-import { FirebaseLogin } from '@/app/sign-in/firebase-login';
-import { LoginBanner } from '@/app/sign-in/login-banner';
+import { FirebaseLogin } from '@/components/sign-in/firebase-login';
+import { LoginBanner } from '@/components/sign-in/login-banner';
 
 export default function SignIn() {
 	return (

@@ -2,14 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 
-import { useUser } from '@/stores/user-store';
+import { Navigation } from '@/constants';
+import { useUser } from '@/stores/api-store';
 
 export default function AuthGuard() {
 	const user = useUser();
 	const router = useRouter();
 
 	if (!user) {
-		router.replace('/');
+		router.replace(Navigation.SignIn);
 		return;
 	}
 	return <></>;

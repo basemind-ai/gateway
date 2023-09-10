@@ -1,7 +1,7 @@
 import bannerTranslation from 'public/locales/en/signin-banner.json';
 import { render, screen } from 'tests/test-utils';
 
-import { LoginBanner } from '@/app/sign-in/login-banner';
+import { LoginBanner } from '@/components/sign-in/login-banner';
 
 describe('LoginBanner tests', () => {
 	it('renders LoginBanner', () => {

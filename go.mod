@@ -6,6 +6,7 @@ require (
 	firebase.google.com/go/v4 v4.12.0
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/go-chi/chi/v5 v5.0.10
+	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/httplog v0.3.1
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redismock/v9 v9.0.3

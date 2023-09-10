@@ -3,11 +3,11 @@ import navRailTranslation from 'public/locales/en/dashboard-navrail.json';
 import { render, screen } from 'tests/test-utils';
 import { Mock } from 'vitest';
 
-import NavRail from '@/app/dashboard/nav-rail';
+import NavRail from '@/components/nav-rail/nav-rail';
 import { Navigation } from '@/constants';
 
 describe('NavRail tests', () => {
-	(usePathname as Mock).mockReturnValue(Navigation.API);
+	(usePathname as Mock).mockReturnValue(Navigation.Api);
 
 	it('should render Logo', () => {
 		render(<NavRail />);

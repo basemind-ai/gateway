@@ -1,8 +1,10 @@
+import { waitFor } from '@testing-library/react';
 import authTranslation from 'public/locales/en/signin-firebase.json';
-import { render, routerReplaceMock, screen, waitFor } from 'tests/test-utils';
-import { Mock, vi } from 'vitest';
+import { render, routerReplaceMock, screen } from 'tests/test-utils';
+import { Mock } from 'vitest';
 
-import { FirebaseLogin } from '@/app/sign-in/firebase-login';
+import { FirebaseLogin } from '@/components/sign-in/firebase-login';
+import { Navigation } from '@/constants';
 import { getFirebaseAuth } from '@/utils/firebase';
 
 vi.mock('@/utils/firebase');
@@ -31,7 +33,7 @@ describe('FirebaseLogin tests', () => {
 		render(<FirebaseLogin />);
 
 		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalledWith('/dashboard');
+			expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);
 		});
 	});
 
@@ -84,7 +86,7 @@ describe('FirebaseLogin tests', () => {
 		expect(authSubtitleLarger).toBeInTheDocument();
 	});
 
-	it('redirects to dashboard after user is logged in', async () => {
+	it('redirects to projects after user is logged in', async () => {
 		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
 			return {
 				currentUser: null,
@@ -120,6 +122,6 @@ describe('FirebaseLogin tests', () => {
 		const loader = screen.queryByTestId('firebase-login-loader');
 		expect(loader).toBeInTheDocument();
 
-		expect(routerReplaceMock).toHaveBeenCalledWith('/dashboard');
+		expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);
 	});
 });

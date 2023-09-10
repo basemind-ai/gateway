@@ -1,5 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
+import useTranslation from 'next-translate/useTranslation';
 import {
 	Boxes,
 	HddStack,
@@ -13,45 +14,33 @@ import Badge from '@/components/badge';
 import LinkMenu from '@/components/link-menu';
 import { Navigation } from '@/constants';
 
-export default function NavRailList({
-	item1,
-	item2,
-	item3,
-	item4,
-	item5,
-	item6,
-}: {
-	item1: string;
-	item2: string;
-	item3: string;
-	item4: string;
-	item5: string;
-	item6: string;
-}) {
-	const pathname: string = usePathname().split('?')[0];
+export default function NavRailList() {
+	const { t } = useTranslation('dashboard-navrail');
+
+	const [pathname] = usePathname().split('?');
 
 	return (
 		<div className="mt-12 ml-2 " data-testid="nav-rail-list">
 			<LinkMenu
 				href={Navigation.Dashboard}
-				text={item1}
+				text={t('overview')}
 				icon={<HouseDoor className="w-3 h-3" />}
 				isCurrent={Navigation.Dashboard === pathname}
 			/>
 			<LinkMenu
-				href={Navigation.TestPrompt}
-				text={item2}
+				href={Navigation.Prompt}
+				text={t('testing')}
 				icon={<Search className="w-3 h-3" />}
-				isCurrent={Navigation.TestPrompt === pathname}
+				isCurrent={Navigation.Prompt === pathname}
 			/>
 			<LinkMenu
-				href={Navigation.API}
-				text={item3}
+				href={Navigation.Api}
+				text={t('api')}
 				icon={<Boxes className="w-3 h-3" />}
-				isCurrent={Navigation.API === pathname}
+				isCurrent={Navigation.Api === pathname}
 			/>
 			<LinkMenu
-				text={item4}
+				text={t('persistence')}
 				icon={<HddStack className="w-3 h-3" />}
 				isDisabled={true}
 				badge={
@@ -63,7 +52,7 @@ export default function NavRailList({
 				}
 			/>
 			<LinkMenu
-				text={item5}
+				text={t('middleware')}
 				icon={<Lightning className="w-3 h-3" />}
 				isDisabled={true}
 				badge={
@@ -75,7 +64,7 @@ export default function NavRailList({
 				}
 			/>
 			<LinkMenu
-				text={item6}
+				text={t('abTesting')}
 				icon={<Speedometer2 className="w-3 h-3" />}
 				isDisabled={true}
 				badge={

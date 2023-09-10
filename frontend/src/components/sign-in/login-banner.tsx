@@ -41,7 +41,7 @@ export function LoginBanner({
 				priority
 				className="w-4/5 mt-12 ml-auto mr-auto relative"
 				src={imageSrc}
-				alt={t('title')}
+				alt={t('bannerTitle')}
 			/>
 		</div>
 	);

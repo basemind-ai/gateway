@@ -1,11 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	important: true,
-	content: [
-		'./src/components/**/*.{js,ts,jsx,tsx,mdx}',
-		'./src/app/**/*.{js,ts,jsx,tsx,mdx}',
-		'node_modules/preline/dist/*.js',
-	],
+	content: ['./src/**/*.{tsx,scss}', 'node_modules/preline/dist/*.js'],
 	theme: {
 		colors: {
 			'transparent': 'transparent',

@@ -30,7 +30,7 @@ export default function LinkMenu({
 		<Link href={href ?? '#'}>
 			<div className="flex items-center pb-4">
 				<div
-					className={`text-base-content transition ${
+					className={`flex items-center text-base-content transition ${
 						isCurrent ? 'text-primary' : 'hover:text-primary'
 					}`}
 				>
