@@ -42,3 +42,18 @@ repos:
           - id: sqlfluff-fix
             exclude: 'sql/migrations'
             args: ['--dialect', 'postgres']
+    - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+      rev: 'v2.10.0'
+      hooks:
+          - id: pretty-format-java
+            args: [--autofix]
+          - id: pretty-format-kotlin
+            args: [--autofix]
+    - repo: local
+      hooks:
+          - id: detekt
+            name: detekt
+            description: Runs `detekt` on modified .kt files.
+            language: script
+            entry: .bin/detekt.sh
+            files: \.kt
