@@ -1,16 +1,17 @@
 FROM golang:1.21 AS install
 WORKDIR /go/src/app
 COPY go.mod go.sum ./
-RUN go mod download
-RUN go install github.com/mitranim/gow@latest
+RUN go mod download \
+  && go install github.com/mitranim/gow@latest
 
 FROM install AS build
 ARG BUILD_TARGET
 COPY go-shared go-shared
 COPY go-services/$BUILD_TARGET services/$BUILD_TARGET
-RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/monorepo/go-services/$BUILD_TARGET
-RUN chmod +x /go/bin/app
+RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/monorepo/go-services/$BUILD_TARGET \
+    && chmod +x /go/bin/app
 
-FROM gcr.io/distroless/static-debian11 AS app
+# hadolint ignore=DL3007
+FROM gcr.io/distroless/static-debian12:latest AS app
 COPY --from=build /go/bin/app /
 CMD ["/app"]
