@@ -9,8 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/client" />
+            <option value="$PROJECT_DIR$/android-client" />
           </set>
         </option>
       </GradleProjectSettings>

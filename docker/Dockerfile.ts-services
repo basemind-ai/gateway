@@ -25,8 +25,8 @@ WORKDIR /app/
 ENV NODE_ENV=production
 ENV PORT=${PORT}
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 app
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 app
 
 COPY --from=build --chown=app:nodejs /app/ts-services/${BUILD_TARGET}/dist ts-services/${BUILD_TARGET}/dist
 

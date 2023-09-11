@@ -4,7 +4,8 @@
   <component
 		name="ProjectRootManager"
 		version="2"
-		languageLevel="JDK_1_6"
+		languageLevel="JDK_19"
+		default="true"
 		project-jdk-name="19"
 		project-jdk-type="JavaSDK"
 	>

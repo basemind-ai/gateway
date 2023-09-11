@@ -14,11 +14,10 @@ then
     fi
 fi
 
-fileArray=($@)
+fileArray=("$@")
 detektInput=$(IFS=,;printf  "%s" "${fileArray[*]}")
 OUTPUT=$(detekt --all-rules --auto-correct --input "$detektInput" 2>&1)
 EXIT_CODE=$?
-
 
 if [ $EXIT_CODE -ne 0 ]; then
   printf "%s" "$OUTPUT"
