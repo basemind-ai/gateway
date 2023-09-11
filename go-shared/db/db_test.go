@@ -13,7 +13,7 @@ import (
 )
 
 func TestDbQueries(t *testing.T) {
-	dbTestUtils.CreateTestDB(t, "file://../../sql/migrations")
+	dbTestUtils.CreateTestDB(t)
 	dbQueries := db.GetQueries()
 
 	t.Run("CheckUserExists tests", func(t *testing.T) {

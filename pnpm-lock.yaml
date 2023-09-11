@@ -125,8 +125,8 @@ importers:
                 specifier: ^2.9.1
                 version: 2.9.1
             openai:
-                specifier: ^4.4.0
-                version: 4.4.0
+                specifier: ^4.5.0
+                version: 4.5.0
             pino:
                 specifier: ^8.15.0
                 version: 8.15.0
@@ -283,7 +283,7 @@ packages:
             '@babel/helper-compilation-targets': 7.22.15
             '@babel/helper-module-transforms': 7.22.15(@babel/core@7.22.15)
             '@babel/helpers': 7.22.15
-            '@babel/parser': 7.22.15
+            '@babel/parser': 7.22.16
             '@babel/template': 7.22.15
             '@babel/traverse': 7.22.15
             '@babel/types': 7.22.15
@@ -588,10 +588,10 @@ packages:
             chalk: 2.4.2
             js-tokens: 4.0.0
 
-    /@babel/parser@7.22.15:
+    /@babel/parser@7.22.16:
         resolution:
             {
-                integrity: sha512-RWmQ/sklUN9BvGGpCDgSubhHWfAx24XDTDObup4ffvxaYsptOg2P3KG0j+1eWKLxpkX0j0uHxmpq2Z1SP/VhxA==,
+                integrity: sha512-+gPfKv8UWeKKeJTUxe59+OobVcrYHETCsORl61EmSkmgymguYk/X5bp7GuUIXaFsc6y++v8ZxPsLSSuujqDphA==,
             }
         engines: { node: '>=6.0.0' }
         hasBin: true
@@ -1843,7 +1843,7 @@ packages:
         engines: { node: '>=6.9.0' }
         dependencies:
             '@babel/code-frame': 7.22.13
-            '@babel/parser': 7.22.15
+            '@babel/parser': 7.22.16
             '@babel/types': 7.22.15
 
     /@babel/traverse@7.22.15:
@@ -1859,7 +1859,7 @@ packages:
             '@babel/helper-function-name': 7.22.5
             '@babel/helper-hoist-variables': 7.22.5
             '@babel/helper-split-export-declaration': 7.22.6
-            '@babel/parser': 7.22.15
+            '@babel/parser': 7.22.16
             '@babel/types': 7.22.15
             debug: 4.3.4
             globals: 11.12.0
@@ -4978,10 +4978,10 @@ packages:
             es-shim-unscopables: 1.0.0
         dev: true
 
-    /array.prototype.flatmap@1.3.1:
+    /array.prototype.flatmap@1.3.2:
         resolution:
             {
-                integrity: sha512-8UGn9O1FDVvMNB0UlLv4voxRMze7+FpHyF5mSMRjWHUMlpoDViniy05870VlxhfgTnLbpuwTzvD76MTtWxB/mQ==,
+                integrity: sha512-Ewyx0c9PmpcsByhSW4r+9zDU7sGjFc86qf/kKtuSCRdhfbk0SNLLkaT5qvcHnRGgc5NP/ly/y+qkXkqONX54CQ==,
             }
         engines: { node: '>= 0.4' }
         dependencies:
@@ -5091,10 +5091,10 @@ packages:
         engines: { node: '>= 0.4' }
         dev: true
 
-    /axe-core@4.7.2:
+    /axe-core@4.8.0:
         resolution:
             {
-                integrity: sha512-zIURGIS1E1Q4pcrMjp+nnEh+16G56eG/MUllJH8yEvw7asDo7Ac9uhC9KIH5jzpITueEZolfYglnCGIuSBz39g==,
+                integrity: sha512-ZtlVZobOeDQhb/y2lMK6mznDw7TJHDNcKx5/bbBkFvArIQ5CVFhSI6hWWQnMx9I8cNmNmZ30wpDyOC2E2nvgbQ==,
             }
         engines: { node: '>=4' }
         dev: true
@@ -5242,7 +5242,7 @@ packages:
         hasBin: true
         dependencies:
             caniuse-lite: 1.0.30001527
-            electron-to-chromium: 1.4.508
+            electron-to-chromium: 1.4.510
             node-releases: 2.0.13
             update-browserslist-db: 1.0.11(browserslist@4.21.10)
 
@@ -6227,10 +6227,10 @@ packages:
             is-obj: 2.0.0
         dev: true
 
-    /electron-to-chromium@1.4.508:
+    /electron-to-chromium@1.4.510:
         resolution:
             {
-                integrity: sha512-FFa8QKjQK/A5QuFr2167myhMesGrhlOBD+3cYNxO9/S4XzHEXesyTD/1/xF644gC8buFPz3ca6G1LOQD0tZrrg==,
+                integrity: sha512-xPfLIPFcN/WLXBpQ/K4UgE98oUBO5Tia6BD4rkSR0wE7ep/PwBVlgvPJQrIBpmJGVAmUzwPKuDbVt9XV6+uC2g==,
             }
 
     /emoji-regex@8.0.0:
@@ -6610,7 +6610,7 @@ packages:
             array-includes: 3.1.7
             array.prototype.findlastindex: 1.2.3
             array.prototype.flat: 1.3.2
-            array.prototype.flatmap: 1.3.1
+            array.prototype.flatmap: 1.3.2
             debug: 3.2.7(supports-color@5.5.0)
             doctrine: 2.1.0
             eslint: 8.48.0
@@ -6643,9 +6643,9 @@ packages:
             '@babel/runtime': 7.22.15
             aria-query: 5.3.0
             array-includes: 3.1.7
-            array.prototype.flatmap: 1.3.1
+            array.prototype.flatmap: 1.3.2
             ast-types-flow: 0.0.7
-            axe-core: 4.7.2
+            axe-core: 4.8.0
             axobject-query: 3.2.1
             damerau-levenshtein: 1.0.8
             emoji-regex: 9.2.2
@@ -6747,7 +6747,7 @@ packages:
             eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
         dependencies:
             array-includes: 3.1.7
-            array.prototype.flatmap: 1.3.1
+            array.prototype.flatmap: 1.3.2
             array.prototype.tosorted: 1.1.1
             doctrine: 2.1.0
             es-iterator-helpers: 1.0.14
@@ -8494,7 +8494,7 @@ packages:
             whatwg-encoding: 2.0.0
             whatwg-mimetype: 3.0.0
             whatwg-url: 12.0.1
-            ws: 8.13.0
+            ws: 8.14.0
             xml-name-validator: 4.0.0
         transitivePeerDependencies:
             - bufferutil
@@ -9543,10 +9543,10 @@ packages:
             is-wsl: 2.2.0
         dev: true
 
-    /openai@4.4.0:
+    /openai@4.5.0:
         resolution:
             {
-                integrity: sha512-JN0t628Kh95T0IrXl0HdBqnlJg+4Vq0Bnh55tio+dfCnyzHvMLiWyCM9m726MAJD2YkDU4/8RQB6rNbEq9ct2w==,
+                integrity: sha512-9cA5i6KpEAeLV8nZrVgOXqRmUWUIu4FV2oRKvSIwrA7Z5aMd4sXVOaqWAuRDhFFewirxhys8D6R5B2Drj1pKIQ==,
             }
         hasBin: true
         dependencies:
@@ -12372,10 +12372,10 @@ packages:
             }
         dev: true
 
-    /ws@8.13.0:
+    /ws@8.14.0:
         resolution:
             {
-                integrity: sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA==,
+                integrity: sha512-WR0RJE9Ehsio6U4TuM+LmunEsjQ5ncHlw4sn9ihD6RoJKZrVyH9FWV3dmnwu8B2aNib1OvG2X6adUCyFpQyWcg==,
             }
         engines: { node: '>=10.0.0' }
         peerDependencies:
