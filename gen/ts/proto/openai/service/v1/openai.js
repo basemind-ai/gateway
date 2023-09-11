@@ -237,7 +237,7 @@ class OpenAIPromptRequest$Type extends MessageType {
                 case /* openai.service.v1.OpenAIModel model */ 1:
                     message.model = reader.int32();
                     break;
-                case /* repeated openai.service.v1.OpenAIMessage messages = 2 [packed = true];*/ 2:
+                case /* repeated openai.service.v1.OpenAIMessage messages */ 2:
                     message.messages.push(OpenAIMessage.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional float temperature */ 3:
@@ -273,7 +273,7 @@ class OpenAIPromptRequest$Type extends MessageType {
         /* openai.service.v1.OpenAIModel model = 1; */
         if (message.model !== 0)
             writer.tag(1, WireType.Varint).int32(message.model);
-        /* repeated openai.service.v1.OpenAIMessage messages = 2 [packed = true]; */
+        /* repeated openai.service.v1.OpenAIMessage messages = 2; */
         for (let i = 0; i < message.messages.length; i++)
             OpenAIMessage.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional float temperature = 3; */

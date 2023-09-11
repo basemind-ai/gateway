@@ -3,7 +3,7 @@ syntax = "proto3";
 // buf:lint:ignore PACKAGE_DIRECTORY_MATCH
 package openai.service.v1;
 
-option go_package = "github.com/basemind-ai/monorepo/openaiservice";
+option go_package = "github.com/basemind-ai/monorepo/gen/openaiconnectorgrpc";
 
 // Type of OpenAI Model
 enum OpenAIModel {
@@ -66,7 +66,7 @@ message OpenAIPromptRequest {
   // OpenAI Model identifier
   OpenAIModel model = 1;
   // Prompt Messages
-  repeated OpenAIMessage messages = 2 [packed = true];
+  repeated OpenAIMessage messages = 2;
   // Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
   optional float temperature = 3;
   // Nucleus Sampling: https://platform.openai.com/docs/api-reference/chat/create#top_p
