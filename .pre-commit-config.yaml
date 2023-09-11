@@ -18,7 +18,7 @@ repos:
           - id: prettier
             exclude: 'go.mod'
     - repo: https://github.com/pre-commit/mirrors-eslint
-      rev: 'v8.48.0'
+      rev: 'v8.49.0'
       hooks:
           - id: eslint
             files: \.tsx?$
@@ -34,7 +34,7 @@ repos:
           - id: buf-format
           - id: buf-lint
     - repo: https://github.com/sqlfluff/sqlfluff
-      rev: 2.3.1
+      rev: 2.3.2
       hooks:
           - id: sqlfluff-lint
             exclude: 'sql/migrations'

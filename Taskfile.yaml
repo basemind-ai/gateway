@@ -2,6 +2,16 @@ version: '3'
 
 tasks:
     # project dependencies
+    install-pnpm:
+        cmds:
+            - |
+                if command -v brew &> /dev/null; then
+                    brew install pnpm
+                else
+                    npm install -g pnpm
+                fi
+        status:
+            - command -v pnpm &> /dev/null || exit 0
     install-pre-commit:
         cmds:
             - |
@@ -32,9 +42,19 @@ tasks:
                 fi
         status:
             - command -v buf &> /dev/null || exit 0
+    update-brew:
+        cmds:
+            - |
+                if command -v brew &> /dev/null; then
+                    brew update;
+                    brew upgrade;
+                    brew cleanup;
+                fi
     setup:
         desc: Setup the project dependencies
         cmds:
+            - task: update-brew
+            - task: install-pnpm
             - task: install-pre-commit
             - task: install-sqlc
             - task: install-atlas
@@ -46,6 +66,7 @@ tasks:
     update:
         desc: Update the project dependencies
         cmds:
+            - task: update-brew
             - pnpm update -r --latest
             - go mod tidy && go get -u ./... &> /dev/null
             - pre-commit autoupdate
