@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+// buf:lint:ignore PACKAGE_DIRECTORY_MATCH
+package gateway.service.v1;
+
+option go_package = "github.com/basemind-ai/monorepo/gen/gateway";
+
+// The API Gateway service definition.
+service APIGatewayService {
+  // Request the configuration for making prompt requests
+  rpc RequestPromptConfig(PromptConfigRequest) returns (PromptConfigResponse) {}
+  // Request a regular LLM prompt
+  rpc RequestPrompt(PromptRequest) returns (PromptResponse) {}
+  // Request a streaming LLM prompt
+  rpc RequestStreamingPrompt(PromptRequest) returns (stream StreamingPromptResponse) {}
+}
+
+// A request for a prompt configuration - retrieving the expected prompt variables
+message PromptConfigRequest {
+  // The application ID
+  string application_id = 1;
+  // The version of the configuration to retrieve
+  optional string config_version = 2;
+}
+
+// A response for a prompt configuration - retrieving the expected prompt variables
+message PromptConfigResponse {
+  // The expected prompt variables
+  map<string, string> expected_prompt_variables = 1;
+}
+
+// A request for a prompt - sending user input to the server.
+message PromptRequest {
+  // The User prompt variables
+  // This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
+  map<string, string> prompt_variables = 1;
+}
+
+// A Prompt Response Message
+message PromptResponse {
+  // Prompt Content
+  string content = 1;
+  // Number of tokens used for the prompt
+  uint32 prompt_tokens = 2;
+}
+
+// An Streaming Prompt Response Message
+message StreamingPromptResponse {
+  // Prompt Content
+  string content = 1;
+  // Finish reason, if this is the last message
+  optional string finish_reason = 2;
+  // Number of tokens used for the prompt, given when the stream ends
+  optional uint32 prompt_tokens = 3;
+}
