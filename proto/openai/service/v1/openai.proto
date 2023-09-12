@@ -91,7 +91,6 @@ message OpenAIPromptResponse {
   uint32 completion_tokens = 3;
   // Total number of tokens used to generate the response
   uint32 total_tokens = 4;
-  // Timestamp of request start
 }
 
 // An OpenAI Streaming Response Message
@@ -100,5 +99,4 @@ message OpenAIStreamResponse {
   string content = 1;
   // Finish reason, if this is the last message
   optional string finish_reason = 2;
-  // Timestamp of request start, if this is the last message
 }
