@@ -8,7 +8,7 @@
 			"@/*": ["src/*"],
 			"tests/*": ["tests/*"],
 			"shared/*": ["../../ts-shared/src/*"],
-			"gen/*": ["../../gen/ts/proto/*"]
+			"gen/*": ["../../gen/ts/*"]
 		},
 		"types": ["vitest/globals"]
 	},

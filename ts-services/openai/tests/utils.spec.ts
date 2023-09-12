@@ -2,7 +2,7 @@ import {
 	OpenAIMessageRole,
 	OpenAIModel,
 	OpenAIPromptRequest,
-} from 'gen/openai/service/v1/openai';
+} from 'gen/openai/v1/openai';
 import { expect } from 'vitest';
 
 import {
