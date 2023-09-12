@@ -1,0 +1,32 @@
+name: 'Tests (Android)'
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+        paths:
+            - '**/*.kts'
+            - '*.gradle.kts'
+            - 'android-client/*'
+            - 'gradle/**'
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pull-requests: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Setup Java
+              uses: actions/setup-java@v3
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+                  cache: gradle
+            - name: Enable gradlew execution
+              run: chmod +x gradlew
+            - name: Test
+              run: ./gradlew test

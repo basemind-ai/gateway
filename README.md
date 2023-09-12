@@ -4,16 +4,18 @@ This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend servic
 
 ## Structure
 
+-   `.bin` - executable scripts.
 -   `.secrets` - secret values that are gitignored.
+-   `android-client` - Android client SDK.
 -   `docker` - Dockerfiles.
+-   `gen` - generated code.
 -   `go-services` - Golang based microservices.
 -   `go-shared` - Golang shared code.
+-   `proto` - gRPC and protobuf files.
 -   `sql` - SQL schema and query files from which we generate the DB DAL (Data Access Layer) and migrations.
 -   `ts-services` - TypeScript based microservices.
 -   `ts-shared` - TypeScript shared code.
 -   `ts-web` - TypeScript based ts-web application.
--   `gen` - generated code.
--   `proto` - gRPC and protobuf files.
 
 The repository root has all tooling and other configurations.
 
@@ -25,8 +27,13 @@ The repository root has all tooling and other configurations.
     - Go >= 1.21
     - Docker >= 24.0
     - Python >= 3.11
+    - Java >= 17.0
 
-    Notes: - Its recommended to use [nvm](https://github.com/nvm-sh/nvm) to manage Node versions. - Its recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage Python versions.
+    Notes:
+
+    - Its recommended to use [nvm](https://github.com/nvm-sh/nvm) to manage Node versions.
+    - Its recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage Python versions.
+    - Its recommended to use [jenv](https://github.com/jenv/jenv) to manage Java versions.
 
 2. Execute the setup task with:
 
