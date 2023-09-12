@@ -25,18 +25,20 @@ repos:
       rev: 'v3.0.3'
       hooks:
           - id: prettier
-            exclude: 'go.mod'
+            exclude: 'go.mod|gen/ts'
     - repo: https://github.com/pre-commit/mirrors-eslint
       rev: 'v8.49.0'
       hooks:
           - id: eslint
             files: \.tsx?$
             types: [file]
+            exclude: 'gen/ts'
     - repo: https://github.com/golangci/golangci-lint
       rev: 'v1.54.2'
       hooks:
           - id: golangci-lint
             args: ['--timeout', '3m0s']
+            exclude: 'gen/go'
     - repo: https://github.com/bufbuild/buf
       rev: v1.26.1
       hooks:
@@ -56,8 +58,10 @@ repos:
       hooks:
           - id: pretty-format-java
             args: [--autofix]
+            exclude: 'gen/kt'
           - id: pretty-format-kotlin
             args: [--autofix]
+            exclude: 'gen/kt'
     - repo: local
       hooks:
           - id: detekt
@@ -66,9 +70,4 @@ repos:
             language: script
             entry: .bin/detekt.sh
             files: \.kt
-          - id: ktlint
-            name: ktlint
-            description: Runs `ktlint` on modified .kt files.
-            language: script
-            entry: .bin/ktlint.sh
-            files: \.kt
+            exclude: 'gen/kt'

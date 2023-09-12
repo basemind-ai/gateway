@@ -2,7 +2,7 @@ import { ServerCredentials } from '@grpc/grpc-js';
 import {
 	IOpenAIService,
 	openAIServiceDefinition,
-} from 'gen/openai/service/v1/openai.grpc-server';
+} from 'gen/openai/v1/openai.grpc-server';
 import { createServer } from 'shared/utils';
 import logger from 'shared/utils/logger';
 

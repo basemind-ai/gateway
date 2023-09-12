@@ -1,7 +1,6 @@
 syntax = "proto3";
 
-// buf:lint:ignore PACKAGE_DIRECTORY_MATCH
-package gateway.service.v1;
+package gateway.v1;
 
 option go_package = "github.com/basemind-ai/monorepo/gen/gateway";
 

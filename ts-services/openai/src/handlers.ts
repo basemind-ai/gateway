@@ -7,7 +7,7 @@ import {
 	OpenAIPromptRequest,
 	OpenAIPromptResponse,
 	OpenAIStreamResponse,
-} from 'gen/openai/service/v1/openai';
+} from 'gen/openai/v1/openai';
 import { GrpcError } from 'shared/utils';
 import logger from 'shared/utils/logger';
 

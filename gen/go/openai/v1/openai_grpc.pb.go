@@ -2,9 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: proto/openai/service/v1/openai.proto
-
-// buf:lint:ignore PACKAGE_DIRECTORY_MATCH
+// source: openai/v1/openai.proto
 
 package openaiconnectorgrpc
 
@@ -21,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	OpenAIService_OpenAIPrompt_FullMethodName = "/openai.service.v1.OpenAIService/OpenAIPrompt"
-	OpenAIService_OpenAIStream_FullMethodName = "/openai.service.v1.OpenAIService/OpenAIStream"
+	OpenAIService_OpenAIPrompt_FullMethodName = "/openai.v1.OpenAIService/OpenAIPrompt"
+	OpenAIService_OpenAIStream_FullMethodName = "/openai.v1.OpenAIService/OpenAIStream"
 )
 
 // OpenAIServiceClient is the client API for OpenAIService service.
@@ -161,7 +159,7 @@ func (x *openAIServiceOpenAIStreamServer) Send(m *OpenAIStreamResponse) error {
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OpenAIService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "openai.service.v1.OpenAIService",
+	ServiceName: "openai.v1.OpenAIService",
 	HandlerType: (*OpenAIServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -176,5 +174,5 @@ var OpenAIService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "proto/openai/service/v1/openai.proto",
+	Metadata: "openai/v1/openai.proto",
 }
