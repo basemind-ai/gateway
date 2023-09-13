@@ -12,8 +12,6 @@ import enSignIn from 'public/locales/en/signIn.json';
 import enSignInBanner from 'public/locales/en/signInBanner.json';
 import { mockNextRouter } from 'tests/mocks';
 
-import { AppWrapper } from '@/wrapper';
-
 const namespaces = {
 	common: enCommon,
 	signIn: enSignIn,
@@ -42,7 +40,7 @@ const customRender = (
 			return (
 				<RouterContext.Provider value={router}>
 					<I18nProvider lang="en" namespaces={namespaces}>
-						<AppWrapper>{children}</AppWrapper>
+						{children}
 					</I18nProvider>
 				</RouterContext.Provider>
 			);
@@ -62,7 +60,7 @@ const customRenderHook = (
 			return (
 				<RouterContext.Provider value={router}>
 					<I18nProvider lang="en" namespaces={namespaces}>
-						<AppWrapper>{children}</AppWrapper>
+						{children}
 					</I18nProvider>
 				</RouterContext.Provider>
 			);

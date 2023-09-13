@@ -178,6 +178,9 @@ importers:
             next-translate:
                 specifier: ^2.5.3
                 version: 2.5.3(next@13.4.19)(react@18.2.0)
+            preline:
+                specifier: ^1.9.0
+                version: 1.9.0
             react:
                 specifier: 18.2.0
                 version: 18.2.0
@@ -3450,6 +3453,13 @@ packages:
             picocolors: 1.0.0
             tslib: 2.6.2
         dev: true
+
+    /@popperjs/core@2.11.8:
+        resolution:
+            {
+                integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==,
+            }
+        dev: false
 
     /@prettier/plugin-xml@3.2.1(prettier@3.0.3):
         resolution:
@@ -10069,6 +10079,15 @@ packages:
             picocolors: 1.0.0
             source-map-js: 1.0.2
         dev: true
+
+    /preline@1.9.0:
+        resolution:
+            {
+                integrity: sha512-zvOexsDBood9gBAQYSwz7iY8TaomtRD0/qxvCnJl3caq5pif6frl8Oe4b4DsxHHD3Clzl4I5RmVKTq9XjMvNJA==,
+            }
+        dependencies:
+            '@popperjs/core': 2.11.8
+        dev: false
 
     /prelude-ls@1.2.1:
         resolution:

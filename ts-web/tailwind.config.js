@@ -4,6 +4,7 @@ module.exports = {
 	content: [
 		'./src/client-components/**/*.{js,ts,jsx,tsx,mdx}',
 		'./src/app/**/*.{js,ts,jsx,tsx,mdx}',
+		'node_modules/preline/dist/*.js',
 	],
 	theme: {
 		extend: {
@@ -26,5 +27,6 @@ module.exports = {
 	plugins: [
 		require('@tailwindcss/typography'),
 		require('tailwindcss-elevation'),
+		require('preline/plugin'),
 	],
 };

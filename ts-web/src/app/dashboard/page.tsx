@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { PrelineComponentWrapper } from '@/client-components/preline-component-wrapper';
 import { useUser } from '@/stores/user-store';
 import { getFirebaseAuth } from '@/utils/firebase';
 
@@ -21,16 +22,18 @@ export default function Dashboard() {
 	}
 
 	return (
-		<div>
-			<h1 data-testid="dashboard-display-name">
-				Username: {user.displayName}
-			</h1>
-			<button
-				data-testid="dashboard-logout-btn"
-				onClick={() => void logout()}
-			>
-				Logout
-			</button>
-		</div>
+		<PrelineComponentWrapper>
+			<div>
+				<h1 data-testid="dashboard-display-name">
+					Username: {user.displayName}
+				</h1>
+				<button
+					data-testid="dashboard-logout-btn"
+					onClick={() => void logout()}
+				>
+					Logout
+				</button>
+			</div>
+		</PrelineComponentWrapper>
 	);
 }
