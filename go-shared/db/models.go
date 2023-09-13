@@ -141,7 +141,6 @@ func (ns NullModelVendor) Value() (driver.Value, error) {
 type Application struct {
 	ID          pgtype.UUID        `json:"id"`
 	AppID       string             `json:"app_id"`
-	Version     string             `json:"version"`
 	Description string             `json:"description"`
 	Name        string             `json:"name"`
 	PublicKey   string             `json:"public_key"`
@@ -153,6 +152,8 @@ type Application struct {
 type ApplicationPromptConfig struct {
 	ApplicationID  pgtype.UUID `json:"application_id"`
 	PromptConfigID pgtype.UUID `json:"prompt_config_id"`
+	Version        int32       `json:"version"`
+	IsLatest       bool        `json:"is_latest"`
 }
 
 type Project struct {

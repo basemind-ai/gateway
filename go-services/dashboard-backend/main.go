@@ -68,8 +68,9 @@ func main() {
 		Middlewares:      middlewares,
 	})
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", cfg.Port),
-		Handler: mux,
+		Addr:              fmt.Sprintf(":%d", cfg.Port),
+		Handler:           mux,
+		ReadHeaderTimeout: 10,
 	}
 
 	g, gCtx := errgroup.WithContext(ctx)

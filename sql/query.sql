@@ -59,54 +59,39 @@ INSERT INTO "application" (
     description,
     name,
     project_id,
-    public_key,
-    version
+    public_key
 )
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
 -- name: UpdateApplication :one
 UPDATE "application"
 SET
     app_id = $1,
-    version = $2,
-    description = $3,
-    name = $4,
-    public_key = $5,
+    description = $2,
+    name = $3,
+    public_key = $4,
     updated_at = NOW()
-WHERE id = $6 RETURNING *;
+WHERE id = $5 RETURNING *;
 
 -- name: DeleteApplication :exec
 DELETE FROM "application"
 WHERE id = $1;
 
--- name: FindApplicationByAppAndVersionId :one
+-- name: FindApplicationByAppIdAndProjectId :one
 SELECT
     id,
     app_id,
-    version,
     description,
     name,
     public_key
 FROM "application"
-WHERE app_id = $1 AND version = $2 AND project_id = $3;
-
--- name: FindApplicationById :one
-SELECT
-    id,
-    app_id,
-    version,
-    description,
-    name,
-    public_key
-FROM "application"
-WHERE id = $1;
+WHERE app_id = $1 AND project_id = $2;
 
 -- name: FindProjectApplications :many
 SELECT
     id,
     app_id,
-    version,
     description,
     name
 FROM "application"
@@ -138,5 +123,21 @@ WHERE id = $1;
 -- name: CreateApplicationPromptConfig :one
 INSERT INTO "application_prompt_config" (
     application_id,
-    prompt_config_id
-) VALUES ($1, $2) RETURNING *;
+    prompt_config_id,
+    version,
+    is_latest
+) VALUES ($1, $2, $3, $4) RETURNING *;
+
+-- name: FindPromptConfigByAppId :one
+SELECT
+    pc.id,
+    pc.model_type,
+    pc.model_vendor,
+    pc.model_parameters,
+    pc.prompt_template,
+    pc.template_variables,
+    pc.created_at,
+    pc.updated_at
+FROM "prompt_config" AS pc
+LEFT JOIN "application_prompt_config" AS apc ON pc.id = apc.prompt_config_id
+WHERE apc.application_id = $1 AND (apc.version = $2 OR apc.is_latest = true);

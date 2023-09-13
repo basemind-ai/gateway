@@ -40,7 +40,6 @@ CREATE TABLE application
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     app_id text NOT NULL,
-    version text NOT NULL,
     description text NOT NULL,
     name varchar(256) NOT NULL,
     public_key text NOT NULL,
@@ -50,8 +49,8 @@ CREATE TABLE application
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX idx_app_id_version_project_id ON application (
-    app_id, version, project_id
+CREATE UNIQUE INDEX idx_app_id_project_id ON application (
+    app_id, project_id
 );
 
 -- model_vendor
@@ -83,6 +82,8 @@ CREATE TABLE prompt_config (
 CREATE TABLE application_prompt_config (
     application_id uuid NOT NULL,
     prompt_config_id uuid NOT NULL,
+    version serial NOT NULL,
+    is_latest boolean NOT NULL DEFAULT FALSE,
     PRIMARY KEY (application_id, prompt_config_id),
     FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE,
     FOREIGN KEY (prompt_config_id) REFERENCES prompt_config (

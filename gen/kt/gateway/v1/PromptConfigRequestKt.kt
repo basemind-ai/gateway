@@ -33,7 +33,7 @@ public object PromptConfigRequestKt {
 
     /**
      * ```
-     * The application ID
+     * The application ID, this value represents the APP ID as configured in our db.
      * ```
      *
      * `string application_id = 1 [json_name = "applicationId"];`
@@ -47,7 +47,7 @@ public object PromptConfigRequestKt {
       }
     /**
      * ```
-     * The application ID
+     * The application ID, this value represents the APP ID as configured in our db.
      * ```
      *
      * `string application_id = 1 [json_name = "applicationId"];`
@@ -58,12 +58,37 @@ public object PromptConfigRequestKt {
 
     /**
      * ```
+     * The project ID, this value represents the PROJECT ID in our db.
+     * ```
+     *
+     * `string project_id = 2 [json_name = "projectId"];`
+     */
+    public var projectId: kotlin.String
+      @JvmName("getProjectId")
+      get() = _builder.getProjectId()
+      @JvmName("setProjectId")
+      set(value) {
+        _builder.setProjectId(value)
+      }
+    /**
+     * ```
+     * The project ID, this value represents the PROJECT ID in our db.
+     * ```
+     *
+     * `string project_id = 2 [json_name = "projectId"];`
+     */
+    public fun clearProjectId() {
+      _builder.clearProjectId()
+    }
+
+    /**
+     * ```
      * The version of the configuration to retrieve
      * ```
      *
-     * `optional string config_version = 2 [json_name = "configVersion"];`
+     * `optional uint32 config_version = 3 [json_name = "configVersion"];`
      */
-    public var configVersion: kotlin.String
+    public var configVersion: kotlin.Int
       @JvmName("getConfigVersion")
       get() = _builder.getConfigVersion()
       @JvmName("setConfigVersion")
@@ -75,7 +100,7 @@ public object PromptConfigRequestKt {
      * The version of the configuration to retrieve
      * ```
      *
-     * `optional string config_version = 2 [json_name = "configVersion"];`
+     * `optional uint32 config_version = 3 [json_name = "configVersion"];`
      */
     public fun clearConfigVersion() {
       _builder.clearConfigVersion()
@@ -85,7 +110,7 @@ public object PromptConfigRequestKt {
      * The version of the configuration to retrieve
      * ```
      *
-     * `optional string config_version = 2 [json_name = "configVersion"];`
+     * `optional uint32 config_version = 3 [json_name = "configVersion"];`
      * @return Whether the configVersion field is set.
      */
     public fun hasConfigVersion(): kotlin.Boolean {

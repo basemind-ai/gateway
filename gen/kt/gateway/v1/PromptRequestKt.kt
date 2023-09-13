@@ -36,20 +36,20 @@ public object PromptRequestKt {
      * generics.
      */
     @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
-    public class PromptVariablesProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
+    public class TemplateVariablesProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
     /**
      * ```
      * The User prompt variables
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> prompt_variables = 1 [json_name = "promptVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
-     public val promptVariables: com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, PromptVariablesProxy>
+     public val templateVariables: com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
       @kotlin.jvm.JvmSynthetic
-      @JvmName("getPromptVariablesMap")
+      @JvmName("getTemplateVariablesMap")
       get() = com.google.protobuf.kotlin.DslMap(
-        _builder.getPromptVariablesMap()
+        _builder.getTemplateVariablesMap()
       )
     /**
      * ```
@@ -57,12 +57,12 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> prompt_variables = 1 [json_name = "promptVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
-    @JvmName("putPromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, PromptVariablesProxy>
+    @JvmName("putTemplateVariables")
+    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
       .put(key: kotlin.String, value: kotlin.String) {
-         _builder.putPromptVariables(key, value)
+         _builder.putTemplateVariables(key, value)
        }
     /**
      * ```
@@ -70,12 +70,12 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> prompt_variables = 1 [json_name = "promptVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("setPromptVariables")
+    @JvmName("setTemplateVariables")
     @Suppress("NOTHING_TO_INLINE")
-    public inline operator fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, PromptVariablesProxy>
+    public inline operator fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
       .set(key: kotlin.String, value: kotlin.String) {
          put(key, value)
        }
@@ -85,13 +85,13 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> prompt_variables = 1 [json_name = "promptVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("removePromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, PromptVariablesProxy>
+    @JvmName("removeTemplateVariables")
+    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
       .remove(key: kotlin.String) {
-         _builder.removePromptVariables(key)
+         _builder.removeTemplateVariables(key)
        }
     /**
      * ```
@@ -99,13 +99,13 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> prompt_variables = 1 [json_name = "promptVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("putAllPromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, PromptVariablesProxy>
+    @JvmName("putAllTemplateVariables")
+    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
       .putAll(map: kotlin.collections.Map<kotlin.String, kotlin.String>) {
-         _builder.putAllPromptVariables(map)
+         _builder.putAllTemplateVariables(map)
        }
     /**
      * ```
@@ -113,13 +113,13 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> prompt_variables = 1 [json_name = "promptVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("clearPromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, PromptVariablesProxy>
+    @JvmName("clearTemplateVariables")
+    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
       .clear() {
-         _builder.clearPromptVariables()
+         _builder.clearTemplateVariables()
        }
   }
 }

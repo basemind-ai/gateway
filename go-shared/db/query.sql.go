@@ -28,11 +28,10 @@ INSERT INTO "application" (
     description,
     name,
     project_id,
-    public_key,
-    version
+    public_key
 )
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, app_id, version, description, name, public_key, project_id, created_at, updated_at
+VALUES ($1, $2, $3, $4, $5)
+RETURNING id, app_id, description, name, public_key, project_id, created_at, updated_at
 `
 
 type CreateApplicationParams struct {
@@ -41,7 +40,6 @@ type CreateApplicationParams struct {
 	Name        string      `json:"name"`
 	ProjectID   pgtype.UUID `json:"project_id"`
 	PublicKey   string      `json:"public_key"`
-	Version     string      `json:"version"`
 }
 
 func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationParams) (Application, error) {
@@ -51,13 +49,11 @@ func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationPa
 		arg.Name,
 		arg.ProjectID,
 		arg.PublicKey,
-		arg.Version,
 	)
 	var i Application
 	err := row.Scan(
 		&i.ID,
 		&i.AppID,
-		&i.Version,
 		&i.Description,
 		&i.Name,
 		&i.PublicKey,
@@ -71,19 +67,33 @@ func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationPa
 const createApplicationPromptConfig = `-- name: CreateApplicationPromptConfig :one
 INSERT INTO "application_prompt_config" (
     application_id,
-    prompt_config_id
-) VALUES ($1, $2) RETURNING application_id, prompt_config_id
+    prompt_config_id,
+    version,
+    is_latest
+) VALUES ($1, $2, $3, $4) RETURNING application_id, prompt_config_id, version, is_latest
 `
 
 type CreateApplicationPromptConfigParams struct {
 	ApplicationID  pgtype.UUID `json:"application_id"`
 	PromptConfigID pgtype.UUID `json:"prompt_config_id"`
+	Version        int32       `json:"version"`
+	IsLatest       bool        `json:"is_latest"`
 }
 
 func (q *Queries) CreateApplicationPromptConfig(ctx context.Context, arg CreateApplicationPromptConfigParams) (ApplicationPromptConfig, error) {
-	row := q.db.QueryRow(ctx, createApplicationPromptConfig, arg.ApplicationID, arg.PromptConfigID)
+	row := q.db.QueryRow(ctx, createApplicationPromptConfig,
+		arg.ApplicationID,
+		arg.PromptConfigID,
+		arg.Version,
+		arg.IsLatest,
+	)
 	var i ApplicationPromptConfig
-	err := row.Scan(&i.ApplicationID, &i.PromptConfigID)
+	err := row.Scan(
+		&i.ApplicationID,
+		&i.PromptConfigID,
+		&i.Version,
+		&i.IsLatest,
+	)
 	return i, err
 }
 
@@ -248,75 +258,36 @@ func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) 
 	return err
 }
 
-const findApplicationByAppAndVersionId = `-- name: FindApplicationByAppAndVersionId :one
+const findApplicationByAppIdAndProjectId = `-- name: FindApplicationByAppIdAndProjectId :one
 SELECT
     id,
     app_id,
-    version,
     description,
     name,
     public_key
 FROM "application"
-WHERE app_id = $1 AND version = $2 AND project_id = $3
+WHERE app_id = $1 AND project_id = $2
 `
 
-type FindApplicationByAppAndVersionIdParams struct {
+type FindApplicationByAppIdAndProjectIdParams struct {
 	AppID     string      `json:"app_id"`
-	Version   string      `json:"version"`
 	ProjectID pgtype.UUID `json:"project_id"`
 }
 
-type FindApplicationByAppAndVersionIdRow struct {
+type FindApplicationByAppIdAndProjectIdRow struct {
 	ID          pgtype.UUID `json:"id"`
 	AppID       string      `json:"app_id"`
-	Version     string      `json:"version"`
 	Description string      `json:"description"`
 	Name        string      `json:"name"`
 	PublicKey   string      `json:"public_key"`
 }
 
-func (q *Queries) FindApplicationByAppAndVersionId(ctx context.Context, arg FindApplicationByAppAndVersionIdParams) (FindApplicationByAppAndVersionIdRow, error) {
-	row := q.db.QueryRow(ctx, findApplicationByAppAndVersionId, arg.AppID, arg.Version, arg.ProjectID)
-	var i FindApplicationByAppAndVersionIdRow
+func (q *Queries) FindApplicationByAppIdAndProjectId(ctx context.Context, arg FindApplicationByAppIdAndProjectIdParams) (FindApplicationByAppIdAndProjectIdRow, error) {
+	row := q.db.QueryRow(ctx, findApplicationByAppIdAndProjectId, arg.AppID, arg.ProjectID)
+	var i FindApplicationByAppIdAndProjectIdRow
 	err := row.Scan(
 		&i.ID,
 		&i.AppID,
-		&i.Version,
-		&i.Description,
-		&i.Name,
-		&i.PublicKey,
-	)
-	return i, err
-}
-
-const findApplicationById = `-- name: FindApplicationById :one
-SELECT
-    id,
-    app_id,
-    version,
-    description,
-    name,
-    public_key
-FROM "application"
-WHERE id = $1
-`
-
-type FindApplicationByIdRow struct {
-	ID          pgtype.UUID `json:"id"`
-	AppID       string      `json:"app_id"`
-	Version     string      `json:"version"`
-	Description string      `json:"description"`
-	Name        string      `json:"name"`
-	PublicKey   string      `json:"public_key"`
-}
-
-func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (FindApplicationByIdRow, error) {
-	row := q.db.QueryRow(ctx, findApplicationById, id)
-	var i FindApplicationByIdRow
-	err := row.Scan(
-		&i.ID,
-		&i.AppID,
-		&i.Version,
 		&i.Description,
 		&i.Name,
 		&i.PublicKey,
@@ -328,7 +299,6 @@ const findProjectApplications = `-- name: FindProjectApplications :many
 SELECT
     id,
     app_id,
-    version,
     description,
     name
 FROM "application"
@@ -338,7 +308,6 @@ WHERE project_id = $1
 type FindProjectApplicationsRow struct {
 	ID          pgtype.UUID `json:"id"`
 	AppID       string      `json:"app_id"`
-	Version     string      `json:"version"`
 	Description string      `json:"description"`
 	Name        string      `json:"name"`
 }
@@ -355,7 +324,6 @@ func (q *Queries) FindProjectApplications(ctx context.Context, projectID pgtype.
 		if err := rows.Scan(
 			&i.ID,
 			&i.AppID,
-			&i.Version,
 			&i.Description,
 			&i.Name,
 		); err != nil {
@@ -418,6 +386,42 @@ func (q *Queries) FindProjectsByUserId(ctx context.Context, userID pgtype.UUID) 
 	return items, nil
 }
 
+const findPromptConfigByAppId = `-- name: FindPromptConfigByAppId :one
+SELECT
+    pc.id,
+    pc.model_type,
+    pc.model_vendor,
+    pc.model_parameters,
+    pc.prompt_template,
+    pc.template_variables,
+    pc.created_at,
+    pc.updated_at
+FROM "prompt_config" AS pc
+LEFT JOIN "application_prompt_config" AS apc ON pc.id = apc.prompt_config_id
+WHERE apc.application_id = $1 AND (apc.version = $2 OR apc.is_latest = true)
+`
+
+type FindPromptConfigByAppIdParams struct {
+	ApplicationID pgtype.UUID `json:"application_id"`
+	Version       int32       `json:"version"`
+}
+
+func (q *Queries) FindPromptConfigByAppId(ctx context.Context, arg FindPromptConfigByAppIdParams) (PromptConfig, error) {
+	row := q.db.QueryRow(ctx, findPromptConfigByAppId, arg.ApplicationID, arg.Version)
+	var i PromptConfig
+	err := row.Scan(
+		&i.ID,
+		&i.ModelType,
+		&i.ModelVendor,
+		&i.ModelParameters,
+		&i.PromptTemplate,
+		&i.TemplateVariables,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const findUserByFirebaseId = `-- name: FindUserByFirebaseId :one
 SELECT
     id,
@@ -438,17 +442,15 @@ const updateApplication = `-- name: UpdateApplication :one
 UPDATE "application"
 SET
     app_id = $1,
-    version = $2,
-    description = $3,
-    name = $4,
-    public_key = $5,
+    description = $2,
+    name = $3,
+    public_key = $4,
     updated_at = NOW()
-WHERE id = $6 RETURNING id, app_id, version, description, name, public_key, project_id, created_at, updated_at
+WHERE id = $5 RETURNING id, app_id, description, name, public_key, project_id, created_at, updated_at
 `
 
 type UpdateApplicationParams struct {
 	AppID       string      `json:"app_id"`
-	Version     string      `json:"version"`
 	Description string      `json:"description"`
 	Name        string      `json:"name"`
 	PublicKey   string      `json:"public_key"`
@@ -458,7 +460,6 @@ type UpdateApplicationParams struct {
 func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationParams) (Application, error) {
 	row := q.db.QueryRow(ctx, updateApplication,
 		arg.AppID,
-		arg.Version,
 		arg.Description,
 		arg.Name,
 		arg.PublicKey,
@@ -468,7 +469,6 @@ func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationPa
 	err := row.Scan(
 		&i.ID,
 		&i.AppID,
-		&i.Version,
 		&i.Description,
 		&i.Name,
 		&i.PublicKey,
