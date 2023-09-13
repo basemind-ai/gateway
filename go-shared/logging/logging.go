@@ -1,11 +1,10 @@
 package logging
 
 import (
-	"os"
-	"time"
-
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"os"
+	"time"
 )
 
 // Configure configures the logger to print to console when cfg.Debug is true,

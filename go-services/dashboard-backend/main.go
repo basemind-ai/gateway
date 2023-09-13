@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/go-shared/config"
 	"net/http"
 	"os"
 	"os/signal"

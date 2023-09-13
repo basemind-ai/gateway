@@ -52,7 +52,6 @@ func main() {
 		_ = cacheClient.Close()
 		_ = conn.Close(ctx)
 	}()
-
 	server := grpcutils.CreateGRPCServer(gateway.RegisterAPIGatewayServiceServer, service.New())
 
 	g, gCtx := errgroup.WithContext(ctx)

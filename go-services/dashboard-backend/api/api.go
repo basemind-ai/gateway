@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"errors"
+	"github.com/basemind-ai/monorepo/go-shared/config"
 	"net/http"
 
 	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/constants"

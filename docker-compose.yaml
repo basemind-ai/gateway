@@ -32,6 +32,7 @@ services:
             - '4000:4000'
         volumes:
             - ./.secrets:/go/src/app/.secrets:cached
+            - ./gen/go:/go/src/app/gen/go:cached
             - ./go-services/api-gateway:/go/src/app/go-services/api-gateway:cached
             - ./go-shared:/go/src/app/go-shared:cached
             - ./go.mod:/go/src/app/go.mod:cached

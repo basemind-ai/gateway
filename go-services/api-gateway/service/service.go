@@ -11,17 +11,17 @@ type Server struct {
 	gateway.UnimplementedAPIGatewayServiceServer
 }
 
-func New() *Server {
-	return &Server{}
+func New() gateway.APIGatewayServiceServer {
+	return Server{}
 }
 
-func (*Server) RequestPromptConfig(context.Context, *gateway.PromptConfigRequest) (*gateway.PromptConfigResponse, error) {
+func (Server) RequestPromptConfig(context.Context, *gateway.PromptConfigRequest) (*gateway.PromptConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestPromptConfig not implemented")
 }
 
-func (*Server) RequestPrompt(context.Context, *gateway.PromptRequest) (*gateway.PromptResponse, error) {
+func (Server) RequestPrompt(context.Context, *gateway.PromptRequest) (*gateway.PromptResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestPrompt not implemented")
 }
-func (*Server) RequestStreamingPrompt(*gateway.PromptRequest, gateway.APIGatewayService_RequestStreamingPromptServer) error {
+func (Server) RequestStreamingPrompt(*gateway.PromptRequest, gateway.APIGatewayService_RequestStreamingPromptServer) error {
 	return status.Errorf(codes.Unimplemented, "method RequestStreamingPrompt not implemented")
 }
