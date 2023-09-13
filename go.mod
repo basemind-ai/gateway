@@ -9,6 +9,7 @@ require (
 	github.com/go-chi/httplog v0.3.1
 	github.com/go-redis/redismock/v9 v9.0.3
 	github.com/google/uuid v1.3.1
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/redis/go-redis/v9 v9.1.0

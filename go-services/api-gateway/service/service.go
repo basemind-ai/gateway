@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -27,6 +28,13 @@ func RetrievePromptConfig(appId pgtype.UUID, version *uint32) (db.PromptConfig, 
 	return db.GetQueries().FindPromptConfigByAppId(context.Background(), db.FindPromptConfigByAppIdParams{
 		ApplicationID: appId, Version: -1,
 	})
+}
+
+func PromptConfigCacheKey(projectId string, appId pgtype.UUID, version *uint32) string {
+	if version != nil {
+		return fmt.Sprintf("%s::%x::%d", projectId, appId.Bytes, *version)
+	}
+	return fmt.Sprintf("%s::%x::latest", projectId, appId.Bytes)
 }
 
 func (Server) RequestPromptConfig(ctx context.Context, request *gateway.PromptConfigRequest) (*gateway.PromptConfigResponse, error) {
