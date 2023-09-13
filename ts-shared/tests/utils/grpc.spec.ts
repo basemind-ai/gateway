@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import { Server } from '@grpc/grpc-js';
 import { createServer } from 'shared/utils';
 

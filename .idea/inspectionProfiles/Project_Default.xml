@@ -264,7 +264,11 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_regex" value="[A-Z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyContinue"
 			enabled="true"
@@ -282,7 +286,9 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="ignoreOnVolatileVariables" value="false" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyEmptyCatchBlock"
 			enabled="true"
@@ -312,19 +318,29 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="3" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyInstanceMethodNamingConvention"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyInstanceVariableNamingConvention"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_regex" value="m_[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="1" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyListGetCanBeKeyedAccess"
 			enabled="true"
@@ -342,7 +358,11 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyLoopStatementThatDoesntLoop"
 			enabled="true"
@@ -366,7 +386,9 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="5" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyMethodWithMoreThanThreeNegations"
 			enabled="true"
@@ -378,7 +400,9 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="1" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyNegatedConditional"
 			enabled="true"
@@ -438,37 +462,51 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="3" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyOverlyComplexBooleanExpression"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="3" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyOverlyComplexMethod"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="10" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyOverlyLongMethod"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="30" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyOverlyNestedMethod"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_limit" value="5" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyParameterNamingConvention"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyPointlessArithmetic"
 			enabled="true"
@@ -516,13 +554,21 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovyStaticVariableNamingConvention"
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="m_regex" value="s_[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
     <inspection_tool
 			class="GroovySwitchStatementWithNoDefault"
 			enabled="true"
@@ -594,7 +640,9 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
+		>
+      <option name="ignoreNonEmtpyLoops" value="false" />
+    </inspection_tool>
     <inspection_tool
 			class="HelmChartMissingKeys"
 			enabled="false"
@@ -626,6 +674,42 @@
 			enabled_by_default="false"
 		/>
     <inspection_tool
+			class="HttpUrlsUsage"
+			enabled="true"
+			level="WEAK WARNING"
+			enabled_by_default="true"
+		>
+      <option name="ignoredUrls">
+        <list>
+          <option value="http://localhost" />
+          <option value="http://127.0.0.1" />
+          <option value="http://0.0.0.0" />
+          <option value="http://www.w3.org/" />
+          <option value="http://json-schema.org/draft" />
+          <option value="http://java.sun.com/" />
+          <option value="http://xmlns.jcp.org/" />
+          <option value="http://javafx.com/javafx/" />
+          <option value="http://javafx.com/fxml" />
+          <option value="http://maven.apache.org/xsd/" />
+          <option value="http://maven.apache.org/POM/" />
+          <option value="http://www.springframework.org/schema/" />
+          <option value="http://www.springframework.org/tags" />
+          <option value="http://www.springframework.org/security/tags" />
+          <option value="http://www.thymeleaf.org" />
+          <option value="http://www.jboss.org/j2ee/schema/" />
+          <option value="http://www.jboss.com/xml/ns/" />
+          <option value="http://www.ibm.com/webservices/xsd" />
+          <option value="http://activemq.apache.org/schema/" />
+          <option value="http://schema.cloudfoundry.org/spring/" />
+          <option value="http://schemas.xmlsoap.org/" />
+          <option value="http://cxf.apache.org/schemas/" />
+          <option value="http://primefaces.org/ui" />
+          <option value="http://tiles.apache.org/" />
+          <option value="http://www.example.com" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool
 			class="IncompleteDestructuring"
 			enabled="true"
 			level="WARNING"
@@ -642,6 +726,18 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
+		/>
+    <inspection_tool
+			class="JSAnnotator"
+			enabled="false"
+			level="ERROR"
+			enabled_by_default="false"
+		/>
+    <inspection_tool
+			class="JSUnusedGlobalSymbols"
+			enabled="false"
+			level="WARNING"
+			enabled_by_default="false"
 		/>
     <inspection_tool
 			class="KDocMissingDocumentation"
@@ -2047,6 +2143,12 @@
 			class="TomlInvalidKeywordSegment"
 			enabled="false"
 			level="ERROR"
+			enabled_by_default="false"
+		/>
+    <inspection_tool
+			class="TypeScriptUMDGlobal"
+			enabled="false"
+			level="WEAK WARNING"
 			enabled_by_default="false"
 		/>
     <inspection_tool

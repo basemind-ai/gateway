@@ -20,10 +20,6 @@ const env = {
 	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
 };
 
-export const setEnv = (key: keyof typeof env, value: string) => {
-	Reflect.set(process.env, key, value);
-};
-
 const { initializeAppMock, getAuthMock } = vi.hoisted(() => {
 	return {
 		initializeAppMock: vi.fn().mockReturnValue({}),

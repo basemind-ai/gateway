@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <includedPredefinedLibrary name="Node.js Core" />
+    <file url="file://$PROJECT_DIR$" libraries="{monorepo/node_modules}" />
+    <file
+			url="file://$PROJECT_DIR$/ts-shared"
+			libraries="{monorepo/node_modules}"
+		/>
+    <excludedPredefinedLibrary name="HTML" />
   </component>
 </project>

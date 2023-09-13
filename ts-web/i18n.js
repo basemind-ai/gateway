@@ -1,3 +1,4 @@
+// noinspection JSUnusedGlobalSymbols
 module.exports = {
 	locales: ['en'],
 	defaultLocale: 'en',
