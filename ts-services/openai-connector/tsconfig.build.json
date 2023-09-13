@@ -1,6 +1,7 @@
 {
 	"extends": "./tsconfig.json",
 	"include": ["src/**/*.ts", "../../gen/ts/openai/**/*.*"],
+	"exclude": ["node_modules", "dist"],
 	"compilerOptions": {
 		"allowJs": true,
 		"baseUrl": ".",
@@ -9,6 +10,8 @@
 		"sourceMap": true,
 		"module": "CommonJS",
 		"moduleResolution": "node",
-		"outDir": "dist"
+		"outDir": "dist",
+		"isolatedModules": false,
+		"skipLibCheck": true
 	}
 }
