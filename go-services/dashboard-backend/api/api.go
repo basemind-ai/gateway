@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/config"
 	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/constants"
 	"github.com/basemind-ai/monorepo/go-shared/apierror"
 	"github.com/basemind-ai/monorepo/go-shared/db"
