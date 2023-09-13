@@ -3,26 +3,20 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
+	"github.com/basemind-ai/monorepo/go-services/api-gateway/service"
 	"github.com/basemind-ai/monorepo/go-shared/config"
-	"net/http"
+	"github.com/basemind-ai/monorepo/go-shared/db"
+	"github.com/basemind-ai/monorepo/go-shared/grpcutils"
+	"github.com/basemind-ai/monorepo/go-shared/logging"
+	"github.com/basemind-ai/monorepo/go-shared/rediscache"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/sync/errgroup"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/middleware"
-
-	"github.com/basemind-ai/monorepo/go-shared/db"
-	"github.com/basemind-ai/monorepo/go-shared/rediscache"
-
-	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/api"
-	"github.com/basemind-ai/monorepo/go-shared/router"
-
-	"github.com/basemind-ai/monorepo/go-shared/logging"
-	"github.com/rs/zerolog/log"
-	"golang.org/x/sync/errgroup"
 )
-
-var middlewares = []func(next http.Handler) http.Handler{middleware.FirebaseAuthMiddleware}
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -58,30 +52,26 @@ func main() {
 		_ = cacheClient.Close()
 		_ = conn.Close(ctx)
 	}()
-
-	mux := router.New(router.Options[config.Config]{
-		Environment:      cfg.Environment,
-		ServiceName:      "dashboard-backend",
-		RegisterHandlers: api.RegisterHandlers,
-		Cache:            cacheClient,
-		Config:           cfg,
-		Middlewares:      middlewares,
-	})
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", cfg.Port),
-		Handler: mux,
-	}
+	server := grpcutils.CreateGRPCServer(gateway.RegisterAPIGatewayServiceServer, service.New())
 
 	g, gCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		log.Info().Msg("server starting")
-		return srv.ListenAndServe()
+		address := fmt.Sprintf("0.0.0.0:%d", cfg.Port)
+
+		listen, listenErr := net.Listen("tcp", address)
+		if listenErr != nil {
+			return listenErr
+		}
+
+		log.Info().Str("address", address).Msg("server starting")
+		return server.Serve(listen)
 	})
 
 	g.Go(func() error {
 		<-gCtx.Done()
-		return srv.Shutdown(ctx)
+		server.Stop()
+		return nil
 	})
 
 	if err := g.Wait(); err != nil {

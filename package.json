@@ -28,6 +28,7 @@
 		"eslint": "^8.49.0",
 		"eslint-import-resolver-typescript": "^3.6.0",
 		"eslint-plugin-vitest": "^0.3.1",
+		"fork-ts-checker-webpack-plugin": "^8.0.0",
 		"interface-forge": "^1.5.1",
 		"nodemon-webpack-plugin": "^4.8.1",
 		"pino": "^8.15.1",

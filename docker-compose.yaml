@@ -21,18 +21,19 @@ services:
             timeout: 5s
             retries: 5
             start_period: 5s
-    dashboard-backend:
+    api-gateway:
         build:
             dockerfile: docker/Dockerfile.go-services
             context: .
             target: install
             args:
-                BUILD_TARGET: dashboard-backend
+                BUILD_TARGET: api-gateway
         ports:
             - '4000:4000'
         volumes:
             - ./.secrets:/go/src/app/.secrets:cached
-            - ./go-services/dashboard-backend:/go/src/app/go-services/dashboard-backend:cached
+            - ./gen/go:/go/src/app/gen/go:cached
+            - ./go-services/api-gateway:/go/src/app/go-services/api-gateway:cached
             - ./go-shared:/go/src/app/go-shared:cached
             - ./go.mod:/go/src/app/go.mod:cached
             - ./go.sum:/go/src/app/go.sum:cached
@@ -48,29 +49,58 @@ services:
                 'gow',
                 '-e=go,mod,html',
                 'run',
+                '/go/src/app/go-services/api-gateway/main.go',
+            ]
+    dashboard-backend:
+        build:
+            dockerfile: docker/Dockerfile.go-services
+            context: .
+            target: install
+            args:
+                BUILD_TARGET: dashboard-backend
+        ports:
+            - '4100:4100'
+        volumes:
+            - ./.secrets:/go/src/app/.secrets:cached
+            - ./go-services/dashboard-backend:/go/src/app/go-services/dashboard-backend:cached
+            - ./go-shared:/go/src/app/go-shared:cached
+            - ./go.mod:/go/src/app/go.mod:cached
+            - ./go.sum:/go/src/app/go.sum:cached
+        environment:
+            PORT: 4100
+            ENVIRONMENT: development
+            BASE_URL: http://localhost:4000
+            REDIS_CONNECTION_STRING: redis://redis:6379
+            DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
+            GOOGLE_APPLICATION_CREDENTIALS: /.secrets/serviceAccountKey.json
+        command:
+            [
+                'gow',
+                '-e=go,mod,html',
+                'run',
                 '/go/src/app/go-services/dashboard-backend/main.go',
             ]
-    openai:
+    openai-connector:
         build:
             dockerfile: docker/Dockerfile.ts-services
             context: .
             target: install
             args:
-                BUILD_TARGET: openai
+                BUILD_TARGET: openai-connector
                 NODE_ENV: development
                 PORT: 8000
         ports:
             - '8000:8000'
         volumes:
             - ./gen/ts:/app/gen/ts:cached
-            - ./ts-services/openai/src:/app/ts-services/openai/src:cached
+            - ./ts-services/openai-connector/src:/app/ts-services/openai-connector/src:cached
             - ./ts-shared/src:/app/ts-shared/src:cached
         environment:
             NODE_ENV: development
             GRPC_VERBOSITY: debug
             GRPC_TRACE: channel,subchannel,call_stream
             PORT: 8000
-        working_dir: /app/ts-services/openai
+        working_dir: /app/ts-services/openai-connector
         command: ['pnpm', 'run', 'dev']
     ts-web:
         build:

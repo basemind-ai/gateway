@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import { Issue } from 'fork-ts-checker-webpack-plugin/lib/issue';
 import NodemonPlugin from 'nodemon-webpack-plugin';
 import { PinoWebpackPlugin } from 'pino-webpack-plugin';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
@@ -14,6 +16,18 @@ const config: Configuration = {
 	externalsPresets: { node: true },
 	externals: [nodeExternals()],
 	plugins: [
+		new ForkTsCheckerWebpackPlugin({
+			typescript: { configFile: 'tsconfig.build.json' },
+			issue: {
+				exclude: [
+					(issue: Issue) => {
+						return !!issue.file?.includes(
+							'/app/node_modules/.pnpm/openai',
+						);
+					},
+				],
+			},
+		}),
 		new NodemonPlugin(),
 		new PinoWebpackPlugin({
 			transports: isDevelopment ? ['pino-pretty'] : [],

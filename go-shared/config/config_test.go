@@ -2,9 +2,8 @@ package config_test
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/go-shared/config"
 	"testing"
-
-	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/config"
 
 	"github.com/stretchr/testify/assert"
 )
