@@ -67,7 +67,6 @@ func main() {
 		Config:           cfg,
 		Middlewares:      middlewares,
 	})
-
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.Port),
 		Handler: mux,

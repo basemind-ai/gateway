@@ -9,7 +9,7 @@ import (
 
 func TestService(t *testing.T) {
 	t.Run("New", func(t *testing.T) {
-		assert.IsTypef(t, &service.Server{}, service.New(), "New() should return a pointer to a Server")
+		assert.IsTypef(t, service.Server{}, service.New(), "New() should return a pointer to a Server")
 	})
 	t.Run("RequestPromptConfig", func(t *testing.T) {
 		s := service.New()
