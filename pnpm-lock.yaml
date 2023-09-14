@@ -116,6 +116,24 @@ importers:
                 specifier: ^3.0.0
                 version: 3.0.0
 
+    ts-services/openai:
+        dependencies:
+            '@grpc/grpc-js':
+                specifier: ^1.9.2
+                version: 1.9.2
+            '@protobuf-ts/runtime':
+                specifier: ^2.9.1
+                version: 2.9.1
+            '@protobuf-ts/runtime-rpc':
+                specifier: ^2.9.1
+                version: 2.9.1
+            openai:
+                specifier: ^4.6.0
+                version: 4.6.0
+            pino:
+                specifier: ^8.15.1
+                version: 8.15.1
+
     ts-services/openai-connector:
         dependencies:
             '@grpc/grpc-js':
