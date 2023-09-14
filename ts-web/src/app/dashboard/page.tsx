@@ -23,7 +23,7 @@ export default function Dashboard() {
 
 	return (
 		<PrelineComponentWrapper>
-			<div>
+			<div className="bg-base-100 h-full">
 				<h1 data-testid="dashboard-display-name">
 					Username: {user.displayName}
 				</h1>

@@ -1,6 +1,13 @@
 {
 	"extends": "../tsconfig.json",
-	"include": ["*.d.ts", "**/*.ts", "**/*.tsx", "*.ts", ".next/types/**/*.ts"],
+	"include": [
+		"*.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"*.ts",
+		".next/types/**/*.ts",
+		"dist/types/**/*.ts"
+	],
 	"exclude": ["node_modules"],
 	"compilerOptions": {
 		"baseUrl": ".",
@@ -19,6 +26,10 @@
 			"public/*": ["public/*"],
 			"shared/*": ["../ts-shared/src/*"]
 		},
-		"plugins": [{ "name": "next" }]
+		"plugins": [
+			{
+				"name": "next"
+			}
+		]
 	}
 }
