@@ -19,7 +19,7 @@ export function LoginBanner({
 	return (
 		<div
 			data-testid="login-banner-container"
-			className="rounded-xl border border-neutral-700 p-6 bg-zinc-900 relative"
+			className="rounded-xl border border-b-base-300 p-6 bg-base-200 relative"
 		>
 			<div className="flex gap-4 items-center">
 				<Image
@@ -29,11 +29,11 @@ export function LoginBanner({
 					src={iconSrc}
 					alt={heading}
 				/>
-				<h1 className="text-white text-xl">{heading}</h1>
+				<h1 className="text-base-content text-xl">{heading}</h1>
 			</div>
 
-			<h3 className="text-zinc-100 mt-4 text-lg">{title}</h3>
-			<p className="text-neutral-500 mt-5">{subtitle}</p>
+			<h3 className="text-base-content mt-4 text-lg">{title}</h3>
+			<p className="text-neutral-content mt-5">{subtitle}</p>
 			<Image
 				data-testid="login-banner-splash-image"
 				fill={true}

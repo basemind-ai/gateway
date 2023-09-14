@@ -12,7 +12,7 @@ export function LoginContainer() {
 		<PrelineComponentWrapper>
 			<main
 				data-testid="login-container"
-				className="h-full w-full flex items-center justify-center bg-black"
+				className="h-full w-full flex items-center justify-center bg-base-200"
 			>
 				<div className="flex max-w-7xl mx-6 xl:mx-0 bg-gray-111 p-12 rounded-xl	gap-8 ">
 					<div className="flex-1">
