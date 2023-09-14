@@ -3,23 +3,20 @@ package router
 import (
 	"net/http"
 
-	"github.com/basemind-ai/monorepo/go-shared/rediscache"
 	"github.com/go-chi/chi/v5"
 	chiMiddlewares "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog"
 	"github.com/rs/zerolog/log"
 )
 
-type Options[T any] struct {
+type Options struct {
 	Environment      string
 	ServiceName      string
-	Config           T
-	RegisterHandlers func(mux *chi.Mux, config T)
-	Cache            *rediscache.Client
+	RegisterHandlers func(mux *chi.Mux)
 	Middlewares      []func(next http.Handler) http.Handler
 }
 
-func New[T interface{}](opts Options[T]) chi.Router {
+func New(opts Options) chi.Router {
 	router := chi.NewRouter()
 
 	if opts.Environment != "test" {
@@ -34,6 +31,6 @@ func New[T interface{}](opts Options[T]) chi.Router {
 		router.Use(middleware)
 	}
 
-	opts.RegisterHandlers(router, opts.Config)
+	opts.RegisterHandlers(router)
 	return router
 }

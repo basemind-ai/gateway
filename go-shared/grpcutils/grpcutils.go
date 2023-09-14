@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 	loggingMiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func CreateInterceptorLogger(isDebug bool) (loggingMiddleware.Logger, []loggingMiddleware.Option) {
@@ -45,20 +48,38 @@ func CreateInterceptorLogger(isDebug bool) (loggingMiddleware.Logger, []loggingM
 }
 
 type Options[T any] struct {
+	Environment   string
 	GrpcRegistrar func(s grpc.ServiceRegistrar, srv T)
 	Service       T
-	IsDebug       bool
+	ServiceName   string
+}
+
+func RecoveryHandler(p any) (err error) {
+	log.Error().Msgf("panic triggered: %v", p)
+	return status.Errorf(codes.Unknown, "panic triggered: %v", p)
 }
 
 func CreateGRPCServer[T any](opts Options[T]) *grpc.Server {
-	interceptorLogger, loggingOptions := CreateInterceptorLogger(opts.IsDebug)
-	server := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(
-			loggingMiddleware.UnaryServerInterceptor(interceptorLogger, loggingOptions...),
-		),
-		grpc.ChainStreamInterceptor(
-			loggingMiddleware.StreamServerInterceptor(interceptorLogger, loggingOptions...),
-		))
+	serverOpts := make([]grpc.ServerOption, 0)
+
+	if opts.Environment != "test" {
+		interceptorLogger, loggingOptions := CreateInterceptorLogger(opts.Environment != "production")
+
+		serverOpts = append(
+			serverOpts,
+			grpc.ChainUnaryInterceptor(
+				loggingMiddleware.UnaryServerInterceptor(interceptorLogger, loggingOptions...),
+				//
+				recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(RecoveryHandler)),
+			),
+			grpc.ChainStreamInterceptor(
+				loggingMiddleware.StreamServerInterceptor(interceptorLogger, loggingOptions...),
+				recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(RecoveryHandler)),
+			),
+		)
+	}
+
+	server := grpc.NewServer(serverOpts...)
 	opts.GrpcRegistrar(server, opts.Service)
 	return server
 }

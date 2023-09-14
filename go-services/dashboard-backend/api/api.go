@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"errors"
-	"github.com/basemind-ai/monorepo/go-shared/config"
 	"net/http"
 
 	"github.com/basemind-ai/monorepo/go-services/dashboard-backend/constants"
@@ -101,7 +100,7 @@ func HandleDashboardUserPostLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RegisterHandlers(mux *chi.Mux, _ config.Config) {
+func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(r chi.Router) {
 		r.Get(constants.DashboardLoginEndpoint, HandleDashboardUserPostLogin)
 	})

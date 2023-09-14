@@ -53,9 +53,10 @@ func main() {
 		_ = conn.Close(ctx)
 	}()
 	server := grpcutils.CreateGRPCServer[gateway.APIGatewayServiceServer](grpcutils.Options[gateway.APIGatewayServiceServer]{
+		Environment:   cfg.Environment,
 		GrpcRegistrar: gateway.RegisterAPIGatewayServiceServer,
 		Service:       service.New(),
-		IsDebug:       cfg.Environment != "production",
+		ServiceName:   "api-gateway",
 	})
 
 	g, gCtx := errgroup.WithContext(ctx)
@@ -68,7 +69,7 @@ func main() {
 			return listenErr
 		}
 
-		log.Info().Str("address", address).Msg("server starting")
+		log.Info().Str("service", "api-gateway").Str("address", address).Msg("server starting")
 		return server.Serve(listen)
 	})
 

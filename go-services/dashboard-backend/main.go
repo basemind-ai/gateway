@@ -59,12 +59,10 @@ func main() {
 		_ = conn.Close(ctx)
 	}()
 
-	mux := router.New(router.Options[config.Config]{
+	mux := router.New(router.Options{
 		Environment:      cfg.Environment,
 		ServiceName:      "dashboard-backend",
 		RegisterHandlers: api.RegisterHandlers,
-		Cache:            cacheClient,
-		Config:           cfg,
 		Middlewares:      middlewares,
 	})
 	srv := &http.Server{
