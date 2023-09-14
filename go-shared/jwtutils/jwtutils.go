@@ -7,21 +7,18 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func CreateToken(expiration time.Time, secret []byte, values map[string]string) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = expiration.Unix()
-
-	for key, value := range values {
-		claims[key] = value
-	}
+func CreateJWT(ttl time.Duration, secret []byte, sub string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"exp": time.Now().UTC().Add(ttl).Unix(),
+			"sub": sub,
+		})
 
 	return token.SignedString(secret)
 }
 
-func ParseToken(encodedString string, secret []byte) (map[string]interface{}, error) {
-	parsedToken, err := jwt.Parse(encodedString, func(encodedToken *jwt.Token) (interface{}, error) {
+func ParseJWT(encodedString string, secret []byte) (jwt.Claims, error) {
+	parsedToken, signingErr := jwt.Parse(encodedString, func(encodedToken *jwt.Token) (interface{}, error) {
 		_, ok := encodedToken.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return nil, fmt.Errorf("signing method failure")
@@ -29,19 +26,13 @@ func ParseToken(encodedString string, secret []byte) (map[string]interface{}, er
 		return secret, nil
 	})
 
-	if err != nil {
-		return nil, fmt.Errorf("error parsing token %w", err)
+	if signingErr != nil {
+		return nil, fmt.Errorf("error parsing token %w", signingErr)
 	}
 
 	if !parsedToken.Valid {
 		return nil, fmt.Errorf("invalid token")
 	}
 
-	claims, claimsOk := parsedToken.Claims.(jwt.MapClaims)
-
-	if !claimsOk {
-		return nil, fmt.Errorf("unable to parse claims from token")
-	}
-
-	return claims, nil
+	return parsedToken.Claims, nil
 }

@@ -13,6 +13,7 @@ type Config struct {
 	Environment string `env:"ENVIRONMENT,default=test"`
 	Port        int    `env:"PORT,required"`
 	RedisUrl    string `env:"REDIS_CONNECTION_STRING,required"`
+	JWTSecret   string `env:"JWT_SECRET,required"`
 }
 
 var (

@@ -53,6 +53,7 @@ func main() {
 		_ = conn.Close(ctx)
 	}()
 	server := grpcutils.CreateGRPCServer[gateway.APIGatewayServiceServer](grpcutils.Options[gateway.APIGatewayServiceServer]{
+		AuthHandler:   grpcutils.NewAuthHandler(cfg.JWTSecret).HandleAuth,
 		Environment:   cfg.Environment,
 		GrpcRegistrar: gateway.RegisterAPIGatewayServiceServer,
 		Service:       service.New(),
