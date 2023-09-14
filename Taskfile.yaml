@@ -48,7 +48,7 @@ tasks:
                 if command -v brew &> /dev/null; then
                     brew update;
                     brew upgrade;
-                    brew cleanup;
+                    brew cleanup || true;
                 fi
     setup:
         desc: Setup the project dependencies

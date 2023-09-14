@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/go-shared/db"
+	"github.com/basemind-ai/monorepo/go-shared/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"time"
 )
 
 type Server struct {
@@ -19,22 +22,46 @@ func New() gateway.APIGatewayServiceServer {
 	return Server{}
 }
 
-func RetrievePromptConfig(appId pgtype.UUID, version *uint32) (db.PromptConfig, error) {
-	if version != nil {
-		return db.GetQueries().FindPromptConfigByAppId(context.Background(), db.FindPromptConfigByAppIdParams{
-			ApplicationID: appId, Version: int32(*version),
-		})
-	}
-	return db.GetQueries().FindPromptConfigByAppId(context.Background(), db.FindPromptConfigByAppIdParams{
-		ApplicationID: appId, Version: -1,
-	})
-}
-
 func PromptConfigCacheKey(projectId string, appId pgtype.UUID, version *uint32) string {
 	if version != nil {
 		return fmt.Sprintf("%s::%x::%d", projectId, appId.Bytes, *version)
 	}
 	return fmt.Sprintf("%s::%x::latest", projectId, appId.Bytes)
+}
+
+func RetrievePromptConfig(ctx context.Context, projectId string, appId pgtype.UUID, version *uint32) (db.PromptConfig, error) {
+	cacheKey := PromptConfigCacheKey(projectId, appId, version)
+	cfg := db.PromptConfig{}
+
+	if cachedValue := rediscache.GetCachedValue(ctx, cacheKey, &cfg); cachedValue != nil {
+		return *cachedValue, nil
+	}
+
+	if version != nil {
+		dbValue, queryErr := db.GetQueries().FindPromptConfigByAppId(context.Background(), db.FindPromptConfigByAppIdParams{
+			ApplicationID: appId, Version: int32(*version),
+		})
+		if queryErr != nil {
+			return cfg, queryErr
+		}
+		cfg = dbValue
+	} else {
+		dbValue, queryErr := db.GetQueries().FindPromptConfigByAppId(context.Background(), db.FindPromptConfigByAppIdParams{
+			ApplicationID: appId, Version: -1,
+		})
+		if queryErr != nil {
+			return cfg, queryErr
+		}
+		cfg = dbValue
+	}
+
+	go func() {
+		if cacheErr := rediscache.SetCachedValue(ctx, cacheKey, time.Minute*5, &cfg); cacheErr != nil {
+			log.Error().Err(cacheErr).Msg("error caching prompt config")
+		}
+	}()
+
+	return cfg, nil
 }
 
 func (Server) RequestPromptConfig(ctx context.Context, request *gateway.PromptConfigRequest) (*gateway.PromptConfigResponse, error) {
@@ -51,7 +78,7 @@ func (Server) RequestPromptConfig(ctx context.Context, request *gateway.PromptCo
 	if applicationQueryErr != nil {
 		return nil, status.Errorf(codes.Internal, "error querying application: %v", applicationQueryErr)
 	}
-	promptConfig, promptConfigQueryErr := RetrievePromptConfig(application.ID, request.ConfigVersion)
+	promptConfig, promptConfigQueryErr := RetrievePromptConfig(ctx, request.ProjectId, application.ID, request.ConfigVersion)
 
 	if promptConfigQueryErr != nil {
 		return nil, status.Errorf(codes.Internal, "error querying prompt config: %v", promptConfigQueryErr)

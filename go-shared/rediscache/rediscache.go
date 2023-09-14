@@ -2,6 +2,7 @@ package rediscache
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sync"
 	"time"
@@ -84,4 +85,24 @@ func GetClient() *Client {
 		panic("redis client is not initialized")
 	}
 	return client
+}
+
+func GetCachedValue[T any](ctx context.Context, key string, instance *T) *T {
+	cachedValue, cacheErr := GetClient().Get(ctx, key)
+	if cacheErr != nil || cachedValue == nil {
+		return nil
+	}
+	unmarshalErr := json.Unmarshal(cachedValue, instance)
+	if unmarshalErr != nil {
+		return nil
+	}
+	return instance
+}
+
+func SetCachedValue[T any](ctx context.Context, key string, exp time.Duration, instance *T) error {
+	marshalledValue, marshalErr := json.Marshal(instance)
+	if marshalErr != nil {
+		return marshalErr
+	}
+	return GetClient().Set(ctx, key, marshalledValue, exp)
 }
