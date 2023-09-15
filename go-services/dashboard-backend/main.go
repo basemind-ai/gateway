@@ -43,9 +43,7 @@ func main() {
 
 	logging.Configure(cfg.Environment != "production")
 
-	cacheClient, cacheClientErr := rediscache.New(cfg.RedisUrl)
-
-	if cacheClientErr != nil {
+	if _, cacheClientErr := rediscache.New(cfg.RedisUrl); cacheClientErr != nil {
 		log.Fatal().Err(cacheClientErr).Msg("failed to init redis")
 	}
 
@@ -55,7 +53,6 @@ func main() {
 	}
 
 	defer func() {
-		_ = cacheClient.Close()
 		_ = conn.Close(ctx)
 	}()
 
