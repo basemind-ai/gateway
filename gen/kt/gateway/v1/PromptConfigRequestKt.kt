@@ -30,31 +30,6 @@ public object PromptConfigRequestKt {
     @kotlin.jvm.JvmSynthetic
     @kotlin.PublishedApi
     internal fun _build(): gateway.v1.Gateway.PromptConfigRequest = _builder.build()
-
-    /**
-     * ```
-     * The application ID, this value represents the APP ID as configured in our db.
-     * ```
-     *
-     * `string application_id = 1 [json_name = "applicationId"];`
-     */
-    public var applicationId: kotlin.String
-      @JvmName("getApplicationId")
-      get() = _builder.getApplicationId()
-      @JvmName("setApplicationId")
-      set(value) {
-        _builder.setApplicationId(value)
-      }
-    /**
-     * ```
-     * The application ID, this value represents the APP ID as configured in our db.
-     * ```
-     *
-     * `string application_id = 1 [json_name = "applicationId"];`
-     */
-    public fun clearApplicationId() {
-      _builder.clearApplicationId()
-    }
   }
 }
 @kotlin.jvm.JvmSynthetic

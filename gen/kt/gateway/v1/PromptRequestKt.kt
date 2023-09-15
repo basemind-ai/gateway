@@ -32,31 +32,6 @@ public object PromptRequestKt {
     internal fun _build(): gateway.v1.Gateway.PromptRequest = _builder.build()
 
     /**
-     * ```
-     * The application ID, this value represents the APP ID as configured in our db.
-     * ```
-     *
-     * `string application_id = 1 [json_name = "applicationId"];`
-     */
-    public var applicationId: kotlin.String
-      @JvmName("getApplicationId")
-      get() = _builder.getApplicationId()
-      @JvmName("setApplicationId")
-      set(value) {
-        _builder.setApplicationId(value)
-      }
-    /**
-     * ```
-     * The application ID, this value represents the APP ID as configured in our db.
-     * ```
-     *
-     * `string application_id = 1 [json_name = "applicationId"];`
-     */
-    public fun clearApplicationId() {
-      _builder.clearApplicationId()
-    }
-
-    /**
      * An uninstantiable, behaviorless type to represent the field in
      * generics.
      */
@@ -68,7 +43,7 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> template_variables = 2 [json_name = "templateVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
      public val templateVariables: com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
       @kotlin.jvm.JvmSynthetic
@@ -82,7 +57,7 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> template_variables = 2 [json_name = "templateVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @JvmName("putTemplateVariables")
     public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, TemplateVariablesProxy>
@@ -95,7 +70,7 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> template_variables = 2 [json_name = "templateVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
     @JvmName("setTemplateVariables")
@@ -110,7 +85,7 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> template_variables = 2 [json_name = "templateVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
     @JvmName("removeTemplateVariables")
@@ -124,7 +99,7 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> template_variables = 2 [json_name = "templateVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
     @JvmName("putAllTemplateVariables")
@@ -138,7 +113,7 @@ public object PromptRequestKt {
      * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      * ```
      *
-     * `map<string, string> template_variables = 2 [json_name = "templateVariables"];`
+     * `map<string, string> template_variables = 1 [json_name = "templateVariables"];`
      */
     @kotlin.jvm.JvmSynthetic
     @JvmName("clearTemplateVariables")

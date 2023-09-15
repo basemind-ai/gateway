@@ -24,7 +24,15 @@ func (q *Queries) CheckUserExists(ctx context.Context, firebaseID string) (bool,
 
 const createApplication = `-- name: CreateApplication :one
 INSERT INTO application (
-    project_id, name, description, model_type, model_vendor, model_parameters, prompt_template, template_variables, project_id
+    project_id,
+    name,
+    description,
+    model_type,
+    model_vendor,
+    model_parameters,
+    prompt_template,
+    template_variables,
+    project_id
 ) VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9
 ) RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_template, template_variables, created_at, updated_at, project_id
@@ -184,50 +192,26 @@ func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) 
 
 const findApplicationById = `-- name: FindApplicationById :one
 SELECT
-    id,
-    project_id,
-    name,
-    description,
-    model_type,
-    model_vendor,
-    model_parameters,
-    prompt_template,
-    template_variables,
-    created_at,
-    updated_at
+    id, description, model_parameters, model_type, model_vendor, name, prompt_template, template_variables, created_at, updated_at, project_id
 FROM application
 WHERE id = $1
 `
 
-type FindApplicationByIdRow struct {
-	ID                pgtype.UUID        `json:"id"`
-	ProjectID         pgtype.UUID        `json:"project_id"`
-	Name              string             `json:"name"`
-	Description       string             `json:"description"`
-	ModelType         ModelType          `json:"model_type"`
-	ModelVendor       ModelVendor        `json:"model_vendor"`
-	ModelParameters   []byte             `json:"model_parameters"`
-	PromptTemplate    []byte             `json:"prompt_template"`
-	TemplateVariables []byte             `json:"template_variables"`
-	CreatedAt         pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
-}
-
-func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (FindApplicationByIdRow, error) {
+func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (Application, error) {
 	row := q.db.QueryRow(ctx, findApplicationById, id)
-	var i FindApplicationByIdRow
+	var i Application
 	err := row.Scan(
 		&i.ID,
-		&i.ProjectID,
-		&i.Name,
 		&i.Description,
+		&i.ModelParameters,
 		&i.ModelType,
 		&i.ModelVendor,
-		&i.ModelParameters,
+		&i.Name,
 		&i.PromptTemplate,
 		&i.TemplateVariables,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ProjectID,
 	)
 	return i, err
 }

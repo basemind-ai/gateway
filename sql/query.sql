@@ -85,17 +85,6 @@ DELETE FROM application
 WHERE id = $1;
 
 -- name: FindApplicationById :one
-SELECT
-    id,
-    project_id,
-    name,
-    description,
-    model_type,
-    model_vendor,
-    model_parameters,
-    prompt_template,
-    template_variables,
-    created_at,
-    updated_at
+SELECT * -- noqa: L044
 FROM application
 WHERE id = $1;

@@ -15,10 +15,7 @@ service APIGatewayService {
 }
 
 // A request for a prompt configuration - retrieving the expected prompt variables
-message PromptConfigRequest {
-  // The application ID, this value represents the APP ID as configured in our db.
-  string application_id = 1;
-}
+message PromptConfigRequest {}
 
 // A response for a prompt configuration - retrieving the expected prompt variables
 message PromptConfigResponse {
@@ -28,11 +25,9 @@ message PromptConfigResponse {
 
 // A request for a prompt - sending user input to the server.
 message PromptRequest {
-  // The application ID, this value represents the APP ID as configured in our db.
-  string application_id = 1;
   // The User prompt variables
   // This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
-  map<string, string> template_variables = 2;
+  map<string, string> template_variables = 1;
 }
 
 // A Prompt Response Message
