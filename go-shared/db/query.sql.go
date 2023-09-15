@@ -23,76 +23,50 @@ func (q *Queries) CheckUserExists(ctx context.Context, firebaseID string) (bool,
 }
 
 const createApplication = `-- name: CreateApplication :one
-INSERT INTO "application" (
-    app_id,
-    description,
-    name,
-    project_id,
-    public_key
-)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING id, app_id, description, name, public_key, project_id, created_at, updated_at
+INSERT INTO application (
+    project_id, name, description, model_type, model_vendor, model_parameters, prompt_template, template_variables, project_id
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9
+) RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_template, template_variables, created_at, updated_at, project_id
 `
 
 type CreateApplicationParams struct {
-	AppID       string      `json:"app_id"`
-	Description string      `json:"description"`
-	Name        string      `json:"name"`
-	ProjectID   pgtype.UUID `json:"project_id"`
-	PublicKey   string      `json:"public_key"`
+	ProjectID         pgtype.UUID `json:"project_id"`
+	Name              string      `json:"name"`
+	Description       string      `json:"description"`
+	ModelType         ModelType   `json:"model_type"`
+	ModelVendor       ModelVendor `json:"model_vendor"`
+	ModelParameters   []byte      `json:"model_parameters"`
+	PromptTemplate    []byte      `json:"prompt_template"`
+	TemplateVariables []byte      `json:"template_variables"`
+	ProjectID_2       pgtype.UUID `json:"project_id_2"`
 }
 
 func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationParams) (Application, error) {
 	row := q.db.QueryRow(ctx, createApplication,
-		arg.AppID,
-		arg.Description,
-		arg.Name,
 		arg.ProjectID,
-		arg.PublicKey,
+		arg.Name,
+		arg.Description,
+		arg.ModelType,
+		arg.ModelVendor,
+		arg.ModelParameters,
+		arg.PromptTemplate,
+		arg.TemplateVariables,
+		arg.ProjectID_2,
 	)
 	var i Application
 	err := row.Scan(
 		&i.ID,
-		&i.AppID,
 		&i.Description,
+		&i.ModelParameters,
+		&i.ModelType,
+		&i.ModelVendor,
 		&i.Name,
-		&i.PublicKey,
-		&i.ProjectID,
+		&i.PromptTemplate,
+		&i.TemplateVariables,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const createApplicationPromptConfig = `-- name: CreateApplicationPromptConfig :one
-INSERT INTO "application_prompt_config" (
-    application_id,
-    prompt_config_id,
-    version,
-    is_latest
-) VALUES ($1, $2, $3, $4) RETURNING application_id, prompt_config_id, version, is_latest
-`
-
-type CreateApplicationPromptConfigParams struct {
-	ApplicationID  pgtype.UUID `json:"application_id"`
-	PromptConfigID pgtype.UUID `json:"prompt_config_id"`
-	Version        int32       `json:"version"`
-	IsLatest       bool        `json:"is_latest"`
-}
-
-func (q *Queries) CreateApplicationPromptConfig(ctx context.Context, arg CreateApplicationPromptConfigParams) (ApplicationPromptConfig, error) {
-	row := q.db.QueryRow(ctx, createApplicationPromptConfig,
-		arg.ApplicationID,
-		arg.PromptConfigID,
-		arg.Version,
-		arg.IsLatest,
-	)
-	var i ApplicationPromptConfig
-	err := row.Scan(
-		&i.ApplicationID,
-		&i.PromptConfigID,
-		&i.Version,
-		&i.IsLatest,
+		&i.ProjectID,
 	)
 	return i, err
 }
@@ -116,46 +90,6 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 		&i.Name,
 		&i.Description,
 		&i.CreatedAt,
-	)
-	return i, err
-}
-
-const createPromptConfig = `-- name: CreatePromptConfig :one
-INSERT INTO "prompt_config" (
-    model_type,
-    model_vendor,
-    model_parameters,
-    prompt_template,
-    template_variables
-) VALUES ($1, $2, $3, $4, $5) RETURNING id, model_type, model_vendor, model_parameters, prompt_template, template_variables, created_at, updated_at
-`
-
-type CreatePromptConfigParams struct {
-	ModelType         ModelType   `json:"model_type"`
-	ModelVendor       ModelVendor `json:"model_vendor"`
-	ModelParameters   []byte      `json:"model_parameters"`
-	PromptTemplate    []byte      `json:"prompt_template"`
-	TemplateVariables []byte      `json:"template_variables"`
-}
-
-func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfigParams) (PromptConfig, error) {
-	row := q.db.QueryRow(ctx, createPromptConfig,
-		arg.ModelType,
-		arg.ModelVendor,
-		arg.ModelParameters,
-		arg.PromptTemplate,
-		arg.TemplateVariables,
-	)
-	var i PromptConfig
-	err := row.Scan(
-		&i.ID,
-		&i.ModelType,
-		&i.ModelVendor,
-		&i.ModelParameters,
-		&i.PromptTemplate,
-		&i.TemplateVariables,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -206,7 +140,7 @@ func (q *Queries) CreateUserProject(ctx context.Context, arg CreateUserProjectPa
 }
 
 const deleteApplication = `-- name: DeleteApplication :exec
-DELETE FROM "application"
+DELETE FROM application
 WHERE id = $1
 `
 
@@ -223,16 +157,6 @@ WHERE id = $1
 
 func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, deleteProject, id)
-	return err
-}
-
-const deletePromptConfig = `-- name: DeletePromptConfig :exec
-DELETE FROM "prompt_config"
-WHERE id = $1
-`
-
-func (q *Queries) DeletePromptConfig(ctx context.Context, id pgtype.UUID) error {
-	_, err := q.db.Exec(ctx, deletePromptConfig, id)
 	return err
 }
 
@@ -258,83 +182,54 @@ func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) 
 	return err
 }
 
-const findApplicationByAppIdAndProjectId = `-- name: FindApplicationByAppIdAndProjectId :one
+const findApplicationById = `-- name: FindApplicationById :one
 SELECT
     id,
-    app_id,
-    description,
+    project_id,
     name,
-    public_key
-FROM "application"
-WHERE app_id = $1 AND project_id = $2
+    description,
+    model_type,
+    model_vendor,
+    model_parameters,
+    prompt_template,
+    template_variables,
+    created_at,
+    updated_at
+FROM application
+WHERE id = $1
 `
 
-type FindApplicationByAppIdAndProjectIdParams struct {
-	AppID     string      `json:"app_id"`
-	ProjectID pgtype.UUID `json:"project_id"`
+type FindApplicationByIdRow struct {
+	ID                pgtype.UUID        `json:"id"`
+	ProjectID         pgtype.UUID        `json:"project_id"`
+	Name              string             `json:"name"`
+	Description       string             `json:"description"`
+	ModelType         ModelType          `json:"model_type"`
+	ModelVendor       ModelVendor        `json:"model_vendor"`
+	ModelParameters   []byte             `json:"model_parameters"`
+	PromptTemplate    []byte             `json:"prompt_template"`
+	TemplateVariables []byte             `json:"template_variables"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
 }
 
-type FindApplicationByAppIdAndProjectIdRow struct {
-	ID          pgtype.UUID `json:"id"`
-	AppID       string      `json:"app_id"`
-	Description string      `json:"description"`
-	Name        string      `json:"name"`
-	PublicKey   string      `json:"public_key"`
-}
-
-func (q *Queries) FindApplicationByAppIdAndProjectId(ctx context.Context, arg FindApplicationByAppIdAndProjectIdParams) (FindApplicationByAppIdAndProjectIdRow, error) {
-	row := q.db.QueryRow(ctx, findApplicationByAppIdAndProjectId, arg.AppID, arg.ProjectID)
-	var i FindApplicationByAppIdAndProjectIdRow
+func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (FindApplicationByIdRow, error) {
+	row := q.db.QueryRow(ctx, findApplicationById, id)
+	var i FindApplicationByIdRow
 	err := row.Scan(
 		&i.ID,
-		&i.AppID,
-		&i.Description,
+		&i.ProjectID,
 		&i.Name,
-		&i.PublicKey,
+		&i.Description,
+		&i.ModelType,
+		&i.ModelVendor,
+		&i.ModelParameters,
+		&i.PromptTemplate,
+		&i.TemplateVariables,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
-}
-
-const findProjectApplications = `-- name: FindProjectApplications :many
-SELECT
-    id,
-    app_id,
-    description,
-    name
-FROM "application"
-WHERE project_id = $1
-`
-
-type FindProjectApplicationsRow struct {
-	ID          pgtype.UUID `json:"id"`
-	AppID       string      `json:"app_id"`
-	Description string      `json:"description"`
-	Name        string      `json:"name"`
-}
-
-func (q *Queries) FindProjectApplications(ctx context.Context, projectID pgtype.UUID) ([]FindProjectApplicationsRow, error) {
-	rows, err := q.db.Query(ctx, findProjectApplications, projectID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []FindProjectApplicationsRow
-	for rows.Next() {
-		var i FindProjectApplicationsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.AppID,
-			&i.Description,
-			&i.Name,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const findProjectsByUserId = `-- name: FindProjectsByUserId :many
@@ -386,42 +281,6 @@ func (q *Queries) FindProjectsByUserId(ctx context.Context, userID pgtype.UUID) 
 	return items, nil
 }
 
-const findPromptConfigByAppId = `-- name: FindPromptConfigByAppId :one
-SELECT
-    pc.id,
-    pc.model_type,
-    pc.model_vendor,
-    pc.model_parameters,
-    pc.prompt_template,
-    pc.template_variables,
-    pc.created_at,
-    pc.updated_at
-FROM "prompt_config" AS pc
-LEFT JOIN "application_prompt_config" AS apc ON pc.id = apc.prompt_config_id
-WHERE apc.application_id = $1 AND (apc.version = $2 OR apc.is_latest = true)
-`
-
-type FindPromptConfigByAppIdParams struct {
-	ApplicationID pgtype.UUID `json:"application_id"`
-	Version       int32       `json:"version"`
-}
-
-func (q *Queries) FindPromptConfigByAppId(ctx context.Context, arg FindPromptConfigByAppIdParams) (PromptConfig, error) {
-	row := q.db.QueryRow(ctx, findPromptConfigByAppId, arg.ApplicationID, arg.Version)
-	var i PromptConfig
-	err := row.Scan(
-		&i.ID,
-		&i.ModelType,
-		&i.ModelVendor,
-		&i.ModelParameters,
-		&i.PromptTemplate,
-		&i.TemplateVariables,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
 const findUserByFirebaseId = `-- name: FindUserByFirebaseId :one
 SELECT
     id,
@@ -439,85 +298,53 @@ func (q *Queries) FindUserByFirebaseId(ctx context.Context, firebaseID string) (
 }
 
 const updateApplication = `-- name: UpdateApplication :one
-UPDATE "application"
+UPDATE application
 SET
-    app_id = $1,
-    description = $2,
-    name = $3,
-    public_key = $4,
-    updated_at = NOW()
-WHERE id = $5 RETURNING id, app_id, description, name, public_key, project_id, created_at, updated_at
+    name = $2,
+    description = $3,
+    model_type = $4,
+    model_vendor = $5,
+    model_parameters = $6,
+    prompt_template = $7,
+    template_variables = $8
+WHERE id = $1 RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_template, template_variables, created_at, updated_at, project_id
 `
 
 type UpdateApplicationParams struct {
-	AppID       string      `json:"app_id"`
-	Description string      `json:"description"`
-	Name        string      `json:"name"`
-	PublicKey   string      `json:"public_key"`
-	ID          pgtype.UUID `json:"id"`
-}
-
-func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationParams) (Application, error) {
-	row := q.db.QueryRow(ctx, updateApplication,
-		arg.AppID,
-		arg.Description,
-		arg.Name,
-		arg.PublicKey,
-		arg.ID,
-	)
-	var i Application
-	err := row.Scan(
-		&i.ID,
-		&i.AppID,
-		&i.Description,
-		&i.Name,
-		&i.PublicKey,
-		&i.ProjectID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const updatePromptConfig = `-- name: UpdatePromptConfig :one
-UPDATE "prompt_config"
-SET
-    model_type = $1,
-    model_vendor = $2,
-    model_parameters = $3,
-    prompt_template = $4,
-    template_variables = $5
-WHERE id = $6 RETURNING id, model_type, model_vendor, model_parameters, prompt_template, template_variables, created_at, updated_at
-`
-
-type UpdatePromptConfigParams struct {
+	ID                pgtype.UUID `json:"id"`
+	Name              string      `json:"name"`
+	Description       string      `json:"description"`
 	ModelType         ModelType   `json:"model_type"`
 	ModelVendor       ModelVendor `json:"model_vendor"`
 	ModelParameters   []byte      `json:"model_parameters"`
 	PromptTemplate    []byte      `json:"prompt_template"`
 	TemplateVariables []byte      `json:"template_variables"`
-	ID                pgtype.UUID `json:"id"`
 }
 
-func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfigParams) (PromptConfig, error) {
-	row := q.db.QueryRow(ctx, updatePromptConfig,
+func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationParams) (Application, error) {
+	row := q.db.QueryRow(ctx, updateApplication,
+		arg.ID,
+		arg.Name,
+		arg.Description,
 		arg.ModelType,
 		arg.ModelVendor,
 		arg.ModelParameters,
 		arg.PromptTemplate,
 		arg.TemplateVariables,
-		arg.ID,
 	)
-	var i PromptConfig
+	var i Application
 	err := row.Scan(
 		&i.ID,
+		&i.Description,
+		&i.ModelParameters,
 		&i.ModelType,
 		&i.ModelVendor,
-		&i.ModelParameters,
+		&i.Name,
 		&i.PromptTemplate,
 		&i.TemplateVariables,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ProjectID,
 	)
 	return i, err
 }

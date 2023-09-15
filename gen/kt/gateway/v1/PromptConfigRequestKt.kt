@@ -55,67 +55,6 @@ public object PromptConfigRequestKt {
     public fun clearApplicationId() {
       _builder.clearApplicationId()
     }
-
-    /**
-     * ```
-     * The project ID, this value represents the PROJECT ID in our db.
-     * ```
-     *
-     * `string project_id = 2 [json_name = "projectId"];`
-     */
-    public var projectId: kotlin.String
-      @JvmName("getProjectId")
-      get() = _builder.getProjectId()
-      @JvmName("setProjectId")
-      set(value) {
-        _builder.setProjectId(value)
-      }
-    /**
-     * ```
-     * The project ID, this value represents the PROJECT ID in our db.
-     * ```
-     *
-     * `string project_id = 2 [json_name = "projectId"];`
-     */
-    public fun clearProjectId() {
-      _builder.clearProjectId()
-    }
-
-    /**
-     * ```
-     * The version of the configuration to retrieve
-     * ```
-     *
-     * `optional uint32 config_version = 3 [json_name = "configVersion"];`
-     */
-    public var configVersion: kotlin.Int
-      @JvmName("getConfigVersion")
-      get() = _builder.getConfigVersion()
-      @JvmName("setConfigVersion")
-      set(value) {
-        _builder.setConfigVersion(value)
-      }
-    /**
-     * ```
-     * The version of the configuration to retrieve
-     * ```
-     *
-     * `optional uint32 config_version = 3 [json_name = "configVersion"];`
-     */
-    public fun clearConfigVersion() {
-      _builder.clearConfigVersion()
-    }
-    /**
-     * ```
-     * The version of the configuration to retrieve
-     * ```
-     *
-     * `optional uint32 config_version = 3 [json_name = "configVersion"];`
-     * @return Whether the configVersion field is set.
-     */
-    public fun hasConfigVersion(): kotlin.Boolean {
-      return _builder.hasConfigVersion()
-    }
   }
 }
 @kotlin.jvm.JvmSynthetic

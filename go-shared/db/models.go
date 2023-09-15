@@ -139,21 +139,17 @@ func (ns NullModelVendor) Value() (driver.Value, error) {
 }
 
 type Application struct {
-	ID          pgtype.UUID        `json:"id"`
-	AppID       string             `json:"app_id"`
-	Description string             `json:"description"`
-	Name        string             `json:"name"`
-	PublicKey   string             `json:"public_key"`
-	ProjectID   pgtype.UUID        `json:"project_id"`
-	CreatedAt   pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
-}
-
-type ApplicationPromptConfig struct {
-	ApplicationID  pgtype.UUID `json:"application_id"`
-	PromptConfigID pgtype.UUID `json:"prompt_config_id"`
-	Version        int32       `json:"version"`
-	IsLatest       bool        `json:"is_latest"`
+	ID                pgtype.UUID        `json:"id"`
+	Description       string             `json:"description"`
+	ModelParameters   []byte             `json:"model_parameters"`
+	ModelType         ModelType          `json:"model_type"`
+	ModelVendor       ModelVendor        `json:"model_vendor"`
+	Name              string             `json:"name"`
+	PromptTemplate    []byte             `json:"prompt_template"`
+	TemplateVariables []byte             `json:"template_variables"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
+	ProjectID         pgtype.UUID        `json:"project_id"`
 }
 
 type Project struct {
@@ -161,17 +157,6 @@ type Project struct {
 	Name        string             `json:"name"`
 	Description string             `json:"description"`
 	CreatedAt   pgtype.Timestamptz `json:"created_at"`
-}
-
-type PromptConfig struct {
-	ID                pgtype.UUID        `json:"id"`
-	ModelType         ModelType          `json:"model_type"`
-	ModelVendor       ModelVendor        `json:"model_vendor"`
-	ModelParameters   []byte             `json:"model_parameters"`
-	PromptTemplate    []byte             `json:"prompt_template"`
-	TemplateVariables []byte             `json:"template_variables"`
-	CreatedAt         pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
 }
 
 type User struct {

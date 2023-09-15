@@ -18,10 +18,6 @@ service APIGatewayService {
 message PromptConfigRequest {
   // The application ID, this value represents the APP ID as configured in our db.
   string application_id = 1;
-  // The project ID, this value represents the PROJECT ID in our db.
-  string project_id = 2;
-  // The version of the configuration to retrieve
-  optional uint32 config_version = 3;
 }
 
 // A response for a prompt configuration - retrieving the expected prompt variables
@@ -32,9 +28,11 @@ message PromptConfigResponse {
 
 // A request for a prompt - sending user input to the server.
 message PromptRequest {
+  // The application ID, this value represents the APP ID as configured in our db.
+  string application_id = 1;
   // The User prompt variables
   // This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
-  map<string, string> template_variables = 1;
+  map<string, string> template_variables = 2;
 }
 
 // A Prompt Response Message

@@ -54,90 +54,48 @@ FROM "project"
 WHERE id = $1;
 
 -- name: CreateApplication :one
-INSERT INTO "application" (
-    app_id,
-    description,
-    name,
+INSERT INTO application (
     project_id,
-    public_key
-)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING *;
-
--- name: UpdateApplication :one
-UPDATE "application"
-SET
-    app_id = $1,
-    description = $2,
-    name = $3,
-    public_key = $4,
-    updated_at = NOW()
-WHERE id = $5 RETURNING *;
-
--- name: DeleteApplication :exec
-DELETE FROM "application"
-WHERE id = $1;
-
--- name: FindApplicationByAppIdAndProjectId :one
-SELECT
-    id,
-    app_id,
-    description,
     name,
-    public_key
-FROM "application"
-WHERE app_id = $1 AND project_id = $2;
-
--- name: FindProjectApplications :many
-SELECT
-    id,
-    app_id,
     description,
-    name
-FROM "application"
-WHERE project_id = $1;
-
--- name: CreatePromptConfig :one
-INSERT INTO "prompt_config" (
     model_type,
     model_vendor,
     model_parameters,
     prompt_template,
-    template_variables
-) VALUES ($1, $2, $3, $4, $5) RETURNING *;
+    template_variables,
+    project_id
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9
+) RETURNING *;
 
--- name: UpdatePromptConfig :one
-UPDATE "prompt_config"
+-- name: UpdateApplication :one
+UPDATE application
 SET
-    model_type = $1,
-    model_vendor = $2,
-    model_parameters = $3,
-    prompt_template = $4,
-    template_variables = $5
-WHERE id = $6 RETURNING *;
+    name = $2,
+    description = $3,
+    model_type = $4,
+    model_vendor = $5,
+    model_parameters = $6,
+    prompt_template = $7,
+    template_variables = $8
+WHERE id = $1 RETURNING *;
 
--- name: DeletePromptConfig :exec
-DELETE FROM "prompt_config"
+-- name: DeleteApplication :exec
+DELETE FROM application
 WHERE id = $1;
 
--- name: CreateApplicationPromptConfig :one
-INSERT INTO "application_prompt_config" (
-    application_id,
-    prompt_config_id,
-    version,
-    is_latest
-) VALUES ($1, $2, $3, $4) RETURNING *;
-
--- name: FindPromptConfigByAppId :one
+-- name: FindApplicationById :one
 SELECT
-    pc.id,
-    pc.model_type,
-    pc.model_vendor,
-    pc.model_parameters,
-    pc.prompt_template,
-    pc.template_variables,
-    pc.created_at,
-    pc.updated_at
-FROM "prompt_config" AS pc
-LEFT JOIN "application_prompt_config" AS apc ON pc.id = apc.prompt_config_id
-WHERE apc.application_id = $1 AND (apc.version = $2 OR apc.is_latest = true);
+    id,
+    project_id,
+    name,
+    description,
+    model_type,
+    model_vendor,
+    model_parameters,
+    prompt_template,
+    template_variables,
+    created_at,
+    updated_at
+FROM application
+WHERE id = $1;
