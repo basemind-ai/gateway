@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/go-services/api-gateway/constants"
 	"github.com/basemind-ai/monorepo/go-shared/db"
@@ -50,13 +49,8 @@ func (Server) RequestPromptConfig(ctx context.Context, _ *gateway.PromptConfigRe
 		return nil, status.Errorf(codes.Internal, "error retrieving application: %v", retrievalErr)
 	}
 
-	expectedPromptVariables := make(map[string]string)
-	if unmarshalErr := json.Unmarshal(application.PromptTemplate, &expectedPromptVariables); unmarshalErr != nil {
-		return nil, status.Errorf(codes.Internal, "error unmarshalling prompt template: %v", unmarshalErr)
-	}
-
 	return &gateway.PromptConfigResponse{
-		ExpectedPromptVariables: expectedPromptVariables,
+		ExpectedPromptVariables: application.ExpectedTemplateVariables,
 	}, nil
 }
 
