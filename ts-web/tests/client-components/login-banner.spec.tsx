@@ -1,16 +1,12 @@
+import bannerTranslation from 'public/locales/en/signin-banner.json';
 import { render, screen } from 'tests/test-utils';
 
-import { LoginBanner } from '@/client-components/login-banner';
-
-import bannerTranslation from '../../public/locales/en/signInBanner.json';
+import { LoginBanner } from '@/app/sign-in/login-banner';
 
 describe('LoginBanner tests', () => {
 	it('renders LoginBanner', () => {
 		render(
 			<LoginBanner
-				heading={bannerTranslation.bannerHeading}
-				title={bannerTranslation.bannerTitle}
-				subtitle={bannerTranslation.bannerSubtitle}
 				imageSrc="/images/pinecone-transparent-bg.svg"
 				iconSrc="/images/pinecone-round.svg"
 			/>,
