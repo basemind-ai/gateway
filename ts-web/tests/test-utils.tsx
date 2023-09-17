@@ -8,8 +8,8 @@ import {
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 import I18nProvider from 'next-translate/I18nProvider';
 import enCommon from 'public/locales/en/common.json';
-import enSignIn from 'public/locales/en/signIn.json';
-import enSignInBanner from 'public/locales/en/signInBanner.json';
+import enSignInBanner from 'public/locales/en/signin-banner.json';
+import enSignIn from 'public/locales/en/signin-firebase.json';
 import { mockNextRouter } from 'tests/mocks';
 
 const namespaces = {

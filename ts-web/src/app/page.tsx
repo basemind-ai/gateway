@@ -1,9 +1,16 @@
 'use client';
 
-import 'firebaseui/dist/firebaseui.css';
+import Link from 'next/link';
 
-import { LoginContainer } from '@/client-components/auth/login-container';
+import { Navigation } from '@/constants';
 
 export default function Home() {
-	return <LoginContainer />;
+	return (
+		<main
+			data-testid="login-container"
+			className="h-full w-full flex items-center justify-center bg-base-200"
+		>
+			<Link href={Navigation.SignIn}>SIGN-IN</Link>
+		</main>
+	);
 }
