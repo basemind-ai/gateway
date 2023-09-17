@@ -1,13 +1,10 @@
 'use client';
-import useTranslation from 'next-translate/useTranslation';
 
-import { FirebaseLogin } from '@/client-components/firebase-login';
-import { LoginBanner } from '@/client-components/login-banner';
+import { FirebaseLogin } from '@/app/sign-in/firebase-login';
+import { LoginBanner } from '@/app/sign-in/login-banner';
 import { PrelineComponentWrapper } from '@/client-components/preline-component-wrapper';
 
 export function LoginContainer() {
-	const { t } = useTranslation('signInBanner');
-
 	return (
 		<PrelineComponentWrapper>
 			<main
@@ -20,9 +17,6 @@ export function LoginContainer() {
 					</div>
 					<div className="flex-1 hidden lg:block ">
 						<LoginBanner
-							heading={t('bannerHeading')}
-							title={t('bannerTitle')}
-							subtitle={t('bannerSubtitle')}
 							imageSrc="/images/pinecone-transparent-bg.svg"
 							iconSrc="/images/pinecone-round.svg"
 						/>

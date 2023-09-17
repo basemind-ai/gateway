@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 
+import { Navigation } from '@/constants';
 import { useSetUser } from '@/stores/user-store';
 import { firebaseUIConfig, getFirebaseAuth } from '@/utils/firebase';
 
 export function FirebaseLogin() {
 	const [uiRendered, setIsUIRendered] = useState(false);
 	const [isSignedIn, setIsSignedIn] = useState(false);
-	const { t } = useTranslation('signIn');
+	const { t } = useTranslation('signin-firebase');
 
 	const router = useRouter();
 	const setUser = useSetUser();
@@ -22,7 +23,7 @@ export function FirebaseLogin() {
 			const auth = await getFirebaseAuth();
 			if (auth.currentUser) {
 				setUser(auth.currentUser);
-				router.replace('/dashboard');
+				router.replace(Navigation.Dashboard as string);
 				return;
 			}
 
@@ -52,7 +53,7 @@ export function FirebaseLogin() {
 
 	useEffect(() => {
 		if (isSignedIn) {
-			router.replace('/dashboard');
+			router.replace(Navigation.Dashboard as string);
 		}
 	}, [isSignedIn]);
 
