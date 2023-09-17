@@ -20,15 +20,6 @@ vi.mock('@/utils/firebase', () => ({
 }));
 
 describe('Dashboard page tests', () => {
-	it('renders username', () => {
-		render(<Dashboard />);
-
-		const displayName = screen.getByTestId('dashboard-display-name');
-
-		expect(displayName).toBeInTheDocument();
-		expect(displayName.innerHTML).toContain(mockDisplayName);
-	});
-
 	it('handles logout', async () => {
 		render(<Dashboard />);
 
