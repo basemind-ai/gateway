@@ -99,20 +99,26 @@ describe('utils tests', () => {
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
-				temperature: 0.8,
-				topP: 0.9,
-				maxTokens: 100,
-				userId: '123',
-				presencePenalty: 0.5,
-				frequencyPenalty: 0.3,
+				parameters: {
+					temperature: 0.8,
+					topP: 0.9,
+					maxTokens: 100,
+					presencePenalty: 0.5,
+					frequencyPenalty: 0.3,
+				},
+				applicationId: '123',
 			};
 			const result = createOpenAIRequest(request, true);
-			expect(result.temperature).toBe(request.temperature);
-			expect(result.top_p).toBe(request.topP);
-			expect(result.max_tokens).toBe(request.maxTokens);
-			expect(result.user).toBe(request.userId);
-			expect(result.presence_penalty).toBe(request.presencePenalty);
-			expect(result.frequency_penalty).toBe(request.frequencyPenalty);
+			expect(result.temperature).toBe(request.parameters?.temperature);
+			expect(result.top_p).toBe(request.parameters?.topP);
+			expect(result.max_tokens).toBe(request.parameters?.maxTokens);
+			expect(result.user).toBe(request.applicationId);
+			expect(result.presence_penalty).toBe(
+				request.parameters?.presencePenalty,
+			);
+			expect(result.frequency_penalty).toBe(
+				request.parameters?.frequencyPenalty,
+			);
 		});
 
 		it('should handle default values for optional fields in the OpenAIPromptRequest object', () => {

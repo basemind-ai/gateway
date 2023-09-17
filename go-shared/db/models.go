@@ -139,17 +139,17 @@ func (ns NullModelVendor) Value() (driver.Value, error) {
 }
 
 type Application struct {
-	ID                pgtype.UUID        `json:"id"`
-	Description       string             `json:"description"`
-	ModelParameters   []byte             `json:"model_parameters"`
-	ModelType         ModelType          `json:"model_type"`
-	ModelVendor       ModelVendor        `json:"model_vendor"`
-	Name              string             `json:"name"`
-	PromptTemplate    []byte             `json:"prompt_template"`
-	TemplateVariables []byte             `json:"template_variables"`
-	CreatedAt         pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
-	ProjectID         pgtype.UUID        `json:"project_id"`
+	ID                        pgtype.UUID        `json:"id"`
+	Description               string             `json:"description"`
+	ModelParameters           []byte             `json:"model_parameters"`
+	ModelType                 ModelType          `json:"model_type"`
+	ModelVendor               ModelVendor        `json:"model_vendor"`
+	Name                      string             `json:"name"`
+	PromptMessages            []byte             `json:"prompt_messages"`
+	ExpectedTemplateVariables []string           `json:"expected_template_variables"`
+	CreatedAt                 pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt                 pgtype.Timestamptz `json:"updated_at"`
+	ProjectID                 pgtype.UUID        `json:"project_id"`
 }
 
 type Project struct {

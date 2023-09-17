@@ -60,19 +60,21 @@ export function createOpenAIRequest(
 	| ChatCompletionCreateParamsStreaming
 	| ChatCompletionCreateParamsNonStreaming {
 	const {
-		frequencyPenalty,
-		maxTokens,
+		parameters: {
+			topP,
+			maxTokens,
+			frequencyPenalty,
+			presencePenalty,
+			temperature,
+		} = {},
 		messages,
 		model,
-		presencePenalty,
-		temperature,
-		topP,
-		userId,
+		applicationId,
 	} = request;
 	return {
 		stream,
 		temperature,
-		user: userId,
+		user: applicationId,
 		top_p: topP,
 		max_tokens: maxTokens,
 		frequency_penalty: frequencyPenalty,

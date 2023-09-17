@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: openai/v1/openai.proto
 
-package openaiconnectorgrpc
+package openaiconnector
 
 import (
 	context "context"

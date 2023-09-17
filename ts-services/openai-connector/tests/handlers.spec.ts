@@ -50,12 +50,14 @@ describe('handlers tests', () => {
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
-				temperature: 0.8,
-				topP: 0.9,
-				maxTokens: 100,
-				userId: '123',
-				presencePenalty: 0.5,
-				frequencyPenalty: 0.5,
+				parameters: {
+					temperature: 0.8,
+					topP: 0.9,
+					maxTokens: 100,
+					presencePenalty: 0.5,
+					frequencyPenalty: 0.5,
+				},
+				applicationId: '123',
 			});
 			const callback: sendUnaryData<OpenAIPromptResponse> = vi.fn();
 
@@ -242,12 +244,15 @@ describe('handlers tests', () => {
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
-				temperature: 0.8,
-				topP: 0.9,
-				maxTokens: 100,
-				userId: '123',
-				presencePenalty: 0.5,
-				frequencyPenalty: 0.5,
+				parameters: {
+					temperature: 0.8,
+					topP: 0.9,
+					maxTokens: 100,
+
+					presencePenalty: 0.5,
+					frequencyPenalty: 0.5,
+				},
+				applicationId: '123',
 			});
 			completionsSpy.mockResolvedValueOnce(createReadableStream() as any);
 			await openAIStream(call);
