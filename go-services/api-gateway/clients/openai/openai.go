@@ -2,10 +2,11 @@ package openai
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 	"google.golang.org/grpc"
+	"io"
 )
 
 type Client struct {
@@ -26,22 +27,59 @@ func (c *Client) RequestPrompt(
 	applicationId string,
 	application db.Application,
 ) (string, error) {
-	promptRequest := &openaiconnector.OpenAIPromptRequest{
-		Model:         GetModelType(application.ModelType),
-		ApplicationId: &applicationId,
-	}
-
-	if parametersUnmarshalErr := json.Unmarshal(application.ModelParameters, promptRequest.Parameters); parametersUnmarshalErr != nil {
-		return "", parametersUnmarshalErr
-	}
-
-	if messagesUnmarshalErr := json.Unmarshal(application.PromptMessages, &promptRequest.Messages); messagesUnmarshalErr != nil {
-		return "", messagesUnmarshalErr
+	promptRequest, promptRequestErr := CreatePromptRequest(applicationId,
+		application.ModelType,
+		application.ModelParameters,
+		application.PromptMessages,
+	)
+	if promptRequestErr != nil {
+		return "", promptRequestErr
 	}
 
 	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
 	if requestErr != nil {
 		return "", requestErr
 	}
+	// TODO handle token related logic here by using the response token properties.
 	return response.Content, nil
+}
+
+func (c *Client) RequestStream(
+	ctx context.Context,
+	contentChannel chan<- string,
+	errChannel chan<- error,
+	applicationId string,
+	application db.Application,
+) {
+	promptRequest, promptRequestErr := CreatePromptRequest(applicationId,
+		application.ModelType,
+		application.ModelParameters,
+		application.PromptMessages,
+	)
+	if promptRequestErr != nil {
+		errChannel <- promptRequestErr
+		close(contentChannel)
+		return
+	}
+
+	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
+	if streamErr != nil {
+		errChannel <- promptRequestErr
+		close(contentChannel)
+		return
+	}
+
+	for {
+		msg, receiveErr := stream.Recv()
+		if receiveErr != nil {
+			if !errors.Is(receiveErr, io.EOF) {
+				errChannel <- receiveErr
+			}
+			close(contentChannel)
+			return
+		}
+
+		// TODO handle token related logic here
+		contentChannel <- msg.Content
+	}
 }

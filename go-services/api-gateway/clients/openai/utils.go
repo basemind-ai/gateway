@@ -1,6 +1,7 @@
 package openai
 
 import (
+	"encoding/json"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 )
@@ -18,4 +19,25 @@ func GetModelType(modelType db.ModelType) openaiconnector.OpenAIModel {
 		panic("unknown model type")
 	}
 	return value
+}
+
+func CreatePromptRequest(
+	applicationId string,
+	modelType db.ModelType,
+	modelParameters []byte,
+	promptMessages []byte,
+) (*openaiconnector.OpenAIPromptRequest, error) {
+	promptRequest := &openaiconnector.OpenAIPromptRequest{
+		Model:         GetModelType(modelType),
+		ApplicationId: &applicationId,
+	}
+
+	if parametersUnmarshalErr := json.Unmarshal(modelParameters, promptRequest.Parameters); parametersUnmarshalErr != nil {
+		return nil, parametersUnmarshalErr
+	}
+
+	if messagesUnmarshalErr := json.Unmarshal(promptMessages, &promptRequest.Messages); messagesUnmarshalErr != nil {
+		return nil, messagesUnmarshalErr
+	}
+	return promptRequest, nil
 }
