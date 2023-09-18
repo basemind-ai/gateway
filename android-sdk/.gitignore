@@ -15,6 +15,10 @@ captures/
 *.apk
 output.json
 
+# Copied generated kotlin code from the root directory
+gateway/
+promptModels/
+
 # IntelliJ
 *.iml
 .idea/
