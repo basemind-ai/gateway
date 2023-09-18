@@ -14,7 +14,7 @@ export default function NavRailFooter() {
 			<a
 				href={Navigation.Settings as string}
 				className={`${
-					(Navigation.Settings as string) === pathname
+					Navigation.Settings === pathname
 						? 'text-primary'
 						: 'text-base-content'
 				} hover:text-primary`}
@@ -24,7 +24,7 @@ export default function NavRailFooter() {
 			<a
 				href={Navigation.Billing as string}
 				className={`${
-					(Navigation.Billing as string) === pathname
+					Navigation.Billing === pathname
 						? 'text-primary'
 						: 'text-base-content'
 				} hover:text-primary`}
@@ -34,7 +34,7 @@ export default function NavRailFooter() {
 			<a
 				href={Navigation.Help as string}
 				className={`${
-					(Navigation.Help as string) === pathname
+					Navigation.Help === pathname
 						? 'text-primary'
 						: 'text-base-content'
 				} hover:text-primary`}

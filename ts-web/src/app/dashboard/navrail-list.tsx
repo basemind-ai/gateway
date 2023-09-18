@@ -33,22 +33,22 @@ export default function NavRailList({
 	return (
 		<div className="mt-12 ml-2 ">
 			<LinkMenu
-				href={Navigation.Dashboard as string}
+				href={Navigation.Dashboard}
 				text={item1}
 				icon={<HouseDoor className="w-3 h-3" />}
-				isCurrent={(Navigation.Dashboard as string) === pathname}
+				isCurrent={Navigation.Dashboard === pathname}
 			/>
 			<LinkMenu
-				href={Navigation.TestPrompt as string}
+				href={Navigation.TestPrompt}
 				text={item2}
 				icon={<Search className="w-3 h-3" />}
-				isCurrent={(Navigation.TestPrompt as string) === pathname}
+				isCurrent={Navigation.TestPrompt === pathname}
 			/>
 			<LinkMenu
-				href={Navigation.API as string}
+				href={Navigation.API}
 				text={item3}
 				icon={<Boxes className="w-3 h-3" />}
-				isCurrent={(Navigation.API as string) === pathname}
+				isCurrent={Navigation.API === pathname}
 			/>
 			<LinkMenu
 				text={item4}
