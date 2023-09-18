@@ -8,14 +8,16 @@ import {
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 import I18nProvider from 'next-translate/I18nProvider';
 import enCommon from 'public/locales/en/common.json';
+import enDashboardNavrail from 'public/locales/en/dashboard-navrail.json';
 import enSignInBanner from 'public/locales/en/signin-banner.json';
 import enSignIn from 'public/locales/en/signin-firebase.json';
 import { nextRouterMock } from 'tests/mocks';
 
 const namespaces = {
-	common: enCommon,
-	signIn: enSignIn,
-	signInBanner: enSignInBanner,
+	'common': enCommon,
+	'signin-firebase': enSignIn,
+	'dashboard-navrail': enDashboardNavrail,
+	'signin-banner': enSignInBanner,
 };
 
 const customRender = (
