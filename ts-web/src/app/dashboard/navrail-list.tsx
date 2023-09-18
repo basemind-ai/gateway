@@ -9,8 +9,8 @@ import {
 	Speedometer2,
 } from 'react-bootstrap-icons';
 
-import Badge from '@/client-components/badge';
-import LinkMenu from '@/client-components/link-menu';
+import Badge from '@/components/badge';
+import LinkMenu from '@/components/link-menu';
 import { Navigation } from '@/constants';
 
 export default function NavRailList({

@@ -12,7 +12,8 @@ export default function NavRailFooter() {
 	return (
 		<div className="flex h-12 items-center justify-around relative border-t border-base-100 shadow-sm">
 			<a
-				href={Navigation.Settings as string}
+				data-testid="nav-rail-footer-settings"
+				href={Navigation.Settings}
 				className={`${
 					Navigation.Settings === pathname
 						? 'text-primary'
@@ -22,7 +23,8 @@ export default function NavRailFooter() {
 				<Gear />
 			</a>
 			<a
-				href={Navigation.Billing as string}
+				data-testid="nav-rail-footer-billing"
+				href={Navigation.Billing}
 				className={`${
 					Navigation.Billing === pathname
 						? 'text-primary'
@@ -32,7 +34,7 @@ export default function NavRailFooter() {
 				<Bank2 />
 			</a>
 			<a
-				href={Navigation.Help as string}
+				href={Navigation.Help}
 				className={`${
 					Navigation.Help === pathname
 						? 'text-primary'

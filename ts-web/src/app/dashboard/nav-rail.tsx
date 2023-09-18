@@ -3,7 +3,7 @@ import { ChevronRight } from 'react-bootstrap-icons';
 
 import NavRailFooter from '@/app/dashboard/nav-rail-footer';
 import NavRailList from '@/app/dashboard/navrail-list';
-import { Logo } from '@/client-components/logo';
+import { Logo } from '@/components/logo';
 
 export default function NavRail() {
 	const { t } = useTranslation('dashboard-navrail');
