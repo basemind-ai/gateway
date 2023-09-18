@@ -3,6 +3,7 @@ package openai
 import (
 	"encoding/json"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
+	"github.com/basemind-ai/monorepo/go-shared/datatypes"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 )
 
@@ -26,6 +27,7 @@ func CreatePromptRequest(
 	modelType db.ModelType,
 	modelParameters []byte,
 	promptMessages []byte,
+	templateVariables map[string]string,
 ) (*openaiconnector.OpenAIPromptRequest, error) {
 	promptRequest := &openaiconnector.OpenAIPromptRequest{
 		Model:         GetModelType(modelType),
@@ -36,8 +38,25 @@ func CreatePromptRequest(
 		return nil, parametersUnmarshalErr
 	}
 
-	if messagesUnmarshalErr := json.Unmarshal(promptMessages, &promptRequest.Messages); messagesUnmarshalErr != nil {
+	messages := make([]datatypes.PromptTemplateMessage, 0)
+
+	if messagesUnmarshalErr := json.Unmarshal(promptMessages, &messages); messagesUnmarshalErr != nil {
 		return nil, messagesUnmarshalErr
 	}
+	for _, message := range messages {
+		if err := message.ParseTemplateVariables(templateVariables); err != nil {
+			return nil, err
+		}
+
+		openaiMessage := &openaiconnector.OpenAIMessage{}
+		if unmarshalErr := json.Unmarshal(message.ProviderMessage, openaiMessage); unmarshalErr != nil {
+			return nil, unmarshalErr
+		}
+		if message.Content != "" {
+			openaiMessage.Content = &message.Content
+		}
+		promptRequest.Messages = append(promptRequest.Messages, openaiMessage)
+	}
+
 	return promptRequest, nil
 }

@@ -28,11 +28,14 @@ func (c *Client) RequestPrompt(
 	ctx context.Context,
 	applicationId string,
 	application db.Application,
+	templateVariables map[string]string,
 ) (string, error) {
-	promptRequest, promptRequestErr := CreatePromptRequest(applicationId,
+	promptRequest, promptRequestErr := CreatePromptRequest(
+		applicationId,
 		application.ModelType,
 		application.ModelParameters,
 		application.PromptMessages,
+		templateVariables,
 	)
 	if promptRequestErr != nil {
 		return "", promptRequestErr
@@ -48,26 +51,27 @@ func (c *Client) RequestPrompt(
 
 func (c *Client) RequestStream(
 	ctx context.Context,
-	contentChannel chan<- string,
-	errChannel chan<- error,
 	applicationId string,
 	application db.Application,
+	templateVariables map[string]string,
+	contentChannel chan<- string,
+	errChannel chan<- error,
 ) {
-	promptRequest, promptRequestErr := CreatePromptRequest(applicationId,
+	promptRequest, promptRequestErr := CreatePromptRequest(
+		applicationId,
 		application.ModelType,
 		application.ModelParameters,
 		application.PromptMessages,
+		templateVariables,
 	)
 	if promptRequestErr != nil {
 		errChannel <- promptRequestErr
-		close(contentChannel)
 		return
 	}
 
 	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
 	if streamErr != nil {
 		errChannel <- promptRequestErr
-		close(contentChannel)
 		return
 	}
 

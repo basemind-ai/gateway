@@ -38,8 +38,7 @@ func main() {
 
 	logging.Configure(cfg.Environment != "production")
 
-	connectorsInitErr := connectors.Init(ctx)
-	if connectorsInitErr != nil {
+	if connectorsInitErr := connectors.Init(ctx); connectorsInitErr != nil {
 		log.Fatal().Err(connectorsInitErr).Msg("failed to initialize connectors")
 	}
 

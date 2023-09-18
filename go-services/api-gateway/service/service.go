@@ -47,7 +47,7 @@ func (Server) RequestPromptConfig(ctx context.Context, _ *gateway.PromptConfigRe
 		ctx, applicationId, &db.Application{}, time.Minute*30, RetrieveApplicationHandler(ctx, applicationId),
 	)
 	if retrievalErr != nil {
-		return nil, status.Errorf(codes.Internal, "error retrieving application: %v", retrievalErr)
+		return nil, retrievalErr
 	}
 
 	return &gateway.PromptConfigResponse{
@@ -65,13 +65,13 @@ func (Server) RequestPrompt(ctx context.Context, request *gateway.PromptRequest)
 		ctx, applicationId, &db.Application{}, time.Minute*30, RetrieveApplicationHandler(ctx, applicationId),
 	)
 	if retrievalErr != nil {
-		return nil, status.Errorf(codes.Internal, "error retrieving application: %v", retrievalErr)
+		return nil, retrievalErr
 	}
 
 	client := connectors.GetOpenAIConnectorClient()
-	responseContent, requestErr := client.RequestPrompt(ctx, applicationId, *application)
+	responseContent, requestErr := client.RequestPrompt(ctx, applicationId, *application, request.TemplateVariables)
 	if requestErr != nil {
-		return nil, status.Errorf(codes.Internal, "error requesting prompt: %v", requestErr)
+		return nil, retrievalErr
 	}
 
 	return &gateway.PromptResponse{
@@ -79,6 +79,34 @@ func (Server) RequestPrompt(ctx context.Context, request *gateway.PromptRequest)
 		PromptTokens: 0,
 	}, nil
 }
-func (Server) RequestStreamingPrompt(*gateway.PromptRequest, gateway.APIGatewayService_RequestStreamingPromptServer) error {
-	return status.Errorf(codes.Unimplemented, "method RequestStreamingPrompt not implemented")
+func (Server) RequestStreamingPrompt(request *gateway.PromptRequest, streamServer gateway.APIGatewayService_RequestStreamingPromptServer) error {
+	applicationId, ok := streamServer.Context().Value(constants.ApplicationIDContextKey).(string)
+	if !ok {
+		return status.Errorf(codes.Unauthenticated, "application ID not found in context")
+	}
+
+	application, retrievalErr := rediscache.With[db.Application](
+		streamServer.Context(), applicationId, &db.Application{}, time.Minute*30, RetrieveApplicationHandler(streamServer.Context(), applicationId),
+	)
+	if retrievalErr != nil {
+		return retrievalErr
+	}
+
+	contentChannel := make(chan string)
+	errorChannel := make(chan error, 1)
+
+	go connectors.GetOpenAIConnectorClient().RequestStream(streamServer.Context(), applicationId, *application, request.TemplateVariables, contentChannel, errorChannel)
+
+	for {
+		select {
+		case content := <-contentChannel:
+			if sendErr := streamServer.SendMsg(&gateway.StreamingPromptResponse{
+				Content: content,
+			}); sendErr != nil {
+				return sendErr
+			}
+		case err := <-errorChannel:
+			return err
+		}
+	}
 }
