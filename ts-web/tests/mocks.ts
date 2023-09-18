@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { NextRouter } from 'next/router';
 import { beforeEach } from 'vitest';
 
 export const mockFetch = vi.fn().mockResolvedValue({
@@ -73,7 +72,10 @@ Object.defineProperties(global.HTMLElement.prototype, {
 	},
 });
 
-export const mockNextRouter = (router: Partial<NextRouter>): NextRouter => ({
+export const usePathnameMock = vi.fn();
+export const routerReplaceMock = vi.fn();
+
+export const nextRouterMock = {
 	basePath: '',
 	pathname: '',
 	route: '',
@@ -85,7 +87,7 @@ export const mockNextRouter = (router: Partial<NextRouter>): NextRouter => ({
 	push: vi.fn(),
 	reload: vi.fn(),
 	forward: vi.fn(),
-	replace: vi.fn(),
+	replace: routerReplaceMock,
 	events: {
 		on: vi.fn(),
 		off: vi.fn(),
@@ -97,5 +99,16 @@ export const mockNextRouter = (router: Partial<NextRouter>): NextRouter => ({
 	defaultLocale: 'en',
 	domainLocales: [],
 	isPreview: false,
-	...router,
-});
+};
+
+vi.mock(
+	'next/navigation',
+	async (importOriginal: () => Promise<Record<string, any>>) => {
+		const original = await importOriginal();
+		return {
+			...original,
+			useRouter: () => nextRouterMock,
+			usePathname: usePathnameMock,
+		};
+	},
+);

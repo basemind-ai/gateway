@@ -5,16 +5,6 @@ import { Mock } from 'vitest';
 import NavRailFooter from '@/app/dashboard/nav-rail-footer';
 import { Navigation } from '@/constants';
 
-vi.mock('next/navigation', async () => {
-	const actual = await vi.importActual('next/navigation');
-
-	return {
-		// @ts-expect-error
-		...actual,
-		usePathname: vi.fn(),
-	};
-});
-
 describe('NavRailFooter tests', () => {
 	// const usePathnameSpy = vi.spyOn('navigation', 'usePathname');
 	//
