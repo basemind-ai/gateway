@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
+	"github.com/basemind-ai/monorepo/go-services/api-gateway/connectors"
 	"github.com/basemind-ai/monorepo/go-services/api-gateway/service"
 	"github.com/basemind-ai/monorepo/go-shared/config"
 	"github.com/basemind-ai/monorepo/go-shared/db"
@@ -37,6 +38,11 @@ func main() {
 
 	logging.Configure(cfg.Environment != "production")
 
+	connectorsInitErr := connectors.Init(ctx)
+	if connectorsInitErr != nil {
+		log.Fatal().Err(connectorsInitErr).Msg("failed to initialize connectors")
+	}
+
 	if _, cacheClientErr := rediscache.New(cfg.RedisUrl); cacheClientErr != nil {
 		log.Fatal().Err(cacheClientErr).Msg("failed to init redis")
 	}
@@ -49,6 +55,7 @@ func main() {
 	defer func() {
 		_ = conn.Close(ctx)
 	}()
+
 	server := grpcutils.CreateGRPCServer[gateway.APIGatewayServiceServer](grpcutils.Options[gateway.APIGatewayServiceServer]{
 		AuthHandler:   grpcutils.NewAuthHandler(cfg.JWTSecret).HandleAuth,
 		Environment:   cfg.Environment,

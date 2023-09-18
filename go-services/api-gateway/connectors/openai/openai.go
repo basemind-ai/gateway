@@ -5,6 +5,7 @@ import (
 	"errors"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/go-shared/db"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"io"
 )
@@ -19,6 +20,7 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 		return nil, dialErr
 	}
 	client := openaiconnector.NewOpenAIServiceClient(conn)
+	log.Info().Msg("initialized OpenAI connector")
 	return &Client{client: client}, nil
 }
 

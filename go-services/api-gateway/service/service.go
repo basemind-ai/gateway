@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
+	"github.com/basemind-ai/monorepo/go-services/api-gateway/connectors"
 	"github.com/basemind-ai/monorepo/go-services/api-gateway/constants"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 	"github.com/basemind-ai/monorepo/go-shared/rediscache"
@@ -54,8 +55,29 @@ func (Server) RequestPromptConfig(ctx context.Context, _ *gateway.PromptConfigRe
 	}, nil
 }
 
-func (Server) RequestPrompt(context.Context, *gateway.PromptRequest) (*gateway.PromptResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestPrompt not implemented")
+func (Server) RequestPrompt(ctx context.Context, request *gateway.PromptRequest) (*gateway.PromptResponse, error) {
+	applicationId, ok := ctx.Value(constants.ApplicationIDContextKey).(string)
+	if !ok {
+		return nil, status.Errorf(codes.Unauthenticated, "application ID not found in context")
+	}
+
+	application, retrievalErr := rediscache.With[db.Application](
+		ctx, applicationId, &db.Application{}, time.Minute*30, RetrieveApplicationHandler(ctx, applicationId),
+	)
+	if retrievalErr != nil {
+		return nil, status.Errorf(codes.Internal, "error retrieving application: %v", retrievalErr)
+	}
+
+	client := connectors.GetOpenAIConnectorClient()
+	responseContent, requestErr := client.RequestPrompt(ctx, applicationId, *application)
+	if requestErr != nil {
+		return nil, status.Errorf(codes.Internal, "error requesting prompt: %v", requestErr)
+	}
+
+	return &gateway.PromptResponse{
+		Content:      responseContent,
+		PromptTokens: 0,
+	}, nil
 }
 func (Server) RequestStreamingPrompt(*gateway.PromptRequest, gateway.APIGatewayService_RequestStreamingPromptServer) error {
 	return status.Errorf(codes.Unimplemented, "method RequestStreamingPrompt not implemented")
