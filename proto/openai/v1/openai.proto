@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package openai.v1;
 
-option go_package = "github.com/basemind-ai/monorepo/gen/openaiconnectorgrpc";
+option go_package = "github.com/basemind-ai/monorepo/gen/openaiconnector";
 
 // Type of OpenAI Model
 enum OpenAIModel {
@@ -60,24 +60,30 @@ message OpenAIMessage {
   optional OpenAIFunctionCall function_call = 4;
 }
 
+// OpenAI API Request parameters
+message OpenAIModelParameters {
+  // Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
+  optional float temperature = 1;
+  // Nucleus Sampling: https://platform.openai.com/docs/api-reference/chat/create#top_p
+  optional float top_p = 2;
+  // Maximum Tokens after which the prompt will stop generating a response;
+  optional uint32 max_tokens = 3;
+  // Penalize New tokens: https://platform.openai.com/docs/api-reference/chat/create#presence_penalty
+  optional float presence_penalty = 4;
+  // Penalize Repeated tokens: https://platform.openai.com/docs/api-reference/chat/create#frequency_penalty
+  optional float frequency_penalty = 5;
+}
+
 // A Request for an OpenAI regular LLM Prompt
 message OpenAIPromptRequest {
   // OpenAI Model identifier
   OpenAIModel model = 1;
   // Prompt Messages
   repeated OpenAIMessage messages = 2;
-  // Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
-  optional float temperature = 3;
-  // Nucleus Sampling: https://platform.openai.com/docs/api-reference/chat/create#top_p
-  optional float top_p = 4;
-  // Maximum Tokens after which the prompt will stop generating a response;
-  optional uint32 max_tokens = 5;
-  // Unique user ID to keep track of conversations;
-  optional string user_id = 6;
-  // Penalize New tokens: https://platform.openai.com/docs/api-reference/chat/create#presence_penalty
-  optional float presence_penalty = 7;
-  // Penalize Repeated tokens: https://platform.openai.com/docs/api-reference/chat/create#frequency_penalty
-  optional float frequency_penalty = 8;
+  // OpenAI API Request parameters
+  OpenAIModelParameters parameters = 3;
+  // Unique application ID to keep track of conversations;
+  optional string application_id = 4;
 }
 
 // An OpenAI Prompt Response Message

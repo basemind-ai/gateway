@@ -209,17 +209,88 @@ class OpenAIMessage$Type extends MessageType {
  */
 export const OpenAIMessage = new OpenAIMessage$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class OpenAIModelParameters$Type extends MessageType {
+    constructor() {
+        super("openai.v1.OpenAIModelParameters", [
+            { no: 1, name: "temperature", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 2, name: "top_p", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 3, name: "max_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "presence_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 5, name: "frequency_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+        ]);
+    }
+    create(value) {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional float temperature */ 1:
+                    message.temperature = reader.float();
+                    break;
+                case /* optional float top_p */ 2:
+                    message.topP = reader.float();
+                    break;
+                case /* optional uint32 max_tokens */ 3:
+                    message.maxTokens = reader.uint32();
+                    break;
+                case /* optional float presence_penalty */ 4:
+                    message.presencePenalty = reader.float();
+                    break;
+                case /* optional float frequency_penalty */ 5:
+                    message.frequencyPenalty = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* optional float temperature = 1; */
+        if (message.temperature !== undefined)
+            writer.tag(1, WireType.Bit32).float(message.temperature);
+        /* optional float top_p = 2; */
+        if (message.topP !== undefined)
+            writer.tag(2, WireType.Bit32).float(message.topP);
+        /* optional uint32 max_tokens = 3; */
+        if (message.maxTokens !== undefined)
+            writer.tag(3, WireType.Varint).uint32(message.maxTokens);
+        /* optional float presence_penalty = 4; */
+        if (message.presencePenalty !== undefined)
+            writer.tag(4, WireType.Bit32).float(message.presencePenalty);
+        /* optional float frequency_penalty = 5; */
+        if (message.frequencyPenalty !== undefined)
+            writer.tag(5, WireType.Bit32).float(message.frequencyPenalty);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message openai.v1.OpenAIModelParameters
+ */
+export const OpenAIModelParameters = new OpenAIModelParameters$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class OpenAIPromptRequest$Type extends MessageType {
     constructor() {
         super("openai.v1.OpenAIPromptRequest", [
             { no: 1, name: "model", kind: "enum", T: () => ["openai.v1.OpenAIModel", OpenAIModel] },
             { no: 2, name: "messages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => OpenAIMessage },
-            { no: 3, name: "temperature", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 4, name: "top_p", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 5, name: "max_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 6, name: "user_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "presence_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 8, name: "frequency_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 3, name: "parameters", kind: "message", T: () => OpenAIModelParameters },
+            { no: 4, name: "application_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value) {
@@ -240,23 +311,11 @@ class OpenAIPromptRequest$Type extends MessageType {
                 case /* repeated openai.v1.OpenAIMessage messages */ 2:
                     message.messages.push(OpenAIMessage.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional float temperature */ 3:
-                    message.temperature = reader.float();
+                case /* openai.v1.OpenAIModelParameters parameters */ 3:
+                    message.parameters = OpenAIModelParameters.internalBinaryRead(reader, reader.uint32(), options, message.parameters);
                     break;
-                case /* optional float top_p */ 4:
-                    message.topP = reader.float();
-                    break;
-                case /* optional uint32 max_tokens */ 5:
-                    message.maxTokens = reader.uint32();
-                    break;
-                case /* optional string user_id */ 6:
-                    message.userId = reader.string();
-                    break;
-                case /* optional float presence_penalty */ 7:
-                    message.presencePenalty = reader.float();
-                    break;
-                case /* optional float frequency_penalty */ 8:
-                    message.frequencyPenalty = reader.float();
+                case /* optional string application_id */ 4:
+                    message.applicationId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -276,24 +335,12 @@ class OpenAIPromptRequest$Type extends MessageType {
         /* repeated openai.v1.OpenAIMessage messages = 2; */
         for (let i = 0; i < message.messages.length; i++)
             OpenAIMessage.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional float temperature = 3; */
-        if (message.temperature !== undefined)
-            writer.tag(3, WireType.Bit32).float(message.temperature);
-        /* optional float top_p = 4; */
-        if (message.topP !== undefined)
-            writer.tag(4, WireType.Bit32).float(message.topP);
-        /* optional uint32 max_tokens = 5; */
-        if (message.maxTokens !== undefined)
-            writer.tag(5, WireType.Varint).uint32(message.maxTokens);
-        /* optional string user_id = 6; */
-        if (message.userId !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.userId);
-        /* optional float presence_penalty = 7; */
-        if (message.presencePenalty !== undefined)
-            writer.tag(7, WireType.Bit32).float(message.presencePenalty);
-        /* optional float frequency_penalty = 8; */
-        if (message.frequencyPenalty !== undefined)
-            writer.tag(8, WireType.Bit32).float(message.frequencyPenalty);
+        /* openai.v1.OpenAIModelParameters parameters = 3; */
+        if (message.parameters)
+            OpenAIModelParameters.internalBinaryWrite(message.parameters, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional string application_id = 4; */
+        if (message.applicationId !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.applicationId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -42,80 +42,93 @@ public object PromptConfigResponseKt {
      * The expected prompt variables
      * ```
      *
-     * `map<string, string> expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * `repeated string expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * @return A list containing the expectedPromptVariables.
      */
-     public val expectedPromptVariables: com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, ExpectedPromptVariablesProxy>
+    public val expectedPromptVariables: com.google.protobuf.kotlin.DslList<kotlin.String, ExpectedPromptVariablesProxy>
       @kotlin.jvm.JvmSynthetic
-      @JvmName("getExpectedPromptVariablesMap")
-      get() = com.google.protobuf.kotlin.DslMap(
-        _builder.getExpectedPromptVariablesMap()
+      get() = com.google.protobuf.kotlin.DslList(
+        _builder.getExpectedPromptVariablesList()
       )
     /**
      * ```
      * The expected prompt variables
      * ```
      *
-     * `map<string, string> expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * `repeated string expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * @param value The expectedPromptVariables to add.
      */
-    @JvmName("putExpectedPromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, ExpectedPromptVariablesProxy>
-      .put(key: kotlin.String, value: kotlin.String) {
-         _builder.putExpectedPromptVariables(key, value)
-       }
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("addExpectedPromptVariables")
+    public fun com.google.protobuf.kotlin.DslList<kotlin.String, ExpectedPromptVariablesProxy>.add(value: kotlin.String) {
+      _builder.addExpectedPromptVariables(value)
+    }
     /**
      * ```
      * The expected prompt variables
      * ```
      *
-     * `map<string, string> expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * `repeated string expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * @param value The expectedPromptVariables to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("setExpectedPromptVariables")
+    @kotlin.jvm.JvmName("plusAssignExpectedPromptVariables")
     @Suppress("NOTHING_TO_INLINE")
-    public inline operator fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, ExpectedPromptVariablesProxy>
-      .set(key: kotlin.String, value: kotlin.String) {
-         put(key, value)
-       }
+    public inline operator fun com.google.protobuf.kotlin.DslList<kotlin.String, ExpectedPromptVariablesProxy>.plusAssign(value: kotlin.String) {
+      add(value)
+    }
     /**
      * ```
      * The expected prompt variables
      * ```
      *
-     * `map<string, string> expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * `repeated string expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * @param values The expectedPromptVariables to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("removeExpectedPromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, ExpectedPromptVariablesProxy>
-      .remove(key: kotlin.String) {
-         _builder.removeExpectedPromptVariables(key)
-       }
+    @kotlin.jvm.JvmName("addAllExpectedPromptVariables")
+    public fun com.google.protobuf.kotlin.DslList<kotlin.String, ExpectedPromptVariablesProxy>.addAll(values: kotlin.collections.Iterable<kotlin.String>) {
+      _builder.addAllExpectedPromptVariables(values)
+    }
     /**
      * ```
      * The expected prompt variables
      * ```
      *
-     * `map<string, string> expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * `repeated string expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * @param values The expectedPromptVariables to add.
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("putAllExpectedPromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, ExpectedPromptVariablesProxy>
-      .putAll(map: kotlin.collections.Map<kotlin.String, kotlin.String>) {
-         _builder.putAllExpectedPromptVariables(map)
-       }
+    @kotlin.jvm.JvmName("plusAssignAllExpectedPromptVariables")
+    @Suppress("NOTHING_TO_INLINE")
+    public inline operator fun com.google.protobuf.kotlin.DslList<kotlin.String, ExpectedPromptVariablesProxy>.plusAssign(values: kotlin.collections.Iterable<kotlin.String>) {
+      addAll(values)
+    }
     /**
      * ```
      * The expected prompt variables
      * ```
      *
-     * `map<string, string> expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * `repeated string expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     * @param index The index to set the value at.
+     * @param value The expectedPromptVariables to set.
      */
     @kotlin.jvm.JvmSynthetic
-    @JvmName("clearExpectedPromptVariables")
-    public fun com.google.protobuf.kotlin.DslMap<kotlin.String, kotlin.String, ExpectedPromptVariablesProxy>
-      .clear() {
-         _builder.clearExpectedPromptVariables()
-       }
-  }
+    @kotlin.jvm.JvmName("setExpectedPromptVariables")
+    public operator fun com.google.protobuf.kotlin.DslList<kotlin.String, ExpectedPromptVariablesProxy>.set(index: kotlin.Int, value: kotlin.String) {
+      _builder.setExpectedPromptVariables(index, value)
+    }/**
+     * ```
+     * The expected prompt variables
+     * ```
+     *
+     * `repeated string expected_prompt_variables = 1 [json_name = "expectedPromptVariables"];`
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("clearExpectedPromptVariables")
+    public fun com.google.protobuf.kotlin.DslList<kotlin.String, ExpectedPromptVariablesProxy>.clear() {
+      _builder.clearExpectedPromptVariables()
+    }}
 }
 @kotlin.jvm.JvmSynthetic
 public inline fun gateway.v1.Gateway.PromptConfigResponse.copy(block: `gateway.v1`.PromptConfigResponseKt.Dsl.() -> kotlin.Unit): gateway.v1.Gateway.PromptConfigResponse =
