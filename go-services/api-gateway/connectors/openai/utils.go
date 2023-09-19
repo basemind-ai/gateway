@@ -2,24 +2,41 @@ package openai
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
+
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/go-shared/datatypes"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 )
 
-var modelTypeMap = map[db.ModelType]openaiconnector.OpenAIModel{
+var ModelTypeMap = map[db.ModelType]openaiconnector.OpenAIModel{
 	db.ModelTypeGpt35Turbo:    openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 	db.ModelTypeGpt35Turbo16k: openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_16K,
 	db.ModelTypeGpt4:          openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT4_8K,
 	db.ModelTypeGpt432k:       openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT4_32K,
 }
 
-func GetModelType(modelType db.ModelType) openaiconnector.OpenAIModel {
-	value, ok := modelTypeMap[modelType]
+func GetModelType(modelType db.ModelType) (*openaiconnector.OpenAIModel, error) {
+	value, ok := ModelTypeMap[modelType]
 	if !ok {
-		panic("unknown model type")
+		return nil, fmt.Errorf("unknown model type {%s}", modelType)
 	}
-	return value
+	return &value, nil
+}
+
+func ParseTemplateVariables(content string, expectedVariables []string, templateVariables map[string]string) (string, error) {
+	for _, expectedVariable := range expectedVariables {
+		value, ok := templateVariables[expectedVariable]
+
+		if !ok {
+			return "", fmt.Errorf("missing template variable {%s}", expectedVariable)
+		}
+
+		content = strings.ReplaceAll(content, fmt.Sprintf("{%s}", expectedVariable), value)
+	}
+
+	return content, nil
 }
 
 func CreatePromptRequest(
@@ -29,9 +46,16 @@ func CreatePromptRequest(
 	promptMessages []byte,
 	templateVariables map[string]string,
 ) (*openaiconnector.OpenAIPromptRequest, error) {
+	model, modelErr := GetModelType(modelType)
+	if modelErr != nil {
+		return nil, modelErr
+	}
+
 	promptRequest := &openaiconnector.OpenAIPromptRequest{
-		Model:         GetModelType(modelType),
+		Model:         *model,
 		ApplicationId: &applicationId,
+		Parameters:    &openaiconnector.OpenAIModelParameters{},
+		Messages:      make([]*openaiconnector.OpenAIMessage, 0),
 	}
 
 	if parametersUnmarshalErr := json.Unmarshal(modelParameters, promptRequest.Parameters); parametersUnmarshalErr != nil {
@@ -44,17 +68,19 @@ func CreatePromptRequest(
 		return nil, messagesUnmarshalErr
 	}
 	for _, message := range messages {
-		if err := message.ParseTemplateVariables(templateVariables); err != nil {
-			return nil, err
-		}
-
 		openaiMessage := &openaiconnector.OpenAIMessage{}
 		if unmarshalErr := json.Unmarshal(message.ProviderMessage, openaiMessage); unmarshalErr != nil {
 			return nil, unmarshalErr
 		}
-		if message.Content != "" {
-			openaiMessage.Content = &message.Content
+
+		if openaiMessage.Content != nil {
+			parsedContent, parseErr := ParseTemplateVariables(*openaiMessage.Content, message.ExpectedTemplateVariables, templateVariables)
+			if parseErr != nil {
+				return nil, parseErr
+			}
+			openaiMessage.Content = &parsedContent
 		}
+
 		promptRequest.Messages = append(promptRequest.Messages, openaiMessage)
 	}
 
