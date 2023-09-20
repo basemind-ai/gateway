@@ -5,17 +5,15 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 
+# Copied generated kotlin code from the root directory
+gateway/
+promptModels/
+
 # Android Studio generated files and folders
 #captures/
 #.externalNativeBuild/
 #.cxx/
-*.apk
-output.json
 
 # IntelliJ
 .idea/
 misc.xml
-
-# Keystore files
-*.jks
-*.keystore

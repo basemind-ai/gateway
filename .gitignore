@@ -24,7 +24,11 @@
 .idea/dataSources/*
 .idea/httpRequests/*
 .idea/libraries
+.idea/misc.xml
 .idea/modules.xml
+.idea/modules/*.iml
+.idea/modules/android-client/*.iml
+.idea/modules/android-sdk/*.iml
 .idea/navEditor.xml
 .idea/shelf/*
 .idea/sonarlint/
