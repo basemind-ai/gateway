@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -42,20 +40,49 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-tasks.named("build").dependsOn("copyGenKtToLocal")
+// directories
+private val generatedKotlinDir = "../gen/kt"
+private val destinationDir = "src/main/java/com/basemind/client/gateway"
 
-tasks.register("copyGenKtToLocal") {
-    doFirst {
-        println("Copying Generated Kotlin Files from ../gen/kt")
+// tasks
+private val taskCopyGenKtToSrc = "copyGeneratedKotlinToSrc"
+private val taskCleanGenCopies = "cleanGenCopies"
+private val taskDefaultBuild = "build"
 
-        val sourceDir = file("../gen/kt")
-        val destinationDir = project.file("src/main/java/com/basemind/client/gateway")
+// messages
+private val descTaskCopyGenKtToSrc = "Copying Generated Kotlin Files from $generatedKotlinDir ..."
+private val conclusionTaskCopyGenKtToSrc = "Files copied from %s to $destinationDir!"
+private val descTaskCleanGenCopies = "Cleaning the contents from $destinationDir ..."
+private val conclusionTaskCleanGenCopies = "Directory \"$destinationDir\" is cleaned!"
 
-        project.copy {
-            from(sourceDir)
-            into(destinationDir)
-        }
+tasks.register(taskCleanGenCopies) {
+    println(descTaskCleanGenCopies)
 
-        println("Files copied from $sourceDir to $destinationDir")
+    val destDir = project.file(destinationDir)
+    // Delete the contents of the folder
+    destDir.deleteRecursively()
+
+    // Optionally, recreate the empty folder if needed
+    destDir.mkdirs()
+
+    println(conclusionTaskCleanGenCopies)
+}
+
+tasks.register(taskCopyGenKtToSrc) {
+    println(descTaskCopyGenKtToSrc)
+
+    val sourceDir = file(generatedKotlinDir)
+    val destDir = project.file(destinationDir)
+
+    project.copy {
+        from(sourceDir)
+        into(destDir)
     }
+
+    println(String.format(conclusionTaskCopyGenKtToSrc, sourceDir))
+}
+
+tasks.named(taskDefaultBuild) {
+    dependsOn(taskCleanGenCopies)
+    dependsOn(taskCopyGenKtToSrc)
 }
