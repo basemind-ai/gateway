@@ -82,7 +82,6 @@ func CreateGRPCServer[T any](opts Options[T]) *grpc.Server {
 			),
 		)
 	}
-
 	server := grpc.NewServer(serverOpts...)
 	opts.GrpcRegistrar(server, opts.Service)
 	return server

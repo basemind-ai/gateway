@@ -99,12 +99,17 @@ func (Server) RequestStreamingPrompt(request *gateway.PromptRequest, streamServe
 
 	for {
 		select {
-		case content := <-contentChannel:
+		case content, isOpen := <-contentChannel:
+			if !isOpen {
+				return nil
+			}
+
 			if sendErr := streamServer.SendMsg(&gateway.StreamingPromptResponse{
 				Content: content,
 			}); sendErr != nil {
 				return sendErr
 			}
+
 		case err := <-errorChannel:
 			return err
 		}

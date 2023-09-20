@@ -3,11 +3,12 @@ package openai
 import (
 	"context"
 	"errors"
+	"io"
+
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
-	"io"
 )
 
 type Client struct {
@@ -30,15 +31,15 @@ func (c *Client) RequestPrompt(
 	application db.Application,
 	templateVariables map[string]string,
 ) (string, error) {
-	promptRequest, promptRequestErr := CreatePromptRequest(
+	promptRequest, createPromptRequestErr := CreatePromptRequest(
 		applicationId,
 		application.ModelType,
 		application.ModelParameters,
 		application.PromptMessages,
 		templateVariables,
 	)
-	if promptRequestErr != nil {
-		return "", promptRequestErr
+	if createPromptRequestErr != nil {
+		return "", createPromptRequestErr
 	}
 
 	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
