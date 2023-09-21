@@ -31,7 +31,7 @@ export default function NavRailList({
 	const pathname: string = usePathname().split('?')[0];
 
 	return (
-		<div className="mt-12 ml-2 ">
+		<div className="mt-12 ml-2 " data-testid="nav-rail-list">
 			<LinkMenu
 				href={Navigation.Dashboard}
 				text={item1}
