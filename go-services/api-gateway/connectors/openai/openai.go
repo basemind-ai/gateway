@@ -20,8 +20,10 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 	if dialErr != nil {
 		return nil, dialErr
 	}
+
 	client := openaiconnector.NewOpenAIServiceClient(conn)
 	log.Info().Msg("initialized OpenAI connector")
+
 	return &Client{client: client}, nil
 }
 

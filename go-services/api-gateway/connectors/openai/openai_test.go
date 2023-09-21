@@ -2,10 +2,9 @@ package openai_test
 
 import (
 	"context"
-	"encoding/json"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/go-services/api-gateway/connectors/openai"
-	"github.com/basemind-ai/monorepo/go-shared/datatypes"
+	openaitestutils "github.com/basemind-ai/monorepo/go-services/api-gateway/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/go-shared/db"
 	"github.com/basemind-ai/monorepo/go-shared/grpcutils/testutils"
 	"github.com/stretchr/testify/assert"
@@ -15,66 +14,8 @@ import (
 	"testing"
 )
 
-type MockOpenAIService struct {
-	openaiconnector.UnimplementedOpenAIServiceServer
-	Context         context.Context
-	Error           error
-	ExpectedRequest *openaiconnector.OpenAIPromptRequest
-	Response        *openaiconnector.OpenAIPromptResponse
-	Stream          []*openaiconnector.OpenAIStreamResponse
-	T               *testing.T
-}
-
-func (m MockOpenAIService) OpenAIPrompt(_ context.Context, request *openaiconnector.OpenAIPromptRequest) (*openaiconnector.OpenAIPromptResponse, error) {
-	if m.Error != nil {
-		return nil, m.Error
-	}
-
-	assert.NotNil(m.T, m.Response)
-
-	if m.ExpectedRequest != nil {
-		assert.Equal(m.T, m.ExpectedRequest.Model, request.Model)
-		assert.Equal(m.T, m.ExpectedRequest.ApplicationId, request.ApplicationId)
-
-		for i, message := range m.ExpectedRequest.Messages {
-			assert.Equal(m.T, message.Role, request.Messages[i].Role)
-			assert.Equal(m.T, message.Content, request.Messages[i].Content)
-		}
-
-		assert.Equal(m.T, m.ExpectedRequest.Parameters, request.Parameters)
-	}
-
-	return m.Response, nil
-}
-
-func (m MockOpenAIService) OpenAIStream(request *openaiconnector.OpenAIPromptRequest, stream openaiconnector.OpenAIService_OpenAIStreamServer) error {
-	if m.Error != nil {
-		return m.Error
-	}
-
-	assert.NotNil(m.T, m.Stream)
-
-	if m.ExpectedRequest != nil {
-		assert.Equal(m.T, m.ExpectedRequest.Model, request.Model)
-		assert.Equal(m.T, m.ExpectedRequest.ApplicationId, request.ApplicationId)
-
-		for i, message := range m.ExpectedRequest.Messages {
-			assert.Equal(m.T, message.Role, request.Messages[i].Role)
-			assert.Equal(m.T, message.Content, request.Messages[i].Content)
-		}
-
-		assert.Equal(m.T, m.ExpectedRequest.Parameters, request.Parameters)
-	}
-
-	for _, response := range m.Stream {
-		_ = stream.Send(response)
-	}
-
-	return nil
-}
-
-func CreateClientAndService(t *testing.T) (*openai.Client, *MockOpenAIService) {
-	mockService := &MockOpenAIService{T: t}
+func CreateClientAndService(t *testing.T) (*openai.Client, *openaitestutils.MockOpenAIService) {
+	mockService := &openaitestutils.MockOpenAIService{T: t}
 	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](t, openaiconnector.RegisterOpenAIServiceServer, mockService)
 	client, clientErr := openai.New(
 		"",
@@ -90,39 +31,6 @@ func CreateClientAndService(t *testing.T) (*openai.Client, *MockOpenAIService) {
 	return client, mockService
 }
 
-func CreatePromptMessages(t *testing.T, systemMessage string, userMessage string) []byte {
-	s, createPromptMessageErr := datatypes.CreatePromptTemplateMessage(make([]string, 0), map[string]interface{}{
-		"content": systemMessage,
-		"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
-	})
-	assert.NoError(t, createPromptMessageErr)
-	u, createPromptMessageErr := datatypes.CreatePromptTemplateMessage([]string{"userInput"}, map[string]interface{}{
-		"content": userMessage,
-		"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
-	})
-	assert.NoError(t, createPromptMessageErr)
-
-	promptMessages, marshalErr := json.Marshal([]datatypes.PromptTemplateMessage{
-		*s, *u,
-	})
-	assert.NoError(t, marshalErr)
-
-	return promptMessages
-}
-
-func CreateModelParameters(t *testing.T) []byte {
-	modelParameters, marshalErr := json.Marshal(map[string]float32{
-		"temperature":       1,
-		"top_p":             1,
-		"max_tokens":        1,
-		"presence_penalty":  1,
-		"frequency_penalty": 1,
-	})
-	assert.NoError(t, marshalErr)
-
-	return modelParameters
-}
-
 func TestOpenAIConnectorClient(t *testing.T) {
 	ctx := context.Background()
 	applicationId := "123"
@@ -130,8 +38,8 @@ func TestOpenAIConnectorClient(t *testing.T) {
 	systemMessage := "You are a helpful chat bot."
 	userMessage := "This is what the user asked for: {userInput}"
 
-	promptMessages := CreatePromptMessages(t, systemMessage, userMessage)
-	modelParameters := CreateModelParameters(t)
+	promptMessages := openaitestutils.CreatePromptMessages(t, systemMessage, userMessage)
+	modelParameters := openaitestutils.CreateModelParameters(t)
 
 	application := db.Application{
 		ModelType:       db.ModelTypeGpt35Turbo,

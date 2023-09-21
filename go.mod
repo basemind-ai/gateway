@@ -10,10 +10,10 @@ require (
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/google/uuid v1.3.1
-	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/ory/dockertest/v3 v3.10.0
-	github.com/redis/go-redis/v9 v9.2.0
+	github.com/redis/go-redis/v9 v9.0.5
 	github.com/rs/zerolog v1.30.0
 	github.com/sethvargo/go-envconfig v0.9.0
 	github.com/stretchr/testify v1.8.4
@@ -42,6 +42,7 @@ require (
 	github.com/docker/docker v24.0.6+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
+	github.com/go-redis/redismock/v9 v9.0.3 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect

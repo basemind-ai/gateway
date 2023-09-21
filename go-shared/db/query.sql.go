@@ -31,10 +31,9 @@ INSERT INTO application (
     model_vendor,
     model_parameters,
     prompt_messages,
-    expected_template_variables,
-    project_id
+    expected_template_variables
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9
+    $1, $2, $3, $4, $5, $6, $7, $8
 ) RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_messages, expected_template_variables, created_at, updated_at, project_id
 `
 
@@ -47,7 +46,6 @@ type CreateApplicationParams struct {
 	ModelParameters           []byte      `json:"model_parameters"`
 	PromptMessages            []byte      `json:"prompt_messages"`
 	ExpectedTemplateVariables []string    `json:"expected_template_variables"`
-	ProjectID_2               pgtype.UUID `json:"project_id_2"`
 }
 
 func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationParams) (Application, error) {
@@ -60,7 +58,6 @@ func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationPa
 		arg.ModelParameters,
 		arg.PromptMessages,
 		arg.ExpectedTemplateVariables,
-		arg.ProjectID_2,
 	)
 	var i Application
 	err := row.Scan(

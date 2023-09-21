@@ -62,9 +62,7 @@ func RecoveryHandler(p any) (err error) {
 	return status.Errorf(codes.Unknown, "panic triggered: %v", p)
 }
 
-func CreateGRPCServer[T any](opts Options[T]) *grpc.Server {
-	serverOpts := make([]grpc.ServerOption, 0)
-
+func CreateGRPCServer[T any](opts Options[T], serverOpts ...grpc.ServerOption) *grpc.Server {
 	if opts.Environment != "test" {
 		interceptorLogger, loggingOptions := CreateInterceptorLogger(opts.Environment != "production")
 
@@ -82,6 +80,7 @@ func CreateGRPCServer[T any](opts Options[T]) *grpc.Server {
 			),
 		)
 	}
+
 	server := grpc.NewServer(serverOpts...)
 	opts.GrpcRegistrar(server, opts.Service)
 	return server
