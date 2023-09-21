@@ -13,6 +13,10 @@ import (
 	"time"
 )
 
+const (
+	ErrorApplicationIdNotInContext = "application ID not found in context"
+)
+
 type Server struct {
 	gateway.UnimplementedAPIGatewayServiceServer
 }
@@ -40,7 +44,7 @@ func RetrieveApplicationHandler(ctx context.Context, applicationId string) func(
 func (Server) RequestPromptConfig(ctx context.Context, _ *gateway.PromptConfigRequest) (*gateway.PromptConfigResponse, error) {
 	applicationId, ok := ctx.Value(constants.ApplicationIDContextKey).(string)
 	if !ok {
-		return nil, status.Errorf(codes.Unauthenticated, "application ID not found in context")
+		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
 
 	application, retrievalErr := rediscache.With[db.Application](
@@ -58,7 +62,7 @@ func (Server) RequestPromptConfig(ctx context.Context, _ *gateway.PromptConfigRe
 func (Server) RequestPrompt(ctx context.Context, request *gateway.PromptRequest) (*gateway.PromptResponse, error) {
 	applicationId, ok := ctx.Value(constants.ApplicationIDContextKey).(string)
 	if !ok {
-		return nil, status.Errorf(codes.Unauthenticated, "application ID not found in context")
+		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
 
 	application, retrievalErr := rediscache.With[db.Application](
@@ -82,7 +86,7 @@ func (Server) RequestPrompt(ctx context.Context, request *gateway.PromptRequest)
 func (Server) RequestStreamingPrompt(request *gateway.PromptRequest, streamServer gateway.APIGatewayService_RequestStreamingPromptServer) error {
 	applicationId, ok := streamServer.Context().Value(constants.ApplicationIDContextKey).(string)
 	if !ok {
-		return status.Errorf(codes.Unauthenticated, "application ID not found in context")
+		return status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
 
 	application, retrievalErr := rediscache.With[db.Application](

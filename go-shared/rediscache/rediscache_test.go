@@ -2,11 +2,8 @@ package rediscache_test
 
 import (
 	"github.com/basemind-ai/monorepo/go-shared/rediscache"
-	"github.com/go-redis/cache/v9"
-	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
 	"testing"
-	"time"
 )
 
 func TestRedisClient(t *testing.T) {
@@ -23,30 +20,32 @@ func TestRedisClient(t *testing.T) {
 		})
 	})
 
-	t.Run("Caches values as expected", func(t *testing.T) {
-		_, err := rediscache.New("redis://redis:6379")
-		assert.Nil(t, err)
+	// test below currently fails due to: https://github.com/go-redis/redismock/issues/83
 
-		db, mockRedis := redismock.NewClientMock()
-
-		rediscache.SetClient(cache.New(&cache.Options{
-			Redis: db,
-		}))
-
-		client := rediscache.GetClient()
-
-		key := "john"
-
-		val := &cache.Item{
-			TTL:   time.Minute,
-			Key:   key,
-			Value: "doe",
-		}
-
-		expected, _ := client.Marshal("doe")
-
-		mockRedis.ExpectSet(key, expected, time.Minute).SetVal("OK")
-		setErr := client.Set(val)
-		assert.NoError(t, setErr)
-	})
+	// t.Run("Caches values as expected", func(t *testing.T) {
+	//	_, err := rediscache.New("redis://redis:6379")
+	//	assert.Nil(t, err)
+	//
+	//	db, mockRedis := redismock.NewClientMock() //nolint: typecheck
+	//
+	//	rediscache.SetClient(cache.New(&cache.Options{
+	//		Redis: db,
+	//	}))
+	//
+	//	client := rediscache.GetClient()
+	//
+	//	key := "john"
+	//
+	//	val := &cache.Item{
+	//		TTL:   time.Minute,
+	//		Key:   key,
+	//		Value: "doe",
+	//	}
+	//
+	//	expected, _ := client.Marshal("doe")
+	//
+	//	mockRedis.ExpectSet(key, expected, time.Minute).SetVal("OK")
+	//	setErr := client.Set(val)
+	//	assert.NoError(t, setErr)
+	// })
 }
