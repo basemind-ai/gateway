@@ -1,4 +1,3 @@
-// todo fix use translation here
 import { usePathname } from 'next/navigation';
 import { render, screen } from 'tests/test-utils';
 import { Mock } from 'vitest';
