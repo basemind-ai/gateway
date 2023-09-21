@@ -2,41 +2,23 @@ package datatypes
 
 import (
 	"encoding/json"
-	"fmt"
-	"regexp"
-	"strings"
 )
 
-var curlyBracesRegex = regexp.MustCompile(`\{([^}]+)\}`)
-
+// PromptTemplateMessage is a data type used to represent a generic prompt message template.
 type PromptTemplateMessage struct {
-	// The prompt template content
-	Content string `json:"content"`
-	// Expected template variables, if any
+	// Expected template variables, if any.
 	ExpectedTemplateVariables []string `json:"expectedTemplateVariables"`
-	// Provider message
+	// Provider message - a json object representing the provider specific message object.
 	ProviderMessage json.RawMessage `json:"providerMessage"`
 }
 
-func NewPromptTemplateMessage(content string, providerMessage []byte) *PromptTemplateMessage {
-	ExpectedTemplateVariables := curlyBracesRegex.FindAllString(content, -1)
+func CreatePromptTemplateMessage(expectedTemplateVariables []string, providerMessage map[string]interface{}) (*PromptTemplateMessage, error) {
+	unmarshalledProviderMessage, unmarshalErr := json.Marshal(providerMessage)
+	if unmarshalErr != nil {
+		return nil, unmarshalErr
+	}
 	return &PromptTemplateMessage{
-		Content:                   content,
-		ExpectedTemplateVariables: ExpectedTemplateVariables,
-		ProviderMessage:           providerMessage,
-	}
-}
-
-func (p *PromptTemplateMessage) ParseTemplateVariables(templateVariables map[string]string) error {
-	for _, expectedTemplateVariable := range p.ExpectedTemplateVariables {
-		value, ok := templateVariables[expectedTemplateVariable]
-
-		if !ok {
-			return fmt.Errorf("missing template variable %s", expectedTemplateVariable)
-		}
-
-		p.Content = strings.ReplaceAll(p.Content, expectedTemplateVariable, value)
-	}
-
-	return nil
+		ExpectedTemplateVariables: expectedTemplateVariables,
+		ProviderMessage:           unmarshalledProviderMessage,
+	}, nil
 }

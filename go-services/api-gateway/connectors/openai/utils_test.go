@@ -1,0 +1,191 @@
+package openai_test
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/basemind-ai/monorepo/go-services/api-gateway/connectors/openai"
+	"github.com/basemind-ai/monorepo/go-shared/datatypes"
+	"github.com/stretchr/testify/assert"
+	"testing"
+
+	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
+	"github.com/basemind-ai/monorepo/go-shared/db"
+)
+
+func TestUtils(t *testing.T) {
+	t.Run("GetModelType", func(t *testing.T) {
+		t.Run("returns the expected models", func(t *testing.T) {
+			for modelType, expected := range openai.ModelTypeMap {
+				result, err := openai.GetModelType(modelType)
+
+				assert.NoError(t, err)
+				assert.Equal(t, expected, *result)
+			}
+		})
+		t.Run("panics with unknown model type if not in modelTypeMap", func(t *testing.T) {
+			modelType, err := openai.GetModelType("unknown")
+			assert.Error(t, err)
+			assert.Nil(t, modelType)
+		})
+	})
+
+	t.Run("ParseTemplateVariables", func(t *testing.T) {
+		t.Run("replaces all expected variables", func(t *testing.T) {
+			content := "Hello {name}, your age is {age}. How are you {name}?"
+			expectedVariables := []string{"name", "age"}
+			templateVariables := map[string]string{"name": "John", "age": "30"}
+
+			result, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
+			assert.NoError(t, err)
+
+			expected := "Hello John, your age is 30. How are you John?"
+			assert.Equal(t, expected, result)
+		})
+		t.Run("returns the content string with no errors when there are no expected variables", func(t *testing.T) {
+			content := "Hello {name}, your age is {age}. How are you {name}?"
+			expectedVariables := make([]string, 0)
+			templateVariables := map[string]string{"name": "John", "age": "30"}
+
+			result, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
+			assert.NoError(t, err)
+
+			assert.Equal(t, content, result)
+		})
+		t.Run("returns an error when an expected variable is missing", func(t *testing.T) {
+			content := "Hello {name}, your age is {age}."
+			expectedVariables := []string{"name", "age"}
+			templateVariables := map[string]string{"name": "John"}
+
+			_, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
+			assert.Error(t, err)
+
+			expectedError := "missing template variable {age}"
+			assert.Equal(t, expectedError, err.Error())
+		})
+		t.Run("handles empty template variable", func(t *testing.T) {
+			content := "Hello {name}, how are you?"
+			expectedVariables := []string{"name"}
+			templateVariables := map[string]string{"name": ""}
+
+			result, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
+			assert.NoError(t, err)
+
+			expected := "Hello , how are you?"
+			assert.Equal(t, expected, result)
+		})
+	})
+
+	t.Run("CreatePromptRequest", func(t *testing.T) {
+		t.Run("creates a prompt request correctly", func(t *testing.T) {
+			floatValue := float32(1)
+			uintValue := uint32(1)
+			expectedModelParameters := &openaiconnector.OpenAIModelParameters{
+				Temperature:      &floatValue,
+				TopP:             &floatValue,
+				MaxTokens:        &uintValue,
+				PresencePenalty:  &floatValue,
+				FrequencyPenalty: &floatValue,
+			}
+
+			systemMessage := "You are a helpful chat bot."
+			userMessage := "This is what the user asked for: {userInput}"
+			applicationId := "12345"
+			modelType := db.ModelTypeGpt35Turbo
+
+			modelParameters, marshalErr := json.Marshal(map[string]float32{
+				"temperature":       floatValue,
+				"top_p":             floatValue,
+				"max_tokens":        floatValue,
+				"presence_penalty":  floatValue,
+				"frequency_penalty": floatValue,
+			})
+			assert.NoError(t, marshalErr)
+
+			s, createPromptMessageErr := datatypes.CreatePromptTemplateMessage(make([]string, 0), map[string]interface{}{
+				"content": systemMessage,
+				"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
+			})
+			assert.NoError(t, createPromptMessageErr)
+			u, createPromptMessageErr := datatypes.CreatePromptTemplateMessage([]string{"userInput"}, map[string]interface{}{
+				"content": userMessage,
+				"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
+			})
+			assert.NoError(t, createPromptMessageErr)
+
+			promptMessages, marshalErr := json.Marshal([]datatypes.PromptTemplateMessage{
+				*s, *u,
+			})
+			assert.NoError(t, marshalErr)
+
+			userInput := "Please write me a short poem about cheese."
+			templateVariables := map[string]string{"userInput": userInput}
+
+			content := fmt.Sprintf("This is what the user asked for: %s", userInput)
+
+			expectedPromptRequest := &openaiconnector.OpenAIPromptRequest{
+				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				ApplicationId: &applicationId,
+				Parameters:    expectedModelParameters,
+				Messages: []*openaiconnector.OpenAIMessage{
+					{
+						Content: &systemMessage,
+						Role:    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
+					},
+					{
+						Content: &content,
+						Role:    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
+					},
+				},
+			}
+
+			promptRequest, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
+			assert.NoError(t, err)
+
+			assert.Equal(t, expectedPromptRequest, promptRequest)
+		})
+		t.Run("returns error for unknown model type", func(t *testing.T) {
+			applicationId := "12345"
+			modelType := "unknown"
+			modelParameters := []byte(`{}`)
+			promptMessages := []byte(`[]`)
+			templateVariables := map[string]string{}
+
+			_, err := openai.CreatePromptRequest(applicationId, db.ModelType(modelType), modelParameters, promptMessages, templateVariables)
+			assert.Error(t, err)
+
+			expectedError := "unknown model type {unknown}"
+			assert.Equal(t, expectedError, err.Error())
+		})
+		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {
+			applicationId := "12345"
+			modelType := db.ModelTypeGpt35Turbo
+			modelParameters := []byte(`invalid_json`)
+			promptMessages := []byte(`[]`)
+			templateVariables := make(map[string]string)
+
+			_, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
+			assert.Error(t, err)
+		})
+
+		t.Run("returns error if prompt messages is invalid json", func(t *testing.T) {
+			applicationId := "12345"
+			modelType := db.ModelTypeGpt35Turbo
+			modelParameters := []byte(`{"temperature": 0.8}`)
+			promptMessages := []byte(`invalid_json`)
+			templateVariables := map[string]string{"userInput": "Please write me a short poem about cheese."}
+
+			_, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
+			assert.Error(t, err)
+		})
+		t.Run("returns error if template variables does not contain the necessary variables", func(t *testing.T) {
+			applicationId := "12345"
+			modelType := db.ModelTypeGpt35Turbo
+			modelParameters := []byte(`{"temperature": 0.8}`)
+			promptMessages := []byte(`[{"content": "This is what the user asked for: {userInput}", "role": "user"}]`)
+			templateVariables := map[string]string{"invalidVariable": "Please write me a short poem about cheese."}
+
+			_, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
+			assert.Error(t, err)
+		})
+	})
+}
