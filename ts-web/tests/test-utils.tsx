@@ -5,7 +5,7 @@ import {
 	RenderHookResult,
 	RenderOptions,
 } from '@testing-library/react';
-import { RouterContext } from 'next/dist/shared/lib/router-context';
+import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
 import I18nProvider from 'next-translate/I18nProvider';
 import enCommon from 'public/locales/en/common.json';
 import enSignIn from 'public/locales/en/signIn.json';
