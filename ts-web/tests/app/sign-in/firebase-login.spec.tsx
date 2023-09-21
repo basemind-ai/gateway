@@ -35,7 +35,7 @@ describe('FirebaseLogin tests', () => {
 		});
 	});
 
-	it.skip('renders custom ui after firebase ui loads and hides loader', async () => {
+	it('renders custom ui after firebase ui loads and hides loader', async () => {
 		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
 			return {
 				currentUser: null,
