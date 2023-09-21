@@ -1,9 +1,11 @@
 'use client';
 import { useRouter } from 'next/navigation';
+import useTranslation from 'next-translate/useTranslation';
 
 import { getFirebaseAuth } from '@/utils/firebase';
 
 export function LogoutButton() {
+	const { t } = useTranslation('common');
 	const router = useRouter();
 
 	async function logout() {
@@ -19,7 +21,7 @@ export function LogoutButton() {
 			}}
 			data-testid="dashboard-logout-btn"
 		>
-			LOGOUT
+			{t('logout')}
 		</button>
 	);
 }
