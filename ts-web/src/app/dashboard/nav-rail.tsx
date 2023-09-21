@@ -18,7 +18,7 @@ export default function NavRail() {
 					item3={t('api')}
 					item4={t('persistence')}
 					item5={t('middleware')}
-					item6={t('a/b-testing')}
+					item6={t('abTesting')}
 				/>
 			</div>
 			<div>
@@ -31,7 +31,7 @@ export default function NavRail() {
 							{t('bannerBody1')} <br /> {t('bannerBody2')}
 						</p>
 						<a
-							className="mt-3 inline-flex items-center gap-2 mt-5 text-sm font-medium text-secondary hover:text-blue-700"
+							className="inline-flex items-center gap-2 mt-5 text-sm font-medium text-secondary hover:underline"
 							href="#"
 						>
 							{t('bannerCTA')}

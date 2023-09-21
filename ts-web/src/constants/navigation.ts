@@ -7,7 +7,7 @@ export enum Navigation {
 	Help = '/helpdesk',
 	Docs = '/docs',
 	Settings = '/settings',
-	Billing = '/payments',
+	Billing = '/billing',
 	ComingSoon = '/coming-soon',
 	GetSupport = '/helpdesk/get-support',
 }
