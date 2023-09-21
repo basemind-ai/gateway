@@ -112,3 +112,6 @@ vi.mock(
 		};
 	},
 );
+beforeEach(() => {
+	routerReplaceMock.mockReset();
+});
