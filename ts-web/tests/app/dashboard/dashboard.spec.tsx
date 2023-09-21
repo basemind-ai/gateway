@@ -36,15 +36,4 @@ describe('Dashboard page tests', () => {
 			expect(routerReplaceMock).toHaveBeenCalledWith('/');
 		});
 	});
-
-	it('handles non logged in case', async () => {
-		vi.doMock('@/stores/user-store', () => ({
-			useUser: () => null,
-		}));
-		render(<Dashboard />);
-
-		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalledWith('/');
-		});
-	});
 });
