@@ -1,4 +1,5 @@
 import { usePathname } from 'next/navigation';
+import navRailTranslation from 'public/locales/en/dashboard-navrail.json';
 import { render, screen } from 'tests/test-utils';
 import { Mock } from 'vitest';
 
@@ -19,5 +20,19 @@ describe('NavRail tests', () => {
 	it('should render NavRailFooter', () => {
 		render(<NavRail />);
 		expect(screen.getByTestId('nav-rail-footer')).toBeInTheDocument();
+	});
+	it('uses translated text', () => {
+		render(<NavRail />);
+		const overviewItem = screen.getByText(navRailTranslation.overview);
+		const testingItem = screen.getByText(navRailTranslation.testing);
+		const apiItem = screen.getByText(navRailTranslation.api);
+		const bannerTitle = screen.getByText(navRailTranslation.bannerTitle);
+		const bannerCTA = screen.getByText(navRailTranslation.bannerCTA);
+
+		expect(overviewItem).toBeInTheDocument();
+		expect(testingItem).toBeInTheDocument();
+		expect(apiItem).toBeInTheDocument();
+		expect(bannerTitle).toBeInTheDocument();
+		expect(bannerCTA).toBeInTheDocument();
 	});
 });
