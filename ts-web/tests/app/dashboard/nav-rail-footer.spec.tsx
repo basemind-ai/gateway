@@ -7,6 +7,7 @@ import { Navigation } from '@/constants';
 
 describe('NavRailFooter tests', () => {
 	(usePathname as Mock).mockReturnValue(Navigation.Settings + '?4242');
+
 	it('should highlight the correct link based on pathname', () => {
 		render(<NavRailFooter />);
 

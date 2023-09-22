@@ -7,6 +7,7 @@ import { Navigation } from '@/constants';
 
 describe('NavRail tests', () => {
 	(usePathname as Mock).mockReturnValue(Navigation.API);
+
 	it('should render Logo', () => {
 		render(<NavRail />);
 		expect(screen.getByTestId('logo-component')).toBeInTheDocument();
