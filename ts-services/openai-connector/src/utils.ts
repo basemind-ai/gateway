@@ -76,7 +76,7 @@ export function createOpenAIRequest(
 		temperature,
 		user: applicationId,
 		top_p: topP,
-		max_tokens: maxTokens,
+		max_tokens: !!maxTokens && maxTokens > 0 ? maxTokens : undefined,
 		frequency_penalty: frequencyPenalty,
 		presence_penalty: presencePenalty,
 		model: getOpenAIModel(model),

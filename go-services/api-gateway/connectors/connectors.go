@@ -10,7 +10,6 @@ import (
 
 var (
 	once                  sync.Once
-	config                *ConnectorConfig
 	openaiConnectorClient *openai.Client
 )
 
@@ -22,7 +21,7 @@ func Init(ctx context.Context, opts ...grpc.DialOption) error {
 	var err error
 
 	once.Do(func() {
-		config = &ConnectorConfig{}
+		config := &ConnectorConfig{}
 		if envErr := envconfig.Process(ctx, config); envErr != nil {
 			err = envErr
 			return

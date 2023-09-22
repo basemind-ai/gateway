@@ -8,6 +8,7 @@ import (
 	"github.com/basemind-ai/monorepo/go-shared/db"
 	"github.com/basemind-ai/monorepo/go-shared/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"time"
@@ -64,19 +65,20 @@ func (Server) RequestPrompt(ctx context.Context, request *gateway.PromptRequest)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
-
+	log.Debug().Str("applicationId", applicationId).Msg("entered prompt request")
 	application, retrievalErr := rediscache.With[db.Application](
 		ctx, applicationId, &db.Application{}, time.Minute*30, RetrieveApplicationHandler(ctx, applicationId),
 	)
 	if retrievalErr != nil {
 		return nil, retrievalErr
 	}
-
+	log.Debug().Msg("retrieved application")
 	client := connectors.GetOpenAIConnectorClient()
 	responseContent, requestErr := client.RequestPrompt(ctx, applicationId, *application, request.TemplateVariables)
 	if requestErr != nil {
 		return nil, retrievalErr
 	}
+	log.Debug().Msg("got response from openai")
 
 	return &gateway.PromptResponse{
 		Content:      responseContent,
