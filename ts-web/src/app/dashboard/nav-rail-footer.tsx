@@ -8,7 +8,7 @@ import { Bank2, Gear, QuestionCircle } from 'react-bootstrap-icons';
 import { Navigation } from '@/constants';
 
 export default function NavRailFooter() {
-	const pathname: string = usePathname().split('?')[0];
+	const [pathname] = usePathname().split('?');
 	return (
 		<div
 			className="flex h-12 items-center justify-around relative border-t border-base-100 shadow-sm"
