@@ -166,9 +166,15 @@ importers:
             react:
                 specifier: 18.2.0
                 version: 18.2.0
+            react-bootstrap-icons:
+                specifier: ^1.10.3
+                version: 1.10.3(react@18.2.0)
             react-dom:
                 specifier: 18.2.0
                 version: 18.2.0(react@18.2.0)
+            react-icons:
+                specifier: ^4.11.0
+                version: 4.11.0(react@18.2.0)
             zustand:
                 specifier: ^4.4.1
                 version: 4.4.1(@types/react@18.2.22)(react@18.2.0)
@@ -9459,7 +9465,6 @@ packages:
                 integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==,
             }
         engines: { node: '>=0.10.0' }
-        dev: true
 
     /object-hash@3.0.0:
         resolution:
@@ -10123,7 +10128,6 @@ packages:
             loose-envify: 1.4.0
             object-assign: 4.1.1
             react-is: 16.13.1
-        dev: true
 
     /protobufjs@7.2.5:
         resolution:
@@ -10215,6 +10219,18 @@ packages:
             safe-buffer: 5.2.1
         dev: true
 
+    /react-bootstrap-icons@1.10.3(react@18.2.0):
+        resolution:
+            {
+                integrity: sha512-j4hSby6gT9/enhl3ybB1tfr1slZNAYXDVntcRrmVjxB3//2WwqrzpESVqKhyayYVaWpEtnwf9wgUQ03cuziwrw==,
+            }
+        peerDependencies:
+            react: '>=16.8.6'
+        dependencies:
+            prop-types: 15.8.1
+            react: 18.2.0
+        dev: false
+
     /react-dom@18.2.0(react@18.2.0):
         resolution:
             {
@@ -10227,12 +10243,22 @@ packages:
             react: 18.2.0
             scheduler: 0.23.0
 
+    /react-icons@4.11.0(react@18.2.0):
+        resolution:
+            {
+                integrity: sha512-V+4khzYcE5EBk/BvcuYRq6V/osf11ODUM2J8hg2FDSswRrGvqiYUYPRy4OdrWaQOBj4NcpJfmHZLNaD+VH0TyA==,
+            }
+        peerDependencies:
+            react: '*'
+        dependencies:
+            react: 18.2.0
+        dev: false
+
     /react-is@16.13.1:
         resolution:
             {
                 integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==,
             }
-        dev: true
 
     /react-is@17.0.2:
         resolution:

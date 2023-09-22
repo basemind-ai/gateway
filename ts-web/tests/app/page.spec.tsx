@@ -3,11 +3,9 @@ import { render, screen } from 'tests/test-utils';
 import Home from '@/app/page';
 
 describe('Home page tests', () => {
-	it('renders LoginContainer', () => {
+	it('renders signupButton', () => {
 		render(<Home />);
-
-		const loginContainer = screen.getByTestId('login-container');
-
-		expect(loginContainer).toBeInTheDocument();
+		const signupButton = screen.getByTestId('sign-in-link');
+		expect(signupButton).toBeInTheDocument();
 	});
 });

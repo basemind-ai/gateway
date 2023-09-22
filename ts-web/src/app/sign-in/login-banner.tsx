@@ -1,25 +1,22 @@
 'use client';
 import Image from 'next/image';
+import useTranslation from 'next-translate/useTranslation';
 
 import { Dimensions } from '@/constants';
 
 export function LoginBanner({
-	heading,
-	title,
-	subtitle,
 	imageSrc,
 	iconSrc,
 }: {
-	heading: string;
-	title: string;
-	subtitle: string;
 	imageSrc: string;
 	iconSrc: string;
 }) {
+	const { t } = useTranslation('signin-banner');
+
 	return (
 		<div
 			data-testid="login-banner-container"
-			className="rounded-xl border border-neutral-700 p-6 bg-zinc-900 relative"
+			className="rounded-xl border border-b-base-300 p-6 bg-base-200 relative"
 		>
 			<div className="flex gap-4 items-center">
 				<Image
@@ -27,20 +24,24 @@ export function LoginBanner({
 					height={Dimensions.Eight}
 					width={Dimensions.Eight}
 					src={iconSrc}
-					alt={heading}
+					alt={t('bannerHeading')}
 				/>
-				<h1 className="text-white text-xl">{heading}</h1>
+				<h1 className="text-base-content text-xl">
+					{t('bannerHeading')}
+				</h1>
 			</div>
 
-			<h3 className="text-zinc-100 mt-4 text-lg">{title}</h3>
-			<p className="text-neutral-500 mt-5">{subtitle}</p>
+			<h3 className="text-base-content mt-4 text-lg">
+				{t('bannerTitle')}
+			</h3>
+			<p className="text-neutral-content mt-5">{t('bannerSubtitle')}</p>
 			<Image
 				data-testid="login-banner-splash-image"
 				fill={true}
 				priority
 				className="w-4/5 mt-12 ml-auto mr-auto relative"
 				src={imageSrc}
-				alt={title}
+				alt={t('title')}
 			/>
 		</div>
 	);

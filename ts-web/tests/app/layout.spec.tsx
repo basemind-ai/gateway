@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import RootLayout from '@/layout';
+import RootLayout from '@/app/layout';
 
 vi.mock('next/font/google', () => ({
 	Inter: () => ({ className: 'Inter' }),

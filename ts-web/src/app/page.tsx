@@ -1,9 +1,17 @@
 'use client';
 
-import 'firebaseui/dist/firebaseui.css';
+import Link from 'next/link';
+import useTranslation from 'next-translate/useTranslation';
 
-import { LoginContainer } from '@/client-components/login-container';
+import { Navigation } from '@/constants';
 
 export default function Home() {
-	return <LoginContainer />;
+	const { t } = useTranslation('common');
+	return (
+		<main className="h-full w-full flex items-center justify-center bg-base-100">
+			<Link data-testid="sign-in-link" href={Navigation.SignIn}>
+				{t('sign-in')}
+			</Link>
+		</main>
+	);
 }

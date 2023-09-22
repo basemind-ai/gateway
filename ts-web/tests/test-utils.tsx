@@ -8,26 +8,17 @@ import {
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
 import I18nProvider from 'next-translate/I18nProvider';
 import enCommon from 'public/locales/en/common.json';
-import enSignIn from 'public/locales/en/signIn.json';
-import enSignInBanner from 'public/locales/en/signInBanner.json';
-import { mockNextRouter } from 'tests/mocks';
+import enDashboardNavrail from 'public/locales/en/dashboard-navrail.json';
+import enSignInBanner from 'public/locales/en/signin-banner.json';
+import enSignIn from 'public/locales/en/signin-firebase.json';
+import { nextRouterMock } from 'tests/mocks';
 
 const namespaces = {
-	common: enCommon,
-	signIn: enSignIn,
-	signInBanner: enSignInBanner,
+	'common': enCommon,
+	'signin-firebase': enSignIn,
+	'dashboard-navrail': enDashboardNavrail,
+	'signin-banner': enSignInBanner,
 };
-
-const routerReplaceMock = vi.fn();
-
-vi.mock('next/navigation', () => ({
-	useRouter() {
-		return {
-			asPath: '/',
-			replace: routerReplaceMock,
-		};
-	},
-}));
 
 const customRender = (
 	ui: React.ReactElement,
@@ -35,10 +26,8 @@ const customRender = (
 ) => {
 	return render(ui, {
 		wrapper: ({ children }: any) => {
-			const router = mockNextRouter({});
-
 			return (
-				<RouterContext.Provider value={router}>
+				<RouterContext.Provider value={nextRouterMock}>
 					<I18nProvider lang="en" namespaces={namespaces}>
 						{children}
 					</I18nProvider>
@@ -55,10 +44,8 @@ const customRenderHook = (
 ): RenderHookResult<any, any> => {
 	return renderHook(initialProps, {
 		wrapper: ({ children }: any) => {
-			const router = mockNextRouter({});
-
 			return (
-				<RouterContext.Provider value={router}>
+				<RouterContext.Provider value={nextRouterMock}>
 					<I18nProvider lang="en" namespaces={namespaces}>
 						{children}
 					</I18nProvider>
@@ -71,10 +58,7 @@ const customRenderHook = (
 
 export * from '@testing-library/dom';
 
-export {
-	customRender as render,
-	customRenderHook as renderHook,
-	routerReplaceMock,
-};
+export { customRender as render, customRenderHook as renderHook };
 
 export { act } from '@testing-library/react';
+export { routerReplaceMock } from 'tests/mocks';

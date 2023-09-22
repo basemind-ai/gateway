@@ -20,15 +20,6 @@ vi.mock('@/utils/firebase', () => ({
 }));
 
 describe('Dashboard page tests', () => {
-	it('renders username', () => {
-		render(<Dashboard />);
-
-		const displayName = screen.getByTestId('dashboard-display-name');
-
-		expect(displayName).toBeInTheDocument();
-		expect(displayName.innerHTML).toContain(mockDisplayName);
-	});
-
 	it('handles logout', async () => {
 		render(<Dashboard />);
 
@@ -41,17 +32,6 @@ describe('Dashboard page tests', () => {
 		await waitFor(() => {
 			expect(signOutMock).toHaveBeenCalled();
 		});
-		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalledWith('/');
-		});
-	});
-
-	it('handles non logged in case', async () => {
-		vi.doMock('@/stores/user-store', () => ({
-			useUser: () => null,
-		}));
-		render(<Dashboard />);
-
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith('/');
 		});

@@ -4,7 +4,8 @@ module.exports = {
 	defaultLocale: 'en',
 	pages: {
 		'*': ['common'],
-		'/': ['signIn', 'signInBanner'],
+		'/sign-in': ['signin-firebase', 'signin-banner'],
+		'/dashboard': ['dashboard-navrail'],
 	},
 	loadLocaleFrom: (language, namespace) =>
 		import(`./public/locales/${language}/${namespace}.json`).then(

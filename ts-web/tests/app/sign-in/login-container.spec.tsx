@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import { LoginContainer } from '@/client-components/login-container';
+import { LoginContainer } from '@/app/sign-in/login-container';
 
 describe('LoginContainer tests', () => {
 	it('renders Firebase login and LoginBanner', () => {
