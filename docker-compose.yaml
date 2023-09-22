@@ -44,6 +44,8 @@ services:
             REDIS_CONNECTION_STRING: redis://redis:6379
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
             GOOGLE_APPLICATION_CREDENTIALS: /.secrets/serviceAccountKey.json
+            OPENAI_CONNECTOR_ADDRESS: openai-connector:8000
+            JWT_SECRET: 'jeronimo'
         command:
             [
                 'gow',
@@ -102,6 +104,7 @@ services:
             PORT: 8000
         working_dir: /app/ts-services/openai-connector
         command: ['pnpm', 'run', 'dev']
+        env_file: '.secrets/.env.openai-connector'
     ts-web:
         build:
             dockerfile: docker/Dockerfile.ts-web

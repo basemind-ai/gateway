@@ -74,6 +74,12 @@ tasks:
         desc: Lint the project
         cmds:
             - pre-commit run --all-files
+            - task: lint:android
+    lint:android:
+        desc: Lint the android codebase with in-built lint checks
+        cmds:
+            - ./gradlew :android-client:lint
+            - ./gradlew :android-sdk:lint
     # database
     db:up:
         desc: Bring up the local database

@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "BaseMind.AI Client"
 include(":android-client")
+include(":android-sdk")

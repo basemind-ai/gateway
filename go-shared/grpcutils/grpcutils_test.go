@@ -57,5 +57,4 @@ func TestGrpcUtils(t *testing.T) {
 		assert.Error(t, err)
 		assert.Contains(t, buf.String(), "panic triggered: test panic")
 	})
-
 }

@@ -30,24 +30,22 @@ INSERT INTO application (
     model_type,
     model_vendor,
     model_parameters,
-    prompt_template,
-    template_variables,
-    project_id
+    prompt_messages,
+    expected_template_variables
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9
-) RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_template, template_variables, created_at, updated_at, project_id
+    $1, $2, $3, $4, $5, $6, $7, $8
+) RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_messages, expected_template_variables, created_at, updated_at, project_id
 `
 
 type CreateApplicationParams struct {
-	ProjectID         pgtype.UUID `json:"project_id"`
-	Name              string      `json:"name"`
-	Description       string      `json:"description"`
-	ModelType         ModelType   `json:"model_type"`
-	ModelVendor       ModelVendor `json:"model_vendor"`
-	ModelParameters   []byte      `json:"model_parameters"`
-	PromptTemplate    []byte      `json:"prompt_template"`
-	TemplateVariables []byte      `json:"template_variables"`
-	ProjectID_2       pgtype.UUID `json:"project_id_2"`
+	ProjectID                 pgtype.UUID `json:"project_id"`
+	Name                      string      `json:"name"`
+	Description               string      `json:"description"`
+	ModelType                 ModelType   `json:"model_type"`
+	ModelVendor               ModelVendor `json:"model_vendor"`
+	ModelParameters           []byte      `json:"model_parameters"`
+	PromptMessages            []byte      `json:"prompt_messages"`
+	ExpectedTemplateVariables []string    `json:"expected_template_variables"`
 }
 
 func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationParams) (Application, error) {
@@ -58,9 +56,8 @@ func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationPa
 		arg.ModelType,
 		arg.ModelVendor,
 		arg.ModelParameters,
-		arg.PromptTemplate,
-		arg.TemplateVariables,
-		arg.ProjectID_2,
+		arg.PromptMessages,
+		arg.ExpectedTemplateVariables,
 	)
 	var i Application
 	err := row.Scan(
@@ -70,8 +67,8 @@ func (q *Queries) CreateApplication(ctx context.Context, arg CreateApplicationPa
 		&i.ModelType,
 		&i.ModelVendor,
 		&i.Name,
-		&i.PromptTemplate,
-		&i.TemplateVariables,
+		&i.PromptMessages,
+		&i.ExpectedTemplateVariables,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ProjectID,
@@ -191,8 +188,7 @@ func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) 
 }
 
 const findApplicationById = `-- name: FindApplicationById :one
-SELECT
-    id, description, model_parameters, model_type, model_vendor, name, prompt_template, template_variables, created_at, updated_at, project_id
+SELECT id, description, model_parameters, model_type, model_vendor, name, prompt_messages, expected_template_variables, created_at, updated_at, project_id -- noqa: L044
 FROM application
 WHERE id = $1
 `
@@ -207,8 +203,8 @@ func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (Appl
 		&i.ModelType,
 		&i.ModelVendor,
 		&i.Name,
-		&i.PromptTemplate,
-		&i.TemplateVariables,
+		&i.PromptMessages,
+		&i.ExpectedTemplateVariables,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ProjectID,
@@ -289,20 +285,20 @@ SET
     model_type = $4,
     model_vendor = $5,
     model_parameters = $6,
-    prompt_template = $7,
-    template_variables = $8
-WHERE id = $1 RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_template, template_variables, created_at, updated_at, project_id
+    prompt_messages = $7,
+    expected_template_variables = $8
+WHERE id = $1 RETURNING id, description, model_parameters, model_type, model_vendor, name, prompt_messages, expected_template_variables, created_at, updated_at, project_id
 `
 
 type UpdateApplicationParams struct {
-	ID                pgtype.UUID `json:"id"`
-	Name              string      `json:"name"`
-	Description       string      `json:"description"`
-	ModelType         ModelType   `json:"model_type"`
-	ModelVendor       ModelVendor `json:"model_vendor"`
-	ModelParameters   []byte      `json:"model_parameters"`
-	PromptTemplate    []byte      `json:"prompt_template"`
-	TemplateVariables []byte      `json:"template_variables"`
+	ID                        pgtype.UUID `json:"id"`
+	Name                      string      `json:"name"`
+	Description               string      `json:"description"`
+	ModelType                 ModelType   `json:"model_type"`
+	ModelVendor               ModelVendor `json:"model_vendor"`
+	ModelParameters           []byte      `json:"model_parameters"`
+	PromptMessages            []byte      `json:"prompt_messages"`
+	ExpectedTemplateVariables []string    `json:"expected_template_variables"`
 }
 
 func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationParams) (Application, error) {
@@ -313,8 +309,8 @@ func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationPa
 		arg.ModelType,
 		arg.ModelVendor,
 		arg.ModelParameters,
-		arg.PromptTemplate,
-		arg.TemplateVariables,
+		arg.PromptMessages,
+		arg.ExpectedTemplateVariables,
 	)
 	var i Application
 	err := row.Scan(
@@ -324,8 +320,8 @@ func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationPa
 		&i.ModelType,
 		&i.ModelVendor,
 		&i.Name,
-		&i.PromptTemplate,
-		&i.TemplateVariables,
+		&i.PromptMessages,
+		&i.ExpectedTemplateVariables,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ProjectID,

@@ -29,7 +29,10 @@ export async function openAIPrompt(
 		const { usage, choices } =
 			await getOpenAIClient().chat.completions.create(request);
 		const finishTime = Date.now();
-		logger.debug({ startTime, finishTime }, 'openAI request completed');
+		logger.debug(
+			{ startTime, finishTime, choices },
+			'openAI request completed',
+		);
 		callback(null, {
 			content: choices[0]?.message.content ?? '',
 			promptTokens: usage?.prompt_tokens ?? 0,

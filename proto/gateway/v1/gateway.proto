@@ -20,7 +20,7 @@ message PromptConfigRequest {}
 // A response for a prompt configuration - retrieving the expected prompt variables
 message PromptConfigResponse {
   // The expected prompt variables
-  map<string, string> expected_prompt_variables = 1;
+  repeated string expected_prompt_variables = 1;
 }
 
 // A request for a prompt - sending user input to the server.

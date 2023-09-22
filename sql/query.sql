@@ -61,11 +61,10 @@ INSERT INTO application (
     model_type,
     model_vendor,
     model_parameters,
-    prompt_template,
-    template_variables,
-    project_id
+    prompt_messages,
+    expected_template_variables
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9
+    $1, $2, $3, $4, $5, $6, $7, $8
 ) RETURNING *;
 
 -- name: UpdateApplication :one
@@ -76,8 +75,8 @@ SET
     model_type = $4,
     model_vendor = $5,
     model_parameters = $6,
-    prompt_template = $7,
-    template_variables = $8
+    prompt_messages = $7,
+    expected_template_variables = $8
 WHERE id = $1 RETURNING *;
 
 -- name: DeleteApplication :exec

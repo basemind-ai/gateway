@@ -58,6 +58,43 @@ export interface OpenAIMessage {
     functionCall?: OpenAIFunctionCall;
 }
 /**
+ * OpenAI API Request parameters
+ *
+ * @generated from protobuf message openai.v1.OpenAIModelParameters
+ */
+export interface OpenAIModelParameters {
+    /**
+     * Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
+     *
+     * @generated from protobuf field: optional float temperature = 1;
+     */
+    temperature?: number;
+    /**
+     * Nucleus Sampling: https://platform.openai.com/docs/api-reference/chat/create#top_p
+     *
+     * @generated from protobuf field: optional float top_p = 2;
+     */
+    topP?: number;
+    /**
+     * Maximum Tokens after which the prompt will stop generating a response;
+     *
+     * @generated from protobuf field: optional uint32 max_tokens = 3;
+     */
+    maxTokens?: number;
+    /**
+     * Penalize New tokens: https://platform.openai.com/docs/api-reference/chat/create#presence_penalty
+     *
+     * @generated from protobuf field: optional float presence_penalty = 4;
+     */
+    presencePenalty?: number;
+    /**
+     * Penalize Repeated tokens: https://platform.openai.com/docs/api-reference/chat/create#frequency_penalty
+     *
+     * @generated from protobuf field: optional float frequency_penalty = 5;
+     */
+    frequencyPenalty?: number;
+}
+/**
  * A Request for an OpenAI regular LLM Prompt
  *
  * @generated from protobuf message openai.v1.OpenAIPromptRequest
@@ -76,41 +113,17 @@ export interface OpenAIPromptRequest {
      */
     messages: OpenAIMessage[];
     /**
-     * Temperature Sampling: https://platform.openai.com/docs/api-reference/chat/create#temperature
+     * OpenAI API Request parameters
      *
-     * @generated from protobuf field: optional float temperature = 3;
+     * @generated from protobuf field: openai.v1.OpenAIModelParameters parameters = 3;
      */
-    temperature?: number;
+    parameters?: OpenAIModelParameters;
     /**
-     * Nucleus Sampling: https://platform.openai.com/docs/api-reference/chat/create#top_p
+     * Unique application ID to keep track of conversations;
      *
-     * @generated from protobuf field: optional float top_p = 4;
+     * @generated from protobuf field: optional string application_id = 4;
      */
-    topP?: number;
-    /**
-     * Maximum Tokens after which the prompt will stop generating a response;
-     *
-     * @generated from protobuf field: optional uint32 max_tokens = 5;
-     */
-    maxTokens?: number;
-    /**
-     * Unique user ID to keep track of conversations;
-     *
-     * @generated from protobuf field: optional string user_id = 6;
-     */
-    userId?: string;
-    /**
-     * Penalize New tokens: https://platform.openai.com/docs/api-reference/chat/create#presence_penalty
-     *
-     * @generated from protobuf field: optional float presence_penalty = 7;
-     */
-    presencePenalty?: number;
-    /**
-     * Penalize Repeated tokens: https://platform.openai.com/docs/api-reference/chat/create#frequency_penalty
-     *
-     * @generated from protobuf field: optional float frequency_penalty = 8;
-     */
-    frequencyPenalty?: number;
+    applicationId?: string;
 }
 /**
  * An OpenAI Prompt Response Message
@@ -256,6 +269,16 @@ declare class OpenAIMessage$Type extends MessageType<OpenAIMessage> {
  * @generated MessageType for protobuf message openai.v1.OpenAIMessage
  */
 export declare const OpenAIMessage: OpenAIMessage$Type;
+declare class OpenAIModelParameters$Type extends MessageType<OpenAIModelParameters> {
+    constructor();
+    create(value?: PartialMessage<OpenAIModelParameters>): OpenAIModelParameters;
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OpenAIModelParameters): OpenAIModelParameters;
+    internalBinaryWrite(message: OpenAIModelParameters, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter;
+}
+/**
+ * @generated MessageType for protobuf message openai.v1.OpenAIModelParameters
+ */
+export declare const OpenAIModelParameters: OpenAIModelParameters$Type;
 declare class OpenAIPromptRequest$Type extends MessageType<OpenAIPromptRequest> {
     constructor();
     create(value?: PartialMessage<OpenAIPromptRequest>): OpenAIPromptRequest;
