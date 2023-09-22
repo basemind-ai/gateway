@@ -43,10 +43,7 @@ func GetClient() *cache.Cache {
 // With is a helper function that will check if a key exists in redis, and if it does, it will return the value. If it
 // does not exist, it will call the fallback function, set the value in redis, and return the value.
 func With[T interface{}](ctx context.Context, key string, target *T, ttl time.Duration, fallback func() (*T, error)) (*T, error) {
-	if client.Exists(ctx, key) {
-		if getErr := client.Get(ctx, key, target); getErr != nil {
-			return nil, getErr
-		}
+	if getErr := client.Get(ctx, key, target); getErr == nil {
 		return target, nil
 	}
 	retrieved, retrieveErr := fallback()

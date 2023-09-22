@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
-func CreateTestServer[T any](t *testing.T, grpcRegistrar func(s grpc.ServiceRegistrar, srv T), service T) *bufconn.Listener {
+func CreateTestServer[T any](t *testing.T, grpcRegistrar func(s grpc.ServiceRegistrar, srv T), service T, serverOpts ...grpc.ServerOption) *bufconn.Listener {
 	listen := bufconn.Listen(101024 * 1024)
 	server := grpcutils.CreateGRPCServer[T](
 		grpcutils.Options[T]{
@@ -20,7 +20,9 @@ func CreateTestServer[T any](t *testing.T, grpcRegistrar func(s grpc.ServiceRegi
 			Service:       service,
 			GrpcRegistrar: grpcRegistrar,
 			ServiceName:   "test-service",
-		})
+		},
+		serverOpts...,
+	)
 
 	go func() {
 		if err := server.Serve(listen); err != nil {

@@ -1,10 +1,9 @@
 package openai_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/go-services/api-gateway/connectors/openai"
-	"github.com/basemind-ai/monorepo/go-shared/datatypes"
+	openaitestutils "github.com/basemind-ai/monorepo/go-services/api-gateway/connectors/openai/testutils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 
@@ -79,6 +78,7 @@ func TestUtils(t *testing.T) {
 		t.Run("creates a prompt request correctly", func(t *testing.T) {
 			floatValue := float32(1)
 			uintValue := uint32(1)
+
 			expectedModelParameters := &openaiconnector.OpenAIModelParameters{
 				Temperature:      &floatValue,
 				TopP:             &floatValue,
@@ -92,30 +92,8 @@ func TestUtils(t *testing.T) {
 			applicationId := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 
-			modelParameters, marshalErr := json.Marshal(map[string]float32{
-				"temperature":       floatValue,
-				"top_p":             floatValue,
-				"max_tokens":        floatValue,
-				"presence_penalty":  floatValue,
-				"frequency_penalty": floatValue,
-			})
-			assert.NoError(t, marshalErr)
-
-			s, createPromptMessageErr := datatypes.CreatePromptTemplateMessage(make([]string, 0), map[string]interface{}{
-				"content": systemMessage,
-				"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
-			})
-			assert.NoError(t, createPromptMessageErr)
-			u, createPromptMessageErr := datatypes.CreatePromptTemplateMessage([]string{"userInput"}, map[string]interface{}{
-				"content": userMessage,
-				"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
-			})
-			assert.NoError(t, createPromptMessageErr)
-
-			promptMessages, marshalErr := json.Marshal([]datatypes.PromptTemplateMessage{
-				*s, *u,
-			})
-			assert.NoError(t, marshalErr)
+			modelParameters := openaitestutils.CreateModelParameters(t)
+			promptMessages := openaitestutils.CreatePromptMessages(t, systemMessage, userMessage)
 
 			userInput := "Please write me a short poem about cheese."
 			templateVariables := map[string]string{"userInput": userInput}

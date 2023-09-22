@@ -62,10 +62,9 @@ INSERT INTO application (
     model_vendor,
     model_parameters,
     prompt_messages,
-    expected_template_variables,
-    project_id
+    expected_template_variables
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9
+    $1, $2, $3, $4, $5, $6, $7, $8
 ) RETURNING *;
 
 -- name: UpdateApplication :one

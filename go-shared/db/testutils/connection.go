@@ -32,7 +32,7 @@ func CreateTestDB(t *testing.T) {
 		Env: []string{
 			"POSTGRES_PASSWORD=test",
 			"POSTGRES_USER=test",
-			"POSTGRES_DB=test",
+			fmt.Sprintf("POSTGRES_DB=%s", t.Name()),
 			"listen_addresses = '*'",
 		},
 	}
@@ -48,7 +48,7 @@ func CreateTestDB(t *testing.T) {
 
 	_ = resource.Expire(120)
 
-	dbUrl := fmt.Sprintf("postgres://test:test@%s/test?sslmode=disable", resource.GetHostPort("5432/tcp"))
+	dbUrl := fmt.Sprintf("postgres://test:test@%s/%s?sslmode=disable", resource.GetHostPort("5432/tcp"), t.Name())
 
 	connection, connectionErr := db.CreateConnection(context.TODO(), dbUrl)
 	if connectionErr != nil {

@@ -8,10 +8,11 @@ export const OPEN_AI_ORGANIZATION_NAMESPACE = 'BaseMind.AI';
 export function getOpenAIClient(): OpenAI {
 	if (!ref.instance) {
 		const apiKey = loadEnv('OPEN_AI_API_KEY');
-		const organization = OPEN_AI_ORGANIZATION_NAMESPACE;
+		// FIXME: we cannot set organization until we have an official user
+		//const organization = OPEN_AI_ORGANIZATION_NAMESPACE;
 		ref.instance = new OpenAI({
 			apiKey,
-			organization,
+			organization: null,
 		});
 	}
 	return ref.instance;
