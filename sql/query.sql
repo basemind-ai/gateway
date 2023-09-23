@@ -87,7 +87,7 @@ SELECT
 FROM application
 WHERE id = $1;
 
--- name: CreatePromptConfig: one
+-- name: CreatePromptConfig :one
 INSERT INTO prompt_config (
     name,
     model_parameters,
@@ -101,7 +101,7 @@ INSERT INTO prompt_config (
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
 
--- name: UpdatePromptConfig: one
+-- name: UpdatePromptConfig :one
 UPDATE prompt_config
 SET
     name = $2,
@@ -115,12 +115,12 @@ SET
 WHERE id = $1
 RETURNING *;
 
--- name: DeletePromptConfig: exec
+-- name: DeletePromptConfig :exec
 DELETE
 FROM prompt_config
 WHERE id = $1;
 
--- name: FindPromptConfigById: one
+-- name: FindPromptConfigById :one
 SELECT
     id,
     name,
@@ -136,7 +136,7 @@ SELECT
 FROM prompt_config
 WHERE id = $1;
 
--- name: CreatePromptRequestRecord: one
+-- name: CreatePromptRequestRecord :one
 INSERT INTO prompt_request_record (
     is_stream_response,
     request_tokens,
@@ -147,7 +147,7 @@ INSERT INTO prompt_request_record (
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
--- name: FindPromptRequestRecords: many
+-- name: FindPromptRequestRecords :many
 SELECT
     id,
     is_stream_response,
@@ -159,7 +159,7 @@ FROM prompt_request_record
 WHERE prompt_config_id = $1
 ORDER BY start_time DESC;
 
--- name: CreatePromptTest
+-- name: CreatePromptTest :one
 INSERT INTO prompt_test (
     name,
     variable_values,
@@ -170,7 +170,7 @@ INSERT INTO prompt_test (
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
--- name: FindPromptTests: many
+-- name: FindPromptTests :many
 SELECT
     prc.finish_time,
     prc.request_tokens,
@@ -180,7 +180,6 @@ SELECT
     pt.id,
     pt.name,
     pt.response,
-    pt.updated_at,
     pt.variable_values
 FROM prompt_test AS pt
 LEFT JOIN prompt_request_record AS prc
