@@ -10,8 +10,6 @@ CREATE TABLE "project" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" cha
 CREATE INDEX "idx_project_name" ON "project" ("name");
 -- Create "application" table
 CREATE TABLE "application" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "description" text NOT NULL, "name" character varying(256) NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "project_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "application_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
--- Create index "idx_application_name" to table: "application"
-CREATE INDEX "idx_application_name" ON "application" ("name");
 -- Create index "idx_application_project_id" to table: "application"
 CREATE INDEX "idx_application_project_id" ON "application" ("project_id");
 -- Create "prompt_config" table

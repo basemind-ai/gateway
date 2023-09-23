@@ -65,7 +65,6 @@ CREATE TABLE application
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_application_name ON application (name);
 CREATE INDEX idx_application_project_id ON application (project_id);
 
 -- prompt-config
@@ -88,7 +87,6 @@ CREATE TABLE prompt_config
 CREATE INDEX idx_prompt_config_application_id ON prompt_config (application_id);
 CREATE INDEX idx_prompt_config_is_active ON prompt_config (is_active);
 CREATE INDEX idx_prompt_config_created_at ON prompt_config (created_at);
-CREATE UNIQUE INDEX idx_prompt_config_is_active_index ON prompt_config (name);
 
 -- prompt-request-record
 CREATE TABLE prompt_request_record
