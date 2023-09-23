@@ -1,0 +1,39 @@
+FROM node:20-slim AS base
+RUN npm i -g pnpm
+
+FROM base AS install
+WORKDIR /app/
+ARG NODE_ENV="production"
+ENV NODE_ENV=${NODE_ENV}
+COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
+COPY frontend/tsconfig.json frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/i18n.js frontend/postcss.config.js frontend/tailwind.config.js ./frontend/
+RUN pnpm install -r --ignore-scripts \
+    && pnpm add -D @next/swc-linux-arm64-gnu @next/swc-linux-arm64-musl -w
+
+FROM install AS build
+WORKDIR /app/
+COPY shared/ts shared/ts
+COPY frontend/src frontend/src
+COPY frontend/public frontend/public
+WORKDIR /app/frontend
+RUN pnpm run build
+
+FROM base AS app
+WORKDIR /app/
+EXPOSE 3000
+ENV PORT 3000
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED 1
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 app
+
+COPY frontend/public frontend/public
+COPY --from=build --chown=app:nodejs /app/frontend/dist frontend/dist
+
+COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/next-i18next.config.js frontend/tailwind.config.js ./frontend/
+RUN pnpm install -r --ignore-scripts
+
+WORKDIR /app/frontend
+USER app
+CMD ["pnpm", "run", "start"]

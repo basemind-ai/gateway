@@ -7,13 +7,14 @@ on:
         branches:
             - main
         paths:
-            - 'ts-services/**'
-            - 'ts-shared/**'
-            - 'ts-web/**'
-            - 'tsconfig.json'
+            - 'frontend/**'
+            - 'gen/ts/**'
             - 'package.json'
             - 'pnpm-lock.yaml'
             - 'pnpm-workspace.yaml'
+            - 'services/openai-connector/**'
+            - 'shared/ts/**'
+            - 'tsconfig.json'
             - 'vitest.*'
 env:
     NODE_OPTIONS: '--max_old_space_size=4096'

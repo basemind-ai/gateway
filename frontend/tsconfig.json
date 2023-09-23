@@ -1,0 +1,35 @@
+{
+	"extends": "../tsconfig.json",
+	"include": [
+		"*.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"*.ts",
+		".next/types/**/*.ts",
+		"dist/types/**/*.ts"
+	],
+	"exclude": ["node_modules"],
+	"compilerOptions": {
+		"baseUrl": "./",
+		"importHelpers": true,
+		"jsx": "preserve",
+		"lib": ["dom", "dom.iterable", "ESNext"],
+		"types": ["vitest/globals", "@testing-library/jest-dom"],
+		"isolatedModules": true,
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"sourceMap": true,
+		"noEmit": false,
+		"paths": {
+			"@/*": ["src/*"],
+			"tests/*": ["tests/*"],
+			"public/*": ["public/*"],
+			"shared/*": ["../shared/ts/src/*"]
+		},
+		"plugins": [
+			{
+				"name": "next"
+			}
+		]
+	}
+}

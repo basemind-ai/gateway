@@ -7,9 +7,9 @@ RUN go mod download \
 FROM install AS build
 ARG BUILD_TARGET
 COPY gen/go gen/go
-COPY go-shared go-shared
-COPY go-services/$BUILD_TARGET services/$BUILD_TARGET
-RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/monorepo/go-services/$BUILD_TARGET \
+COPY shared/go shared/go
+COPY services/$BUILD_TARGET services/$BUILD_TARGET
+RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/monorepo/services/$BUILD_TARGET \
     && chmod +x /go/bin/app
 
 # hadolint ignore=DL3007

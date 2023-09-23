@@ -33,8 +33,8 @@ services:
         volumes:
             - ./.secrets:/go/src/app/.secrets:cached
             - ./gen/go:/go/src/app/gen/go:cached
-            - ./go-services/api-gateway:/go/src/app/go-services/api-gateway:cached
-            - ./go-shared:/go/src/app/go-shared:cached
+            - ./services/api-gateway:/go/src/app/services/api-gateway:cached
+            - ./shared/go:/go/src/app/shared/go:cached
             - ./go.mod:/go/src/app/go.mod:cached
             - ./go.sum:/go/src/app/go.sum:cached
         environment:
@@ -51,7 +51,7 @@ services:
                 'gow',
                 '-e=go,mod,html',
                 'run',
-                '/go/src/app/go-services/api-gateway/main.go',
+                '/go/src/app/services/api-gateway/main.go',
             ]
     dashboard-backend:
         build:
@@ -64,8 +64,8 @@ services:
             - '4100:4100'
         volumes:
             - ./.secrets:/go/src/app/.secrets:cached
-            - ./go-services/dashboard-backend:/go/src/app/go-services/dashboard-backend:cached
-            - ./go-shared:/go/src/app/go-shared:cached
+            - ./services/dashboard-backend:/go/src/app/services/dashboard-backend:cached
+            - ./shared/go:/go/src/app/shared/go:cached
             - ./go.mod:/go/src/app/go.mod:cached
             - ./go.sum:/go/src/app/go.sum:cached
         environment:
@@ -75,12 +75,13 @@ services:
             REDIS_CONNECTION_STRING: redis://redis:6379
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
             GOOGLE_APPLICATION_CREDENTIALS: /.secrets/serviceAccountKey.json
+            JWT_SECRET: 'jeronimo'
         command:
             [
                 'gow',
                 '-e=go,mod,html',
                 'run',
-                '/go/src/app/go-services/dashboard-backend/main.go',
+                '/go/src/app/services/dashboard-backend/main.go',
             ]
     openai-connector:
         build:
@@ -95,19 +96,19 @@ services:
             - '8000:8000'
         volumes:
             - ./gen/ts:/app/gen/ts:cached
-            - ./ts-services/openai-connector/src:/app/ts-services/openai-connector/src:cached
-            - ./ts-shared/src:/app/ts-shared/src:cached
+            - ./services/openai-connector/src:/app/services/openai-connector/src:cached
+            - ./shared/ts/src:/app/shared/ts/src:cached
         environment:
             NODE_ENV: development
             GRPC_VERBOSITY: debug
             GRPC_TRACE: channel,subchannel,call_stream
             PORT: 8000
-        working_dir: /app/ts-services/openai-connector
+        working_dir: /app/services/openai-connector
         command: ['pnpm', 'run', 'dev']
         env_file: '.secrets/.env.openai-connector'
-    ts-web:
+    frontend:
         build:
-            dockerfile: docker/Dockerfile.ts-web
+            dockerfile: docker/Dockerfile.frontend
             context: .
             target: install
             args:
@@ -115,13 +116,13 @@ services:
         ports:
             - '3000:3000'
         volumes:
-            - ./ts-shared/src:/app/ts-shared/src:cached
-            - ./ts-web/public:/app/ts-web/public:cached
-            - ./ts-web/src:/app/ts-web/src:cached
+            - ./shared/ts/src:/app/shared/ts/src:cached
+            - ./frontend/public:/app/frontend/public:cached
+            - ./frontend/src:/app/frontend/src:cached
         environment:
             NEXT_PUBLIC_BACKEND_BASE_URL: http://0.0.0.0:8000/v1
             NODE_ENV: development
-        working_dir: /app/ts-web
+        working_dir: /app/frontend
         command: ['pnpm', 'run', 'dev']
         env_file: '.secrets/.env.frontend'
 volumes:

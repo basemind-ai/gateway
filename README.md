@@ -8,14 +8,12 @@ This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend servic
 -   `.secrets` - secret values that are gitignored.
 -   `android-client` - Android client SDK.
 -   `docker` - Dockerfiles.
+-   `frontend` - TypeScript based frontend application.
 -   `gen` - generated code.
--   `go-services` - Golang based microservices.
--   `go-shared` - Golang shared code.
 -   `proto` - gRPC and protobuf files.
+-   `services` - Microservices.
+-   `shared` - shared code.
 -   `sql` - SQL schema and query files from which we generate the DB DAL (Data Access Layer) and migrations.
--   `ts-services` - TypeScript based microservices.
--   `ts-shared` - TypeScript shared code.
--   `ts-web` - TypeScript based ts-web application.
 
 The repository root has all tooling and other configurations.
 

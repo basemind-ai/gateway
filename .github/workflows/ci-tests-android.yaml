@@ -7,10 +7,11 @@ on:
         branches:
             - main
         paths:
-            - '**/*.kts'
             - '*.gradle.kts'
-            - 'android-client/*'
+            - 'gen/kt/**'
+            - 'gradle.properties'
             - 'gradle/**'
+            - 'sdks/android/**'
 jobs:
     test:
         runs-on: ubuntu-latest

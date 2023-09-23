@@ -7,15 +7,15 @@ ARG BUILD_TARGET
 ARG NODE_ENV="production"
 ENV NODE_ENV=${NODE_ENV}
 COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
-COPY ts-services/${BUILD_TARGET}/tsconfig* ts-services/${BUILD_TARGET}/package.json ts-services/${BUILD_TARGET}/webpack.config.ts ./ts-services/${BUILD_TARGET}/
+COPY services/${BUILD_TARGET}/tsconfig* services/${BUILD_TARGET}/package.json services/${BUILD_TARGET}/webpack.config.ts ./services/${BUILD_TARGET}/
 RUN pnpm install -r --ignore-scripts
 
 FROM install AS build
 WORKDIR /app/
 COPY gen/ts gen/ts
-COPY ts-shared/src ts-shared/src
-COPY ts-services/${BUILD_TARGET}/src ts-services/${BUILD_TARGET}/src
-WORKDIR /app/ts-services/${BUILD_TARGET}
+COPY shared/ts/src shared/ts/src
+COPY services/${BUILD_TARGET}/src services/${BUILD_TARGET}/src
+WORKDIR /app/services/${BUILD_TARGET}
 RUN pnpm run build
 
 FROM base AS app
@@ -28,12 +28,12 @@ ENV PORT=${PORT}
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 app
 
-COPY --from=build --chown=app:nodejs /app/ts-services/${BUILD_TARGET}/dist ts-services/${BUILD_TARGET}/dist
+COPY --from=build --chown=app:nodejs /app/services/${BUILD_TARGET}/dist services/${BUILD_TARGET}/dist
 
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
-COPY ts-services/${BUILD_TARGET}/package.json ts-services/${BUILD_TARGET}/package.json
+COPY services/${BUILD_TARGET}/package.json services/${BUILD_TARGET}/package.json
 RUN pnpm install -r --prod
 
-WORKDIR /app/ts-services/${BUILD_TARGET}/dist
+WORKDIR /app/services/${BUILD_TARGET}/dist
 USER app
 CMD ["index.js"]

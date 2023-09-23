@@ -1,10 +1,10 @@
 {
-	"include": ["*.ts", "ts-shared/**/*.ts"],
+	"include": ["*.ts", "shared/**/*.ts"],
 	"exclude": ["node_modules"],
 	"compilerOptions": {
+		"baseUrl": ".",
 		"allowJs": false,
 		"allowSyntheticDefaultImports": true,
-		"baseUrl": ".",
 		"declaration": false,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
@@ -26,10 +26,10 @@
 		"strictNullChecks": true,
 		"strictPropertyInitialization": true,
 		"target": "esnext",
+		"types": ["vitest/globals"],
 		"paths": {
-			"shared/*": ["ts-shared/src/*"],
+			"shared/*": ["shared/ts/src/*"],
 			"gen/*": ["gen/ts/*"]
-		},
-		"types": ["vitest/globals"]
+		}
 	}
 }

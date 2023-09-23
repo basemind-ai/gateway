@@ -7,9 +7,11 @@ on:
         branches:
             - main
         paths:
-            - 'go-services/**'
-            - 'go-shared/**'
+            - 'gen/go/**'
             - 'go.*'
+            - 'services/api-gateway/**'
+            - 'services/dashboard-backend/**'
+            - 'shared/go/**'
 env:
     GCP_OIDC_PROVIDER_NAME: github-provider
     GCP_PROJECT_ID: basemind-ai-development

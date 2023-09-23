@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BaseMind.AI Client"
-include(":android-client")
-include(":android-sdk")
+rootProject.name = "BaseMind.AI"
+include(":sdks:android:test-app")
+include(":sdks:android:sdk")

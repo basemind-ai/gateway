@@ -2,8 +2,8 @@ const rules = {
 	'@typescript-eslint/no-extraneous-class': 0,
 	'@typescript-eslint/no-magic-numbers': 0,
 	'@typescript-eslint/no-unsafe-enum-comparison': 0,
-	'sonarjs/elseif-without-else': 0,
 	'n/no-process-exit': 0,
+	'sonarjs/elseif-without-else': 0,
 	'unicorn/no-process-exit': 0,
 };
 
@@ -16,8 +16,8 @@ const tsWebRules = {
 
 const project = [
 	'./tsconfig.json',
-	'./ts-services/**/tsconfig.json',
-	'./ts-web/tsconfig.json',
+	'./frontend/tsconfig.json',
+	'./services/openai-connector/tsconfig.json',
 ];
 
 const settings = {
@@ -44,12 +44,12 @@ module.exports = {
 	rules,
 	overrides: [
 		{
-			files: ['ts-services/**/tests/*.ts'],
+			files: ['services/**/tests/**/*.ts'],
 			extends: ['@tool-belt/eslint-config', 'plugin:vitest/recommended'],
 			rules,
 		},
 		{
-			files: ['ts-web/**/*.ts', 'ts-web/**/*.tsx'],
+			files: ['frontend/**/*.ts', 'frontend/**/*.tsx'],
 			extends: [
 				'@tool-belt/eslint-config/react',
 				'plugin:@next/next/recommended',
@@ -57,7 +57,7 @@ module.exports = {
 			rules: tsWebRules,
 		},
 		{
-			files: ['ts-web/tests/*.ts', 'ts-web/tests/*.tsx'],
+			files: ['frontend/tests/**/*.ts', 'frontend/tests/**/*.tsx'],
 			extends: [
 				'@tool-belt/eslint-config/react',
 				'plugin:vitest/recommended',
