@@ -67,7 +67,7 @@ tasks:
         desc: Update the project dependencies
         cmds:
             - task: update-brew
-            - pnpm update -r --latest
+            - pnpm add -g pnpm && pnpm update -r --latest
             - go mod tidy && go get -u ./... &> /dev/null
             - pre-commit autoupdate
             - ./gradlew wrapper --gradle-version latest

@@ -13,13 +13,14 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/../..">
+      <sourceFolder
+				url="file://$MODULE_DIR$/../../gen"
+				isTestSource="false"
+				generated="true"
+			/>
       <excludeFolder url="file://$MODULE_DIR$/../../.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../build" />
-      <excludeFolder url="file://$MODULE_DIR$/../dataSources" />
-      <excludeFolder url="file://$MODULE_DIR$/../sonarlint/issuestore" />
-      <excludeFolder
-				url="file://$MODULE_DIR$/../sonarlint/securityhotspotstore"
-			/>
+      <excludeFolder url="file://$MODULE_DIR$/../../gradle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

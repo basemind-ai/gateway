@@ -2,20 +2,38 @@
 
 This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend services.
 
-## Structure
+## Repository Structure
 
--   `.bin` - executable scripts.
--   `.secrets` - secret values that are gitignored.
--   `android-client` - Android client SDK.
--   `docker` - Dockerfiles.
--   `frontend` - TypeScript based frontend application.
--   `gen` - generated code.
--   `proto` - gRPC and protobuf files.
--   `services` - Microservices.
--   `shared` - shared code.
--   `sql` - SQL schema and query files from which we generate the DB DAL (Data Access Layer) and migrations.
-
-The repository root has all tooling and other configurations.
+```text
+root                        # repository root, holding all tooling configurations
+├─── .bin                   # executable scripts
+├─── .github                # GitHub CI/CD and other configurations
+├─── .idea                  # IDE configurations that are sh<red
+├─── .secrets               # secret values that are gitignored
+├─── assets                 # images used for branding
+├─── docker                 # docker files
+├─── frontend               # frontend web-app
+├─── gen                    # code generated from the protobuf schemas under `proto`
+│    ├─── go                # golang gen-code
+│    ├─── ts                # typescript gen-code
+│    └─── kt                # kotlin gen-code
+├─── proto                  # protobuf schemas
+│    ├─── gateway           # api-gate protobuf schema
+│    └─── openai            # openai-connector protobuf schema
+├─── sdks                   # client libraries that connect to our API gateway
+│    └─── android           # android apps
+│         ├─── test-app     # test application
+│         └─── sdk          # android sdk
+├─── services               # microservices
+│   ├─── api-gateway        # api-gateway
+│   ├─── dashboard-backend  # backend for the frontend web-app
+│   └─── openai-connector   # openai-connector
+├─── shared                 # shared code
+│   ├─── go                 # golang shared packages
+│   └─── ts                 # typescript shared packages
+└─── sql                    # SQL schema and query files from which we generate the DB DAL (Data Access Layer)
+    └─── migrations         # DB migrations
+```
 
 ## Installation
 

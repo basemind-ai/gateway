@@ -23,6 +23,7 @@
 .idea/navEditor.xml
 .idea/shelf/*
 .idea/sonarlint/*
+.idea/modules/sdks/
 .idea/workspace.xml
 build/
 captures/
