@@ -23,6 +23,8 @@ CREATE TABLE project
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
+CREATE INDEX idx_project_name ON project (name);
+
 -- user-project many-to-many
 CREATE TABLE user_project
 (
@@ -34,6 +36,9 @@ CREATE TABLE user_project
     FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_user_project_user_id ON user_project (user_id);
+CREATE INDEX idx_user_project_project_id ON user_project (project_id);
 
 -- model_vendor
 CREATE TYPE model_vendor AS ENUM (
@@ -60,6 +65,9 @@ CREATE TABLE application
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
 
+CREATE INDEX idx_application_name ON application (name);
+CREATE INDEX idx_application_project_id ON application (project_id);
+
 -- prompt-config
 CREATE TABLE prompt_config
 (
@@ -77,11 +85,15 @@ CREATE TABLE prompt_config
     FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE
 );
 
+CREATE INDEX idx_prompt_config_application_id ON prompt_config (application_id);
+CREATE INDEX idx_prompt_config_is_active ON prompt_config (is_active);
+CREATE INDEX idx_prompt_config_created_at ON prompt_config (created_at);
+
 -- prompt-request-record
 CREATE TABLE prompt_request_record
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    stream_response boolean NOT NULL DEFAULT FALSE,
+    is_stream_response boolean NOT NULL DEFAULT FALSE,
     request_tokens int NOT NULL,
     start_time timestamptz NOT NULL,
     finish_time timestamptz NOT NULL,
@@ -89,6 +101,16 @@ CREATE TABLE prompt_request_record
     FOREIGN KEY (prompt_config_id) REFERENCES prompt_config (
         id
     ) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_prompt_request_record_prompt_config_id ON prompt_request_record (
+    prompt_config_id
+);
+CREATE INDEX idx_prompt_request_record_start_time ON prompt_request_record (
+    start_time
+);
+CREATE INDEX idx_prompt_request_record_finish_time ON prompt_request_record (
+    finish_time
 );
 
 -- prompt-test
@@ -99,9 +121,13 @@ CREATE TABLE prompt_test
     variable_values json NOT NULL,
     response text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
-    updated_at timestamptz NOT NULL DEFAULT now(),
     prompt_request_record_id uuid NOT NULL,
     FOREIGN KEY (prompt_request_record_id) REFERENCES prompt_request_record (
         id
     ) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_prompt_test_prompt_request_record_id ON prompt_test (
+    prompt_request_record_id
+);
+CREATE INDEX idx_prompt_test_created_at ON prompt_test (created_at);
