@@ -2,6 +2,7 @@ package datatypes
 
 import (
 	"encoding/json"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 )
 
 // PromptTemplateMessage is a data type used to represent a generic prompt message template.
@@ -21,4 +22,14 @@ func CreatePromptTemplateMessage(expectedTemplateVariables []string, providerMes
 		ExpectedTemplateVariables: expectedTemplateVariables,
 		ProviderMessage:           unmarshalledProviderMessage,
 	}, nil
+}
+
+// ApplicationPromptConfig is a data type used encapsulate the current application prompt configuration.
+type ApplicationPromptConfig struct {
+	// The application ID as a string
+	ApplicationID string `json:"applicationId"`
+	// The application DB record
+	ApplicationData db.Application `json:"applicationObject"`
+	// The prompt config DB record
+	PromptConfigData db.PromptConfig `json:"promptConfigObject"`
 }

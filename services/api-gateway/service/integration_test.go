@@ -9,7 +9,8 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/connectors"
 	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/services/api-gateway/service"
-	db2 "github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils/testutils"
@@ -78,10 +79,10 @@ func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismoc
 	return cacheClient, mockRedis
 }
 
-func CreateApplication(t *testing.T) (*db2.Application, string) {
+func CreateApplicationPromptConfig(t *testing.T) (*datatypes.ApplicationPromptConfig, string) {
 	dbTestUtils.CreateTestDB(t)
 
-	project, projectCreateErr := db2.GetQueries().CreateProject(context.TODO(), db2.CreateProjectParams{
+	project, projectCreateErr := db.GetQueries().CreateProject(context.TODO(), db.CreateProjectParams{
 		Name:        "test",
 		Description: "test",
 	})
@@ -91,25 +92,36 @@ func CreateApplication(t *testing.T) (*db2.Application, string) {
 	systemMessage := "You are a helpful chat bot."
 	userMessage := "This is what the user asked for: {userInput}"
 
-	application, applicationCreateErr := db2.GetQueries().CreateApplication(context.TODO(), db2.CreateApplicationParams{
-		ProjectID:                 project.ID,
-		Name:                      "test",
-		Description:               "test",
-		ModelType:                 db2.ModelTypeGpt35Turbo,
-		ModelVendor:               db2.ModelVendorOPENAI,
-		ModelParameters:           openaitestutils.CreateModelParameters(t),
-		PromptMessages:            openaitestutils.CreatePromptMessages(t, systemMessage, userMessage),
-		ExpectedTemplateVariables: []string{"userInput"},
+	application, applicationCreateErr := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
+		ProjectID:   project.ID,
+		Name:        "test",
+		Description: "test",
 	})
 
 	assert.NoError(t, applicationCreateErr)
 
-	return &application, fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16])
+	promptConfig, promptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+		ModelType:         db.ModelTypeGpt35Turbo,
+		ModelVendor:       db.ModelVendorOPENAI,
+		ModelParameters:   openaitestutils.CreateModelParameters(t),
+		PromptMessages:    openaitestutils.CreatePromptMessages(t, systemMessage, userMessage),
+		TemplateVariables: []string{"userInput"},
+		IsActive:          true,
+		ApplicationID:     application.ID,
+	})
+
+	assert.NoError(t, promptConfigCreateErr)
+
+	return &datatypes.ApplicationPromptConfig{
+		ApplicationID:    fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16]),
+		ApplicationData:  application,
+		PromptConfigData: promptConfig,
+	}, fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16])
 }
 
 func TestIntegration(t *testing.T) {
 	openaiService := CreateOpenAIService(t)
-	application, applicationId := CreateApplication(t)
+	applicationPromptConfig, applicationId := CreateApplicationPromptConfig(t)
 
 	jwtToken, jwtCreateErr := jwtutils.CreateJWT(time.Minute, []byte(JWTSecret), applicationId)
 	assert.NoError(t, jwtCreateErr)
@@ -120,7 +132,7 @@ func TestIntegration(t *testing.T) {
 
 		expectedResponseContent := []string{"userInput"}
 
-		expectedCacheValue, marshalErr := cacheClient.Marshal(application)
+		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
 		assert.NoError(t, marshalErr)
 
 		mockRedis.ExpectGet(applicationId).RedisNil()
@@ -152,7 +164,7 @@ func TestIntegration(t *testing.T) {
 			PromptTokens:     2,
 		}
 
-		expectedCacheValue, marshalErr := cacheClient.Marshal(application)
+		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
 		assert.NoError(t, marshalErr)
 
 		mockRedis.ExpectGet(applicationId).RedisNil()
@@ -187,7 +199,7 @@ func TestIntegration(t *testing.T) {
 			{Content: "3", FinishReason: &finishReason},
 		}
 
-		expectedCacheValue, marshalErr := cacheClient.Marshal(application)
+		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
 		assert.NoError(t, marshalErr)
 
 		mockRedis.ExpectGet(applicationId).RedisNil()

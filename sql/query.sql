@@ -77,13 +77,7 @@ FROM application
 WHERE id = $1;
 
 -- name: FindApplicationById :one
-SELECT
-    id,
-    project_id,
-    name,
-    description,
-    created_at,
-    updated_at
+SELECT * -- noqa: L044
 FROM application
 WHERE id = $1;
 
@@ -135,6 +129,22 @@ SELECT
     application_id
 FROM prompt_config
 WHERE id = $1;
+
+-- name: FindActivePromptConfigByApplicationId :one
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_active,
+    created_at,
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE application_id = $1 AND is_active = TRUE;
 
 -- name: CreatePromptRequestRecord :one
 INSERT INTO prompt_request_record (

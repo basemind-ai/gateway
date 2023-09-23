@@ -309,37 +309,58 @@ func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) 
 	return err
 }
 
-const findApplicationById = `-- name: FindApplicationById :one
+const findActivePromptConfigByApplicationId = `-- name: FindActivePromptConfigByApplicationId :one
 SELECT
     id,
-    project_id,
     name,
-    description,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_active,
     created_at,
-    updated_at
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE application_id = $1 AND is_active = TRUE
+`
+
+func (q *Queries) FindActivePromptConfigByApplicationId(ctx context.Context, applicationID pgtype.UUID) (PromptConfig, error) {
+	row := q.db.QueryRow(ctx, findActivePromptConfigByApplicationId, applicationID)
+	var i PromptConfig
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.ModelParameters,
+		&i.ModelType,
+		&i.ModelVendor,
+		&i.PromptMessages,
+		&i.TemplateVariables,
+		&i.IsActive,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ApplicationID,
+	)
+	return i, err
+}
+
+const findApplicationById = `-- name: FindApplicationById :one
+SELECT id, description, name, created_at, updated_at, project_id
 FROM application
 WHERE id = $1
 `
 
-type FindApplicationByIdRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	ProjectID   pgtype.UUID        `json:"project_id"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	CreatedAt   pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
-}
-
-func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (FindApplicationByIdRow, error) {
+func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (Application, error) {
 	row := q.db.QueryRow(ctx, findApplicationById, id)
-	var i FindApplicationByIdRow
+	var i Application
 	err := row.Scan(
 		&i.ID,
-		&i.ProjectID,
-		&i.Name,
 		&i.Description,
+		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ProjectID,
 	)
 	return i, err
 }

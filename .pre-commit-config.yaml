@@ -26,7 +26,7 @@ repos:
       rev: 'v3.0.3'
       hooks:
           - id: prettier
-            exclude: 'go.mod|gen/ts'
+            exclude: 'go.mod|gen/ts|.idea/modules'
     - repo: https://github.com/pre-commit/mirrors-eslint
       rev: 'v8.50.0'
       hooks:
