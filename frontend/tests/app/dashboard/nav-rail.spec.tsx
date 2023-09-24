@@ -7,7 +7,7 @@ import NavRail from '@/components/nav-rail/nav-rail';
 import { Navigation } from '@/constants';
 
 describe('NavRail tests', () => {
-	(usePathname as Mock).mockReturnValue(Navigation.Api);
+	(usePathname as Mock).mockReturnValue(Navigation.Application);
 
 	it('should render Logo', () => {
 		render(<NavRail />);

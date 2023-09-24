@@ -7,7 +7,7 @@ import NavRailList from '@/components/nav-rail/nav-rail-list';
 import { Navigation } from '@/constants';
 
 export default function NavRail() {
-	const { t } = useTranslation('dashboard-navrail');
+	const { t } = useTranslation('common');
 
 	return (
 		<div className="flex flex-col pt-6 px-8 w-1/6 h-full bg-base-200 justify-between">

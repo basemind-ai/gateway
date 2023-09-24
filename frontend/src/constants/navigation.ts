@@ -1,11 +1,11 @@
 export enum Navigation {
-	Api = '/project/:projectId/api',
+	Application = '/project/:projectId/application',
 	Base = '/',
 	Dashboard = '/project/:projectId/dashboard',
 	Projects = '/project',
-	Prompt = '/project/:projectId/prompt',
+	TestingPrompt = '/project/:projectId/testing/prompt',
 	SignIn = '/sign-in',
 	Settings = '/project/:projectId/settings',
 	Billing = '/project/:projectId/billing',
-	Support = '/Support',
+	Support = '/support',
 }

@@ -15,7 +15,7 @@ import LinkMenu from '@/components/link-menu';
 import { Navigation } from '@/constants';
 
 export default function NavRailList() {
-	const { t } = useTranslation('dashboard-navrail');
+	const { t } = useTranslation('common');
 
 	const [pathname] = usePathname().split('?');
 
@@ -28,16 +28,16 @@ export default function NavRailList() {
 				isCurrent={Navigation.Dashboard === pathname}
 			/>
 			<LinkMenu
-				href={Navigation.Prompt}
+				href={Navigation.TestingPrompt}
 				text={t('testing')}
 				icon={<Search className="w-3 h-3" />}
-				isCurrent={Navigation.Prompt === pathname}
+				isCurrent={Navigation.TestingPrompt === pathname}
 			/>
 			<LinkMenu
-				href={Navigation.Api}
+				href={Navigation.Application}
 				text={t('api')}
 				icon={<Boxes className="w-3 h-3" />}
-				isCurrent={Navigation.Api === pathname}
+				isCurrent={Navigation.Application === pathname}
 			/>
 			<LinkMenu
 				text={t('persistence')}
