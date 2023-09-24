@@ -8,7 +8,6 @@ import (
 )
 
 type Config struct {
-	BaseUrl     string `env:"BASE_URL,required"`
 	DatabaseUrl string `env:"DATABASE_URL,required"`
 	Environment string `env:"ENVIRONMENT,default=test"`
 	Port        int    `env:"PORT,required"`

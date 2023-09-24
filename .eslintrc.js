@@ -12,6 +12,7 @@ const tsWebRules = {
 	'@next/next/no-html-link-for-pages': 0,
 	'react-hooks/exhaustive-deps': 0,
 	'react/react-in-jsx-scope': 0,
+	'unicorn/prefer-node-protocol': 0,
 };
 
 const project = [

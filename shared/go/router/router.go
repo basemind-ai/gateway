@@ -24,12 +24,11 @@ func New(opts Options) chi.Router {
 		router.Use(chiMiddlewares.RequestID)
 		router.Use(chiMiddlewares.RealIP)
 		router.Use(cors.Handler(cors.Options{
-			AllowedOrigins:   []string{"*"},
-			AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
-			AllowedHeaders:   []string{"*"},
-			AllowCredentials: false,
-			MaxAge:           3600,
-			Debug:            opts.Environment == "development",
+			AllowedOrigins: []string{"*"},
+			AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+			AllowedHeaders: []string{"*"},
+			MaxAge:         3600,
+			Debug:          opts.Environment == "development",
 		}))
 		router.Use(httplog.RequestLogger(log.With().Str("service", opts.ServiceName).Logger()))
 		router.Use(chiMiddlewares.Recoverer)

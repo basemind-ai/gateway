@@ -62,15 +62,14 @@ func main() {
 		Middlewares:      middlewares,
 	})
 	srv := &http.Server{
-		Addr:              fmt.Sprintf(":%d", cfg.Port),
-		Handler:           mux,
-		ReadHeaderTimeout: 10,
+		Addr:    fmt.Sprintf(":%d", cfg.Port),
+		Handler: mux,
 	}
 
 	g, gCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		log.Info().Msg("server starting")
+		log.Info().Msgf("server starting, listening on port %d", cfg.Port)
 		return srv.ListenAndServe()
 	})
 

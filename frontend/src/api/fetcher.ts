@@ -42,6 +42,8 @@ export async function fetcher<T>({
 		process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
 	);
 
+	console.log(path, request);
+
 	const response = await fetch(path, request);
 	const body =
 		response.status === 204
@@ -49,6 +51,7 @@ export async function fetcher<T>({
 			: ((await response.json()) as Record<string, any>);
 
 	if (!response.ok) {
+		console.log('failed to retrieve data');
 		throw new ApiError(
 			(Reflect.get(body, 'message') ?? 'An API Error Occurred') as string,
 			{

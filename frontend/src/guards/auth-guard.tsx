@@ -13,5 +13,5 @@ export default function AuthGuard() {
 		router.replace(Navigation.SignIn);
 		return;
 	}
-	return <></>;
+	return null;
 }

@@ -4,6 +4,7 @@ const nextTranslate = require('next-translate-plugin');
 const nextConfig = nextTranslate({
 	experimental: {
 		externalDir: true,
+		serverComponentsExternalPackages: ['react-bootstrap-icons'],
 	},
 	reactStrictMode: true,
 	distDir: 'dist',
