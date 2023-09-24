@@ -79,8 +79,8 @@ tasks:
     lint:android:
         desc: Lint the android codebase with in-built lint checks
         cmds:
-            - ./gradlew :android-client:lint
-            - ./gradlew :android-sdk:lint
+            - ./gradlew :sdks:android:sdk:lint
+            - ./gradlew :sdks:android:test-app:lint
     # database
     db:up:
         desc: Bring up the local database
