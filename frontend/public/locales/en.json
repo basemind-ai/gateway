@@ -1,0 +1,32 @@
+{
+	"common": {
+		"accept": "Accept",
+		"basemindName": "BaseMind",
+		"cancel": "Cancel",
+		"continue": "Continue",
+		"decline": "Decline",
+		"logout": "Logout",
+		"open": "Open",
+		"signIn": "Sign-In",
+		"submit": "Submit"
+	},
+	"navrail": {
+		"overview": "Overview",
+		"testing": "Testing",
+		"api": "API",
+		"persistence": "Persistence",
+		"middleware": "Middleware",
+		"abTesting": "A/B Testing",
+		"bannerTitle": "Need Help?",
+		"bannerBody": "Our customer success team is \nhere for you",
+		"bannerCTA": "Get Support"
+	},
+	"signin": {
+		"authHeader": "Welcome to BaseMind",
+		"authSubtitle": "Get started - it's free.",
+		"authSubtitleLarger": "No credit card required.",
+		"bannerHeading": "Feature 1",
+		"bannerTitle": "This feature is good for AI",
+		"bannerSubtitle": "Try all paid functions for free, just register and create your first widget, its simple and fast"
+	}
+}

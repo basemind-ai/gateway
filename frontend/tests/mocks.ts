@@ -19,17 +19,13 @@ const env = {
 	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
 };
 
-const { initializeAppMock, getAuthMock } = vi.hoisted(() => {
-	return {
-		initializeAppMock: vi.fn().mockReturnValue({}),
-		getAuthMock: vi.fn().mockImplementation(() => ({
-			setPersistence: vi.fn(),
-			currentUser: {
-				getIdToken: vi.fn().mockResolvedValue('test_token'),
-			},
-		})),
-	};
-});
+const initializeAppMock = vi.fn().mockReturnValue({});
+const getAuthMock = vi.fn().mockImplementation(() => ({
+	setPersistence: vi.fn(),
+	currentUser: {
+		getIdToken: vi.fn().mockResolvedValue('test_token'),
+	},
+}));
 
 vi.mock(
 	'firebase/app',

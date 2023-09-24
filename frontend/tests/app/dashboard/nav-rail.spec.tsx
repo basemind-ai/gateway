@@ -1,10 +1,12 @@
 import { usePathname } from 'next/navigation';
-import navRailTranslation from 'public/locales/en/dashboard-navrail.json';
+import locales from 'public/locales/en.json';
 import { render, screen } from 'tests/test-utils';
 import { Mock } from 'vitest';
 
 import NavRail from '@/components/nav-rail/nav-rail';
 import { Navigation } from '@/constants';
+
+const navRailTranslation = locales.navrail;
 
 describe('NavRail tests', () => {
 	(usePathname as Mock).mockReturnValue(Navigation.Api);

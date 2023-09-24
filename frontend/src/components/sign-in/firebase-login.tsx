@@ -2,7 +2,7 @@
 import 'firebaseui/dist/firebaseui.css';
 
 import { useRouter } from 'next/navigation';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 import { Navigation } from '@/constants';
@@ -12,7 +12,7 @@ import { firebaseUIConfig, getFirebaseAuth } from '@/utils/firebase';
 export function FirebaseLogin() {
 	const [uiRendered, setIsUIRendered] = useState(false);
 	const [isSignedIn, setIsSignedIn] = useState(false);
-	const { t } = useTranslation('signin-firebase');
+	const t = useTranslations('signin');
 
 	const router = useRouter();
 	const setUser = useSetUser();

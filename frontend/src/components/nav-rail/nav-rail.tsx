@@ -1,4 +1,5 @@
-import useTranslation from 'next-translate/useTranslation';
+'use client';
+import { useTranslations } from 'next-intl';
 import { ChevronRight } from 'react-bootstrap-icons';
 
 import { Logo } from '@/components/logo';
@@ -7,7 +8,7 @@ import NavRailList from '@/components/nav-rail/nav-rail-list';
 import { Navigation } from '@/constants';
 
 export default function NavRail() {
-	const { t } = useTranslation('dashboard-navrail');
+	const t = useTranslations('navrail');
 
 	return (
 		<div className="flex flex-col pt-6 px-8 w-1/6 h-full bg-base-200 justify-between">
@@ -22,7 +23,7 @@ export default function NavRail() {
 							{t('bannerTitle')}
 						</h3>
 						<p className="mt-2 text-sm text-base-content/80">
-							{t('bannerBody1')} <br /> {t('bannerBody2')}
+							{t('bannerBody')}
 						</p>
 						<a
 							className="inline-flex items-center gap-2 mt-5 text-sm font-medium text-secondary hover:underline"

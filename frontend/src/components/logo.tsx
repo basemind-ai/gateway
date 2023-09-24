@@ -1,8 +1,8 @@
 import Image from 'next/image';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from 'next-intl';
 
 export function Logo() {
-	const { t } = useTranslation('common');
+	const t = useTranslations('common');
 
 	return (
 		<div className="align-baseline flex" data-testid="logo-component">

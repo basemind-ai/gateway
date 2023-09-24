@@ -6,19 +6,9 @@ import {
 	RenderOptions,
 } from '@testing-library/react';
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
-import I18nProvider from 'next-translate/I18nProvider';
-import enCommon from 'public/locales/en/common.json';
-import enDashboardNavrail from 'public/locales/en/dashboard-navrail.json';
-import enSignInBanner from 'public/locales/en/signin-banner.json';
-import enSignIn from 'public/locales/en/signin-firebase.json';
+import { NextIntlClientProvider } from 'next-intl';
+import locales from 'public/locales/en.json';
 import { nextRouterMock } from 'tests/mocks';
-
-const namespaces = {
-	'common': enCommon,
-	'signin-firebase': enSignIn,
-	'dashboard-navrail': enDashboardNavrail,
-	'signin-banner': enSignInBanner,
-};
 
 const customRender = (
 	ui: React.ReactElement,
@@ -28,9 +18,9 @@ const customRender = (
 		wrapper: ({ children }: any) => {
 			return (
 				<RouterContext.Provider value={nextRouterMock}>
-					<I18nProvider lang="en" namespaces={namespaces}>
+					<NextIntlClientProvider locale="en" messages={locales}>
 						{children}
-					</I18nProvider>
+					</NextIntlClientProvider>
 				</RouterContext.Provider>
 			);
 		},
@@ -46,9 +36,9 @@ const customRenderHook = (
 		wrapper: ({ children }: any) => {
 			return (
 				<RouterContext.Provider value={nextRouterMock}>
-					<I18nProvider lang="en" namespaces={namespaces}>
+					<NextIntlClientProvider locale="en" messages={locales}>
 						{children}
-					</I18nProvider>
+					</NextIntlClientProvider>
 				</RouterContext.Provider>
 			);
 		},

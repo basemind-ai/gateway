@@ -1,10 +1,10 @@
 import { useRouter } from 'next/navigation';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from 'next-intl';
 
 import { getFirebaseAuth } from '@/utils/firebase';
 
 export function LogoutButton() {
-	const { t } = useTranslation('common');
+	const t = useTranslations('common');
 	const router = useRouter();
 
 	async function handleLogout() {

@@ -7,12 +7,14 @@ vi.mock('next/font/google', () => ({
 }));
 
 describe('RootLayout tests', () => {
-	it('renders layout', () => {
-		render(
-			<RootLayout>
-				<div></div>
-			</RootLayout>,
+	it('renders layout', async () => {
+		const component = await RootLayout(
+			// @ts-expect-error
+			<div>
+				<span>hello</span>
+			</div>,
 		);
+		render(component);
 
 		const bodyElement = screen.getByRole('document');
 

@@ -1,7 +1,9 @@
-import bannerTranslation from 'public/locales/en/signin-banner.json';
+import locales from 'public/locales/en.json';
 import { render, screen } from 'tests/test-utils';
 
 import { LoginBanner } from '@/components/sign-in/login-banner';
+
+const signinLocales = locales.signin;
 
 describe('LoginBanner tests', () => {
 	it('renders LoginBanner', () => {
@@ -16,9 +18,9 @@ describe('LoginBanner tests', () => {
 		const splashImage = screen.getByTestId<HTMLImageElement>(
 			'login-banner-splash-image',
 		);
-		const heading = screen.getByText(bannerTranslation.bannerHeading);
-		const title = screen.getByText(bannerTranslation.bannerTitle);
-		const subtitle = screen.getByText(bannerTranslation.bannerSubtitle);
+		const heading = screen.getByText(signinLocales.bannerHeading);
+		const title = screen.getByText(signinLocales.bannerTitle);
+		const subtitle = screen.getByText(signinLocales.bannerSubtitle);
 
 		expect(icon.src).toContain('/images/pinecone-round.svg');
 		expect(splashImage.src).toContain(

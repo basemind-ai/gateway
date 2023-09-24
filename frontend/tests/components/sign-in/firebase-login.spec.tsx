@@ -1,11 +1,13 @@
 import { waitFor } from '@testing-library/react';
-import authTranslation from 'public/locales/en/signin-firebase.json';
+import locales from 'public/locales/en.json';
 import { render, routerReplaceMock, screen } from 'tests/test-utils';
 import { Mock } from 'vitest';
 
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';
 import { Navigation } from '@/constants';
 import { getFirebaseAuth } from '@/utils/firebase';
+
+const signinLocales = locales.signin;
 
 vi.mock('@/utils/firebase');
 
@@ -75,10 +77,10 @@ describe('FirebaseLogin tests', () => {
 		const loader = screen.queryByTestId('firebase-login-loader');
 		expect(loader).not.toBeInTheDocument();
 
-		const authHeader = screen.getByText(authTranslation.authHeader);
-		const authSubtitle = screen.getByText(authTranslation.authSubtitle);
+		const authHeader = screen.getByText(signinLocales.authHeader);
+		const authSubtitle = screen.getByText(signinLocales.authSubtitle);
 		const authSubtitleLarger = screen.getByText(
-			authTranslation.authSubtitleLarger,
+			signinLocales.authSubtitleLarger,
 		);
 
 		expect(authHeader).toBeInTheDocument();

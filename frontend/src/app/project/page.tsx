@@ -6,10 +6,11 @@ import { useEffect } from 'react';
 import { handleLogin } from '@/api/login-api';
 import { LogoutButton } from '@/components/logout-button';
 import { Navigation } from '@/constants';
-import { useSetProjects, useUser } from '@/stores/api-store';
+import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { useSetProjects } from '@/stores/api-store';
 
 export default function ProjectView() {
-	const user = useUser();
+	const user = useAuthenticatedUser();
 	const setProjects = useSetProjects();
 	const router = useRouter();
 
