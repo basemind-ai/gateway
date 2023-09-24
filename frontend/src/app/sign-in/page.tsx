@@ -1,3 +1,4 @@
+'use client';
 import 'firebaseui/dist/firebaseui.css';
 
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';

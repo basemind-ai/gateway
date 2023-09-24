@@ -9,6 +9,7 @@ vi.mock('next/font/google', () => ({
 describe('RootLayout tests', () => {
 	it('renders layout', async () => {
 		const component = await RootLayout(
+			// @ts-expect-error
 			<div>
 				<span>hello</span>
 			</div>,
