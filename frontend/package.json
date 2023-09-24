@@ -16,7 +16,7 @@
 		"encoding": "^0.1.13",
 		"firebase": "^10.4.0",
 		"firebaseui": "^6.1.0",
-		"next": "13.5.2",
+		"next": "13.4.19",
 		"next-translate": "^2.5.3",
 		"preline": "^1.9.0",
 		"react": "18.2.0",
