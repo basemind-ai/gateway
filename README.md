@@ -8,7 +8,7 @@ This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend servic
 root                        # repository root, holding all tooling configurations
 ├─── .bin                   # executable scripts
 ├─── .github                # GitHub CI/CD and other configurations
-├─── .idea                  # IDE configurations that are sh<red
+├─── .idea                  # IDE configurations that are shared
 ├─── .secrets               # secret values that are gitignored
 ├─── assets                 # images used for branding
 ├─── docker                 # docker files
