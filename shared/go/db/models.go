@@ -139,17 +139,12 @@ func (ns NullModelVendor) Value() (driver.Value, error) {
 }
 
 type Application struct {
-	ID                        pgtype.UUID        `json:"id"`
-	Description               string             `json:"description"`
-	ModelParameters []byte      `json:"model_parameters"`
-	ModelType       ModelType   `json:"model_type"`
-	ModelVendor     ModelVendor `json:"model_vendor"`
-	Name            string      `json:"name"`
-	PromptMessages            []byte             `json:"prompt_messages"`
-	ExpectedTemplateVariables []string           `json:"expected_template_variables"`
-	CreatedAt                 pgtype.Timestamptz `json:"created_at"`
-	UpdatedAt                 pgtype.Timestamptz `json:"updated_at"`
-	ProjectID                 pgtype.UUID        `json:"project_id"`
+	ID          pgtype.UUID        `json:"id"`
+	Description string             `json:"description"`
+	Name        string             `json:"name"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
+	ProjectID   pgtype.UUID        `json:"project_id"`
 }
 
 type Project struct {
@@ -157,6 +152,38 @@ type Project struct {
 	Name        string             `json:"name"`
 	Description string             `json:"description"`
 	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+}
+
+type PromptConfig struct {
+	ID                pgtype.UUID        `json:"id"`
+	Name              string             `json:"name"`
+	ModelParameters   []byte             `json:"model_parameters"`
+	ModelType         ModelType          `json:"model_type"`
+	ModelVendor       ModelVendor        `json:"model_vendor"`
+	PromptMessages    []byte             `json:"prompt_messages"`
+	TemplateVariables []string           `json:"template_variables"`
+	IsActive          bool               `json:"is_active"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
+	ApplicationID     pgtype.UUID        `json:"application_id"`
+}
+
+type PromptRequestRecord struct {
+	ID               pgtype.UUID        `json:"id"`
+	IsStreamResponse bool               `json:"is_stream_response"`
+	RequestTokens    int32              `json:"request_tokens"`
+	StartTime        pgtype.Timestamptz `json:"start_time"`
+	FinishTime       pgtype.Timestamptz `json:"finish_time"`
+	PromptConfigID   pgtype.UUID        `json:"prompt_config_id"`
+}
+
+type PromptTest struct {
+	ID                    pgtype.UUID        `json:"id"`
+	Name                  string             `json:"name"`
+	VariableValues        []byte             `json:"variable_values"`
+	Response              string             `json:"response"`
+	CreatedAt             pgtype.Timestamptz `json:"created_at"`
+	PromptRequestRecordID pgtype.UUID        `json:"prompt_request_record_id"`
 }
 
 type User struct {

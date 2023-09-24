@@ -1,103 +1,35 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/BaseMind.AI.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/BaseMind.AI.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/BaseMind.AI.sdks.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/BaseMind.AI.sdks.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/BaseMind.AI.sdks.android.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/BaseMind.AI.sdks.android.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.androidTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.androidTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.main.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.main.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.unitTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.unitTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.androidTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.androidTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.main.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.main.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.unitTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.unitTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.androidTest~1.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.androidTest~1.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.main.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.main.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.unitTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.unitTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/monorepo.BaseMind.AI.sdks.android.test-app.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/monorepo.BaseMind.AI.sdks.android.test-app.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml"
-			/>
-      <module
-				fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest.iml"
-				filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest.iml"
-			/>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BaseMind.AI.iml" filepath="$PROJECT_DIR$/.idea/modules/BaseMind.AI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/BaseMind.AI.sdks.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/BaseMind.AI.sdks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/BaseMind.AI.sdks.android.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/BaseMind.AI.sdks.android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/BaseMind.AI.sdks.android.test-app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.androidTest~1.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.androidTest~1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.unitTest~1.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/monorepo.BaseMind.AI.sdks.android.sdk.unitTest~1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/monorepo.BaseMind.AI.sdks.android.test-app.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/monorepo.BaseMind.AI.sdks.android.test-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest~1.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.androidTest~1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.main~1.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.main~1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest~1.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/test-app/workspace.basemind.monorepo.BaseMind.AI.sdks.android.test-app.unitTest~1.iml" />
     </modules>
   </component>
 </project>

@@ -21,57 +21,6 @@ import (
 	"syscall"
 )
 
-// code used for testing only -- currently held here, but we will move it to E2E testing later
-
-// func Seed(cfg config.Config) {
-//	project, _ := db.GetQueries().CreateProject(context.TODO(), db.CreateProjectParams{
-//		Name:        "test",
-//		Description: "test",
-//	})
-//
-//	systemMessage := "You are a helpful chat bot."
-//	userMessage := "This is what the user asked for: {userInput}"
-//
-//	modelParameters, _ := json.Marshal(map[string]float32{
-//		"temperature":       1,
-//		"top_p":             1,
-//		"max_tokens":        1,
-//		"presence_penalty":  1,
-//		"frequency_penalty": 1,
-//	})
-//
-//	s, _ := datatypes.CreatePromptTemplateMessage(make([]string, 0), map[string]interface{}{
-//		"content": systemMessage,
-//		"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
-//	})
-//	u, _ := datatypes.CreatePromptTemplateMessage([]string{"userInput"}, map[string]interface{}{
-//		"content": userMessage,
-//		"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
-//	})
-//
-//	promptMessages, _ := json.Marshal([]datatypes.PromptTemplateMessage{
-//		*s, *u,
-//	})
-//
-//	application, _ := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
-//		ProjectID:                 project.ID,
-//		Name:                      "test",
-//		Description:               "test",
-//		ModelType:                 db.ModelTypeGpt35Turbo,
-//		ModelVendor:               db.ModelVendorOPENAI,
-//		ModelParameters:           modelParameters,
-//		PromptMessages:            promptMessages,
-//		ExpectedTemplateVariables: []string{"userInput"},
-//	})
-//
-//	applicationId := fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16])
-//
-//	log.Info().Str("applicationId", applicationId).Msg("created application")
-//
-//	jwt, _ := jwtutils.CreateJWT(time.Hour, []byte(cfg.JWTSecret), applicationId)
-//	log.Info().Str("jwt", jwt).Msg("created jwt")
-//}
-
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 

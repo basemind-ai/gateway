@@ -1,0 +1,3 @@
+[tool.sqlfluff.core]
+dialect = "postgres"
+max_line_length = 120

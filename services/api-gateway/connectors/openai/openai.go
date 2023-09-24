@@ -3,7 +3,7 @@ package openai
 import (
 	"context"
 	"errors"
-	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"io"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
@@ -30,14 +30,14 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 func (c *Client) RequestPrompt(
 	ctx context.Context,
 	applicationId string,
-	application db.Application,
+	applicationPromptConfig *datatypes.ApplicationPromptConfig,
 	templateVariables map[string]string,
 ) (string, error) {
 	promptRequest, createPromptRequestErr := CreatePromptRequest(
 		applicationId,
-		application.ModelType,
-		application.ModelParameters,
-		application.PromptMessages,
+		applicationPromptConfig.PromptConfigData.ModelType,
+		applicationPromptConfig.PromptConfigData.ModelParameters,
+		applicationPromptConfig.PromptConfigData.PromptMessages,
 		templateVariables,
 	)
 	if createPromptRequestErr != nil {
@@ -55,16 +55,16 @@ func (c *Client) RequestPrompt(
 func (c *Client) RequestStream(
 	ctx context.Context,
 	applicationId string,
-	application db.Application,
+	applicationPromptConfig *datatypes.ApplicationPromptConfig,
 	templateVariables map[string]string,
 	contentChannel chan<- string,
 	errChannel chan<- error,
 ) {
 	promptRequest, promptRequestErr := CreatePromptRequest(
 		applicationId,
-		application.ModelType,
-		application.ModelParameters,
-		application.PromptMessages,
+		applicationPromptConfig.PromptConfigData.ModelType,
+		applicationPromptConfig.PromptConfigData.ModelParameters,
+		applicationPromptConfig.PromptConfigData.PromptMessages,
 		templateVariables,
 	)
 	if promptRequestErr != nil {

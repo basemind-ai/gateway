@@ -57,33 +57,142 @@ WHERE id = $1;
 INSERT INTO application (
     project_id,
     name,
-    description,
-    model_type,
-    model_vendor,
-    model_parameters,
-    prompt_messages,
-    expected_template_variables
-) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING *;
+    description
+)
+VALUES ($1, $2, $3)
+RETURNING *;
 
 -- name: UpdateApplication :one
 UPDATE application
 SET
     name = $2,
     description = $3,
-    model_type = $4,
-    model_vendor = $5,
-    model_parameters = $6,
-    prompt_messages = $7,
-    expected_template_variables = $8
-WHERE id = $1 RETURNING *;
+    updated_at = NOW()
+WHERE id = $1
+RETURNING *;
 
 -- name: DeleteApplication :exec
-DELETE FROM application
+DELETE
+FROM application
 WHERE id = $1;
 
 -- name: FindApplicationById :one
 SELECT * -- noqa: L044
 FROM application
 WHERE id = $1;
+
+-- name: CreatePromptConfig :one
+INSERT INTO prompt_config (
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_active,
+    application_id
+)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING *;
+
+-- name: UpdatePromptConfig :one
+UPDATE prompt_config
+SET
+    name = $2,
+    model_parameters = $3,
+    model_type = $4,
+    model_vendor = $5,
+    prompt_messages = $6,
+    template_variables = $7,
+    is_active = $8,
+    updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
+-- name: DeletePromptConfig :exec
+DELETE
+FROM prompt_config
+WHERE id = $1;
+
+-- name: FindPromptConfigById :one
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_active,
+    created_at,
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE id = $1;
+
+-- name: FindActivePromptConfigByApplicationId :one
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_active,
+    created_at,
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE application_id = $1 AND is_active = TRUE;
+
+-- name: CreatePromptRequestRecord :one
+INSERT INTO prompt_request_record (
+    is_stream_response,
+    request_tokens,
+    start_time,
+    finish_time,
+    prompt_config_id
+)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING *;
+
+-- name: FindPromptRequestRecords :many
+SELECT
+    id,
+    is_stream_response,
+    request_tokens,
+    start_time,
+    finish_time,
+    prompt_config_id
+FROM prompt_request_record
+WHERE prompt_config_id = $1
+ORDER BY start_time DESC;
+
+-- name: CreatePromptTest :one
+INSERT INTO prompt_test (
+    name,
+    variable_values,
+    response,
+    created_at,
+    prompt_request_record_id
+)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING *;
+
+-- name: FindPromptTests :many
+SELECT
+    prc.finish_time,
+    prc.request_tokens,
+    prc.start_time,
+    prc.is_stream_response,
+    pt.created_at,
+    pt.id,
+    pt.name,
+    pt.response,
+    pt.variable_values
+FROM prompt_test AS pt
+LEFT JOIN prompt_request_record AS prc
+    ON pt.prompt_request_record_id = prc.id
+WHERE prc.prompt_config_id = $1
+ORDER BY pt.created_at;

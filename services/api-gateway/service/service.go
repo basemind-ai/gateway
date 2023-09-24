@@ -5,7 +5,8 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/connectors"
 	"github.com/basemind-ai/monorepo/services/api-gateway/constants"
-	db2 "github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
@@ -26,19 +27,28 @@ func New() gateway.APIGatewayServiceServer {
 	return Server{}
 }
 
-func RetrieveApplicationHandler(ctx context.Context, applicationId string) func() (*db2.Application, error) {
-	return func() (*db2.Application, error) {
+func RetrieveApplicationPromptConfig(ctx context.Context, applicationId string) func() (*datatypes.ApplicationPromptConfig, error) {
+	return func() (*datatypes.ApplicationPromptConfig, error) {
 		appId := pgtype.UUID{}
 		if idErr := appId.Scan(applicationId); idErr != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "invalid application id: %v", idErr)
 		}
 
-		application, applicationQueryErr := db2.GetQueries().FindApplicationById(ctx, appId)
-
+		application, applicationQueryErr := db.GetQueries().FindApplicationById(ctx, appId)
 		if applicationQueryErr != nil {
-			return nil, status.Errorf(codes.NotFound, "application with the given ID does not exist: %v", applicationQueryErr)
+			return nil, status.Errorf(codes.NotFound, "application does not exist: %v", applicationQueryErr)
 		}
-		return &application, nil
+
+		promptConfig, promptConfigQueryErr := db.GetQueries().FindActivePromptConfigByApplicationId(ctx, appId)
+		if promptConfigQueryErr != nil {
+			return nil, status.Errorf(codes.NotFound, "the application does not have an active prompt configuration: %v", promptConfigQueryErr)
+		}
+
+		return &datatypes.ApplicationPromptConfig{
+			ApplicationID:    applicationId,
+			ApplicationData:  application,
+			PromptConfigData: promptConfig,
+		}, nil
 	}
 }
 
@@ -48,15 +58,15 @@ func (Server) RequestPromptConfig(ctx context.Context, _ *gateway.PromptConfigRe
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
 
-	application, retrievalErr := rediscache.With[db2.Application](
-		ctx, applicationId, &db2.Application{}, time.Minute*30, RetrieveApplicationHandler(ctx, applicationId),
+	applicationPromptConfig, retrievalErr := rediscache.With[datatypes.ApplicationPromptConfig](
+		ctx, applicationId, &datatypes.ApplicationPromptConfig{}, time.Minute*30, RetrieveApplicationPromptConfig(ctx, applicationId),
 	)
 	if retrievalErr != nil {
 		return nil, retrievalErr
 	}
 
 	return &gateway.PromptConfigResponse{
-		ExpectedPromptVariables: application.ExpectedTemplateVariables,
+		ExpectedPromptVariables: applicationPromptConfig.PromptConfigData.TemplateVariables,
 	}, nil
 }
 
@@ -66,15 +76,15 @@ func (Server) RequestPrompt(ctx context.Context, request *gateway.PromptRequest)
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
 	log.Debug().Str("applicationId", applicationId).Msg("entered prompt request")
-	application, retrievalErr := rediscache.With[db2.Application](
-		ctx, applicationId, &db2.Application{}, time.Minute*30, RetrieveApplicationHandler(ctx, applicationId),
+	applicationPromptConfig, retrievalErr := rediscache.With[datatypes.ApplicationPromptConfig](
+		ctx, applicationId, &datatypes.ApplicationPromptConfig{}, time.Minute*30, RetrieveApplicationPromptConfig(ctx, applicationId),
 	)
 	if retrievalErr != nil {
 		return nil, retrievalErr
 	}
 	log.Debug().Msg("retrieved application")
 	client := connectors.GetOpenAIConnectorClient()
-	responseContent, requestErr := client.RequestPrompt(ctx, applicationId, *application, request.TemplateVariables)
+	responseContent, requestErr := client.RequestPrompt(ctx, applicationId, applicationPromptConfig, request.TemplateVariables)
 	if requestErr != nil {
 		return nil, retrievalErr
 	}
@@ -91,8 +101,8 @@ func (Server) RequestStreamingPrompt(request *gateway.PromptRequest, streamServe
 		return status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
 
-	application, retrievalErr := rediscache.With[db2.Application](
-		streamServer.Context(), applicationId, &db2.Application{}, time.Minute*30, RetrieveApplicationHandler(streamServer.Context(), applicationId),
+	applicationPromptConfig, retrievalErr := rediscache.With[datatypes.ApplicationPromptConfig](
+		streamServer.Context(), applicationId, &datatypes.ApplicationPromptConfig{}, time.Minute*30, RetrieveApplicationPromptConfig(streamServer.Context(), applicationId),
 	)
 	if retrievalErr != nil {
 		return retrievalErr
@@ -101,7 +111,7 @@ func (Server) RequestStreamingPrompt(request *gateway.PromptRequest, streamServe
 	contentChannel := make(chan string)
 	errorChannel := make(chan error, 1)
 
-	go connectors.GetOpenAIConnectorClient().RequestStream(streamServer.Context(), applicationId, *application, request.TemplateVariables, contentChannel, errorChannel)
+	go connectors.GetOpenAIConnectorClient().RequestStream(streamServer.Context(), applicationId, applicationPromptConfig, request.TemplateVariables, contentChannel, errorChannel)
 
 	for {
 		select {
