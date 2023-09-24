@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from 'next-intl';
 import {
 	Boxes,
 	HddStack,
@@ -15,7 +15,7 @@ import LinkMenu from '@/components/link-menu';
 import { Navigation } from '@/constants';
 
 export default function NavRailList() {
-	const { t } = useTranslation('dashboard-navrail');
+	const t = useTranslations('navrail');
 
 	const [pathname] = usePathname().split('?');
 

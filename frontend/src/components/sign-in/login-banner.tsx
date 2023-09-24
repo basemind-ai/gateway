@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import useTranslation from 'next-translate/useTranslation';
+import { useTranslations } from 'next-intl';
 
 import { Dimensions } from '@/constants';
 
@@ -11,7 +11,7 @@ export function LoginBanner({
 	imageSrc: string;
 	iconSrc: string;
 }) {
-	const { t } = useTranslation('signin-banner');
+	const t = useTranslations('signin');
 
 	return (
 		<div
