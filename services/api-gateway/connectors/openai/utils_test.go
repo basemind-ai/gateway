@@ -2,8 +2,8 @@ package openai_test
 
 import (
 	"fmt"
+	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai"
-	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -92,8 +92,11 @@ func TestUtils(t *testing.T) {
 			applicationId := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 
-			modelParameters := openaitestutils.CreateModelParameters(t)
-			promptMessages := openaitestutils.CreatePromptMessages(t, systemMessage, userMessage)
+			modelParameters, modelParametersErr := factories.CreateModelParameters()
+			assert.NoError(t, modelParametersErr)
+
+			promptMessages, promptMessagesErr := factories.CreatePromptMessages(systemMessage, userMessage)
+			assert.NoError(t, promptMessagesErr)
 
 			userInput := "Please write me a short poem about cheese."
 			templateVariables := map[string]string{"userInput": userInput}

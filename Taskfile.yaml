@@ -115,3 +115,18 @@ tasks:
         desc: Format the protobuf files
         cmds:
             - npx buf format
+    # testing
+    e2e:seed:
+        desc: Seed the local database with testing data
+        cmds:
+            - task: db:up
+            - go run e2e/main.go seed
+    e2e:clean:
+        desc: Clean the local database of all testing data
+        cmds:
+            - task: db:up
+            - go run e2e/main.go clean
+    e2e:create-jwt:
+        desc: Create a JWT from the given applicationId arg
+        cmds:
+            - go run e2e/main.go create-jwt {{.CLI_ARGS}}

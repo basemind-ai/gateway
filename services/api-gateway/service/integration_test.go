@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/connectors"
 	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/services/api-gateway/service"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils/testutils"
@@ -82,41 +82,10 @@ func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismoc
 func CreateApplicationPromptConfig(t *testing.T) (*datatypes.ApplicationPromptConfig, string) {
 	dbTestUtils.CreateTestDB(t)
 
-	project, projectCreateErr := db.GetQueries().CreateProject(context.TODO(), db.CreateProjectParams{
-		Name:        "test",
-		Description: "test",
-	})
+	appConfig, appId, createAppConfigErr := factories.CreateApplicationPromptConfig(context.TODO())
+	assert.NoError(t, createAppConfigErr)
 
-	assert.NoError(t, projectCreateErr)
-
-	systemMessage := "You are a helpful chat bot."
-	userMessage := "This is what the user asked for: {userInput}"
-
-	application, applicationCreateErr := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
-		ProjectID:   project.ID,
-		Name:        "test",
-		Description: "test",
-	})
-
-	assert.NoError(t, applicationCreateErr)
-
-	promptConfig, promptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-		ModelType:         db.ModelTypeGpt35Turbo,
-		ModelVendor:       db.ModelVendorOPENAI,
-		ModelParameters:   openaitestutils.CreateModelParameters(t),
-		PromptMessages:    openaitestutils.CreatePromptMessages(t, systemMessage, userMessage),
-		TemplateVariables: []string{"userInput"},
-		IsActive:          true,
-		ApplicationID:     application.ID,
-	})
-
-	assert.NoError(t, promptConfigCreateErr)
-
-	return &datatypes.ApplicationPromptConfig{
-		ApplicationID:    fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16]),
-		ApplicationData:  application,
-		PromptConfigData: promptConfig,
-	}, fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16])
+	return appConfig, appId
 }
 
 func TestIntegration(t *testing.T) {
