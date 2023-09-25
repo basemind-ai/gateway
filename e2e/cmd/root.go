@@ -7,14 +7,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "e2e",
 	Short: "E2E testing CLI",
 	Long:  `CLI tool for executing E2E test`,
 }
 
-var dbUrl string
+var (
+	dbUrl  string
+	secret string
+)
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -30,5 +33,5 @@ func init() {
 
 	// global flags
 	rootCmd.PersistentFlags().StringVar(&dbUrl, "dbUrl", "postgresql://basemind:basemind@localhost:5432/basemind", "the url of the DB to use")
-
+	createJwt.Flags().StringVarP(&secret, "secret", "s", "jeronimo", "Secret to use for JWT creation and decoding")
 }

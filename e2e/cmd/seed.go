@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/rs/zerolog/log"
@@ -18,7 +17,7 @@ var seedCommand = &cobra.Command{
 	Short: "Seeds the database with test data",
 	Long:  `Execute this command to insert test data into the DB`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("creating db connection")
+		log.Info().Msg("creating db connection")
 
 		conn, connErr := db.CreateConnection(cmd.Context(), dbUrl)
 		if connErr != nil {
@@ -31,10 +30,12 @@ var seedCommand = &cobra.Command{
 			}
 		}()
 
-		promptConfig, applicationId := factories.CreateApplicationPromptConfig(cmd.Context())
+		promptConfig, applicationId, promptConfigCreateErr := factories.CreateApplicationPromptConfig(cmd.Context())
+		if promptConfigCreateErr != nil {
+			log.Fatal().Err(promptConfigCreateErr).Msg("failed to create application prompt config")
+		}
 
 		log.Info().Str("applicationId", applicationId).Msg("created application")
 		log.Info().Interface("promptConfig", promptConfig).Msg("created prompt config")
-
 	},
 }
