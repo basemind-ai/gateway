@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { handleLogin } from '@/api/login-api';
+import { handleRetrieveUserProjects } from '@/api/projects-api';
 import { LogoutButton } from '@/components/logout-button';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
@@ -15,7 +15,7 @@ export default function ProjectView() {
 	const router = useRouter();
 
 	async function fetchLoginData() {
-		const { projects } = await handleLogin();
+		const projects = await handleRetrieveUserProjects();
 		if (projects.length === 0) {
 			return;
 		}

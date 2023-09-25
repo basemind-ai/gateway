@@ -17,8 +17,3 @@ export enum AccessPermission {
 	ADMIN = 'ADMIN',
 	MEMBER = 'MEMBER',
 }
-
-export interface LoginResponseData {
-	user: User;
-	projects: Project[];
-}

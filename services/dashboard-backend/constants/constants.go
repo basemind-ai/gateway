@@ -7,5 +7,5 @@ const (
 )
 
 const (
-	DashboardLoginEndpoint = "/login"
+	DashboardRetrieveProjectsEndpoint = "/projects"
 )

@@ -43,23 +43,22 @@ func TestAPI(t *testing.T) {
 
 			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardLoginEndpoint))
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardRetrieveProjectsEndpoint))
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			var responseUser api.HandleDashboardUserPostLoginDTO
-			deserializationErr := serialization.DeserializeJson(response, &responseUser)
+			projects := make([]db.FindProjectsByUserIdRow, 0)
+			deserializationErr := serialization.DeserializeJson(response, &projects)
 			assert.NoError(t, deserializationErr)
-
-			assert.Equal(t, userId, responseUser.User.FirebaseID)
-			assert.Equal(t, "Default Project", responseUser.Projects[0].Name)
-			assert.Equal(t, "Default Project", responseUser.Projects[0].Description)
+			assert.Len(t, projects, 1)
+			assert.Equal(t, "Default Project", projects[0].Name)        
+			assert.Equal(t, "Default Project", projects[0].Description) 
 		})
 
 		t.Run("retrieves existing user if it exists", func(t *testing.T) {
 			userId := "xxx123"
 
-			_, userCreateErr := api.HandleCreateNewUser(context.Background(), db.GetQueries(), userId)
+			_, userCreateErr := api.GetOrCreateUser(context.Background(), db.GetQueries(), userId)
 			assert.NoError(t, userCreateErr)
 
 			r := router.New(router.Options{
@@ -73,17 +72,16 @@ func TestAPI(t *testing.T) {
 
 			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardLoginEndpoint))
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardRetrieveProjectsEndpoint))
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			var responseUser api.HandleDashboardUserPostLoginDTO
-			deserializationErr := serialization.DeserializeJson(response, &responseUser)
+			projects := make([]db.FindProjectsByUserIdRow, 0)
+			deserializationErr := serialization.DeserializeJson(response, &projects)
 			assert.NoError(t, deserializationErr)
-
-			assert.Equal(t, userId, responseUser.User.FirebaseID)
-			assert.Equal(t, "Default Project", responseUser.Projects[0].Name)
-			assert.Equal(t, "Default Project", responseUser.Projects[0].Description)
+			assert.Len(t, projects, 1)
+			assert.Equal(t, "Default Project", projects[0].Name)        
+			assert.Equal(t, "Default Project", projects[0].Description) 
 		})
 
 		t.Run("returns error when user exists without projects", func(t *testing.T) {
@@ -103,7 +101,7 @@ func TestAPI(t *testing.T) {
 
 			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardLoginEndpoint))
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardRetrieveProjectsEndpoint))
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusInternalServerError, response.StatusCode)
 		})

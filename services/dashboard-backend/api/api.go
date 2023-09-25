@@ -7,6 +7,6 @@ import (
 
 func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(r chi.Router) {
-		r.Get(constants.DashboardLoginEndpoint, HandleDashboardUserPostLogin)
+		r.Get(constants.DashboardRetrieveProjectsEndpoint, HandleRetrieveUserProjects)
 	})
 }
