@@ -2,11 +2,11 @@ package openai_test
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/e2e/factories"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai"
 	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai/testutils"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/db"
+	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils/testutils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -33,24 +33,13 @@ func CreateClientAndService(t *testing.T) (*openai.Client, *openaitestutils.Mock
 }
 
 func TestOpenAIConnectorClient(t *testing.T) {
+	dbTestUtils.CreateTestDB(t)
+
 	ctx := context.Background()
-	applicationId := "123"
 
-	systemMessage := "You are a helpful chat bot."
-	userMessage := "This is what the user asked for: {userInput}"
+	promptConfig, applicationId, promptConfigCreateErr := factories.CreateApplicationPromptConfig(context.TODO())
+	assert.NoError(t, promptConfigCreateErr)
 
-	promptMessages := openaitestutils.CreatePromptMessages(t, systemMessage, userMessage)
-	modelParameters := openaitestutils.CreateModelParameters(t)
-
-	applicationPromptConfig := &datatypes.ApplicationPromptConfig{
-		ApplicationID:   applicationId,
-		ApplicationData: db.Application{},
-		PromptConfigData: db.PromptConfig{
-			ModelType:       db.ModelTypeGpt35Turbo,
-			ModelParameters: modelParameters,
-			PromptMessages:  promptMessages,
-		},
-	}
 	templateVariables := map[string]string{"userInput": "abc"}
 
 	expectedParsedContent := "This is what the user asked for: abc"
@@ -76,6 +65,8 @@ func TestOpenAIConnectorClient(t *testing.T) {
 				PromptTokens:     2,
 			}
 
+			systemMessage := "You are a helpful chat bot."
+
 			mockService.ExpectedRequest = &openaiconnector.OpenAIPromptRequest{
 				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				ApplicationId: &applicationId,
@@ -92,7 +83,7 @@ func TestOpenAIConnectorClient(t *testing.T) {
 				},
 			}
 
-			response, err := client.RequestPrompt(ctx, applicationId, applicationPromptConfig, templateVariables)
+			response, err := client.RequestPrompt(ctx, applicationId, promptConfig, templateVariables)
 			assert.NoError(t, err)
 			assert.Equal(t, "Response content", response)
 		})
@@ -102,14 +93,14 @@ func TestOpenAIConnectorClient(t *testing.T) {
 
 			mockService.Error = assert.AnError
 
-			_, err := client.RequestPrompt(ctx, applicationId, applicationPromptConfig, templateVariables)
+			_, err := client.RequestPrompt(ctx, applicationId, promptConfig, templateVariables)
 			assert.Error(t, err)
 		})
 
 		t.Run("returns an error if a prompt variable is missing", func(t *testing.T) {
 			client, _ := CreateClientAndService(t)
 
-			_, err := client.RequestPrompt(ctx, applicationId, applicationPromptConfig, map[string]string{})
+			_, err := client.RequestPrompt(ctx, applicationId, promptConfig, map[string]string{})
 			assert.Errorf(t, err, "missing template variable {userInput}")
 		})
 	})
@@ -129,7 +120,7 @@ func TestOpenAIConnectorClient(t *testing.T) {
 			}
 
 			go func() {
-				client.RequestStream(ctx, applicationId, applicationPromptConfig, templateVariables, contentChannel, errChannel)
+				client.RequestStream(ctx, applicationId, promptConfig, templateVariables, contentChannel, errChannel)
 			}()
 
 			chunks := make([]string, 0)
@@ -167,7 +158,7 @@ func TestOpenAIConnectorClient(t *testing.T) {
 			mockService.Error = assert.AnError
 
 			go func() {
-				client.RequestStream(ctx, applicationId, applicationPromptConfig, templateVariables, contentChannel, errChannel)
+				client.RequestStream(ctx, applicationId, promptConfig, templateVariables, contentChannel, errChannel)
 			}()
 
 			for {
@@ -197,7 +188,7 @@ func TestOpenAIConnectorClient(t *testing.T) {
 			mockService.Error = assert.AnError
 
 			go func() {
-				client.RequestStream(ctx, applicationId, applicationPromptConfig, map[string]string{}, contentChannel, errChannel)
+				client.RequestStream(ctx, applicationId, promptConfig, map[string]string{}, contentChannel, errChannel)
 			}()
 
 			for {
