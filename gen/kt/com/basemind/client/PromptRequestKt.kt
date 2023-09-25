@@ -3,11 +3,11 @@
 
 // Generated files should ignore deprecation warnings
 @file:Suppress("DEPRECATION")
-package gateway.v1;
+package com.basemind.client;
 
 @kotlin.jvm.JvmName("-initializepromptRequest")
-public inline fun promptRequest(block: gateway.v1.PromptRequestKt.Dsl.() -> kotlin.Unit): gateway.v1.Gateway.PromptRequest =
-  gateway.v1.PromptRequestKt.Dsl._create(gateway.v1.Gateway.PromptRequest.newBuilder()).apply { block() }._build()
+public inline fun promptRequest(block: com.basemind.client.PromptRequestKt.Dsl.() -> kotlin.Unit): com.basemind.client.Gateway.PromptRequest =
+  com.basemind.client.PromptRequestKt.Dsl._create(com.basemind.client.Gateway.PromptRequest.newBuilder()).apply { block() }._build()
 /**
  * ```
  * A request for a prompt - sending user input to the server.
@@ -19,17 +19,17 @@ public object PromptRequestKt {
   @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
   @com.google.protobuf.kotlin.ProtoDslMarker
   public class Dsl private constructor(
-    private val _builder: gateway.v1.Gateway.PromptRequest.Builder
+    private val _builder: com.basemind.client.Gateway.PromptRequest.Builder
   ) {
     public companion object {
       @kotlin.jvm.JvmSynthetic
       @kotlin.PublishedApi
-      internal fun _create(builder: gateway.v1.Gateway.PromptRequest.Builder): Dsl = Dsl(builder)
+      internal fun _create(builder: com.basemind.client.Gateway.PromptRequest.Builder): Dsl = Dsl(builder)
     }
 
     @kotlin.jvm.JvmSynthetic
     @kotlin.PublishedApi
-    internal fun _build(): gateway.v1.Gateway.PromptRequest = _builder.build()
+    internal fun _build(): com.basemind.client.Gateway.PromptRequest = _builder.build()
 
     /**
      * An uninstantiable, behaviorless type to represent the field in
@@ -124,5 +124,5 @@ public object PromptRequestKt {
   }
 }
 @kotlin.jvm.JvmSynthetic
-public inline fun gateway.v1.Gateway.PromptRequest.copy(block: `gateway.v1`.PromptRequestKt.Dsl.() -> kotlin.Unit): gateway.v1.Gateway.PromptRequest =
-  `gateway.v1`.PromptRequestKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+public inline fun com.basemind.client.Gateway.PromptRequest.copy(block: `com.basemind.client`.PromptRequestKt.Dsl.() -> kotlin.Unit): com.basemind.client.Gateway.PromptRequest =
+  `com.basemind.client`.PromptRequestKt.Dsl._create(this.toBuilder()).apply { block() }._build()

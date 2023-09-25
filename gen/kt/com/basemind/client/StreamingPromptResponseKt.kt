@@ -3,11 +3,11 @@
 
 // Generated files should ignore deprecation warnings
 @file:Suppress("DEPRECATION")
-package gateway.v1;
+package com.basemind.client;
 
 @kotlin.jvm.JvmName("-initializestreamingPromptResponse")
-public inline fun streamingPromptResponse(block: gateway.v1.StreamingPromptResponseKt.Dsl.() -> kotlin.Unit): gateway.v1.Gateway.StreamingPromptResponse =
-  gateway.v1.StreamingPromptResponseKt.Dsl._create(gateway.v1.Gateway.StreamingPromptResponse.newBuilder()).apply { block() }._build()
+public inline fun streamingPromptResponse(block: com.basemind.client.StreamingPromptResponseKt.Dsl.() -> kotlin.Unit): com.basemind.client.Gateway.StreamingPromptResponse =
+  com.basemind.client.StreamingPromptResponseKt.Dsl._create(com.basemind.client.Gateway.StreamingPromptResponse.newBuilder()).apply { block() }._build()
 /**
  * ```
  * An Streaming Prompt Response Message
@@ -19,17 +19,17 @@ public object StreamingPromptResponseKt {
   @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
   @com.google.protobuf.kotlin.ProtoDslMarker
   public class Dsl private constructor(
-    private val _builder: gateway.v1.Gateway.StreamingPromptResponse.Builder
+    private val _builder: com.basemind.client.Gateway.StreamingPromptResponse.Builder
   ) {
     public companion object {
       @kotlin.jvm.JvmSynthetic
       @kotlin.PublishedApi
-      internal fun _create(builder: gateway.v1.Gateway.StreamingPromptResponse.Builder): Dsl = Dsl(builder)
+      internal fun _create(builder: com.basemind.client.Gateway.StreamingPromptResponse.Builder): Dsl = Dsl(builder)
     }
 
     @kotlin.jvm.JvmSynthetic
     @kotlin.PublishedApi
-    internal fun _build(): gateway.v1.Gateway.StreamingPromptResponse = _builder.build()
+    internal fun _build(): com.basemind.client.Gateway.StreamingPromptResponse = _builder.build()
 
     /**
      * ```
@@ -130,5 +130,5 @@ public object StreamingPromptResponseKt {
   }
 }
 @kotlin.jvm.JvmSynthetic
-public inline fun gateway.v1.Gateway.StreamingPromptResponse.copy(block: `gateway.v1`.StreamingPromptResponseKt.Dsl.() -> kotlin.Unit): gateway.v1.Gateway.StreamingPromptResponse =
-  `gateway.v1`.StreamingPromptResponseKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+public inline fun com.basemind.client.Gateway.StreamingPromptResponse.copy(block: `com.basemind.client`.StreamingPromptResponseKt.Dsl.() -> kotlin.Unit): com.basemind.client.Gateway.StreamingPromptResponse =
+  `com.basemind.client`.StreamingPromptResponseKt.Dsl._create(this.toBuilder()).apply { block() }._build()

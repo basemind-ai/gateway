@@ -3,11 +3,11 @@
 
 // Generated files should ignore deprecation warnings
 @file:Suppress("DEPRECATION")
-package gateway.v1;
+package com.basemind.client;
 
 @kotlin.jvm.JvmName("-initializepromptConfigResponse")
-public inline fun promptConfigResponse(block: gateway.v1.PromptConfigResponseKt.Dsl.() -> kotlin.Unit): gateway.v1.Gateway.PromptConfigResponse =
-  gateway.v1.PromptConfigResponseKt.Dsl._create(gateway.v1.Gateway.PromptConfigResponse.newBuilder()).apply { block() }._build()
+public inline fun promptConfigResponse(block: com.basemind.client.PromptConfigResponseKt.Dsl.() -> kotlin.Unit): com.basemind.client.Gateway.PromptConfigResponse =
+  com.basemind.client.PromptConfigResponseKt.Dsl._create(com.basemind.client.Gateway.PromptConfigResponse.newBuilder()).apply { block() }._build()
 /**
  * ```
  * A response for a prompt configuration - retrieving the expected prompt variables
@@ -19,17 +19,17 @@ public object PromptConfigResponseKt {
   @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
   @com.google.protobuf.kotlin.ProtoDslMarker
   public class Dsl private constructor(
-    private val _builder: gateway.v1.Gateway.PromptConfigResponse.Builder
+    private val _builder: com.basemind.client.Gateway.PromptConfigResponse.Builder
   ) {
     public companion object {
       @kotlin.jvm.JvmSynthetic
       @kotlin.PublishedApi
-      internal fun _create(builder: gateway.v1.Gateway.PromptConfigResponse.Builder): Dsl = Dsl(builder)
+      internal fun _create(builder: com.basemind.client.Gateway.PromptConfigResponse.Builder): Dsl = Dsl(builder)
     }
 
     @kotlin.jvm.JvmSynthetic
     @kotlin.PublishedApi
-    internal fun _build(): gateway.v1.Gateway.PromptConfigResponse = _builder.build()
+    internal fun _build(): com.basemind.client.Gateway.PromptConfigResponse = _builder.build()
 
     /**
      * An uninstantiable, behaviorless type to represent the field in
@@ -131,5 +131,5 @@ public object PromptConfigResponseKt {
     }}
 }
 @kotlin.jvm.JvmSynthetic
-public inline fun gateway.v1.Gateway.PromptConfigResponse.copy(block: `gateway.v1`.PromptConfigResponseKt.Dsl.() -> kotlin.Unit): gateway.v1.Gateway.PromptConfigResponse =
-  `gateway.v1`.PromptConfigResponseKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+public inline fun com.basemind.client.Gateway.PromptConfigResponse.copy(block: `com.basemind.client`.PromptConfigResponseKt.Dsl.() -> kotlin.Unit): com.basemind.client.Gateway.PromptConfigResponse =
+  `com.basemind.client`.PromptConfigResponseKt.Dsl._create(this.toBuilder()).apply { block() }._build()

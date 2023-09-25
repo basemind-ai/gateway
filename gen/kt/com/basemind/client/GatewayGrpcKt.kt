@@ -1,6 +1,6 @@
-package gateway.v1
+package com.basemind.client
 
-import gateway.v1.APIGatewayServiceGrpc.getServiceDescriptor
+import com.basemind.client.APIGatewayServiceGrpc.getServiceDescriptor
 import io.grpc.CallOptions
 import io.grpc.CallOptions.DEFAULT
 import io.grpc.Channel

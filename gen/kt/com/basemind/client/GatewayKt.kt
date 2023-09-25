@@ -3,4 +3,4 @@
 
 // Generated files should ignore deprecation warnings
 @file:Suppress("DEPRECATION")
-package gateway.v1;
+package com.basemind.client;

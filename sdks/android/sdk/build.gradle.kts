@@ -39,6 +39,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.grpc.okhttp)
+    implementation(libs.grpc.protobuf.lite)
+    implementation(libs.grpc.stub)
+    implementation(libs.grpc.kotlin.stub)
 }
 
 // root directories
@@ -47,7 +51,7 @@ private val androidSdkDir = "$androidCoreDir/sdk"
 private val androidSdkMainDir = "$androidSdkDir/src/main/java/com/basemind/client"
 
 // directories in focus
-private val genKtGatewayDir = "$rootDir/gen/kt/gateway/v1"
+private val genKtGatewayDir = "$rootDir/gen/kt/com/basemind/client"
 private val copyDestinationGatewayDir = "$androidSdkMainDir/gateway"
 private val copyDestinationPModelsDir = "$androidSdkMainDir/promptModels"
 
