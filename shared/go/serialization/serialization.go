@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-func ReadResponseBody(response *http.Response) ([]byte, error) {
+func ReadBody(body io.ReadCloser) ([]byte, error) {
 	defer func() {
-		_ = response.Body.Close()
+		_ = body.Close()
 	}()
 
-	data, readErr := io.ReadAll(response.Body)
+	data, readErr := io.ReadAll(body)
 	if readErr != nil {
 		return nil, readErr
 	}
@@ -19,8 +19,8 @@ func ReadResponseBody(response *http.Response) ([]byte, error) {
 	return data, nil
 }
 
-func DeserializeJson[T any](response *http.Response, targetType T) error {
-	data, err := ReadResponseBody(response)
+func DeserializeJson[T any](body io.ReadCloser, targetType T) error {
+	data, err := ReadBody(body)
 	if err != nil {
 		return err
 	}

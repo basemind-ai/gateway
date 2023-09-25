@@ -2,9 +2,9 @@ package apierror_test
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"net/http"
 	"testing"
 
@@ -68,7 +68,7 @@ func TestApiError(t *testing.T) {
 		assert.Equal(t, testCase.ExpectedStatus, res.StatusCode)
 
 		var body apierror.ApiError
-		_ = json.Unmarshal(res.Body, &body)
+		_ = serialization.DeserializeJson(res.Body, &body)
 		assert.Equal(t, testCase.ExpectedMessage, body.Message)
 	}
 }
