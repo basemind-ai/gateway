@@ -3,15 +3,13 @@ package api_test
 import (
 	"context"
 	"fmt"
-	db2 "github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
-	firebaseTestUtils "github.com/basemind-ai/monorepo/shared/go/firebaseutils/testutils"
+	httpTestUtils "github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/router"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"net/http"
-	"net/http/httptest"
 	"testing"
-
-	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/api"
 
@@ -19,85 +17,95 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func deleteUserData(ctx context.Context, dbQueries *db2.Queries, userID pgtype.UUID) {
-	userProjects, _ := dbQueries.FindProjectsByUserId(ctx, userID)
-	for _, project := range userProjects {
-		_ = dbQueries.DeleteUserProject(ctx, project.ID)
-		_ = dbQueries.DeleteProject(ctx, project.ID)
+func createMockFirebaseAuthMiddleware(userId string) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := context.WithValue(r.Context(), constants.FireBaseIdContextKey, userId)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
 	}
-
-	_ = dbQueries.DeleteUser(ctx, fmt.Sprintf("%x", userID.Bytes))
 }
 
-func TestHandleDashboardUserPostLogin(t *testing.T) {
+func TestAPI(t *testing.T) {
 	dbTestUtils.CreateTestDB(t)
 
-	t.Run("Create New User tests", func(t *testing.T) {
-		t.Run("success case", func(t *testing.T) {
-			rr := httptest.NewRecorder()
+	t.Run("HandleDashboardUserPostLogin", func(t *testing.T) {
+		t.Run("creates a new user if it doesnt exist", func(t *testing.T) {
+			userId := "123abc"
+			r := router.New(router.Options{
+				Environment:      "test",
+				ServiceName:      "test",
+				RegisterHandlers: api.RegisterHandlers,
+				Middlewares: []func(next http.Handler) http.Handler{
+					createMockFirebaseAuthMiddleware(userId),
+				},
+			})
 
-			req, err := http.NewRequestWithContext(firebaseTestUtils.MockFirebaseContext(), http.MethodGet, constants.DashboardLoginEndpoint, nil)
-			assert.Nil(t, err)
+			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			api.HandleDashboardUserPostLogin(rr, req)
-			res := rr.Result()
-
-			assert.Equal(t, http.StatusCreated, res.StatusCode)
-
-			var responseUser api.HandleDashboardUserPostLoginDTO
-			err = serialization.DeserializeJson(res, &responseUser)
-
-			assert.Nil(t, err)
-			assert.Equal(t, "1", responseUser.User.FirebaseID)
-			assert.Equal(t, "Default Project", responseUser.Projects[0].Name)
-			assert.Equal(t, "Default Project", responseUser.Projects[0].Description)
-		})
-	})
-
-	t.Run("Retrieves a existing user tests", func(t *testing.T) {
-		t.Run("success case", func(t *testing.T) {
-			req, err := http.NewRequestWithContext(firebaseTestUtils.MockFirebaseContext(), http.MethodGet, constants.DashboardLoginEndpoint, nil)
-			assert.Nil(t, err)
-			api.HandleDashboardUserPostLogin(httptest.NewRecorder(), req)
-
-			req, err = http.NewRequestWithContext(firebaseTestUtils.MockFirebaseContext(), http.MethodGet, constants.DashboardLoginEndpoint, nil)
-			assert.Nil(t, err)
-
-			rr := httptest.NewRecorder()
-			api.HandleDashboardUserPostLogin(rr, req)
-
-			res := rr.Result()
-			assert.Equal(t, http.StatusOK, res.StatusCode)
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardLoginEndpoint))
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			var responseUser api.HandleDashboardUserPostLoginDTO
-			err = serialization.DeserializeJson(res, &responseUser)
+			deserializationErr := serialization.DeserializeJson(response, &responseUser)
+			assert.NoError(t, deserializationErr)
 
-			assert.Nil(t, err)
-			assert.Equal(t, "1", responseUser.User.FirebaseID)
+			assert.Equal(t, userId, responseUser.User.FirebaseID)
 			assert.Equal(t, "Default Project", responseUser.Projects[0].Name)
 			assert.Equal(t, "Default Project", responseUser.Projects[0].Description)
 		})
 
-		t.Run("failure case - failed to retrieve user projects", func(t *testing.T) {
-			ctx := context.TODO()
-			dbQueries := db2.GetQueries()
+		t.Run("retrieves existing user if it exists", func(t *testing.T) {
+			userId := "xxx123"
 
-			existingUser, err := dbQueries.FindUserByFirebaseId(ctx, "1")
-			if err == nil {
-				deleteUserData(ctx, dbQueries, existingUser.ID)
-			}
+			_, userCreateErr := api.HandleCreateNewUser(context.Background(), db.GetQueries(), userId)
+			assert.NoError(t, userCreateErr)
 
-			// Create a user but not his projects
-			_, _ = dbQueries.CreateUser(ctx, "1")
+			r := router.New(router.Options{
+				Environment:      "test",
+				ServiceName:      "test",
+				RegisterHandlers: api.RegisterHandlers,
+				Middlewares: []func(next http.Handler) http.Handler{
+					createMockFirebaseAuthMiddleware(userId),
+				},
+			})
 
-			req, err := http.NewRequestWithContext(firebaseTestUtils.MockFirebaseContext(), http.MethodGet, constants.DashboardLoginEndpoint, nil)
-			assert.Nil(t, err)
+			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			rr := httptest.NewRecorder()
-			api.HandleDashboardUserPostLogin(rr, req)
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardLoginEndpoint))
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			res := rr.Result()
-			assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+			var responseUser api.HandleDashboardUserPostLoginDTO
+			deserializationErr := serialization.DeserializeJson(response, &responseUser)
+			assert.NoError(t, deserializationErr)
+
+			assert.Equal(t, userId, responseUser.User.FirebaseID)
+			assert.Equal(t, "Default Project", responseUser.Projects[0].Name)
+			assert.Equal(t, "Default Project", responseUser.Projects[0].Description)
+		})
+
+		t.Run("returns error when user exists without projects", func(t *testing.T) {
+			userId := "zzz123"
+
+			_, userCreateErr := db.GetQueries().CreateUser(context.TODO(), userId)
+			assert.NoError(t, userCreateErr)
+
+			r := router.New(router.Options{
+				Environment:      "test",
+				ServiceName:      "test",
+				RegisterHandlers: api.RegisterHandlers,
+				Middlewares: []func(next http.Handler) http.Handler{
+					createMockFirebaseAuthMiddleware(userId),
+				},
+			})
+
+			testClient := httpTestUtils.CreateTestClient(t, r)
+
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardLoginEndpoint))
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusInternalServerError, response.StatusCode)
 		})
 	})
 }

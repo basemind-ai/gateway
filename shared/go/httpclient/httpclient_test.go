@@ -3,7 +3,6 @@ package httpclient_test
 import (
 	"context"
 	"encoding/json"
-	"github.com/basemind-ai/monorepo/shared/go/httpclient"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
 	"io"
 	"net/http"
@@ -59,7 +58,7 @@ func TestClient(t *testing.T) {
 			writer.WriteHeader(http.StatusOK)
 		}))
 		var (
-			res *httpclient.HTTPResponse
+			res *http.Response
 			err error
 		)
 		switch testCase.Method {

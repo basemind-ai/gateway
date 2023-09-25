@@ -2,7 +2,7 @@ package db_test
 
 import (
 	"context"
-	db2 "github.com/basemind-ai/monorepo/shared/go/db"
+	db "github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"testing"
 
@@ -13,7 +13,7 @@ import (
 
 func TestDbQueries(t *testing.T) {
 	dbTestUtils.CreateTestDB(t)
-	dbQueries := db2.GetQueries()
+	dbQueries := db.GetQueries()
 
 	t.Run("CheckUserExists tests", func(t *testing.T) {
 		testUserId := uuid.NewString()
@@ -94,7 +94,7 @@ func TestDbQueries(t *testing.T) {
 
 	t.Run("CreateProject tests", func(t *testing.T) {
 		t.Run("successfully creates a project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
 			assert.Equal(t, project.Name, "test")
@@ -106,7 +106,7 @@ func TestDbQueries(t *testing.T) {
 
 	t.Run("DeleteProject tests", func(t *testing.T) {
 		t.Run("successfully deletes a project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
 			err = dbQueries.DeleteProject(context.TODO(), project.ID)
@@ -121,24 +121,24 @@ func TestDbQueries(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Run("successfully creates a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
-			createProjectParams := db2.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db2.AccessPermissionTypeADMIN, IsUserDefaultProject: true}
+			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN, IsUserDefaultProject: true}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
 			assert.Equal(t, userProject.IsUserDefaultProject, true)
 			assert.Equal(t, userProject.ProjectID, project.ID)
 			assert.Equal(t, userProject.UserID, user.ID)
-			assert.Equal(t, userProject.Permission, db2.AccessPermissionTypeADMIN)
+			assert.Equal(t, userProject.Permission, db.AccessPermissionTypeADMIN)
 		})
 
 		t.Run("User default project is false by default", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
-			createProjectParams := db2.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db2.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -146,10 +146,10 @@ func TestDbQueries(t *testing.T) {
 		})
 
 		t.Run("fails when creating a duplicate user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
-			createProjectParams := db2.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db2.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
 			_, err = dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -165,10 +165,10 @@ func TestDbQueries(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Run("successfully delete a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
-			createProjectParams := db2.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db2.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -189,10 +189,10 @@ func TestDbQueries(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Run("successfully delete a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
-			createProjectParams := db2.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db2.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -212,10 +212,10 @@ func TestDbQueries(t *testing.T) {
 			user, err := dbQueries.CreateUser(context.TODO(), testUserId)
 			assert.Nil(t, err)
 
-			project, err := dbQueries.CreateProject(context.TODO(), db2.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
 			assert.Nil(t, err)
 
-			createProjectParams := db2.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db2.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 

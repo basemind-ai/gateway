@@ -2,7 +2,6 @@ package testutils
 
 import (
 	"context"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/constants"
 	"github.com/basemind-ai/monorepo/shared/go/firebaseutils"
 
 	"firebase.google.com/go/v4/auth"
@@ -26,8 +25,4 @@ func MockFirebaseAuth() *FirebaseAuthMock {
 	authMock := &FirebaseAuthMock{}
 	firebaseutils.SetFirebaseAuth(authMock)
 	return authMock
-}
-
-func MockFirebaseContext() context.Context {
-	return context.WithValue(context.Background(), constants.FireBaseIdContextKey, "1")
 }

@@ -5043,7 +5043,7 @@ packages:
     /ansi-styles@4.3.0:
         resolution:
             {
-                integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==,
+                integrity: sha512-zbB9rCJAT1rbjiVdbhqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==,
             }
         engines: { node: '>=8' }
         dependencies:
@@ -11726,7 +11726,7 @@ packages:
     /react@18.2.0:
         resolution:
             {
-                integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==,
+                integrity: sha512-/3IjMdbL9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==,
             }
         engines: { node: '>=0.10.0' }
         dependencies:
