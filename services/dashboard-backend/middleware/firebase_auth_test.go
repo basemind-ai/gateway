@@ -8,8 +8,6 @@ import (
 	"testing"
 
 	"firebase.google.com/go/v4/auth"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/constants"
-
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -78,7 +76,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 		assert.Equal(t, 1, len(mockNext.Calls))
 
 		newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
-		ctxValue := newRequest.Context().Value(constants.FireBaseIdContextKey)
+		ctxValue := newRequest.Context().Value(middleware.FireBaseIdContextKey)
 		assert.Equal(t, ctxValue, "123")
 	})
 }

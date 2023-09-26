@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	httpTestUtils "github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
@@ -13,14 +14,13 @@ import (
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/api"
 
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/constants"
 	"github.com/stretchr/testify/assert"
 )
 
 func createMockFirebaseAuthMiddleware(userId string) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := context.WithValue(r.Context(), constants.FireBaseIdContextKey, userId)
+			ctx := context.WithValue(r.Context(), middleware.FireBaseIdContextKey, userId)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
@@ -43,7 +43,7 @@ func TestAPI(t *testing.T) {
 
 			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardRetrieveProjectsEndpoint))
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", api.ProjectsListEndpoint))
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
@@ -72,7 +72,7 @@ func TestAPI(t *testing.T) {
 
 			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardRetrieveProjectsEndpoint))
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", api.ProjectsListEndpoint))
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
@@ -101,7 +101,7 @@ func TestAPI(t *testing.T) {
 
 			testClient := httpTestUtils.CreateTestClient(t, r)
 
-			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", constants.DashboardRetrieveProjectsEndpoint))
+			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", api.ProjectsListEndpoint))
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusInternalServerError, response.StatusCode)
 		})

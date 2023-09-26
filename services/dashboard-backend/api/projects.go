@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/constants"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -45,7 +45,7 @@ func GetOrCreateUser(ctx context.Context, dbQueries *db.Queries, firebaseId stri
 // 1. user already exists, in which case it retrieves the projects for the user.
 // 2. user is new, in which case it creates the user entry and the default project, retrieve this project.
 func HandleRetrieveUserProjects(w http.ResponseWriter, r *http.Request) {
-	firebaseId := r.Context().Value(constants.FireBaseIdContextKey).(string)
+	firebaseId := r.Context().Value(middleware.FireBaseIdContextKey).(string)
 
 	user, userRetrieveError := GetOrCreateUser(r.Context(), db.GetQueries(), firebaseId)
 

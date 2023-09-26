@@ -7,9 +7,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/constants"
-
 	"github.com/rs/zerolog/log"
+)
+
+type ContextKeyType int
+
+const (
+	FireBaseIdContextKey ContextKeyType = iota
 )
 
 func FirebaseAuthMiddleware(next http.Handler) http.Handler {
@@ -33,7 +37,7 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), constants.FireBaseIdContextKey, token.UID)
+		ctx := context.WithValue(r.Context(), FireBaseIdContextKey, token.UID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

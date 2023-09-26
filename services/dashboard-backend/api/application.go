@@ -12,8 +12,7 @@ import (
 func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	projectId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "projectId"))
 	if uuidErr != nil {
-		log.Debug().Err(uuidErr).Msg("invalid projectId received")
-		_ = apierror.BadRequest("projectId is not a valid UUID value").Render(w, r)
+		_ = apierror.BadRequest(InvalidProjectIdError).Render(w, r)
 		return
 	}
 
@@ -22,7 +21,12 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	}
 	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		_ = apierror.BadRequest("invalid request body").Render(w, r)
+		_ = apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		return
+	}
+
+	if data.Name == "" {
+		_ = apierror.BadRequest("application name is either missing or empty").Render(w, r)
 		return
 	}
 
@@ -39,8 +43,7 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 	applicationId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "applicationId"))
 	if uuidErr != nil {
-		log.Debug().Err(uuidErr).Msg("invalid applicationId received")
-		_ = apierror.BadRequest("applicationId is not a valid UUID value").Render(w, r)
+		_ = apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
 		return
 	}
 
@@ -51,4 +54,50 @@ func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_ = serialization.RenderJsonResponse(w, http.StatusOK, application)
+}
+
+func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
+	applicationId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "applicationId"))
+	if uuidErr != nil {
+		_ = apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
+		return
+	}
+
+	data := &db.UpdateApplicationParams{
+		ID: *applicationId,
+	}
+	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
+		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
+		_ = apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		return
+	}
+
+	if data.Name == "" {
+		_ = apierror.BadRequest("application name is either missing or empty").Render(w, r)
+		return
+	}
+
+	application, applicationUpdateError := db.GetQueries().UpdateApplication(r.Context(), *data)
+	if applicationUpdateError != nil {
+		log.Error().Err(applicationUpdateError).Msg("failed to update application")
+		_ = apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	_ = serialization.RenderJsonResponse(w, http.StatusOK, application)
+}
+
+func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
+	applicationId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "applicationId"))
+	if uuidErr != nil {
+		_ = apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
+		return
+	}
+
+	if applicationDeleteErr := db.GetQueries().DeleteApplication(r.Context(), *applicationId); applicationDeleteErr != nil {
+		log.Error().Err(applicationDeleteErr).Msg("failed to delete application")
+		_ = apierror.InternalServerError().Render(w, r)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
