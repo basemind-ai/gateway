@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="19" />
+    <bytecodeTargetLevel target="19">
+      <module name="BaseMind.AI.proto" target="19" />
+      <module name="BaseMind.AI.proto.main" target="19" />
+      <module name="BaseMind.AI.proto.test" target="19" />
+    </bytecodeTargetLevel>
   </component>
 </project>

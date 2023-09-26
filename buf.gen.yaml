@@ -18,10 +18,3 @@ plugins:
       out: gen/go
       opt:
           - paths=source_relative
-    # kotlin
-    - plugin: buf.build/grpc/kotlin:v1.3.1
-      out: gen/kt
-    - plugin: buf.build/grpc/java
-      out: gen/kt
-    - plugin: buf.build/protocolbuffers/kotlin
-      out: gen/kt

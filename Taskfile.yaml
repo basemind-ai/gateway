@@ -106,7 +106,9 @@ tasks:
     buf:generate:
         desc: Generate gRPC types and code from proto files
         cmds:
-            - rm -rf gen && npx buf generate
+            - rm -rf gen
+            - npx buf generate
+            - rm -rf gen/ts/gateway
     buf:lint:
         desc: Lint the protobuf files
         cmds:

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.protobuf)
     id("org.jetbrains.kotlin.jvm") apply false
 }
 
@@ -34,98 +35,60 @@ android {
 }
 
 dependencies {
+    protobuf(files("../../../proto/gateway/v1"))
 
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.grpc.kotlin.stub)
     implementation(libs.grpc.okhttp)
+    implementation(libs.grpc.protobuf.kotlin.lite)
     implementation(libs.grpc.protobuf.lite)
     implementation(libs.grpc.stub)
-    implementation(libs.grpc.kotlin.stub)
+    implementation(libs.kotlinx.coroutines)
+
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.junit)
 }
 
-// root directories
-private val androidCoreDir = "$rootDir/sdks/android"
-private val androidSdkDir = "$androidCoreDir/sdk"
-private val androidSdkMainDir = "$androidSdkDir/src/main/java/com/basemind/client"
-
-// directories in focus
-private val genKtGatewayDir = "$rootDir/gen/kt/com/basemind/client"
-private val copyDestinationGatewayDir = "$androidSdkMainDir/gateway"
-private val copyDestinationPModelsDir = "$androidSdkMainDir/promptModels"
-
-// tasks
-private val taskCopyGenKtToSrc = "copyGeneratedKotlinToSrc"
-private val taskCleanGenCopies = "cleanGenCopies"
-private val taskDefaultBuild = "build"
-
-// messages
-private val descTaskCopy = "Copying Generated Kotlin Files from $genKtGatewayDir ..."
-private val positiveConclusionTaskCopy = "Files copied from %s to %s"
-private val negativeConclusionTaskCopy = "There was an problem copying files from %s to %s"
-private val descTaskClean = "Cleaning the contents from %s ..."
-private val conclusionTaskClean = "Directory %s is cleaned!"
-
-tasks.register(taskCleanGenCopies) {
-    println(descTaskClean)
-
-    deleteContents(project.file(copyDestinationGatewayDir))
-    println(String.format(conclusionTaskClean, copyDestinationGatewayDir))
-
-    deleteContents(project.file(copyDestinationPModelsDir))
-    println(String.format(conclusionTaskClean, copyDestinationPModelsDir))
-}
-
-tasks.register(taskCopyGenKtToSrc) {
-    println(descTaskCopy)
-
-    val sourceDir = file(genKtGatewayDir)
-
-    // Copy gateway files to the sdk's 'gateway' folder
-    val copiedGatewayFiles = project.copy {
-        val destDir = project.file(copyDestinationGatewayDir)
-
-        from(sourceDir)
-        into(destDir)
-
-        exclude("**/*Prompt*")
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
     }
+}
 
-    printConclusionMessage(copiedGatewayFiles.didWork, sourceDir, copyDestinationGatewayDir)
-
-    // Copy promptReq/Res files to the sdk's 'promptModels' folder
-    val copiedPromptFiles = project.copy {
-        val destDir = project.file(copyDestinationPModelsDir)
-
-        from(sourceDir)
-        into(destDir)
-
-        include("**/*Prompt*")
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.3"
     }
-
-    printConclusionMessage(copiedPromptFiles.didWork, sourceDir, copyDestinationPModelsDir)
-}
-
-fun deleteContents(file: File) {
-    // Delete the contents of the folder
-    file.deleteRecursively()
-
-    // Optionally, recreate the empty folder if needed
-    file.mkdirs()
-}
-
-fun printConclusionMessage(copyStatus: Boolean, sourceDir: File, destinationDir: String) {
-    val conclusionMessage = if (copyStatus) {
-        positiveConclusionTaskCopy
-    } else {
-        negativeConclusionTaskCopy
+    plugins {
+        create("java") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+        }
+        create("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+        }
+        create("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
+        }
     }
-
-    println(String.format(conclusionMessage, sourceDir, destinationDir))
-}
-
-tasks.named(taskDefaultBuild) {
-    dependsOn(taskCleanGenCopies)
-    dependsOn(taskCopyGenKtToSrc)
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                create("java") {
+                    option("lite")
+                }
+                create("grpc") {
+                    option("lite")
+                }
+                create("grpckt") {
+                    option("lite")
+                }
+            }
+            it.builtins {
+                create("kotlin") {
+                    option("lite")
+                }
+            }
+        }
+    }
 }
