@@ -9,11 +9,6 @@ local.properties
 gateway/
 promptModels/
 
-# Android Studio generated files and folders
-#captures/
-#.externalNativeBuild/
-#.cxx/
-
 # IntelliJ
 .idea/
 misc.xml
