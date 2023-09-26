@@ -3,8 +3,13 @@ package openai
 import (
 	"context"
 	"errors"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"fmt"
 	"io"
+	"strings"
+
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
+	"github.com/tiktoken-go/tokenizer"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/rs/zerolog/log"
@@ -48,7 +53,27 @@ func (c *Client) RequestPrompt(
 	if requestErr != nil {
 		return "", requestErr
 	}
-	// TODO handle token related logic here by using the response token properties.
+
+	// Count the total number of tokens utilized for openai prompt
+	var promptMessages string
+	for _, message := range promptRequest.Messages {
+		promptMessages += *message.Content
+		promptMessages += "\n"
+	}
+
+	promptMessages = strings.TrimRight(promptMessages, "\n")
+
+	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(promptMessages, tokenizer.Cl100kBase)
+	if tokenizationErr != nil {
+		log.Err(tokenizationErr).Msg("failed to get prompt token count")
+	}
+
+	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(response.Content, tokenizer.Cl100kBase)
+	if tokenizationErr != nil {
+		log.Err(tokenizationErr).Msg("failed to get prompt token count")
+	}
+
+	log.Debug().Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
 	return response.Content, nil
 }
 

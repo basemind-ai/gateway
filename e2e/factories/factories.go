@@ -3,6 +3,7 @@ package factories
 import (
 	"context"
 	"encoding/json"
+
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
