@@ -83,11 +83,11 @@ INSERT INTO prompt_config (
     model_vendor,
     prompt_messages,
     template_variables,
-    is_active,
+    is_default,
     application_id
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages, template_variables, is_active, created_at, updated_at, application_id
+RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages, template_variables, is_default, created_at, updated_at, application_id
 `
 
 type CreatePromptConfigParams struct {
@@ -97,7 +97,7 @@ type CreatePromptConfigParams struct {
 	ModelVendor       ModelVendor `json:"modelVendor"`
 	PromptMessages    []byte      `json:"promptMessages"`
 	TemplateVariables []string    `json:"templateVariables"`
-	IsActive          bool        `json:"isActive"`
+	IsDefault         bool        `json:"isDefault"`
 	ApplicationID     pgtype.UUID `json:"applicationId"`
 }
 
@@ -109,7 +109,7 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 		arg.ModelVendor,
 		arg.PromptMessages,
 		arg.TemplateVariables,
-		arg.IsActive,
+		arg.IsDefault,
 		arg.ApplicationID,
 	)
 	var i PromptConfig
@@ -121,7 +121,7 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 		&i.ModelVendor,
 		&i.PromptMessages,
 		&i.TemplateVariables,
-		&i.IsActive,
+		&i.IsDefault,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ApplicationID,
@@ -309,42 +309,6 @@ func (q *Queries) DeleteUserProject(ctx context.Context, projectID pgtype.UUID) 
 	return err
 }
 
-const findActivePromptConfigByApplicationId = `-- name: FindActivePromptConfigByApplicationId :one
-SELECT
-    id,
-    name,
-    model_parameters,
-    model_type,
-    model_vendor,
-    prompt_messages,
-    template_variables,
-    is_active,
-    created_at,
-    updated_at,
-    application_id
-FROM prompt_config
-WHERE application_id = $1 AND is_active = TRUE
-`
-
-func (q *Queries) FindActivePromptConfigByApplicationId(ctx context.Context, applicationID pgtype.UUID) (PromptConfig, error) {
-	row := q.db.QueryRow(ctx, findActivePromptConfigByApplicationId, applicationID)
-	var i PromptConfig
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.ModelParameters,
-		&i.ModelType,
-		&i.ModelVendor,
-		&i.PromptMessages,
-		&i.TemplateVariables,
-		&i.IsActive,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.ApplicationID,
-	)
-	return i, err
-}
-
 const findApplicationById = `-- name: FindApplicationById :one
 SELECT id, description, name, created_at, updated_at, project_id -- noqa: L044
 FROM application
@@ -361,6 +325,42 @@ func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (Appl
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ProjectID,
+	)
+	return i, err
+}
+
+const findDefaultPromptConfigByApplicationId = `-- name: FindDefaultPromptConfigByApplicationId :one
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_default,
+    created_at,
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE application_id = $1 AND is_default = TRUE
+`
+
+func (q *Queries) FindDefaultPromptConfigByApplicationId(ctx context.Context, applicationID pgtype.UUID) (PromptConfig, error) {
+	row := q.db.QueryRow(ctx, findDefaultPromptConfigByApplicationId, applicationID)
+	var i PromptConfig
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.ModelParameters,
+		&i.ModelType,
+		&i.ModelVendor,
+		&i.PromptMessages,
+		&i.TemplateVariables,
+		&i.IsDefault,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ApplicationID,
 	)
 	return i, err
 }
@@ -423,7 +423,7 @@ SELECT
     model_vendor,
     prompt_messages,
     template_variables,
-    is_active,
+    is_default,
     created_at,
     updated_at,
     application_id
@@ -442,7 +442,7 @@ func (q *Queries) FindPromptConfigById(ctx context.Context, id pgtype.UUID) (Pro
 		&i.ModelVendor,
 		&i.PromptMessages,
 		&i.TemplateVariables,
-		&i.IsActive,
+		&i.IsDefault,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ApplicationID,
@@ -605,10 +605,10 @@ SET
     model_vendor = $5,
     prompt_messages = $6,
     template_variables = $7,
-    is_active = $8,
+    is_default = $8,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages, template_variables, is_active, created_at, updated_at, application_id
+RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages, template_variables, is_default, created_at, updated_at, application_id
 `
 
 type UpdatePromptConfigParams struct {
@@ -619,7 +619,7 @@ type UpdatePromptConfigParams struct {
 	ModelVendor       ModelVendor `json:"modelVendor"`
 	PromptMessages    []byte      `json:"promptMessages"`
 	TemplateVariables []string    `json:"templateVariables"`
-	IsActive          bool        `json:"isActive"`
+	IsDefault         bool        `json:"isDefault"`
 }
 
 func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfigParams) (PromptConfig, error) {
@@ -631,7 +631,7 @@ func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfig
 		arg.ModelVendor,
 		arg.PromptMessages,
 		arg.TemplateVariables,
-		arg.IsActive,
+		arg.IsDefault,
 	)
 	var i PromptConfig
 	err := row.Scan(
@@ -642,10 +642,28 @@ func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfig
 		&i.ModelVendor,
 		&i.PromptMessages,
 		&i.TemplateVariables,
-		&i.IsActive,
+		&i.IsDefault,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.ApplicationID,
 	)
 	return i, err
+}
+
+const updatePromptConfigIsDefault = `-- name: UpdatePromptConfigIsDefault :exec
+UPDATE prompt_config
+SET
+    is_default = $2,
+    updated_at = NOW()
+WHERE id = $1
+`
+
+type UpdatePromptConfigIsDefaultParams struct {
+	ID        pgtype.UUID `json:"id"`
+	IsDefault bool        `json:"isDefault"`
+}
+
+func (q *Queries) UpdatePromptConfigIsDefault(ctx context.Context, arg UpdatePromptConfigIsDefaultParams) error {
+	_, err := q.db.Exec(ctx, updatePromptConfigIsDefault, arg.ID, arg.IsDefault)
+	return err
 }

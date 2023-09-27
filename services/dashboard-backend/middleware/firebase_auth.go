@@ -22,7 +22,7 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 
 		if !strings.HasPrefix(authHeader, "Bearer ") {
 			log.Error().Msg("malformed firebase auth header")
-			_ = apierror.Unauthorized("invalid auth header").Render(w, r)
+			apierror.Unauthorized("invalid auth header").Render(w, r)
 			return
 		}
 
@@ -33,7 +33,7 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 
 		if tokenErr != nil {
 			log.Error().Err(tokenErr).Msg("malformed firebase auth header")
-			_ = apierror.Unauthorized("invalid auth header").Render(w, r)
+			apierror.Unauthorized("invalid auth header").Render(w, r)
 			return
 		}
 

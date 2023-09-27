@@ -162,7 +162,7 @@ type PromptConfig struct {
 	ModelVendor       ModelVendor        `json:"modelVendor"`
 	PromptMessages    []byte             `json:"promptMessages"`
 	TemplateVariables []string           `json:"templateVariables"`
-	IsActive          bool               `json:"isActive"`
+	IsDefault         bool               `json:"isDefault"`
 	CreatedAt         pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt         pgtype.Timestamptz `json:"updatedAt"`
 	ApplicationID     pgtype.UUID        `json:"applicationId"`

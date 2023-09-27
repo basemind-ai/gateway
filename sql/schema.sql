@@ -77,7 +77,7 @@ CREATE TABLE prompt_config
     model_vendor model_vendor NOT NULL,
     prompt_messages json NOT NULL,
     template_variables varchar(256) [] NULL,
-    is_active boolean NOT NULL DEFAULT FALSE,
+    is_default boolean NOT NULL DEFAULT TRUE,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     application_id uuid NOT NULL,
@@ -85,8 +85,9 @@ CREATE TABLE prompt_config
 );
 
 CREATE INDEX idx_prompt_config_application_id ON prompt_config (application_id);
-CREATE INDEX idx_prompt_config_is_active ON prompt_config (is_active);
+CREATE INDEX idx_prompt_config_is_default ON prompt_config (is_default);
 CREATE INDEX idx_prompt_config_created_at ON prompt_config (created_at);
+CREATE UNIQUE INDEX idx_prompt_config_name ON prompt_config (name, application_id);
 
 -- prompt-request-record
 CREATE TABLE prompt_request_record

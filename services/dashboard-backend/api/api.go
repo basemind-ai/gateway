@@ -2,6 +2,11 @@ package api
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
+)
+
+var (
+	validate = validator.New(validator.WithRequiredStructEnabled())
 )
 
 func RegisterHandlers(mux *chi.Mux) {
@@ -14,5 +19,7 @@ func RegisterHandlers(mux *chi.Mux) {
 			applicationsRouter.Patch("/", HandleUpdateApplication)
 			applicationsRouter.Delete("/", HandleDeleteApplication)
 		})
+
+		router.Post(PromptConfigListEndpoint, HandleCreatePromptConfig)
 	})
 }
