@@ -3,7 +3,8 @@ syntax = "proto3";
 package gateway.v1;
 
 option go_package = "github.com/basemind-ai/monorepo/gen/gateway";
-option java_package = "com.basemind.client";
+option java_multiple_files = true;
+option java_package = "com.basemind.client.grpc";
 
 // The API Gateway service definition.
 service APIGatewayService {

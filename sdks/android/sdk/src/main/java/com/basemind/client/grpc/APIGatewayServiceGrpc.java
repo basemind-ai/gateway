@@ -1,4 +1,4 @@
-package com.basemind.client;
+package com.basemind.client.grpc;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
@@ -18,30 +18,29 @@ public final class APIGatewayServiceGrpc {
   public static final java.lang.String SERVICE_NAME = "gateway.v1.APIGatewayService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptConfigRequest,
-      com.basemind.client.Gateway.PromptConfigResponse> getRequestPromptConfigMethod;
+  private static volatile io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptConfigRequest,
+      com.basemind.client.grpc.PromptConfigResponse> getRequestPromptConfigMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestPromptConfig",
-      requestType = com.basemind.client.Gateway.PromptConfigRequest.class,
-      responseType = com.basemind.client.Gateway.PromptConfigResponse.class,
+      requestType = com.basemind.client.grpc.PromptConfigRequest.class,
+      responseType = com.basemind.client.grpc.PromptConfigResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptConfigRequest,
-      com.basemind.client.Gateway.PromptConfigResponse> getRequestPromptConfigMethod() {
-    io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptConfigRequest, com.basemind.client.Gateway.PromptConfigResponse> getRequestPromptConfigMethod;
+  public static io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptConfigRequest,
+      com.basemind.client.grpc.PromptConfigResponse> getRequestPromptConfigMethod() {
+    io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptConfigRequest, com.basemind.client.grpc.PromptConfigResponse> getRequestPromptConfigMethod;
     if ((getRequestPromptConfigMethod = APIGatewayServiceGrpc.getRequestPromptConfigMethod) == null) {
       synchronized (APIGatewayServiceGrpc.class) {
         if ((getRequestPromptConfigMethod = APIGatewayServiceGrpc.getRequestPromptConfigMethod) == null) {
           APIGatewayServiceGrpc.getRequestPromptConfigMethod = getRequestPromptConfigMethod =
-              io.grpc.MethodDescriptor.<com.basemind.client.Gateway.PromptConfigRequest, com.basemind.client.Gateway.PromptConfigResponse>newBuilder()
+              io.grpc.MethodDescriptor.<com.basemind.client.grpc.PromptConfigRequest, com.basemind.client.grpc.PromptConfigResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RequestPromptConfig"))
               .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.basemind.client.Gateway.PromptConfigRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.basemind.client.Gateway.PromptConfigResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new APIGatewayServiceMethodDescriptorSupplier("RequestPromptConfig"))
+              .setRequestMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
+                  com.basemind.client.grpc.PromptConfigRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
+                  com.basemind.client.grpc.PromptConfigResponse.getDefaultInstance()))
               .build();
         }
       }
@@ -49,30 +48,29 @@ public final class APIGatewayServiceGrpc {
     return getRequestPromptConfigMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptRequest,
-      com.basemind.client.Gateway.PromptResponse> getRequestPromptMethod;
+  private static volatile io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptRequest,
+      com.basemind.client.grpc.PromptResponse> getRequestPromptMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestPrompt",
-      requestType = com.basemind.client.Gateway.PromptRequest.class,
-      responseType = com.basemind.client.Gateway.PromptResponse.class,
+      requestType = com.basemind.client.grpc.PromptRequest.class,
+      responseType = com.basemind.client.grpc.PromptResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptRequest,
-      com.basemind.client.Gateway.PromptResponse> getRequestPromptMethod() {
-    io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptRequest, com.basemind.client.Gateway.PromptResponse> getRequestPromptMethod;
+  public static io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptRequest,
+      com.basemind.client.grpc.PromptResponse> getRequestPromptMethod() {
+    io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptRequest, com.basemind.client.grpc.PromptResponse> getRequestPromptMethod;
     if ((getRequestPromptMethod = APIGatewayServiceGrpc.getRequestPromptMethod) == null) {
       synchronized (APIGatewayServiceGrpc.class) {
         if ((getRequestPromptMethod = APIGatewayServiceGrpc.getRequestPromptMethod) == null) {
           APIGatewayServiceGrpc.getRequestPromptMethod = getRequestPromptMethod =
-              io.grpc.MethodDescriptor.<com.basemind.client.Gateway.PromptRequest, com.basemind.client.Gateway.PromptResponse>newBuilder()
+              io.grpc.MethodDescriptor.<com.basemind.client.grpc.PromptRequest, com.basemind.client.grpc.PromptResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RequestPrompt"))
               .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.basemind.client.Gateway.PromptRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.basemind.client.Gateway.PromptResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new APIGatewayServiceMethodDescriptorSupplier("RequestPrompt"))
+              .setRequestMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
+                  com.basemind.client.grpc.PromptRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
+                  com.basemind.client.grpc.PromptResponse.getDefaultInstance()))
               .build();
         }
       }
@@ -80,30 +78,29 @@ public final class APIGatewayServiceGrpc {
     return getRequestPromptMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptRequest,
-      com.basemind.client.Gateway.StreamingPromptResponse> getRequestStreamingPromptMethod;
+  private static volatile io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptRequest,
+      com.basemind.client.grpc.StreamingPromptResponse> getRequestStreamingPromptMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "RequestStreamingPrompt",
-      requestType = com.basemind.client.Gateway.PromptRequest.class,
-      responseType = com.basemind.client.Gateway.StreamingPromptResponse.class,
+      requestType = com.basemind.client.grpc.PromptRequest.class,
+      responseType = com.basemind.client.grpc.StreamingPromptResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
-  public static io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptRequest,
-      com.basemind.client.Gateway.StreamingPromptResponse> getRequestStreamingPromptMethod() {
-    io.grpc.MethodDescriptor<com.basemind.client.Gateway.PromptRequest, com.basemind.client.Gateway.StreamingPromptResponse> getRequestStreamingPromptMethod;
+  public static io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptRequest,
+      com.basemind.client.grpc.StreamingPromptResponse> getRequestStreamingPromptMethod() {
+    io.grpc.MethodDescriptor<com.basemind.client.grpc.PromptRequest, com.basemind.client.grpc.StreamingPromptResponse> getRequestStreamingPromptMethod;
     if ((getRequestStreamingPromptMethod = APIGatewayServiceGrpc.getRequestStreamingPromptMethod) == null) {
       synchronized (APIGatewayServiceGrpc.class) {
         if ((getRequestStreamingPromptMethod = APIGatewayServiceGrpc.getRequestStreamingPromptMethod) == null) {
           APIGatewayServiceGrpc.getRequestStreamingPromptMethod = getRequestStreamingPromptMethod =
-              io.grpc.MethodDescriptor.<com.basemind.client.Gateway.PromptRequest, com.basemind.client.Gateway.StreamingPromptResponse>newBuilder()
+              io.grpc.MethodDescriptor.<com.basemind.client.grpc.PromptRequest, com.basemind.client.grpc.StreamingPromptResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RequestStreamingPrompt"))
               .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.basemind.client.Gateway.PromptRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.basemind.client.Gateway.StreamingPromptResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new APIGatewayServiceMethodDescriptorSupplier("RequestStreamingPrompt"))
+              .setRequestMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
+                  com.basemind.client.grpc.PromptRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
+                  com.basemind.client.grpc.StreamingPromptResponse.getDefaultInstance()))
               .build();
         }
       }
@@ -167,8 +164,8 @@ public final class APIGatewayServiceGrpc {
      * Request the configuration for making prompt requests
      * </pre>
      */
-    default void requestPromptConfig(com.basemind.client.Gateway.PromptConfigRequest request,
-        io.grpc.stub.StreamObserver<com.basemind.client.Gateway.PromptConfigResponse> responseObserver) {
+    default void requestPromptConfig(com.basemind.client.grpc.PromptConfigRequest request,
+        io.grpc.stub.StreamObserver<com.basemind.client.grpc.PromptConfigResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRequestPromptConfigMethod(), responseObserver);
     }
 
@@ -177,8 +174,8 @@ public final class APIGatewayServiceGrpc {
      * Request a regular LLM prompt
      * </pre>
      */
-    default void requestPrompt(com.basemind.client.Gateway.PromptRequest request,
-        io.grpc.stub.StreamObserver<com.basemind.client.Gateway.PromptResponse> responseObserver) {
+    default void requestPrompt(com.basemind.client.grpc.PromptRequest request,
+        io.grpc.stub.StreamObserver<com.basemind.client.grpc.PromptResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRequestPromptMethod(), responseObserver);
     }
 
@@ -187,8 +184,8 @@ public final class APIGatewayServiceGrpc {
      * Request a streaming LLM prompt
      * </pre>
      */
-    default void requestStreamingPrompt(com.basemind.client.Gateway.PromptRequest request,
-        io.grpc.stub.StreamObserver<com.basemind.client.Gateway.StreamingPromptResponse> responseObserver) {
+    default void requestStreamingPrompt(com.basemind.client.grpc.PromptRequest request,
+        io.grpc.stub.StreamObserver<com.basemind.client.grpc.StreamingPromptResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRequestStreamingPromptMethod(), responseObserver);
     }
   }
@@ -231,8 +228,8 @@ public final class APIGatewayServiceGrpc {
      * Request the configuration for making prompt requests
      * </pre>
      */
-    public void requestPromptConfig(com.basemind.client.Gateway.PromptConfigRequest request,
-        io.grpc.stub.StreamObserver<com.basemind.client.Gateway.PromptConfigResponse> responseObserver) {
+    public void requestPromptConfig(com.basemind.client.grpc.PromptConfigRequest request,
+        io.grpc.stub.StreamObserver<com.basemind.client.grpc.PromptConfigResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getRequestPromptConfigMethod(), getCallOptions()), request, responseObserver);
     }
@@ -242,8 +239,8 @@ public final class APIGatewayServiceGrpc {
      * Request a regular LLM prompt
      * </pre>
      */
-    public void requestPrompt(com.basemind.client.Gateway.PromptRequest request,
-        io.grpc.stub.StreamObserver<com.basemind.client.Gateway.PromptResponse> responseObserver) {
+    public void requestPrompt(com.basemind.client.grpc.PromptRequest request,
+        io.grpc.stub.StreamObserver<com.basemind.client.grpc.PromptResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getRequestPromptMethod(), getCallOptions()), request, responseObserver);
     }
@@ -253,8 +250,8 @@ public final class APIGatewayServiceGrpc {
      * Request a streaming LLM prompt
      * </pre>
      */
-    public void requestStreamingPrompt(com.basemind.client.Gateway.PromptRequest request,
-        io.grpc.stub.StreamObserver<com.basemind.client.Gateway.StreamingPromptResponse> responseObserver) {
+    public void requestStreamingPrompt(com.basemind.client.grpc.PromptRequest request,
+        io.grpc.stub.StreamObserver<com.basemind.client.grpc.StreamingPromptResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getRequestStreamingPromptMethod(), getCallOptions()), request, responseObserver);
     }
@@ -284,7 +281,7 @@ public final class APIGatewayServiceGrpc {
      * Request the configuration for making prompt requests
      * </pre>
      */
-    public com.basemind.client.Gateway.PromptConfigResponse requestPromptConfig(com.basemind.client.Gateway.PromptConfigRequest request) {
+    public com.basemind.client.grpc.PromptConfigResponse requestPromptConfig(com.basemind.client.grpc.PromptConfigRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getRequestPromptConfigMethod(), getCallOptions(), request);
     }
@@ -294,7 +291,7 @@ public final class APIGatewayServiceGrpc {
      * Request a regular LLM prompt
      * </pre>
      */
-    public com.basemind.client.Gateway.PromptResponse requestPrompt(com.basemind.client.Gateway.PromptRequest request) {
+    public com.basemind.client.grpc.PromptResponse requestPrompt(com.basemind.client.grpc.PromptRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getRequestPromptMethod(), getCallOptions(), request);
     }
@@ -304,8 +301,8 @@ public final class APIGatewayServiceGrpc {
      * Request a streaming LLM prompt
      * </pre>
      */
-    public java.util.Iterator<com.basemind.client.Gateway.StreamingPromptResponse> requestStreamingPrompt(
-        com.basemind.client.Gateway.PromptRequest request) {
+    public java.util.Iterator<com.basemind.client.grpc.StreamingPromptResponse> requestStreamingPrompt(
+        com.basemind.client.grpc.PromptRequest request) {
       return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getRequestStreamingPromptMethod(), getCallOptions(), request);
     }
@@ -335,8 +332,8 @@ public final class APIGatewayServiceGrpc {
      * Request the configuration for making prompt requests
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.basemind.client.Gateway.PromptConfigResponse> requestPromptConfig(
-        com.basemind.client.Gateway.PromptConfigRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<com.basemind.client.grpc.PromptConfigResponse> requestPromptConfig(
+        com.basemind.client.grpc.PromptConfigRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getRequestPromptConfigMethod(), getCallOptions()), request);
     }
@@ -346,8 +343,8 @@ public final class APIGatewayServiceGrpc {
      * Request a regular LLM prompt
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.basemind.client.Gateway.PromptResponse> requestPrompt(
-        com.basemind.client.Gateway.PromptRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<com.basemind.client.grpc.PromptResponse> requestPrompt(
+        com.basemind.client.grpc.PromptRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getRequestPromptMethod(), getCallOptions()), request);
     }
@@ -375,16 +372,16 @@ public final class APIGatewayServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_REQUEST_PROMPT_CONFIG:
-          serviceImpl.requestPromptConfig((com.basemind.client.Gateway.PromptConfigRequest) request,
-              (io.grpc.stub.StreamObserver<com.basemind.client.Gateway.PromptConfigResponse>) responseObserver);
+          serviceImpl.requestPromptConfig((com.basemind.client.grpc.PromptConfigRequest) request,
+              (io.grpc.stub.StreamObserver<com.basemind.client.grpc.PromptConfigResponse>) responseObserver);
           break;
         case METHODID_REQUEST_PROMPT:
-          serviceImpl.requestPrompt((com.basemind.client.Gateway.PromptRequest) request,
-              (io.grpc.stub.StreamObserver<com.basemind.client.Gateway.PromptResponse>) responseObserver);
+          serviceImpl.requestPrompt((com.basemind.client.grpc.PromptRequest) request,
+              (io.grpc.stub.StreamObserver<com.basemind.client.grpc.PromptResponse>) responseObserver);
           break;
         case METHODID_REQUEST_STREAMING_PROMPT:
-          serviceImpl.requestStreamingPrompt((com.basemind.client.Gateway.PromptRequest) request,
-              (io.grpc.stub.StreamObserver<com.basemind.client.Gateway.StreamingPromptResponse>) responseObserver);
+          serviceImpl.requestStreamingPrompt((com.basemind.client.grpc.PromptRequest) request,
+              (io.grpc.stub.StreamObserver<com.basemind.client.grpc.StreamingPromptResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -408,59 +405,24 @@ public final class APIGatewayServiceGrpc {
           getRequestPromptConfigMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              com.basemind.client.Gateway.PromptConfigRequest,
-              com.basemind.client.Gateway.PromptConfigResponse>(
+              com.basemind.client.grpc.PromptConfigRequest,
+              com.basemind.client.grpc.PromptConfigResponse>(
                 service, METHODID_REQUEST_PROMPT_CONFIG)))
         .addMethod(
           getRequestPromptMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              com.basemind.client.Gateway.PromptRequest,
-              com.basemind.client.Gateway.PromptResponse>(
+              com.basemind.client.grpc.PromptRequest,
+              com.basemind.client.grpc.PromptResponse>(
                 service, METHODID_REQUEST_PROMPT)))
         .addMethod(
           getRequestStreamingPromptMethod(),
           io.grpc.stub.ServerCalls.asyncServerStreamingCall(
             new MethodHandlers<
-              com.basemind.client.Gateway.PromptRequest,
-              com.basemind.client.Gateway.StreamingPromptResponse>(
+              com.basemind.client.grpc.PromptRequest,
+              com.basemind.client.grpc.StreamingPromptResponse>(
                 service, METHODID_REQUEST_STREAMING_PROMPT)))
         .build();
-  }
-
-  private static abstract class APIGatewayServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
-    APIGatewayServiceBaseDescriptorSupplier() {}
-
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return com.basemind.client.Gateway.getDescriptor();
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.ServiceDescriptor getServiceDescriptor() {
-      return getFileDescriptor().findServiceByName("APIGatewayService");
-    }
-  }
-
-  private static final class APIGatewayServiceFileDescriptorSupplier
-      extends APIGatewayServiceBaseDescriptorSupplier {
-    APIGatewayServiceFileDescriptorSupplier() {}
-  }
-
-  private static final class APIGatewayServiceMethodDescriptorSupplier
-      extends APIGatewayServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final java.lang.String methodName;
-
-    APIGatewayServiceMethodDescriptorSupplier(java.lang.String methodName) {
-      this.methodName = methodName;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Descriptors.MethodDescriptor getMethodDescriptor() {
-      return getServiceDescriptor().findMethodByName(methodName);
-    }
   }
 
   private static volatile io.grpc.ServiceDescriptor serviceDescriptor;
@@ -472,7 +434,6 @@ public final class APIGatewayServiceGrpc {
         result = serviceDescriptor;
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-              .setSchemaDescriptor(new APIGatewayServiceFileDescriptorSupplier())
               .addMethod(getRequestPromptConfigMethod())
               .addMethod(getRequestPromptMethod())
               .addMethod(getRequestStreamingPromptMethod())
