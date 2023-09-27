@@ -56,10 +56,10 @@ repos:
       hooks:
           - id: pretty-format-java
             args: [--autofix]
-            exclude: 'gen/kt'
+            exclude: 'gen|client/grpc'
           - id: pretty-format-kotlin
             args: [--autofix]
-            exclude: 'gen/kt'
+            exclude: 'gen|client/grpc'
     - repo: local
       hooks:
           - id: detekt
@@ -68,4 +68,3 @@ repos:
             language: script
             entry: .bin/detekt.sh
             files: \.kt
-            exclude: 'gen/kt'
