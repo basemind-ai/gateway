@@ -10,7 +10,7 @@ import (
 )
 
 func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
-	projectId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "projectId"))
+	projectId, uuidErr := db.StringToUUID(chi.URLParam(r, "projectId"))
 	if uuidErr != nil {
 		_ = apierror.BadRequest(InvalidProjectIdError).Render(w, r)
 		return
@@ -41,7 +41,7 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "applicationId"))
+	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
 	if uuidErr != nil {
 		_ = apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
 		return
@@ -57,7 +57,7 @@ func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "applicationId"))
+	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
 	if uuidErr != nil {
 		_ = apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
 		return
@@ -88,7 +88,7 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.CreateUUIDFromString(chi.URLParam(r, "applicationId"))
+	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
 	if uuidErr != nil {
 		_ = apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
 		return
