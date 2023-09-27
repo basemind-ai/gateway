@@ -89,11 +89,18 @@ INSERT INTO prompt_config (
     model_vendor,
     prompt_messages,
     template_variables,
-    is_active,
+    is_default,
     application_id
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
+
+-- name: UpdatePromptConfigIsDefault :exec
+UPDATE prompt_config
+SET
+    is_default = $2,
+    updated_at = NOW()
+WHERE id = $1;
 
 -- name: UpdatePromptConfig :one
 UPDATE prompt_config
@@ -104,7 +111,7 @@ SET
     model_vendor = $5,
     prompt_messages = $6,
     template_variables = $7,
-    is_active = $8,
+    is_default = $8,
     updated_at = NOW()
 WHERE id = $1
 RETURNING *;
@@ -123,14 +130,14 @@ SELECT
     model_vendor,
     prompt_messages,
     template_variables,
-    is_active,
+    is_default,
     created_at,
     updated_at,
     application_id
 FROM prompt_config
 WHERE id = $1;
 
--- name: FindActivePromptConfigByApplicationId :one
+-- name: FindDefaultPromptConfigByApplicationId :one
 SELECT
     id,
     name,
@@ -139,12 +146,12 @@ SELECT
     model_vendor,
     prompt_messages,
     template_variables,
-    is_active,
+    is_default,
     created_at,
     updated_at,
     application_id
 FROM prompt_config
-WHERE application_id = $1 AND is_active = TRUE;
+WHERE application_id = $1 AND is_default = TRUE;
 
 -- name: CreatePromptRequestRecord :one
 INSERT INTO prompt_request_record (

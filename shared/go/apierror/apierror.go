@@ -12,8 +12,8 @@ type ApiError struct {
 	StatusCode int    `json:"statusCode"`
 }
 
-func (e *ApiError) Render(w http.ResponseWriter, _ *http.Request) error {
-	return serialization.RenderJsonResponse(w, e.StatusCode, e)
+func (e *ApiError) Render(w http.ResponseWriter, _ *http.Request) {
+	serialization.RenderJsonResponse(w, e.StatusCode, e)
 }
 
 func NewApiError(statusCode int, args ...interface{}) *ApiError {

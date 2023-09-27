@@ -39,7 +39,7 @@ func RetrieveApplicationPromptConfig(ctx context.Context, applicationId string) 
 			return nil, status.Errorf(codes.NotFound, "application does not exist: %v", applicationQueryErr)
 		}
 
-		promptConfig, promptConfigQueryErr := db.GetQueries().FindActivePromptConfigByApplicationId(ctx, appId)
+		promptConfig, promptConfigQueryErr := db.GetQueries().FindDefaultPromptConfigByApplicationId(ctx, appId)
 		if promptConfigQueryErr != nil {
 			return nil, status.Errorf(codes.NotFound, "the application does not have an active prompt configuration: %v", promptConfigQueryErr)
 		}

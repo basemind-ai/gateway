@@ -61,7 +61,7 @@ func TestApiError(t *testing.T) {
 		},
 	} {
 		client := testutils.CreateTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			_ = testCase.ApiErrType.Render(w, r)
+			testCase.ApiErrType.Render(w, r)
 		}))
 		res, err := client.Get(context.TODO(), "/")
 		assert.Nil(t, err)

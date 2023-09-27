@@ -90,7 +90,7 @@ func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationP
 		ModelParameters:   modelParams,
 		PromptMessages:    promptMessages,
 		TemplateVariables: []string{"userInput"},
-		IsActive:          true,
+		IsDefault:         true,
 		ApplicationID:     application.ID,
 	})
 	if promptConfigCreateErr != nil {

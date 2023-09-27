@@ -2,6 +2,7 @@ package serialization
 
 import (
 	"encoding/json"
+	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
 )
@@ -27,8 +28,11 @@ func DeserializeJson[T any](body io.ReadCloser, targetType T) error {
 	return json.Unmarshal(data, targetType)
 }
 
-func RenderJsonResponse(w http.ResponseWriter, statusCode int, body any) error {
+func RenderJsonResponse(w http.ResponseWriter, statusCode int, body any) {
 	w.WriteHeader(statusCode)
 	w.Header().Set("Content-Type", "application/json")
-	return json.NewEncoder(w).Encode(body)
+	if renderErr := json.NewEncoder(w).Encode(body); renderErr != nil {
+		log.Error().Err(renderErr).Msg("failed to render json response")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
 }

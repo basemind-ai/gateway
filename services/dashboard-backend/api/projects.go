@@ -51,22 +51,22 @@ func HandleRetrieveUserProjects(w http.ResponseWriter, r *http.Request) {
 
 	if userRetrieveError != nil {
 		log.Error().Err(userRetrieveError).Msg("failed to get or create user")
-		_ = apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w, r)
 		return
 	}
 	userProjects, findProjectsErr := db.GetQueries().FindProjectsByUserId(r.Context(), user.ID)
 	if findProjectsErr != nil {
 		log.Error().Err(findProjectsErr).Msg("failed to find user projects")
-		_ = apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w, r)
 		return
 	}
 
 	if len(userProjects) == 0 {
 		errMessage := "user does not have any projects"
 		log.Error().Err(findProjectsErr).Msg(errMessage)
-		_ = apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w, r)
 		return
 	}
 
-	_ = serialization.RenderJsonResponse(w, http.StatusOK, userProjects)
+	serialization.RenderJsonResponse(w, http.StatusOK, userProjects)
 }

@@ -50,3 +50,12 @@ func GetQueries() *Queries {
 	})
 	return queries
 }
+
+func GetTransactionQueries(ctx context.Context) (*Queries, pgx.Tx, error) {
+	queries := GetQueries()
+	tx, err := connection.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return nil, nil, err
+	}
+	return queries.WithTx(tx), tx, nil
+}

@@ -13,13 +13,15 @@ CREATE TABLE "application" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "descr
 -- Create index "idx_application_project_id" to table: "application"
 CREATE INDEX "idx_application_project_id" ON "application" ("project_id");
 -- Create "prompt_config" table
-CREATE TABLE "prompt_config" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(256) NOT NULL, "model_parameters" json NOT NULL, "model_type" "model_type" NOT NULL, "model_vendor" "model_vendor" NOT NULL, "prompt_messages" json NOT NULL, "template_variables" character varying(256)[] NULL, "is_active" boolean NOT NULL DEFAULT false, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_config_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "prompt_config" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(256) NOT NULL, "model_parameters" json NOT NULL, "model_type" "model_type" NOT NULL, "model_vendor" "model_vendor" NOT NULL, "prompt_messages" json NOT NULL, "template_variables" character varying(256)[] NULL, "is_default" boolean NOT NULL DEFAULT true, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_config_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_prompt_config_application_id" to table: "prompt_config"
 CREATE INDEX "idx_prompt_config_application_id" ON "prompt_config" ("application_id");
 -- Create index "idx_prompt_config_created_at" to table: "prompt_config"
 CREATE INDEX "idx_prompt_config_created_at" ON "prompt_config" ("created_at");
--- Create index "idx_prompt_config_is_active" to table: "prompt_config"
-CREATE INDEX "idx_prompt_config_is_active" ON "prompt_config" ("is_active");
+-- Create index "idx_prompt_config_is_default" to table: "prompt_config"
+CREATE INDEX "idx_prompt_config_is_default" ON "prompt_config" ("is_default");
+-- Create index "idx_prompt_config_name" to table: "prompt_config"
+CREATE UNIQUE INDEX "idx_prompt_config_name" ON "prompt_config" ("name", "application_id");
 -- Create "prompt_request_record" table
 CREATE TABLE "prompt_request_record" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "is_stream_response" boolean NOT NULL DEFAULT false, "request_tokens" integer NOT NULL, "start_time" timestamptz NOT NULL, "finish_time" timestamptz NOT NULL, "prompt_config_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_request_record_prompt_config_id_fkey" FOREIGN KEY ("prompt_config_id") REFERENCES "prompt_config" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_prompt_request_record_finish_time" to table: "prompt_request_record"
