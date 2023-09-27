@@ -1,22 +1,21 @@
-name: build
+name: Submit gradle dependency graph
 on:
     push:
         branches:
             - main
 
+permissions:
+    contents: write
+
 jobs:
     build:
-        name: Submit Gradle Dependencies
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-            - name: Gradle Dependency Submission
-              uses: mikepenz/gradle-dependency-submission@v0.9.0
+            - name: Setup Gradle
+              uses: gradle/gradle-build-action@v2.8.1
               with:
-                  gradle-project-path: 'gradle-example'
-                  gradle-build-module: |-
-                      :sdks:android:sdk
-                      :sdks:android:test-app
+                  dependency-graph: generate-and-submit
+            - name: Run a build, generating the dependency graph snapshot which will be submitted
+              run: ./gradlew build
