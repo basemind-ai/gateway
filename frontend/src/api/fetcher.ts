@@ -44,13 +44,12 @@ export async function fetcher<T>({
 
 	const response = await fetch(path, request);
 	const body =
-		response.status === 204
-			? {}
-			: ((await response.json()) as Record<string, any>);
+		response.status === 204 ? {} : ((await response.json()) as unknown);
 
 	if (!response.ok) {
 		throw new ApiError(
-			(Reflect.get(body, 'message') ?? 'An API Error Occurred') as string,
+			(Reflect.get(body as Record<string, any>, 'message') ??
+				'An API Error Occurred') as string,
 			{
 				statusCode: response.status,
 				statusText: response.statusText,

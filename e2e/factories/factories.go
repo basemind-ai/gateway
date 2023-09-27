@@ -3,7 +3,6 @@ package factories
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
@@ -99,8 +98,8 @@ func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationP
 	}
 
 	return &datatypes.ApplicationPromptConfig{
-		ApplicationID:    fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16]),
+		ApplicationID:    db.UUIDToString(&application.ID),
 		ApplicationData:  application,
 		PromptConfigData: promptConfig,
-	}, fmt.Sprintf("%x-%x-%x-%x-%x", application.ID.Bytes[0:4], application.ID.Bytes[4:6], application.ID.Bytes[6:8], application.ID.Bytes[8:10], application.ID.Bytes[10:16]), nil
+	}, db.UUIDToString(&application.ID), nil
 }
