@@ -65,17 +65,17 @@ tasks:
     # repository management
     update:android:
         cmds:
-            - ./gradlew androidDependencies
             - ./gradlew wrapper --gradle-version latest
-            - ./gradlew wrapper --distribution-type all
+            - ./gradlew androidDependencies
+            - ./gradlew versionCatalogUpdate
     update:
         desc: Update the project dependencies
         cmds:
             - task: update-brew
+            - task: update:android
             - pnpm add -g pnpm && pnpm update -r --latest
             - go mod tidy && go get -u ./... &> /dev/null
             - pre-commit autoupdate
-
     lint:
         desc: Lint the project
         cmds:
