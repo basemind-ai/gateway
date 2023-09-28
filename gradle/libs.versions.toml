@@ -1,15 +1,15 @@
 [versions]
-androidGradlePlugin = "8.1.1"
-androidXJunit = "1.1.5"
+androidGradlePlugin = "8.3.0-alpha05"
+androidXJunit = "1.2.0-alpha01"
 annotations = "6.0.53"
-appcompat = "1.6.1"
-coreKtx = "1.12.0"
+appcompat = "1.7.0-alpha03"
+coreKtx = "1.9.0"
 dependencyUpdatePlugin = "0.48.0"
-versionCatalogUpdatePlugin = "0.8.1"
-espressoCore = "3.5.1"
+espressoCore = "3.6.0-alpha01"
 grpc = "1.58.0"
 junit = "4.13.2"
-kotlin = "1.9.0"
+kotlin = "1.9.20-Beta2"
+versionCatalogUpdatePlugin = "0.8.1"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -28,5 +28,3 @@ android-library = { id = "com.android.library", version.ref = "androidGradlePlug
 gradle-dependency-update = { id = "com.github.ben-manes.versions", version.ref = "dependencyUpdatePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }
-
-[bundles]

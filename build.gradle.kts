@@ -14,5 +14,4 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
     checkConstraints = true
     checkBuildEnvironmentConstraints = true
     gradleReleaseChannel = "release-candidate"
-    reportfileName = "androidDepsUpdatesReport"
 }
