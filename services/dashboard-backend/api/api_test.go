@@ -354,7 +354,7 @@ func TestAPI(t *testing.T) {
 
 		t.Run("HandleCreatePromptConfig", func(t *testing.T) {
 			t.Run("creates a new prompt config", func(t *testing.T) {
-				dto := api.PromptConfigCreateDTO{
+				dto := api.PromptConfigDTO{
 					Name:              "test prompt config",
 					ModelParameters:   modelParameters,
 					ModelType:         db.ModelTypeGpt4,
@@ -388,11 +388,11 @@ func TestAPI(t *testing.T) {
 			t.Run("returns bad request for validation errors", func(t *testing.T) {
 				failureTestCases := []struct {
 					Name string
-					Dto  api.PromptConfigCreateDTO
+					Dto  api.PromptConfigDTO
 				}{
 					{
 						Name: "fails validation for missing name",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							ModelParameters:   modelParameters,
 							ModelType:         db.ModelTypeGpt4,
 							ModelVendor:       db.ModelVendorOPENAI,
@@ -403,7 +403,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing model parameters",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:              "test prompt config",
 							ModelType:         db.ModelTypeGpt4,
 							ModelVendor:       db.ModelVendorOPENAI,
@@ -414,7 +414,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing model type",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:              "test prompt config",
 							ModelParameters:   modelParameters,
 							ModelVendor:       db.ModelVendorOPENAI,
@@ -425,7 +425,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing model vendor",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:              "test prompt config",
 							ModelType:         db.ModelTypeGpt4,
 							ModelParameters:   modelParameters,
@@ -436,7 +436,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing prompt messages",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:              "test prompt config",
 							ModelParameters:   modelParameters,
 							ModelType:         db.ModelTypeGpt4,
@@ -447,7 +447,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing template variables",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:            "test prompt config",
 							ModelParameters: modelParameters,
 							ModelType:       db.ModelTypeGpt4,
@@ -458,7 +458,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing is default",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:              "test prompt config",
 							ModelParameters:   modelParameters,
 							ModelType:         db.ModelTypeGpt4,
@@ -469,7 +469,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for wrong model type",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:              "test prompt config",
 							ModelParameters:   modelParameters,
 							ModelType:         db.ModelType("abc"),
@@ -481,7 +481,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for wrong model vendor",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api.PromptConfigDTO{
 							Name:              "test prompt config",
 							ModelParameters:   modelParameters,
 							ModelType:         db.ModelTypeGpt432k,
@@ -508,7 +508,7 @@ func TestAPI(t *testing.T) {
 
 			for i, modelType := range []db.ModelType{db.ModelTypeGpt35Turbo, db.ModelTypeGpt35Turbo16k, db.ModelTypeGpt4, db.ModelTypeGpt432k} {
 				t.Run(fmt.Sprintf("validates successfully model type %s", modelType), func(t *testing.T) {
-					dto := api.PromptConfigCreateDTO{
+					dto := api.PromptConfigDTO{
 						Name:              fmt.Sprintf("test prompt config: %d", i),
 						ModelParameters:   modelParameters,
 						ModelType:         modelType,
@@ -540,7 +540,7 @@ func TestAPI(t *testing.T) {
 				})
 				assert.NoError(t, promptConfigCreateErr)
 
-				dto := api.PromptConfigCreateDTO{
+				dto := api.PromptConfigDTO{
 					Name:              "unique name",
 					ModelParameters:   modelParameters,
 					ModelType:         db.ModelTypeGpt4,
@@ -571,7 +571,7 @@ func TestAPI(t *testing.T) {
 				})
 				assert.NoError(t, promptConfigCreateErr)
 
-				dto := api.PromptConfigCreateDTO{
+				dto := api.PromptConfigDTO{
 					Name:              "default prompt config",
 					ModelParameters:   modelParameters,
 					ModelType:         db.ModelTypeGpt4,
@@ -607,7 +607,7 @@ func TestAPI(t *testing.T) {
 							"invalid",
 						),
 					),
-					api.PromptConfigCreateDTO{
+					api.PromptConfigDTO{
 						Name:              "test prompt config",
 						ModelParameters:   modelParameters,
 						ModelType:         db.ModelTypeGpt4,

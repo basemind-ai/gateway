@@ -137,6 +137,22 @@ SELECT
 FROM prompt_config
 WHERE id = $1;
 
+-- name: RetrieveApplicationPromptConfigs :many
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_default,
+    created_at,
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE application_id = $1;
+
 -- name: FindDefaultPromptConfigByApplicationId :one
 SELECT
     id,

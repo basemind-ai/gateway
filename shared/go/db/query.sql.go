@@ -566,6 +566,55 @@ func (q *Queries) FindUserByFirebaseId(ctx context.Context, firebaseID string) (
 	return i, err
 }
 
+const retrieveApplicationPromptConfigs = `-- name: RetrieveApplicationPromptConfigs :many
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    prompt_messages,
+    template_variables,
+    is_default,
+    created_at,
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE application_id = $1
+`
+
+func (q *Queries) RetrieveApplicationPromptConfigs(ctx context.Context, applicationID pgtype.UUID) ([]PromptConfig, error) {
+	rows, err := q.db.Query(ctx, retrieveApplicationPromptConfigs, applicationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []PromptConfig
+	for rows.Next() {
+		var i PromptConfig
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ModelParameters,
+			&i.ModelType,
+			&i.ModelVendor,
+			&i.PromptMessages,
+			&i.TemplateVariables,
+			&i.IsDefault,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.ApplicationID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateApplication = `-- name: UpdateApplication :one
 UPDATE application
 SET
