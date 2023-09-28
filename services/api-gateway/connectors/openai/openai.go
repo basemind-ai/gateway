@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
@@ -55,15 +54,7 @@ func (c *Client) RequestPrompt(
 	}
 
 	// Count the total number of tokens utilized for openai prompt
-	var promptMessages string
-	for _, message := range promptRequest.Messages {
-		promptMessages += *message.Content
-		promptMessages += "\n"
-	}
-
-	promptMessages = strings.TrimRight(promptMessages, "\n")
-
-	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(promptMessages, tokenizer.Cl100kBase)
+	promptReqTokenCount, tokenizationErr := tokenutils.GetRequestPromptTokenCount(promptRequest.Messages, tokenizer.Cl100kBase)
 	if tokenizationErr != nil {
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
@@ -103,6 +94,12 @@ func (c *Client) RequestStream(
 		return
 	}
 
+	promptReqTokenCount, tokenizationErr := tokenutils.GetRequestPromptTokenCount(promptRequest.Messages, tokenizer.Cl100kBase)
+	if tokenizationErr != nil {
+		log.Err(tokenizationErr).Msg("failed to get prompt token count")
+	}
+	log.Debug().Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
+
 	for {
 		msg, receiveErr := stream.Recv()
 		if receiveErr != nil {
@@ -114,6 +111,11 @@ func (c *Client) RequestStream(
 		}
 
 		// TODO handle token related logic here
+		promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(msg.Content, tokenizer.Cl100kBase)
+		if tokenizationErr != nil {
+			log.Err(tokenizationErr).Msg("failed to get prompt token count")
+		}
+		log.Debug().Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
 		contentChannel <- msg.Content
 	}
 }
