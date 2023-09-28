@@ -4,12 +4,12 @@ androidXJunit = "1.1.5"
 annotations = "6.0.53"
 appcompat = "1.6.1"
 coreKtx = "1.12.0"
-depUpdatePluginVersion = "0.48.0"
+dependencyUpdatePlugin = "0.48.0"
+versionCatalogUpdatePlugin = "0.8.1"
 espressoCore = "3.5.1"
 grpc = "1.58.0"
 junit = "4.13.2"
 kotlin = "1.9.0"
-protobufPlugin = "0.9.4"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -25,8 +25,8 @@ junit = { module = "junit:junit", version.ref = "junit" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-dep-update= { id = "com.github.ben-manes.versions", version.ref = "depUpdatePluginVersion"}
+gradle-dependency-update = { id = "com.github.ben-manes.versions", version.ref = "dependencyUpdatePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }
 
 [bundles]
