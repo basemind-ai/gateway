@@ -5,7 +5,8 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.dep.update)
+    alias(libs.plugins.gradle.dependency.update)
+    alias(libs.plugins.version.catalog.update)
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -13,5 +14,4 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
     checkConstraints = true
     checkBuildEnvironmentConstraints = true
     gradleReleaseChannel = "release-candidate"
-    reportfileName = "androidDepsUpdatesReport"
 }

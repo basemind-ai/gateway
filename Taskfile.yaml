@@ -63,15 +63,19 @@ tasks:
             - pnpm install -r
             - go mod download
     # repository management
+    update:android:
+        cmds:
+            - ./gradlew wrapper --gradle-version latest
+            - ./gradlew androidDependencies
+            - ./gradlew versionCatalogUpdate
     update:
         desc: Update the project dependencies
         cmds:
             - task: update-brew
+            - task: update:android
             - pnpm add -g pnpm && pnpm update -r --latest
             - go mod tidy && go get -u ./... &> /dev/null
             - pre-commit autoupdate
-            - ./gradlew androidDependencies
-            - ./gradlew wrapper --gradle-version latest
     lint:
         desc: Lint the project
         cmds:
