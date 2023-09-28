@@ -7,8 +7,12 @@ coreKtx = "1.12.0"
 dependencyUpdatePlugin = "0.48.0"
 espressoCore = "3.6.0-alpha01"
 grpc = "1.58.0"
+grpcKotlin = "1.4.0"
 junit = "4.13.2"
 kotlin = "1.9.20-Beta2"
+kotlinX = "1.7.3"
+protobuf = "3.24.3"
+protobufPlugin = "0.9.4"
 versionCatalogUpdatePlugin = "0.8.1"
 
 [libraries]
@@ -17,14 +21,18 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx"
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidXJunit" }
 annotations-api = { module = "org.apache.tomcat:annotations-api", version.ref = "annotations" }
+grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlin" }
 grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpc" }
+grpc-protobuf-kotlin-lite = {module = "com.google.protobuf:protobuf-kotlin-lite", version.ref = "protobuf" }
 grpc-protobuf-lite = { module = "io.grpc:grpc-protobuf-lite", version.ref = "grpc" }
 grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
 junit = { module = "junit:junit", version.ref = "junit" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinX" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 gradle-dependency-update = { id = "com.github.ben-manes.versions", version.ref = "dependencyUpdatePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }

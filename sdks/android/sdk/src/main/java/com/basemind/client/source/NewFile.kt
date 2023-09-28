@@ -1,6 +1,6 @@
 package com.basemind.client.source
 
-import com.basemind.client.grpc.APIGatewayServiceGrpc
+import com.basemind.client.gateway.APIGatewayServiceGrpc
 import io.grpc.ManagedChannelBuilder
 
 const val PORT = 8980

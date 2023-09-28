@@ -1,4 +1,7 @@
 version: v1
+managed:
+    enabled: true
+    optimize_for: LITE_RUNTIME
 plugins:
     # typescript
     - plugin: buf.build/community/timostamm-protobuf-ts
@@ -18,16 +21,3 @@ plugins:
       out: gen/go
       opt:
           - paths=source_relative
-    # kotlin
-    - plugin: buf.build/grpc/kotlin
-      out: gen/java
-      opt:
-          - lite
-    - plugin: buf.build/grpc/java
-      out: gen/java
-      opt:
-          - lite
-    - plugin: buf.build/protocolbuffers/kotlin
-      out: gen/java
-      opt:
-          - lite

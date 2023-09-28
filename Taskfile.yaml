@@ -113,10 +113,6 @@ tasks:
         cmds:
             - rm -rf gen
             - npx buf generate
-            - rm -rf gen/ts/gateway
-            - rm -rf sdks/android/sdk/src/main/java/com/basemind/client/grpc
-            - mv gen/java/com/basemind/client/grpc sdks/android/sdk/src/main/java/com/basemind/client
-            - rm -rf gen/java
     buf:lint:
         desc: Lint the protobuf files
         cmds:
