@@ -51,15 +51,6 @@ repos:
       hooks:
           - id: sqlfluff-fix
             exclude: 'sql/migrations'
-    - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-      rev: 'v2.10.0'
-      hooks:
-          - id: pretty-format-java
-            args: [--autofix]
-            exclude: 'gen|client/grpc'
-          - id: pretty-format-kotlin
-            args: [--autofix]
-            exclude: 'gen|client/grpc'
     - repo: local
       hooks:
           - id: detekt

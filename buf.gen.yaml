@@ -1,7 +1,7 @@
 version: v1
 plugins:
     # typescript
-    - plugin: buf.build/community/timostamm-protobuf-ts:v2.9.1
+    - plugin: buf.build/community/timostamm-protobuf-ts
       out: gen/ts
       opt:
           - generate_dependencies
@@ -10,7 +10,7 @@ plugins:
           - server_grpc1
           - force_client_none
     # golang
-    - plugin: buf.build/grpc/go:v1.3.0
+    - plugin: buf.build/grpc/go
       out: gen/go
       opt:
           - paths=source_relative
@@ -18,13 +18,16 @@ plugins:
       out: gen/go
       opt:
           - paths=source_relative
-
-    # java
-    - plugin: buf.build/grpc/java:v1.58.0
+    # kotlin
+    - plugin: buf.build/grpc/kotlin
       out: gen/java
       opt:
           - lite
-    - plugin: buf.build/protocolbuffers/java
+    - plugin: buf.build/grpc/java
+      out: gen/java
+      opt:
+          - lite
+    - plugin: buf.build/protocolbuffers/kotlin
       out: gen/java
       opt:
           - lite
