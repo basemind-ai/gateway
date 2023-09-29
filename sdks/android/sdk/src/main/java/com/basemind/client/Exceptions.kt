@@ -10,7 +10,6 @@ abstract class BaseMindException(message: String, cause: Throwable? = null) : Ex
  */
 class MissingAPIKeyException : BaseMindException("The 'apiToken' parameter cannot be empty")
 
-
 /**
  * Thrown when a client method is called without passing in at least one expected prompt variable key.
  */

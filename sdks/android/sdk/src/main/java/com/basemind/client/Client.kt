@@ -25,11 +25,10 @@ data class Options(
      * Defaults to 5 seconds.
      */
     val terminationDelaySeconds: Long = 5L,
-
     /**
      * Controls outputting debug log messages. Defaults to 'false'.
      */
-    val debug: Boolean = false
+    val debug: Boolean = false,
 )
 
 /**
@@ -44,29 +43,29 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
 
     private val opts = options ?: Options()
 
-    private val channel = let {
-        val serverAddress = System.getenv("BASEMIND_API_GATEWAY_ADDRESS") ?: "localhost"
-        val serverPort = (System.getenv("BASEMIND_API_GATEWAY_PORT") ?: "4000").toInt()
-        val useHttps = (System.getenv("BASEMIND_API_GATEWAY_HTTPS") ?: "false").toBoolean()
+    private val channel =
+        let {
+            val serverAddress = System.getenv("BASEMIND_API_GATEWAY_ADDRESS") ?: "localhost"
+            val serverPort = (System.getenv("BASEMIND_API_GATEWAY_PORT") ?: "4000").toInt()
+            val useHttps = (System.getenv("BASEMIND_API_GATEWAY_HTTPS") ?: "false").toBoolean()
 
+            if (opts.debug) {
+                Log.d(LOGGING_TAG, "Connecting to $serverAddress:$serverPort")
+            }
 
-        if (opts.debug) {
-            Log.d(LOGGING_TAG, "Connecting to $serverAddress:$serverPort")
-        }
+            /**
+             * creates a gRPC channel builder instance, which allows us to set options
+             */
+            val builder = ManagedChannelBuilder.forAddress(serverAddress, serverPort)
 
-        /**
-         * creates a gRPC channel builder instance, which allows us to set options
-         */
-        val builder = ManagedChannelBuilder.forAddress(serverAddress, serverPort)
+            if (useHttps) {
+                builder.useTransportSecurity()
+            } else {
+                builder.usePlaintext()
+            }
 
-        if (useHttps) {
-            builder.useTransportSecurity()
-        } else {
-            builder.usePlaintext()
-        }
-
-        builder.executor(Dispatchers.IO.asExecutor()).build()
-    }!!
+            builder.executor(Dispatchers.IO.asExecutor()).build()
+        }!!
 
     private val grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
 
@@ -90,6 +89,7 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
     /**
      * Requests an AI prompt. The prompt is returned as a single response.
      */
+    @Suppress("ThrowsCount")
     suspend fun requestPrompt(templateVariables: HashMap<String, String>): PromptResponse {
         try {
             if (opts.debug) {
@@ -113,6 +113,7 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
     /**
      * Requests an AI streaming prompt. The prompt is streamed from the API gateway in chunks.
      */
+    @Suppress("ThrowsCount")
     fun requestStream(templateVariables: HashMap<String, String>): Flow<StreamingPromptResponse> {
         try {
             if (opts.debug) {

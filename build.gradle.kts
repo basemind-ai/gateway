@@ -5,8 +5,10 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.gradle.dependency.update)
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.version.catalog.update)
 }
 
@@ -43,5 +45,24 @@ fun isNonStable(version: String): Boolean {
 tasks.withType<DependencyUpdatesTask> {
     rejectVersionIf {
         isNonStable(candidate.version) && !isNonStable(currentVersion)
+    }
+}
+
+spotless {
+    java {
+        target("**/*.java")
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+    }
+    kotlin {
+        target("**/*.kt")
+        ktfmt()
+        ktlint()
+    }
+    kotlinGradle {
+        target("**/*.gradle.kts")
+        ktfmt()
+        ktlint()
     }
 }

@@ -9,8 +9,8 @@ class BaseMindClientTest {
     fun throws_exception_when_api_key_is_empty() {
         assertThrows(
             MissingAPIKeyException::class.java,
-            {BaseMindClient("")},
-            "empty apiToken should throw"
+            { BaseMindClient("") },
+            "empty apiToken should throw",
         )
     }
 
