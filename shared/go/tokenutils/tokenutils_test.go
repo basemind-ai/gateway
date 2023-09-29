@@ -33,4 +33,9 @@ func TestGetPromptTokenCount(t *testing.T) {
 			assert.Equal(t, testCase.expected, actual)
 		})
 	}
+
+	// test for the invalid encodings
+	tokenCnt, err := tokenutils.GetPromptTokenCount("Hello world!", tokenutils.Encoding("invalid"))
+	assert.NotNil(t, err)
+	assert.Equal(t, -1, tokenCnt)
 }
