@@ -6,7 +6,6 @@ import (
 
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/stretchr/testify/assert"
-	"github.com/tiktoken-go/tokenizer"
 )
 
 func TestGetPromptTokenCount(t *testing.T) {
@@ -30,7 +29,7 @@ func TestGetPromptTokenCount(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("Test: %d", testCase.expected), func(t *testing.T) {
-			actual, _ := tokenutils.GetPromptTokenCount(testCase.input, tokenizer.Cl100kBase)
+			actual, _ := tokenutils.GetPromptTokenCount(testCase.input, tokenutils.Cl100kBase)
 			assert.Equal(t, testCase.expected, actual)
 		})
 	}
