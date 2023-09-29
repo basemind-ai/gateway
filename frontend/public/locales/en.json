@@ -33,6 +33,9 @@
 		"promptHeader": "Prompt Testing",
 		"promptGenerativeText": "Generative Text",
 		"promptSavedTemplates": "Saved Templates",
-		"promptNew": "New"
+		"promptNew": "+ New",
+		"promptAlbumRecommendation": "Album Recommendation",
+		"promptActiveStatus": "Active",
+		"promptDraftStatus": "Draft"
 	}
 }
