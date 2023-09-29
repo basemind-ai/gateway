@@ -5,10 +5,12 @@ import com.basemind.client.grpc.APIGatewayServiceGrpcKt
 import com.basemind.client.grpc.PromptRequest
 import com.basemind.client.grpc.PromptResponse
 import com.basemind.client.grpc.StreamingPromptResponse
+import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
@@ -29,6 +31,13 @@ data class Options(
      * Controls outputting debug log messages. Defaults to 'false'.
      */
     val debug: Boolean = false,
+
+    /**
+     * The gRPC channel to use for communication with the API gateway.
+     *
+     * This value should only be given in testing, when mocking the API gateway is desirable.
+     */
+    val channel: ManagedChannel? = null
 )
 
 /**
@@ -43,7 +52,7 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
 
     private val opts = options ?: Options()
 
-    private val channel =
+    private val channel = opts.channel ?:
         let {
             val serverAddress = System.getenv("BASEMIND_API_GATEWAY_ADDRESS") ?: "localhost"
             val serverPort = (System.getenv("BASEMIND_API_GATEWAY_PORT") ?: "4000").toInt()

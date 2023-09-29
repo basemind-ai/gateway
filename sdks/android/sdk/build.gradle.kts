@@ -45,8 +45,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.grpc.okhttp)
 
+    testImplementation(libs.grpc.testing)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.system.stubs.jupiter)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     compileOnly(libs.annotations.api)
