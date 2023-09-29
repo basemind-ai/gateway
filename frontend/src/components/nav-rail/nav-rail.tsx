@@ -11,7 +11,7 @@ export default function NavRail() {
 	const t = useTranslations('navrail');
 
 	return (
-		<div className="flex flex-col pt-6 px-8 w-1/6 h-full bg-base-200 justify-between">
+		<div className="flex flex-col pt-6 px-8 h-full bg-base-200 justify-between">
 			<div>
 				<Logo />
 				<NavRailList />
