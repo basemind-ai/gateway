@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.protobuf)
+    alias(libs.plugins.android.junit.jupiter)
     id("org.jetbrains.kotlin.jvm") apply false
 }
 
@@ -12,7 +13,6 @@ android {
     defaultConfig {
         minSdk = 25
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -45,9 +45,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.grpc.okhttp)
 
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     compileOnly(libs.annotations.api)
 }
