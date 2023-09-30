@@ -1,4 +1,4 @@
-package com.basemind.client
+package com.basemind.testapp
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.basemind.client.test", appContext.packageName)
+        assertEquals("com.basemind.testapp", appContext.packageName)
     }
 }

@@ -1,4 +1,4 @@
-package com.basemind.client
+package com.basemind.testapp
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
