@@ -33,18 +33,16 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
 /**
  * isNonStable checks if a given version is not stable
  */
-fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
-    val nonStableKeyword = listOf("ALPHA", "BETA", "RC").any { version.uppercase().contains(it) }
+fun isStableVersion(version: String): Boolean {
+    val containsNonStableVersionKeyword = listOf("alpha", "beta", "rc").any { version.lowercase().contains(it) }
 
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = !nonStableKeyword && (stableKeyword || regex.matches(version))
-    return isStable.not()
+    return !containsNonStableVersionKeyword && regex.matches(version)
 }
 
 tasks.withType<DependencyUpdatesTask> {
     rejectVersionIf {
-        isNonStable(candidate.version) && !isNonStable(currentVersion)
+        isStableVersion(currentVersion) && !isStableVersion(candidate.version)
     }
 }
 

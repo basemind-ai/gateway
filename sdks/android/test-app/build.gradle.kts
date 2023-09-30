@@ -4,9 +4,13 @@ plugins {
     alias(libs.plugins.android.junit.jupiter)
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     namespace = "com.basemind.client"
-    compileSdk = 34
+    compileSdk = 25
 
     defaultConfig {
         minSdk = 25

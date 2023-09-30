@@ -6,9 +6,13 @@ plugins {
     id("org.jetbrains.kotlin.jvm") apply false
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     namespace = "com.basemind.client"
-    compileSdk = 34
+    compileSdk = 25
 
     defaultConfig {
         minSdk = 25

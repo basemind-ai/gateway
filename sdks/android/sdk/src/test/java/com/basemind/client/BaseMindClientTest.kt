@@ -1,4 +1,5 @@
 @file:Suppress("MaxLineLength")
+
 package com.basemind.client
 
 import com.basemind.client.grpc.APIGatewayServiceGrpcKt
