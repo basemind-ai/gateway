@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.basemind.testapp"
-    compileSdk = 34
+    compileSdk = 31
 
     defaultConfig {
         applicationId = "com.basemind.testapp"
-        minSdk = 25
-        targetSdk = 34
+        minSdk = 31
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 
