@@ -5,10 +5,6 @@
 // @generated from protobuf file "openai/v1/openai.proto" (package "openai.v1", syntax proto3)
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
-import { WireType } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
-import { reflectionMergePartial } from "@protobuf-ts/runtime";
-import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
  * Type of OpenAI Model
@@ -94,47 +90,6 @@ class OpenAIFunctionCall$Type extends MessageType {
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value) {
-        const message = { arguments: "", name: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader, length, options, target) {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string arguments */ 1:
-                    message.arguments = reader.string();
-                    break;
-                case /* string name */ 2:
-                    message.name = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message, writer, options) {
-        /* string arguments = 1; */
-        if (message.arguments !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.arguments);
-        /* string name = 2; */
-        if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
 }
 /**
  * @generated MessageType for protobuf message openai.v1.OpenAIFunctionCall
@@ -149,59 +104,6 @@ class OpenAIMessage$Type extends MessageType {
             { no: 3, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "function_call", kind: "message", T: () => OpenAIFunctionCall }
         ]);
-    }
-    create(value) {
-        const message = { role: 0 };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader, length, options, target) {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* optional string content */ 1:
-                    message.content = reader.string();
-                    break;
-                case /* openai.v1.OpenAIMessageRole role */ 2:
-                    message.role = reader.int32();
-                    break;
-                case /* optional string name */ 3:
-                    message.name = reader.string();
-                    break;
-                case /* optional openai.v1.OpenAIFunctionCall function_call */ 4:
-                    message.functionCall = OpenAIFunctionCall.internalBinaryRead(reader, reader.uint32(), options, message.functionCall);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message, writer, options) {
-        /* optional string content = 1; */
-        if (message.content !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.content);
-        /* openai.v1.OpenAIMessageRole role = 2; */
-        if (message.role !== 0)
-            writer.tag(2, WireType.Varint).int32(message.role);
-        /* optional string name = 3; */
-        if (message.name !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.name);
-        /* optional openai.v1.OpenAIFunctionCall function_call = 4; */
-        if (message.functionCall)
-            OpenAIFunctionCall.internalBinaryWrite(message.functionCall, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
     }
 }
 /**
@@ -219,65 +121,6 @@ class OpenAIModelParameters$Type extends MessageType {
             { no: 5, name: "frequency_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
-    create(value) {
-        const message = {};
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader, length, options, target) {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* optional float temperature */ 1:
-                    message.temperature = reader.float();
-                    break;
-                case /* optional float top_p */ 2:
-                    message.topP = reader.float();
-                    break;
-                case /* optional uint32 max_tokens */ 3:
-                    message.maxTokens = reader.uint32();
-                    break;
-                case /* optional float presence_penalty */ 4:
-                    message.presencePenalty = reader.float();
-                    break;
-                case /* optional float frequency_penalty */ 5:
-                    message.frequencyPenalty = reader.float();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message, writer, options) {
-        /* optional float temperature = 1; */
-        if (message.temperature !== undefined)
-            writer.tag(1, WireType.Bit32).float(message.temperature);
-        /* optional float top_p = 2; */
-        if (message.topP !== undefined)
-            writer.tag(2, WireType.Bit32).float(message.topP);
-        /* optional uint32 max_tokens = 3; */
-        if (message.maxTokens !== undefined)
-            writer.tag(3, WireType.Varint).uint32(message.maxTokens);
-        /* optional float presence_penalty = 4; */
-        if (message.presencePenalty !== undefined)
-            writer.tag(4, WireType.Bit32).float(message.presencePenalty);
-        /* optional float frequency_penalty = 5; */
-        if (message.frequencyPenalty !== undefined)
-            writer.tag(5, WireType.Bit32).float(message.frequencyPenalty);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
 }
 /**
  * @generated MessageType for protobuf message openai.v1.OpenAIModelParameters
@@ -292,59 +135,6 @@ class OpenAIPromptRequest$Type extends MessageType {
             { no: 3, name: "parameters", kind: "message", T: () => OpenAIModelParameters },
             { no: 4, name: "application_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
-    }
-    create(value) {
-        const message = { model: 0, messages: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader, length, options, target) {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* openai.v1.OpenAIModel model */ 1:
-                    message.model = reader.int32();
-                    break;
-                case /* repeated openai.v1.OpenAIMessage messages */ 2:
-                    message.messages.push(OpenAIMessage.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* openai.v1.OpenAIModelParameters parameters */ 3:
-                    message.parameters = OpenAIModelParameters.internalBinaryRead(reader, reader.uint32(), options, message.parameters);
-                    break;
-                case /* optional string application_id */ 4:
-                    message.applicationId = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message, writer, options) {
-        /* openai.v1.OpenAIModel model = 1; */
-        if (message.model !== 0)
-            writer.tag(1, WireType.Varint).int32(message.model);
-        /* repeated openai.v1.OpenAIMessage messages = 2; */
-        for (let i = 0; i < message.messages.length; i++)
-            OpenAIMessage.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* openai.v1.OpenAIModelParameters parameters = 3; */
-        if (message.parameters)
-            OpenAIModelParameters.internalBinaryWrite(message.parameters, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional string application_id = 4; */
-        if (message.applicationId !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.applicationId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
     }
 }
 /**
@@ -361,59 +151,6 @@ class OpenAIPromptResponse$Type extends MessageType {
             { no: 4, name: "total_tokens", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
-    create(value) {
-        const message = { content: "", promptTokens: 0, completionTokens: 0, totalTokens: 0 };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader, length, options, target) {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string content */ 1:
-                    message.content = reader.string();
-                    break;
-                case /* uint32 prompt_tokens */ 2:
-                    message.promptTokens = reader.uint32();
-                    break;
-                case /* uint32 completion_tokens */ 3:
-                    message.completionTokens = reader.uint32();
-                    break;
-                case /* uint32 total_tokens */ 4:
-                    message.totalTokens = reader.uint32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message, writer, options) {
-        /* string content = 1; */
-        if (message.content !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.content);
-        /* uint32 prompt_tokens = 2; */
-        if (message.promptTokens !== 0)
-            writer.tag(2, WireType.Varint).uint32(message.promptTokens);
-        /* uint32 completion_tokens = 3; */
-        if (message.completionTokens !== 0)
-            writer.tag(3, WireType.Varint).uint32(message.completionTokens);
-        /* uint32 total_tokens = 4; */
-        if (message.totalTokens !== 0)
-            writer.tag(4, WireType.Varint).uint32(message.totalTokens);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
 }
 /**
  * @generated MessageType for protobuf message openai.v1.OpenAIPromptResponse
@@ -426,47 +163,6 @@ class OpenAIStreamResponse$Type extends MessageType {
             { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "finish_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
-    }
-    create(value) {
-        const message = { content: "" };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader, length, options, target) {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string content */ 1:
-                    message.content = reader.string();
-                    break;
-                case /* optional string finish_reason */ 2:
-                    message.finishReason = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message, writer, options) {
-        /* string content = 1; */
-        if (message.content !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.content);
-        /* optional string finish_reason = 2; */
-        if (message.finishReason !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.finishReason);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
     }
 }
 /**

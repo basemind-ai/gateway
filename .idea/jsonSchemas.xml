@@ -3,6 +3,25 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="Detekt Schema">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Detekt Schema" />
+              <option
+								name="relativePathToSchema"
+								value="https://json.schemastore.org/detekt-1.22.0.json"
+							/>
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value=".detekt-config.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="Taskfile YAML Schema">
           <value>
             <SchemaInfo>
