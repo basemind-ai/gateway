@@ -8,18 +8,58 @@
 	tools:context=".ui.home.HomeFragment"
 >
 
-    <TextView
+	<TextView
 		android:id="@+id/text_home"
+		android:text="@string/prompt_request"
+		android:textIsSelectable="false"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="8dp"
+		android:layout_height="29dp"
 		android:layout_marginTop="8dp"
 		android:layout_marginEnd="8dp"
 		android:textAlignment="center"
 		android:textSize="20sp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintVertical_bias="0.011"
+	/>
+
+	<TextView
+		android:id="@+id/prompt_result"
+		android:text="@string/prompt_response"
+		android:textIsSelectable="true"
+		android:layout_height="290dp"
+		android:layout_width="match_parent"
+		android:layout_marginTop="20dp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.461"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/text_home"
+	/>
+
+	<EditText
+		android:id="@+id/editTextTextMultiLine"
+		android:text="@string/prompt_input"
+		android:layout_width="match_parent"
+		android:layout_height="163dp"
+		android:inputType="textMultiLine"
+		android:gravity="start|top"
+		android:ems="10"
+		android:textIsSelectable="false"
+		app:layout_constraintTop_toBottomOf="@+id/prompt_result"
+		tools:layout_editor_absoluteX="-2dp"
+	/>
+
+	<Button
+		android:id="@+id/button2"
+		android:text="@string/send_prompt_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine"
 	/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,4 +3,9 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="prompt_request">Prompt Request</string>
+    <string name="prompt_response">Prompt Response</string>
+    <string name="streaming_response">Streaming Response</string>
+    <string name="prompt_input">Prompt Input</string>
+    <string name="send_prompt_button">Submit</string>
 </resources>
