@@ -3,9 +3,10 @@ package openai
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"strings"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 )
@@ -85,4 +86,13 @@ func CreatePromptRequest(
 	}
 
 	return promptRequest, nil
+}
+
+func GetRequestPromptString(messages []*openaiconnector.OpenAIMessage) string {
+	var promptMessages string
+	for _, message := range messages {
+		promptMessages += *message.Content
+		promptMessages += "\n"
+	}
+	return strings.TrimRight(promptMessages, "\n")
 }

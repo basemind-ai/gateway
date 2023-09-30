@@ -3,8 +3,11 @@ package openai
 import (
 	"context"
 	"errors"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"fmt"
 	"io"
+
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/rs/zerolog/log"
@@ -48,7 +51,20 @@ func (c *Client) RequestPrompt(
 	if requestErr != nil {
 		return "", requestErr
 	}
-	// TODO handle token related logic here by using the response token properties.
+
+	// Count the total number of tokens utilized for openai prompt
+	reqPromptString := GetRequestPromptString(promptRequest.Messages)
+	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
+	if tokenizationErr != nil {
+		log.Err(tokenizationErr).Msg("failed to get prompt token count")
+	}
+
+	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(response.Content, applicationPromptConfig.PromptConfigData.ModelType)
+	if tokenizationErr != nil {
+		log.Err(tokenizationErr).Msg("failed to get prompt token count")
+	}
+
+	log.Debug().Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
 	return response.Content, nil
 }
 
@@ -78,6 +94,15 @@ func (c *Client) RequestStream(
 		return
 	}
 
+	reqPromptString := GetRequestPromptString(promptRequest.Messages)
+	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
+	if tokenizationErr != nil {
+		log.Err(tokenizationErr).Msg("failed to get prompt token count")
+	}
+	log.Debug().Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
+
+	var promptResTokenCount int
+
 	for {
 		msg, receiveErr := stream.Recv()
 		if receiveErr != nil {
@@ -85,10 +110,15 @@ func (c *Client) RequestStream(
 				errChannel <- receiveErr
 			}
 			close(contentChannel)
+			log.Debug().Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
 			return
 		}
 
-		// TODO handle token related logic here
+		streamResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(msg.Content, applicationPromptConfig.PromptConfigData.ModelType)
+		if tokenizationErr != nil {
+			log.Err(tokenizationErr).Msg("failed to get prompt token count")
+		}
+		promptResTokenCount += streamResTokenCount
 		contentChannel <- msg.Content
 	}
 }

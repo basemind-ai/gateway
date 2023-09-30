@@ -2,11 +2,12 @@ package openai_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/stretchr/testify/assert"
-	"testing"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 )
@@ -167,6 +168,44 @@ func TestUtils(t *testing.T) {
 
 			_, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
 			assert.Error(t, err)
+		})
+	})
+
+	t.Run("GetRequestPromptString", func(t *testing.T) {
+		t.Run("returns the request prompt as string", func(t *testing.T) {
+			floatValue := float32(1)
+			uintValue := uint32(1)
+
+			expectedModelParameters := &openaiconnector.OpenAIModelParameters{
+				Temperature:      &floatValue,
+				TopP:             &floatValue,
+				MaxTokens:        &uintValue,
+				PresencePenalty:  &floatValue,
+				FrequencyPenalty: &floatValue,
+			}
+
+			systemMessage := "You are a helpful chat bot."
+			applicationId := "12345"
+			userInput := "Please write an essay on Dogs."
+			content := fmt.Sprintf("This is what the user asked for: %s", userInput)
+
+			promptRequest := &openaiconnector.OpenAIPromptRequest{
+				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				ApplicationId: &applicationId,
+				Parameters:    expectedModelParameters,
+				Messages: []*openaiconnector.OpenAIMessage{
+					{
+						Content: &systemMessage,
+						Role:    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
+					},
+					{
+						Content: &content,
+						Role:    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
+					},
+				},
+			}
+			reqPromptString := openai.GetRequestPromptString(promptRequest.Messages)
+			assert.Equal(t, "You are a helpful chat bot.\nThis is what the user asked for: Please write an essay on Dogs.", reqPromptString)
 		})
 	})
 }
