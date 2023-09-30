@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.Flow
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
-private const val LOGGING_TAG = "BaseMindClient"
+internal const val LOGGING_TAG = "BaseMindClient"
+internal const val DEFAULT_API_GATEWAY_ADDRESS = "localhost"
+internal const val DEFAULT_API_GATEWAY_PORT = 4000
+internal const val DEFAULT_API_GATEWAY_HTTPS = false
 
 /**
  * BaseMindClient Options
@@ -50,9 +53,9 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
 
     private val channel =
         let {
-            val serverAddress = System.getenv("BASEMIND_API_GATEWAY_ADDRESS") ?: "localhost"
-            val serverPort = (System.getenv("BASEMIND_API_GATEWAY_PORT") ?: "4000").toInt()
-            val useHttps = (System.getenv("BASEMIND_API_GATEWAY_HTTPS") ?: "false").toBoolean()
+            val serverAddress = System.getenv("BASEMIND_API_GATEWAY_ADDRESS") ?: DEFAULT_API_GATEWAY_ADDRESS
+            val serverPort = System.getenv("BASEMIND_API_GATEWAY_PORT")?.toInt() ?: DEFAULT_API_GATEWAY_PORT
+            val useHttps = System.getenv("BASEMIND_API_GATEWAY_HTTPS")?.toBoolean() ?: DEFAULT_API_GATEWAY_HTTPS
 
             if (options.debug) {
                 Log.d(LOGGING_TAG, "Connecting to $serverAddress:$serverPort")
@@ -106,7 +109,6 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
      * @throws MissingPromptVariableException if a template variable is missing.
      * @throws APIGatewayException if the API gateway returns an error.
      */
-    @Suppress("ThrowsCount")
     suspend fun requestPrompt(templateVariables: HashMap<String, String>): PromptResponse {
         try {
             if (options.debug) {
@@ -123,7 +125,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
                 throw MissingPromptVariableException(e.message ?: "Missing prompt variable", e)
             }
 
-            throw throw APIGatewayException(e.message ?: "API Gateway error", e)
+            throw APIGatewayException(e.message ?: "API Gateway error", e)
         }
     }
 
@@ -134,7 +136,6 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
      * @throws MissingPromptVariableException if a template variable is missing.
      * @throws APIGatewayException if the API gateway returns an error.
      */
-    @Suppress("ThrowsCount")
     fun requestStream(templateVariables: HashMap<String, String>): Flow<StreamingPromptResponse> {
         try {
             if (options.debug) {
@@ -151,7 +152,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
                 throw MissingPromptVariableException(e.message ?: "Missing prompt variable", e)
             }
 
-            throw throw APIGatewayException(e.message ?: "API Gateway error", e)
+            throw APIGatewayException(e.message ?: "API Gateway error", e)
         }
     }
 }
