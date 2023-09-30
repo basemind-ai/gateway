@@ -11,7 +11,7 @@ tasks:
                     npm install -g pnpm
                 fi
         status:
-            - command -v pnpm &> /dev/null || exit 0
+            - command -v pnpm &> /dev/null || exit 1
     install-pre-commit:
         cmds:
             - |
@@ -21,17 +21,17 @@ tasks:
                     pip install pre-commit
                 fi
         status:
-            - command -v pre-commit &> /dev/null || exit 0
+            - command -v pre-commit &> /dev/null || exit 1
     install-sqlc:
         cmds:
             - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
         status:
-            - command -v sqlc &> /dev/null || exit 0
+            - command -v sqlc &> /dev/null || exit 1
     install-atlas:
         cmds:
             - curl -sSf https://atlasgo.sh | sh
         status:
-            - command -v atlas &> /dev/null || exit 0
+            - command -v atlas &> /dev/null || exit 1
     install-buf:
         cmds:
             - |
@@ -41,7 +41,7 @@ tasks:
                     npm install -g @bufbuild/buf
                 fi
         status:
-            - command -v buf &> /dev/null || exit 0
+            - command -v buf &> /dev/null || exit 1
     update-brew:
         cmds:
             - |
