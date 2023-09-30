@@ -94,7 +94,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
     private fun createMetadata(): Metadata {
         val metadata = Metadata()
 
-        metadata.put(Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER), apiToken)
+        metadata.put(Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer $apiToken")
 
         return metadata
     }
@@ -160,17 +160,17 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
  * Creates a client instance that uses the provided channel.
  *
  * @param channel the channel to use for communication.
- * @apiToken the API token to use for authentication. This parameter is optional since its not actually used.
+ * @apiToken the API token to use for authentication. This parameter is optional.
  * @options an options object. This parameter is optional.
  *
  * Note: This should be used *only* for unit testing code!
  */
 fun createTestClient(
     channel: ManagedChannel,
-    apiToken: String? = null,
-    options: Options? = null,
+    apiToken: String = "testToken",
+    options: Options = Options(),
 ): BaseMindClient {
-    val client = BaseMindClient(apiToken ?: "test token", options ?: Options())
+    val client = BaseMindClient(apiToken, options)
     client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
     return client
 }
