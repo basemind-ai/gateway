@@ -15,8 +15,7 @@ root                        # repository root, holding all tooling configuration
 ├─── frontend               # frontend web-app
 ├─── gen                    # code generated from the protobuf schemas under `proto`
 │    ├─── go                # golang gen-code
-│    ├─── ts                # typescript gen-code
-│    └─── kt                # kotlin gen-code
+│    └─── ts                # typescript gen-code
 ├─── proto                  # protobuf schemas
 │    ├─── gateway           # api-gate protobuf schema
 │    └─── openai            # openai-connector protobuf schema

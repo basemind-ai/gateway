@@ -6,6 +6,7 @@ RUN go mod download \
 
 FROM install AS build
 ARG BUILD_TARGET
+COPY e2e e2e
 COPY gen/go gen/go
 COPY shared/go shared/go
 COPY services/$BUILD_TARGET services/$BUILD_TARGET
