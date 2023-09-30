@@ -18,6 +18,8 @@ private const val LOGGING_TAG = "BaseMindClient"
 
 /**
  * BaseMindClient Options
+ *
+ * This dataclass is used for configuring the client.
  */
 data class Options(
     /**
@@ -34,15 +36,16 @@ data class Options(
 
 /**
  * BaseMindClient is an API client that uses gRPC for communication with the BaseMind.AI API gateway.
+ * @property apiToken the API token to use for authentication. This parameter is required.
+ * @property options an options object. This parameter is optional.
+ * @constructor instantiates a new client instance.
  */
-class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
+class BaseMindClient(private val apiToken: String, private val options: Options = Options()) : Closeable {
     init {
         if (apiToken.isEmpty()) {
             throw MissingAPIKeyException()
         }
     }
-
-    private val opts = options ?: Options()
 
     private val channel =
         let {
@@ -50,7 +53,7 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
             val serverPort = (System.getenv("BASEMIND_API_GATEWAY_PORT") ?: "4000").toInt()
             val useHttps = (System.getenv("BASEMIND_API_GATEWAY_HTTPS") ?: "false").toBoolean()
 
-            if (opts.debug) {
+            if (options.debug) {
                 Log.d(LOGGING_TAG, "Connecting to $serverAddress:$serverPort")
             }
 
@@ -76,7 +79,7 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
      * Note: Existing calls are allowed to finish, but all new calls will be declined after close is called.
      */
     override fun close() {
-        channel.shutdown().awaitTermination(opts.terminationDelaySeconds, TimeUnit.SECONDS)
+        channel.shutdown().awaitTermination(options.terminationDelaySeconds, TimeUnit.SECONDS)
     }
 
     private fun createPromptRequest(templateVariables: HashMap<String, String>): PromptRequest {
@@ -93,13 +96,13 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
     @Suppress("ThrowsCount")
     suspend fun requestPrompt(templateVariables: HashMap<String, String>): PromptResponse {
         try {
-            if (opts.debug) {
+            if (options.debug) {
                 Log.d(LOGGING_TAG, "requesting prompt")
             }
 
             return grpcStub.requestPrompt(createPromptRequest(templateVariables))
         } catch (e: StatusException) {
-            if (opts.debug) {
+            if (options.debug) {
                 Log.d(LOGGING_TAG, "exception requesting prompt: $e")
             }
 
@@ -117,13 +120,13 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
     @Suppress("ThrowsCount")
     fun requestStream(templateVariables: HashMap<String, String>): Flow<StreamingPromptResponse> {
         try {
-            if (opts.debug) {
+            if (options.debug) {
                 Log.d(LOGGING_TAG, "requesting streaming prompt")
             }
 
             return grpcStub.requestStreamingPrompt(createPromptRequest(templateVariables))
         } catch (e: StatusException) {
-            if (opts.debug) {
+            if (options.debug) {
                 Log.d(LOGGING_TAG, "exception requesting streaming prompt: $e")
             }
 
@@ -146,7 +149,7 @@ fun createTestClient(
     apiToken: String? = null,
     options: Options? = null,
 ): BaseMindClient {
-    val client = BaseMindClient(apiToken ?: "test token", options)
+    val client = BaseMindClient(apiToken ?: "test token", options ?: Options())
     client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
     return client
 }
