@@ -92,6 +92,10 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
 
     /**
      * Requests an AI prompt. The prompt is returned as a single response.
+     *
+     * @param templateVariables a map of template variables to use for the prompt request.
+     * @throws MissingPromptVariableException if a template variable is missing.
+     * @throws APIGatewayException if the API gateway returns an error.
      */
     @Suppress("ThrowsCount")
     suspend fun requestPrompt(templateVariables: HashMap<String, String>): PromptResponse {
@@ -116,6 +120,10 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
 
     /**
      * Requests an AI streaming prompt. The prompt is streamed from the API gateway in chunks.
+     *
+     * @param templateVariables a map of template variables to use for the prompt request.
+     * @throws MissingPromptVariableException if a template variable is missing.
+     * @throws APIGatewayException if the API gateway returns an error.
      */
     @Suppress("ThrowsCount")
     fun requestStream(templateVariables: HashMap<String, String>): Flow<StreamingPromptResponse> {
@@ -141,6 +149,10 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
 
 /**
  * Creates a client instance that uses the provided channel.
+ *
+ * @param channel the channel to use for communication.
+ * @apiToken the API token to use for authentication. This parameter is optional since its not actually used.
+ * @options an options object. This parameter is optional.
  *
  * Note: This should be used *only* for unit testing code!
  */
