@@ -44,7 +44,7 @@ message PromptResponse {
 message StreamingPromptResponse {
   // Prompt Content
   string content = 1;
-  // Finish reason, if this is the last message
+  // Finish reason, given when the stream ends
   optional string finish_reason = 2;
   // Number of tokens used for the prompt, given when the stream ends
   optional uint32 prompt_tokens = 3;

@@ -10,7 +10,6 @@ import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
@@ -31,13 +30,6 @@ data class Options(
      * Controls outputting debug log messages. Defaults to 'false'.
      */
     val debug: Boolean = false,
-
-    /**
-     * The gRPC channel to use for communication with the API gateway.
-     *
-     * This value should only be given in testing, when mocking the API gateway is desirable.
-     */
-    val channel: ManagedChannel? = null
 )
 
 /**
@@ -52,7 +44,7 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
 
     private val opts = options ?: Options()
 
-    private val channel = opts.channel ?:
+    private val channel =
         let {
             val serverAddress = System.getenv("BASEMIND_API_GATEWAY_ADDRESS") ?: "localhost"
             val serverPort = (System.getenv("BASEMIND_API_GATEWAY_PORT") ?: "4000").toInt()
@@ -76,7 +68,7 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
             builder.executor(Dispatchers.IO.asExecutor()).build()
         }!!
 
-    private val grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
+    internal var grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
 
     /**
      * closes the connection to the API gateway.
@@ -142,4 +134,19 @@ class BaseMindClient(apiToken: String, options: Options? = null) : Closeable {
             throw throw APIGatewayException(e.message ?: "API Gateway error", e)
         }
     }
+}
+
+/**
+ * Creates a client instance that uses the provided channel.
+ *
+ * Note: This should be used *only* for unit testing code!
+ */
+fun createTestClient(
+    channel: ManagedChannel,
+    apiToken: String? = null,
+    options: Options? = null,
+): BaseMindClient {
+    val client = BaseMindClient(apiToken ?: "test token", options)
+    client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
+    return client
 }
