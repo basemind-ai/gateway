@@ -7,7 +7,6 @@ import (
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 )
@@ -89,7 +88,7 @@ func CreatePromptRequest(
 	return promptRequest, nil
 }
 
-func GetRequestPromptString(messages []*openaiconnector.OpenAIMessage, encoding tokenutils.Encoding) string {
+func GetRequestPromptString(messages []*openaiconnector.OpenAIMessage) string {
 	var promptMessages string
 	for _, message := range messages {
 		promptMessages += *message.Content

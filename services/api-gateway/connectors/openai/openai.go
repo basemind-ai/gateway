@@ -53,13 +53,13 @@ func (c *Client) RequestPrompt(
 	}
 
 	// Count the total number of tokens utilized for openai prompt
-	reqPromptString := GetRequestPromptString(promptRequest.Messages, tokenutils.Cl100kBase)
-	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, tokenutils.Cl100kBase)
+	reqPromptString := GetRequestPromptString(promptRequest.Messages)
+	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
 	if tokenizationErr != nil {
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
 
-	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(response.Content, tokenutils.Cl100kBase)
+	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(response.Content, applicationPromptConfig.PromptConfigData.ModelType)
 	if tokenizationErr != nil {
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
@@ -94,8 +94,8 @@ func (c *Client) RequestStream(
 		return
 	}
 
-	reqPromptString := GetRequestPromptString(promptRequest.Messages, tokenutils.Cl100kBase)
-	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, tokenutils.Cl100kBase)
+	reqPromptString := GetRequestPromptString(promptRequest.Messages)
+	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
 	if tokenizationErr != nil {
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
@@ -114,7 +114,7 @@ func (c *Client) RequestStream(
 			return
 		}
 
-		streamResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(msg.Content, tokenutils.Cl100kBase)
+		streamResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(msg.Content, applicationPromptConfig.PromptConfigData.ModelType)
 		if tokenizationErr != nil {
 			log.Err(tokenizationErr).Msg("failed to get prompt token count")
 		}

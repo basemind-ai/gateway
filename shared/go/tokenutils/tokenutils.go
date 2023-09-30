@@ -1,20 +1,19 @@
 package tokenutils
 
 import (
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/tiktoken-go/tokenizer"
 )
 
-type Encoding = tokenizer.Encoding
+var modelEncodingMap map[db.ModelType]tokenizer.Encoding = map[db.ModelType]tokenizer.Encoding{
+	db.ModelTypeGpt35Turbo:    tokenizer.Cl100kBase,
+	db.ModelTypeGpt35Turbo16k: tokenizer.Cl100kBase,
+	db.ModelTypeGpt4:          tokenizer.Cl100kBase,
+	db.ModelTypeGpt432k:       tokenizer.Cl100kBase,
+}
 
-const (
-	GPT2Enc    Encoding = tokenizer.GPT2Enc
-	R50kBase   Encoding = tokenizer.R50kBase
-	P50kBase   Encoding = tokenizer.P50kBase
-	P50kEdit   Encoding = tokenizer.P50kEdit
-	Cl100kBase Encoding = tokenizer.Cl100kBase
-)
-
-func GetPromptTokenCount(prompt string, encoding tokenizer.Encoding) (int, error) {
+func GetPromptTokenCount(prompt string, modelType db.ModelType) (int, error) {
+	encoding := modelEncodingMap[modelType]
 	enc, err := tokenizer.Get(encoding)
 	if err != nil {
 		return -1, err
