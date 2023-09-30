@@ -43,7 +43,7 @@ root                        # repository root, holding all tooling configuration
     - Go >= 1.21
     - Docker >= 24.0
     - Python >= 3.11
-    - Java >= 17.0
+    - Java >= 21.0
 
     Notes:
 

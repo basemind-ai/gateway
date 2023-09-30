@@ -22,6 +22,7 @@ import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension
 
 class MockAPIGatewayServer : APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineImplBase() {
     var exc: StatusException? = null
+    var metadata: Metadata? = null
 
     override suspend fun requestPrompt(request: PromptRequest): PromptResponse {
         if (exc != null) {

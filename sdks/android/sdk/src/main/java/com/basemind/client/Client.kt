@@ -7,6 +7,7 @@ import com.basemind.client.grpc.PromptResponse
 import com.basemind.client.grpc.StreamingPromptResponse
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
+import io.grpc.Metadata
 import io.grpc.StatusException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
@@ -90,6 +91,14 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
         }.build()
     }
 
+    private fun createMetadata(): Metadata {
+        val metadata = Metadata()
+
+        metadata.put(Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER), apiToken)
+
+        return metadata
+    }
+
     /**
      * Requests an AI prompt. The prompt is returned as a single response.
      *
@@ -104,7 +113,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
                 Log.d(LOGGING_TAG, "requesting prompt")
             }
 
-            return grpcStub.requestPrompt(createPromptRequest(templateVariables))
+            return grpcStub.requestPrompt(createPromptRequest(templateVariables), createMetadata())
         } catch (e: StatusException) {
             if (options.debug) {
                 Log.d(LOGGING_TAG, "exception requesting prompt: $e")
@@ -132,7 +141,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
                 Log.d(LOGGING_TAG, "requesting streaming prompt")
             }
 
-            return grpcStub.requestStreamingPrompt(createPromptRequest(templateVariables))
+            return grpcStub.requestStreamingPrompt(createPromptRequest(templateVariables), createMetadata())
         } catch (e: StatusException) {
             if (options.debug) {
                 Log.d(LOGGING_TAG, "exception requesting streaming prompt: $e")
