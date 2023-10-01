@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project version="4">
   <component name="ExternalDependencies">
+    <plugin id="Docker" />
+    <plugin id="Git4Idea" />
+    <plugin id="JavaScript" />
+    <plugin id="String Manipulation" />
+    <plugin id="codiumai.codiumai" />
+    <plugin id="com.android.tools.design" />
+    <plugin id="com.github.bufbuild.intellij" />
+    <plugin id="com.intellij.css" />
+    <plugin id="com.intellij.database" />
+    <plugin id="com.intellij.gradle" />
+    <plugin id="com.intellij.tailwindcss" />
     <plugin id="com.intellij.tasks" />
     <plugin id="com.ypwang.plugin.go-linter" />
+    <plugin id="idea.plugin.protoeditor" />
+    <plugin id="intellij.vitejs" />
+    <plugin id="org.jetbrains.android" />
+    <plugin id="org.jetbrains.kotlin" />
+    <plugin id="org.jetbrains.plugins.github" />
     <plugin id="org.jetbrains.plugins.go" />
+    <plugin id="org.jetbrains.plugins.yaml" />
+    <plugin id="org.toml.lang" />
     <plugin id="ru.adelf.idea.dotenv" />
   </component>
 </project>
