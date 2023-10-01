@@ -155,17 +155,17 @@ type Project struct {
 }
 
 type PromptConfig struct {
-	ID                pgtype.UUID        `json:"id"`
-	Name              string             `json:"name"`
-	ModelParameters   []byte             `json:"modelParameters"`
-	ModelType         ModelType          `json:"modelType"`
-	ModelVendor       ModelVendor        `json:"modelVendor"`
-	PromptMessages    []byte             `json:"promptMessages"`
-	TemplateVariables []string           `json:"templateVariables"`
-	IsDefault         bool               `json:"isDefault"`
-	CreatedAt         pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt         pgtype.Timestamptz `json:"updatedAt"`
-	ApplicationID     pgtype.UUID        `json:"applicationId"`
+	ID                        pgtype.UUID        `json:"id"`
+	Name                      string             `json:"name"`
+	ModelParameters           []byte             `json:"modelParameters"`
+	ModelType                 ModelType          `json:"modelType"`
+	ModelVendor               ModelVendor        `json:"modelVendor"`
+	ProviderPromptMessages    []byte             `json:"providerPromptMessages"`
+	ExpectedTemplateVariables []string           `json:"expectedTemplateVariables"`
+	IsDefault                 bool               `json:"isDefault"`
+	CreatedAt                 pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt                 pgtype.Timestamptz `json:"updatedAt"`
+	ApplicationID             pgtype.UUID        `json:"applicationId"`
 }
 
 type PromptRequestRecord struct {

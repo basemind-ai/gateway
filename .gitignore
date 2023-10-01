@@ -21,6 +21,7 @@
 .idea/*.local.xml
 .idea/assetWizardSettings.xml
 .idea/caches
+.idea/dictionaries
 .idea/libraries
 .idea/modules
 .idea/shelf

@@ -66,7 +66,7 @@ func (Server) RequestPromptConfig(ctx context.Context, _ *gateway.PromptConfigRe
 	}
 
 	return &gateway.PromptConfigResponse{
-		ExpectedPromptVariables: applicationPromptConfig.PromptConfigData.TemplateVariables,
+		ExpectedPromptVariables: applicationPromptConfig.PromptConfigData.ExpectedTemplateVariables,
 	}, nil
 }
 

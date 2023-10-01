@@ -31,7 +31,7 @@
 		"fork-ts-checker-webpack-plugin": "^8.0.0",
 		"interface-forge": "^1.6.1",
 		"nodemon-webpack-plugin": "^4.8.1",
-		"pino": "^8.15.1",
+		"pino": "^8.15.3",
 		"pino-pretty": "^10.2.0",
 		"pino-webpack-plugin": "^2.0.0",
 		"prettier": "^3.0.3",

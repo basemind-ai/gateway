@@ -87,8 +87,8 @@ INSERT INTO prompt_config (
     model_parameters,
     model_type,
     model_vendor,
-    prompt_messages,
-    template_variables,
+    provider_prompt_messages,
+    expected_template_variables,
     is_default,
     application_id
 )
@@ -108,10 +108,7 @@ SET
     name = $2,
     model_parameters = $3,
     model_type = $4,
-    model_vendor = $5,
-    prompt_messages = $6,
-    template_variables = $7,
-    is_default = $8,
+    is_default = $5,
     updated_at = NOW()
 WHERE id = $1
 RETURNING *;
@@ -128,14 +125,30 @@ SELECT
     model_parameters,
     model_type,
     model_vendor,
-    prompt_messages,
-    template_variables,
+    provider_prompt_messages,
+    expected_template_variables,
     is_default,
     created_at,
     updated_at,
     application_id
 FROM prompt_config
 WHERE id = $1;
+
+-- name: RetrieveApplicationPromptConfigs :many
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    provider_prompt_messages,
+    expected_template_variables,
+    is_default,
+    created_at,
+    updated_at,
+    application_id
+FROM prompt_config
+WHERE application_id = $1;
 
 -- name: FindDefaultPromptConfigByApplicationId :one
 SELECT
@@ -144,8 +157,8 @@ SELECT
     model_parameters,
     model_type,
     model_vendor,
-    prompt_messages,
-    template_variables,
+    provider_prompt_messages,
+    expected_template_variables,
     is_default,
     created_at,
     updated_at,
