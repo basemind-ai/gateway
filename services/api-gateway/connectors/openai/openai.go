@@ -5,9 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/rs/zerolog/log"
@@ -47,10 +50,12 @@ func (c *Client) RequestPrompt(
 		return "", createPromptRequestErr
 	}
 
+	promptStartTime := time.Now()
 	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
 	if requestErr != nil {
 		return "", requestErr
 	}
+	promptFinishTime := time.Now()
 
 	// Count the total number of tokens utilized for openai prompt
 	reqPromptString := GetRequestPromptString(promptRequest.Messages)
@@ -63,6 +68,14 @@ func (c *Client) RequestPrompt(
 	if tokenizationErr != nil {
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
+
+	db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+		IsStreamResponse: false,
+		RequestTokens:    int32(promptReqTokenCount + promptResTokenCount),
+		StartTime:        pgtype.Timestamptz{Time: promptStartTime},
+		FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
+		PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
+	})
 
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
 	return response.Content, nil
@@ -102,15 +115,26 @@ func (c *Client) RequestStream(
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
 
 	var promptResTokenCount int
+	promptStartTime := time.Now()
 
 	for {
 		msg, receiveErr := stream.Recv()
 		if receiveErr != nil {
+			promptFinishTime := time.Now()
+
 			if !errors.Is(receiveErr, io.EOF) {
 				errChannel <- receiveErr
 			}
 			close(contentChannel)
 			log.Debug().Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
+
+			db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+				IsStreamResponse: true,
+				RequestTokens:    int32(promptReqTokenCount + promptResTokenCount),
+				StartTime:        pgtype.Timestamptz{Time: promptStartTime},
+				FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
+				PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
+			})
 			return
 		}
 
