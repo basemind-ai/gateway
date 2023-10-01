@@ -3,11 +3,22 @@ package factories
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/jackc/pgx/v5/pgtype"
+	"math/rand"
+	"time"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 )
+
+func RandomString(length int) string {
+	rand.NewSource(time.Now().UnixNano())
+	b := make([]byte, length+2)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)[2 : length+2]
+}
 
 func CreatePromptMessages(systemMessage string, userMessage string) ([]byte, error) {
 	s, createPromptSystemMessageErr := datatypes.CreatePromptTemplateMessage(make([]string, 0), map[string]interface{}{
@@ -50,10 +61,24 @@ func CreateModelParameters() ([]byte, error) {
 	return modelParameters, nil
 }
 
+func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Application, error) {
+	application, applicationCreateErr := db.GetQueries().CreateApplication(ctx, db.CreateApplicationParams{
+		ProjectID:   projectId,
+		Name:        RandomString(10),
+		Description: RandomString(30),
+	})
+
+	if applicationCreateErr != nil {
+		return nil, applicationCreateErr
+	}
+
+	return &application, nil
+}
+
 func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationPromptConfig, string, error) {
 	project, projectCreateErr := db.GetQueries().CreateProject(ctx, db.CreateProjectParams{
-		Name:        "test",
-		Description: "test",
+		Name:        RandomString(10),
+		Description: RandomString(30),
 	})
 
 	if projectCreateErr != nil {
@@ -65,8 +90,8 @@ func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationP
 
 	application, applicationCreateErr := db.GetQueries().CreateApplication(ctx, db.CreateApplicationParams{
 		ProjectID:   project.ID,
-		Name:        "test",
-		Description: "test",
+		Name:        RandomString(10),
+		Description: RandomString(30),
 	})
 
 	if applicationCreateErr != nil {
@@ -86,13 +111,13 @@ func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationP
 	}
 
 	promptConfig, promptConfigCreateErr := db.GetQueries().CreatePromptConfig(ctx, db.CreatePromptConfigParams{
-		ModelType:         db.ModelTypeGpt35Turbo,
-		ModelVendor:       db.ModelVendorOPENAI,
-		ModelParameters:   modelParams,
-		PromptMessages:    promptMessages,
-		TemplateVariables: []string{"userInput"},
-		IsDefault:         true,
-		ApplicationID:     application.ID,
+		ModelType:                 db.ModelTypeGpt35Turbo,
+		ModelVendor:               db.ModelVendorOPENAI,
+		ModelParameters:           modelParams,
+		ProviderPromptMessages:    promptMessages,
+		ExpectedTemplateVariables: []string{"userInput"},
+		IsDefault:                 true,
+		ApplicationID:             application.ID,
 	})
 	if promptConfigCreateErr != nil {
 		return nil, "", promptConfigCreateErr
@@ -103,4 +128,18 @@ func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationP
 		ApplicationData:  application,
 		PromptConfigData: promptConfig,
 	}, db.UUIDToString(&application.ID), nil
+}
+
+func CreateOpenAIPromptMessageDTO(tupleSlice []struct {
+	Role    string
+	Content string
+}) ([]byte, error) {
+	openAIPromptMessageDTOs := make([]datatypes.OpenAIPromptMessageDTO, 0)
+	for _, tuple := range tupleSlice {
+		openAIPromptMessageDTOs = append(openAIPromptMessageDTOs, datatypes.OpenAIPromptMessageDTO{
+			Role:    tuple.Role,
+			Content: &tuple.Content,
+		})
+	}
+	return json.Marshal(openAIPromptMessageDTOs)
 }

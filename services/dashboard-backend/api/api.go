@@ -26,7 +26,7 @@ func RegisterHandlers(mux *chi.Mux) {
 		})
 
 		router.Route(PromptConfigDetailEndpoint, func(promptConfigRouter chi.Router) {
-			promptConfigRouter.Put("/", HandleUpdatePromptConfig)
+			promptConfigRouter.Patch("/", HandleUpdatePromptConfig)
 			promptConfigRouter.Delete("/", HandleDeletePromptConfig)
 		})
 	})

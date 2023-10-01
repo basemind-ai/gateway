@@ -40,7 +40,7 @@ func (c *Client) RequestPrompt(
 		applicationId,
 		applicationPromptConfig.PromptConfigData.ModelType,
 		applicationPromptConfig.PromptConfigData.ModelParameters,
-		applicationPromptConfig.PromptConfigData.PromptMessages,
+		applicationPromptConfig.PromptConfigData.ProviderPromptMessages,
 		templateVariables,
 	)
 	if createPromptRequestErr != nil {
@@ -80,7 +80,7 @@ func (c *Client) RequestStream(
 		applicationId,
 		applicationPromptConfig.PromptConfigData.ModelType,
 		applicationPromptConfig.PromptConfigData.ModelParameters,
-		applicationPromptConfig.PromptConfigData.PromptMessages,
+		applicationPromptConfig.PromptConfigData.ProviderPromptMessages,
 		templateVariables,
 	)
 	if promptRequestErr != nil {

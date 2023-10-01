@@ -33,3 +33,10 @@ type ApplicationPromptConfig struct {
 	// The prompt config DB record
 	PromptConfigData db.PromptConfig `json:"promptConfigObject"`
 }
+
+type OpenAIPromptMessageDTO struct {
+	Role              string    `json:"role" validate:"oneof=system user function assistant"`
+	Content           *string   `json:"content,omitempty"`
+	Name              *string   `json:"name,omitempty"`
+	FunctionArguments *[]string `json:"functionArguments,omitempty"`
+}

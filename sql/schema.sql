@@ -3,10 +3,9 @@ CREATE TABLE "user"
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     firebase_id varchar(128) NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (firebase_id)
 );
-
-CREATE UNIQUE INDEX idx_firebase_id ON "user" (firebase_id);
 
 -- permission_type
 CREATE TYPE access_permission_type AS ENUM (
@@ -75,19 +74,19 @@ CREATE TABLE prompt_config
     model_parameters json NOT NULL,
     model_type model_type NOT NULL,
     model_vendor model_vendor NOT NULL,
-    prompt_messages json NOT NULL,
-    template_variables varchar(256) [] NULL,
+    provider_prompt_messages json NOT NULL,
+    expected_template_variables varchar(256) [] NOT NULL,
     is_default boolean NOT NULL DEFAULT TRUE,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     application_id uuid NOT NULL,
-    FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE
+    FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE,
+    UNIQUE (name, application_id)
 );
 
 CREATE INDEX idx_prompt_config_application_id ON prompt_config (application_id);
 CREATE INDEX idx_prompt_config_is_default ON prompt_config (is_default);
 CREATE INDEX idx_prompt_config_created_at ON prompt_config (created_at);
-CREATE UNIQUE INDEX idx_prompt_config_name ON prompt_config (name, application_id);
 
 -- prompt-request-record
 CREATE TABLE prompt_request_record

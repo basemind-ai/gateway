@@ -81,24 +81,24 @@ INSERT INTO prompt_config (
     model_parameters,
     model_type,
     model_vendor,
-    prompt_messages,
-    template_variables,
+    provider_prompt_messages,
+    expected_template_variables,
     is_default,
     application_id
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages, template_variables, is_default, created_at, updated_at, application_id
+RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, created_at, updated_at, application_id
 `
 
 type CreatePromptConfigParams struct {
-	Name              string      `json:"name"`
-	ModelParameters   []byte      `json:"modelParameters"`
-	ModelType         ModelType   `json:"modelType"`
-	ModelVendor       ModelVendor `json:"modelVendor"`
-	PromptMessages    []byte      `json:"promptMessages"`
-	TemplateVariables []string    `json:"templateVariables"`
-	IsDefault         bool        `json:"isDefault"`
-	ApplicationID     pgtype.UUID `json:"applicationId"`
+	Name                      string      `json:"name"`
+	ModelParameters           []byte      `json:"modelParameters"`
+	ModelType                 ModelType   `json:"modelType"`
+	ModelVendor               ModelVendor `json:"modelVendor"`
+	ProviderPromptMessages    []byte      `json:"providerPromptMessages"`
+	ExpectedTemplateVariables []string    `json:"expectedTemplateVariables"`
+	IsDefault                 bool        `json:"isDefault"`
+	ApplicationID             pgtype.UUID `json:"applicationId"`
 }
 
 func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfigParams) (PromptConfig, error) {
@@ -107,8 +107,8 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 		arg.ModelParameters,
 		arg.ModelType,
 		arg.ModelVendor,
-		arg.PromptMessages,
-		arg.TemplateVariables,
+		arg.ProviderPromptMessages,
+		arg.ExpectedTemplateVariables,
 		arg.IsDefault,
 		arg.ApplicationID,
 	)
@@ -119,8 +119,8 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 		&i.ModelParameters,
 		&i.ModelType,
 		&i.ModelVendor,
-		&i.PromptMessages,
-		&i.TemplateVariables,
+		&i.ProviderPromptMessages,
+		&i.ExpectedTemplateVariables,
 		&i.IsDefault,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -336,8 +336,8 @@ SELECT
     model_parameters,
     model_type,
     model_vendor,
-    prompt_messages,
-    template_variables,
+    provider_prompt_messages,
+    expected_template_variables,
     is_default,
     created_at,
     updated_at,
@@ -355,8 +355,8 @@ func (q *Queries) FindDefaultPromptConfigByApplicationId(ctx context.Context, ap
 		&i.ModelParameters,
 		&i.ModelType,
 		&i.ModelVendor,
-		&i.PromptMessages,
-		&i.TemplateVariables,
+		&i.ProviderPromptMessages,
+		&i.ExpectedTemplateVariables,
 		&i.IsDefault,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -421,8 +421,8 @@ SELECT
     model_parameters,
     model_type,
     model_vendor,
-    prompt_messages,
-    template_variables,
+    provider_prompt_messages,
+    expected_template_variables,
     is_default,
     created_at,
     updated_at,
@@ -440,8 +440,8 @@ func (q *Queries) FindPromptConfigById(ctx context.Context, id pgtype.UUID) (Pro
 		&i.ModelParameters,
 		&i.ModelType,
 		&i.ModelVendor,
-		&i.PromptMessages,
-		&i.TemplateVariables,
+		&i.ProviderPromptMessages,
+		&i.ExpectedTemplateVariables,
 		&i.IsDefault,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -573,8 +573,8 @@ SELECT
     model_parameters,
     model_type,
     model_vendor,
-    prompt_messages,
-    template_variables,
+    provider_prompt_messages,
+    expected_template_variables,
     is_default,
     created_at,
     updated_at,
@@ -598,8 +598,8 @@ func (q *Queries) RetrieveApplicationPromptConfigs(ctx context.Context, applicat
 			&i.ModelParameters,
 			&i.ModelType,
 			&i.ModelVendor,
-			&i.PromptMessages,
-			&i.TemplateVariables,
+			&i.ProviderPromptMessages,
+			&i.ExpectedTemplateVariables,
 			&i.IsDefault,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -651,24 +651,18 @@ SET
     name = $2,
     model_parameters = $3,
     model_type = $4,
-    model_vendor = $5,
-    prompt_messages = $6,
-    template_variables = $7,
-    is_default = $8,
+    is_default = $5,
     updated_at = NOW()
 WHERE id = $1
-RETURNING id, name, model_parameters, model_type, model_vendor, prompt_messages, template_variables, is_default, created_at, updated_at, application_id
+RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, created_at, updated_at, application_id
 `
 
 type UpdatePromptConfigParams struct {
-	ID                pgtype.UUID `json:"id"`
-	Name              string      `json:"name"`
-	ModelParameters   []byte      `json:"modelParameters"`
-	ModelType         ModelType   `json:"modelType"`
-	ModelVendor       ModelVendor `json:"modelVendor"`
-	PromptMessages    []byte      `json:"promptMessages"`
-	TemplateVariables []string    `json:"templateVariables"`
-	IsDefault         bool        `json:"isDefault"`
+	ID              pgtype.UUID `json:"id"`
+	Name            string      `json:"name"`
+	ModelParameters []byte      `json:"modelParameters"`
+	ModelType       ModelType   `json:"modelType"`
+	IsDefault       bool        `json:"isDefault"`
 }
 
 func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfigParams) (PromptConfig, error) {
@@ -677,9 +671,6 @@ func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfig
 		arg.Name,
 		arg.ModelParameters,
 		arg.ModelType,
-		arg.ModelVendor,
-		arg.PromptMessages,
-		arg.TemplateVariables,
 		arg.IsDefault,
 	)
 	var i PromptConfig
@@ -689,8 +680,8 @@ func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfig
 		&i.ModelParameters,
 		&i.ModelType,
 		&i.ModelVendor,
-		&i.PromptMessages,
-		&i.TemplateVariables,
+		&i.ProviderPromptMessages,
+		&i.ExpectedTemplateVariables,
 		&i.IsDefault,
 		&i.CreatedAt,
 		&i.UpdatedAt,
