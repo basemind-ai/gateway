@@ -50,6 +50,7 @@ func (c *Client) RequestPrompt(
 		return "", createPromptRequestErr
 	}
 
+	var recordErrLog pgtype.Text
 	promptStartTime := time.Now()
 	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
 	if requestErr != nil {
@@ -61,11 +62,13 @@ func (c *Client) RequestPrompt(
 	reqPromptString := GetRequestPromptString(promptRequest.Messages)
 	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
 	if tokenizationErr != nil {
+		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
 
 	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(response.Content, applicationPromptConfig.PromptConfigData.ModelType)
 	if tokenizationErr != nil {
+		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
 
@@ -76,7 +79,7 @@ func (c *Client) RequestPrompt(
 		StartTime:        pgtype.Timestamptz{Time: promptStartTime},
 		FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
 		PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
-		ErrorLog:         pgtype.Text{String: requestErr.Error()},
+		ErrorLog:         recordErrLog,
 	})
 
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
@@ -109,9 +112,12 @@ func (c *Client) RequestStream(
 		return
 	}
 
+	var recordErrLog pgtype.Text
+
 	reqPromptString := GetRequestPromptString(promptRequest.Messages)
 	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
 	if tokenizationErr != nil {
+		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
@@ -130,6 +136,10 @@ func (c *Client) RequestStream(
 			close(contentChannel)
 			log.Debug().Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
 
+			if recordErrLog.String == "" && receiveErr != io.EOF {
+				recordErrLog = pgtype.Text{String: receiveErr.Error()}
+			}
+
 			db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
 				IsStreamResponse: true,
 				RequestTokens:    promptReqTokenCount,
@@ -137,13 +147,14 @@ func (c *Client) RequestStream(
 				StartTime:        pgtype.Timestamptz{Time: promptStartTime},
 				FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
 				PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
-				ErrorLog:         pgtype.Text{String: receiveErr.Error()},
+				ErrorLog:         recordErrLog,
 			})
 			return
 		}
 
 		streamResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(msg.Content, applicationPromptConfig.PromptConfigData.ModelType)
 		if tokenizationErr != nil {
+			recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 			log.Err(tokenizationErr).Msg("failed to get prompt token count")
 		}
 		promptResTokenCount += streamResTokenCount
