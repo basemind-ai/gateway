@@ -15,7 +15,6 @@ export function TemplateDetail({
 	name,
 	status,
 }: TemplateDetailProps) {
-
 	return (
 		<div className="mt-4 bg-base-300 bg-opacity-25 flex justify-center items-center h-12 rounded-lg p-2">
 			<div className="ml-8 text-neutral-content flex">
