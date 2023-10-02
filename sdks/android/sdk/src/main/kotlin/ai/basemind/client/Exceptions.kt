@@ -1,4 +1,4 @@
-package com.basemind.client
+package ai.basemind.client
 
 /**
  * Abstract base exception for all BaseMind exceptions.

@@ -12,8 +12,6 @@
             <option value="$PROJECT_DIR$/sdks" />
             <option value="$PROJECT_DIR$/sdks/android" />
             <option value="$PROJECT_DIR$/sdks/android/sdk" />
-            <option value="$PROJECT_DIR$/sdks/android/test-app" />
-            <option value="$PROJECT_DIR$/testapp" />
           </set>
         </option>
       </GradleProjectSettings>

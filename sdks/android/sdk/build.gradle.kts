@@ -12,10 +12,10 @@ kotlin {
 
 android {
     namespace = "com.basemind.client"
-    compileSdk = 31
+    compileSdk = 34
 
     defaultConfig {
-        minSdk = 31
+        minSdk = 25
 
         consumerProguardFiles("consumer-rules.pro")
     }
