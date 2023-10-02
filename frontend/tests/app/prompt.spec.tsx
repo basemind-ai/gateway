@@ -1,30 +1,31 @@
 import locales from 'public/locales/en.json';
 import { render, screen } from 'tests/test-utils';
 
-import Prompt from '@/app/project/[projectId]/prompt/page';
+import PromptConfigurations from '@/app/project/[projectId]/prompt/page';
 
 const promptTranslation = locales.prompt;
+
 describe('Prompt page tests', () => {
 	it('render Prompt testing', async () => {
-		render(<Prompt />);
+		render(<PromptConfigurations />);
 
-		const dashboardContainer = screen.getByTestId('prompt');
+		const dashboardContainer = screen.getByTestId('prompt-page');
 		expect(dashboardContainer).toBeInTheDocument();
 	});
 
 	it('render Prompt testing heading', async () => {
-		render(<Prompt />);
+		render(<PromptConfigurations />);
 
 		const promptHeader = screen.getByText(promptTranslation.promptHeader);
 		expect(promptHeader).toBeInTheDocument();
 	});
 
 	it('render Prompt testing saved template', async () => {
-		render(<Prompt />);
+		render(<PromptConfigurations />);
 
-		const promptSavedTemplates = screen.getByText(
-			promptTranslation.promptSavedTemplates,
+		const savedPromptConfig = screen.getByText(
+			promptTranslation.savedPromptConfig,
 		);
-		expect(promptSavedTemplates).toBeInTheDocument();
+		expect(savedPromptConfig).toBeInTheDocument();
 	});
 });

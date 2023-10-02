@@ -32,10 +32,7 @@
 	"prompt": {
 		"promptHeader": "Prompt Testing",
 		"promptGenerativeText": "Generative Text",
-		"promptSavedTemplates": "Saved Templates",
-		"promptNew": "+ New",
-		"promptAlbumRecommendation": "Album Recommendation",
-		"promptActiveStatus": "Active",
-		"promptDraftStatus": "Draft"
+		"savedPromptConfig": "Saved Templates",
+		"newPrompt": "+ New"
 	}
 }

@@ -2,11 +2,11 @@
 
 import { useTranslations } from 'next-intl';
 
-export default function Prompt() {
+export default function PromptConfigurations() {
 	const t = useTranslations('prompt');
 
 	return (
-		<div data-testid="prompt" className="mx-12">
+		<div data-testid="prompt-page" className="mx-12">
 			<div className="mt-6 flex">
 				<div className="font-semibold text-2xl w-10/12">
 					{t('promptHeader')}
@@ -15,9 +15,7 @@ export default function Prompt() {
 					{t('promptGenerativeText')}
 				</div>
 			</div>
-			<div className="font-medium text-lg">
-				{t('promptSavedTemplates')}
-			</div>
+			<div className="font-medium text-lg">{t('savedPromptConfig')}</div>
 		</div>
 	);
 }
