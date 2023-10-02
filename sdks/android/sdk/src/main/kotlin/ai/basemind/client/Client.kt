@@ -2,11 +2,11 @@
 
 package ai.basemind.client
 
+import ai.basemind.grpc.APIGatewayServiceGrpcKt
+import ai.basemind.grpc.PromptRequest
+import ai.basemind.grpc.PromptResponse
+import ai.basemind.grpc.StreamingPromptResponse
 import android.util.Log
-import com.basemind.client.grpc.APIGatewayServiceGrpcKt
-import com.basemind.client.grpc.PromptRequest
-import com.basemind.client.grpc.PromptResponse
-import com.basemind.client.grpc.StreamingPromptResponse
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.StatusException
