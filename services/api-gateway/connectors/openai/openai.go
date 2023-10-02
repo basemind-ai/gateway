@@ -139,7 +139,7 @@ func (c *Client) RequestStream(
 			close(contentChannel)
 			log.Debug().Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
 
-			if recordErrLog.String == "" && receiveErr != io.EOF {
+			if recordErrLog.String == "" && !errors.Is(receiveErr, io.EOF) {
 				recordErrLog = pgtype.Text{String: receiveErr.Error()}
 			}
 
