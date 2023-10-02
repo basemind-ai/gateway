@@ -71,10 +71,12 @@ func (c *Client) RequestPrompt(
 
 	db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
 		IsStreamResponse: false,
-		RequestTokens:    int32(promptReqTokenCount + promptResTokenCount),
+		RequestTokens:    promptReqTokenCount,
+		ResponseTokens:   promptResTokenCount,
 		StartTime:        pgtype.Timestamptz{Time: promptStartTime},
 		FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
 		PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
+		ErrorLog:         pgtype.Text{String: requestErr.Error()},
 	})
 
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
@@ -114,7 +116,7 @@ func (c *Client) RequestStream(
 	}
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
 
-	var promptResTokenCount int
+	var promptResTokenCount int32
 	promptStartTime := time.Now()
 
 	for {
@@ -130,10 +132,12 @@ func (c *Client) RequestStream(
 
 			db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
 				IsStreamResponse: true,
-				RequestTokens:    int32(promptReqTokenCount + promptResTokenCount),
+				RequestTokens:    promptReqTokenCount,
+				ResponseTokens:   promptResTokenCount,
 				StartTime:        pgtype.Timestamptz{Time: promptStartTime},
 				FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
 				PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
+				ErrorLog:         pgtype.Text{String: receiveErr.Error()},
 			})
 			return
 		}

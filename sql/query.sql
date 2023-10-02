@@ -170,11 +170,13 @@ WHERE application_id = $1 AND is_default = TRUE;
 INSERT INTO prompt_request_record (
     is_stream_response,
     request_tokens,
+    response_tokens,
     start_time,
     finish_time,
-    prompt_config_id
+    prompt_config_id,
+    error_log
 )
-VALUES ($1, $2, $3, $4, $5)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;
 
 -- name: FindPromptRequestRecords :many
@@ -182,9 +184,11 @@ SELECT
     id,
     is_stream_response,
     request_tokens,
+    response_tokens,
     start_time,
     finish_time,
-    prompt_config_id
+    prompt_config_id,
+    error_log
 FROM prompt_request_record
 WHERE prompt_config_id = $1
 ORDER BY start_time DESC;

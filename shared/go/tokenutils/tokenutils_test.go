@@ -12,7 +12,7 @@ import (
 func TestGetPromptTokenCount(t *testing.T) {
 	testCases := []struct {
 		input    string
-		expected int
+		expected int32
 	}{
 		{
 			input:    "Hello world!",
@@ -38,5 +38,5 @@ func TestGetPromptTokenCount(t *testing.T) {
 	// test for the invalid encodings
 	tokenCnt, err := tokenutils.GetPromptTokenCount("Hello world!", db.ModelType("invalid"))
 	assert.NotNil(t, err)
-	assert.Equal(t, -1, tokenCnt)
+	assert.Equal(t, int32(-1), tokenCnt)
 }

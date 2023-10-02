@@ -94,9 +94,11 @@ CREATE TABLE prompt_request_record
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     is_stream_response boolean NOT NULL DEFAULT FALSE,
     request_tokens int NOT NULL,
+    response_tokens int NOT NULL,
     start_time timestamptz NOT NULL,
     finish_time timestamptz NOT NULL,
     prompt_config_id uuid NOT NULL,
+    error_log text NULL,
     FOREIGN KEY (prompt_config_id) REFERENCES prompt_config (
         id
     ) ON DELETE CASCADE
