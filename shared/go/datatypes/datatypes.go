@@ -13,7 +13,10 @@ type PromptTemplateMessage struct {
 	ProviderMessage json.RawMessage `json:"providerMessage"`
 }
 
-func CreatePromptTemplateMessage(expectedTemplateVariables []string, providerMessage map[string]interface{}) (*PromptTemplateMessage, error) {
+func CreatePromptTemplateMessage(
+	expectedTemplateVariables []string,
+	providerMessage map[string]interface{},
+) (*PromptTemplateMessage, error) {
 	unmarshalledProviderMessage, unmarshalErr := json.Marshal(providerMessage)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
@@ -35,7 +38,7 @@ type ApplicationPromptConfig struct {
 }
 
 type OpenAIPromptMessageDTO struct {
-	Role              string    `json:"role" validate:"oneof=system user function assistant"`
+	Role              string    `json:"role"                        validate:"oneof=system user function assistant"`
 	Content           *string   `json:"content,omitempty"`
 	Name              *string   `json:"name,omitempty"`
 	FunctionArguments *[]string `json:"functionArguments,omitempty"`

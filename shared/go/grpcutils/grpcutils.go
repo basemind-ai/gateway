@@ -29,22 +29,24 @@ func CreateInterceptorLogger(isDebug bool) (loggingMiddleware.Logger, []loggingM
 		loggingMiddleware.WithLogOnEvents(loggingEvents...),
 	}
 
-	handlerFunc := loggingMiddleware.LoggerFunc(func(ctx context.Context, lvl loggingMiddleware.Level, msg string, fields ...any) {
-		logger := log.Logger.With().Fields(fields).Logger()
+	handlerFunc := loggingMiddleware.LoggerFunc(
+		func(ctx context.Context, lvl loggingMiddleware.Level, msg string, fields ...any) {
+			logger := log.Logger.With().Fields(fields).Logger()
 
-		switch lvl {
-		case loggingMiddleware.LevelDebug:
-			logger.Debug().Msg(msg)
-		case loggingMiddleware.LevelInfo:
-			logger.Info().Msg(msg)
-		case loggingMiddleware.LevelWarn:
-			logger.Warn().Msg(msg)
-		case loggingMiddleware.LevelError:
-			logger.Error().Msg(msg)
-		default:
-			panic(fmt.Sprintf("unknown level %v", lvl))
-		}
-	})
+			switch lvl {
+			case loggingMiddleware.LevelDebug:
+				logger.Debug().Msg(msg)
+			case loggingMiddleware.LevelInfo:
+				logger.Info().Msg(msg)
+			case loggingMiddleware.LevelWarn:
+				logger.Warn().Msg(msg)
+			case loggingMiddleware.LevelError:
+				logger.Error().Msg(msg)
+			default:
+				panic(fmt.Sprintf("unknown level %v", lvl))
+			}
+		},
+	)
 
 	return handlerFunc, loggingOptions
 }
@@ -64,7 +66,9 @@ func RecoveryHandler(p any) (err error) {
 
 func CreateGRPCServer[T any](opts Options[T], serverOpts ...grpc.ServerOption) *grpc.Server {
 	if opts.Environment != "test" {
-		interceptorLogger, loggingOptions := CreateInterceptorLogger(opts.Environment != "production")
+		interceptorLogger, loggingOptions := CreateInterceptorLogger(
+			opts.Environment != "production",
+		)
 
 		serverOpts = append(
 			serverOpts,

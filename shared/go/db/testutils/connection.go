@@ -47,7 +47,11 @@ func CreateTestDB(t *testing.T) {
 
 	_ = resource.Expire(120)
 
-	dbUrl := fmt.Sprintf("postgres://test:test@%s/%s?sslmode=disable", resource.GetHostPort("5432/tcp"), t.Name())
+	dbUrl := fmt.Sprintf(
+		"postgres://test:test@%s/%s?sslmode=disable",
+		resource.GetHostPort("5432/tcp"),
+		t.Name(),
+	)
 
 	connection, connectionErr := db.CreateConnection(context.TODO(), dbUrl)
 	if connectionErr != nil {

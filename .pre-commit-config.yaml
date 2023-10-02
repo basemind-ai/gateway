@@ -41,6 +41,10 @@ repos:
           - id: golangci-lint
             args: ['--timeout', '3m0s']
             exclude: 'gen/go'
+    - repo: https://github.com/segmentio/golines
+      rev: 'v0.11.0'
+      hooks:
+          - id: golines
     - repo: https://github.com/bufbuild/buf
       rev: v1.26.1
       hooks:

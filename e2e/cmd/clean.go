@@ -31,7 +31,10 @@ var cleanCommand = &cobra.Command{
 			}
 		}()
 
-		rows, queryErr := conn.Query(cmd.Context(), "SELECT schemaname, tablename FROM pg_catalog.pg_tables")
+		rows, queryErr := conn.Query(
+			cmd.Context(),
+			"SELECT schemaname, tablename FROM pg_catalog.pg_tables",
+		)
 		if queryErr != nil {
 			log.Fatal().Err(queryErr).Msg("failed to query tables from DB")
 		}

@@ -12,7 +12,12 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
-func CreateTestServer[T any](t *testing.T, grpcRegistrar func(s grpc.ServiceRegistrar, srv T), service T, serverOpts ...grpc.ServerOption) *bufconn.Listener {
+func CreateTestServer[T any](
+	t *testing.T,
+	grpcRegistrar func(s grpc.ServiceRegistrar, srv T),
+	service T,
+	serverOpts ...grpc.ServerOption,
+) *bufconn.Listener {
 	listen := bufconn.Listen(101024 * 1024)
 	server := grpcutils.CreateGRPCServer[T](
 		grpcutils.Options[T]{
@@ -40,7 +45,11 @@ func CreateTestServer[T any](t *testing.T, grpcRegistrar func(s grpc.ServiceRegi
 	return listen
 }
 
-func CreateTestClient[T interface{}](t *testing.T, listen *bufconn.Listener, clientFactory func(cc grpc.ClientConnInterface) T) T {
+func CreateTestClient[T interface{}](
+	t *testing.T,
+	listen *bufconn.Listener,
+	clientFactory func(cc grpc.ClientConnInterface) T,
+) T {
 	conn, dialErr := grpc.DialContext(context.TODO(), "",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(

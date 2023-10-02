@@ -21,17 +21,23 @@ func RandomString(length int) string {
 }
 
 func CreatePromptMessages(systemMessage string, userMessage string) ([]byte, error) {
-	s, createPromptSystemMessageErr := datatypes.CreatePromptTemplateMessage(make([]string, 0), map[string]interface{}{
-		"content": systemMessage,
-		"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
-	})
+	s, createPromptSystemMessageErr := datatypes.CreatePromptTemplateMessage(
+		make([]string, 0),
+		map[string]interface{}{
+			"content": systemMessage,
+			"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
+		},
+	)
 	if createPromptSystemMessageErr != nil {
 		return nil, createPromptSystemMessageErr
 	}
-	u, createPromptUserMessageErr := datatypes.CreatePromptTemplateMessage([]string{"userInput"}, map[string]interface{}{
-		"content": userMessage,
-		"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
-	})
+	u, createPromptUserMessageErr := datatypes.CreatePromptTemplateMessage(
+		[]string{"userInput"},
+		map[string]interface{}{
+			"content": userMessage,
+			"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
+		},
+	)
 	if createPromptUserMessageErr != nil {
 		return nil, createPromptUserMessageErr
 	}
@@ -62,11 +68,12 @@ func CreateModelParameters() ([]byte, error) {
 }
 
 func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Application, error) {
-	application, applicationCreateErr := db.GetQueries().CreateApplication(ctx, db.CreateApplicationParams{
-		ProjectID:   projectId,
-		Name:        RandomString(10),
-		Description: RandomString(30),
-	})
+	application, applicationCreateErr := db.GetQueries().
+		CreateApplication(ctx, db.CreateApplicationParams{
+			ProjectID:   projectId,
+			Name:        RandomString(10),
+			Description: RandomString(30),
+		})
 
 	if applicationCreateErr != nil {
 		return nil, applicationCreateErr
@@ -75,7 +82,9 @@ func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Applicat
 	return &application, nil
 }
 
-func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationPromptConfig, string, error) {
+func CreateApplicationPromptConfig(
+	ctx context.Context,
+) (*datatypes.ApplicationPromptConfig, string, error) {
 	project, projectCreateErr := db.GetQueries().CreateProject(ctx, db.CreateProjectParams{
 		Name:        RandomString(10),
 		Description: RandomString(30),
@@ -88,11 +97,12 @@ func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationP
 	systemMessage := "You are a helpful chat bot."
 	userMessage := "This is what the user asked for: {userInput}"
 
-	application, applicationCreateErr := db.GetQueries().CreateApplication(ctx, db.CreateApplicationParams{
-		ProjectID:   project.ID,
-		Name:        RandomString(10),
-		Description: RandomString(30),
-	})
+	application, applicationCreateErr := db.GetQueries().
+		CreateApplication(ctx, db.CreateApplicationParams{
+			ProjectID:   project.ID,
+			Name:        RandomString(10),
+			Description: RandomString(30),
+		})
 
 	if applicationCreateErr != nil {
 		return nil, "", applicationCreateErr
@@ -110,15 +120,16 @@ func CreateApplicationPromptConfig(ctx context.Context) (*datatypes.ApplicationP
 		return nil, "", promptMessagesCreateErr
 	}
 
-	promptConfig, promptConfigCreateErr := db.GetQueries().CreatePromptConfig(ctx, db.CreatePromptConfigParams{
-		ModelType:                 db.ModelTypeGpt35Turbo,
-		ModelVendor:               db.ModelVendorOPENAI,
-		ModelParameters:           modelParams,
-		ProviderPromptMessages:    promptMessages,
-		ExpectedTemplateVariables: []string{"userInput"},
-		IsDefault:                 true,
-		ApplicationID:             application.ID,
-	})
+	promptConfig, promptConfigCreateErr := db.GetQueries().
+		CreatePromptConfig(ctx, db.CreatePromptConfigParams{
+			ModelType:                 db.ModelTypeGpt35Turbo,
+			ModelVendor:               db.ModelVendorOPENAI,
+			ModelParameters:           modelParams,
+			ProviderPromptMessages:    promptMessages,
+			ExpectedTemplateVariables: []string{"userInput"},
+			IsDefault:                 true,
+			ApplicationID:             application.ID,
+		})
 	if promptConfigCreateErr != nil {
 		return nil, "", promptConfigCreateErr
 	}

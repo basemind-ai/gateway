@@ -18,17 +18,17 @@ import (
 var curlyBracesRegex = regexp.MustCompile(`\{([^}]+)\}`)
 
 type PromptConfigCreateDTO struct {
-	Name                   string          `json:"name" validate:"required"`
+	Name                   string          `json:"name"            validate:"required"`
 	ModelParameters        []byte          `json:"modelParameters" validate:"required"`
-	ModelType              db.ModelType    `json:"modelType" validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
-	ModelVendor            db.ModelVendor  `json:"modelVendor" validate:"oneof=OPEN_AI"`
-	ProviderPromptMessages json.RawMessage `json:"promptMessages" validate:"required"`
+	ModelType              db.ModelType    `json:"modelType"       validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelVendor            db.ModelVendor  `json:"modelVendor"     validate:"oneof=OPEN_AI"`
+	ProviderPromptMessages json.RawMessage `json:"promptMessages"  validate:"required"`
 }
 
 type PromptConfigUpdateDTO struct {
 	Name            *string       `json:"name,omitempty"`
 	ModelParameters *[]byte       `json:"modelParameters,omitempty"`
-	ModelType       *db.ModelType `json:"modelType,omitempty" validate:"omitempty,oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelType       *db.ModelType `json:"modelType,omitempty"       validate:"omitempty,oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	IsDefault       *bool         `json:"isDefault,omitempty"`
 }
 
@@ -52,7 +52,10 @@ func HandleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expectedTemplateVariables, parsePromptMessagesErr := ParsePromptMessages(dto.ProviderPromptMessages, dto.ModelVendor)
+	expectedTemplateVariables, parsePromptMessagesErr := ParsePromptMessages(
+		dto.ProviderPromptMessages,
+		dto.ModelVendor,
+	)
 	if parsePromptMessagesErr != nil {
 		log.Error().Err(parsePromptMessagesErr).Msg("failed to parse prompt messages")
 		apierror.InternalServerError().Render(w, r)
@@ -67,22 +70,29 @@ func HandleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	// we know this is the first prompt config for the application, because there must always be a default config.
 	setDefault := retrieveDefaultPromptConfigErr != nil
 
-	promptConfig, createPromptConfigErr := db.GetQueries().CreatePromptConfig(r.Context(), db.CreatePromptConfigParams{
-		ApplicationID:             *applicationId,
-		Name:                      strings.TrimSpace(dto.Name),
-		ModelParameters:           dto.ModelParameters,
-		ModelType:                 dto.ModelType,
-		ModelVendor:               dto.ModelVendor,
-		ProviderPromptMessages:    dto.ProviderPromptMessages,
-		ExpectedTemplateVariables: expectedTemplateVariables,
-		IsDefault:                 setDefault,
-	})
+	promptConfig, createPromptConfigErr := db.GetQueries().
+		CreatePromptConfig(r.Context(), db.CreatePromptConfigParams{
+			ApplicationID:             *applicationId,
+			Name:                      strings.TrimSpace(dto.Name),
+			ModelParameters:           dto.ModelParameters,
+			ModelType:                 dto.ModelType,
+			ModelVendor:               dto.ModelVendor,
+			ProviderPromptMessages:    dto.ProviderPromptMessages,
+			ExpectedTemplateVariables: expectedTemplateVariables,
+			IsDefault:                 setDefault,
+		})
 
 	if createPromptConfigErr != nil {
 		log.Error().Err(createPromptConfigErr).Msg("failed to create prompt config")
 
-		if strings.Contains(createPromptConfigErr.Error(), "duplicate key value violates unique constraint") {
-			msg := fmt.Sprintf("prompt config with the name '%s' already exists for the given application", dto.Name)
+		if strings.Contains(
+			createPromptConfigErr.Error(),
+			"duplicate key value violates unique constraint",
+		) {
+			msg := fmt.Sprintf(
+				"prompt config with the name '%s' already exists for the given application",
+				dto.Name,
+			)
 			apierror.BadRequest(msg).Render(w, r)
 			return
 		}
@@ -101,7 +111,8 @@ func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	promptConfigs, retrivalErr := db.GetQueries().RetrieveApplicationPromptConfigs(r.Context(), *applicationId)
+	promptConfigs, retrivalErr := db.GetQueries().
+		RetrieveApplicationPromptConfigs(r.Context(), *applicationId)
 	if retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve prompt configs")
 		apierror.InternalServerError().Render(w, r)
@@ -111,18 +122,28 @@ func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJsonResponse(w, http.StatusOK, promptConfigs)
 }
 
-func updateDefaultPromptConfig(ctx context.Context, queries *db.Queries, updatedDefaultValue bool, applicationId *pgtype.UUID, promptConfigId *pgtype.UUID) *apierror.ApiError {
+func updateDefaultPromptConfig(
+	ctx context.Context,
+	queries *db.Queries,
+	updatedDefaultValue bool,
+	applicationId *pgtype.UUID,
+	promptConfigId *pgtype.UUID,
+) *apierror.ApiError {
 	defaultPromptConfig, retrieveDefaultPromptConfigErr := queries.FindDefaultPromptConfigByApplicationId(
 		ctx,
 		*applicationId,
 	)
 	if retrieveDefaultPromptConfigErr != nil {
-		log.Error().Err(retrieveDefaultPromptConfigErr).Msg("failed to retrieve the default prompt config")
+		log.Error().
+			Err(retrieveDefaultPromptConfigErr).
+			Msg("failed to retrieve the default prompt config")
 		return apierror.InternalServerError("failed to retrieve default prompt config")
 	}
 
 	if defaultPromptConfig.ID == *promptConfigId && !updatedDefaultValue {
-		return apierror.BadRequest("cannot make the default prompt config non-default without setting another config as the default first")
+		return apierror.BadRequest(
+			"cannot make the default prompt config non-default without setting another config as the default first",
+		)
 	}
 
 	if defaultPromptConfig.ID != *promptConfigId && updatedDefaultValue {
@@ -178,7 +199,10 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	retrievedPromptConfig, retrievePromptConfigErr := queries.FindPromptConfigById(r.Context(), *promptConfigId)
+	retrievedPromptConfig, retrievePromptConfigErr := queries.FindPromptConfigById(
+		r.Context(),
+		*promptConfigId,
+	)
 	if retrievePromptConfigErr != nil {
 		log.Error().Err(retrievePromptConfigErr).Msg("failed to retrieve prompt config")
 		apierror.BadRequest("prompt config with the given ID does not exist").Render(w, r)
@@ -206,7 +230,10 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		updateParams.IsDefault = *dto.IsDefault
 	}
 
-	updatedPromptConfig, updatePromptConfigErr := queries.UpdatePromptConfig(r.Context(), updateParams)
+	updatedPromptConfig, updatePromptConfigErr := queries.UpdatePromptConfig(
+		r.Context(),
+		updateParams,
+	)
 
 	if updatePromptConfigErr != nil {
 		log.Error().Err(updatePromptConfigErr).Msg("failed to update prompt config")
@@ -214,8 +241,14 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
 		}
 
-		if strings.Contains(updatePromptConfigErr.Error(), "duplicate key value violates unique constraint") {
-			msg := fmt.Sprintf("prompt config with the name '%s' already exists for the given application", *dto.Name)
+		if strings.Contains(
+			updatePromptConfigErr.Error(),
+			"duplicate key value violates unique constraint",
+		) {
+			msg := fmt.Sprintf(
+				"prompt config with the name '%s' already exists for the given application",
+				*dto.Name,
+			)
 			apierror.BadRequest(msg).Render(w, r)
 			return
 		}
@@ -240,7 +273,8 @@ func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	promptConfig, retrievePromptConfigErr := db.GetQueries().FindPromptConfigById(r.Context(), *promptConfigId)
+	promptConfig, retrievePromptConfigErr := db.GetQueries().
+		FindPromptConfigById(r.Context(), *promptConfigId)
 	if retrievePromptConfigErr != nil {
 		log.Error().Err(retrievePromptConfigErr).Msg("failed to retrieve prompt config")
 		apierror.BadRequest("prompt config with the given ID does not exist").Render(w, r)

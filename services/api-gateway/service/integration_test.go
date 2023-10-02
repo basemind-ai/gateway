@@ -33,7 +33,11 @@ const JWTSecret = "ABC123"
 
 func CreateOpenAIService(t *testing.T) *openaitestutils.MockOpenAIService {
 	mockService := &openaitestutils.MockOpenAIService{T: t}
-	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](t, openaiconnector.RegisterOpenAIServiceServer, mockService)
+	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](
+		t,
+		openaiconnector.RegisterOpenAIServiceServer,
+		mockService,
+	)
 
 	t.Setenv("OPENAI_CONNECTOR_ADDRESS", "")
 
@@ -51,7 +55,10 @@ func CreateOpenAIService(t *testing.T) *openaitestutils.MockOpenAIService {
 }
 
 func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
-	listener := testutils.CreateTestServer[gateway.APIGatewayServiceServer](t, gateway.RegisterAPIGatewayServiceServer, service.New(),
+	listener := testutils.CreateTestServer[gateway.APIGatewayServiceServer](
+		t,
+		gateway.RegisterAPIGatewayServiceServer,
+		service.New(),
 		// we are using the same auth middleware as we do on main.go in this test
 		grpc.ChainUnaryInterceptor(
 			auth.UnaryServerInterceptor(grpcutils.NewAuthHandler(JWTSecret).HandleAuth),
@@ -60,7 +67,11 @@ func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 			auth.StreamServerInterceptor(grpcutils.NewAuthHandler(JWTSecret).HandleAuth),
 		),
 	)
-	return testutils.CreateTestClient[gateway.APIGatewayServiceClient](t, listener, gateway.NewAPIGatewayServiceClient)
+	return testutils.CreateTestClient[gateway.APIGatewayServiceClient](
+		t,
+		listener,
+		gateway.NewAPIGatewayServiceClient,
+	)
 }
 
 func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismock.ClientMock) {
@@ -107,15 +118,25 @@ func TestIntegration(t *testing.T) {
 		mockRedis.ExpectGet(applicationId).RedisNil()
 		mockRedis.ExpectSet(applicationId, expectedCacheValue, time.Hour/2).SetVal("OK")
 
-		outgoingContext := metadata.AppendToOutgoingContext(context.TODO(), "authorization", fmt.Sprintf("bearer %s", jwtToken))
+		outgoingContext := metadata.AppendToOutgoingContext(
+			context.TODO(),
+			"authorization",
+			fmt.Sprintf("bearer %s", jwtToken),
+		)
 
-		firstResponse, firstResponseErr := client.RequestPromptConfig(outgoingContext, &gateway.PromptConfigRequest{})
+		firstResponse, firstResponseErr := client.RequestPromptConfig(
+			outgoingContext,
+			&gateway.PromptConfigRequest{},
+		)
 		assert.NoError(t, firstResponseErr)
 		assert.Equal(t, expectedResponseContent, firstResponse.ExpectedPromptVariables)
 
 		mockRedis.ExpectGet(applicationId).SetVal(string(expectedCacheValue))
 
-		secondResponse, secondResponseErr := client.RequestPromptConfig(outgoingContext, &gateway.PromptConfigRequest{})
+		secondResponse, secondResponseErr := client.RequestPromptConfig(
+			outgoingContext,
+			&gateway.PromptConfigRequest{},
+		)
 		assert.NoError(t, secondResponseErr)
 		assert.Equal(t, expectedResponseContent, secondResponse.ExpectedPromptVariables)
 	})
@@ -139,19 +160,29 @@ func TestIntegration(t *testing.T) {
 		mockRedis.ExpectGet(applicationId).RedisNil()
 		mockRedis.ExpectSet(applicationId, expectedCacheValue, time.Hour/2).SetVal("OK")
 
-		outgoingContext := metadata.AppendToOutgoingContext(context.TODO(), "authorization", fmt.Sprintf("bearer %s", jwtToken))
+		outgoingContext := metadata.AppendToOutgoingContext(
+			context.TODO(),
+			"authorization",
+			fmt.Sprintf("bearer %s", jwtToken),
+		)
 
-		firstResponse, firstResponseErr := client.RequestPrompt(outgoingContext, &gateway.PromptRequest{
-			TemplateVariables: map[string]string{"userInput": "abc"},
-		})
+		firstResponse, firstResponseErr := client.RequestPrompt(
+			outgoingContext,
+			&gateway.PromptRequest{
+				TemplateVariables: map[string]string{"userInput": "abc"},
+			},
+		)
 		assert.NoError(t, firstResponseErr)
 		assert.Equal(t, expectedResponseContent, firstResponse.Content)
 
 		mockRedis.ExpectGet(applicationId).SetVal(string(expectedCacheValue))
 
-		secondResponse, secondResponseErr := client.RequestPrompt(outgoingContext, &gateway.PromptRequest{
-			TemplateVariables: map[string]string{"userInput": "abc"},
-		})
+		secondResponse, secondResponseErr := client.RequestPrompt(
+			outgoingContext,
+			&gateway.PromptRequest{
+				TemplateVariables: map[string]string{"userInput": "abc"},
+			},
+		)
 		assert.NoError(t, secondResponseErr)
 		assert.Equal(t, expectedResponseContent, secondResponse.Content)
 	})
@@ -174,7 +205,11 @@ func TestIntegration(t *testing.T) {
 		mockRedis.ExpectGet(applicationId).RedisNil()
 		mockRedis.ExpectSet(applicationId, expectedCacheValue, time.Hour/2).SetVal("OK")
 
-		outgoingContext := metadata.AppendToOutgoingContext(context.TODO(), "authorization", fmt.Sprintf("bearer %s", jwtToken))
+		outgoingContext := metadata.AppendToOutgoingContext(
+			context.TODO(),
+			"authorization",
+			fmt.Sprintf("bearer %s", jwtToken),
+		)
 
 		stream, streamErr := client.RequestStreamingPrompt(outgoingContext, &gateway.PromptRequest{
 			TemplateVariables: map[string]string{"userInput": "abc"},

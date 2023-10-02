@@ -60,9 +60,12 @@ func TestApiError(t *testing.T) {
 			ExpectedMessage: http.StatusText(http.StatusInternalServerError),
 		},
 	} {
-		client := testutils.CreateTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			testCase.ApiErrType.Render(w, r)
-		}))
+		client := testutils.CreateTestClient(
+			t,
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				testCase.ApiErrType.Render(w, r)
+			}),
+		)
 		res, err := client.Get(context.TODO(), "/")
 		assert.Nil(t, err)
 		assert.Equal(t, testCase.ExpectedStatus, res.StatusCode)

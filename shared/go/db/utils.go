@@ -14,5 +14,12 @@ func StringToUUID(value string) (*pgtype.UUID, error) {
 }
 
 func UUIDToString(value *pgtype.UUID) string {
-	return fmt.Sprintf("%x-%x-%x-%x-%x", value.Bytes[0:4], value.Bytes[4:6], value.Bytes[6:8], value.Bytes[8:10], value.Bytes[10:16])
+	return fmt.Sprintf(
+		"%x-%x-%x-%x-%x",
+		value.Bytes[0:4],
+		value.Bytes[4:6],
+		value.Bytes[6:8],
+		value.Bytes[8:10],
+		value.Bytes[10:16],
+	)
 }

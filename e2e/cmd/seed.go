@@ -30,7 +30,9 @@ var seedCommand = &cobra.Command{
 			}
 		}()
 
-		promptConfig, applicationId, promptConfigCreateErr := factories.CreateApplicationPromptConfig(cmd.Context())
+		promptConfig, applicationId, promptConfigCreateErr := factories.CreateApplicationPromptConfig(
+			cmd.Context(),
+		)
 		if promptConfigCreateErr != nil {
 			log.Fatal().Err(promptConfigCreateErr).Msg("failed to create application prompt config")
 		}

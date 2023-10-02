@@ -31,30 +31,36 @@ func TestGrpcUtils(t *testing.T) {
 		assert.NotNil(t, opts)
 	})
 
-	t.Run("CreateInterceptorLogger handler functions logs at all levels correctly", func(t *testing.T) {
-		loggerFunc, _ := grpcutils.CreateInterceptorLogger(true)
+	t.Run(
+		"CreateInterceptorLogger handler functions logs at all levels correctly",
+		func(t *testing.T) {
+			loggerFunc, _ := grpcutils.CreateInterceptorLogger(true)
 
-		var buf bytes.Buffer
-		log.Logger = log.Output(&buf)
+			var buf bytes.Buffer
+			log.Logger = log.Output(&buf)
 
-		loggerFunc.Log(context.Background(), loggingMiddleware.LevelDebug, "debug message")
-		loggerFunc.Log(context.Background(), loggingMiddleware.LevelInfo, "info message")
-		loggerFunc.Log(context.Background(), loggingMiddleware.LevelWarn, "warn message")
-		loggerFunc.Log(context.Background(), loggingMiddleware.LevelError, "error message")
+			loggerFunc.Log(context.Background(), loggingMiddleware.LevelDebug, "debug message")
+			loggerFunc.Log(context.Background(), loggingMiddleware.LevelInfo, "info message")
+			loggerFunc.Log(context.Background(), loggingMiddleware.LevelWarn, "warn message")
+			loggerFunc.Log(context.Background(), loggingMiddleware.LevelError, "error message")
 
-		assert.Contains(t, buf.String(), "debug message")
-		assert.Contains(t, buf.String(), "info message")
-		assert.Contains(t, buf.String(), "warn message")
-		assert.Contains(t, buf.String(), "error message")
-	})
+			assert.Contains(t, buf.String(), "debug message")
+			assert.Contains(t, buf.String(), "info message")
+			assert.Contains(t, buf.String(), "warn message")
+			assert.Contains(t, buf.String(), "error message")
+		},
+	)
 
-	t.Run("RecoveryHandler logs panic message and formats the error as expected", func(t *testing.T) {
-		var buf bytes.Buffer
-		log.Logger = log.Output(&buf)
+	t.Run(
+		"RecoveryHandler logs panic message and formats the error as expected",
+		func(t *testing.T) {
+			var buf bytes.Buffer
+			log.Logger = log.Output(&buf)
 
-		err := grpcutils.RecoveryHandler("test panic")
+			err := grpcutils.RecoveryHandler("test panic")
 
-		assert.Error(t, err)
-		assert.Contains(t, buf.String(), "panic triggered: test panic")
-	})
+			assert.Error(t, err)
+			assert.Contains(t, buf.String(), "panic triggered: test panic")
+		},
+	)
 }

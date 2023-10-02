@@ -17,7 +17,11 @@ import (
 
 func CreateClientAndService(t *testing.T) (*openai.Client, *openaitestutils.MockOpenAIService) {
 	mockService := &openaitestutils.MockOpenAIService{T: t}
-	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](t, openaiconnector.RegisterOpenAIServiceServer, mockService)
+	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](
+		t,
+		openaiconnector.RegisterOpenAIServiceServer,
+		mockService,
+	)
 	client, clientErr := openai.New(
 		"",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -37,7 +41,9 @@ func TestOpenAIConnectorClient(t *testing.T) {
 
 	ctx := context.Background()
 
-	promptConfig, applicationId, promptConfigCreateErr := factories.CreateApplicationPromptConfig(context.TODO())
+	promptConfig, applicationId, promptConfigCreateErr := factories.CreateApplicationPromptConfig(
+		context.TODO(),
+	)
 	assert.NoError(t, promptConfigCreateErr)
 
 	templateVariables := map[string]string{"userInput": "abc"}
@@ -83,7 +89,12 @@ func TestOpenAIConnectorClient(t *testing.T) {
 				},
 			}
 
-			response, err := client.RequestPrompt(ctx, applicationId, promptConfig, templateVariables)
+			response, err := client.RequestPrompt(
+				ctx,
+				applicationId,
+				promptConfig,
+				templateVariables,
+			)
 			assert.NoError(t, err)
 			assert.Equal(t, "Response content", response)
 		})
@@ -120,7 +131,14 @@ func TestOpenAIConnectorClient(t *testing.T) {
 			}
 
 			go func() {
-				client.RequestStream(ctx, applicationId, promptConfig, templateVariables, contentChannel, errChannel)
+				client.RequestStream(
+					ctx,
+					applicationId,
+					promptConfig,
+					templateVariables,
+					contentChannel,
+					errChannel,
+				)
 			}()
 
 			chunks := make([]string, 0)
@@ -158,7 +176,14 @@ func TestOpenAIConnectorClient(t *testing.T) {
 			mockService.Error = assert.AnError
 
 			go func() {
-				client.RequestStream(ctx, applicationId, promptConfig, templateVariables, contentChannel, errChannel)
+				client.RequestStream(
+					ctx,
+					applicationId,
+					promptConfig,
+					templateVariables,
+					contentChannel,
+					errChannel,
+				)
 			}()
 
 			for {
@@ -188,7 +213,14 @@ func TestOpenAIConnectorClient(t *testing.T) {
 			mockService.Error = assert.AnError
 
 			go func() {
-				client.RequestStream(ctx, applicationId, promptConfig, map[string]string{}, contentChannel, errChannel)
+				client.RequestStream(
+					ctx,
+					applicationId,
+					promptConfig,
+					map[string]string{},
+					contentChannel,
+					errChannel,
+				)
 			}()
 
 			for {

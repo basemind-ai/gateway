@@ -13,7 +13,10 @@ func Configure(isDebug bool) {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	if isDebug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-		log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}).With().Timestamp().Logger()
+		log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}).
+			With().
+			Timestamp().
+			Logger()
 	} else {
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 		log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()

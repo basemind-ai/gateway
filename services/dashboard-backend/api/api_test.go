@@ -37,7 +37,10 @@ func TestAPI(t *testing.T) {
 
 				testClient := httpTestUtils.CreateTestClient(t, r)
 
-				response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", api.ProjectsListEndpoint))
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
+				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
@@ -52,7 +55,11 @@ func TestAPI(t *testing.T) {
 			t.Run("retrieves projects for existing user", func(t *testing.T) {
 				userId := "xxx123"
 
-				_, userCreateErr := api.GetOrCreateUser(context.Background(), db.GetQueries(), userId)
+				_, userCreateErr := api.GetOrCreateUser(
+					context.Background(),
+					db.GetQueries(),
+					userId,
+				)
 				assert.NoError(t, userCreateErr)
 
 				r := router.New(router.Options{
@@ -66,7 +73,10 @@ func TestAPI(t *testing.T) {
 
 				testClient := httpTestUtils.CreateTestClient(t, r)
 
-				response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", api.ProjectsListEndpoint))
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
+				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
@@ -95,7 +105,10 @@ func TestAPI(t *testing.T) {
 
 				testClient := httpTestUtils.CreateTestClient(t, r)
 
-				response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf("/v1%s", api.ProjectsListEndpoint))
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
+				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusInternalServerError, response.StatusCode)
 			})
@@ -103,10 +116,11 @@ func TestAPI(t *testing.T) {
 	})
 
 	t.Run("Application CRUD", func(t *testing.T) {
-		project, createProjectErr := db.GetQueries().CreateProject(context.TODO(), db.CreateProjectParams{
-			Name:        "test project",
-			Description: "test project description",
-		})
+		project, createProjectErr := db.GetQueries().
+			CreateProject(context.TODO(), db.CreateProjectParams{
+				Name:        "test project",
+				Description: "test project description",
+			})
 		assert.NoError(t, createProjectErr)
 
 		projectId := db.UUIDToString(&project.ID)
@@ -126,7 +140,10 @@ func TestAPI(t *testing.T) {
 			t.Run("creates a new application", func(t *testing.T) {
 				response, requestErr := testClient.Post(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId)),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId),
+					),
 					map[string]interface{}{
 						"name":        "test app",
 						"description": "test app description",
@@ -146,7 +163,10 @@ func TestAPI(t *testing.T) {
 			t.Run("returns an error if the project id is invalid", func(t *testing.T) {
 				response, requestErr := testClient.Post(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid")),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid"),
+					),
 					map[string]interface{}{
 						"name":        "test app",
 						"description": "test app description",
@@ -159,7 +179,10 @@ func TestAPI(t *testing.T) {
 			t.Run("returns an error if the request body is invalid", func(t *testing.T) {
 				response, requestErr := testClient.Post(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId)),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId),
+					),
 					"invalid",
 				)
 				assert.NoError(t, requestErr)
@@ -169,21 +192,32 @@ func TestAPI(t *testing.T) {
 
 		t.Run("HandleRetrieveApplication", func(t *testing.T) {
 			t.Run("retrieves an existing application", func(t *testing.T) {
-				application, applicationCreateErr := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
-					ProjectID: project.ID,
-				})
+				application, applicationCreateErr := db.GetQueries().
+					CreateApplication(context.TODO(), db.CreateApplicationParams{
+						ProjectID: project.ID,
+					})
 				assert.NoError(t, applicationCreateErr)
 
 				applicationId := db.UUIDToString(&application.ID)
 				response, requestErr := testClient.Get(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationDetailEndpoint, "{applicationId}", applicationId)),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationDetailEndpoint,
+							"{applicationId}",
+							applicationId,
+						),
+					),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
 				responseApplication := db.Application{}
-				deserializationErr := serialization.DeserializeJson(response.Body, &responseApplication)
+				deserializationErr := serialization.DeserializeJson(
+					response.Body,
+					&responseApplication,
+				)
 				assert.NoError(t, deserializationErr)
 				assert.Equal(t, application.ID, responseApplication.ID)
 				assert.Equal(t, application.Name, responseApplication.Name)
@@ -193,7 +227,14 @@ func TestAPI(t *testing.T) {
 			t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 				response, requestErr := testClient.Get(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationDetailEndpoint, "{applicationId}", "invalid")),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationDetailEndpoint,
+							"{applicationId}",
+							"invalid",
+						),
+					),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
@@ -202,15 +243,23 @@ func TestAPI(t *testing.T) {
 
 		t.Run("HandleUpdateApplication", func(t *testing.T) {
 			t.Run("updates an existing application", func(t *testing.T) {
-				application, applicationCreateErr := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
-					ProjectID: project.ID,
-				})
+				application, applicationCreateErr := db.GetQueries().
+					CreateApplication(context.TODO(), db.CreateApplicationParams{
+						ProjectID: project.ID,
+					})
 				assert.NoError(t, applicationCreateErr)
 
 				applicationId := db.UUIDToString(&application.ID)
 				response, requestErr := testClient.Patch(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationDetailEndpoint, "{applicationId}", applicationId)),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationDetailEndpoint,
+							"{applicationId}",
+							applicationId,
+						),
+					),
 					map[string]interface{}{
 						"name":        "updated app",
 						"description": "updated app description",
@@ -220,7 +269,10 @@ func TestAPI(t *testing.T) {
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
 				responseApplication := db.Application{}
-				deserializationErr := serialization.DeserializeJson(response.Body, &responseApplication)
+				deserializationErr := serialization.DeserializeJson(
+					response.Body,
+					&responseApplication,
+				)
 				assert.NoError(t, deserializationErr)
 				assert.Equal(t, application.ID, responseApplication.ID)
 				assert.Equal(t, "updated app", responseApplication.Name)
@@ -230,7 +282,14 @@ func TestAPI(t *testing.T) {
 			t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationDetailEndpoint, "{applicationId}", "invalid")),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationDetailEndpoint,
+							"{applicationId}",
+							"invalid",
+						),
+					),
 					map[string]interface{}{
 						"name":        "updated app",
 						"description": "updated app description",
@@ -241,15 +300,23 @@ func TestAPI(t *testing.T) {
 			})
 
 			t.Run("returns an error if the request body is invalid", func(t *testing.T) {
-				application, applicationCreateErr := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
-					ProjectID: project.ID,
-				})
+				application, applicationCreateErr := db.GetQueries().
+					CreateApplication(context.TODO(), db.CreateApplicationParams{
+						ProjectID: project.ID,
+					})
 				assert.NoError(t, applicationCreateErr)
 
 				applicationId := db.UUIDToString(&application.ID)
 				response, requestErr := testClient.Patch(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationDetailEndpoint, "{applicationId}", applicationId)),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationDetailEndpoint,
+							"{applicationId}",
+							applicationId,
+						),
+					),
 					"invalid",
 				)
 				assert.NoError(t, requestErr)
@@ -259,27 +326,43 @@ func TestAPI(t *testing.T) {
 
 		t.Run("HandleDeleteApplication", func(t *testing.T) {
 			t.Run("deletes an existing application", func(t *testing.T) {
-				application, applicationCreateErr := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
-					ProjectID: project.ID,
-				})
+				application, applicationCreateErr := db.GetQueries().
+					CreateApplication(context.TODO(), db.CreateApplicationParams{
+						ProjectID: project.ID,
+					})
 				assert.NoError(t, applicationCreateErr)
 
 				applicationId := db.UUIDToString(&application.ID)
 				response, requestErr := testClient.Delete(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationDetailEndpoint, "{applicationId}", applicationId)),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationDetailEndpoint,
+							"{applicationId}",
+							applicationId,
+						),
+					),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
-				_, applicationRetrieveErr := db.GetQueries().FindApplicationById(context.TODO(), application.ID)
+				_, applicationRetrieveErr := db.GetQueries().
+					FindApplicationById(context.TODO(), application.ID)
 				assert.Error(t, applicationRetrieveErr)
 			})
 
 			t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 				response, requestErr := testClient.Delete(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", strings.ReplaceAll(api.ApplicationDetailEndpoint, "{applicationId}", "invalid")),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationDetailEndpoint,
+							"{applicationId}",
+							"invalid",
+						),
+					),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
@@ -288,10 +371,11 @@ func TestAPI(t *testing.T) {
 	})
 
 	t.Run("PromptConfig CRUD", func(t *testing.T) {
-		project, createProjectErr := db.GetQueries().CreateProject(context.TODO(), db.CreateProjectParams{
-			Name:        "test project",
-			Description: "test project description",
-		})
+		project, createProjectErr := db.GetQueries().
+			CreateProject(context.TODO(), db.CreateProjectParams{
+				Name:        "test project",
+				Description: "test project description",
+			})
 		assert.NoError(t, createProjectErr)
 
 		projectId := db.UUIDToString(&project.ID)
@@ -351,11 +435,12 @@ func TestAPI(t *testing.T) {
 		}
 
 		t.Run("HandleCreatePromptConfig", func(t *testing.T) {
-			application, applicationCreateErr := db.GetQueries().CreateApplication(context.TODO(), db.CreateApplicationParams{
-				ProjectID:   project.ID,
-				Name:        "test app",
-				Description: "test app description",
-			})
+			application, applicationCreateErr := db.GetQueries().
+				CreateApplication(context.TODO(), db.CreateApplicationParams{
+					ProjectID:   project.ID,
+					Name:        "test app",
+					Description: "test app description",
+				})
 			assert.NoError(t, applicationCreateErr)
 
 			applicationId := db.UUIDToString(&application.ID)
@@ -385,7 +470,11 @@ func TestAPI(t *testing.T) {
 				assert.Equal(t, dto.ModelParameters, promptConfig.ModelParameters)
 				assert.Equal(t, dto.ModelType, promptConfig.ModelType)
 				assert.Equal(t, dto.ModelVendor, promptConfig.ModelVendor)
-				assert.Equal(t, dto.ProviderPromptMessages, json.RawMessage(promptConfig.ProviderPromptMessages))
+				assert.Equal(
+					t,
+					dto.ProviderPromptMessages,
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				)
 			})
 
 			t.Run("returns bad request for validation errors", func(t *testing.T) {
@@ -474,11 +563,47 @@ func TestAPI(t *testing.T) {
 			})
 
 			for i, modelType := range []db.ModelType{db.ModelTypeGpt35Turbo, db.ModelTypeGpt35Turbo16k, db.ModelTypeGpt4, db.ModelTypeGpt432k} {
-				t.Run(fmt.Sprintf("validates successfully model type %s", modelType), func(t *testing.T) {
+				t.Run(
+					fmt.Sprintf("validates successfully model type %s", modelType),
+					func(t *testing.T) {
+						dto := api.PromptConfigCreateDTO{
+							Name:                   fmt.Sprintf("test prompt config: %d", i),
+							ModelParameters:        modelParameters,
+							ModelType:              modelType,
+							ModelVendor:            db.ModelVendorOPENAI,
+							ProviderPromptMessages: promptMessages,
+						}
+						response, requestErr := testClient.Post(
+							context.TODO(),
+							fmtListEndpoint(projectId, applicationId),
+							dto,
+						)
+						assert.NoError(t, requestErr)
+						assert.Equal(t, http.StatusCreated, response.StatusCode)
+					},
+				)
+			}
+
+			t.Run(
+				"returns an error if the name of the prompt config is already used",
+				func(t *testing.T) {
+					_, promptConfigCreateErr := db.GetQueries().
+						CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+							ApplicationID:             application.ID,
+							Name:                      "unique name",
+							ModelVendor:               db.ModelVendorOPENAI,
+							ModelType:                 db.ModelTypeGpt4,
+							ModelParameters:           modelParameters,
+							ProviderPromptMessages:    promptMessages,
+							ExpectedTemplateVariables: []string{"userInput"},
+							IsDefault:                 true,
+						})
+					assert.NoError(t, promptConfigCreateErr)
+
 					dto := api.PromptConfigCreateDTO{
-						Name:                   fmt.Sprintf("test prompt config: %d", i),
+						Name:                   "unique name",
 						ModelParameters:        modelParameters,
-						ModelType:              modelType,
+						ModelType:              db.ModelTypeGpt4,
 						ModelVendor:            db.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					}
@@ -488,50 +613,22 @@ func TestAPI(t *testing.T) {
 						dto,
 					)
 					assert.NoError(t, requestErr)
-					assert.Equal(t, http.StatusCreated, response.StatusCode)
-				})
-			}
-
-			t.Run("returns an error if the name of the prompt config is already used", func(t *testing.T) {
-				_, promptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "unique name",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{"userInput"},
-					IsDefault:                 true,
-				})
-				assert.NoError(t, promptConfigCreateErr)
-
-				dto := api.PromptConfigCreateDTO{
-					Name:                   "unique name",
-					ModelParameters:        modelParameters,
-					ModelType:              db.ModelTypeGpt4,
-					ModelVendor:            db.ModelVendorOPENAI,
-					ProviderPromptMessages: promptMessages,
-				}
-				response, requestErr := testClient.Post(
-					context.TODO(),
-					fmtListEndpoint(projectId, applicationId),
-					dto,
-				)
-				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-			})
+					assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+				},
+			)
 
 			t.Run("rolls back transaction when failing to update record", func(t *testing.T) {
-				defaultPromptConfig, promptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "default prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{"userInput"},
-					IsDefault:                 true,
-				})
+				defaultPromptConfig, promptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      "default prompt config",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{"userInput"},
+						IsDefault:                 true,
+					})
 				assert.NoError(t, promptConfigCreateErr)
 
 				dto := api.PromptConfigCreateDTO{
@@ -549,7 +646,8 @@ func TestAPI(t *testing.T) {
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 
-				retrievedPromptConfig, retrieveErr := db.GetQueries().FindPromptConfigById(context.Background(), defaultPromptConfig.ID)
+				retrievedPromptConfig, retrieveErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), defaultPromptConfig.ID)
 				assert.NoError(t, retrieveErr)
 				assert.True(t, retrievedPromptConfig.IsDefault)
 			})
@@ -592,32 +690,37 @@ func TestAPI(t *testing.T) {
 		})
 
 		t.Run("HandleRetrievePromptConfigs", func(t *testing.T) {
-			application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+			application, applicationCreateErr := factories.CreateApplication(
+				context.TODO(),
+				project.ID,
+			)
 			assert.NoError(t, applicationCreateErr)
 			applicationId := db.UUIDToString(&application.ID)
 
 			t.Run("retrieves prompt configs for an application", func(t *testing.T) {
-				firstPromptConfig, firstPromptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "a",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{"name"},
-					IsDefault:                 true,
-				})
+				firstPromptConfig, firstPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      "a",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{"name"},
+						IsDefault:                 true,
+					})
 				assert.NoError(t, firstPromptConfigCreateErr)
-				secondPromptConfig, secondPromptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "b",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{"values"},
-					IsDefault:                 true,
-				})
+				secondPromptConfig, secondPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      "b",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{"values"},
+						IsDefault:                 true,
+					})
 				assert.NoError(t, secondPromptConfigCreateErr)
 
 				response, responseErr := testClient.Get(
@@ -637,7 +740,10 @@ func TestAPI(t *testing.T) {
 			})
 
 			t.Run("returns empty array when no prompt configs are found", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
@@ -658,20 +764,24 @@ func TestAPI(t *testing.T) {
 
 		t.Run("HandleUpdatePromptConfig", func(t *testing.T) {
 			t.Run("updates a prompt config's name", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
-				promptConfigToRename, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "abc prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
+				promptConfigToRename, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      "abc prompt config",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
 
 				assert.NoError(t, configCreateErr)
 
@@ -687,80 +797,94 @@ func TestAPI(t *testing.T) {
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
-				dbPromptConfig, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), promptConfigToRename.ID)
+				dbPromptConfig, retrivalErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), promptConfigToRename.ID)
 				assert.NoError(t, retrivalErr)
 				assert.Equal(t, newName, dbPromptConfig.Name)
 			})
 
-			t.Run("returns bad request when duplicating a prompt config's name", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
-				assert.NoError(t, applicationCreateErr)
-				applicationId := db.UUIDToString(&application.ID)
+			t.Run(
+				"returns bad request when duplicating a prompt config's name",
+				func(t *testing.T) {
+					application, applicationCreateErr := factories.CreateApplication(
+						context.TODO(),
+						project.ID,
+					)
+					assert.NoError(t, applicationCreateErr)
+					applicationId := db.UUIDToString(&application.ID)
 
-				firstPromptConfig, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
-				assert.NoError(t, configCreateErr)
+					firstPromptConfig, configCreateErr := db.GetQueries().
+						CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+							ApplicationID:             application.ID,
+							Name:                      factories.RandomString(10),
+							ModelVendor:               db.ModelVendorOPENAI,
+							ModelType:                 db.ModelTypeGpt4,
+							ModelParameters:           modelParameters,
+							ProviderPromptMessages:    promptMessages,
+							ExpectedTemplateVariables: []string{""},
+							IsDefault:                 true,
+						})
+					assert.NoError(t, configCreateErr)
 
-				newPromptConfig, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 false,
-				})
-				assert.NoError(t, configCreateErr)
+					newPromptConfig, configCreateErr := db.GetQueries().
+						CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+							ApplicationID:             application.ID,
+							Name:                      factories.RandomString(10),
+							ModelVendor:               db.ModelVendorOPENAI,
+							ModelType:                 db.ModelTypeGpt4,
+							ModelParameters:           modelParameters,
+							ProviderPromptMessages:    promptMessages,
+							ExpectedTemplateVariables: []string{""},
+							IsDefault:                 false,
+						})
+					assert.NoError(t, configCreateErr)
 
-				newPromptConfigId := db.UUIDToString(&newPromptConfig.ID)
+					newPromptConfigId := db.UUIDToString(&newPromptConfig.ID)
 
-				newName := firstPromptConfig.Name
-				response, requestErr := testClient.Patch(
-					context.TODO(),
-					fmtDetailEndpoint(projectId, applicationId, newPromptConfigId),
-					api.PromptConfigUpdateDTO{
-						Name: &newName,
-					})
-				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-			})
+					newName := firstPromptConfig.Name
+					response, requestErr := testClient.Patch(
+						context.TODO(),
+						fmtDetailEndpoint(projectId, applicationId, newPromptConfigId),
+						api.PromptConfigUpdateDTO{
+							Name: &newName,
+						})
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+				},
+			)
 
 			t.Run("allows making a non-default prompt config default", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
-				defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
+				defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
 				assert.NoError(t, defaultPromptConfigCreateErr)
 
-				nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 false,
-				})
+				nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 false,
+					})
 				assert.NoError(t, nonDefaultPromptConfigCreateErr)
 
 				nonDefaultPromptConfigId := db.UUIDToString(&nonDefaultPromptConfig.ID)
@@ -775,65 +899,79 @@ func TestAPI(t *testing.T) {
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
-				dbDefaultPromptConfig, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), defaultPromptConfig.ID)
+				dbDefaultPromptConfig, retrivalErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), defaultPromptConfig.ID)
 				assert.NoError(t, retrivalErr)
 				assert.Equal(t, false, dbDefaultPromptConfig.IsDefault)
 
-				dbNonDefaultPromptConfig, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), nonDefaultPromptConfig.ID)
+				dbNonDefaultPromptConfig, retrivalErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), nonDefaultPromptConfig.ID)
 				assert.NoError(t, retrivalErr)
 				assert.Equal(t, true, dbNonDefaultPromptConfig.IsDefault)
 			})
 
-			t.Run("returns bad request when trying to make the default prompt config non-default", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
-				assert.NoError(t, applicationCreateErr)
-				applicationId := db.UUIDToString(&application.ID)
+			t.Run(
+				"returns bad request when trying to make the default prompt config non-default",
+				func(t *testing.T) {
+					application, applicationCreateErr := factories.CreateApplication(
+						context.TODO(),
+						project.ID,
+					)
+					assert.NoError(t, applicationCreateErr)
+					applicationId := db.UUIDToString(&application.ID)
 
-				defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "default prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
+					defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().
+						CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+							ApplicationID:             application.ID,
+							Name:                      "default prompt config",
+							ModelVendor:               db.ModelVendorOPENAI,
+							ModelType:                 db.ModelTypeGpt4,
+							ModelParameters:           modelParameters,
+							ProviderPromptMessages:    promptMessages,
+							ExpectedTemplateVariables: []string{""},
+							IsDefault:                 true,
+						})
 
-				assert.NoError(t, defaultPromptConfigCreateErr)
+					assert.NoError(t, defaultPromptConfigCreateErr)
 
-				defaultPromptConfigId := db.UUIDToString(&defaultPromptConfig.ID)
+					defaultPromptConfigId := db.UUIDToString(&defaultPromptConfig.ID)
 
-				isDefault := false
-				response, requestErr := testClient.Patch(
-					context.TODO(),
-					fmtDetailEndpoint(projectId, applicationId, defaultPromptConfigId),
-					api.PromptConfigUpdateDTO{
-						IsDefault: &isDefault,
-					})
-				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+					isDefault := false
+					response, requestErr := testClient.Patch(
+						context.TODO(),
+						fmtDetailEndpoint(projectId, applicationId, defaultPromptConfigId),
+						api.PromptConfigUpdateDTO{
+							IsDefault: &isDefault,
+						})
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 
-				dbDefaultPromptConfig, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), defaultPromptConfig.ID)
-				assert.NoError(t, retrivalErr)
-				assert.Equal(t, true, dbDefaultPromptConfig.IsDefault)
-			})
+					dbDefaultPromptConfig, retrivalErr := db.GetQueries().
+						FindPromptConfigById(context.Background(), defaultPromptConfig.ID)
+					assert.NoError(t, retrivalErr)
+					assert.Equal(t, true, dbDefaultPromptConfig.IsDefault)
+				},
+			)
 
 			t.Run("updates a prompt config's model type", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
-				promptConfigToRename, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "abc prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
+				promptConfigToRename, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      "abc prompt config",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
 
 				assert.NoError(t, configCreateErr)
 
@@ -849,26 +987,31 @@ func TestAPI(t *testing.T) {
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
-				dbPromptConfig, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), promptConfigToRename.ID)
+				dbPromptConfig, retrivalErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), promptConfigToRename.ID)
 				assert.NoError(t, retrivalErr)
 				assert.Equal(t, newModel, dbPromptConfig.ModelType)
 			})
 
 			t.Run("returns bad request for invalid model type", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
-				promptConfigToRename, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      "abc prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
+				promptConfigToRename, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      "abc prompt config",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
 
 				assert.NoError(t, configCreateErr)
 
@@ -886,20 +1029,24 @@ func TestAPI(t *testing.T) {
 			})
 
 			t.Run("updates a prompt config's model parameters", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
-				promptConfigToRename, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
+				promptConfigToRename, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
 
 				assert.NoError(t, configCreateErr)
 
@@ -923,7 +1070,8 @@ func TestAPI(t *testing.T) {
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
 
-				dbPromptConfig, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), promptConfigToRename.ID)
+				dbPromptConfig, retrivalErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), promptConfigToRename.ID)
 				assert.NoError(t, retrivalErr)
 				assert.Equal(t, newModelParameters, dbPromptConfig.ModelParameters)
 			})
@@ -931,20 +1079,24 @@ func TestAPI(t *testing.T) {
 
 		t.Run("HandleDeletePromptConfig", func(t *testing.T) {
 			t.Run("deletes a prompt config if its not default", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
-				promptConfig, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 false,
-				})
+				promptConfig, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 false,
+					})
 				assert.NoError(t, configCreateErr)
 
 				response, requestErr := testClient.Delete(
@@ -954,25 +1106,30 @@ func TestAPI(t *testing.T) {
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
-				_, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), promptConfig.ID)
+				_, retrivalErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), promptConfig.ID)
 				assert.Error(t, retrivalErr)
 			})
 
 			t.Run("returns bad request when deleting a default prompt config", func(t *testing.T) {
-				application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
+				application, applicationCreateErr := factories.CreateApplication(
+					context.TODO(),
+					project.ID,
+				)
 				assert.NoError(t, applicationCreateErr)
 				applicationId := db.UUIDToString(&application.ID)
 
-				promptConfig, configCreateErr := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             application.ID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
+				promptConfig, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             application.ID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
 				assert.NoError(t, configCreateErr)
 
 				response, requestErr := testClient.Delete(
@@ -982,7 +1139,8 @@ func TestAPI(t *testing.T) {
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 
-				_, retrivalErr := db.GetQueries().FindPromptConfigById(context.Background(), promptConfig.ID)
+				_, retrivalErr := db.GetQueries().
+					FindPromptConfigById(context.Background(), promptConfig.ID)
 				assert.NoError(t, retrivalErr)
 			})
 		})

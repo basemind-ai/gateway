@@ -19,7 +19,10 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 	t.Run("No panic with address", func(t *testing.T) {
 		t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
 
-		err := connectors.Init(context.TODO(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		err := connectors.Init(
+			context.TODO(),
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		)
 		assert.NoError(t, err)
 
 		client1 := connectors.GetOpenAIConnectorClient()

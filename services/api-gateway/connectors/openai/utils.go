@@ -26,7 +26,11 @@ func GetModelType(modelType db.ModelType) (*openaiconnector.OpenAIModel, error) 
 	return &value, nil
 }
 
-func ParseTemplateVariables(content string, expectedVariables []string, templateVariables map[string]string) (string, error) {
+func ParseTemplateVariables(
+	content string,
+	expectedVariables []string,
+	templateVariables map[string]string,
+) (string, error) {
 	for _, expectedVariable := range expectedVariables {
 		value, ok := templateVariables[expectedVariable]
 
@@ -75,7 +79,11 @@ func CreatePromptRequest(
 		}
 
 		if openaiMessage.Content != nil {
-			parsedContent, parseErr := ParseTemplateVariables(*openaiMessage.Content, message.ExpectedTemplateVariables, templateVariables)
+			parsedContent, parseErr := ParseTemplateVariables(
+				*openaiMessage.Content,
+				message.ExpectedTemplateVariables,
+				templateVariables,
+			)
 			if parseErr != nil {
 				return nil, parseErr
 			}

@@ -23,12 +23,16 @@ func GetFirebaseAuth(ctx context.Context) FirebaseAuth {
 	once.Do(func() {
 		app, appInitErr := firebase.NewApp(ctx, nil)
 		if appInitErr != nil {
-			log.Fatal().Err(fmt.Errorf("error initializing firebase app: %w", appInitErr)).Msg("error initializing firebase app")
+			log.Fatal().
+				Err(fmt.Errorf("error initializing firebase app: %w", appInitErr)).
+				Msg("error initializing firebase app")
 		}
 
 		authInstance, authInitErr := app.Auth(ctx)
 		if authInitErr != nil {
-			log.Fatal().Err(fmt.Errorf("error initializing firebase auth: %w", authInitErr)).Msg("error initializing firebase auth")
+			log.Fatal().
+				Err(fmt.Errorf("error initializing firebase auth: %w", authInitErr)).
+				Msg("error initializing firebase auth")
 		}
 		SetFirebaseAuth(authInstance)
 	})

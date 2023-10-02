@@ -17,7 +17,10 @@ type MockOpenAIService struct {
 	T               *testing.T
 }
 
-func (m MockOpenAIService) OpenAIPrompt(_ context.Context, request *openaiconnector.OpenAIPromptRequest) (*openaiconnector.OpenAIPromptResponse, error) {
+func (m MockOpenAIService) OpenAIPrompt(
+	_ context.Context,
+	request *openaiconnector.OpenAIPromptRequest,
+) (*openaiconnector.OpenAIPromptResponse, error) {
 	if m.Error != nil {
 		return nil, m.Error
 	}
@@ -39,7 +42,10 @@ func (m MockOpenAIService) OpenAIPrompt(_ context.Context, request *openaiconnec
 	return m.Response, nil
 }
 
-func (m MockOpenAIService) OpenAIStream(request *openaiconnector.OpenAIPromptRequest, stream openaiconnector.OpenAIService_OpenAIStreamServer) error {
+func (m MockOpenAIService) OpenAIStream(
+	request *openaiconnector.OpenAIPromptRequest,
+	stream openaiconnector.OpenAIService_OpenAIStreamServer,
+) error {
 	if m.Error != nil {
 		return m.Error
 	}

@@ -24,7 +24,11 @@ func NewApiError(statusCode int, args ...interface{}) *ApiError {
 		message = http.StatusText(statusCode)
 	}
 
-	return &ApiError{StatusCode: statusCode, Message: message, StatusText: http.StatusText(statusCode)}
+	return &ApiError{
+		StatusCode: statusCode,
+		Message:    message,
+		StatusText: http.StatusText(statusCode),
+	}
 }
 
 func BadRequest(message ...interface{}) *ApiError {

@@ -41,22 +41,25 @@ func TestClient(t *testing.T) {
 			Body:   &Body{Message: "ABC"},
 		},
 	} {
-		client := testutils.CreateTestClient(t, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-			assert.Equal(t, request.Method, testCase.Method)
+		client := testutils.CreateTestClient(
+			t,
+			http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+				assert.Equal(t, request.Method, testCase.Method)
 
-			defer func() {
-				_ =
-					request.Body.Close()
-			}()
+				defer func() {
+					_ =
+						request.Body.Close()
+				}()
 
-			if testCase.Body != nil {
-				data, _ := io.ReadAll(request.Body)
-				body := Body{}
-				_ = json.Unmarshal(data, &body)
-				assert.Equal(t, body.Message, testCase.Body.Message)
-			}
-			writer.WriteHeader(http.StatusOK)
-		}))
+				if testCase.Body != nil {
+					data, _ := io.ReadAll(request.Body)
+					body := Body{}
+					_ = json.Unmarshal(data, &body)
+					assert.Equal(t, body.Message, testCase.Body.Message)
+				}
+				writer.WriteHeader(http.StatusOK)
+			}),
+		)
 		var (
 			res *http.Response
 			err error

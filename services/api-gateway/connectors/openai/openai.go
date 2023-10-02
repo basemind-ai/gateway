@@ -61,13 +61,19 @@ func (c *Client) RequestPrompt(
 
 	// Count the total number of tokens utilized for openai prompt
 	reqPromptString := GetRequestPromptString(promptRequest.Messages)
-	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
+	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
+		reqPromptString,
+		applicationPromptConfig.PromptConfigData.ModelType,
+	)
 	if tokenizationErr != nil {
 		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
 
-	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(response.Content, applicationPromptConfig.PromptConfigData.ModelType)
+	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
+		response.Content,
+		applicationPromptConfig.PromptConfigData.ModelType,
+	)
 	if tokenizationErr != nil {
 		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
@@ -86,7 +92,8 @@ func (c *Client) RequestPrompt(
 		log.Err(dbErr).Msg("failed to create prompt request record")
 	}
 
-	log.Debug().Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
+	log.Debug().
+		Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
 	return response.Content, nil
 }
 
@@ -124,12 +131,16 @@ func (c *Client) RequestStream(
 	}
 
 	reqPromptString := GetRequestPromptString(promptRequest.Messages)
-	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
+	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
+		reqPromptString,
+		applicationPromptConfig.PromptConfigData.ModelType,
+	)
 	if tokenizationErr != nil {
 		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
-	log.Debug().Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
+	log.Debug().
+		Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
 
 	for {
 		msg, receiveErr := stream.Recv()
@@ -146,22 +157,24 @@ func (c *Client) RequestStream(
 				errChannel <- receiveErr
 			}
 			close(contentChannel)
-			log.Debug().Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
+			log.Debug().
+				Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
 
 			if recordErrLog.String == "" && !errors.Is(receiveErr, io.EOF) {
 				recordErrLog = pgtype.Text{String: receiveErr.Error()}
 			}
 
-			_, dbErr := db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
-				IsStreamResponse:      true,
-				RequestTokens:         promptReqTokenCount,
-				ResponseTokens:        promptResTokenCount,
-				StartTime:             pgtype.Timestamptz{Time: promptStartTime},
-				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime},
-				StreamResponseLatency: streamResDuration,
-				PromptConfigID:        applicationPromptConfig.PromptConfigData.ID,
-				ErrorLog:              recordErrLog,
-			})
+			_, dbErr := db.GetQueries().
+				CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+					IsStreamResponse:      true,
+					RequestTokens:         promptReqTokenCount,
+					ResponseTokens:        promptResTokenCount,
+					StartTime:             pgtype.Timestamptz{Time: promptStartTime},
+					FinishTime:            pgtype.Timestamptz{Time: promptFinishTime},
+					StreamResponseLatency: streamResDuration,
+					PromptConfigID:        applicationPromptConfig.PromptConfigData.ID,
+					ErrorLog:              recordErrLog,
+				})
 			if dbErr != nil {
 				log.Err(dbErr).Msg("failed to create prompt request record")
 			}
@@ -169,7 +182,10 @@ func (c *Client) RequestStream(
 			return
 		}
 
-		streamResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(msg.Content, applicationPromptConfig.PromptConfigData.ModelType)
+		streamResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
+			msg.Content,
+			applicationPromptConfig.PromptConfigData.ModelType,
+		)
 		if tokenizationErr != nil {
 			recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
 			log.Err(tokenizationErr).Msg("failed to get prompt token count")

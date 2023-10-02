@@ -58,13 +58,15 @@ func main() {
 		_ = conn.Close(ctx)
 	}()
 
-	server := grpcutils2.CreateGRPCServer[gateway.APIGatewayServiceServer](grpcutils2.Options[gateway.APIGatewayServiceServer]{
-		AuthHandler:   grpcutils2.NewAuthHandler(cfg.JWTSecret).HandleAuth,
-		Environment:   cfg.Environment,
-		GrpcRegistrar: gateway.RegisterAPIGatewayServiceServer,
-		Service:       service.New(),
-		ServiceName:   "api-gateway",
-	})
+	server := grpcutils2.CreateGRPCServer[gateway.APIGatewayServiceServer](
+		grpcutils2.Options[gateway.APIGatewayServiceServer]{
+			AuthHandler:   grpcutils2.NewAuthHandler(cfg.JWTSecret).HandleAuth,
+			Environment:   cfg.Environment,
+			GrpcRegistrar: gateway.RegisterAPIGatewayServiceServer,
+			Service:       service.New(),
+			ServiceName:   "api-gateway",
+		},
+	)
 
 	g, gCtx := errgroup.WithContext(ctx)
 

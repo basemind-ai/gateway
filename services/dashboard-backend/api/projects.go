@@ -10,7 +10,11 @@ import (
 	"net/http"
 )
 
-func GetOrCreateUser(ctx context.Context, dbQueries *db.Queries, firebaseId string) (*db.User, error) {
+func GetOrCreateUser(
+	ctx context.Context,
+	dbQueries *db.Queries,
+	firebaseId string,
+) (*db.User, error) {
 	existingUser, findUserErr := dbQueries.FindUserByFirebaseId(ctx, firebaseId)
 	if findUserErr == nil {
 		return &existingUser, nil
@@ -22,7 +26,10 @@ func GetOrCreateUser(ctx context.Context, dbQueries *db.Queries, firebaseId stri
 		return nil, createUserErr
 	}
 
-	project, createProjectErr := dbQueries.CreateProject(ctx, db.CreateProjectParams{Name: "Default Project", Description: "Default Project"})
+	project, createProjectErr := dbQueries.CreateProject(
+		ctx,
+		db.CreateProjectParams{Name: "Default Project", Description: "Default Project"},
+	)
 	if createProjectErr != nil {
 		log.Error().Err(createProjectErr).Msg("failed to create project row")
 		return nil, createProjectErr

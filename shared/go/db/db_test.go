@@ -98,7 +98,10 @@ func TestDbQueries(t *testing.T) {
 
 	t.Run("CreateProject tests", func(t *testing.T) {
 		t.Run("successfully creates a project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
 			assert.Equal(t, project.Name, "test")
@@ -110,7 +113,10 @@ func TestDbQueries(t *testing.T) {
 
 	t.Run("DeleteProject tests", func(t *testing.T) {
 		t.Run("successfully deletes a project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
 			err = dbQueries.DeleteProject(context.TODO(), project.ID)
@@ -125,10 +131,18 @@ func TestDbQueries(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Run("successfully creates a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
-			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN, IsUserDefaultProject: true}
+			createProjectParams := db.CreateUserProjectParams{
+				UserID:               user.ID,
+				ProjectID:            project.ID,
+				Permission:           db.AccessPermissionTypeADMIN,
+				IsUserDefaultProject: true,
+			}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -139,10 +153,17 @@ func TestDbQueries(t *testing.T) {
 		})
 
 		t.Run("User default project is false by default", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
-			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{
+				UserID:     user.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -150,10 +171,17 @@ func TestDbQueries(t *testing.T) {
 		})
 
 		t.Run("fails when creating a duplicate user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
-			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{
+				UserID:     user.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			}
 			_, err = dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -169,10 +197,17 @@ func TestDbQueries(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Run("successfully delete a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
-			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{
+				UserID:     user.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -193,10 +228,17 @@ func TestDbQueries(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Run("successfully delete a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
-			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{
+				UserID:     user.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -216,10 +258,17 @@ func TestDbQueries(t *testing.T) {
 			user, err := dbQueries.CreateUser(context.TODO(), testUserId)
 			assert.Nil(t, err)
 
-			project, err := dbQueries.CreateProject(context.TODO(), db.CreateProjectParams{Name: "test", Description: "test"})
+			project, err := dbQueries.CreateProject(
+				context.TODO(),
+				db.CreateProjectParams{Name: "test", Description: "test"},
+			)
 			assert.Nil(t, err)
 
-			createProjectParams := db.CreateUserProjectParams{UserID: user.ID, ProjectID: project.ID, Permission: db.AccessPermissionTypeADMIN}
+			createProjectParams := db.CreateUserProjectParams{
+				UserID:     user.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			}
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
@@ -265,27 +314,31 @@ func TestDbQueries(t *testing.T) {
 			{Role: "system", Content: systemMessages}, {Role: "user", Content: userMessage},
 		})
 
-		promptConfig, _ := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-			ApplicationID:             application.ID,
-			Name:                      "abc prompt config",
-			ModelVendor:               db.ModelVendorOPENAI,
-			ModelType:                 db.ModelTypeGpt4,
-			ModelParameters:           modelParameters,
-			ProviderPromptMessages:    promptMessages,
-			ExpectedTemplateVariables: []string{""},
-			IsDefault:                 true,
-		})
+		promptConfig, _ := db.GetQueries().
+			CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				ApplicationID:             application.ID,
+				Name:                      "abc prompt config",
+				ModelVendor:               db.ModelVendorOPENAI,
+				ModelType:                 db.ModelTypeGpt4,
+				ModelParameters:           modelParameters,
+				ProviderPromptMessages:    promptMessages,
+				ExpectedTemplateVariables: []string{""},
+				IsDefault:                 true,
+			})
 
 		t.Run("successfully creates a prompt request record", func(t *testing.T) {
-			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
-				IsStreamResponse:      true,
-				RequestTokens:         tokenCount,
-				ResponseTokens:        tokenCount,
-				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
-				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
-				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
-				PromptConfigID:        promptConfig.ID,
-			})
+			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(
+				context.TODO(),
+				db.CreatePromptRequestRecordParams{
+					IsStreamResponse:      true,
+					RequestTokens:         tokenCount,
+					ResponseTokens:        tokenCount,
+					StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+					FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+					StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+					PromptConfigID:        promptConfig.ID,
+				},
+			)
 
 			assert.Nil(t, err)
 			assert.Equal(t, promptRequestRecord.RequestTokens, tokenCount)
@@ -295,31 +348,37 @@ func TestDbQueries(t *testing.T) {
 
 		t.Run("returns error when prompt config does not exist", func(t *testing.T) {
 			promptConfigId := pgtype.UUID{Bytes: uuid.New(), Valid: true}
-			_, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
-				IsStreamResponse:      true,
-				RequestTokens:         tokenCount,
-				ResponseTokens:        tokenCount,
-				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
-				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
-				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
-				PromptConfigID:        promptConfigId,
-			})
+			_, err := dbQueries.CreatePromptRequestRecord(
+				context.TODO(),
+				db.CreatePromptRequestRecordParams{
+					IsStreamResponse:      true,
+					RequestTokens:         tokenCount,
+					ResponseTokens:        tokenCount,
+					StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+					FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+					StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+					PromptConfigID:        promptConfigId,
+				},
+			)
 
 			assert.Error(t, err)
 		})
 
 		t.Run("successfully creates a prompt request record with error logs", func(t *testing.T) {
 			errString := "error log"
-			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
-				IsStreamResponse:      true,
-				RequestTokens:         tokenCount,
-				ResponseTokens:        tokenCount,
-				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
-				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
-				PromptConfigID:        promptConfig.ID,
-				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
-				ErrorLog:              pgtype.Text{String: errString, Valid: true},
-			})
+			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(
+				context.TODO(),
+				db.CreatePromptRequestRecordParams{
+					IsStreamResponse:      true,
+					RequestTokens:         tokenCount,
+					ResponseTokens:        tokenCount,
+					StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+					FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+					PromptConfigID:        promptConfig.ID,
+					StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+					ErrorLog:              pgtype.Text{String: errString, Valid: true},
+				},
+			)
 
 			assert.Nil(t, err)
 			assert.Equal(t, promptRequestRecord.ErrorLog.String, errString)

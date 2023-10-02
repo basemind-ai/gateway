@@ -33,6 +33,10 @@ func RenderJsonResponse(w http.ResponseWriter, statusCode int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	if renderErr := json.NewEncoder(w).Encode(body); renderErr != nil {
 		log.Error().Err(renderErr).Msg("failed to render json response")
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		http.Error(
+			w,
+			http.StatusText(http.StatusInternalServerError),
+			http.StatusInternalServerError,
+		)
 	}
 }

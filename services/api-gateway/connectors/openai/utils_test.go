@@ -35,22 +35,33 @@ func TestUtils(t *testing.T) {
 			expectedVariables := []string{"name", "age"}
 			templateVariables := map[string]string{"name": "John", "age": "30"}
 
-			result, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
+			result, err := openai.ParseTemplateVariables(
+				content,
+				expectedVariables,
+				templateVariables,
+			)
 			assert.NoError(t, err)
 
 			expected := "Hello John, your age is 30. How are you John?"
 			assert.Equal(t, expected, result)
 		})
-		t.Run("returns the content string with no errors when there are no expected variables", func(t *testing.T) {
-			content := "Hello {name}, your age is {age}. How are you {name}?"
-			expectedVariables := make([]string, 0)
-			templateVariables := map[string]string{"name": "John", "age": "30"}
+		t.Run(
+			"returns the content string with no errors when there are no expected variables",
+			func(t *testing.T) {
+				content := "Hello {name}, your age is {age}. How are you {name}?"
+				expectedVariables := make([]string, 0)
+				templateVariables := map[string]string{"name": "John", "age": "30"}
 
-			result, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
-			assert.NoError(t, err)
+				result, err := openai.ParseTemplateVariables(
+					content,
+					expectedVariables,
+					templateVariables,
+				)
+				assert.NoError(t, err)
 
-			assert.Equal(t, content, result)
-		})
+				assert.Equal(t, content, result)
+			},
+		)
 		t.Run("returns an error when an expected variable is missing", func(t *testing.T) {
 			content := "Hello {name}, your age is {age}."
 			expectedVariables := []string{"name", "age"}
@@ -67,7 +78,11 @@ func TestUtils(t *testing.T) {
 			expectedVariables := []string{"name"}
 			templateVariables := map[string]string{"name": ""}
 
-			result, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
+			result, err := openai.ParseTemplateVariables(
+				content,
+				expectedVariables,
+				templateVariables,
+			)
 			assert.NoError(t, err)
 
 			expected := "Hello , how are you?"
@@ -96,7 +111,10 @@ func TestUtils(t *testing.T) {
 			modelParameters, modelParametersErr := factories.CreateModelParameters()
 			assert.NoError(t, modelParametersErr)
 
-			promptMessages, promptMessagesErr := factories.CreatePromptMessages(systemMessage, userMessage)
+			promptMessages, promptMessagesErr := factories.CreatePromptMessages(
+				systemMessage,
+				userMessage,
+			)
 			assert.NoError(t, promptMessagesErr)
 
 			userInput := "Please write me a short poem about cheese."
@@ -120,7 +138,13 @@ func TestUtils(t *testing.T) {
 				},
 			}
 
-			promptRequest, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
+			promptRequest, err := openai.CreatePromptRequest(
+				applicationId,
+				modelType,
+				modelParameters,
+				promptMessages,
+				templateVariables,
+			)
 			assert.NoError(t, err)
 
 			assert.Equal(t, expectedPromptRequest, promptRequest)
@@ -132,7 +156,13 @@ func TestUtils(t *testing.T) {
 			promptMessages := []byte(`[]`)
 			templateVariables := map[string]string{}
 
-			_, err := openai.CreatePromptRequest(applicationId, db.ModelType(modelType), modelParameters, promptMessages, templateVariables)
+			_, err := openai.CreatePromptRequest(
+				applicationId,
+				db.ModelType(modelType),
+				modelParameters,
+				promptMessages,
+				templateVariables,
+			)
 			assert.Error(t, err)
 
 			expectedError := "unknown model type {unknown}"
@@ -145,7 +175,13 @@ func TestUtils(t *testing.T) {
 			promptMessages := []byte(`[]`)
 			templateVariables := make(map[string]string)
 
-			_, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
+			_, err := openai.CreatePromptRequest(
+				applicationId,
+				modelType,
+				modelParameters,
+				promptMessages,
+				templateVariables,
+			)
 			assert.Error(t, err)
 		})
 
@@ -154,21 +190,42 @@ func TestUtils(t *testing.T) {
 			modelType := db.ModelTypeGpt35Turbo
 			modelParameters := []byte(`{"temperature": 0.8}`)
 			promptMessages := []byte(`invalid_json`)
-			templateVariables := map[string]string{"userInput": "Please write me a short poem about cheese."}
+			templateVariables := map[string]string{
+				"userInput": "Please write me a short poem about cheese.",
+			}
 
-			_, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
+			_, err := openai.CreatePromptRequest(
+				applicationId,
+				modelType,
+				modelParameters,
+				promptMessages,
+				templateVariables,
+			)
 			assert.Error(t, err)
 		})
-		t.Run("returns error if template variables does not contain the necessary variables", func(t *testing.T) {
-			applicationId := "12345"
-			modelType := db.ModelTypeGpt35Turbo
-			modelParameters := []byte(`{"temperature": 0.8}`)
-			promptMessages := []byte(`[{"content": "This is what the user asked for: {userInput}", "role": "user"}]`)
-			templateVariables := map[string]string{"invalidVariable": "Please write me a short poem about cheese."}
+		t.Run(
+			"returns error if template variables does not contain the necessary variables",
+			func(t *testing.T) {
+				applicationId := "12345"
+				modelType := db.ModelTypeGpt35Turbo
+				modelParameters := []byte(`{"temperature": 0.8}`)
+				promptMessages := []byte(
+					`[{"content": "This is what the user asked for: {userInput}", "role": "user"}]`,
+				)
+				templateVariables := map[string]string{
+					"invalidVariable": "Please write me a short poem about cheese.",
+				}
 
-			_, err := openai.CreatePromptRequest(applicationId, modelType, modelParameters, promptMessages, templateVariables)
-			assert.Error(t, err)
-		})
+				_, err := openai.CreatePromptRequest(
+					applicationId,
+					modelType,
+					modelParameters,
+					promptMessages,
+					templateVariables,
+				)
+				assert.Error(t, err)
+			},
+		)
 	})
 
 	t.Run("GetRequestPromptString", func(t *testing.T) {
@@ -205,7 +262,11 @@ func TestUtils(t *testing.T) {
 				},
 			}
 			reqPromptString := openai.GetRequestPromptString(promptRequest.Messages)
-			assert.Equal(t, "You are a helpful chat bot.\nThis is what the user asked for: Please write an essay on Dogs.", reqPromptString)
+			assert.Equal(
+				t,
+				"You are a helpful chat bot.\nThis is what the user asked for: Please write an essay on Dogs.",
+				reqPromptString,
+			)
 		})
 	})
 }

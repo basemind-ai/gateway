@@ -32,6 +32,8 @@ func init() {
 	logging.Configure(true)
 
 	// global flags
-	rootCmd.PersistentFlags().StringVar(&dbUrl, "dbUrl", "postgresql://basemind:basemind@localhost:5432/basemind", "the url of the DB to use")
-	createJwt.Flags().StringVarP(&secret, "secret", "s", "jeronimo", "Secret to use for JWT creation and decoding")
+	rootCmd.PersistentFlags().
+		StringVar(&dbUrl, "dbUrl", "postgresql://basemind:basemind@localhost:5432/basemind", "the url of the DB to use")
+	createJwt.Flags().
+		StringVarP(&secret, "secret", "s", "jeronimo", "Secret to use for JWT creation and decoding")
 }
