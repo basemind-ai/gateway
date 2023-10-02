@@ -842,36 +842,6 @@
       <option name="ignoreNonEmtpyLoops" value="false" />
     </inspection_tool>
     <inspection_tool
-			class="HelmChartMissingKeys"
-			enabled="false"
-			level="ERROR"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="HelmChartUnknownKeys"
-			enabled="false"
-			level="WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="HelmChartUnknownValues"
-			enabled="false"
-			level="ERROR"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="HelmUnknownTemplates"
-			enabled="false"
-			level="WEAK WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="HelmUnknownValues"
-			enabled="false"
-			level="WEAK WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
 			class="HttpUrlsUsage"
 			enabled="true"
 			level="WEAK WARNING"
@@ -948,60 +918,6 @@
 			enabled="true"
 			level="WARNING"
 			enabled_by_default="true"
-		/>
-    <inspection_tool
-			class="KubernetesDeprecatedKeys"
-			enabled="false"
-			level="WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesDeprecatedResources"
-			enabled="false"
-			level="WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesDuplicatedEnvVars"
-			enabled="false"
-			level="ERROR"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesMissingKeys"
-			enabled="false"
-			level="ERROR"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesNonEditableKeys"
-			enabled="false"
-			level="WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesNonEditableResources"
-			enabled="false"
-			level="WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesUnknownKeys"
-			enabled="false"
-			level="ERROR"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesUnknownResourcesInspection"
-			enabled="false"
-			level="WARNING"
-			enabled_by_default="false"
-		/>
-    <inspection_tool
-			class="KubernetesUnknownValues"
-			enabled="false"
-			level="ERROR"
-			enabled_by_default="false"
 		/>
     <inspection_tool
 			class="LanguageMismatch"

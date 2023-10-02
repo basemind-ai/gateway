@@ -1,6 +1,6 @@
 @file:Suppress("MaxLineLength")
 
-package com.basemind.client
+package ai.basemind.client
 
 import com.basemind.client.grpc.APIGatewayServiceGrpcKt
 import com.basemind.client.grpc.PromptRequest
@@ -8,6 +8,7 @@ import com.basemind.client.grpc.PromptResponse
 import com.basemind.client.grpc.StreamingPromptResponse
 import io.grpc.Context
 import io.grpc.Contexts
+import io.grpc.ManagedChannel
 import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
@@ -36,6 +37,25 @@ import uk.org.webcompere.systemstubs.jupiter.SystemStub
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+
+/**
+ * Creates a client instance that uses the provided channel.
+ *
+ * @param channel the channel to use for communication.
+ * @apiToken the API token to use for authentication. This parameter is optional.
+ * @options an options object. This parameter is optional.
+ *
+ * Note: This should be used *only* for unit testing code!
+ */
+fun createTestClient(
+    channel: ManagedChannel,
+    apiToken: String = "testToken",
+    options: Options = Options(),
+): BaseMindClient {
+    val client = BaseMindClient(apiToken, options)
+    client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
+    return client
+}
 
 /*
 * A gRPC interceptor that ready the metadata auth header and sets it on the server
@@ -115,7 +135,7 @@ class BaseMindClientTest {
 
     @Test
     fun client_does_not_log_when_debug_is_false() {
-        BaseMindClient("abc", Options(debug = false))
+        BaseMindClient("abc", Options())
         assertFalse(systemOutStream.toString().contains("Connecting to"))
     }
 
@@ -123,6 +143,20 @@ class BaseMindClientTest {
     fun client_logs_when_debug_is_true() {
         BaseMindClient("abc", Options(debug = true))
         assertTrue(systemOutStream.toString().contains("Connecting to"))
+    }
+
+    @Test
+    fun client_uses_passed_in_log_handler() {
+        var result = ""
+
+        fun logHandler(
+            tag: String,
+            message: String,
+        ) {
+            result = "$tag: $message"
+        }
+        BaseMindClient("abc", Options(debug = true, debugLogger = { tag, message -> logHandler(tag, message) }))
+        assertEquals("$LOGGING_TAG: Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT", result)
     }
 
     @Test
@@ -135,8 +169,8 @@ class BaseMindClientTest {
 
     @Test
     fun uses_custom_address_when_env_variables_are_specified() {
-        environment.set("BASEMIND_API_GATEWAY_ADDRESS", "0.0.0.0")
-        environment.set("BASEMIND_API_GATEWAY_PORT", "5000")
+        environment.set(ENV_API_GATEWAY_ADDRESS, "0.0.0.0")
+        environment.set(ENV_API_GATEWAY_PORT, "5000")
         BaseMindClient("abc", Options(debug = true))
         assertTrue(systemOutStream.toString().contains("Connecting to 0.0.0.0:5000"))
     }
