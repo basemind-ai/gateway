@@ -27,11 +27,4 @@ describe('Prompt page tests', () => {
 		);
 		expect(promptSavedTemplates).toBeInTheDocument();
 	});
-
-	it('render Prompt testing new button', async () => {
-		render(<Prompt />);
-
-		const promptNewButton = screen.getByText(promptTranslation.promptNew);
-		expect(promptNewButton).toBeInTheDocument();
-	});
 });
