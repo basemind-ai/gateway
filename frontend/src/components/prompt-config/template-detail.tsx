@@ -24,7 +24,6 @@ export function TemplateDetail({
 					height={Dimensions.Eight}
 					width={Dimensions.Eight}
 					src={imageSrc}
-					// alt={t('promptHeading')}
 					alt="provider logo"
 				/>
 
