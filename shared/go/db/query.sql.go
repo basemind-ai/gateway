@@ -136,21 +136,23 @@ INSERT INTO prompt_request_record (
     response_tokens,
     start_time,
     finish_time,
+    stream_response_latency,
     prompt_config_id,
     error_log
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, is_stream_response, request_tokens, response_tokens, start_time, finish_time, prompt_config_id, error_log
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id, is_stream_response, request_tokens, response_tokens, start_time, finish_time, stream_response_latency, prompt_config_id, error_log
 `
 
 type CreatePromptRequestRecordParams struct {
-	IsStreamResponse bool               `json:"isStreamResponse"`
-	RequestTokens    int32              `json:"requestTokens"`
-	ResponseTokens   int32              `json:"responseTokens"`
-	StartTime        pgtype.Timestamptz `json:"startTime"`
-	FinishTime       pgtype.Timestamptz `json:"finishTime"`
-	PromptConfigID   pgtype.UUID        `json:"promptConfigId"`
-	ErrorLog         pgtype.Text        `json:"errorLog"`
+	IsStreamResponse      bool               `json:"isStreamResponse"`
+	RequestTokens         int32              `json:"requestTokens"`
+	ResponseTokens        int32              `json:"responseTokens"`
+	StartTime             pgtype.Timestamptz `json:"startTime"`
+	FinishTime            pgtype.Timestamptz `json:"finishTime"`
+	StreamResponseLatency pgtype.Int8        `json:"streamResponseLatency"`
+	PromptConfigID        pgtype.UUID        `json:"promptConfigId"`
+	ErrorLog              pgtype.Text        `json:"errorLog"`
 }
 
 func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromptRequestRecordParams) (PromptRequestRecord, error) {
@@ -160,6 +162,7 @@ func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromp
 		arg.ResponseTokens,
 		arg.StartTime,
 		arg.FinishTime,
+		arg.StreamResponseLatency,
 		arg.PromptConfigID,
 		arg.ErrorLog,
 	)
@@ -171,6 +174,7 @@ func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromp
 		&i.ResponseTokens,
 		&i.StartTime,
 		&i.FinishTime,
+		&i.StreamResponseLatency,
 		&i.PromptConfigID,
 		&i.ErrorLog,
 	)
@@ -466,6 +470,7 @@ SELECT
     response_tokens,
     start_time,
     finish_time,
+    stream_response_latency,
     prompt_config_id,
     error_log
 FROM prompt_request_record
@@ -489,6 +494,7 @@ func (q *Queries) FindPromptRequestRecords(ctx context.Context, promptConfigID p
 			&i.ResponseTokens,
 			&i.StartTime,
 			&i.FinishTime,
+			&i.StreamResponseLatency,
 			&i.PromptConfigID,
 			&i.ErrorLog,
 		); err != nil {

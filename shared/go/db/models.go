@@ -169,14 +169,15 @@ type PromptConfig struct {
 }
 
 type PromptRequestRecord struct {
-	ID               pgtype.UUID        `json:"id"`
-	IsStreamResponse bool               `json:"isStreamResponse"`
-	RequestTokens    int32              `json:"requestTokens"`
-	ResponseTokens   int32              `json:"responseTokens"`
-	StartTime        pgtype.Timestamptz `json:"startTime"`
-	FinishTime       pgtype.Timestamptz `json:"finishTime"`
-	PromptConfigID   pgtype.UUID        `json:"promptConfigId"`
-	ErrorLog         pgtype.Text        `json:"errorLog"`
+	ID                    pgtype.UUID        `json:"id"`
+	IsStreamResponse      bool               `json:"isStreamResponse"`
+	RequestTokens         int32              `json:"requestTokens"`
+	ResponseTokens        int32              `json:"responseTokens"`
+	StartTime             pgtype.Timestamptz `json:"startTime"`
+	FinishTime            pgtype.Timestamptz `json:"finishTime"`
+	StreamResponseLatency pgtype.Int8        `json:"streamResponseLatency"`
+	PromptConfigID        pgtype.UUID        `json:"promptConfigId"`
+	ErrorLog              pgtype.Text        `json:"errorLog"`
 }
 
 type PromptTest struct {

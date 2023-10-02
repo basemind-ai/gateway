@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sync"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
@@ -109,13 +110,18 @@ func (c *Client) RequestStream(
 		return
 	}
 
+	var promptResTokenCount int32
+	promptStartTime := time.Now()
+
+	var streamDurationOnce sync.Once
+	var streamResDuration pgtype.Int8
+	var recordErrLog pgtype.Text
+
 	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
 	if streamErr != nil {
 		errChannel <- promptRequestErr
 		return
 	}
-
-	var recordErrLog pgtype.Text
 
 	reqPromptString := GetRequestPromptString(promptRequest.Messages)
 	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(reqPromptString, applicationPromptConfig.PromptConfigData.ModelType)
@@ -125,11 +131,14 @@ func (c *Client) RequestStream(
 	}
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
 
-	var promptResTokenCount int32
-	promptStartTime := time.Now()
-
 	for {
 		msg, receiveErr := stream.Recv()
+
+		streamDurationOnce.Do(func() {
+			duration := int64(time.Until(promptStartTime))
+			streamResDuration = pgtype.Int8{Int64: duration, Valid: true}
+		})
+
 		if receiveErr != nil {
 			promptFinishTime := time.Now()
 
@@ -144,13 +153,14 @@ func (c *Client) RequestStream(
 			}
 
 			_, dbErr := db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
-				IsStreamResponse: true,
-				RequestTokens:    promptReqTokenCount,
-				ResponseTokens:   promptResTokenCount,
-				StartTime:        pgtype.Timestamptz{Time: promptStartTime},
-				FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
-				PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
-				ErrorLog:         recordErrLog,
+				IsStreamResponse:      true,
+				RequestTokens:         promptReqTokenCount,
+				ResponseTokens:        promptResTokenCount,
+				StartTime:             pgtype.Timestamptz{Time: promptStartTime},
+				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime},
+				StreamResponseLatency: streamResDuration,
+				PromptConfigID:        applicationPromptConfig.PromptConfigData.ID,
+				ErrorLog:              recordErrLog,
 			})
 			if dbErr != nil {
 				log.Err(dbErr).Msg("failed to create prompt request record")

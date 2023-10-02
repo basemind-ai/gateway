@@ -278,12 +278,13 @@ func TestDbQueries(t *testing.T) {
 
 		t.Run("successfully creates a prompt request record", func(t *testing.T) {
 			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
-				IsStreamResponse: true,
-				RequestTokens:    tokenCount,
-				ResponseTokens:   tokenCount,
-				StartTime:        pgtype.Timestamptz{Time: promptStartTime, Valid: true},
-				FinishTime:       pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
-				PromptConfigID:   promptConfig.ID,
+				IsStreamResponse:      true,
+				RequestTokens:         tokenCount,
+				ResponseTokens:        tokenCount,
+				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+				PromptConfigID:        promptConfig.ID,
 			})
 
 			assert.Nil(t, err)
@@ -295,12 +296,13 @@ func TestDbQueries(t *testing.T) {
 		t.Run("returns error when prompt config does not exist", func(t *testing.T) {
 			promptConfigId := pgtype.UUID{Bytes: uuid.New(), Valid: true}
 			_, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
-				IsStreamResponse: true,
-				RequestTokens:    tokenCount,
-				ResponseTokens:   tokenCount,
-				StartTime:        pgtype.Timestamptz{Time: promptStartTime, Valid: true},
-				FinishTime:       pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
-				PromptConfigID:   promptConfigId,
+				IsStreamResponse:      true,
+				RequestTokens:         tokenCount,
+				ResponseTokens:        tokenCount,
+				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+				PromptConfigID:        promptConfigId,
 			})
 
 			assert.Error(t, err)
@@ -309,13 +311,14 @@ func TestDbQueries(t *testing.T) {
 		t.Run("successfully creates a prompt request record with error logs", func(t *testing.T) {
 			errString := "error log"
 			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
-				IsStreamResponse: true,
-				RequestTokens:    tokenCount,
-				ResponseTokens:   tokenCount,
-				StartTime:        pgtype.Timestamptz{Time: promptStartTime, Valid: true},
-				FinishTime:       pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
-				PromptConfigID:   promptConfig.ID,
-				ErrorLog:         pgtype.Text{String: errString, Valid: true},
+				IsStreamResponse:      true,
+				RequestTokens:         tokenCount,
+				ResponseTokens:        tokenCount,
+				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+				PromptConfigID:        promptConfig.ID,
+				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+				ErrorLog:              pgtype.Text{String: errString, Valid: true},
 			})
 
 			assert.Nil(t, err)

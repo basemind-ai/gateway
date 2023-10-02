@@ -23,7 +23,7 @@ CREATE INDEX "idx_prompt_config_is_default" ON "prompt_config" ("is_default");
 -- Create index "prompt_config_name_application_id_key" to table: "prompt_config"
 CREATE UNIQUE INDEX "prompt_config_name_application_id_key" ON "prompt_config" ("name", "application_id");
 -- Create "prompt_request_record" table
-CREATE TABLE "prompt_request_record" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "is_stream_response" boolean NOT NULL DEFAULT false, "request_tokens" integer NOT NULL, "response_tokens" integer NOT NULL, "start_time" timestamptz NOT NULL, "finish_time" timestamptz NOT NULL, "prompt_config_id" uuid NOT NULL, "error_log" text NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_request_record_prompt_config_id_fkey" FOREIGN KEY ("prompt_config_id") REFERENCES "prompt_config" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "prompt_request_record" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "is_stream_response" boolean NOT NULL DEFAULT false, "request_tokens" integer NOT NULL, "response_tokens" integer NOT NULL, "start_time" timestamptz NOT NULL, "finish_time" timestamptz NOT NULL, "stream_response_latency" bigint NULL, "prompt_config_id" uuid NOT NULL, "error_log" text NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_request_record_prompt_config_id_fkey" FOREIGN KEY ("prompt_config_id") REFERENCES "prompt_config" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_prompt_request_record_finish_time" to table: "prompt_request_record"
 CREATE INDEX "idx_prompt_request_record_finish_time" ON "prompt_request_record" ("finish_time");
 -- Create index "idx_prompt_request_record_prompt_config_id" to table: "prompt_request_record"

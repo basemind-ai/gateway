@@ -173,10 +173,11 @@ INSERT INTO prompt_request_record (
     response_tokens,
     start_time,
     finish_time,
+    stream_response_latency,
     prompt_config_id,
     error_log
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
 
 -- name: FindPromptRequestRecords :many
@@ -187,6 +188,7 @@ SELECT
     response_tokens,
     start_time,
     finish_time,
+    stream_response_latency,
     prompt_config_id,
     error_log
 FROM prompt_request_record
