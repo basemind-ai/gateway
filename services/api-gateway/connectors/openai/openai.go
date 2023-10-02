@@ -39,7 +39,6 @@ func (c *Client) RequestPrompt(
 	requestConfiguration *datatypes.RequestConfiguration,
 	templateVariables map[string]string,
 ) datatypes.PromptResult {
-
 	promptRequest, createPromptRequestErr := CreatePromptRequest(
 		applicationId,
 		requestConfiguration.PromptConfigData.ModelType,
@@ -72,7 +71,6 @@ func (c *Client) RequestPrompt(
 			response.Content,
 			requestConfiguration.PromptConfigData.ModelType,
 		)
-
 	} else {
 		recordParams.ErrorLog = pgtype.Text{String: requestErr.Error()}
 	}
