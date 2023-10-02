@@ -23,27 +23,33 @@ internal const val ENV_API_GATEWAY_ADDRESS = "BASEMIND_API_GATEWAY_ADDRESS"
 internal const val ENV_API_GATEWAY_HTTPS = "BASEMIND_API_GATEWAY_HTTPS"
 internal const val ENV_API_GATEWAY_PORT = "BASEMIND_API_GATEWAY_PORT"
 internal const val LOGGING_TAG = "BaseMindClient"
+private const val DEFAULT_TERMINATION_DELAY_S = 5L
+
+@DslMarker
+annotation class BasemindClientDsl
 
 /**
  * BaseMindClient Options
  *
  * This dataclass is used for configuring the client.
  */
+
+@BasemindClientDsl
 data class Options(
     /**
      * The amount of seconds a channel shutdown should wait before force terminating requests.
      *
      * Defaults to 5 seconds.
      */
-    val terminationDelaySeconds: Long = 5L,
+    var terminationDelaySeconds: Long = DEFAULT_TERMINATION_DELAY_S,
     /**
      * Controls outputting debug log messages. Defaults to 'false'.
      */
-    val debug: Boolean = false,
+    var debug: Boolean = false,
     /**
      * A logging handler function. Defaults to android's Log.d.
      */
-    val debugLogger: (String, String) -> Unit = { tag, message -> Log.d(tag, message) },
+    var debugLogger: (String, String) -> Unit = { tag, message -> Log.d(tag, message) },
 )
 
 /**
@@ -60,7 +66,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
     }
 
     private val channel =
-        let {
+        run {
             val serverAddress = System.getenv(ENV_API_GATEWAY_ADDRESS) ?: DEFAULT_API_GATEWAY_ADDRESS
             val serverPort = System.getenv(ENV_API_GATEWAY_PORT)?.toInt() ?: DEFAULT_API_GATEWAY_PORT
             val useHttps = System.getenv(ENV_API_GATEWAY_HTTPS)?.toBoolean() ?: DEFAULT_API_GATEWAY_HTTPS
@@ -130,7 +136,11 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
             }
 
             when (e.status.code) {
-                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(e.message ?: "Missing prompt variable", e)
+                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(
+                    e.message ?: "Missing prompt variable",
+                    e,
+                )
+
                 else -> throw APIGatewayException(e.message ?: "API Gateway error", e)
             }
         }
@@ -156,7 +166,11 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
             }
 
             when (e.status.code) {
-                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(e.message ?: "Missing prompt variable", e)
+                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(
+                    e.message ?: "Missing prompt variable",
+                    e,
+                )
+
                 else -> throw APIGatewayException(e.message ?: "API Gateway error", e)
             }
         }

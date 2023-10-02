@@ -18,14 +18,17 @@ import io.grpc.StatusException
 import io.grpc.inprocess.InProcessChannelBuilder
 import io.grpc.inprocess.InProcessServerBuilder
 import io.grpc.testing.GrpcCleanupRule
+import io.kotest.assertions.throwables.shouldNotThrow
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,15 +50,18 @@ import java.io.PrintStream
  *
  * Note: This should be used *only* for unit testing code!
  */
+@BasemindClientDsl
 fun createTestClient(
     channel: ManagedChannel,
     apiToken: String = "testToken",
-    options: Options = Options(),
+    config: Options.() -> Unit = {},
 ): BaseMindClient {
-    val client = BaseMindClient(apiToken, options)
+    val client = BaseMindClient(apiToken, Options().apply(config))
     client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
     return client
 }
+
+private const val METADATA_AUTHORIZATION_KEY = "authorization"
 
 /*
 * A gRPC interceptor that ready the metadata auth header and sets it on the server
@@ -66,7 +72,7 @@ class HeaderServerInterceptor(private val server: MockAPIGatewayServer) : Server
         requestHeaders: Metadata,
         serverCallHandler: ServerCallHandler<ReqT, RespT>,
     ): ServerCall.Listener<ReqT> {
-        val key = Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER)
+        val key = Metadata.Key.of(METADATA_AUTHORIZATION_KEY, Metadata.ASCII_STRING_MARSHALLER)
         server.authHeader = requestHeaders.get(key)
         return Contexts.interceptCall(Context.current(), call, requestHeaders, serverCallHandler)
     }
@@ -118,17 +124,15 @@ class BaseMindClientTest {
     private val environment: EnvironmentVariables = EnvironmentVariables()
 
     @Test
-    fun client_throws_exception_when_api_key_is_empty() {
-        assertThrows(
-            MissingAPIKeyException::class.java,
-            { BaseMindClient("") },
-            "empty apiToken should throw",
-        )
+    fun `client throws exception when api key is empty`() {
+        shouldThrow<MissingAPIKeyException> {
+            BaseMindClient("")
+        }
     }
 
     @Test
     fun client_does_not_throw_exception_when_api_key_is_provided() {
-        assertDoesNotThrow {
+        shouldNotThrow<Throwable> {
             BaseMindClient("abc")
         }
     }
@@ -136,13 +140,15 @@ class BaseMindClientTest {
     @Test
     fun client_does_not_log_when_debug_is_false() {
         BaseMindClient("abc", Options())
-        assertFalse(systemOutStream.toString().contains("Connecting to"))
+
+        systemOutStream.toString() shouldNotContain "Connecting to"
     }
 
     @Test
     fun client_logs_when_debug_is_true() {
         BaseMindClient("abc", Options(debug = true))
-        assertTrue(systemOutStream.toString().contains("Connecting to"))
+
+        systemOutStream.toString() shouldContain "Connecting to"
     }
 
     @Test
@@ -155,24 +161,27 @@ class BaseMindClientTest {
         ) {
             result = "$tag: $message"
         }
+
         BaseMindClient("abc", Options(debug = true, debugLogger = { tag, message -> logHandler(tag, message) }))
-        assertEquals("$LOGGING_TAG: Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT", result)
+
+        result shouldBe "$LOGGING_TAG: Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT"
     }
 
     @Test
     fun uses_default_address_when_env_variables_are_not_specified() {
         BaseMindClient("abc", Options(debug = true))
-        assertTrue(
-            systemOutStream.toString().contains("Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT"),
-        )
+
+        systemOutStream.toString() shouldContain "Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT"
     }
 
     @Test
     fun uses_custom_address_when_env_variables_are_specified() {
         environment.set(ENV_API_GATEWAY_ADDRESS, "0.0.0.0")
         environment.set(ENV_API_GATEWAY_PORT, "5000")
+
         BaseMindClient("abc", Options(debug = true))
-        assertTrue(systemOutStream.toString().contains("Connecting to 0.0.0.0:5000"))
+
+        systemOutStream.toString() shouldContain "Connecting to 0.0.0.0:5000"
     }
 
     @ParameterizedTest
@@ -186,11 +195,14 @@ class BaseMindClientTest {
             assertEquals("test prompt", response.content)
             assertEquals("Bearer testToken", mock.authHeader)
 
-            val containsLogMessage = systemOutStream.toString().contains("requesting prompt")
-            if (isDebug) {
-                assertTrue(containsLogMessage)
-            } else {
-                assertFalse(containsLogMessage)
+            with(systemOutStream.toString()) {
+                "requesting prompt".let {
+                    if (isDebug) {
+                        this shouldContain it
+                    } else {
+                        this shouldNotContain it
+                    }
+                }
             }
         }
     }
@@ -209,11 +221,14 @@ class BaseMindClientTest {
             } catch (e: BaseMindException) {
                 assertEquals(MissingPromptVariableException::class.java, e.javaClass)
 
-                val containsLogMessage = systemOutStream.toString().contains("exception requesting prompt")
-                if (isDebug) {
-                    assertTrue(containsLogMessage)
-                } else {
-                    assertFalse(containsLogMessage)
+                with(systemOutStream.toString()) {
+                    "exception requesting prompt".let {
+                        if (isDebug) {
+                            this shouldContain it
+                        } else {
+                            this shouldNotContain it
+                        }
+                    }
                 }
             }
         }
@@ -233,11 +248,14 @@ class BaseMindClientTest {
             } catch (e: BaseMindException) {
                 assertEquals(APIGatewayException::class.java, e.javaClass)
 
-                val containsLogMessage = systemOutStream.toString().contains("exception requesting prompt")
-                if (isDebug) {
-                    assertTrue(containsLogMessage)
-                } else {
-                    assertFalse(containsLogMessage)
+                with(systemOutStream.toString()) {
+                    "exception requesting prompt".let {
+                        if (isDebug) {
+                            this shouldContain it
+                        } else {
+                            this shouldNotContain it
+                        }
+                    }
                 }
             }
         }
@@ -262,6 +280,7 @@ class BaseMindClientTest {
             } else {
                 assertFalse(containsLogMessage)
             }
+            // maybe put all of these in a data (parameterized) test to avoid duplication?
         }
     }
 
@@ -344,7 +363,9 @@ class BaseMindClientTest {
                         .build(),
                 )
 
-            return createTestClient(channel, options = Options(debug = isDebug))
+            return createTestClient(channel) {
+                debug = isDebug
+            }
         }
     }
 }

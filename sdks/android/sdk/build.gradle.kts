@@ -53,6 +53,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.system.stubs.jupiter)
+    testImplementation(libs.kotest.assertions.core)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     compileOnly(libs.annotations.api)
