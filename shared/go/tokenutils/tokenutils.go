@@ -12,7 +12,7 @@ var modelEncodingMap map[db.ModelType]tokenizer.Encoding = map[db.ModelType]toke
 	db.ModelTypeGpt432k:       tokenizer.Cl100kBase,
 }
 
-func GetPromptTokenCount(prompt string, modelType db.ModelType) (int, error) {
+func GetPromptTokenCount(prompt string, modelType db.ModelType) (int32, error) {
 	encoding := modelEncodingMap[modelType]
 	enc, err := tokenizer.Get(encoding)
 	if err != nil {
@@ -20,5 +20,5 @@ func GetPromptTokenCount(prompt string, modelType db.ModelType) (int, error) {
 	}
 
 	ids, _, _ := enc.Encode(prompt)
-	return len(ids), nil
+	return int32(len(ids)), nil
 }

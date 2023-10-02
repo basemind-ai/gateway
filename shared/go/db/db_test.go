@@ -2,9 +2,13 @@ package db_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
+	"github.com/basemind-ai/monorepo/e2e/factories"
 	db "github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
-	"testing"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/google/uuid"
 
@@ -236,6 +240,89 @@ func TestDbQueries(t *testing.T) {
 			assert.Nil(t, err)
 
 			assert.Equal(t, len(userProjects), 0)
+		})
+	})
+
+	t.Run("CreatePromptRequestRecord tests", func(t *testing.T) {
+		tokenCount := int32(10)
+		promptStartTime := time.Now()
+		promptFinishTime := promptStartTime.Add(10 * time.Second)
+
+		project, _ := db.GetQueries().CreateProject(context.TODO(), db.CreateProjectParams{
+			Name:        "test project",
+			Description: "test project description",
+		})
+
+		application, _ := factories.CreateApplication(context.TODO(), project.ID)
+		modelParameters, _ := factories.CreateModelParameters()
+
+		systemMessages := "You are a chatbot."
+		userMessage := "Write a jungle story."
+		promptMessages, _ := factories.CreateOpenAIPromptMessageDTO([]struct {
+			Role    string
+			Content string
+		}{
+			{Role: "system", Content: systemMessages}, {Role: "user", Content: userMessage},
+		})
+
+		promptConfig, _ := db.GetQueries().CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+			ApplicationID:             application.ID,
+			Name:                      "abc prompt config",
+			ModelVendor:               db.ModelVendorOPENAI,
+			ModelType:                 db.ModelTypeGpt4,
+			ModelParameters:           modelParameters,
+			ProviderPromptMessages:    promptMessages,
+			ExpectedTemplateVariables: []string{""},
+			IsDefault:                 true,
+		})
+
+		t.Run("successfully creates a prompt request record", func(t *testing.T) {
+			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
+				IsStreamResponse:      true,
+				RequestTokens:         tokenCount,
+				ResponseTokens:        tokenCount,
+				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+				PromptConfigID:        promptConfig.ID,
+			})
+
+			assert.Nil(t, err)
+			assert.Equal(t, promptRequestRecord.RequestTokens, tokenCount)
+			assert.Equal(t, promptRequestRecord.ResponseTokens, tokenCount)
+			assert.Empty(t, promptRequestRecord.ErrorLog.String)
+		})
+
+		t.Run("returns error when prompt config does not exist", func(t *testing.T) {
+			promptConfigId := pgtype.UUID{Bytes: uuid.New(), Valid: true}
+			_, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
+				IsStreamResponse:      true,
+				RequestTokens:         tokenCount,
+				ResponseTokens:        tokenCount,
+				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+				PromptConfigID:        promptConfigId,
+			})
+
+			assert.Error(t, err)
+		})
+
+		t.Run("successfully creates a prompt request record with error logs", func(t *testing.T) {
+			errString := "error log"
+			promptRequestRecord, err := dbQueries.CreatePromptRequestRecord(context.TODO(), db.CreatePromptRequestRecordParams{
+				IsStreamResponse:      true,
+				RequestTokens:         tokenCount,
+				ResponseTokens:        tokenCount,
+				StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+				FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+				PromptConfigID:        promptConfig.ID,
+				StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+				ErrorLog:              pgtype.Text{String: errString, Valid: true},
+			})
+
+			assert.Nil(t, err)
+			assert.Equal(t, promptRequestRecord.ErrorLog.String, errString)
 		})
 	})
 }

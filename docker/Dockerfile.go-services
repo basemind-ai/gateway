@@ -11,7 +11,7 @@ COPY gen/go gen/go
 COPY shared/go shared/go
 COPY services/$BUILD_TARGET services/$BUILD_TARGET
 RUN CGO_ENABLED=0 go build -o /go/bin/app github.com/basemind-ai/monorepo/services/$BUILD_TARGET \
-    && chmod +x /go/bin/app
+  && chmod +x /go/bin/app
 
 # hadolint ignore=DL3007
 FROM gcr.io/distroless/static-debian12:latest AS app
