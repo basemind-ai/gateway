@@ -18,21 +18,6 @@ export default function Prompt() {
 			<div className="font-medium text-lg">
 				{t('promptSavedTemplates')}
 			</div>
-			<div className="mt-4 bg-base-300 bg-opacity-25 flex justify-center items-center h-12 rounded-lg p-2">
-				<div className="w-4/12 ml-8 text-neutral-content ">
-					{t('promptAlbumRecommendation')}
-					<button className="bg-success text-base-200 px-2 rounded-full ml-2">
-						{t('promptActiveStatus')}
-					</button>
-				</div>
-				<div className="w-4/12 text-primary underline">
-					{t('promptAlbumRecommendation')}
-					<button className="bg-base-300 text-base-content px-2 rounded-full ml-2">
-						{t('promptDraftStatus')}
-					</button>
-				</div>
-				<div className="w-4/12 cursor-pointer">{t('promptNew')}</div>
-			</div>
 		</div>
 	);
 }

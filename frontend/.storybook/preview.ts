@@ -1,11 +1,19 @@
 import { Preview } from '@storybook/react';
-
+import { reactIntl } from './reactIntl';
 import { withThemeByClassName } from '@storybook/addon-styling';
 
 import '@/styles/globals.scss';
 
 const preview: Preview = {
+	globals: {
+		locale: reactIntl.defaultLocale,
+		locales: {
+			en: 'English',
+		},
+	},
+
 	parameters: {
+		reactIntl,
 		actions: { argTypesRegex: '^on[A-Z].*' },
 		controls: {
 			matchers: {
