@@ -72,7 +72,7 @@ func (c *Client) RequestPrompt(
 		log.Err(tokenizationErr).Msg("failed to get prompt token count")
 	}
 
-	db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+	_, dbErr := db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
 		IsStreamResponse: false,
 		RequestTokens:    promptReqTokenCount,
 		ResponseTokens:   promptResTokenCount,
@@ -81,6 +81,9 @@ func (c *Client) RequestPrompt(
 		PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
 		ErrorLog:         recordErrLog,
 	})
+	if dbErr != nil {
+		log.Err(dbErr).Msg("failed to create prompt request record")
+	}
 
 	log.Debug().Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
 	return response.Content, nil
@@ -140,7 +143,7 @@ func (c *Client) RequestStream(
 				recordErrLog = pgtype.Text{String: receiveErr.Error()}
 			}
 
-			db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+			_, dbErr := db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
 				IsStreamResponse: true,
 				RequestTokens:    promptReqTokenCount,
 				ResponseTokens:   promptResTokenCount,
@@ -149,6 +152,10 @@ func (c *Client) RequestStream(
 				PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
 				ErrorLog:         recordErrLog,
 			})
+			if dbErr != nil {
+				log.Err(dbErr).Msg("failed to create prompt request record")
+			}
+
 			return
 		}
 
