@@ -31,6 +31,12 @@ internal const val LOGGING_TAG = "BaseMindClient"
  */
 data class Options(
     /**
+     * The prompt configuration id to use for the prompt request.
+     *
+     * Defaults to null, which means the default prompt configuration as defined in the BaseMind.AI dashboard will be used.
+     */
+    val promptConfigId: String? = null,
+    /**
      * The amount of seconds a channel shutdown should wait before force terminating requests.
      *
      * Defaults to 5 seconds.
@@ -99,6 +105,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
             templateVariables.forEach { (key, value) ->
                 putTemplateVariables(key, value)
             }
+            promptConfigId = options.promptConfigId
         }.build()
     }
 

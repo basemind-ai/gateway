@@ -13,7 +13,7 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 	t.Run("Panic without address", func(t *testing.T) {
 		t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
 
-		assert.Panics(t, func() { connectors.GetOpenAIConnectorClient() })
+		assert.Panics(t, func() { connectors.GetProviderConnector() })
 	})
 
 	t.Run("No panic with address", func(t *testing.T) {
@@ -25,8 +25,8 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 		)
 		assert.NoError(t, err)
 
-		client1 := connectors.GetOpenAIConnectorClient()
-		client2 := connectors.GetOpenAIConnectorClient()
+		client1 := connectors.GetProviderConnector()
+		client2 := connectors.GetProviderConnector()
 
 		assert.Equal(t, client1, client2)
 	})

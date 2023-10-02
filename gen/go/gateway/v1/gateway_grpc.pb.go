@@ -19,7 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	APIGatewayService_RequestPromptConfig_FullMethodName    = "/gateway.v1.APIGatewayService/RequestPromptConfig"
 	APIGatewayService_RequestPrompt_FullMethodName          = "/gateway.v1.APIGatewayService/RequestPrompt"
 	APIGatewayService_RequestStreamingPrompt_FullMethodName = "/gateway.v1.APIGatewayService/RequestStreamingPrompt"
 )
@@ -28,8 +27,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type APIGatewayServiceClient interface {
-	// Request the configuration for making prompt requests
-	RequestPromptConfig(ctx context.Context, in *PromptConfigRequest, opts ...grpc.CallOption) (*PromptConfigResponse, error)
 	// Request a regular LLM prompt
 	RequestPrompt(ctx context.Context, in *PromptRequest, opts ...grpc.CallOption) (*PromptResponse, error)
 	// Request a streaming LLM prompt
@@ -42,15 +39,6 @@ type aPIGatewayServiceClient struct {
 
 func NewAPIGatewayServiceClient(cc grpc.ClientConnInterface) APIGatewayServiceClient {
 	return &aPIGatewayServiceClient{cc}
-}
-
-func (c *aPIGatewayServiceClient) RequestPromptConfig(ctx context.Context, in *PromptConfigRequest, opts ...grpc.CallOption) (*PromptConfigResponse, error) {
-	out := new(PromptConfigResponse)
-	err := c.cc.Invoke(ctx, APIGatewayService_RequestPromptConfig_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *aPIGatewayServiceClient) RequestPrompt(ctx context.Context, in *PromptRequest, opts ...grpc.CallOption) (*PromptResponse, error) {
@@ -98,8 +86,6 @@ func (x *aPIGatewayServiceRequestStreamingPromptClient) Recv() (*StreamingPrompt
 // All implementations must embed UnimplementedAPIGatewayServiceServer
 // for forward compatibility
 type APIGatewayServiceServer interface {
-	// Request the configuration for making prompt requests
-	RequestPromptConfig(context.Context, *PromptConfigRequest) (*PromptConfigResponse, error)
 	// Request a regular LLM prompt
 	RequestPrompt(context.Context, *PromptRequest) (*PromptResponse, error)
 	// Request a streaming LLM prompt
@@ -111,9 +97,6 @@ type APIGatewayServiceServer interface {
 type UnimplementedAPIGatewayServiceServer struct {
 }
 
-func (UnimplementedAPIGatewayServiceServer) RequestPromptConfig(context.Context, *PromptConfigRequest) (*PromptConfigResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestPromptConfig not implemented")
-}
 func (UnimplementedAPIGatewayServiceServer) RequestPrompt(context.Context, *PromptRequest) (*PromptResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestPrompt not implemented")
 }
@@ -131,24 +114,6 @@ type UnsafeAPIGatewayServiceServer interface {
 
 func RegisterAPIGatewayServiceServer(s grpc.ServiceRegistrar, srv APIGatewayServiceServer) {
 	s.RegisterService(&APIGatewayService_ServiceDesc, srv)
-}
-
-func _APIGatewayService_RequestPromptConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PromptConfigRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(APIGatewayServiceServer).RequestPromptConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: APIGatewayService_RequestPromptConfig_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(APIGatewayServiceServer).RequestPromptConfig(ctx, req.(*PromptConfigRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _APIGatewayService_RequestPrompt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -197,10 +162,6 @@ var APIGatewayService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "gateway.v1.APIGatewayService",
 	HandlerType: (*APIGatewayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "RequestPromptConfig",
-			Handler:    _APIGatewayService_RequestPromptConfig_Handler,
-		},
 		{
 			MethodName: "RequestPrompt",
 			Handler:    _APIGatewayService_RequestPrompt_Handler,

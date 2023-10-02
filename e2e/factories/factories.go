@@ -2,21 +2,18 @@ package factories
 
 import (
 	"context"
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgtype"
-	"math/rand"
-	"time"
-
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func RandomString(length int) string {
-	rand.NewSource(time.Now().UnixNano())
 	b := make([]byte, length+2)
-	rand.Read(b)
+	_, _ = rand.Read(b)
 	return fmt.Sprintf("%x", b)[2 : length+2]
 }
 
@@ -67,6 +64,19 @@ func CreateModelParameters() ([]byte, error) {
 	return modelParameters, nil
 }
 
+func CreateProject(ctx context.Context) (*db.Project, error) {
+	project, projectCreateErr := db.GetQueries().CreateProject(ctx, db.CreateProjectParams{
+		Name:        RandomString(10),
+		Description: RandomString(30),
+	})
+
+	if projectCreateErr != nil {
+		return nil, projectCreateErr
+	}
+
+	return &project, nil
+}
+
 func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Application, error) {
 	application, applicationCreateErr := db.GetQueries().
 		CreateApplication(ctx, db.CreateApplicationParams{
@@ -84,11 +94,8 @@ func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Applicat
 
 func CreateApplicationPromptConfig(
 	ctx context.Context,
-) (*datatypes.ApplicationPromptConfig, string, error) {
-	project, projectCreateErr := db.GetQueries().CreateProject(ctx, db.CreateProjectParams{
-		Name:        RandomString(10),
-		Description: RandomString(30),
-	})
+) (*datatypes.RequestConfiguration, string, error) {
+	project, projectCreateErr := CreateProject(ctx)
 
 	if projectCreateErr != nil {
 		return nil, "", projectCreateErr
@@ -97,12 +104,7 @@ func CreateApplicationPromptConfig(
 	systemMessage := "You are a helpful chat bot."
 	userMessage := "This is what the user asked for: {userInput}"
 
-	application, applicationCreateErr := db.GetQueries().
-		CreateApplication(ctx, db.CreateApplicationParams{
-			ProjectID:   project.ID,
-			Name:        RandomString(10),
-			Description: RandomString(30),
-		})
+	application, applicationCreateErr := CreateApplication(ctx, project.ID)
 
 	if applicationCreateErr != nil {
 		return nil, "", applicationCreateErr
@@ -134,9 +136,9 @@ func CreateApplicationPromptConfig(
 		return nil, "", promptConfigCreateErr
 	}
 
-	return &datatypes.ApplicationPromptConfig{
+	return &datatypes.RequestConfiguration{
 		ApplicationID:    db.UUIDToString(&application.ID),
-		ApplicationData:  application,
+		ApplicationData:  *application,
 		PromptConfigData: promptConfig,
 	}, db.UUIDToString(&application.ID), nil
 }
@@ -147,9 +149,10 @@ func CreateOpenAIPromptMessageDTO(tupleSlice []struct {
 }) ([]byte, error) {
 	openAIPromptMessageDTOs := make([]datatypes.OpenAIPromptMessageDTO, 0)
 	for _, tuple := range tupleSlice {
+		content := tuple.Content
 		openAIPromptMessageDTOs = append(openAIPromptMessageDTOs, datatypes.OpenAIPromptMessageDTO{
 			Role:    tuple.Role,
-			Content: &tuple.Content,
+			Content: &content,
 		})
 	}
 	return json.Marshal(openAIPromptMessageDTOs)

@@ -90,7 +90,7 @@ func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismoc
 	return cacheClient, mockRedis
 }
 
-func CreateApplicationPromptConfig(t *testing.T) (*datatypes.ApplicationPromptConfig, string) {
+func CreateApplicationPromptConfig(t *testing.T) (*datatypes.RequestConfiguration, string) {
 	dbTestUtils.CreateTestDB(t)
 
 	appConfig, appId, createAppConfigErr := factories.CreateApplicationPromptConfig(context.TODO())
@@ -105,41 +105,6 @@ func TestIntegration(t *testing.T) {
 
 	jwtToken, jwtCreateErr := jwtutils.CreateJWT(time.Minute, []byte(JWTSecret), applicationId)
 	assert.NoError(t, jwtCreateErr)
-
-	t.Run("E2E Test RequestPromptConfig", func(t *testing.T) {
-		client := CreateGatewayServiceClient(t)
-		cacheClient, mockRedis := CreateTestCache(t, applicationId)
-
-		expectedResponseContent := []string{"userInput"}
-
-		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
-		assert.NoError(t, marshalErr)
-
-		mockRedis.ExpectGet(applicationId).RedisNil()
-		mockRedis.ExpectSet(applicationId, expectedCacheValue, time.Hour/2).SetVal("OK")
-
-		outgoingContext := metadata.AppendToOutgoingContext(
-			context.TODO(),
-			"authorization",
-			fmt.Sprintf("bearer %s", jwtToken),
-		)
-
-		firstResponse, firstResponseErr := client.RequestPromptConfig(
-			outgoingContext,
-			&gateway.PromptConfigRequest{},
-		)
-		assert.NoError(t, firstResponseErr)
-		assert.Equal(t, expectedResponseContent, firstResponse.ExpectedPromptVariables)
-
-		mockRedis.ExpectGet(applicationId).SetVal(string(expectedCacheValue))
-
-		secondResponse, secondResponseErr := client.RequestPromptConfig(
-			outgoingContext,
-			&gateway.PromptConfigRequest{},
-		)
-		assert.NoError(t, secondResponseErr)
-		assert.Equal(t, expectedResponseContent, secondResponse.ExpectedPromptVariables)
-	})
 
 	t.Run("E2E Test RequestPrompt", func(t *testing.T) {
 		client := CreateGatewayServiceClient(t)

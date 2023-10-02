@@ -3,9 +3,8 @@ package openai
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
-	"sync"
+	"strings"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
@@ -37,160 +36,127 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 func (c *Client) RequestPrompt(
 	ctx context.Context,
 	applicationId string,
-	applicationPromptConfig *datatypes.ApplicationPromptConfig,
+	requestConfiguration *datatypes.RequestConfiguration,
 	templateVariables map[string]string,
-) (string, error) {
+) datatypes.PromptResult {
+
 	promptRequest, createPromptRequestErr := CreatePromptRequest(
 		applicationId,
-		applicationPromptConfig.PromptConfigData.ModelType,
-		applicationPromptConfig.PromptConfigData.ModelParameters,
-		applicationPromptConfig.PromptConfigData.ProviderPromptMessages,
+		requestConfiguration.PromptConfigData.ModelType,
+		requestConfiguration.PromptConfigData.ModelParameters,
+		requestConfiguration.PromptConfigData.ProviderPromptMessages,
 		templateVariables,
 	)
 	if createPromptRequestErr != nil {
-		return "", createPromptRequestErr
+		return datatypes.PromptResult{Error: createPromptRequestErr}
 	}
 
-	var recordErrLog pgtype.Text
-	promptStartTime := time.Now()
-	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
-	if requestErr != nil {
-		return "", requestErr
-	}
-	promptFinishTime := time.Now()
-
-	// Count the total number of tokens utilized for openai prompt
-	reqPromptString := GetRequestPromptString(promptRequest.Messages)
-	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
-		reqPromptString,
-		applicationPromptConfig.PromptConfigData.ModelType,
-	)
-	if tokenizationErr != nil {
-		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
-		log.Err(tokenizationErr).Msg("failed to get prompt token count")
-	}
-
-	promptResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
-		response.Content,
-		applicationPromptConfig.PromptConfigData.ModelType,
-	)
-	if tokenizationErr != nil {
-		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
-		log.Err(tokenizationErr).Msg("failed to get prompt token count")
-	}
-
-	_, dbErr := db.GetQueries().CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+	recordParams := db.CreatePromptRequestRecordParams{
+		PromptConfigID:   requestConfiguration.PromptConfigData.ID,
 		IsStreamResponse: false,
-		RequestTokens:    promptReqTokenCount,
-		ResponseTokens:   promptResTokenCount,
-		StartTime:        pgtype.Timestamptz{Time: promptStartTime},
-		FinishTime:       pgtype.Timestamptz{Time: promptFinishTime},
-		PromptConfigID:   applicationPromptConfig.PromptConfigData.ID,
-		ErrorLog:         recordErrLog,
-	})
-	if dbErr != nil {
-		log.Err(dbErr).Msg("failed to create prompt request record")
+		StartTime:        pgtype.Timestamptz{Time: time.Now()},
 	}
 
-	log.Debug().
-		Msg(fmt.Sprintf("Total tokens utilized: Request-%d, Response-%d", promptReqTokenCount, promptResTokenCount))
-	return response.Content, nil
+	var content *string
+
+	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
+	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now()}
+
+	if requestErr == nil {
+		content = &response.Content
+		recordParams.RequestTokens = tokenutils.GetPromptTokenCount(
+			GetRequestPromptString(promptRequest.Messages),
+			requestConfiguration.PromptConfigData.ModelType,
+		)
+		recordParams.ResponseTokens = tokenutils.GetPromptTokenCount(
+			response.Content,
+			requestConfiguration.PromptConfigData.ModelType,
+		)
+
+	} else {
+		recordParams.ErrorLog = pgtype.Text{String: requestErr.Error()}
+	}
+
+	requestRecord, createRequestRecordErr := db.GetQueries().
+		CreatePromptRequestRecord(ctx, recordParams)
+	if createRequestRecordErr != nil {
+		log.Error().Err(createRequestRecordErr).Msg("failed to create prompt request record")
+	}
+	return datatypes.PromptResult{Content: content, RequestRecord: &requestRecord}
 }
 
 func (c *Client) RequestStream(
 	ctx context.Context,
 	applicationId string,
-	applicationPromptConfig *datatypes.ApplicationPromptConfig,
+	requestConfiguration *datatypes.RequestConfiguration,
 	templateVariables map[string]string,
-	contentChannel chan<- string,
-	errChannel chan<- error,
+	channel chan<- datatypes.PromptResult,
 ) {
 	promptRequest, promptRequestErr := CreatePromptRequest(
 		applicationId,
-		applicationPromptConfig.PromptConfigData.ModelType,
-		applicationPromptConfig.PromptConfigData.ModelParameters,
-		applicationPromptConfig.PromptConfigData.ProviderPromptMessages,
+		requestConfiguration.PromptConfigData.ModelType,
+		requestConfiguration.PromptConfigData.ModelParameters,
+		requestConfiguration.PromptConfigData.ProviderPromptMessages,
 		templateVariables,
 	)
 	if promptRequestErr != nil {
-		errChannel <- promptRequestErr
+		channel <- datatypes.PromptResult{Error: promptRequestErr}
+		close(channel)
 		return
 	}
 
-	var promptResTokenCount int32
-	promptStartTime := time.Now()
+	var builder strings.Builder
+	startTime := time.Now()
 
-	var streamDurationOnce sync.Once
-	var streamResDuration pgtype.Int8
-	var recordErrLog pgtype.Text
+	recordParams := db.CreatePromptRequestRecordParams{
+		PromptConfigID:   requestConfiguration.PromptConfigData.ID,
+		IsStreamResponse: true,
+		StartTime:        pgtype.Timestamptz{Time: startTime},
+	}
 
 	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
-	if streamErr != nil {
-		errChannel <- promptRequestErr
-		return
+	if streamErr == nil {
+		for {
+			msg, receiveErr := stream.Recv()
+
+			if recordParams.StreamResponseLatency.Int64 == 0 && receiveErr == nil {
+				duration := int64(time.Until(startTime))
+				recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
+			}
+
+			if receiveErr != nil {
+				recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now()}
+
+				if !errors.Is(receiveErr, io.EOF) {
+					recordParams.ErrorLog = pgtype.Text{String: receiveErr.Error()}
+				}
+
+				break
+			} else {
+				builder.WriteString(msg.Content)
+				channel <- datatypes.PromptResult{Content: &msg.Content}
+			}
+		}
+	} else {
+		recordParams.ErrorLog = pgtype.Text{String: streamErr.Error()}
 	}
 
-	reqPromptString := GetRequestPromptString(promptRequest.Messages)
-	promptReqTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
-		reqPromptString,
-		applicationPromptConfig.PromptConfigData.ModelType,
+	recordParams.RequestTokens = tokenutils.GetPromptTokenCount(
+		GetRequestPromptString(promptRequest.Messages),
+		requestConfiguration.PromptConfigData.ModelType,
 	)
-	if tokenizationErr != nil {
-		recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
-		log.Err(tokenizationErr).Msg("failed to get prompt token count")
+	recordParams.ResponseTokens = tokenutils.GetPromptTokenCount(
+		builder.String(),
+		requestConfiguration.PromptConfigData.ModelType,
+	)
+
+	promptRecord, createRequestRecordErr := db.GetQueries().
+		CreatePromptRequestRecord(ctx, recordParams)
+	if createRequestRecordErr != nil {
+		log.Error().Err(createRequestRecordErr).Msg("failed to create prompt request record")
+		channel <- datatypes.PromptResult{Error: createRequestRecordErr}
+	} else {
+		channel <- datatypes.PromptResult{RequestRecord: &promptRecord}
 	}
-	log.Debug().
-		Msg(fmt.Sprintf("Total tokens utilized for request prompt - %d", promptReqTokenCount))
-
-	for {
-		msg, receiveErr := stream.Recv()
-
-		streamDurationOnce.Do(func() {
-			duration := int64(time.Until(promptStartTime))
-			streamResDuration = pgtype.Int8{Int64: duration, Valid: true}
-		})
-
-		if receiveErr != nil {
-			promptFinishTime := time.Now()
-
-			if !errors.Is(receiveErr, io.EOF) {
-				errChannel <- receiveErr
-			}
-			close(contentChannel)
-			log.Debug().
-				Msg(fmt.Sprintf("Tokens utilized for streaming response-%d", promptResTokenCount))
-
-			if recordErrLog.String == "" && !errors.Is(receiveErr, io.EOF) {
-				recordErrLog = pgtype.Text{String: receiveErr.Error()}
-			}
-
-			_, dbErr := db.GetQueries().
-				CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
-					IsStreamResponse:      true,
-					RequestTokens:         promptReqTokenCount,
-					ResponseTokens:        promptResTokenCount,
-					StartTime:             pgtype.Timestamptz{Time: promptStartTime},
-					FinishTime:            pgtype.Timestamptz{Time: promptFinishTime},
-					StreamResponseLatency: streamResDuration,
-					PromptConfigID:        applicationPromptConfig.PromptConfigData.ID,
-					ErrorLog:              recordErrLog,
-				})
-			if dbErr != nil {
-				log.Err(dbErr).Msg("failed to create prompt request record")
-			}
-
-			return
-		}
-
-		streamResTokenCount, tokenizationErr := tokenutils.GetPromptTokenCount(
-			msg.Content,
-			applicationPromptConfig.PromptConfigData.ModelType,
-		)
-		if tokenizationErr != nil {
-			recordErrLog = pgtype.Text{String: tokenizationErr.Error()}
-			log.Err(tokenizationErr).Msg("failed to get prompt token count")
-		}
-		promptResTokenCount += streamResTokenCount
-		contentChannel <- msg.Content
-	}
+	close(channel)
 }
