@@ -28,5 +28,11 @@
 		"bannerHeading": "Feature 1",
 		"bannerTitle": "This feature is good for AI",
 		"bannerSubtitle": "Try all paid functions for free, just register and create your first widget, its simple and fast"
+	},
+	"prompt": {
+		"promptHeader": "Prompt Testing",
+		"promptGenerativeText": "Generative Text",
+		"savedPromptConfig": "Saved Templates",
+		"newPrompt": "+ New"
 	}
 }

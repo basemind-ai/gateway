@@ -8,9 +8,11 @@ export default function DashboardLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<div className="bg-base-100 h-full flex">
-			<NavRail />
-			{children}
+		<div className="bg-base-100 h-full w-full flex">
+			<div className="w-2/12">
+				<NavRail />
+			</div>
+			<div className="w-10/12">{children}</div>
 		</div>
 	);
 }

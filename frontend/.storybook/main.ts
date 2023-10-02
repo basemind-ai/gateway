@@ -10,6 +10,7 @@ const config: StorybookConfig = {
 		'@storybook/addon-essentials',
 		'@storybook/addon-onboarding',
 		'@storybook/addon-interactions',
+		'storybook-react-intl',
 		{
 			name: '@storybook/addon-styling',
 			options: {
