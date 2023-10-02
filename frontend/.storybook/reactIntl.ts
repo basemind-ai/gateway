@@ -3,12 +3,12 @@ const locales = ['en'];
 const messages = locales.reduce(
 	(acc, lang) => ({
 		...acc,
-		[lang]: require(`../public/locales/${lang}.json`), // whatever the relative path to your messages json is
+		[lang]: require(`../public/locales/${lang}.json`), 
 	}),
 	{},
 );
 
-const formats = {}; // optional, if you have any formats
+const formats = {}; 
 
 export const reactIntl = {
 	defaultLocale: 'en',
