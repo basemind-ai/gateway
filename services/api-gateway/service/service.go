@@ -34,7 +34,6 @@ func (Server) RequestPrompt(
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
-	log.Debug().Str("applicationId", applicationId).Msg("entered prompt request")
 
 	cacheKey := applicationId
 	if request.PromptConfigId != nil {
@@ -51,24 +50,25 @@ func (Server) RequestPrompt(
 	if retrievalErr != nil {
 		return nil, retrievalErr
 	}
-	log.Debug().Msg("retrieved application")
-	client := connectors.GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor)
-	promptResult := client.RequestPrompt(
-		ctx,
-		applicationId,
-		applicationConfiguration,
-		request.TemplateVariables,
-	)
+
+	promptResult := connectors.
+		GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
+		RequestPrompt(
+			ctx,
+			applicationId,
+			applicationConfiguration,
+			request.TemplateVariables,
+		)
+
 	if promptResult.Error != nil {
 		log.Error().Err(promptResult.Error).Msg("error in prompt request")
 		return nil, promptResult.Error
 	}
+
 	if promptResult.Content == nil {
 		log.Error().Msg("prompt response content is nil")
 		return nil, status.Errorf(codes.Internal, "prompt response content is nil")
 	}
-
-	log.Debug().Msg("returning response from AI provider")
 
 	return &gateway.PromptResponse{
 		Content:        *promptResult.Content,
@@ -103,7 +103,8 @@ func (Server) RequestStreamingPrompt(
 
 	channel := make(chan datatypes.PromptResult)
 
-	go connectors.GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
+	go connectors.
+		GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
 		RequestStream(
 			streamServer.Context(),
 			applicationId,
@@ -126,7 +127,8 @@ func (Server) RequestStreamingPrompt(
 			requestTokens := uint32(result.RequestRecord.RequestTokens)
 			responseTokens := uint32(result.RequestRecord.ResponseTokens)
 			streamDuration := uint32(
-				result.RequestRecord.FinishTime.Time.Sub(result.RequestRecord.StartTime.Time).
+				result.RequestRecord.FinishTime.Time.
+					Sub(result.RequestRecord.StartTime.Time).
 					Seconds(),
 			)
 			msg.RequestTokens = &requestTokens
@@ -139,12 +141,17 @@ func (Server) RequestStreamingPrompt(
 		}
 
 		if sendErr := streamServer.SendMsg(msg); sendErr != nil {
+			log.Error().Err(sendErr).Msg("failed to send message")
 			return sendErr
 		}
 
 		if result.Error != nil {
 			log.Error().Err(result.Error).Msg("error in prompt request")
 			return result.Error
+		}
+
+		if msg.FinishReason != nil {
+			break
 		}
 	}
 

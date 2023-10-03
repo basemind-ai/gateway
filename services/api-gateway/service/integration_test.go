@@ -113,10 +113,7 @@ func TestIntegration(t *testing.T) {
 		expectedResponseContent := "Response content"
 
 		openaiService.Response = &openaiconnector.OpenAIPromptResponse{
-			Content:          expectedResponseContent,
-			CompletionTokens: 2,
-			TotalTokens:      2,
-			PromptTokens:     2,
+			Content: expectedResponseContent,
 		}
 
 		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
@@ -181,7 +178,7 @@ func TestIntegration(t *testing.T) {
 		})
 		assert.NoError(t, streamErr)
 
-		chunks := make([]string, 0)
+		chunks := make([]*gateway.StreamingPromptResponse, 0)
 
 		for {
 			chunk, receiveErr := stream.Recv()
@@ -191,9 +188,15 @@ func TestIntegration(t *testing.T) {
 				}
 				break
 			}
-			chunks = append(chunks, chunk.Content)
+			chunks = append(chunks, chunk)
 		}
 
-		assert.Equal(t, []string{"1", "2", "3"}, chunks)
+		assert.Len(t, chunks, 4)
+		assert.Equal(t, "1", chunks[0].Content)            //nolint: gosec
+		assert.Equal(t, "2", chunks[1].Content)            //nolint: gosec
+		assert.Equal(t, "3", chunks[2].Content)            //nolint: gosec
+		assert.Equal(t, "done", *chunks[3].FinishReason)   //nolint: gosec
+		assert.Equal(t, 1, int(*chunks[3].ResponseTokens)) //nolint: gosec
+		assert.Equal(t, 16, int(*chunks[3].RequestTokens)) //nolint: gosec
 	})
 }

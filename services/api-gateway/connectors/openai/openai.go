@@ -3,6 +3,7 @@ package openai
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"strings"
 	"time"
@@ -53,16 +54,15 @@ func (c *Client) RequestPrompt(
 	recordParams := db.CreatePromptRequestRecordParams{
 		PromptConfigID:   requestConfiguration.PromptConfigData.ID,
 		IsStreamResponse: false,
-		StartTime:        pgtype.Timestamptz{Time: time.Now()},
+		StartTime:        pgtype.Timestamptz{Time: time.Now(), Valid: true},
 	}
-
-	var content *string
+	promptResult := datatypes.PromptResult{}
 
 	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
-	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now()}
+	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 	if requestErr == nil {
-		content = &response.Content
+		promptResult.Content = &response.Content
 		recordParams.RequestTokens = tokenutils.GetPromptTokenCount(
 			GetRequestPromptString(promptRequest.Messages),
 			requestConfiguration.PromptConfigData.ModelType,
@@ -72,15 +72,22 @@ func (c *Client) RequestPrompt(
 			requestConfiguration.PromptConfigData.ModelType,
 		)
 	} else {
-		recordParams.ErrorLog = pgtype.Text{String: requestErr.Error()}
+		log.Debug().Err(requestErr).Msg("request error")
+		promptResult.Error = requestErr
+		recordParams.ErrorLog = pgtype.Text{String: requestErr.Error(), Valid: true}
 	}
 
-	requestRecord, createRequestRecordErr := db.GetQueries().
-		CreatePromptRequestRecord(ctx, recordParams)
-	if createRequestRecordErr != nil {
+	if requestRecord, createRequestRecordErr := db.GetQueries().CreatePromptRequestRecord(ctx, recordParams); createRequestRecordErr != nil {
 		log.Error().Err(createRequestRecordErr).Msg("failed to create prompt request record")
+		if promptResult.Error == nil {
+			promptResult.Error = createRequestRecordErr
+		} else {
+			promptResult.Error = fmt.Errorf("failed to save prompt record: %w...%w", promptResult.Error, createRequestRecordErr)
+		}
+	} else {
+		promptResult.RequestRecord = &requestRecord
 	}
-	return datatypes.PromptResult{Content: content, RequestRecord: &requestRecord}
+	return promptResult
 }
 
 func (c *Client) RequestStream(
@@ -98,6 +105,7 @@ func (c *Client) RequestStream(
 		templateVariables,
 	)
 	if promptRequestErr != nil {
+		log.Error().Err(promptRequestErr).Msg("failed to create prompt request")
 		channel <- datatypes.PromptResult{Error: promptRequestErr}
 		close(channel)
 		return
@@ -109,52 +117,58 @@ func (c *Client) RequestStream(
 	recordParams := db.CreatePromptRequestRecordParams{
 		PromptConfigID:   requestConfiguration.PromptConfigData.ID,
 		IsStreamResponse: true,
-		StartTime:        pgtype.Timestamptz{Time: startTime},
+		StartTime:        pgtype.Timestamptz{Time: startTime, Valid: true},
+		RequestTokens: tokenutils.GetPromptTokenCount(
+			GetRequestPromptString(promptRequest.Messages),
+			requestConfiguration.PromptConfigData.ModelType,
+		),
 	}
+	finalResult := datatypes.PromptResult{}
 
-	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
-	if streamErr == nil {
+	if stream, streamErr := c.client.OpenAIStream(ctx, promptRequest); streamErr == nil {
 		for {
-			msg, receiveErr := stream.Recv()
-
-			if recordParams.StreamResponseLatency.Int64 == 0 && receiveErr == nil {
-				duration := int64(time.Until(startTime))
-				recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
-			}
-
-			if receiveErr != nil {
-				recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now()}
+			if msg, receiveErr := stream.Recv(); receiveErr != nil {
+				recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 				if !errors.Is(receiveErr, io.EOF) {
-					recordParams.ErrorLog = pgtype.Text{String: receiveErr.Error()}
+					log.Debug().Err(receiveErr).Msg("received stream error")
+					finalResult.Error = receiveErr
 				}
 
 				break
 			} else {
+				if recordParams.StreamResponseLatency.Int64 == 0 {
+					duration := int64(time.Until(startTime))
+					recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
+				}
+
 				builder.WriteString(msg.Content)
 				channel <- datatypes.PromptResult{Content: &msg.Content}
 			}
 		}
+
+		recordParams.ResponseTokens = tokenutils.GetPromptTokenCount(
+			builder.String(),
+			requestConfiguration.PromptConfigData.ModelType,
+		)
 	} else {
-		recordParams.ErrorLog = pgtype.Text{String: streamErr.Error()}
+		finalResult.Error = streamErr
 	}
 
-	recordParams.RequestTokens = tokenutils.GetPromptTokenCount(
-		GetRequestPromptString(promptRequest.Messages),
-		requestConfiguration.PromptConfigData.ModelType,
-	)
-	recordParams.ResponseTokens = tokenutils.GetPromptTokenCount(
-		builder.String(),
-		requestConfiguration.PromptConfigData.ModelType,
-	)
+	if finalResult.Error != nil {
+		recordParams.ErrorLog = pgtype.Text{String: finalResult.Error.Error(), Valid: true}
+	}
 
-	promptRecord, createRequestRecordErr := db.GetQueries().
-		CreatePromptRequestRecord(ctx, recordParams)
-	if createRequestRecordErr != nil {
+	if promptRecord, createRequestRecordErr := db.GetQueries().CreatePromptRequestRecord(ctx, recordParams); createRequestRecordErr != nil {
 		log.Error().Err(createRequestRecordErr).Msg("failed to create prompt request record")
-		channel <- datatypes.PromptResult{Error: createRequestRecordErr}
+		if finalResult.Error == nil {
+			finalResult.Error = createRequestRecordErr
+		} else {
+			finalResult.Error = fmt.Errorf("failed to save prompt record: %w...%w", finalResult.Error, createRequestRecordErr)
+		}
 	} else {
-		channel <- datatypes.PromptResult{RequestRecord: &promptRecord}
+		finalResult.RequestRecord = &promptRecord
 	}
+	channel <- finalResult
 	close(channel)
 }
