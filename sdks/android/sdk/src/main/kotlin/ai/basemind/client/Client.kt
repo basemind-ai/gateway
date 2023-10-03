@@ -1,12 +1,10 @@
-@file:Suppress("MaxLineLength")
-
 package ai.basemind.client
 
+import ai.basemind.grpc.APIGatewayServiceGrpcKt
+import ai.basemind.grpc.PromptRequest
+import ai.basemind.grpc.PromptResponse
+import ai.basemind.grpc.StreamingPromptResponse
 import android.util.Log
-import com.basemind.client.grpc.APIGatewayServiceGrpcKt
-import com.basemind.client.grpc.PromptRequest
-import com.basemind.client.grpc.PromptResponse
-import com.basemind.client.grpc.StreamingPromptResponse
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Metadata
 import io.grpc.StatusException
@@ -19,10 +17,14 @@ import java.util.concurrent.TimeUnit
 internal const val DEFAULT_API_GATEWAY_ADDRESS = "localhost"
 internal const val DEFAULT_API_GATEWAY_HTTPS = false
 internal const val DEFAULT_API_GATEWAY_PORT = 4000
+internal const val DEFAULT_TERMINATION_DELAY_S = 5L
 internal const val ENV_API_GATEWAY_ADDRESS = "BASEMIND_API_GATEWAY_ADDRESS"
 internal const val ENV_API_GATEWAY_HTTPS = "BASEMIND_API_GATEWAY_HTTPS"
 internal const val ENV_API_GATEWAY_PORT = "BASEMIND_API_GATEWAY_PORT"
 internal const val LOGGING_TAG = "BaseMindClient"
+
+@DslMarker
+private annotation class BasemindClientDsl
 
 /**
  * BaseMindClient Options
@@ -35,7 +37,7 @@ data class Options(
      *
      * Defaults to 5 seconds.
      */
-    val terminationDelaySeconds: Long = 5L,
+    val terminationDelaySeconds: Long = DEFAULT_TERMINATION_DELAY_S,
     /**
      * Controls outputting debug log messages. Defaults to 'false'.
      */
@@ -52,7 +54,11 @@ data class Options(
  * @property options an options object. This parameter is optional.
  * @constructor instantiates a new client instance.
  */
-class BaseMindClient(private val apiToken: String, private val options: Options = Options()) : Closeable {
+class BaseMindClient private constructor(
+    private val apiToken: String,
+    private val promptConfigId: String?,
+    private val options: Options,
+) : Closeable {
     init {
         if (apiToken.isEmpty()) {
             throw MissingAPIKeyException()
@@ -60,7 +66,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
     }
 
     private val channel =
-        let {
+        run {
             val serverAddress = System.getenv(ENV_API_GATEWAY_ADDRESS) ?: DEFAULT_API_GATEWAY_ADDRESS
             val serverPort = System.getenv(ENV_API_GATEWAY_PORT)?.toInt() ?: DEFAULT_API_GATEWAY_PORT
             val useHttps = System.getenv(ENV_API_GATEWAY_HTTPS)?.toBoolean() ?: DEFAULT_API_GATEWAY_HTTPS
@@ -85,6 +91,32 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
 
     internal var grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
 
+    companion object {
+        private val instances = mutableMapOf<Int, BaseMindClient>()
+
+        /**
+         * Creates a new client instance.
+         *
+         * @param apiToken the API token to use for authentication. This parameter is required.
+         * @param promptConfigId the prompt config id to use for the client. This parameter is optional.
+         * @param options an options object. This parameter is optional.
+         */
+        @BasemindClientDsl
+        fun getInstance(
+            apiToken: String,
+            promptConfigId: String? = null,
+            options: Options = Options(),
+        ): BaseMindClient {
+            val key = options.hashCode() + apiToken.hashCode() + promptConfigId.hashCode()
+
+            if (!instances.containsKey(key)) {
+                instances[key] = BaseMindClient(apiToken = apiToken, promptConfigId = promptConfigId, options = options)
+            }
+
+            return instances[key]!!
+        }
+    }
+
     /**
      * closes the connection to the API gateway.
      *
@@ -95,9 +127,14 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
     }
 
     private fun createPromptRequest(templateVariables: Map<String, String>): PromptRequest {
+        val configId = promptConfigId
+
         return PromptRequest.newBuilder().apply {
             templateVariables.forEach { (key, value) ->
                 putTemplateVariables(key, value)
+            }
+            if (configId != null) {
+                this.promptConfigId = configId
             }
         }.build()
     }
@@ -117,7 +154,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
      * @throws MissingPromptVariableException if a template variable is missing.
      * @throws APIGatewayException if the API gateway returns an error.
      */
-    suspend fun requestPrompt(templateVariables: HashMap<String, String>): PromptResponse {
+    suspend fun requestPrompt(templateVariables: Map<String, String>): PromptResponse {
         try {
             if (options.debug) {
                 options.debugLogger(LOGGING_TAG, "requesting prompt")
@@ -130,7 +167,11 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
             }
 
             when (e.status.code) {
-                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(e.message ?: "Missing prompt variable", e)
+                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(
+                    e.message ?: "Missing prompt variable",
+                    e,
+                )
+
                 else -> throw APIGatewayException(e.message ?: "API Gateway error", e)
             }
         }
@@ -143,7 +184,7 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
      * @throws MissingPromptVariableException if a template variable is missing.
      * @throws APIGatewayException if the API gateway returns an error.
      */
-    fun requestStream(templateVariables: HashMap<String, String>): Flow<StreamingPromptResponse> {
+    fun requestStream(templateVariables: Map<String, String>): Flow<StreamingPromptResponse> {
         try {
             if (options.debug) {
                 options.debugLogger(LOGGING_TAG, "requesting streaming prompt")
@@ -156,7 +197,11 @@ class BaseMindClient(private val apiToken: String, private val options: Options 
             }
 
             when (e.status.code) {
-                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(e.message ?: "Missing prompt variable", e)
+                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(
+                    e.message ?: "Missing prompt variable",
+                    e,
+                )
+
                 else -> throw APIGatewayException(e.message ?: "API Gateway error", e)
             }
         }

@@ -90,7 +90,7 @@ func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismoc
 	return cacheClient, mockRedis
 }
 
-func CreateApplicationPromptConfig(t *testing.T) (*datatypes.ApplicationPromptConfig, string) {
+func CreateApplicationPromptConfig(t *testing.T) (*datatypes.RequestConfiguration, string) {
 	dbTestUtils.CreateTestDB(t)
 
 	appConfig, appId, createAppConfigErr := factories.CreateApplicationPromptConfig(context.TODO())
@@ -106,41 +106,6 @@ func TestIntegration(t *testing.T) {
 	jwtToken, jwtCreateErr := jwtutils.CreateJWT(time.Minute, []byte(JWTSecret), applicationId)
 	assert.NoError(t, jwtCreateErr)
 
-	t.Run("E2E Test RequestPromptConfig", func(t *testing.T) {
-		client := CreateGatewayServiceClient(t)
-		cacheClient, mockRedis := CreateTestCache(t, applicationId)
-
-		expectedResponseContent := []string{"userInput"}
-
-		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
-		assert.NoError(t, marshalErr)
-
-		mockRedis.ExpectGet(applicationId).RedisNil()
-		mockRedis.ExpectSet(applicationId, expectedCacheValue, time.Hour/2).SetVal("OK")
-
-		outgoingContext := metadata.AppendToOutgoingContext(
-			context.TODO(),
-			"authorization",
-			fmt.Sprintf("bearer %s", jwtToken),
-		)
-
-		firstResponse, firstResponseErr := client.RequestPromptConfig(
-			outgoingContext,
-			&gateway.PromptConfigRequest{},
-		)
-		assert.NoError(t, firstResponseErr)
-		assert.Equal(t, expectedResponseContent, firstResponse.ExpectedPromptVariables)
-
-		mockRedis.ExpectGet(applicationId).SetVal(string(expectedCacheValue))
-
-		secondResponse, secondResponseErr := client.RequestPromptConfig(
-			outgoingContext,
-			&gateway.PromptConfigRequest{},
-		)
-		assert.NoError(t, secondResponseErr)
-		assert.Equal(t, expectedResponseContent, secondResponse.ExpectedPromptVariables)
-	})
-
 	t.Run("E2E Test RequestPrompt", func(t *testing.T) {
 		client := CreateGatewayServiceClient(t)
 		cacheClient, mockRedis := CreateTestCache(t, applicationId)
@@ -148,10 +113,7 @@ func TestIntegration(t *testing.T) {
 		expectedResponseContent := "Response content"
 
 		openaiService.Response = &openaiconnector.OpenAIPromptResponse{
-			Content:          expectedResponseContent,
-			CompletionTokens: 2,
-			TotalTokens:      2,
-			PromptTokens:     2,
+			Content: expectedResponseContent,
 		}
 
 		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
@@ -216,7 +178,7 @@ func TestIntegration(t *testing.T) {
 		})
 		assert.NoError(t, streamErr)
 
-		chunks := make([]string, 0)
+		chunks := make([]*gateway.StreamingPromptResponse, 0)
 
 		for {
 			chunk, receiveErr := stream.Recv()
@@ -226,9 +188,15 @@ func TestIntegration(t *testing.T) {
 				}
 				break
 			}
-			chunks = append(chunks, chunk.Content)
+			chunks = append(chunks, chunk)
 		}
 
-		assert.Equal(t, []string{"1", "2", "3"}, chunks)
+		assert.Len(t, chunks, 4)
+		assert.Equal(t, "1", chunks[0].Content)            //nolint: gosec
+		assert.Equal(t, "2", chunks[1].Content)            //nolint: gosec
+		assert.Equal(t, "3", chunks[2].Content)            //nolint: gosec
+		assert.Equal(t, "done", *chunks[3].FinishReason)   //nolint: gosec
+		assert.Equal(t, 1, int(*chunks[3].ResponseTokens)) //nolint: gosec
+		assert.Equal(t, 16, int(*chunks[3].RequestTokens)) //nolint: gosec
 	})
 }

@@ -4,8 +4,6 @@
 import { StreamingPromptResponse } from "./gateway";
 import { PromptResponse } from "./gateway";
 import { PromptRequest } from "./gateway";
-import { PromptConfigResponse } from "./gateway";
-import { PromptConfigRequest } from "./gateway";
 import type * as grpc from "@grpc/grpc-js";
 /**
  * The API Gateway service definition.
@@ -13,12 +11,6 @@ import type * as grpc from "@grpc/grpc-js";
  * @generated from protobuf service gateway.v1.APIGatewayService
  */
 export interface IAPIGatewayService extends grpc.UntypedServiceImplementation {
-    /**
-     * Request the configuration for making prompt requests
-     *
-     * @generated from protobuf rpc: RequestPromptConfig(gateway.v1.PromptConfigRequest) returns (gateway.v1.PromptConfigResponse);
-     */
-    requestPromptConfig: grpc.handleUnaryCall<PromptConfigRequest, PromptConfigResponse>;
     /**
      * Request a regular LLM prompt
      *

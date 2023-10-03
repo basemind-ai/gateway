@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration
 		default="false"
-		name="monorepo [dependencyUpdatesAndroid]"
+		name="Android SDK Tests"
 		type="GradleRunConfiguration"
 		factoryName="Gradle"
 	>
@@ -15,7 +15,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="dependencyUpdates" />
+          <option value="sdks:android:sdk:test" />
         </list>
       </option>
       <option name="vmOptions" />
@@ -24,6 +24,7 @@
     <ExternalSystemReattachDebugProcess
 		>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>false</RunAsTest>
     <method v="2" />
   </configuration>
 </component>

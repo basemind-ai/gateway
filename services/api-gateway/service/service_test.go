@@ -34,12 +34,6 @@ func TestService(t *testing.T) {
 	t.Run("New", func(t *testing.T) {
 		assert.IsType(t, service.Server{}, srv)
 	})
-	t.Run("RequestPromptConfig", func(t *testing.T) {
-		t.Run("return err when ApplicationIDContext is not set", func(t *testing.T) {
-			_, err := srv.RequestPromptConfig(ctx, nil)
-			assert.Errorf(t, err, service.ErrorApplicationIdNotInContext)
-		})
-	})
 	t.Run("RequestPrompt", func(t *testing.T) {
 		t.Run("return err when ApplicationIDContext is not set", func(t *testing.T) {
 			_, err := srv.RequestPrompt(ctx, nil)

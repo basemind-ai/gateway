@@ -1,10 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration
 		default="false"
-		name="monorepo [test]"
+		name="All Tests"
 		type="GradleRunConfiguration"
 		factoryName="Gradle"
-		nameIsGenerated="true"
 	>
     <ExternalSystemSettings>
       <option name="executionName" />

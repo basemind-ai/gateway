@@ -2,10 +2,10 @@
 
 package ai.basemind.client
 
-import com.basemind.client.grpc.APIGatewayServiceGrpcKt
-import com.basemind.client.grpc.PromptRequest
-import com.basemind.client.grpc.PromptResponse
-import com.basemind.client.grpc.StreamingPromptResponse
+import ai.basemind.grpc.APIGatewayServiceGrpcKt
+import ai.basemind.grpc.PromptRequest
+import ai.basemind.grpc.PromptResponse
+import ai.basemind.grpc.StreamingPromptResponse
 import io.grpc.Context
 import io.grpc.Contexts
 import io.grpc.ManagedChannel
@@ -20,11 +20,12 @@ import io.grpc.inprocess.InProcessServerBuilder
 import io.grpc.testing.GrpcCleanupRule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -52,7 +53,7 @@ fun createTestClient(
     apiToken: String = "testToken",
     options: Options = Options(),
 ): BaseMindClient {
-    val client = BaseMindClient(apiToken, options)
+    val client = BaseMindClient.getInstance(apiToken = apiToken, options = options)
     client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
     return client
 }
@@ -101,6 +102,39 @@ class BaseMindClientTest {
     @ExtendWith
     val grpcCleanup: GrpcCleanupRule = GrpcCleanupRule()
 
+    private fun createTestClientForServer(
+        mockServer: MockAPIGatewayServer,
+        isDebug: Boolean = false,
+    ): BaseMindClient {
+        // we create a server name to register, this is basically a UUID
+        val serverName: String = InProcessServerBuilder.generateName()
+
+        val interceptor = HeaderServerInterceptor(mockServer)
+        val intercept = ServerInterceptors.intercept(mockServer, interceptor)
+
+        // we create an inprocess server and register it for cleanup
+        grpcCleanup.register(
+            InProcessServerBuilder
+                .forName(serverName)
+                .directExecutor()
+                .addService(intercept)
+                .build()
+                .start(),
+        )
+
+        // we create an in-process channel to connect to the server and register it for cleanup
+        // returning this value to register the api.
+        val channel =
+            grpcCleanup.register(
+                InProcessChannelBuilder
+                    .forName(serverName)
+                    .directExecutor()
+                    .build(),
+            )
+
+        return createTestClient(channel, options = Options(debug = isDebug))
+    }
+
     private val originalOut = System.out
     private val systemOutStream = ByteArrayOutputStream()
 
@@ -118,35 +152,34 @@ class BaseMindClientTest {
     private val environment: EnvironmentVariables = EnvironmentVariables()
 
     @Test
-    fun client_throws_exception_when_api_key_is_empty() {
+    fun clientThrowsExceptionWhenApiKeyIsEmpty() {
         assertThrows(
             MissingAPIKeyException::class.java,
-            { BaseMindClient("") },
+            { BaseMindClient.getInstance("") },
             "empty apiToken should throw",
         )
     }
 
     @Test
-    fun client_does_not_throw_exception_when_api_key_is_provided() {
+    fun clientDoesNotThrowExceptionWhenApiKeyIsProvided() {
         assertDoesNotThrow {
-            BaseMindClient("abc")
+            BaseMindClient.getInstance(this.toString())
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = [true, false])
+    fun clientLogsWhenDebug(isDebug: Boolean) {
+        BaseMindClient.getInstance(this.toString(), options = Options(debug = isDebug))
+        if (isDebug) {
+            assertTrue(systemOutStream.toString().contains("Connecting to"))
+        } else {
+            assertFalse(systemOutStream.toString().contains("Connecting to"))
         }
     }
 
     @Test
-    fun client_does_not_log_when_debug_is_false() {
-        BaseMindClient("abc", Options())
-        assertFalse(systemOutStream.toString().contains("Connecting to"))
-    }
-
-    @Test
-    fun client_logs_when_debug_is_true() {
-        BaseMindClient("abc", Options(debug = true))
-        assertTrue(systemOutStream.toString().contains("Connecting to"))
-    }
-
-    @Test
-    fun client_uses_passed_in_log_handler() {
+    fun clientUsesPassedInLogHandler() {
         var result = ""
 
         fun logHandler(
@@ -155,33 +188,52 @@ class BaseMindClientTest {
         ) {
             result = "$tag: $message"
         }
-        BaseMindClient("abc", Options(debug = true, debugLogger = { tag, message -> logHandler(tag, message) }))
+        BaseMindClient.getInstance(
+            this.toString(),
+            options =
+                Options(debug = true, debugLogger = {
+                        tag,
+                        message,
+                    ->
+                    logHandler(tag, message)
+                }),
+        )
         assertEquals("$LOGGING_TAG: Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT", result)
     }
 
     @Test
-    fun uses_default_address_when_env_variables_are_not_specified() {
-        BaseMindClient("abc", Options(debug = true))
+    fun createsSingletons() {
+        val client1 = BaseMindClient.getInstance(this.toString())
+        val client2 = BaseMindClient.getInstance(this.toString())
+        assertEquals(client1, client2)
+
+        val client3 = BaseMindClient.getInstance("abcdefg")
+        assertNotEquals(client1, client3)
+    }
+
+    @Test
+    fun usesDefaultAddressWhenEnvVariablesAreNotSpecified() {
+        BaseMindClient.getInstance(this.toString(), options = Options(debug = true))
         assertTrue(
             systemOutStream.toString().contains("Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT"),
         )
     }
 
     @Test
-    fun uses_custom_address_when_env_variables_are_specified() {
+    fun usesCustomAddressWhenEnvVariablesAreSpecified() {
         environment.set(ENV_API_GATEWAY_ADDRESS, "0.0.0.0")
         environment.set(ENV_API_GATEWAY_PORT, "5000")
-        BaseMindClient("abc", Options(debug = true))
+        BaseMindClient.getInstance(this.toString(), options = Options(debug = true))
         assertTrue(systemOutStream.toString().contains("Connecting to 0.0.0.0:5000"))
     }
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun request_prompt_method_returns_expected_response(isDebug: Boolean) {
-        val mock = MockAPIGatewayServer()
-        val testClient = createTestClientForServer(this, mock, isDebug)
+    fun requestPromptMethodReturnsExpectedResponse(isDebug: Boolean) =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            val testClient = createTestClientForServer(mock, isDebug)
 
-        runBlocking {
             val response = testClient.requestPrompt(HashMap())
             assertEquals("test prompt", response.content)
             assertEquals("Bearer testToken", mock.authHeader)
@@ -193,17 +245,16 @@ class BaseMindClientTest {
                 assertFalse(containsLogMessage)
             }
         }
-    }
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun request_prompt_method_throws_missing_prompt_variable_exception_for_grpc_status_missing_argument(isDebug: Boolean) {
-        val mock = MockAPIGatewayServer()
-        mock.exc = StatusException(io.grpc.Status.INVALID_ARGUMENT, null)
+    fun requestPromptMethodThrowsMissingPromptVariableExceptionForGrpcStatusMissingArgument(isDebug: Boolean) =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            mock.exc = StatusException(io.grpc.Status.INVALID_ARGUMENT, null)
 
-        val testClient = createTestClientForServer(this, mock, isDebug)
+            val testClient = createTestClientForServer(mock, isDebug)
 
-        runBlocking {
             try {
                 testClient.requestPrompt(HashMap())
             } catch (e: BaseMindException) {
@@ -217,17 +268,16 @@ class BaseMindClientTest {
                 }
             }
         }
-    }
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun request_prompt_method_throws_api_gateway_exception_for_grpc_status_other_than_missing_argument(isDebug: Boolean) {
-        val mock = MockAPIGatewayServer()
-        mock.exc = StatusException(io.grpc.Status.INTERNAL, null)
+    fun requestPromptMethodThrowsApiGatewayExceptionForGrpcStatusOtherThanMissingArgument(isDebug: Boolean) =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            mock.exc = StatusException(io.grpc.Status.INTERNAL, null)
 
-        val testClient = createTestClientForServer(this, mock, isDebug)
+            val testClient = createTestClientForServer(mock, isDebug)
 
-        runBlocking {
             try {
                 testClient.requestPrompt(HashMap())
             } catch (e: BaseMindException) {
@@ -241,16 +291,15 @@ class BaseMindClientTest {
                 }
             }
         }
-    }
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun request_streaming_prompt_method_returns_expected_response(isDebug: Boolean) {
-        val mock = MockAPIGatewayServer()
-        val testClient = createTestClientForServer(this, mock, isDebug)
-        val response = testClient.requestStream(HashMap())
+    fun requestStreamingPromptMethodReturnsExpectedResponse(isDebug: Boolean) =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            val testClient = createTestClientForServer(mock, isDebug)
+            val response = testClient.requestStream(HashMap())
 
-        runBlocking {
             val results: MutableList<String> = mutableListOf()
             response.collect { chunk -> results.add(chunk.content) }
             assertEquals(listOf("1", "2", "3"), results)
@@ -263,88 +312,61 @@ class BaseMindClientTest {
                 assertFalse(containsLogMessage)
             }
         }
-    }
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun request_streaming_prompt_method_throws_missing_prompt_variable_exception_for_grpc_status_missing_argument(isDebug: Boolean) {
-        val mock = MockAPIGatewayServer()
-        mock.exc = StatusException(io.grpc.Status.INVALID_ARGUMENT, null)
+    fun requestStreamingPromptMethodThrowsMissingPromptVariableExceptionForGrpcStatusMissingArgument(isDebug: Boolean) =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            mock.exc = StatusException(io.grpc.Status.INVALID_ARGUMENT, null)
 
-        val testClient = createTestClientForServer(this, mock, isDebug)
+            val testClient = createTestClientForServer(mock, isDebug)
 
-        try {
-            testClient.requestStream(HashMap())
-        } catch (e: BaseMindException) {
-            assertEquals(MissingPromptVariableException::class.java, e.javaClass)
+            try {
+                testClient.requestStream(HashMap())
+            } catch (e: BaseMindException) {
+                assertEquals(MissingPromptVariableException::class.java, e.javaClass)
 
-            val containsLogMessage = systemOutStream.toString().contains("exception requesting streaming prompt")
-            if (isDebug) {
-                assertTrue(containsLogMessage)
-            } else {
-                assertFalse(containsLogMessage)
+                val containsLogMessage =
+                    systemOutStream.toString().contains("exception requesting streaming prompt")
+                if (isDebug) {
+                    assertTrue(containsLogMessage)
+                } else {
+                    assertFalse(containsLogMessage)
+                }
             }
         }
-    }
 
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun request_streaming_prompt_method_throws_api_gateway_exception_for_grpc_status_other_than_missing_argument(isDebug: Boolean) {
-        val mock = MockAPIGatewayServer()
-        mock.exc = StatusException(io.grpc.Status.INTERNAL, null)
+    fun requestStreamingPromptMethodThrowsApiGatewayExceptionForGrpcStatusOtherThanMissingArgument(isDebug: Boolean) =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            mock.exc = StatusException(io.grpc.Status.INTERNAL, null)
 
-        val testClient = createTestClientForServer(this, mock, isDebug)
+            val testClient = createTestClientForServer(mock, isDebug)
 
-        try {
-            testClient.requestStream(HashMap())
-        } catch (e: BaseMindException) {
-            assertEquals(APIGatewayException::class.java, e.javaClass)
+            try {
+                testClient.requestStream(HashMap())
+            } catch (e: BaseMindException) {
+                assertEquals(APIGatewayException::class.java, e.javaClass)
 
-            val containsLogMessage = systemOutStream.toString().contains("exception requesting streaming prompt")
-            if (isDebug) {
-                assertTrue(containsLogMessage)
-            } else {
-                assertFalse(containsLogMessage)
+                val containsLogMessage = systemOutStream.toString().contains("exception requesting streaming prompt")
+                if (isDebug) {
+                    assertTrue(containsLogMessage)
+                } else {
+                    assertFalse(containsLogMessage)
+                }
             }
         }
-    }
+}
 
-    companion object {
-        /**
-         * Helper method to create test client that have different bound mock servers
-         */
-        private fun createTestClientForServer(
-            baseMindClientTest: BaseMindClientTest,
-            mockServer: MockAPIGatewayServer,
-            isDebug: Boolean = false,
-        ): BaseMindClient {
-            // we create a server name to register, this is basically a UUID
-            val serverName: String = InProcessServerBuilder.generateName()
+suspend fun getPrompt(userInput: String): String {
+    val client = BaseMindClient.getInstance(apiToken = "myToken")
 
-            val interceptor = HeaderServerInterceptor(mockServer)
-            val intercept = ServerInterceptors.intercept(mockServer, interceptor)
+    val templateVariables = mutableMapOf<String, String>()
+    templateVariables["userInput"] = userInput
 
-            // we create an inprocess server and register it for cleanup
-            baseMindClientTest.grpcCleanup.register(
-                InProcessServerBuilder
-                    .forName(serverName)
-                    .directExecutor()
-                    .addService(intercept)
-                    .build()
-                    .start(),
-            )
-
-            // we create an in-process channel to connect to the server and register it for cleanup
-            // returning this value to register the client.
-            val channel =
-                baseMindClientTest.grpcCleanup.register(
-                    InProcessChannelBuilder
-                        .forName(serverName)
-                        .directExecutor()
-                        .build(),
-                )
-
-            return createTestClient(channel, options = Options(debug = isDebug))
-        }
-    }
+    val result = client.requestPrompt(templateVariables)
+    return result.content
 }

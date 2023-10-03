@@ -7,32 +7,11 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 // @generated message type with reflection information, may provide speed optimized methods
-class PromptConfigRequest$Type extends MessageType {
-    constructor() {
-        super("gateway.v1.PromptConfigRequest", []);
-    }
-}
-/**
- * @generated MessageType for protobuf message gateway.v1.PromptConfigRequest
- */
-export const PromptConfigRequest = new PromptConfigRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PromptConfigResponse$Type extends MessageType {
-    constructor() {
-        super("gateway.v1.PromptConfigResponse", [
-            { no: 1, name: "expected_prompt_variables", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message gateway.v1.PromptConfigResponse
- */
-export const PromptConfigResponse = new PromptConfigResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class PromptRequest$Type extends MessageType {
     constructor() {
         super("gateway.v1.PromptRequest", [
-            { no: 1, name: "template_variables", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
+            { no: 1, name: "template_variables", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
+            { no: 2, name: "prompt_config_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
@@ -45,7 +24,9 @@ class PromptResponse$Type extends MessageType {
     constructor() {
         super("gateway.v1.PromptResponse", [
             { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "prompt_tokens", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+            { no: 2, name: "request_tokens", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 3, name: "response_tokens", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "request_duration", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
 }
@@ -59,7 +40,9 @@ class StreamingPromptResponse$Type extends MessageType {
         super("gateway.v1.StreamingPromptResponse", [
             { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "finish_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "prompt_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
+            { no: 3, name: "request_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "response_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 5, name: "stream_duration", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
 }
@@ -71,7 +54,6 @@ export const StreamingPromptResponse = new StreamingPromptResponse$Type();
  * @generated ServiceType for protobuf service gateway.v1.APIGatewayService
  */
 export const APIGatewayService = new ServiceType("gateway.v1.APIGatewayService", [
-    { name: "RequestPromptConfig", options: {}, I: PromptConfigRequest, O: PromptConfigResponse },
     { name: "RequestPrompt", options: {}, I: PromptRequest, O: PromptResponse },
     { name: "RequestStreamingPrompt", serverStreaming: true, options: {}, I: PromptRequest, O: StreamingPromptResponse }
 ]);

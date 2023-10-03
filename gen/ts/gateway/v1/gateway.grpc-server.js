@@ -7,8 +7,6 @@
 import { StreamingPromptResponse } from "./gateway";
 import { PromptResponse } from "./gateway";
 import { PromptRequest } from "./gateway";
-import { PromptConfigResponse } from "./gateway";
-import { PromptConfigRequest } from "./gateway";
 /**
  * @grpc/grpc-js definition for the protobuf service gateway.v1.APIGatewayService.
  *
@@ -21,16 +19,6 @@ import { PromptConfigRequest } from "./gateway";
  * ```
  */
 export const aPIGatewayServiceDefinition = {
-    requestPromptConfig: {
-        path: "/gateway.v1.APIGatewayService/RequestPromptConfig",
-        originalName: "RequestPromptConfig",
-        requestStream: false,
-        responseStream: false,
-        responseDeserialize: bytes => PromptConfigResponse.fromBinary(bytes),
-        requestDeserialize: bytes => PromptConfigRequest.fromBinary(bytes),
-        responseSerialize: value => Buffer.from(PromptConfigResponse.toBinary(value)),
-        requestSerialize: value => Buffer.from(PromptConfigRequest.toBinary(value))
-    },
     requestPrompt: {
         path: "/gateway.v1.APIGatewayService/RequestPrompt",
         originalName: "RequestPrompt",

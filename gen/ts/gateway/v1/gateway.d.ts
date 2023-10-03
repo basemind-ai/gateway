@@ -3,26 +3,6 @@
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
 /**
- * A request for a prompt configuration - retrieving the expected prompt variables
- *
- * @generated from protobuf message gateway.v1.PromptConfigRequest
- */
-export interface PromptConfigRequest {
-}
-/**
- * A response for a prompt configuration - retrieving the expected prompt variables
- *
- * @generated from protobuf message gateway.v1.PromptConfigResponse
- */
-export interface PromptConfigResponse {
-    /**
-     * The expected prompt variables
-     *
-     * @generated from protobuf field: repeated string expected_prompt_variables = 1;
-     */
-    expectedPromptVariables: string[];
-}
-/**
  * A request for a prompt - sending user input to the server.
  *
  * @generated from protobuf message gateway.v1.PromptRequest
@@ -37,6 +17,12 @@ export interface PromptRequest {
     templateVariables: {
         [key: string]: string;
     };
+    /**
+     * Optional Identifier designating the prompt config ID to use. If not set, the default prompt config will be used.
+     *
+     * @generated from protobuf field: optional string prompt_config_id = 2;
+     */
+    promptConfigId?: string;
 }
 /**
  * A Prompt Response Message
@@ -51,11 +37,23 @@ export interface PromptResponse {
      */
     content: string;
     /**
-     * Number of tokens used for the prompt
+     * Number of tokens used for the prompt request
      *
-     * @generated from protobuf field: uint32 prompt_tokens = 2;
+     * @generated from protobuf field: uint32 request_tokens = 2;
      */
-    promptTokens: number;
+    requestTokens: number;
+    /**
+     * Number of tokens used for the prompt response
+     *
+     * @generated from protobuf field: uint32 response_tokens = 3;
+     */
+    responseTokens: number;
+    /**
+     * Request duration
+     *
+     * @generated from protobuf field: uint32 request_duration = 4;
+     */
+    requestDuration: number;
 }
 /**
  * An Streaming Prompt Response Message
@@ -70,32 +68,30 @@ export interface StreamingPromptResponse {
      */
     content: string;
     /**
-     * Finish reason, if this is the last message
+     * Finish reason, given when the stream ends
      *
      * @generated from protobuf field: optional string finish_reason = 2;
      */
     finishReason?: string;
     /**
-     * Number of tokens used for the prompt, given when the stream ends
+     * Number of tokens used for the prompt request, given when the stream ends
      *
-     * @generated from protobuf field: optional uint32 prompt_tokens = 3;
+     * @generated from protobuf field: optional uint32 request_tokens = 3;
      */
-    promptTokens?: number;
+    requestTokens?: number;
+    /**
+     * Number of tokens used for the prompt response, given when the stream ends
+     *
+     * @generated from protobuf field: optional uint32 response_tokens = 4;
+     */
+    responseTokens?: number;
+    /**
+     * Stream duration, given when the stream ends
+     *
+     * @generated from protobuf field: optional uint32 stream_duration = 5;
+     */
+    streamDuration?: number;
 }
-declare class PromptConfigRequest$Type extends MessageType<PromptConfigRequest> {
-    constructor();
-}
-/**
- * @generated MessageType for protobuf message gateway.v1.PromptConfigRequest
- */
-export declare const PromptConfigRequest: PromptConfigRequest$Type;
-declare class PromptConfigResponse$Type extends MessageType<PromptConfigResponse> {
-    constructor();
-}
-/**
- * @generated MessageType for protobuf message gateway.v1.PromptConfigResponse
- */
-export declare const PromptConfigResponse: PromptConfigResponse$Type;
 declare class PromptRequest$Type extends MessageType<PromptRequest> {
     constructor();
 }

@@ -27,8 +27,8 @@ func CreatePromptTemplateMessage(
 	}, nil
 }
 
-// ApplicationPromptConfig is a data type used encapsulate the current application prompt configuration.
-type ApplicationPromptConfig struct {
+// RequestConfiguration is a data type used encapsulate the current application prompt configuration.
+type RequestConfiguration struct {
 	// The application ID as a string
 	ApplicationID string `json:"applicationId"`
 	// The application DB record
@@ -42,4 +42,10 @@ type OpenAIPromptMessageDTO struct {
 	Content           *string   `json:"content,omitempty"`
 	Name              *string   `json:"name,omitempty"`
 	FunctionArguments *[]string `json:"functionArguments,omitempty"`
+}
+
+type PromptResult struct {
+	Content       *string
+	RequestRecord *db.PromptRequestRecord
+	Error         error
 }
