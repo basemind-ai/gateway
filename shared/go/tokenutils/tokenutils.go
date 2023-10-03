@@ -21,5 +21,6 @@ func GetPromptTokenCount(prompt string, modelType db.ModelType) int32 {
 	}
 
 	ids, _, _ := enc.Encode(prompt)
+
 	return int32(len(ids))
 }

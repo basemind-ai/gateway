@@ -17,6 +17,7 @@ import (
 )
 
 func CreateClientAndService(t *testing.T) (*openai.Client, *openaitestutils.MockOpenAIService) {
+	t.Helper()
 	mockService := &openaitestutils.MockOpenAIService{T: t}
 	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](
 		t,

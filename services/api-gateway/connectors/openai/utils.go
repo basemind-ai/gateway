@@ -23,6 +23,7 @@ func GetModelType(modelType db.ModelType) (*openaiconnector.OpenAIModel, error) 
 	if !ok {
 		return nil, fmt.Errorf("unknown model type {%s}", modelType)
 	}
+
 	return &value, nil
 }
 
@@ -102,5 +103,6 @@ func GetRequestPromptString(messages []*openaiconnector.OpenAIMessage) string {
 		promptMessages += *message.Content
 		promptMessages += "\n"
 	}
+
 	return strings.TrimRight(promptMessages, "\n")
 }

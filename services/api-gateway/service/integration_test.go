@@ -32,6 +32,7 @@ import (
 const JWTSecret = "ABC123"
 
 func CreateOpenAIService(t *testing.T) *openaitestutils.MockOpenAIService {
+	t.Helper()
 	mockService := &openaitestutils.MockOpenAIService{T: t}
 	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](
 		t,
@@ -55,6 +56,7 @@ func CreateOpenAIService(t *testing.T) *openaitestutils.MockOpenAIService {
 }
 
 func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
+	t.Helper()
 	listener := testutils.CreateTestServer[gateway.APIGatewayServiceServer](
 		t,
 		gateway.RegisterAPIGatewayServiceServer,
@@ -75,6 +77,7 @@ func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 }
 
 func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismock.ClientMock) {
+	t.Helper()
 	redisDb, mockRedis := redismock.NewClientMock()
 
 	rediscache.SetClient(cache.New(&cache.Options{
@@ -91,6 +94,7 @@ func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismoc
 }
 
 func CreateApplicationPromptConfig(t *testing.T) (*datatypes.RequestConfiguration, string) {
+	t.Helper()
 	dbTestUtils.CreateTestDB(t)
 
 	appConfig, appId, createAppConfigErr := factories.CreateApplicationPromptConfig(context.TODO())
@@ -186,6 +190,7 @@ func TestIntegration(t *testing.T) {
 				if !errors.Is(receiveErr, io.EOF) {
 					assert.Failf(t, "Received unexpected error:", "%v", receiveErr)
 				}
+
 				break
 			}
 			chunks = append(chunks, chunk)

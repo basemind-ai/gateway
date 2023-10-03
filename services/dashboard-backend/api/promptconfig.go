@@ -159,6 +159,34 @@ func updateDefaultPromptConfig(
 	return nil
 }
 
+func createUpdateParams(
+	dto *PromptConfigUpdateDTO,
+	promptConfig *db.PromptConfig,
+) db.UpdatePromptConfigParams {
+	updateParams := db.UpdatePromptConfigParams{
+		ID:              promptConfig.ID,
+		Name:            promptConfig.Name,
+		ModelParameters: promptConfig.ModelParameters,
+		ModelType:       promptConfig.ModelType,
+		IsDefault:       promptConfig.IsDefault,
+	}
+
+	if dto.Name != nil && len(strings.TrimSpace(*dto.Name)) > 0 {
+		updateParams.Name = strings.TrimSpace(*dto.Name)
+	}
+	if dto.ModelParameters != nil {
+		updateParams.ModelParameters = *dto.ModelParameters
+	}
+	if dto.ModelType != nil {
+		updateParams.ModelType = *dto.ModelType
+	}
+	if dto.IsDefault != nil {
+		updateParams.IsDefault = *dto.IsDefault
+	}
+
+	return updateParams
+}
+
 func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	applicationId, applicationIdUuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
 	if applicationIdUuidErr != nil {
@@ -209,30 +237,9 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updateParams := db.UpdatePromptConfigParams{
-		ID:              *promptConfigId,
-		Name:            retrievedPromptConfig.Name,
-		ModelParameters: retrievedPromptConfig.ModelParameters,
-		ModelType:       retrievedPromptConfig.ModelType,
-		IsDefault:       retrievedPromptConfig.IsDefault,
-	}
-
-	if dto.Name != nil && len(strings.TrimSpace(*dto.Name)) > 0 {
-		updateParams.Name = strings.TrimSpace(*dto.Name)
-	}
-	if dto.ModelParameters != nil {
-		updateParams.ModelParameters = *dto.ModelParameters
-	}
-	if dto.ModelType != nil {
-		updateParams.ModelType = *dto.ModelType
-	}
-	if dto.IsDefault != nil {
-		updateParams.IsDefault = *dto.IsDefault
-	}
-
 	updatedPromptConfig, updatePromptConfigErr := queries.UpdatePromptConfig(
 		r.Context(),
-		updateParams,
+		createUpdateParams(dto, &retrievedPromptConfig),
 	)
 
 	if updatePromptConfigErr != nil {

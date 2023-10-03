@@ -23,9 +23,11 @@ func RetrievePromptConfig(
 				dbIdErr,
 			)
 		}
+
 		promptConfig, err := db.GetQueries().FindPromptConfigById(ctx, dbId)
 		return &promptConfig, err
 	}
+
 	promptConfig, err := db.GetQueries().FindDefaultPromptConfigByApplicationId(ctx, applicationId)
 	return &promptConfig, err
 }

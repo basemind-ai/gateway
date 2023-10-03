@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
 
@@ -62,8 +63,12 @@ func main() {
 		Middlewares:      middlewares,
 	})
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", cfg.Port),
-		Handler: mux,
+		IdleTimeout:       30 * time.Second,
+		ReadHeaderTimeout: 2 * time.Second,
+		ReadTimeout:       3 * time.Second,
+		WriteTimeout:      3 * time.Second,
+		Addr:              fmt.Sprintf(":%d", cfg.Port),
+		Handler:           mux,
 	}
 
 	g, gCtx := errgroup.WithContext(ctx)

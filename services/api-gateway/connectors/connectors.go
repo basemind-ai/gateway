@@ -42,12 +42,14 @@ func Init(ctx context.Context, opts ...grpc.DialOption) error {
 		config := &ConnectorConfig{}
 		if envErr := envconfig.Process(ctx, config); envErr != nil {
 			err = envErr
+
 			return
 		}
 
 		openaiClient, openaiClientErr := openai.New(config.OpenAIConnectorAddress, opts...)
 		if openaiClientErr != nil {
 			err = openaiClientErr
+
 			return
 		}
 		openaiConnectorClient = openaiClient

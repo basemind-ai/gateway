@@ -27,7 +27,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 	authMiddleware := middleware.FirebaseAuthMiddleware(mockNext)
 
 	t.Run("returns Unauthorized for missing auth header", func(t *testing.T) {
-		request := httptest.NewRequest("GET", "/", nil)
+		request := httptest.NewRequest(http.MethodGet, "/", nil)
 		testRecorder := httptest.NewRecorder()
 
 		authMiddleware.ServeHTTP(testRecorder, request)
@@ -36,7 +36,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 	})
 
 	t.Run("returns Unauthorized for auth header without proper prefix", func(t *testing.T) {
-		request := httptest.NewRequest("GET", "/", nil)
+		request := httptest.NewRequest(http.MethodGet, "/", nil)
 		request.Header.Set("Authorization", "Apikey 123")
 		testRecorder := httptest.NewRecorder()
 
@@ -50,7 +50,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{}, fmt.Errorf("test"))
 
-		request := httptest.NewRequest("GET", "/", nil)
+		request := httptest.NewRequest(http.MethodGet, "/", nil)
 		request.Header.Set("Authorization", "Bearer abc")
 		testRecorder := httptest.NewRecorder()
 
@@ -65,7 +65,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{UID: "123"}, nil)
 
-		request := httptest.NewRequest("GET", "/", nil)
+		request := httptest.NewRequest(http.MethodGet, "/", nil)
 		request.Header.Set("Authorization", "Bearer abc")
 		testRecorder := httptest.NewRecorder()
 

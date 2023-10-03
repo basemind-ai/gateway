@@ -18,6 +18,7 @@ func CreateTestServer[T any](
 	service T,
 	serverOpts ...grpc.ServerOption,
 ) *bufconn.Listener {
+	t.Helper()
 	listen := bufconn.Listen(101024 * 1024)
 	server := grpcutils.CreateGRPCServer[T](
 		grpcutils.Options[T]{
@@ -50,6 +51,7 @@ func CreateTestClient[T interface{}](
 	listen *bufconn.Listener,
 	clientFactory func(cc grpc.ClientConnInterface) T,
 ) T {
+	t.Helper()
 	conn, dialErr := grpc.DialContext(context.TODO(), "",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(

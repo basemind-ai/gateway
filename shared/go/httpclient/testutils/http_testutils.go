@@ -8,6 +8,7 @@ import (
 )
 
 func CreateTestClient(t *testing.T, handler http.Handler) httpclient.Client {
+	t.Helper()
 	server := httptest.NewServer(handler)
 
 	t.Cleanup(func() {

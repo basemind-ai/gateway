@@ -16,6 +16,7 @@ import (
 )
 
 func CreateTestDB(t *testing.T) {
+	t.Helper()
 	connectionPool, poolInitErr := dockertest.NewPool("")
 	if poolInitErr != nil {
 		log.Fatal().Err(poolInitErr).Msg("failed to construct dockertest pool")

@@ -32,6 +32,7 @@ func CreateConnection(ctx context.Context, dbUrl string) (*pgx.Conn, error) {
 				return pgxErr
 			}
 			connection = conn
+
 			return connection.Ping(ctx)
 		}, exponentialBackoff); connErr != nil {
 			err = connErr
@@ -48,6 +49,7 @@ func GetQueries() *Queries {
 		}
 		queries = New(connection)
 	})
+
 	return queries
 }
 
@@ -57,5 +59,6 @@ func GetTransactionQueries(ctx context.Context) (*Queries, pgx.Tx, error) {
 	if err != nil {
 		return nil, nil, err
 	}
+
 	return queries.WithTx(tx), tx, nil
 }

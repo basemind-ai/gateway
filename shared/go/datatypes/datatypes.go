@@ -21,6 +21,7 @@ func CreatePromptTemplateMessage(
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
+
 	return &PromptTemplateMessage{
 		ExpectedTemplateVariables: expectedTemplateVariables,
 		ProviderMessage:           unmarshalledProviderMessage,

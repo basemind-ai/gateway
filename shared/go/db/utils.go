@@ -10,6 +10,7 @@ func StringToUUID(value string) (*pgtype.UUID, error) {
 	if scanErr := uuid.Scan(value); scanErr != nil {
 		return nil, scanErr
 	}
+
 	return uuid, nil
 }
 

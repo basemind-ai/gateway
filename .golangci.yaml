@@ -1,17 +1,42 @@
 run:
     go: '1.21'
 linters-settings:
+    revive:
+        rules:
+            - name: var-naming
+              disabled: true
+    goconst:
+        ignore-tests: true
     govet:
         check-shadowing: true
+        disable-all: true
+    decorder:
+        dec-order:
+            - const
+            - type
+            - var
+            - func
+    gocognit:
+        min-complexity: 15
+    gocyclo:
+        min-complexity: 20
+    maintidx:
+        min-index: 80
 linters:
     enable:
+        - asasalint
         - bidichk
+        - decorder
+        - dupword
         - durationcheck
         - errcheck
         - errorlint
+        - exhaustive
         - exportloopref
+        - gocognit
         - goconst
         - gocritic
+        - gocyclo
         - godot
         - goheader
         - gomodguard
@@ -20,16 +45,23 @@ linters:
         - gosimple
         - govet
         - ineffassign
+        - misspell
+        - nilnil
         - nolintlint
+        - prealloc
         - predeclared
+        - reassign
+        - revive
         - sqlclosecheck
         - staticcheck
         - tenv
         - testpackage
+        - thelper
         - typecheck
         - unconvert
         - unparam
         - unused
+        - usestdlibvars
         - wastedassign
         - whitespace
 issues:
