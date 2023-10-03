@@ -30,13 +30,8 @@ func TestGetPromptTokenCount(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("Test: %d", testCase.expected), func(t *testing.T) {
-			actual, _ := tokenutils.GetPromptTokenCount(testCase.input, db.ModelTypeGpt35Turbo)
-			assert.Equal(t, testCase.expected, actual)
+			count := tokenutils.GetPromptTokenCount(testCase.input, db.ModelTypeGpt35Turbo)
+			assert.Equal(t, testCase.expected, count)
 		})
 	}
-
-	// test for the invalid encodings
-	tokenCnt, err := tokenutils.GetPromptTokenCount("Hello world!", db.ModelType("invalid"))
-	assert.NotNil(t, err)
-	assert.Equal(t, int32(-1), tokenCnt)
 }
