@@ -3,7 +3,7 @@ package connectors
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/sethvargo/go-envconfig"
 	"google.golang.org/grpc"
@@ -22,16 +22,14 @@ type ConnectorConfig struct {
 type ProviderConnector interface {
 	RequestPrompt(
 		ctx context.Context,
-		applicationId string,
-		requestConfiguration *datatypes.RequestConfiguration,
+		requestConfiguration *dto.RequestConfigurationDTO,
 		templateVariables map[string]string,
-	) datatypes.PromptResult
+	) dto.PromptResultDTO
 	RequestStream(
 		ctx context.Context,
-		applicationId string,
-		requestConfiguration *datatypes.RequestConfiguration,
+		requestConfiguration *dto.RequestConfigurationDTO,
 		templateVariables map[string]string,
-		channel chan<- datatypes.PromptResult,
+		channel chan<- dto.PromptResultDTO,
 	)
 }
 

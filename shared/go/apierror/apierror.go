@@ -1,6 +1,7 @@
 package apierror
 
 import (
+	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"net/http"
 	"reflect"
@@ -14,6 +15,10 @@ type ApiError struct {
 
 func (e *ApiError) Render(w http.ResponseWriter, _ *http.Request) {
 	serialization.RenderJsonResponse(w, e.StatusCode, e)
+}
+
+func (e *ApiError) Error() string {
+	return fmt.Sprintf("status: %d, message: %s", e.StatusCode, e.Message)
 }
 
 func NewApiError(statusCode int, args ...interface{}) *ApiError {

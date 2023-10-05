@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -17,31 +16,20 @@ func RandomString(length int) string {
 	return fmt.Sprintf("%x", b)[2 : length+2]
 }
 
-func CreatePromptMessages(systemMessage string, userMessage string) ([]byte, error) {
-	s, createPromptSystemMessageErr := datatypes.CreatePromptTemplateMessage(
-		make([]string, 0),
-		map[string]interface{}{
-			"content": systemMessage,
-			"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
-		},
-	)
-	if createPromptSystemMessageErr != nil {
-		return nil, createPromptSystemMessageErr
-	}
-	u, createPromptUserMessageErr := datatypes.CreatePromptTemplateMessage(
-		[]string{"userInput"},
-		map[string]interface{}{
-			"content": userMessage,
-			"role":    openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
-		},
-	)
-	if createPromptUserMessageErr != nil {
-		return nil, createPromptUserMessageErr
-	}
-
-	promptMessages, marshalErr := json.Marshal([]datatypes.PromptTemplateMessage{
-		*s, *u,
-	})
+func CreateOpenAIPromptMessages(
+	systemMessage string,
+	userMessage string,
+	templateVariables *[]string,
+) ([]byte, error) {
+	msgs := []*datatypes.OpenAIPromptMessageDTO{{
+		Content: &systemMessage,
+		Role:    "system",
+	}, {
+		Role:              "user",
+		Content:           &userMessage,
+		TemplateVariables: templateVariables,
+	}}
+	promptMessages, marshalErr := json.Marshal(msgs)
 	if marshalErr != nil {
 		return nil, marshalErr
 	}
@@ -92,34 +80,28 @@ func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Applicat
 	return &application, nil
 }
 
-func CreateApplicationPromptConfig(
+func CreatePromptConfig(
 	ctx context.Context,
-) (*datatypes.RequestConfiguration, string, error) {
-	project, projectCreateErr := CreateProject(ctx)
-
-	if projectCreateErr != nil {
-		return nil, "", projectCreateErr
-	}
-
+	applicationId pgtype.UUID,
+) (*db.PromptConfig, error) {
 	systemMessage := "You are a helpful chat bot."
 	userMessage := "This is what the user asked for: {userInput}"
-
-	application, applicationCreateErr := CreateApplication(ctx, project.ID)
-
-	if applicationCreateErr != nil {
-		return nil, "", applicationCreateErr
-	}
+	templateVariables := []string{"userInput"}
 
 	modelParams, modelParamsCreateErr := CreateModelParameters()
 
 	if modelParamsCreateErr != nil {
-		return nil, "", modelParamsCreateErr
+		return nil, modelParamsCreateErr
 	}
 
-	promptMessages, promptMessagesCreateErr := CreatePromptMessages(systemMessage, userMessage)
+	promptMessages, promptMessagesCreateErr := CreateOpenAIPromptMessages(
+		systemMessage,
+		userMessage,
+		&templateVariables,
+	)
 
 	if promptMessagesCreateErr != nil {
-		return nil, "", promptMessagesCreateErr
+		return nil, promptMessagesCreateErr
 	}
 
 	promptConfig, promptConfigCreateErr := db.GetQueries().
@@ -130,30 +112,11 @@ func CreateApplicationPromptConfig(
 			ProviderPromptMessages:    promptMessages,
 			ExpectedTemplateVariables: []string{"userInput"},
 			IsDefault:                 true,
-			ApplicationID:             application.ID,
+			ApplicationID:             applicationId,
 		})
 	if promptConfigCreateErr != nil {
-		return nil, "", promptConfigCreateErr
+		return nil, promptConfigCreateErr
 	}
 
-	return &datatypes.RequestConfiguration{
-		ApplicationID:    db.UUIDToString(&application.ID),
-		ApplicationData:  *application,
-		PromptConfigData: promptConfig,
-	}, db.UUIDToString(&application.ID), nil
-}
-
-func CreateOpenAIPromptMessageDTO(tupleSlice []struct {
-	Role    string
-	Content string
-}) ([]byte, error) {
-	openAIPromptMessageDTOs := make([]datatypes.OpenAIPromptMessageDTO, 0)
-	for _, tuple := range tupleSlice {
-		content := tuple.Content
-		openAIPromptMessageDTOs = append(openAIPromptMessageDTOs, datatypes.OpenAIPromptMessageDTO{
-			Role:    tuple.Role,
-			Content: &content,
-		})
-	}
-	return json.Marshal(openAIPromptMessageDTOs)
+	return &promptConfig, nil
 }

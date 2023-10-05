@@ -30,14 +30,25 @@ var seedCommand = &cobra.Command{
 			}
 		}()
 
-		promptConfig, applicationId, promptConfigCreateErr := factories.CreateApplicationPromptConfig(
+		project, projectCreateErr := factories.CreateProject(cmd.Context())
+		if projectCreateErr != nil {
+			log.Fatal().Err(projectCreateErr).Msg("failed to create project")
+		}
+		log.Info().Interface("project", project).Msg("created project")
+
+		application, applicationCreateErr := factories.CreateApplication(cmd.Context(), project.ID)
+		if applicationCreateErr != nil {
+			log.Fatal().Err(applicationCreateErr).Msg("failed to create application")
+		}
+		log.Info().Interface("application", application).Msg("created application")
+
+		promptConfig, promptConfigCreateErr := factories.CreatePromptConfig(
 			cmd.Context(),
+			application.ID,
 		)
 		if promptConfigCreateErr != nil {
 			log.Fatal().Err(promptConfigCreateErr).Msg("failed to create application prompt config")
 		}
-
-		log.Info().Str("applicationId", applicationId).Msg("created application")
 		log.Info().Interface("promptConfig", promptConfig).Msg("created prompt config")
 	},
 }
