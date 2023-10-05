@@ -3,30 +3,6 @@ module.exports = {
 	important: true,
 	content: ['./src/**/*.{tsx,scss}', 'node_modules/preline/dist/*.js'],
 	theme: {
-		colors: {
-			'transparent': 'transparent',
-			'current': 'currentColor',
-			'base-100': '#272935',
-			'base-200': '#181920',
-			'base-300': '#09090B',
-			'base-content': '#F8F8F2',
-			'neutral': '#414558',
-			'neutral-content': '#D6D7DB',
-			'primary': '#FF79C6',
-			'primary-content': '#301D27',
-			'secondary': '#BD93F9',
-			'secondary-content': '#282130',
-			'accent': '#FFB86C',
-			'accent-content': '#32261B',
-			'info': '#8BE9FD',
-			'info-content': '#212E31',
-			'success': '#50FA7B',
-			'success-content': '#192D1D',
-			'warning': '#F1FA8C',
-			'warning-content': '#2D2E1E',
-			'error': '#FF5555',
-			'error-content': '#311816',
-		},
 		extend: {
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -47,6 +23,16 @@ module.exports = {
 	plugins: [
 		require('@tailwindcss/typography'),
 		require('tailwindcss-elevation'),
-		require('preline/plugin'),
+		require('daisyui'),
 	],
+	daisyui: {
+		themes: ['dracula'], // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]
+		darkTheme: 'dracula', // name of one of the included themes for dark mode
+		base: true, // applies background color and foreground color for root element by default
+		styled: true, // include daisyUI colors and design decisions for all components
+		utils: true, // adds responsive and modifier utility classes
+		rtl: false, // rotate style direction from left-to-right to right-to-left. You also need to add dir="rtl" to your html tag and install `tailwindcss-flip` plugin for Tailwind CSS.
+		prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
+		logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
+	},
 };
