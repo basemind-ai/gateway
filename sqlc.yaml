@@ -4,7 +4,11 @@ sql:
       queries: './sql/query.sql'
       schema: './sql/schema.sql'
       database:
-          uri: ${DATABASE_URL}
+          uri: postgresql://basemind:basemind@localhost:5432/basemind
+      rules:
+          - sqlc/db-prepare
+          - postgresql-query-too-costly
+          - postgresql-no-seq-scan
       gen:
           go:
               package: 'db'
@@ -12,3 +16,10 @@ sql:
               sql_package: 'pgx/v5'
               emit_json_tags: true
               json_tags_case_style: camel
+rules:
+    - name: postgresql-query-too-costly
+      message: 'Query cost estimate is too high'
+      rule: 'postgresql.explain.plan.total_cost > 25.0'
+    - name: postgresql-no-seq-scan
+      message: 'Query plan results in a sequential scan'
+      rule: "postgresql.explain.plan.node_type == 'Seq Scan'"
