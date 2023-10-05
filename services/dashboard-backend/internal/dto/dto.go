@@ -49,6 +49,6 @@ type PromptConfigUpdateDTO struct {
 type ApplicationTokenDTO struct {
 	ID        string    `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
-	Name      string    `json:"name"`
+	Name      string    `json:"name"           validate:"required"`
 	Hash      *string   `json:"hash,omitempty"`
 }

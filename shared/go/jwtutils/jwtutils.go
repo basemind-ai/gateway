@@ -8,12 +8,15 @@ import (
 )
 
 func CreateJWT(ttl time.Duration, secret []byte, sub string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"exp": time.Now().UTC().Add(ttl).Unix(),
-			"sub": sub,
-		})
+	claims := jwt.MapClaims{
+		"sub": sub,
+	}
 
+	if ttl > 0 {
+		claims["exp"] = time.Now().Add(ttl).Unix()
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(secret)
 }
 
