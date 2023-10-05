@@ -30,7 +30,7 @@ func (m MockOpenAIService) OpenAIPrompt(
 	if m.ExpectedRequest != nil {
 		assert.Equal(m.T, m.ExpectedRequest.Model, request.Model)
 		assert.Equal(m.T, m.ExpectedRequest.ApplicationId, request.ApplicationId)
-
+		assert.Len(m.T, m.ExpectedRequest.Messages, len(request.Messages))
 		for i, message := range m.ExpectedRequest.Messages {
 			assert.Equal(m.T, message.Role, request.Messages[i].Role)
 			assert.Equal(m.T, message.Content, request.Messages[i].Content)

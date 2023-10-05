@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	db "github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"github.com/jackc/pgx/v5/pgtype"
 
@@ -19,80 +19,46 @@ func TestDbQueries(t *testing.T) {
 	dbTestUtils.CreateTestDB(t)
 	dbQueries := db.GetQueries()
 
-	t.Run("CheckUserExists tests", func(t *testing.T) {
+	t.Run("CheckUserAccountExists tests", func(t *testing.T) {
 		testUserId := uuid.NewString()
 
 		t.Run("returns false when user does not exist", func(t *testing.T) {
-			userExists, err := dbQueries.CheckUserExists(context.TODO(), testUserId)
+			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserId)
 			assert.Nil(t, err)
 			assert.False(t, userExists)
 		})
 
 		t.Run("returns true when user does exist", func(t *testing.T) {
-			_, err := dbQueries.CreateUser(context.TODO(), testUserId)
+			_, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
 			assert.Nil(t, err)
 
-			userExists, err := dbQueries.CheckUserExists(context.TODO(), testUserId)
+			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserId)
 			assert.Nil(t, err)
 			assert.True(t, userExists)
-		})
-	})
-
-	t.Run("FindUserByFirebaseId tests", func(t *testing.T) {
-		t.Run("throws error when user does not exist", func(t *testing.T) {
-			testUserId := uuid.NewString()
-			_, err := dbQueries.FindUserByFirebaseId(context.TODO(), testUserId)
-			assert.NotNil(t, err)
-		})
-
-		t.Run("successfully find a user", func(t *testing.T) {
-			testUserId := uuid.NewString()
-
-			_, err := dbQueries.CreateUser(context.TODO(), testUserId)
-			assert.Nil(t, err)
-
-			user, err := dbQueries.FindUserByFirebaseId(context.TODO(), testUserId)
-			assert.Nil(t, err)
-			assert.Equal(t, user.FirebaseID, testUserId)
 		})
 	})
 
 	t.Run("CreateUser tests", func(t *testing.T) {
 		t.Run("successfully creates a user", func(t *testing.T) {
 			testUserId := uuid.NewString()
-			user, err := dbQueries.CreateUser(context.TODO(), testUserId)
+			user, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
 			assert.Nil(t, err)
 
 			assert.Equal(t, user.FirebaseID, testUserId)
 			assert.NotNil(t, user.ID)
 			assert.NotNil(t, user.CreatedAt)
 
-			userExists, err := dbQueries.CheckUserExists(context.TODO(), testUserId)
+			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserId)
 			assert.Nil(t, err)
 			assert.True(t, userExists)
 		})
 
 		t.Run("fails when creating a user with duplicate firebase id", func(t *testing.T) {
 			testUserId := uuid.NewString()
-			_, err := dbQueries.CreateUser(context.TODO(), testUserId)
+			_, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
 			assert.Nil(t, err)
-			_, err = dbQueries.CreateUser(context.TODO(), testUserId)
+			_, err = dbQueries.CreateUserAccount(context.TODO(), testUserId)
 			assert.NotNil(t, err)
-		})
-	})
-
-	t.Run("DeleteUser tests", func(t *testing.T) {
-		t.Run("successfully deletes a user", func(t *testing.T) {
-			testUserId := uuid.NewString()
-			_, err := dbQueries.CreateUser(context.TODO(), testUserId)
-			assert.Nil(t, err)
-
-			err = dbQueries.DeleteUser(context.TODO(), testUserId)
-			assert.Nil(t, err)
-
-			userExists, err := dbQueries.CheckUserExists(context.TODO(), testUserId)
-			assert.Nil(t, err)
-			assert.False(t, userExists)
 		})
 	})
 
@@ -127,7 +93,7 @@ func TestDbQueries(t *testing.T) {
 	t.Run("CreateUserProject tests", func(t *testing.T) {
 		testUserId := uuid.NewString()
 
-		user, err := dbQueries.CreateUser(context.TODO(), testUserId)
+		user, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
 		assert.Nil(t, err)
 
 		t.Run("successfully creates a user project", func(t *testing.T) {
@@ -190,108 +156,6 @@ func TestDbQueries(t *testing.T) {
 		})
 	})
 
-	t.Run("FindProjectsByUserId tests", func(t *testing.T) {
-		testUserId := uuid.NewString()
-
-		user, err := dbQueries.CreateUser(context.TODO(), testUserId)
-		assert.Nil(t, err)
-
-		t.Run("successfully delete a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(
-				context.TODO(),
-				db.CreateProjectParams{Name: "test", Description: "test"},
-			)
-			assert.Nil(t, err)
-
-			createProjectParams := db.CreateUserProjectParams{
-				UserID:     user.ID,
-				ProjectID:  project.ID,
-				Permission: db.AccessPermissionTypeADMIN,
-			}
-			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
-			assert.Nil(t, err)
-
-			err = dbQueries.DeleteUserProject(context.TODO(), userProject.ProjectID)
-			assert.Nil(t, err)
-
-			userProjects, err := dbQueries.FindProjectsByUserId(context.TODO(), user.ID)
-			assert.Nil(t, err)
-
-			assert.Equal(t, len(userProjects), 0)
-		})
-	})
-
-	t.Run("DeleteUserProject tests", func(t *testing.T) {
-		testUserId := uuid.NewString()
-
-		user, err := dbQueries.CreateUser(context.TODO(), testUserId)
-		assert.Nil(t, err)
-
-		t.Run("successfully delete a user project", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(
-				context.TODO(),
-				db.CreateProjectParams{Name: "test", Description: "test"},
-			)
-			assert.Nil(t, err)
-
-			createProjectParams := db.CreateUserProjectParams{
-				UserID:     user.ID,
-				ProjectID:  project.ID,
-				Permission: db.AccessPermissionTypeADMIN,
-			}
-			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
-			assert.Nil(t, err)
-
-			err = dbQueries.DeleteUserProject(context.TODO(), userProject.ProjectID)
-			assert.Nil(t, err)
-
-			userProjects, err := dbQueries.FindProjectsByUserId(context.TODO(), user.ID)
-			assert.Nil(t, err)
-
-			assert.Equal(t, len(userProjects), 0)
-		})
-	})
-
-	t.Run("FindProjectsByUserId tests", func(t *testing.T) {
-		t.Run("successfully finds projects of a user", func(t *testing.T) {
-			testUserId := uuid.NewString()
-			user, err := dbQueries.CreateUser(context.TODO(), testUserId)
-			assert.Nil(t, err)
-
-			project, err := dbQueries.CreateProject(
-				context.TODO(),
-				db.CreateProjectParams{Name: "test", Description: "test"},
-			)
-			assert.Nil(t, err)
-
-			createProjectParams := db.CreateUserProjectParams{
-				UserID:     user.ID,
-				ProjectID:  project.ID,
-				Permission: db.AccessPermissionTypeADMIN,
-			}
-			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
-			assert.Nil(t, err)
-
-			userProjects, err := dbQueries.FindProjectsByUserId(context.TODO(), user.ID)
-			assert.Nil(t, err)
-
-			assert.Equal(t, len(userProjects), 1)
-			assert.Equal(t, userProjects[0].ID, userProject.ProjectID)
-			assert.Equal(t, userProjects[0].Name, project.Name)
-		})
-
-		t.Run("returns empty array when user does not have any projects", func(t *testing.T) {
-			testUserId := uuid.NewString()
-			user, err := dbQueries.CreateUser(context.TODO(), testUserId)
-			assert.Nil(t, err)
-
-			userProjects, err := dbQueries.FindProjectsByUserId(context.TODO(), user.ID)
-			assert.Nil(t, err)
-
-			assert.Equal(t, len(userProjects), 0)
-		})
-	})
-
 	t.Run("CreatePromptRequestRecord tests", func(t *testing.T) {
 		tokenCount := int32(10)
 		promptStartTime := time.Now()
@@ -307,12 +171,7 @@ func TestDbQueries(t *testing.T) {
 
 		systemMessages := "You are a chatbot."
 		userMessage := "Write a jungle story."
-		promptMessages, _ := factories.CreateOpenAIPromptMessageDTO([]struct {
-			Role    string
-			Content string
-		}{
-			{Role: "system", Content: systemMessages}, {Role: "user", Content: userMessage},
-		})
+		promptMessages, _ := factories.CreateOpenAIPromptMessages(systemMessages, userMessage, nil)
 
 		promptConfig, _ := db.GetQueries().
 			CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{

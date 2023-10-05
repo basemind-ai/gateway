@@ -15,8 +15,7 @@ import (
 	"github.com/ory/dockertest/v3/docker"
 )
 
-func CreateTestDB(t *testing.T) {
-	t.Helper()
+func CreateNamespaceTestDBModule(namespace string) func() {
 	connectionPool, poolInitErr := dockertest.NewPool("")
 	if poolInitErr != nil {
 		log.Fatal().Err(poolInitErr).Msg("failed to construct dockertest pool")
@@ -32,7 +31,7 @@ func CreateTestDB(t *testing.T) {
 		Env: []string{
 			"POSTGRES_PASSWORD=test",
 			"POSTGRES_USER=test",
-			fmt.Sprintf("POSTGRES_DB=%s", t.Name()),
+			fmt.Sprintf("POSTGRES_DB=%s", namespace),
 			"listen_addresses = '*'",
 		},
 	}
@@ -51,7 +50,7 @@ func CreateTestDB(t *testing.T) {
 	dbUrl := fmt.Sprintf(
 		"postgres://test:test@%s/%s?sslmode=disable",
 		resource.GetHostPort("5432/tcp"),
-		t.Name(),
+		namespace,
 	)
 
 	connection, connectionErr := db.CreateConnection(context.TODO(), dbUrl)
@@ -60,17 +59,24 @@ func CreateTestDB(t *testing.T) {
 	}
 
 	if migrationsErr := MigrateTestDb(dbUrl); migrationsErr != nil {
-		log.Error().Err(migrationsErr).Send()
 		_ = connectionPool.Purge(resource)
-		t.Fatal("failed to migrate test database")
+		log.Fatal().Err(migrationsErr).Msg("failed to migrate test database")
 	}
 
-	t.Cleanup(func() {
+	return func() {
 		_ = connection.Close(context.TODO())
 		if purgeErr := connectionPool.Purge(resource); purgeErr != nil {
 			log.Fatal().Err(purgeErr).Msg("failed to purge test database")
 		}
-	})
+	}
+}
+
+func CreateTestDB(t *testing.T) {
+	t.Helper()
+
+	cleanup := CreateNamespaceTestDBModule(t.Name())
+
+	t.Cleanup(cleanup)
 }
 
 func MigrateTestDb(dbUrl string) error {

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -16,8 +16,8 @@ import (
 )
 
 func streamFromClient(
-	channel chan<- datatypes.PromptResult,
-	promptResult *datatypes.PromptResult,
+	channel chan<- dto.PromptResultDTO,
+	promptResult *dto.PromptResultDTO,
 	recordParams *db.CreatePromptRequestRecordParams,
 	startTime time.Time,
 	stream openaiconnector.OpenAIService_OpenAIStreamClient,
@@ -41,7 +41,7 @@ func streamFromClient(
 			}
 
 			builder.WriteString(msg.Content)
-			channel <- datatypes.PromptResult{Content: &msg.Content}
+			channel <- dto.PromptResultDTO{Content: &msg.Content}
 		}
 	}
 
@@ -50,13 +50,12 @@ func streamFromClient(
 
 func (c *Client) RequestStream(
 	ctx context.Context,
-	applicationId string,
-	requestConfiguration *datatypes.RequestConfiguration,
+	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
-	channel chan<- datatypes.PromptResult,
+	channel chan<- dto.PromptResultDTO,
 ) {
 	promptRequest, promptRequestErr := CreatePromptRequest(
-		applicationId,
+		requestConfiguration.ApplicationIDString,
 		requestConfiguration.PromptConfigData.ModelType,
 		requestConfiguration.PromptConfigData.ModelParameters,
 		requestConfiguration.PromptConfigData.ProviderPromptMessages,
@@ -64,7 +63,7 @@ func (c *Client) RequestStream(
 	)
 	if promptRequestErr != nil {
 		log.Error().Err(promptRequestErr).Msg("failed to create prompt request")
-		channel <- datatypes.PromptResult{Error: promptRequestErr}
+		channel <- dto.PromptResultDTO{Error: promptRequestErr}
 		close(channel)
 
 		return
@@ -73,7 +72,7 @@ func (c *Client) RequestStream(
 	startTime := time.Now()
 
 	recordParams := &db.CreatePromptRequestRecordParams{
-		PromptConfigID:   requestConfiguration.PromptConfigData.ID,
+		PromptConfigID:   requestConfiguration.PromptConfigID,
 		IsStreamResponse: true,
 		StartTime:        pgtype.Timestamptz{Time: startTime, Valid: true},
 		RequestTokens: tokenutils.GetPromptTokenCount(
@@ -81,7 +80,7 @@ func (c *Client) RequestStream(
 			requestConfiguration.PromptConfigData.ModelType,
 		),
 	}
-	finalResult := &datatypes.PromptResult{}
+	finalResult := &dto.PromptResultDTO{}
 
 	if stream, streamErr := c.client.OpenAIStream(ctx, promptRequest); streamErr == nil {
 		promptContent := streamFromClient(

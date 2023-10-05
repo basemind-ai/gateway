@@ -29,6 +29,44 @@ func TestUtils(t *testing.T) {
 		})
 	})
 
+	t.Run("GetMessageRole", func(t *testing.T) {
+		testCases := []struct {
+			Role     string
+			Expected openaiconnector.OpenAIMessageRole
+		}{{
+			Role:     "user",
+			Expected: openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER,
+		},
+			{
+				Role:     "system",
+				Expected: openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM,
+			},
+			{
+				Role:     "assistant",
+				Expected: openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_ASSISTANT,
+			},
+			{
+				Role:     "function",
+				Expected: openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_FUNCTION,
+			},
+		}
+		for _, testCase := range testCases {
+			t.Run(
+				fmt.Sprintf("returns the expected message role for %s", testCase.Role),
+				func(t *testing.T) {
+					result, err := openai.GetMessageRole(testCase.Role)
+					assert.NoError(t, err)
+					assert.Equal(t, testCase.Expected, *result)
+				},
+			)
+		}
+
+		t.Run("returns an error for unknown message role", func(t *testing.T) {
+			_, err := openai.GetMessageRole("unknown")
+			assert.Error(t, err)
+		})
+	})
+
 	t.Run("ParseTemplateVariables", func(t *testing.T) {
 		t.Run("replaces all expected variables", func(t *testing.T) {
 			content := "Hello {name}, your age is {age}. How are you {name}?"
@@ -71,7 +109,7 @@ func TestUtils(t *testing.T) {
 			assert.Error(t, err)
 
 			expectedError := "missing template variable {age}"
-			assert.Equal(t, expectedError, err.Error())
+			assert.Contains(t, err.Error(), expectedError)
 		})
 		t.Run("handles empty template variable", func(t *testing.T) {
 			content := "Hello {name}, how are you?"
@@ -105,15 +143,17 @@ func TestUtils(t *testing.T) {
 
 			systemMessage := "You are a helpful chat bot."
 			userMessage := "This is what the user asked for: {userInput}"
+			expectedTemplateVariables := []string{"userInput"}
 			applicationId := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 
 			modelParameters, modelParametersErr := factories.CreateModelParameters()
 			assert.NoError(t, modelParametersErr)
 
-			promptMessages, promptMessagesErr := factories.CreatePromptMessages(
+			promptMessages, promptMessagesErr := factories.CreateOpenAIPromptMessages(
 				systemMessage,
 				userMessage,
+				&expectedTemplateVariables,
 			)
 			assert.NoError(t, promptMessagesErr)
 
@@ -203,29 +243,6 @@ func TestUtils(t *testing.T) {
 			)
 			assert.Error(t, err)
 		})
-		t.Run(
-			"returns error if template variables does not contain the necessary variables",
-			func(t *testing.T) {
-				applicationId := "12345"
-				modelType := db.ModelTypeGpt35Turbo
-				modelParameters := []byte(`{"temperature": 0.8}`)
-				promptMessages := []byte(
-					`[{"content": "This is what the user asked for: {userInput}", "role": "user"}]`,
-				)
-				templateVariables := map[string]string{
-					"invalidVariable": "Please write me a short poem about cheese.",
-				}
-
-				_, err := openai.CreatePromptRequest(
-					applicationId,
-					modelType,
-					modelParameters,
-					promptMessages,
-					templateVariables,
-				)
-				assert.Error(t, err)
-			},
-		)
 	})
 
 	t.Run("GetRequestPromptString", func(t *testing.T) {

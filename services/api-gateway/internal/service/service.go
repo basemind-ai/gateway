@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/rs/zerolog/log"
@@ -40,28 +40,35 @@ func (Server) RequestPrompt(
 		cacheKey = fmt.Sprintf("%s:%s", applicationId, *request.PromptConfigId)
 	}
 
-	applicationConfiguration, retrievalErr := rediscache.With[datatypes.RequestConfiguration](
+	requestConfigurationDTO, retrievalErr := rediscache.With[dto.RequestConfigurationDTO](
 		ctx,
 		cacheKey,
-		&datatypes.RequestConfiguration{},
+		&dto.RequestConfigurationDTO{},
 		time.Minute*30,
 		RetrieveRequestConfiguration(ctx, applicationId, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
-		return nil, retrievalErr
+		return nil, status.Error(
+			codes.NotFound,
+			"the application does not have an active prompt configuration",
+		)
 	}
 
-	promptResult := connectors.GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
+	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
+		// the validation error is already a grpc status error
+		return nil, validationError
+	}
+
+	promptResult := connectors.GetProviderConnector(requestConfigurationDTO.PromptConfigData.ModelVendor).
 		RequestPrompt(
 			ctx,
-			applicationId,
-			applicationConfiguration,
+			requestConfigurationDTO,
 			request.TemplateVariables,
 		)
 
 	if promptResult.Error != nil {
 		log.Error().Err(promptResult.Error).Msg("error in prompt request")
-		return nil, promptResult.Error
+		return nil, status.Error(codes.Internal, "error communicating with AI provider")
 	}
 
 	if promptResult.Content == nil {
@@ -76,7 +83,7 @@ func (Server) RequestPrompt(
 	}, nil
 }
 
-func createStreamMessage(result datatypes.PromptResult) *gateway.StreamingPromptResponse {
+func createStreamMessage(result dto.PromptResultDTO) *gateway.StreamingPromptResponse {
 	msg := &gateway.StreamingPromptResponse{}
 	if result.Error != nil {
 		reason := "error"
@@ -106,7 +113,7 @@ func createStreamMessage(result datatypes.PromptResult) *gateway.StreamingPrompt
 }
 
 func streamFromChannel(
-	channel chan datatypes.PromptResult,
+	channel chan dto.PromptResultDTO,
 	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
 ) error {
 	for result := range channel {
@@ -114,12 +121,12 @@ func streamFromChannel(
 
 		if sendErr := streamServer.SendMsg(msg); sendErr != nil {
 			log.Error().Err(sendErr).Msg("failed to send message")
-			return sendErr
+			return status.Error(codes.Internal, "failed to send message")
 		}
 
 		if result.Error != nil {
 			log.Error().Err(result.Error).Msg("error in prompt request")
-			return result.Error
+			return status.Error(codes.Internal, "error communicating with AI provider")
 		}
 
 		if msg.FinishReason != nil {
@@ -143,24 +150,32 @@ func (Server) RequestStreamingPrompt(
 	if request.PromptConfigId != nil {
 		cacheKey = fmt.Sprintf("%s:%s", applicationId, *request.PromptConfigId)
 	}
-	applicationConfiguration, retrievalErr := rediscache.With[datatypes.RequestConfiguration](
+
+	requestConfigurationDTO, retrievalErr := rediscache.With[dto.RequestConfigurationDTO](
 		streamServer.Context(),
 		cacheKey,
-		&datatypes.RequestConfiguration{},
+		&dto.RequestConfigurationDTO{},
 		time.Minute*30,
 		RetrieveRequestConfiguration(streamServer.Context(), applicationId, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
-		return retrievalErr
+		return status.Error(
+			codes.NotFound,
+			"the application does not have an active prompt configuration",
+		)
 	}
 
-	channel := make(chan datatypes.PromptResult)
+	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
+		// the validation error is already a grpc status error
+		return validationError
+	}
 
-	go connectors.GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
+	channel := make(chan dto.PromptResultDTO)
+
+	go connectors.GetProviderConnector(requestConfigurationDTO.PromptConfigData.ModelVendor).
 		RequestStream(
 			streamServer.Context(),
-			applicationId,
-			applicationConfiguration,
+			requestConfigurationDTO,
 			request.TemplateVariables,
 			channel,
 		)

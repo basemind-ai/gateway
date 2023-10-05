@@ -1,11 +1,15 @@
 package api
 
 const (
-	ProjectsListEndpoint       = "/projects"
-	ApplicationsListEndpoint   = "/projects/{projectId}/applications"
-	ApplicationDetailEndpoint  = "/projects/{projectId}/applications/{applicationId}"
-	PromptConfigListEndpoint   = "/projects/{projectId}/applications/{applicationId}/prompt-configs"
-	PromptConfigDetailEndpoint = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}"
+	UserAccountEndpoint            = "/user-account"
+	ProjectsListEndpoint           = "/projects"
+	ProjectDetailEndpoint          = "/projects/{projectId}"
+	ProjectUserDetailEndpoint      = "/projects/{projectId}/users/{userId}"
+	ApplicationsListEndpoint       = "/projects/{projectId}/applications"
+	ApplicationDetailEndpoint      = "/projects/{projectId}/applications/{applicationId}"
+	PromptConfigListEndpoint       = "/projects/{projectId}/applications/{applicationId}/prompt-configs"
+	PromptConfigDetailEndpoint     = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}"
+	PromptConfigSetDefaultEndpoint = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}/set-default"
 )
 
 const (

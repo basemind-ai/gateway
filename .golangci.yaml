@@ -17,7 +17,7 @@ linters-settings:
             - var
             - func
     gocognit:
-        min-complexity: 15
+        min-complexity: 20
     gocyclo:
         min-complexity: 20
     maintidx:

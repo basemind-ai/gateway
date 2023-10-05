@@ -3,9 +3,11 @@ package openai
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"strings"
 
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
@@ -27,6 +29,21 @@ func GetModelType(modelType db.ModelType) (*openaiconnector.OpenAIModel, error) 
 	return &value, nil
 }
 
+func GetMessageRole(role string) (*openaiconnector.OpenAIMessageRole, error) {
+	switch role {
+	case "system":
+		return openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_SYSTEM.Enum(), nil
+	case "user":
+		return openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_USER.Enum(), nil
+	case "assistant":
+		return openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_ASSISTANT.Enum(), nil
+	case "function":
+		return openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_FUNCTION.Enum(), nil
+	default:
+		return nil, status.Errorf(codes.InvalidArgument, "unknown message role {%s}", role)
+	}
+}
+
 func ParseTemplateVariables(
 	content string,
 	expectedVariables []string,
@@ -36,7 +53,11 @@ func ParseTemplateVariables(
 		value, ok := templateVariables[expectedVariable]
 
 		if !ok {
-			return "", fmt.Errorf("missing template variable {%s}", expectedVariable)
+			return "", status.Errorf(
+				codes.InvalidArgument,
+				"missing template variable {%s}",
+				expectedVariable,
+			)
 		}
 
 		content = strings.ReplaceAll(content, fmt.Sprintf("{%s}", expectedVariable), value)
@@ -61,37 +82,51 @@ func CreatePromptRequest(
 		Model:         *model,
 		ApplicationId: &applicationId,
 		Parameters:    &openaiconnector.OpenAIModelParameters{},
-		Messages:      make([]*openaiconnector.OpenAIMessage, 0),
+		Messages:      []*openaiconnector.OpenAIMessage{},
 	}
 
 	if parametersUnmarshalErr := json.Unmarshal(modelParameters, promptRequest.Parameters); parametersUnmarshalErr != nil {
-		return nil, parametersUnmarshalErr
+		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
 	}
 
-	messages := make([]datatypes.PromptTemplateMessage, 0)
-
-	if messagesUnmarshalErr := json.Unmarshal(promptMessages, &messages); messagesUnmarshalErr != nil {
-		return nil, messagesUnmarshalErr
+	var openAIPromptMessageDTOs []*datatypes.OpenAIPromptMessageDTO
+	if messagesUnmarshalErr := json.Unmarshal(promptMessages, &openAIPromptMessageDTOs); messagesUnmarshalErr != nil {
+		return nil, fmt.Errorf("failed to unmarshal prompt messages - %w", messagesUnmarshalErr)
 	}
-	for _, message := range messages {
-		openaiMessage := &openaiconnector.OpenAIMessage{}
-		if unmarshalErr := json.Unmarshal(message.ProviderMessage, openaiMessage); unmarshalErr != nil {
-			return nil, unmarshalErr
+
+	for _, dto := range openAIPromptMessageDTOs {
+		messageRole, roleErr := GetMessageRole(dto.Role)
+		if roleErr != nil {
+			return nil, roleErr
 		}
-
-		if openaiMessage.Content != nil {
-			parsedContent, parseErr := ParseTemplateVariables(
-				*openaiMessage.Content,
-				message.ExpectedTemplateVariables,
-				templateVariables,
-			)
-			if parseErr != nil {
-				return nil, parseErr
+		openAIMessage := &openaiconnector.OpenAIMessage{
+			Role: *messageRole,
+			Name: dto.Name,
+		}
+		if dto.Content != nil {
+			if dto.TemplateVariables != nil {
+				parsedContent, parseErr := ParseTemplateVariables(
+					*dto.Content,
+					*dto.TemplateVariables,
+					templateVariables,
+				)
+				if parseErr != nil {
+					return nil, parseErr
+				}
+				openAIMessage.Content = &parsedContent
+			} else {
+				openAIMessage.Content = dto.Content
 			}
-			openaiMessage.Content = &parsedContent
 		}
 
-		promptRequest.Messages = append(promptRequest.Messages, openaiMessage)
+		if dto.FunctionArguments != nil {
+			openAIMessage.FunctionCall = &openaiconnector.OpenAIFunctionCall{
+				Name:      *dto.Name,
+				Arguments: strings.Join(*dto.FunctionArguments, ","),
+			}
+		}
+
+		promptRequest.Messages = append(promptRequest.Messages, openAIMessage)
 	}
 
 	return promptRequest, nil
@@ -100,8 +135,10 @@ func CreatePromptRequest(
 func GetRequestPromptString(messages []*openaiconnector.OpenAIMessage) string {
 	var promptMessages string
 	for _, message := range messages {
-		promptMessages += *message.Content
-		promptMessages += "\n"
+		if message.Content != nil {
+			promptMessages += *message.Content
+			promptMessages += "\n"
+		}
 	}
 
 	return strings.TrimRight(promptMessages, "\n")

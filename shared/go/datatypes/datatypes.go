@@ -3,50 +3,26 @@ package datatypes
 import (
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"time"
 )
-
-// PromptTemplateMessage is a data type used to represent a generic prompt message template.
-type PromptTemplateMessage struct {
-	// Expected template variables, if any.
-	ExpectedTemplateVariables []string `json:"expectedTemplateVariables"`
-	// Provider message - a json object representing the provider specific message object.
-	ProviderMessage json.RawMessage `json:"providerMessage"`
-}
-
-func CreatePromptTemplateMessage(
-	expectedTemplateVariables []string,
-	providerMessage map[string]interface{},
-) (*PromptTemplateMessage, error) {
-	unmarshalledProviderMessage, unmarshalErr := json.Marshal(providerMessage)
-	if unmarshalErr != nil {
-		return nil, unmarshalErr
-	}
-
-	return &PromptTemplateMessage{
-		ExpectedTemplateVariables: expectedTemplateVariables,
-		ProviderMessage:           unmarshalledProviderMessage,
-	}, nil
-}
-
-// RequestConfiguration is a data type used encapsulate the current application prompt configuration.
-type RequestConfiguration struct {
-	// The application ID as a string
-	ApplicationID string `json:"applicationId"`
-	// The application DB record
-	ApplicationData db.Application `json:"applicationObject"`
-	// The prompt config DB record
-	PromptConfigData db.PromptConfig `json:"promptConfigObject"`
-}
 
 type OpenAIPromptMessageDTO struct {
 	Role              string    `json:"role"                        validate:"oneof=system user function assistant"`
-	Content           *string   `json:"content,omitempty"`
+	Content           *string   `json:"content,omitempty"           validate:"omitempty,required"`
 	Name              *string   `json:"name,omitempty"`
 	FunctionArguments *[]string `json:"functionArguments,omitempty"`
+	TemplateVariables *[]string `json:"templateVariables,omitempty"`
 }
 
-type PromptResult struct {
-	Content       *string
-	RequestRecord *db.PromptRequestRecord
-	Error         error
+type PromptConfigDTO struct {
+	ID                        string          `json:"id"`
+	Name                      string          `json:"name"                      validate:"required"`
+	ModelParameters           json.RawMessage `json:"modelParameters"           validate:"required"`
+	ModelType                 db.ModelType    `json:"modelType"                 validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelVendor               db.ModelVendor  `json:"modelVendor"               validate:"oneof=OPEN_AI"`
+	ProviderPromptMessages    json.RawMessage `json:"providerPromptMessages"    validate:"required"`
+	ExpectedTemplateVariables []string        `json:"expectedTemplateVariables"`
+	IsDefault                 bool            `json:"isDefault,omitempty"`
+	CreatedAt                 time.Time       `json:"createdAt,omitempty"`
+	UpdatedAt                 time.Time       `json:"updatedAt,omitempty"`
 }

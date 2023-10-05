@@ -3,7 +3,7 @@ package openai
 import (
 	"context"
 	"fmt"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -13,27 +13,26 @@ import (
 
 func (c *Client) RequestPrompt(
 	ctx context.Context,
-	applicationId string,
-	requestConfiguration *datatypes.RequestConfiguration,
+	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
-) datatypes.PromptResult {
+) dto.PromptResultDTO {
 	promptRequest, createPromptRequestErr := CreatePromptRequest(
-		applicationId,
+		requestConfiguration.ApplicationIDString,
 		requestConfiguration.PromptConfigData.ModelType,
 		requestConfiguration.PromptConfigData.ModelParameters,
 		requestConfiguration.PromptConfigData.ProviderPromptMessages,
 		templateVariables,
 	)
 	if createPromptRequestErr != nil {
-		return datatypes.PromptResult{Error: createPromptRequestErr}
+		return dto.PromptResultDTO{Error: createPromptRequestErr}
 	}
 
 	recordParams := db.CreatePromptRequestRecordParams{
-		PromptConfigID:   requestConfiguration.PromptConfigData.ID,
+		PromptConfigID:   requestConfiguration.PromptConfigID,
 		IsStreamResponse: false,
 		StartTime:        pgtype.Timestamptz{Time: time.Now(), Valid: true},
 	}
-	promptResult := datatypes.PromptResult{}
+	promptResult := dto.PromptResultDTO{}
 
 	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
 	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}

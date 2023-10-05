@@ -4,14 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
 	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/service"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
@@ -76,7 +73,10 @@ func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 	)
 }
 
-func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismock.ClientMock) {
+func CreateTestCache(
+	t *testing.T,
+	applicationIDString string,
+) (*cache.Cache, redismock.ClientMock) {
 	t.Helper()
 	redisDb, mockRedis := redismock.NewClientMock()
 
@@ -87,32 +87,26 @@ func CreateTestCache(t *testing.T, applicationId string) (*cache.Cache, redismoc
 	cacheClient := rediscache.GetClient()
 
 	t.Cleanup(func() {
-		redisDb.Del(context.TODO(), applicationId)
+		redisDb.Del(context.TODO(), applicationIDString)
 	})
 
 	return cacheClient, mockRedis
 }
 
-func CreateApplicationPromptConfig(t *testing.T) (*datatypes.RequestConfiguration, string) {
-	t.Helper()
-	dbTestUtils.CreateTestDB(t)
-
-	appConfig, appId, createAppConfigErr := factories.CreateApplicationPromptConfig(context.TODO())
-	assert.NoError(t, createAppConfigErr)
-
-	return appConfig, appId
-}
-
 func TestIntegration(t *testing.T) {
 	openaiService := CreateOpenAIService(t)
-	applicationPromptConfig, applicationId := CreateApplicationPromptConfig(t)
+	requestConfigurationDTO := createRequestConfigurationDTO(t)
 
-	jwtToken, jwtCreateErr := jwtutils.CreateJWT(time.Minute, []byte(JWTSecret), applicationId)
+	jwtToken, jwtCreateErr := jwtutils.CreateJWT(
+		time.Minute,
+		[]byte(JWTSecret),
+		requestConfigurationDTO.ApplicationIDString,
+	)
 	assert.NoError(t, jwtCreateErr)
 
 	t.Run("E2E Test RequestPrompt", func(t *testing.T) {
 		client := CreateGatewayServiceClient(t)
-		cacheClient, mockRedis := CreateTestCache(t, applicationId)
+		cacheClient, mockRedis := CreateTestCache(t, requestConfigurationDTO.ApplicationIDString)
 
 		expectedResponseContent := "Response content"
 
@@ -120,11 +114,12 @@ func TestIntegration(t *testing.T) {
 			Content: expectedResponseContent,
 		}
 
-		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
+		expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
 		assert.NoError(t, marshalErr)
 
-		mockRedis.ExpectGet(applicationId).RedisNil()
-		mockRedis.ExpectSet(applicationId, expectedCacheValue, time.Hour/2).SetVal("OK")
+		mockRedis.ExpectGet(requestConfigurationDTO.ApplicationIDString).RedisNil()
+		mockRedis.ExpectSet(requestConfigurationDTO.ApplicationIDString, expectedCacheValue, time.Hour/2).
+			SetVal("OK")
 
 		outgoingContext := metadata.AppendToOutgoingContext(
 			context.TODO(),
@@ -141,7 +136,8 @@ func TestIntegration(t *testing.T) {
 		assert.NoError(t, firstResponseErr)
 		assert.Equal(t, expectedResponseContent, firstResponse.Content)
 
-		mockRedis.ExpectGet(applicationId).SetVal(string(expectedCacheValue))
+		mockRedis.ExpectGet(requestConfigurationDTO.ApplicationIDString).
+			SetVal(string(expectedCacheValue))
 
 		secondResponse, secondResponseErr := client.RequestPrompt(
 			outgoingContext,
@@ -155,7 +151,7 @@ func TestIntegration(t *testing.T) {
 
 	t.Run("E2E Test RequestStreamingPrompt", func(t *testing.T) {
 		client := CreateGatewayServiceClient(t)
-		cacheClient, mockRedis := CreateTestCache(t, applicationId)
+		cacheClient, mockRedis := CreateTestCache(t, requestConfigurationDTO.ApplicationIDString)
 
 		finishReason := "done"
 
@@ -165,11 +161,12 @@ func TestIntegration(t *testing.T) {
 			{Content: "3", FinishReason: &finishReason},
 		}
 
-		expectedCacheValue, marshalErr := cacheClient.Marshal(applicationPromptConfig)
+		expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
 		assert.NoError(t, marshalErr)
 
-		mockRedis.ExpectGet(applicationId).RedisNil()
-		mockRedis.ExpectSet(applicationId, expectedCacheValue, time.Hour/2).SetVal("OK")
+		mockRedis.ExpectGet(requestConfigurationDTO.ApplicationIDString).RedisNil()
+		mockRedis.ExpectSet(requestConfigurationDTO.ApplicationIDString, expectedCacheValue, time.Hour/2).
+			SetVal("OK")
 
 		outgoingContext := metadata.AppendToOutgoingContext(
 			context.TODO(),
