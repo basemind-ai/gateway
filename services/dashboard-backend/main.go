@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
@@ -13,10 +15,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
-
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/api"
 
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"

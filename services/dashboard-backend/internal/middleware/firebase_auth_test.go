@@ -2,13 +2,13 @@ package middleware_test
 
 import (
 	"fmt"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/firebaseutils/testutils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"firebase.google.com/go/v4/auth"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

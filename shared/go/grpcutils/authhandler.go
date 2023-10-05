@@ -3,7 +3,6 @@ package grpcutils
 import (
 	"context"
 	"fmt"
-	"github.com/basemind-ai/monorepo/services/api-gateway/constants"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"google.golang.org/grpc/codes"
@@ -42,5 +41,5 @@ func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, er
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", subErr)
 	}
 
-	return context.WithValue(ctx, constants.ApplicationIDContextKey, sub), nil
+	return context.WithValue(ctx, ApplicationIDContextKey, sub), nil
 }

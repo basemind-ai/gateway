@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
-	"github.com/basemind-ai/monorepo/services/api-gateway/connectors"
-	"github.com/basemind-ai/monorepo/services/api-gateway/constants"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
@@ -30,7 +30,7 @@ func (Server) RequestPrompt(
 	ctx context.Context,
 	request *gateway.PromptRequest,
 ) (*gateway.PromptResponse, error) {
-	applicationId, ok := ctx.Value(constants.ApplicationIDContextKey).(string)
+	applicationId, ok := ctx.Value(grpcutils.ApplicationIDContextKey).(string)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
@@ -51,8 +51,7 @@ func (Server) RequestPrompt(
 		return nil, retrievalErr
 	}
 
-	promptResult := connectors.
-		GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
+	promptResult := connectors.GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
 		RequestPrompt(
 			ctx,
 			applicationId,
@@ -135,7 +134,7 @@ func (Server) RequestStreamingPrompt(
 	request *gateway.PromptRequest,
 	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
 ) error {
-	applicationId, ok := streamServer.Context().Value(constants.ApplicationIDContextKey).(string)
+	applicationId, ok := streamServer.Context().Value(grpcutils.ApplicationIDContextKey).(string)
 	if !ok {
 		return status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
 	}
@@ -157,8 +156,7 @@ func (Server) RequestStreamingPrompt(
 
 	channel := make(chan datatypes.PromptResult)
 
-	go connectors.
-		GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
+	go connectors.GetProviderConnector(applicationConfiguration.PromptConfigData.ModelVendor).
 		RequestStream(
 			streamServer.Context(),
 			applicationId,

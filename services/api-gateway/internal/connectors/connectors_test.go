@@ -2,7 +2,7 @@ package connectors_test
 
 import (
 	"context"
-	"github.com/basemind-ai/monorepo/services/api-gateway/connectors"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"

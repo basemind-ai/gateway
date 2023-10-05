@@ -2,10 +2,10 @@ package openai_test
 
 import (
 	"fmt"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	"github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/stretchr/testify/assert"
 

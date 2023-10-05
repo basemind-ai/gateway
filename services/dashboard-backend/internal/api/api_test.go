@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	api2 "github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"net/http"
 	"strings"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/api"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	httpTestUtils "github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
@@ -29,7 +29,7 @@ func TestAPI(t *testing.T) {
 				r := router.New(router.Options{
 					Environment:      "test",
 					ServiceName:      "test",
-					RegisterHandlers: api.RegisterHandlers,
+					RegisterHandlers: api2.RegisterHandlers,
 					Middlewares: []func(next http.Handler) http.Handler{
 						middleware.CreateMockFirebaseAuthMiddleware(userId),
 					},
@@ -39,7 +39,7 @@ func TestAPI(t *testing.T) {
 
 				response, requestErr := testClient.Get(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
+					fmt.Sprintf("/v1%s", api2.ProjectsListEndpoint),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
@@ -55,7 +55,7 @@ func TestAPI(t *testing.T) {
 			t.Run("retrieves projects for existing user", func(t *testing.T) {
 				userId := "xxx123"
 
-				_, userCreateErr := api.GetOrCreateUser(
+				_, userCreateErr := api2.GetOrCreateUser(
 					context.Background(),
 					db.GetQueries(),
 					userId,
@@ -65,7 +65,7 @@ func TestAPI(t *testing.T) {
 				r := router.New(router.Options{
 					Environment:      "test",
 					ServiceName:      "test",
-					RegisterHandlers: api.RegisterHandlers,
+					RegisterHandlers: api2.RegisterHandlers,
 					Middlewares: []func(next http.Handler) http.Handler{
 						middleware.CreateMockFirebaseAuthMiddleware(userId),
 					},
@@ -75,7 +75,7 @@ func TestAPI(t *testing.T) {
 
 				response, requestErr := testClient.Get(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
+					fmt.Sprintf("/v1%s", api2.ProjectsListEndpoint),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusOK, response.StatusCode)
@@ -97,7 +97,7 @@ func TestAPI(t *testing.T) {
 				r := router.New(router.Options{
 					Environment:      "test",
 					ServiceName:      "test",
-					RegisterHandlers: api.RegisterHandlers,
+					RegisterHandlers: api2.RegisterHandlers,
 					Middlewares: []func(next http.Handler) http.Handler{
 						middleware.CreateMockFirebaseAuthMiddleware(userId),
 					},
@@ -107,7 +107,7 @@ func TestAPI(t *testing.T) {
 
 				response, requestErr := testClient.Get(
 					context.TODO(),
-					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
+					fmt.Sprintf("/v1%s", api2.ProjectsListEndpoint),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusInternalServerError, response.StatusCode)
@@ -129,7 +129,7 @@ func TestAPI(t *testing.T) {
 		r := router.New(router.Options{
 			Environment:      "test",
 			ServiceName:      "test",
-			RegisterHandlers: api.RegisterHandlers,
+			RegisterHandlers: api2.RegisterHandlers,
 			Middlewares: []func(next http.Handler) http.Handler{
 				middleware.CreateMockFirebaseAuthMiddleware(userId),
 			},
@@ -142,7 +142,7 @@ func TestAPI(t *testing.T) {
 					context.TODO(),
 					fmt.Sprintf(
 						"/v1%s",
-						strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api2.ApplicationsListEndpoint, "{projectId}", projectId),
 					),
 					map[string]interface{}{
 						"name":        "test app",
@@ -165,7 +165,7 @@ func TestAPI(t *testing.T) {
 					context.TODO(),
 					fmt.Sprintf(
 						"/v1%s",
-						strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid"),
+						strings.ReplaceAll(api2.ApplicationsListEndpoint, "{projectId}", "invalid"),
 					),
 					map[string]interface{}{
 						"name":        "test app",
@@ -181,7 +181,7 @@ func TestAPI(t *testing.T) {
 					context.TODO(),
 					fmt.Sprintf(
 						"/v1%s",
-						strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api2.ApplicationsListEndpoint, "{projectId}", projectId),
 					),
 					"invalid",
 				)
@@ -204,7 +204,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							api.ApplicationDetailEndpoint,
+							api2.ApplicationDetailEndpoint,
 							"{applicationId}",
 							applicationId,
 						),
@@ -230,7 +230,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							api.ApplicationDetailEndpoint,
+							api2.ApplicationDetailEndpoint,
 							"{applicationId}",
 							"invalid",
 						),
@@ -255,7 +255,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							api.ApplicationDetailEndpoint,
+							api2.ApplicationDetailEndpoint,
 							"{applicationId}",
 							applicationId,
 						),
@@ -285,7 +285,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							api.ApplicationDetailEndpoint,
+							api2.ApplicationDetailEndpoint,
 							"{applicationId}",
 							"invalid",
 						),
@@ -312,7 +312,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							api.ApplicationDetailEndpoint,
+							api2.ApplicationDetailEndpoint,
 							"{applicationId}",
 							applicationId,
 						),
@@ -338,7 +338,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							api.ApplicationDetailEndpoint,
+							api2.ApplicationDetailEndpoint,
 							"{applicationId}",
 							applicationId,
 						),
@@ -358,7 +358,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							api.ApplicationDetailEndpoint,
+							api2.ApplicationDetailEndpoint,
 							"{applicationId}",
 							"invalid",
 						),
@@ -384,7 +384,7 @@ func TestAPI(t *testing.T) {
 		r := router.New(router.Options{
 			Environment:      "test",
 			ServiceName:      "test",
-			RegisterHandlers: api.RegisterHandlers,
+			RegisterHandlers: api2.RegisterHandlers,
 			Middlewares: []func(next http.Handler) http.Handler{
 				middleware.CreateMockFirebaseAuthMiddleware(userId),
 			},
@@ -410,7 +410,7 @@ func TestAPI(t *testing.T) {
 				"/v1%s",
 				strings.ReplaceAll(
 					strings.ReplaceAll(
-						api.PromptConfigListEndpoint,
+						api2.PromptConfigListEndpoint,
 						"{projectId}",
 						projectId),
 					"{applicationId}",
@@ -424,7 +424,7 @@ func TestAPI(t *testing.T) {
 				strings.ReplaceAll(
 					strings.ReplaceAll(
 						strings.ReplaceAll(
-							api.PromptConfigDetailEndpoint,
+							api2.PromptConfigDetailEndpoint,
 							"{projectId}",
 							projectId),
 						"{applicationId}",
@@ -446,7 +446,7 @@ func TestAPI(t *testing.T) {
 			applicationId := db.UUIDToString(&application.ID)
 
 			t.Run("creates a new prompt config", func(t *testing.T) {
-				dto := api.PromptConfigCreateDTO{
+				dto := api2.PromptConfigCreateDTO{
 					Name:                   "test prompt config",
 					ModelParameters:        modelParameters,
 					ModelType:              db.ModelTypeGpt4,
@@ -480,11 +480,11 @@ func TestAPI(t *testing.T) {
 			t.Run("returns bad request for validation errors", func(t *testing.T) {
 				failureTestCases := []struct {
 					Name string
-					Dto  api.PromptConfigCreateDTO
+					Dto  api2.PromptConfigCreateDTO
 				}{
 					{
 						Name: "fails validation for missing name",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api2.PromptConfigCreateDTO{
 							ModelParameters:        modelParameters,
 							ModelType:              db.ModelTypeGpt4,
 							ModelVendor:            db.ModelVendorOPENAI,
@@ -493,7 +493,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing model parameters",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api2.PromptConfigCreateDTO{
 							Name:                   "test prompt config",
 							ModelType:              db.ModelTypeGpt4,
 							ModelVendor:            db.ModelVendorOPENAI,
@@ -502,7 +502,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing model type",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api2.PromptConfigCreateDTO{
 							Name:                   "test prompt config",
 							ModelParameters:        modelParameters,
 							ModelVendor:            db.ModelVendorOPENAI,
@@ -511,7 +511,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing model vendor",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api2.PromptConfigCreateDTO{
 							Name:                   "test prompt config",
 							ModelType:              db.ModelTypeGpt4,
 							ModelParameters:        modelParameters,
@@ -520,7 +520,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for missing prompt messages",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api2.PromptConfigCreateDTO{
 							Name:            "test prompt config",
 							ModelParameters: modelParameters,
 							ModelType:       db.ModelTypeGpt4,
@@ -529,7 +529,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for wrong model type",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api2.PromptConfigCreateDTO{
 							Name:                   "test prompt config",
 							ModelParameters:        modelParameters,
 							ModelType:              db.ModelType("abc"),
@@ -539,7 +539,7 @@ func TestAPI(t *testing.T) {
 					},
 					{
 						Name: "fails validation for wrong model vendor",
-						Dto: api.PromptConfigCreateDTO{
+						Dto: api2.PromptConfigCreateDTO{
 							Name:                   "test prompt config",
 							ModelParameters:        modelParameters,
 							ModelType:              db.ModelTypeGpt432k,
@@ -566,7 +566,7 @@ func TestAPI(t *testing.T) {
 				t.Run(
 					fmt.Sprintf("validates successfully model type %s", modelType),
 					func(t *testing.T) {
-						dto := api.PromptConfigCreateDTO{
+						dto := api2.PromptConfigCreateDTO{
 							Name:                   fmt.Sprintf("test prompt config: %d", i),
 							ModelParameters:        modelParameters,
 							ModelType:              modelType,
@@ -600,7 +600,7 @@ func TestAPI(t *testing.T) {
 						})
 					assert.NoError(t, promptConfigCreateErr)
 
-					dto := api.PromptConfigCreateDTO{
+					dto := api2.PromptConfigCreateDTO{
 						Name:                   "unique name",
 						ModelParameters:        modelParameters,
 						ModelType:              db.ModelTypeGpt4,
@@ -631,7 +631,7 @@ func TestAPI(t *testing.T) {
 					})
 				assert.NoError(t, promptConfigCreateErr)
 
-				dto := api.PromptConfigCreateDTO{
+				dto := api2.PromptConfigCreateDTO{
 					Name:                   "default prompt config",
 					ModelParameters:        modelParameters,
 					ModelType:              db.ModelTypeGpt4,
@@ -658,7 +658,7 @@ func TestAPI(t *testing.T) {
 					fmt.Sprintf("/v1%s",
 						strings.ReplaceAll(
 							strings.ReplaceAll(
-								api.PromptConfigListEndpoint,
+								api2.PromptConfigListEndpoint,
 								"{projectId}",
 								projectId,
 							),
@@ -666,7 +666,7 @@ func TestAPI(t *testing.T) {
 							"invalid",
 						),
 					),
-					api.PromptConfigCreateDTO{
+					api2.PromptConfigCreateDTO{
 						Name:                   "test prompt config",
 						ModelParameters:        modelParameters,
 						ModelType:              db.ModelTypeGpt4,
@@ -791,7 +791,7 @@ func TestAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtDetailEndpoint(projectId, applicationId, promptConfigToRenameId),
-					api.PromptConfigUpdateDTO{
+					api2.PromptConfigUpdateDTO{
 						Name: &newName,
 					})
 				assert.NoError(t, requestErr)
@@ -845,7 +845,7 @@ func TestAPI(t *testing.T) {
 					response, requestErr := testClient.Patch(
 						context.TODO(),
 						fmtDetailEndpoint(projectId, applicationId, newPromptConfigId),
-						api.PromptConfigUpdateDTO{
+						api2.PromptConfigUpdateDTO{
 							Name: &newName,
 						})
 					assert.NoError(t, requestErr)
@@ -893,7 +893,7 @@ func TestAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtDetailEndpoint(projectId, applicationId, nonDefaultPromptConfigId),
-					api.PromptConfigUpdateDTO{
+					api2.PromptConfigUpdateDTO{
 						IsDefault: &isDefault,
 					})
 				assert.NoError(t, requestErr)
@@ -940,7 +940,7 @@ func TestAPI(t *testing.T) {
 					response, requestErr := testClient.Patch(
 						context.TODO(),
 						fmtDetailEndpoint(projectId, applicationId, defaultPromptConfigId),
-						api.PromptConfigUpdateDTO{
+						api2.PromptConfigUpdateDTO{
 							IsDefault: &isDefault,
 						})
 					assert.NoError(t, requestErr)
@@ -981,7 +981,7 @@ func TestAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtDetailEndpoint(projectId, applicationId, promptConfigToRenameId),
-					api.PromptConfigUpdateDTO{
+					api2.PromptConfigUpdateDTO{
 						ModelType: &newModel,
 					})
 				assert.NoError(t, requestErr)
@@ -1021,7 +1021,7 @@ func TestAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtDetailEndpoint(projectId, applicationId, promptConfigToRenameId),
-					api.PromptConfigUpdateDTO{
+					api2.PromptConfigUpdateDTO{
 						ModelType: &newModel,
 					})
 				assert.NoError(t, requestErr)
@@ -1064,7 +1064,7 @@ func TestAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtDetailEndpoint(projectId, applicationId, promptConfigToRenameId),
-					api.PromptConfigUpdateDTO{
+					api2.PromptConfigUpdateDTO{
 						ModelParameters: &newModelParameters,
 					})
 				assert.NoError(t, requestErr)
@@ -1156,7 +1156,7 @@ func TestAPI(t *testing.T) {
 
 				expected := []string{"name"}
 
-				result, err := api.ParsePromptMessages(promptMessages, vendor)
+				result, err := api2.ParsePromptMessages(promptMessages, vendor)
 
 				assert.NoError(t, err)
 				assert.Equal(t, expected, result)
@@ -1170,7 +1170,7 @@ func TestAPI(t *testing.T) {
 
 				expected := []string{"name"}
 
-				result, err := api.ParsePromptMessages(promptMessages, vendor)
+				result, err := api2.ParsePromptMessages(promptMessages, vendor)
 
 				assert.NoError(t, err)
 				assert.Equal(t, expected, result)
@@ -1179,7 +1179,7 @@ func TestAPI(t *testing.T) {
 			t.Run("returns error for invalid JSON prompt message", func(t *testing.T) {
 				promptMessages := json.RawMessage(`invalid`)
 
-				_, err := api.ParsePromptMessages(promptMessages, db.ModelVendorOPENAI)
+				_, err := api2.ParsePromptMessages(promptMessages, db.ModelVendorOPENAI)
 				assert.Error(t, err)
 			})
 
@@ -1188,7 +1188,7 @@ func TestAPI(t *testing.T) {
 					`[{"role": "user", "content": "Hello {name}!"}, {"role": "system", "content": "You are a helpful {name}."}]`,
 				)
 				vendor := db.ModelVendor("abc")
-				_, err := api.ParsePromptMessages(promptMessages, vendor)
+				_, err := api2.ParsePromptMessages(promptMessages, vendor)
 				assert.Error(t, err)
 			})
 		})

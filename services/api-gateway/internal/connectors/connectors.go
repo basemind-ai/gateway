@@ -2,7 +2,7 @@ package connectors
 
 import (
 	"context"
-	"github.com/basemind-ai/monorepo/services/api-gateway/connectors/openai"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/sethvargo/go-envconfig"

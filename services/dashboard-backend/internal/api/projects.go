@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/middleware"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"

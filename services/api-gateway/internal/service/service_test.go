@@ -3,7 +3,7 @@ package service_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
-	"github.com/basemind-ai/monorepo/services/api-gateway/service"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/service"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"testing"

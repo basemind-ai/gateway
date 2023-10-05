@@ -1,4 +1,4 @@
-package constants
+package grpcutils
 
 type ContextKeyType int
 
