@@ -1,3 +1,5 @@
+import { Activity, Cash, Person } from 'react-bootstrap-icons';
+
 import { DataCard, DataCardProps } from '@/components/dashboard/data-card';
 
 export default {
@@ -11,7 +13,7 @@ export default {
 
 export const Default = {
 	args: {
-		imageSrc: '/images/graph.svg',
+		imageSrc: <Activity />,
 		metric: 'API Calls',
 		totalValue: '32k',
 		currentValue: '16000',
@@ -21,7 +23,7 @@ export const Default = {
 
 export const User = {
 	args: {
-		imageSrc: '/images/user.svg',
+		imageSrc: <Person />,
 		metric: 'Users',
 		totalValue: '4.5K',
 		currentValue: '400',
@@ -31,7 +33,7 @@ export const User = {
 
 export const Cost = {
 	args: {
-		imageSrc: '/images/cash.svg',
+		imageSrc: <Cash />,
 		metric: 'Models Cost',
 		totalValue: '120$',
 		currentValue: '60',

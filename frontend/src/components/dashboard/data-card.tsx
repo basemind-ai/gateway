@@ -1,9 +1,7 @@
-import Image from 'next/image';
-
-import { Dimensions } from '@/constants';
+import { ReactElement } from 'react';
 
 export interface DataCardProps {
-	imageSrc: string;
+	imageSrc: ReactElement;
 	metric: string;
 	totalValue: string;
 	currentValue: string;
@@ -22,13 +20,7 @@ export function DataCard({
 			<div className="text-neutral-content">{metric}</div>
 			<div className="text-2xl font-semibold text-neutral-content flex">
 				{totalValue}
-				<Image
-					className="ml-5"
-					src={imageSrc}
-					alt={'data card logo'}
-					width={Dimensions.Eight}
-					height={Dimensions.Eight}
-				/>
+				<div className="ml-5">{imageSrc}</div>
 			</div>
 			<div className="text-neutral-content">
 				{currentValue} ({percentage})
