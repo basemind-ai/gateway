@@ -1,3 +1,4 @@
+import { Activity } from 'react-bootstrap-icons';
 import { render, screen } from 'tests/test-utils';
 
 import { DataCard } from '@/components/dashboard/data-card';
@@ -6,7 +7,7 @@ describe('Data Card tests', () => {
 	it('render Data Card metric API Call', async () => {
 		render(
 			<DataCard
-				imageSrc={'/images/graph.svg'}
+				imageSrc={<Activity />}
 				metric={'API Calls'}
 				totalValue={'32k'}
 				currentValue={'16000'}
@@ -21,7 +22,7 @@ describe('Data Card tests', () => {
 	it('render Data Card metric Users', async () => {
 		render(
 			<DataCard
-				imageSrc={'/images/user.svg'}
+				imageSrc={<Activity />}
 				metric={'Users'}
 				totalValue={'32k'}
 				currentValue={'16000'}
@@ -36,7 +37,7 @@ describe('Data Card tests', () => {
 	it('render Data Card metric Models Cost', async () => {
 		render(
 			<DataCard
-				imageSrc={'/images/user.svg'}
+				imageSrc={<Activity />}
 				metric={'Models Cost'}
 				totalValue={'32k'}
 				currentValue={'16000'}
@@ -51,7 +52,7 @@ describe('Data Card tests', () => {
 	it('render Data Card total value', async () => {
 		render(
 			<DataCard
-				imageSrc={'/images/user.svg'}
+				imageSrc={<Activity />}
 				metric={'Models Cost'}
 				totalValue={'32k'}
 				currentValue={'16000'}
