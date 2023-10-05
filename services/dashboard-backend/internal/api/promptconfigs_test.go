@@ -63,7 +63,7 @@ func TestPromptConfigAPI(t *testing.T) {
 		)
 	}
 
-	t.Run("HandleCreatePromptConfig", func(t *testing.T) {
+	t.Run(fmt.Sprintf("POST: %s", api.PromptConfigListEndpoint), func(t *testing.T) {
 		applicationId := createApplication(t, projectId)
 		uuidId, _ := db.StringToUUID(applicationId)
 
@@ -311,7 +311,7 @@ func TestPromptConfigAPI(t *testing.T) {
 		})
 	})
 
-	t.Run("HandleRetrievePromptConfigs", func(t *testing.T) {
+	t.Run(fmt.Sprintf("GET: %s", api.PromptConfigListEndpoint), func(t *testing.T) {
 		applicationId := createApplication(t, projectId)
 		uuidId, _ := db.StringToUUID(applicationId)
 
@@ -375,7 +375,7 @@ func TestPromptConfigAPI(t *testing.T) {
 		})
 	})
 
-	t.Run("HandleSetApplicationDefaultPromptConfig", func(t *testing.T) {
+	t.Run(fmt.Sprintf("GET: %s", api.PromptConfigSetDefaultEndpoint), func(t *testing.T) {
 		fmtSetDefaultEndpoint := func(projectId string, applicationId string, promptConfigId string) string {
 			return fmt.Sprintf(
 				"/v1%s",
@@ -486,7 +486,7 @@ func TestPromptConfigAPI(t *testing.T) {
 		)
 	})
 
-	t.Run("HandleUpdatePromptConfig", func(t *testing.T) {
+	t.Run(fmt.Sprintf("PATCH: %s", api.PromptConfigDetailEndpoint), func(t *testing.T) {
 		t.Run("updates a prompt config's name", func(t *testing.T) {
 			applicationId := createApplication(t, projectId)
 			uuidId, _ := db.StringToUUID(applicationId)
@@ -683,7 +683,7 @@ func TestPromptConfigAPI(t *testing.T) {
 		})
 	})
 
-	t.Run("HandleDeletePromptConfig", func(t *testing.T) {
+	t.Run(fmt.Sprintf("DELETE: %s", api.PromptConfigDetailEndpoint), func(t *testing.T) {
 		t.Run("deletes a prompt config if its not default", func(t *testing.T) {
 			applicationId := createApplication(t, projectId)
 			uuidId, _ := db.StringToUUID(applicationId)
