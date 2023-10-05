@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -53,12 +54,23 @@ func GetQueries() *Queries {
 	return queries
 }
 
-func GetTransactionQueries(ctx context.Context) (*Queries, pgx.Tx, error) {
-	queries := GetQueries()
+func GetTransaction(ctx context.Context) (pgx.Tx, error) {
 	tx, err := connection.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		return nil, nil, err
+		log.Error().Err(err).Msg("failed to create transaction")
+		return nil, err
 	}
 
-	return queries.WithTx(tx), tx, nil
+	return tx, nil
+}
+
+func WithRollback[T any](tx pgx.Tx, query func() (T, error)) (*T, error) {
+	result, err := query()
+	if err != nil {
+		if rollbackErr := tx.Rollback(context.Background()); rollbackErr != nil {
+			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
+			return nil, fmt.Errorf("failed to rollback transaction - %w - %w", rollbackErr, err)
+		}
+	}
+	return &result, err
 }

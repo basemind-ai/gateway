@@ -1,57 +1,79 @@
--- name: CheckUserExists :one
-SELECT EXISTS(SELECT 1 FROM "user" WHERE firebase_id = $1);
+---- user_account
 
--- name: CreateUser :one
-INSERT INTO "user" (firebase_id)
+-- name: CheckUserAccountExists :one
+SELECT EXISTS(SELECT 1 FROM user_account WHERE firebase_id = $1);
+
+-- name: CreateUserAccount :one
+INSERT INTO user_account (firebase_id)
 VALUES ($1)
 RETURNING *;
 
--- name: FindUserByFirebaseId :one
+-- name: FindUserAccountData :many
 SELECT
-    id,
-    firebase_id,
-    created_at
-FROM "user"
-WHERE firebase_id = $1;
-
--- name: FindProjectsByUserId :many
-SELECT
-    p.created_at,
-    p.description,
-    p.id,
-    p.name,
+    u.id AS user_id,
+    u.firebase_id,
+    u.created_at AS user_created_at,
     up.is_user_default_project,
-    up.permission
-FROM project AS p
-INNER JOIN user_project AS up ON p.id = up.project_id
-WHERE up.user_id = $1;
+    up.permission,
+    p.id AS project_id,
+    p.created_at AS project_created_at,
+    p.name AS project_name,
+    p.description AS project_description,
+    a.id AS application_id,
+    a.name AS application_name,
+    a.description AS application_description,
+    a.created_at AS application_created_at,
+    a.updated_at AS application_updated_at
+FROM user_account AS u
+LEFT JOIN user_project AS up ON u.id = up.user_id
+LEFT JOIN project AS p ON up.project_id = p.id
+LEFT JOIN application AS a ON p.id = a.project_id
+WHERE u.firebase_id = $1 AND p.deleted_at IS NULL;
+
+
+---- project
 
 -- name: CreateProject :one
 INSERT INTO project (name, description)
 VALUES ($1, $2)
 RETURNING *;
 
+-- name: UpdateProject :one
+UPDATE project
+SET
+    name = $2,
+    description = $3,
+    updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
+-- name: DeleteProject :exec
+UPDATE project
+SET deleted_at = NOW()
+WHERE id = $1;
+
+---- user_project
+
 -- name: CreateUserProject :one
-INSERT INTO user_project (
-    user_id, project_id, permission, is_user_default_project
-)
+INSERT INTO user_project (user_id, project_id, permission, is_user_default_project)
 VALUES ($1, $2, $3, $4)
 RETURNING *;
 
--- name: DeleteUser :exec
-DELETE
-FROM "user"
-WHERE firebase_id = $1;
+-- name: UpdateUserProjectPermission :one
+UPDATE user_project
+SET
+    permission = $3,
+    updated_at = NOW()
+WHERE user_id = $1 AND project_id = $2 RETURNING *;
 
--- name: DeleteUserProject :exec
-DELETE
-FROM "user_project"
-WHERE project_id = $1;
+-- name: UpdateUserDefaultProject :one
+UPDATE user_project
+SET
+    is_user_default_project = $3,
+    updated_at = NOW()
+WHERE user_id = $1 AND project_id = $2 RETURNING *;
 
--- name: DeleteProject :exec
-DELETE
-FROM "project"
-WHERE id = $1;
+---- application
 
 -- name: CreateApplication :one
 INSERT INTO application (
@@ -72,14 +94,22 @@ WHERE id = $1
 RETURNING *;
 
 -- name: DeleteApplication :exec
-DELETE
-FROM application
+UPDATE application
+SET deleted_at = NOW()
 WHERE id = $1;
 
 -- name: FindApplicationById :one
-SELECT * -- noqa: L044
+SELECT
+    id,
+    description,
+    name,
+    created_at,
+    updated_at,
+    project_id
 FROM application
-WHERE id = $1;
+WHERE id = $1 AND deleted_at IS NULL;
+
+---- prompt config
 
 -- name: CreatePromptConfig :one
 INSERT INTO prompt_config (
@@ -95,6 +125,15 @@ INSERT INTO prompt_config (
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
 
+-- name: CheckDefaultPromptConfigExistsForApplication :one
+SELECT EXISTS(
+    SELECT 1
+    FROM prompt_config
+    WHERE
+        application_id = $1
+        AND is_default = TRUE
+);
+
 -- name: UpdatePromptConfigIsDefault :exec
 UPDATE prompt_config
 SET
@@ -108,7 +147,9 @@ SET
     name = $2,
     model_parameters = $3,
     model_type = $4,
-    is_default = $5,
+    model_vendor = $5,
+    provider_prompt_messages = $6,
+    expected_template_variables = $7,
     updated_at = NOW()
 WHERE id = $1
 RETURNING *;
@@ -134,7 +175,7 @@ SELECT
 FROM prompt_config
 WHERE id = $1;
 
--- name: RetrieveApplicationPromptConfigs :many
+-- name: FindApplicationPromptConfigs :many
 SELECT
     id,
     name,
@@ -164,7 +205,9 @@ SELECT
     updated_at,
     application_id
 FROM prompt_config
-WHERE application_id = $1 AND is_default = TRUE;
+WHERE
+    application_id = $1
+    AND is_default = TRUE;
 
 -- name: CreatePromptRequestRecord :one
 INSERT INTO prompt_request_record (
@@ -179,46 +222,3 @@ INSERT INTO prompt_request_record (
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
-
--- name: FindPromptRequestRecords :many
-SELECT
-    id,
-    is_stream_response,
-    request_tokens,
-    response_tokens,
-    start_time,
-    finish_time,
-    stream_response_latency,
-    prompt_config_id,
-    error_log
-FROM prompt_request_record
-WHERE prompt_config_id = $1
-ORDER BY start_time DESC;
-
--- name: CreatePromptTest :one
-INSERT INTO prompt_test (
-    name,
-    variable_values,
-    response,
-    created_at,
-    prompt_request_record_id
-)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING *;
-
--- name: FindPromptTests :many
-SELECT
-    prc.finish_time,
-    prc.request_tokens,
-    prc.start_time,
-    prc.is_stream_response,
-    pt.created_at,
-    pt.id,
-    pt.name,
-    pt.response,
-    pt.variable_values
-FROM prompt_test AS pt
-LEFT JOIN prompt_request_record AS prc
-    ON pt.prompt_request_record_id = prc.id
-WHERE prc.prompt_config_id = $1
-ORDER BY pt.created_at;

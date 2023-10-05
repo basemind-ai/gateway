@@ -1,5 +1,5 @@
 -- user
-CREATE TABLE "user"
+CREATE TABLE user_account
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     firebase_id varchar(128) NOT NULL,
@@ -19,10 +19,11 @@ CREATE TABLE project
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(256) NOT NULL,
     description text NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz NULL
 );
-
-CREATE INDEX idx_project_name ON project (name);
+CREATE INDEX idx_project_name ON project (name) WHERE deleted_at IS NULL;
 
 -- user-project many-to-many
 CREATE TABLE user_project
@@ -31,13 +32,30 @@ CREATE TABLE user_project
     project_id uuid NOT NULL,
     permission access_permission_type NOT NULL,
     is_user_default_project boolean NOT NULL DEFAULT FALSE,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (user_id, project_id),
-    FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES user_account (id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_user_project_user_id ON user_project (user_id);
 CREATE INDEX idx_user_project_project_id ON user_project (project_id);
+
+-- application
+CREATE TABLE application
+(
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    description text NOT NULL,
+    name varchar(256) NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz NULL,
+    project_id uuid NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_application_project_id ON application (project_id) WHERE deleted_at IS NULL;
 
 -- model_vendor
 CREATE TYPE model_vendor AS ENUM (
@@ -52,20 +70,6 @@ CREATE TYPE model_type AS ENUM (
     'gpt-4-32k'
 );
 
--- application
-CREATE TABLE application
-(
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    description text NOT NULL,
-    name varchar(256) NOT NULL,
-    created_at timestamptz NOT NULL DEFAULT now(),
-    updated_at timestamptz NOT NULL DEFAULT now(),
-    project_id uuid NOT NULL,
-    FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
-);
-
-CREATE INDEX idx_application_project_id ON application (project_id);
-
 -- prompt-config
 CREATE TABLE prompt_config
 (
@@ -79,14 +83,15 @@ CREATE TABLE prompt_config
     is_default boolean NOT NULL DEFAULT TRUE,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz NULL,
     application_id uuid NOT NULL,
     FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE,
     UNIQUE (name, application_id)
 );
 
-CREATE INDEX idx_prompt_config_application_id ON prompt_config (application_id);
-CREATE INDEX idx_prompt_config_is_default ON prompt_config (is_default);
-CREATE INDEX idx_prompt_config_created_at ON prompt_config (created_at);
+CREATE INDEX idx_prompt_config_application_id ON prompt_config (application_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_prompt_config_is_default ON prompt_config (is_default) WHERE deleted_at IS NULL;
+CREATE INDEX idx_prompt_config_created_at ON prompt_config (created_at) WHERE deleted_at IS NULL;
 
 -- prompt-request-record
 CREATE TABLE prompt_request_record
@@ -100,20 +105,20 @@ CREATE TABLE prompt_request_record
     stream_response_latency bigint NULL,
     prompt_config_id uuid NOT NULL,
     error_log text NULL,
-    FOREIGN KEY (prompt_config_id) REFERENCES prompt_config (
-        id
-    ) ON DELETE CASCADE
+    created_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz NULL,
+    FOREIGN KEY (prompt_config_id) REFERENCES prompt_config (id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_prompt_request_record_prompt_config_id ON prompt_request_record (
     prompt_config_id
-);
+) WHERE deleted_at IS NULL;
 CREATE INDEX idx_prompt_request_record_start_time ON prompt_request_record (
     start_time
-);
+) WHERE deleted_at IS NULL;
 CREATE INDEX idx_prompt_request_record_finish_time ON prompt_request_record (
     finish_time
-);
+) WHERE deleted_at IS NULL;
 
 -- prompt-test
 CREATE TABLE prompt_test
@@ -124,12 +129,20 @@ CREATE TABLE prompt_test
     response text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     prompt_request_record_id uuid NOT NULL,
-    FOREIGN KEY (prompt_request_record_id) REFERENCES prompt_request_record (
-        id
-    ) ON DELETE CASCADE
+    FOREIGN KEY (prompt_request_record_id) REFERENCES prompt_request_record (id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_prompt_test_prompt_request_record_id ON prompt_test (
     prompt_request_record_id
 );
 CREATE INDEX idx_prompt_test_created_at ON prompt_test (created_at);
+
+-- token
+CREATE TABLE token
+(
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz NULL,
+    application_id uuid NOT NULL,
+    FOREIGN KEY (application_id) REFERENCES application (application_id) ON DELETE CASCADE
+);
