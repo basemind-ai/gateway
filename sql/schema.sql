@@ -144,5 +144,6 @@ CREATE TABLE token
     created_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
     application_id uuid NOT NULL,
-    FOREIGN KEY (application_id) REFERENCES application (application_id) ON DELETE CASCADE
+    FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE
 );
+CREATE INDEX idx_token_application_id ON token (application_id) WHERE deleted_at IS NULL;

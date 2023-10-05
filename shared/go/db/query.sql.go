@@ -12,13 +12,11 @@ import (
 )
 
 const checkDefaultPromptConfigExistsForApplication = `-- name: CheckDefaultPromptConfigExistsForApplication :one
-SELECT EXISTS(
-    SELECT 1
-    FROM prompt_config
-    WHERE
-        application_id = $1
-        AND is_default = TRUE
-)
+SELECT EXISTS(SELECT 1
+              FROM prompt_config
+              WHERE application_id = $1
+                AND deleted_at IS NULL
+                AND is_default = TRUE)
 `
 
 func (q *Queries) CheckDefaultPromptConfigExistsForApplication(ctx context.Context, applicationID pgtype.UUID) (bool, error) {
@@ -43,11 +41,9 @@ func (q *Queries) CheckUserAccountExists(ctx context.Context, firebaseID string)
 
 const createApplication = `-- name: CreateApplication :one
 
-INSERT INTO application (
-    project_id,
-    name,
-    description
-)
+INSERT INTO application (project_id,
+                         name,
+                         description)
 VALUES ($1, $2, $3)
 RETURNING id, description, name, created_at, updated_at, deleted_at, project_id
 `
@@ -103,16 +99,14 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 
 const createPromptConfig = `-- name: CreatePromptConfig :one
 
-INSERT INTO prompt_config (
-    name,
-    model_parameters,
-    model_type,
-    model_vendor,
-    provider_prompt_messages,
-    expected_template_variables,
-    is_default,
-    application_id
-)
+INSERT INTO prompt_config (name,
+                           model_parameters,
+                           model_type,
+                           model_vendor,
+                           provider_prompt_messages,
+                           expected_template_variables,
+                           is_default,
+                           application_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, created_at, updated_at, deleted_at, application_id
 `
@@ -159,16 +153,15 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 }
 
 const createPromptRequestRecord = `-- name: CreatePromptRequestRecord :one
-INSERT INTO prompt_request_record (
-    is_stream_response,
-    request_tokens,
-    response_tokens,
-    start_time,
-    finish_time,
-    stream_response_latency,
-    prompt_config_id,
-    error_log
-)
+
+INSERT INTO prompt_request_record (is_stream_response,
+                                   request_tokens,
+                                   response_tokens,
+                                   start_time,
+                                   finish_time,
+                                   stream_response_latency,
+                                   prompt_config_id,
+                                   error_log)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING id, is_stream_response, request_tokens, response_tokens, start_time, finish_time, stream_response_latency, prompt_config_id, error_log, created_at, deleted_at
 `
@@ -184,6 +177,7 @@ type CreatePromptRequestRecordParams struct {
 	ErrorLog              pgtype.Text        `json:"errorLog"`
 }
 
+// -- prompt request record
 func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromptRequestRecordParams) (PromptRequestRecord, error) {
 	row := q.db.QueryRow(ctx, createPromptRequestRecord,
 		arg.IsStreamResponse,
@@ -208,6 +202,26 @@ func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromp
 		&i.ErrorLog,
 		&i.CreatedAt,
 		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const createToken = `-- name: CreateToken :one
+
+INSERT INTO token (application_id)
+VALUES ($1)
+RETURNING id, created_at, deleted_at, application_id
+`
+
+// -- token
+func (q *Queries) CreateToken(ctx context.Context, applicationID pgtype.UUID) (Token, error) {
+	row := q.db.QueryRow(ctx, createToken, applicationID)
+	var i Token
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.DeletedAt,
+		&i.ApplicationID,
 	)
 	return i, err
 }
@@ -282,8 +296,8 @@ func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
 }
 
 const deletePromptConfig = `-- name: DeletePromptConfig :exec
-DELETE
-FROM prompt_config
+UPDATE prompt_config
+SET deleted_at = NOW()
 WHERE id = $1
 `
 
@@ -292,16 +306,27 @@ func (q *Queries) DeletePromptConfig(ctx context.Context, id pgtype.UUID) error 
 	return err
 }
 
+const deleteToken = `-- name: DeleteToken :exec
+UPDATE token
+SET deleted_at = NOW()
+WHERE id = $1
+`
+
+func (q *Queries) DeleteToken(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteToken, id)
+	return err
+}
+
 const findApplicationById = `-- name: FindApplicationById :one
-SELECT
-    id,
-    description,
-    name,
-    created_at,
-    updated_at,
-    project_id
+SELECT id,
+       description,
+       name,
+       created_at,
+       updated_at,
+       project_id
 FROM application
-WHERE id = $1 AND deleted_at IS NULL
+WHERE id = $1
+  AND deleted_at IS NULL
 `
 
 type FindApplicationByIdRow struct {
@@ -328,20 +353,20 @@ func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (Find
 }
 
 const findApplicationPromptConfigs = `-- name: FindApplicationPromptConfigs :many
-SELECT
-    id,
-    name,
-    model_parameters,
-    model_type,
-    model_vendor,
-    provider_prompt_messages,
-    expected_template_variables,
-    is_default,
-    created_at,
-    updated_at,
-    application_id
+SELECT id,
+       name,
+       model_parameters,
+       model_type,
+       model_vendor,
+       provider_prompt_messages,
+       expected_template_variables,
+       is_default,
+       created_at,
+       updated_at,
+       application_id
 FROM prompt_config
 WHERE application_id = $1
+  AND deleted_at IS NULL
 `
 
 type FindApplicationPromptConfigsRow struct {
@@ -391,22 +416,21 @@ func (q *Queries) FindApplicationPromptConfigs(ctx context.Context, applicationI
 }
 
 const findDefaultPromptConfigByApplicationId = `-- name: FindDefaultPromptConfigByApplicationId :one
-SELECT
-    id,
-    name,
-    model_parameters,
-    model_type,
-    model_vendor,
-    provider_prompt_messages,
-    expected_template_variables,
-    is_default,
-    created_at,
-    updated_at,
-    application_id
+SELECT id,
+       name,
+       model_parameters,
+       model_type,
+       model_vendor,
+       provider_prompt_messages,
+       expected_template_variables,
+       is_default,
+       created_at,
+       updated_at,
+       application_id
 FROM prompt_config
-WHERE
-    application_id = $1
-    AND is_default = TRUE
+WHERE application_id = $1
+  AND deleted_at IS NULL
+  AND is_default = TRUE
 `
 
 type FindDefaultPromptConfigByApplicationIdRow struct {
@@ -443,20 +467,20 @@ func (q *Queries) FindDefaultPromptConfigByApplicationId(ctx context.Context, ap
 }
 
 const findPromptConfigById = `-- name: FindPromptConfigById :one
-SELECT
-    id,
-    name,
-    model_parameters,
-    model_type,
-    model_vendor,
-    provider_prompt_messages,
-    expected_template_variables,
-    is_default,
-    created_at,
-    updated_at,
-    application_id
+SELECT id,
+       name,
+       model_parameters,
+       model_type,
+       model_vendor,
+       provider_prompt_messages,
+       expected_template_variables,
+       is_default,
+       created_at,
+       updated_at,
+       application_id
 FROM prompt_config
 WHERE id = $1
+  AND deleted_at IS NULL
 `
 
 type FindPromptConfigByIdRow struct {
@@ -493,26 +517,26 @@ func (q *Queries) FindPromptConfigById(ctx context.Context, id pgtype.UUID) (Fin
 }
 
 const findUserAccountData = `-- name: FindUserAccountData :many
-SELECT
-    u.id AS user_id,
-    u.firebase_id,
-    u.created_at AS user_created_at,
-    up.is_user_default_project,
-    up.permission,
-    p.id AS project_id,
-    p.created_at AS project_created_at,
-    p.name AS project_name,
-    p.description AS project_description,
-    a.id AS application_id,
-    a.name AS application_name,
-    a.description AS application_description,
-    a.created_at AS application_created_at,
-    a.updated_at AS application_updated_at
+SELECT u.id          AS user_id,
+       u.firebase_id,
+       u.created_at  AS user_created_at,
+       up.is_user_default_project,
+       up.permission,
+       p.id          AS project_id,
+       p.created_at  AS project_created_at,
+       p.name        AS project_name,
+       p.description AS project_description,
+       a.id          AS application_id,
+       a.name        AS application_name,
+       a.description AS application_description,
+       a.created_at  AS application_created_at,
+       a.updated_at  AS application_updated_at
 FROM user_account AS u
-LEFT JOIN user_project AS up ON u.id = up.user_id
-LEFT JOIN project AS p ON up.project_id = p.id
-LEFT JOIN application AS a ON p.id = a.project_id
-WHERE u.firebase_id = $1 AND p.deleted_at IS NULL
+         LEFT JOIN user_project AS up ON u.id = up.user_id
+         LEFT JOIN project AS p ON up.project_id = p.id
+         LEFT JOIN application AS a ON p.id = a.project_id
+WHERE u.firebase_id = $1
+  AND p.deleted_at IS NULL
 `
 
 type FindUserAccountDataRow struct {
@@ -567,13 +591,46 @@ func (q *Queries) FindUserAccountData(ctx context.Context, firebaseID string) ([
 	return items, nil
 }
 
+const retrieveApplicationTokens = `-- name: RetrieveApplicationTokens :many
+SELECT id,
+       created_at
+FROM token
+WHERE application_id = $1
+  AND deleted_at IS NULL
+`
+
+type RetrieveApplicationTokensRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+}
+
+func (q *Queries) RetrieveApplicationTokens(ctx context.Context, applicationID pgtype.UUID) ([]RetrieveApplicationTokensRow, error) {
+	rows, err := q.db.Query(ctx, retrieveApplicationTokens, applicationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RetrieveApplicationTokensRow
+	for rows.Next() {
+		var i RetrieveApplicationTokensRow
+		if err := rows.Scan(&i.ID, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateApplication = `-- name: UpdateApplication :one
 UPDATE application
-SET
-    name = $2,
+SET name        = $2,
     description = $3,
-    updated_at = NOW()
+    updated_at  = NOW()
 WHERE id = $1
+  AND deleted_at IS NULL
 RETURNING id, description, name, created_at, updated_at, deleted_at, project_id
 `
 
@@ -600,11 +657,11 @@ func (q *Queries) UpdateApplication(ctx context.Context, arg UpdateApplicationPa
 
 const updateProject = `-- name: UpdateProject :one
 UPDATE project
-SET
-    name = $2,
+SET name        = $2,
     description = $3,
-    updated_at = NOW()
+    updated_at  = NOW()
 WHERE id = $1
+  AND deleted_at IS NULL
 RETURNING id, name, description, created_at, updated_at, deleted_at
 `
 
@@ -630,15 +687,15 @@ func (q *Queries) UpdateProject(ctx context.Context, arg UpdateProjectParams) (P
 
 const updatePromptConfig = `-- name: UpdatePromptConfig :one
 UPDATE prompt_config
-SET
-    name = $2,
-    model_parameters = $3,
-    model_type = $4,
-    model_vendor = $5,
-    provider_prompt_messages = $6,
+SET name                        = $2,
+    model_parameters            = $3,
+    model_type                  = $4,
+    model_vendor                = $5,
+    provider_prompt_messages    = $6,
     expected_template_variables = $7,
-    updated_at = NOW()
+    updated_at                  = NOW()
 WHERE id = $1
+  AND deleted_at IS NULL
 RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, created_at, updated_at, deleted_at, application_id
 `
 
@@ -682,10 +739,10 @@ func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfig
 
 const updatePromptConfigIsDefault = `-- name: UpdatePromptConfigIsDefault :exec
 UPDATE prompt_config
-SET
-    is_default = $2,
+SET is_default = $2,
     updated_at = NOW()
 WHERE id = $1
+  AND deleted_at IS NULL
 `
 
 type UpdatePromptConfigIsDefaultParams struct {
@@ -700,10 +757,11 @@ func (q *Queries) UpdatePromptConfigIsDefault(ctx context.Context, arg UpdatePro
 
 const updateUserDefaultProject = `-- name: UpdateUserDefaultProject :one
 UPDATE user_project
-SET
-    is_user_default_project = $3,
-    updated_at = NOW()
-WHERE user_id = $1 AND project_id = $2 RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
+SET is_user_default_project = $3,
+    updated_at              = NOW()
+WHERE user_id = $1
+  AND project_id = $2
+RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
 `
 
 type UpdateUserDefaultProjectParams struct {
@@ -728,10 +786,11 @@ func (q *Queries) UpdateUserDefaultProject(ctx context.Context, arg UpdateUserDe
 
 const updateUserProjectPermission = `-- name: UpdateUserProjectPermission :one
 UPDATE user_project
-SET
-    permission = $3,
+SET permission = $3,
     updated_at = NOW()
-WHERE user_id = $1 AND project_id = $2 RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
+WHERE user_id = $1
+  AND project_id = $2
+RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
 `
 
 type UpdateUserProjectPermissionParams struct {
