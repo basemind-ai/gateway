@@ -141,6 +141,7 @@ CREATE INDEX idx_prompt_test_created_at ON prompt_test (created_at);
 CREATE TABLE token
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name varchar(256) NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
     application_id uuid NOT NULL,

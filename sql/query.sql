@@ -252,18 +252,20 @@ RETURNING *;
 ---- token
 
 -- name: CreateToken :one
-INSERT INTO token (application_id)
-VALUES ($1)
+INSERT INTO token (application_id, name)
+VALUES ($1, $2)
 RETURNING *;
 
 -- name: RetrieveApplicationTokens :many
 SELECT
     id,
+    name,
     created_at
 FROM token
 WHERE
     application_id = $1
-    AND deleted_at IS NULL;
+    AND deleted_at IS NULL
+ORDER BY created_at;
 
 -- name: DeleteToken :exec
 UPDATE token

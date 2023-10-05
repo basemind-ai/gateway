@@ -35,7 +35,7 @@ func RegisterHandlers(mux *chi.Mux) {
 			applicationsRouter.Delete("/", HandleDeleteApplication)
 		})
 
-		router.Route(ApplicationTokensEndpoint, func(applicationsRouter chi.Router) {
+		router.Route(ApplicationTokensListEndpoint, func(applicationsRouter chi.Router) {
 			applicationsRouter.Post("/", HandleCreateApplicationToken)
 			applicationsRouter.Get("/", HandleRetrieveApplicationTokens)
 			applicationsRouter.Delete("/", HandleDeleteApplicationToken)

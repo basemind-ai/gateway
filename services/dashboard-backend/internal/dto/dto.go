@@ -45,3 +45,10 @@ type PromptConfigUpdateDTO struct {
 	ModelVendor            *db.ModelVendor  `json:"modelVendor,omitempty"     validate:"omitempty,oneof=OPEN_AI"`
 	ProviderPromptMessages *json.RawMessage `json:"promptMessages,omitempty"  validate:"omitempty,required"`
 }
+
+type ApplicationTokenDTO struct {
+	ID        string    `json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	Name      string    `json:"name"`
+	Hash      *string   `json:"hash,omitempty"`
+}
