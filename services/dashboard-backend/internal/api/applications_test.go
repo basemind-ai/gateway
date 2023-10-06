@@ -18,7 +18,7 @@ func TestApplicationsAPI(t *testing.T) {
 	firebaseId := factories.RandomString(10)
 	testClient := createTestClient(t, firebaseId)
 
-	t.Run("HandleCreateApplication", func(t *testing.T) {
+	t.Run(fmt.Sprintf("POST: %s", api.ApplicationsListEndpoint), func(t *testing.T) {
 		t.Run("creates a new application", func(t *testing.T) {
 			response, requestErr := testClient.Post(
 				context.TODO(),
@@ -72,7 +72,7 @@ func TestApplicationsAPI(t *testing.T) {
 		})
 	})
 
-	t.Run("HandleRetrieveApplication", func(t *testing.T) {
+	t.Run(fmt.Sprintf("GET: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
 		t.Run("retrieves an existing application", func(t *testing.T) {
 			applicationId := createApplication(t, projectId)
 
@@ -122,7 +122,7 @@ func TestApplicationsAPI(t *testing.T) {
 		})
 	})
 
-	t.Run("HandleUpdateApplication", func(t *testing.T) {
+	t.Run(fmt.Sprintf("PATCH: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
 		t.Run("updates an existing application", func(t *testing.T) {
 			applicationId := createApplication(t, projectId)
 
@@ -197,7 +197,7 @@ func TestApplicationsAPI(t *testing.T) {
 		})
 	})
 
-	t.Run("HandleDeleteApplication", func(t *testing.T) {
+	t.Run(fmt.Sprintf("DELETE: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
 		t.Run("deletes an existing application", func(t *testing.T) {
 			applicationId := createApplication(t, projectId)
 

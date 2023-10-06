@@ -17,6 +17,7 @@ SELECT EXISTS(
     FROM prompt_config
     WHERE
         application_id = $1
+        AND deleted_at IS NULL
         AND is_default = TRUE
 )
 `
@@ -159,6 +160,7 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 }
 
 const createPromptRequestRecord = `-- name: CreatePromptRequestRecord :one
+
 INSERT INTO prompt_request_record (
     is_stream_response,
     request_tokens,
@@ -184,6 +186,7 @@ type CreatePromptRequestRecordParams struct {
 	ErrorLog              pgtype.Text        `json:"errorLog"`
 }
 
+// -- prompt request record
 func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromptRequestRecordParams) (PromptRequestRecord, error) {
 	row := q.db.QueryRow(ctx, createPromptRequestRecord,
 		arg.IsStreamResponse,
@@ -208,6 +211,32 @@ func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromp
 		&i.ErrorLog,
 		&i.CreatedAt,
 		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const createToken = `-- name: CreateToken :one
+
+INSERT INTO token (application_id, name)
+VALUES ($1, $2)
+RETURNING id, name, created_at, deleted_at, application_id
+`
+
+type CreateTokenParams struct {
+	ApplicationID pgtype.UUID `json:"applicationId"`
+	Name          string      `json:"name"`
+}
+
+// -- token
+func (q *Queries) CreateToken(ctx context.Context, arg CreateTokenParams) (Token, error) {
+	row := q.db.QueryRow(ctx, createToken, arg.ApplicationID, arg.Name)
+	var i Token
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.CreatedAt,
+		&i.DeletedAt,
+		&i.ApplicationID,
 	)
 	return i, err
 }
@@ -282,13 +311,24 @@ func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
 }
 
 const deletePromptConfig = `-- name: DeletePromptConfig :exec
-DELETE
-FROM prompt_config
+UPDATE prompt_config
+SET deleted_at = NOW()
 WHERE id = $1
 `
 
 func (q *Queries) DeletePromptConfig(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, deletePromptConfig, id)
+	return err
+}
+
+const deleteToken = `-- name: DeleteToken :exec
+UPDATE token
+SET deleted_at = NOW()
+WHERE id = $1
+`
+
+func (q *Queries) DeleteToken(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteToken, id)
 	return err
 }
 
@@ -301,7 +341,9 @@ SELECT
     updated_at,
     project_id
 FROM application
-WHERE id = $1 AND deleted_at IS NULL
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 `
 
 type FindApplicationByIdRow struct {
@@ -341,7 +383,9 @@ SELECT
     updated_at,
     application_id
 FROM prompt_config
-WHERE application_id = $1
+WHERE
+    application_id = $1
+    AND deleted_at IS NULL
 `
 
 type FindApplicationPromptConfigsRow struct {
@@ -406,6 +450,7 @@ SELECT
 FROM prompt_config
 WHERE
     application_id = $1
+    AND deleted_at IS NULL
     AND is_default = TRUE
 `
 
@@ -456,7 +501,9 @@ SELECT
     updated_at,
     application_id
 FROM prompt_config
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 `
 
 type FindPromptConfigByIdRow struct {
@@ -512,7 +559,9 @@ FROM user_account AS u
 LEFT JOIN user_project AS up ON u.id = up.user_id
 LEFT JOIN project AS p ON up.project_id = p.id
 LEFT JOIN application AS a ON p.id = a.project_id
-WHERE u.firebase_id = $1 AND p.deleted_at IS NULL
+WHERE
+    u.firebase_id = $1
+    AND p.deleted_at IS NULL
 `
 
 type FindUserAccountDataRow struct {
@@ -567,13 +616,53 @@ func (q *Queries) FindUserAccountData(ctx context.Context, firebaseID string) ([
 	return items, nil
 }
 
+const retrieveApplicationTokens = `-- name: RetrieveApplicationTokens :many
+SELECT
+    id,
+    name,
+    created_at
+FROM token
+WHERE
+    application_id = $1
+    AND deleted_at IS NULL
+ORDER BY created_at
+`
+
+type RetrieveApplicationTokensRow struct {
+	ID        pgtype.UUID        `json:"id"`
+	Name      string             `json:"name"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+}
+
+func (q *Queries) RetrieveApplicationTokens(ctx context.Context, applicationID pgtype.UUID) ([]RetrieveApplicationTokensRow, error) {
+	rows, err := q.db.Query(ctx, retrieveApplicationTokens, applicationID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RetrieveApplicationTokensRow
+	for rows.Next() {
+		var i RetrieveApplicationTokensRow
+		if err := rows.Scan(&i.ID, &i.Name, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateApplication = `-- name: UpdateApplication :one
 UPDATE application
 SET
     name = $2,
     description = $3,
     updated_at = NOW()
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 RETURNING id, description, name, created_at, updated_at, deleted_at, project_id
 `
 
@@ -604,7 +693,9 @@ SET
     name = $2,
     description = $3,
     updated_at = NOW()
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 RETURNING id, name, description, created_at, updated_at, deleted_at
 `
 
@@ -638,7 +729,9 @@ SET
     provider_prompt_messages = $6,
     expected_template_variables = $7,
     updated_at = NOW()
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, created_at, updated_at, deleted_at, application_id
 `
 
@@ -685,7 +778,9 @@ UPDATE prompt_config
 SET
     is_default = $2,
     updated_at = NOW()
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 `
 
 type UpdatePromptConfigIsDefaultParams struct {
@@ -703,7 +798,10 @@ UPDATE user_project
 SET
     is_user_default_project = $3,
     updated_at = NOW()
-WHERE user_id = $1 AND project_id = $2 RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
+WHERE
+    user_id = $1
+    AND project_id = $2
+RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
 `
 
 type UpdateUserDefaultProjectParams struct {
@@ -731,7 +829,10 @@ UPDATE user_project
 SET
     permission = $3,
     updated_at = NOW()
-WHERE user_id = $1 AND project_id = $2 RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
+WHERE
+    user_id = $1
+    AND project_id = $2
+RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
 `
 
 type UpdateUserProjectPermissionParams struct {

@@ -35,6 +35,13 @@ func RegisterHandlers(mux *chi.Mux) {
 			applicationsRouter.Delete("/", HandleDeleteApplication)
 		})
 
+		router.Route(ApplicationTokensListEndpoint, func(applicationsRouter chi.Router) {
+			applicationsRouter.Post("/", HandleCreateApplicationToken)
+			applicationsRouter.Get("/", HandleRetrieveApplicationTokens)
+		})
+
+		router.Delete(ApplicationTokenDetailEndpoint, HandleDeleteApplicationToken)
+
 		router.Route(PromptConfigListEndpoint, func(promptConfigRouter chi.Router) {
 			promptConfigRouter.Post("/", HandleCreatePromptConfig)
 			promptConfigRouter.Get("/", HandleRetrievePromptConfigs)

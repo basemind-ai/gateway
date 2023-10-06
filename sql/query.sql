@@ -28,7 +28,9 @@ FROM user_account AS u
 LEFT JOIN user_project AS up ON u.id = up.user_id
 LEFT JOIN project AS p ON up.project_id = p.id
 LEFT JOIN application AS a ON p.id = a.project_id
-WHERE u.firebase_id = $1 AND p.deleted_at IS NULL;
+WHERE
+    u.firebase_id = $1
+    AND p.deleted_at IS NULL;
 
 
 ---- project
@@ -44,7 +46,9 @@ SET
     name = $2,
     description = $3,
     updated_at = NOW()
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 RETURNING *;
 
 -- name: DeleteProject :exec
@@ -64,14 +68,20 @@ UPDATE user_project
 SET
     permission = $3,
     updated_at = NOW()
-WHERE user_id = $1 AND project_id = $2 RETURNING *;
+WHERE
+    user_id = $1
+    AND project_id = $2
+RETURNING *;
 
 -- name: UpdateUserDefaultProject :one
 UPDATE user_project
 SET
     is_user_default_project = $3,
     updated_at = NOW()
-WHERE user_id = $1 AND project_id = $2 RETURNING *;
+WHERE
+    user_id = $1
+    AND project_id = $2
+RETURNING *;
 
 ---- application
 
@@ -90,7 +100,9 @@ SET
     name = $2,
     description = $3,
     updated_at = NOW()
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 RETURNING *;
 
 -- name: DeleteApplication :exec
@@ -107,7 +119,9 @@ SELECT
     updated_at,
     project_id
 FROM application
-WHERE id = $1 AND deleted_at IS NULL;
+WHERE
+    id = $1
+    AND deleted_at IS NULL;
 
 ---- prompt config
 
@@ -131,6 +145,7 @@ SELECT EXISTS(
     FROM prompt_config
     WHERE
         application_id = $1
+        AND deleted_at IS NULL
         AND is_default = TRUE
 );
 
@@ -139,7 +154,9 @@ UPDATE prompt_config
 SET
     is_default = $2,
     updated_at = NOW()
-WHERE id = $1;
+WHERE
+    id = $1
+    AND deleted_at IS NULL;
 
 -- name: UpdatePromptConfig :one
 UPDATE prompt_config
@@ -151,12 +168,14 @@ SET
     provider_prompt_messages = $6,
     expected_template_variables = $7,
     updated_at = NOW()
-WHERE id = $1
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 RETURNING *;
 
 -- name: DeletePromptConfig :exec
-DELETE
-FROM prompt_config
+UPDATE prompt_config
+SET deleted_at = NOW()
 WHERE id = $1;
 
 -- name: FindPromptConfigById :one
@@ -173,7 +192,9 @@ SELECT
     updated_at,
     application_id
 FROM prompt_config
-WHERE id = $1;
+WHERE
+    id = $1
+    AND deleted_at IS NULL;
 
 -- name: FindApplicationPromptConfigs :many
 SELECT
@@ -189,7 +210,9 @@ SELECT
     updated_at,
     application_id
 FROM prompt_config
-WHERE application_id = $1;
+WHERE
+    application_id = $1
+    AND deleted_at IS NULL;
 
 -- name: FindDefaultPromptConfigByApplicationId :one
 SELECT
@@ -207,7 +230,10 @@ SELECT
 FROM prompt_config
 WHERE
     application_id = $1
+    AND deleted_at IS NULL
     AND is_default = TRUE;
+
+---- prompt request record
 
 -- name: CreatePromptRequestRecord :one
 INSERT INTO prompt_request_record (
@@ -222,3 +248,26 @@ INSERT INTO prompt_request_record (
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
+
+---- token
+
+-- name: CreateToken :one
+INSERT INTO token (application_id, name)
+VALUES ($1, $2)
+RETURNING *;
+
+-- name: RetrieveApplicationTokens :many
+SELECT
+    id,
+    name,
+    created_at
+FROM token
+WHERE
+    application_id = $1
+    AND deleted_at IS NULL
+ORDER BY created_at;
+
+-- name: DeleteToken :exec
+UPDATE token
+SET deleted_at = NOW()
+WHERE id = $1;
