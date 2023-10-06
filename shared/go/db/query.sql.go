@@ -487,6 +487,38 @@ func (q *Queries) FindDefaultPromptConfigByApplicationId(ctx context.Context, ap
 	return i, err
 }
 
+const findProjectById = `-- name: FindProjectById :one
+SELECT
+    id,
+    description,
+    name,
+    created_at,
+    updated_at
+FROM project
+WHERE id = $1 AND deleted_at IS NULL
+`
+
+type FindProjectByIdRow struct {
+	ID          pgtype.UUID        `json:"id"`
+	Description string             `json:"description"`
+	Name        string             `json:"name"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+}
+
+func (q *Queries) FindProjectById(ctx context.Context, id pgtype.UUID) (FindProjectByIdRow, error) {
+	row := q.db.QueryRow(ctx, findProjectById, id)
+	var i FindProjectByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.Description,
+		&i.Name,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const findPromptConfigById = `-- name: FindPromptConfigById :one
 SELECT
     id,

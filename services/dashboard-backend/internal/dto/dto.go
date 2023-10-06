@@ -15,13 +15,13 @@ type ApplicationDTO struct {
 }
 
 type ProjectDTO struct {
-	ID                   string           `json:"id"`
-	Name                 string           `json:"name"`
-	Description          string           `json:"description"`
-	CreatedAt            time.Time        `json:"createdAt"`
-	IsUserDefaultProject bool             `json:"isUserDefaultProject"`
-	Permission           string           `json:"permission"`
-	Applications         []ApplicationDTO `json:"applications"`
+	ID                   string           `json:"id,omitempty"`
+	Name                 string           `json:"name"                           validate:"required"`
+	Description          string           `json:"description,omitempty"`
+	CreatedAt            time.Time        `json:"createdAt,omitempty"`
+	IsUserDefaultProject bool             `json:"isUserDefaultProject,omitempty"`
+	Permission           string           `json:"permission,omitempty"`
+	Applications         []ApplicationDTO `json:"applications,omitempty"`
 }
 
 type UserAccountDTO struct {

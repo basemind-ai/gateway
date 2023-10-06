@@ -56,6 +56,16 @@ UPDATE project
 SET deleted_at = NOW()
 WHERE id = $1;
 
+-- name: FindProjectById :one
+SELECT
+    id,
+    description,
+    name,
+    created_at,
+    updated_at
+FROM project
+WHERE id = $1 AND deleted_at IS NULL;
+
 ---- user_project
 
 -- name: CreateUserProject :one
