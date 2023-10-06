@@ -50,9 +50,7 @@ func main() {
 		log.Fatal().Err(connErr).Msg("failed to connect to DB")
 	}
 
-	defer func() {
-		_ = conn.Close(ctx)
-	}()
+	defer conn.Close()
 
 	mux := router.New(router.Options{
 		Environment:      cfg.Environment,

@@ -34,6 +34,11 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
+	defer func() {
+		if rollbackErr := tx.Rollback(r.Context()); rollbackErr != nil {
+			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
+		}
+	}()
 
 	queries := db.GetQueries()
 
@@ -48,19 +53,13 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tokenId := db.UUIDToString(&token.ID)
-	cfg, configErr := db.WithRollback(
-		tx,
-		func() (config.Config, error) { return config.Get(r.Context()) },
-	)
+	cfg, configErr := config.Get(r.Context())
 	if configErr != nil {
 		log.Error().Err(configErr).Msg("failed to retrieve config")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
-	jwt, jwtErr := db.WithRollback(
-		tx,
-		func() (string, error) { return jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), tokenId) },
-	)
+	jwt, jwtErr := jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), tokenId)
 	if jwtErr != nil {
 		log.Error().Err(jwtErr).Msg("failed to create jwt")
 		apierror.InternalServerError().Render(w, r)
@@ -77,7 +76,7 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 		ID:        tokenId,
 		CreatedAt: token.CreatedAt.Time,
 		Name:      token.Name,
-		Hash:      jwt,
+		Hash:      &jwt,
 	})
 }
 

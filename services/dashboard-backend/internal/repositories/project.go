@@ -39,16 +39,11 @@ func CreateProject(
 		return nil, fmt.Errorf("failed to create project: %w", projectCreateErr)
 	}
 
-	userProject, userProjectCreateErr := db.WithRollback(
-		tx,
-		func() (db.UserProject, error) {
-			return queries.CreateUserProject(ctx, db.CreateUserProjectParams{
-				UserID:     userAccount.ID,
-				ProjectID:  project.ID,
-				Permission: db.AccessPermissionTypeADMIN,
-			})
-		},
-	)
+	userProject, userProjectCreateErr := queries.CreateUserProject(ctx, db.CreateUserProjectParams{
+		UserID:     userAccount.ID,
+		ProjectID:  project.ID,
+		Permission: db.AccessPermissionTypeADMIN,
+	})
 
 	if userProjectCreateErr != nil {
 		log.Error().Err(userProjectCreateErr).Msg("failed to create user project")
@@ -90,6 +85,11 @@ func DeleteProject(ctx context.Context, projectId pgtype.UUID) error {
 		log.Error().Err(txErr).Msg("failed to create transaction")
 		return fmt.Errorf("failed to create transaction: %w", txErr)
 	}
+	defer func() {
+		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
+		}
+	}()
 
 	// we pass in the transaction into the nested function call via context
 	transactionCtx := db.CreateTransactionContext(ctx, tx)
@@ -103,11 +103,7 @@ func DeleteProject(ctx context.Context, projectId pgtype.UUID) error {
 		}
 	}
 
-	if _, deleteErr := db.WithRollback(
-		tx, func() (any, error) {
-			err := db.GetQueries().WithTx(tx).DeleteProject(ctx, projectId)
-			return nil, err
-		}); deleteErr != nil {
+	if deleteErr := db.GetQueries().WithTx(tx).DeleteProject(ctx, projectId); deleteErr != nil {
 		log.Error().Err(deleteErr).Msg("failed to delete project")
 		return fmt.Errorf("failed to delete project: %w", deleteErr)
 	}

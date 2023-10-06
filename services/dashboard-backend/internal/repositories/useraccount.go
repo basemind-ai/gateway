@@ -89,6 +89,12 @@ func CreateDefaultUserAccountData(
 	if err != nil {
 		return nil, fmt.Errorf("failed to get transaction queries - %w", err)
 	}
+	defer func() {
+		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
+		}
+	}()
+
 	queries := db.GetQueries().WithTx(tx)
 	user, createUserErr := queries.CreateUserAccount(ctx, firebaseId)
 	if createUserErr != nil {
@@ -96,31 +102,21 @@ func CreateDefaultUserAccountData(
 		return nil, fmt.Errorf("failed to create user row - %w", createUserErr)
 	}
 
-	project, createProjectErr := db.WithRollback(
-		tx,
-		func() (db.Project, error) {
-			return queries.CreateProject(
-				ctx,
-				db.CreateProjectParams{Name: "Default Project", Description: "Default Project"},
-			)
-		},
+	project, createProjectErr := queries.CreateProject(
+		ctx,
+		db.CreateProjectParams{Name: "Default Project", Description: "Default Project"},
 	)
 	if createProjectErr != nil {
 		log.Error().Err(createProjectErr).Msg("failed to create project")
 		return nil, fmt.Errorf("failed to create project row - %w", createProjectErr)
 	}
 
-	userProject, createUserProjectErr := db.WithRollback(
-		tx,
-		func() (db.UserProject, error) {
-			return queries.CreateUserProject(ctx, db.CreateUserProjectParams{
-				UserID:               user.ID,
-				ProjectID:            project.ID,
-				Permission:           db.AccessPermissionTypeADMIN,
-				IsUserDefaultProject: true,
-			})
-		},
-	)
+	userProject, createUserProjectErr := queries.CreateUserProject(ctx, db.CreateUserProjectParams{
+		UserID:               user.ID,
+		ProjectID:            project.ID,
+		Permission:           db.AccessPermissionTypeADMIN,
+		IsUserDefaultProject: true,
+	})
 
 	if createUserProjectErr != nil {
 		log.Error().Err(createUserProjectErr).Msg("failed to create user project")

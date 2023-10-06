@@ -54,9 +54,7 @@ func main() {
 		log.Fatal().Err(connErr).Msg("failed to connect to DB")
 	}
 
-	defer func() {
-		_ = conn.Close(ctx)
-	}()
+	defer conn.Close()
 
 	server := grpcutils2.CreateGRPCServer[gateway.APIGatewayServiceServer](
 		grpcutils2.Options[gateway.APIGatewayServiceServer]{

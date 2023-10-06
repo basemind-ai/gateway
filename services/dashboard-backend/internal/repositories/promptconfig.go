@@ -95,14 +95,17 @@ func UpdateApplicationDefaultPromptConfig(
 	if txErr != nil {
 		return fmt.Errorf("failed to create transaction - %w", txErr)
 	}
+	defer func() {
+		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
+		}
+	}()
+
 	queries := db.GetQueries().WithTx(tx)
 
-	if _, updateErr := db.WithRollback(tx, func() (any, error) {
-		err := queries.UpdatePromptConfigIsDefault(ctx, db.UpdatePromptConfigIsDefaultParams{
-			ID:        defaultPromptConfig.ID,
-			IsDefault: false,
-		})
-		return nil, err
+	if updateErr := queries.UpdatePromptConfigIsDefault(ctx, db.UpdatePromptConfigIsDefaultParams{
+		ID:        defaultPromptConfig.ID,
+		IsDefault: false,
 	}); updateErr != nil {
 		return fmt.Errorf(
 			"failed to set the existing default config as non-default - %w",
@@ -110,12 +113,9 @@ func UpdateApplicationDefaultPromptConfig(
 		)
 	}
 
-	if _, updateErr := db.WithRollback(tx, func() (any, error) {
-		err := queries.UpdatePromptConfigIsDefault(ctx, db.UpdatePromptConfigIsDefaultParams{
-			ID:        promptConfigId,
-			IsDefault: true,
-		})
-		return nil, err
+	if updateErr := queries.UpdatePromptConfigIsDefault(ctx, db.UpdatePromptConfigIsDefaultParams{
+		ID:        promptConfigId,
+		IsDefault: true,
 	}); updateErr != nil {
 		return fmt.Errorf("failed to set the new prompt config as default - %w", updateErr)
 	}

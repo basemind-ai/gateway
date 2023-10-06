@@ -64,7 +64,7 @@ func CreateNamespaceTestDBModule(namespace string) func() {
 	}
 
 	return func() {
-		_ = connection.Close(context.TODO())
+		connection.Close()
 		if purgeErr := connectionPool.Purge(resource); purgeErr != nil {
 			log.Fatal().Err(purgeErr).Msg("failed to purge test database")
 		}
