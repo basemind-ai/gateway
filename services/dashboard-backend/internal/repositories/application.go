@@ -23,25 +23,12 @@ func DeleteApplication(ctx context.Context, applicationId pgtype.UUID) error {
 	queries := db.GetQueries().WithTx(tx)
 
 	for _, promptConfig := range promptConfigs {
-		_, deleteErr := db.WithRollback[any](
-			tx,
-			func() (any, error) {
-				err := queries.DeletePromptConfig(ctx, promptConfig.ID)
-				return nil, err
-			})
-		if deleteErr != nil {
+		if deleteErr := queries.DeletePromptConfig(ctx, promptConfig.ID); deleteErr != nil {
 			return fmt.Errorf("failed to delete prompt config: %w", deleteErr)
 		}
 	}
 
-	_, deleteErr := db.WithRollback[any](
-		tx,
-		func() (any, error) {
-			err := queries.DeleteApplication(ctx, applicationId)
-			return nil, err
-		},
-	)
-	if deleteErr != nil {
+	if deleteErr := queries.DeleteApplication(ctx, applicationId); deleteErr != nil {
 		return fmt.Errorf("failed to delete application: %w", deleteErr)
 	}
 

@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"sync"
 	"time"
 
@@ -13,64 +13,53 @@ import (
 )
 
 var (
-	queries        *Queries
-	connectionOnce sync.Once
-	queriesOnce    sync.Once
-	connection     *pgx.Conn
+	queries     *Queries
+	poolOnce    sync.Once
+	queriesOnce sync.Once
+	pool        *pgxpool.Pool
 )
 
-func CreateConnection(ctx context.Context, dbUrl string) (*pgx.Conn, error) {
+func CreateConnection(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
 	var err error
 
-	connectionOnce.Do(func() {
+	poolOnce.Do(func() {
 		exponentialBackoff := backoff.NewExponentialBackOff()
 		exponentialBackoff.MaxInterval = time.Second * 5
 		exponentialBackoff.MaxElapsedTime = 20 * time.Second
 
 		if connErr := backoff.Retry(func() error {
-			conn, pgxErr := pgx.Connect(ctx, dbUrl)
+			conn, pgxErr := pgxpool.New(ctx, dbUrl)
 			if pgxErr != nil {
 				return pgxErr
 			}
-			connection = conn
+			pool = conn
 
-			return connection.Ping(ctx)
+			return pool.Ping(ctx)
 		}, exponentialBackoff); connErr != nil {
 			err = connErr
 		}
 	})
 
-	return connection, err
+	return pool, err
 }
 
 func GetQueries() *Queries {
 	queriesOnce.Do(func() {
-		if connection == nil {
+		if pool == nil {
 			log.Fatal().Msg("Connection not initialized")
 		}
-		queries = New(connection)
+		queries = New(pool)
 	})
 
 	return queries
 }
 
 func GetTransaction(ctx context.Context) (pgx.Tx, error) {
-	tx, err := connection.BeginTx(ctx, pgx.TxOptions{})
+	tx, err := pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create transaction")
 		return nil, err
 	}
 
 	return tx, nil
-}
-
-func WithRollback[T any](tx pgx.Tx, query func() (T, error)) (*T, error) {
-	result, err := query()
-	if err != nil {
-		if rollbackErr := tx.Rollback(context.Background()); rollbackErr != nil {
-			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
-			return nil, fmt.Errorf("failed to rollback transaction - %w - %w", rollbackErr, err)
-		}
-	}
-	return &result, err
 }

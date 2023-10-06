@@ -24,11 +24,7 @@ var seedCommand = &cobra.Command{
 			log.Fatal().Err(connErr).Msg("failed to connect to DB")
 		}
 
-		defer func() {
-			if err := conn.Close(cmd.Context()); err != nil {
-				log.Fatal().Err(err).Msg("failed to close DB connection")
-			}
-		}()
+		defer conn.Close()
 
 		project, projectCreateErr := factories.CreateProject(cmd.Context())
 		if projectCreateErr != nil {

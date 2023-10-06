@@ -34,6 +34,7 @@ func TestUtils(t *testing.T) {
 			returnedTx, err := db.GetOrCreateTx(context.TODO())
 			assert.NoError(t, err)
 			assert.NotNil(t, returnedTx)
+			_ = returnedTx.Rollback(context.Background())
 		})
 	})
 	t.Run("CreateShouldCommitContext", func(t *testing.T) {
