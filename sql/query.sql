@@ -3,6 +3,14 @@
 -- name: CheckUserAccountExists :one
 SELECT EXISTS(SELECT 1 FROM user_account WHERE firebase_id = $1);
 
+-- name: FindUserAccountByFirebaseId :one
+SELECT
+    id,
+    firebase_id,
+    created_at
+FROM user_account
+WHERE firebase_id = $1;
+
 -- name: CreateUserAccount :one
 INSERT INTO user_account (firebase_id)
 VALUES ($1)
@@ -131,6 +139,19 @@ SELECT
 FROM application
 WHERE
     id = $1
+    AND deleted_at IS NULL;
+
+-- name: FindApplicationsByProjectId :many
+SELECT
+    id,
+    description,
+    name,
+    created_at,
+    updated_at,
+    project_id
+FROM application
+WHERE
+    project_id = $1
     AND deleted_at IS NULL;
 
 ---- prompt config

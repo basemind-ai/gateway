@@ -434,6 +434,56 @@ func (q *Queries) FindApplicationPromptConfigs(ctx context.Context, applicationI
 	return items, nil
 }
 
+const findApplicationsByProjectId = `-- name: FindApplicationsByProjectId :many
+SELECT
+    id,
+    description,
+    name,
+    created_at,
+    updated_at,
+    project_id
+FROM application
+WHERE
+    project_id = $1
+    AND deleted_at IS NULL
+`
+
+type FindApplicationsByProjectIdRow struct {
+	ID          pgtype.UUID        `json:"id"`
+	Description string             `json:"description"`
+	Name        string             `json:"name"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	ProjectID   pgtype.UUID        `json:"projectId"`
+}
+
+func (q *Queries) FindApplicationsByProjectId(ctx context.Context, projectID pgtype.UUID) ([]FindApplicationsByProjectIdRow, error) {
+	rows, err := q.db.Query(ctx, findApplicationsByProjectId, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindApplicationsByProjectIdRow
+	for rows.Next() {
+		var i FindApplicationsByProjectIdRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Description,
+			&i.Name,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.ProjectID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const findDefaultPromptConfigByApplicationId = `-- name: FindDefaultPromptConfigByApplicationId :one
 SELECT
     id,
@@ -568,6 +618,22 @@ func (q *Queries) FindPromptConfigById(ctx context.Context, id pgtype.UUID) (Fin
 		&i.UpdatedAt,
 		&i.ApplicationID,
 	)
+	return i, err
+}
+
+const findUserAccountByFirebaseId = `-- name: FindUserAccountByFirebaseId :one
+SELECT
+    id,
+    firebase_id,
+    created_at
+FROM user_account
+WHERE firebase_id = $1
+`
+
+func (q *Queries) FindUserAccountByFirebaseId(ctx context.Context, firebaseID string) (UserAccount, error) {
+	row := q.db.QueryRow(ctx, findUserAccountByFirebaseId, firebaseID)
+	var i UserAccount
+	err := row.Scan(&i.ID, &i.FirebaseID, &i.CreatedAt)
 	return i, err
 }
 

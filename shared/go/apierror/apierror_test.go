@@ -20,6 +20,11 @@ func TestApiError(t *testing.T) {
 		ExpectedMessage string
 	}{
 		{
+			ApiErrType:      apierror.NotFound("err"),
+			ExpectedStatus:  http.StatusNotFound,
+			ExpectedMessage: "err",
+		},
+		{
 			ApiErrType:      apierror.BadRequest("err"),
 			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedMessage: "err",

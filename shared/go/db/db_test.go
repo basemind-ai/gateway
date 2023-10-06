@@ -15,8 +15,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMain(m *testing.M) {
+	cleanup := dbTestUtils.CreateNamespaceTestDBModule("db-test")
+	defer cleanup()
+	m.Run()
+}
+
 func TestDbQueries(t *testing.T) {
-	dbTestUtils.CreateTestDB(t)
 	dbQueries := db.GetQueries()
 
 	t.Run("CheckUserAccountExists tests", func(t *testing.T) {

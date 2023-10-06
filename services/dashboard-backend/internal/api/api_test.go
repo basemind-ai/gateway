@@ -43,18 +43,15 @@ func createUserProject(
 	permission db.AccessPermissionType,
 ) {
 	t.Helper()
-	userData, err := db.GetQueries().FindUserAccountData(context.Background(), firebaseId)
+	userAccount, err := db.GetQueries().
+		FindUserAccountByFirebaseId(context.Background(), firebaseId)
 	assert.NoError(t, err)
-
-	assert.True(t, len(userData) > 0)
-
-	userId := userData[0].UserID
 
 	projectIdUUID, err := db.StringToUUID(projectId)
 	assert.NoError(t, err)
 
 	_, err = db.GetQueries().CreateUserProject(context.Background(), db.CreateUserProjectParams{
-		UserID:     userId,
+		UserID:     userAccount.ID,
 		ProjectID:  *projectIdUUID,
 		Permission: permission,
 	})

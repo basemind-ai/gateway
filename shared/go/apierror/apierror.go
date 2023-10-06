@@ -36,6 +36,10 @@ func NewApiError(statusCode int, args ...interface{}) *ApiError {
 	}
 }
 
+func NotFound(message ...interface{}) *ApiError {
+	return NewApiError(http.StatusNotFound, message...)
+}
+
 func BadRequest(message ...interface{}) *ApiError {
 	return NewApiError(http.StatusBadRequest, message...)
 }
