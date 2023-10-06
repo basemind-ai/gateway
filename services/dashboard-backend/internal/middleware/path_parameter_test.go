@@ -97,6 +97,44 @@ func TestPathParameterMiddleware(t *testing.T) {
 			})
 		}
 	})
+	t.Run("should handle multiple parameters", func(t *testing.T) {
+		mockNext := &nextMock{}
+		mockNext.On("ServeHTTP", mock.Anything, mock.Anything).Return()
+
+		projectId := "3a8c3c0a-6512-49e5-9b99-98a7d3336659"
+		applicationId := "b5cbc13e-9c5b-42e5-9c25-79e4a4be872a"
+
+		pathParameterMiddleware := middleware.PathParameterMiddleware(
+			"projectId",
+			"applicationId",
+		)(
+			mockNext,
+		)
+		request := httptest.NewRequest(http.MethodGet, "/", nil).WithContext(
+			createChiRouteContext(
+				context.TODO(),
+				[]string{"projectId", "applicationId"},
+				[]string{projectId, applicationId},
+			),
+		)
+		testRecorder := httptest.NewRecorder()
+		pathParameterMiddleware.ServeHTTP(testRecorder, request)
+		newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
+
+		ctxValue := newRequest.Context().Value(middleware.ProjectIdContextKey)
+		uuidValue, ok := ctxValue.(pgtype.UUID)
+		assert.True(t, ok)
+
+		stringValue := db.UUIDToString(&uuidValue)
+		assert.Equal(t, projectId, stringValue)
+
+		ctxValue = newRequest.Context().Value(middleware.ApplicationIdContextKey)
+		uuidValue, ok = ctxValue.(pgtype.UUID)
+		assert.True(t, ok)
+
+		stringValue = db.UUIDToString(&uuidValue)
+		assert.Equal(t, applicationId, stringValue)
+	})
 	t.Run("should panic for unknown parameter name", func(t *testing.T) {
 		mockNext := &nextMock{}
 		mockNext.On("ServeHTTP", mock.Anything, mock.Anything).Return()

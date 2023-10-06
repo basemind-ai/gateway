@@ -106,7 +106,7 @@ func TestProjectsAPI(t *testing.T) {
 		)
 
 		t.Run(
-			"responds with status 404 NOT FOUND if the projectId is invalid",
+			"responds with status 400 BAD REQUEST if the projectId is invalid",
 			func(t *testing.T) {
 				body := &dto.ProjectDTO{
 					Name:        "New Name",
@@ -118,12 +118,12 @@ func TestProjectsAPI(t *testing.T) {
 				)
 				response, requestErr := testClient.Patch(context.Background(), url, body)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusNotFound, response.StatusCode)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
 
 		t.Run(
-			"responds with status 400 BAD REQUEST if no project matching the ID is found,",
+			"responds with status 400 BAD REQUEST if no project matching the ID is found",
 			func(t *testing.T) {
 				projectId := createProject(t)
 				createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeADMIN)
@@ -188,7 +188,7 @@ func TestProjectsAPI(t *testing.T) {
 			},
 		)
 		t.Run(
-			"responds with status 404 NOT FOUND if the projectId is invalid",
+			"responds with status 400 BAD REQUEST if the projectId is invalid",
 			func(t *testing.T) {
 				url := fmt.Sprintf(
 					"/v1%s",
@@ -196,12 +196,12 @@ func TestProjectsAPI(t *testing.T) {
 				)
 				response, requestErr := testClient.Delete(context.Background(), url)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusNotFound, response.StatusCode)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
 
 		t.Run(
-			"responds with status 400 BAD REQUEST if no project matching the ID is found,",
+			"responds with status 400 BAD REQUEST if no project matching the ID is found",
 			func(t *testing.T) {
 				projectId := createProject(t)
 				createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeADMIN)

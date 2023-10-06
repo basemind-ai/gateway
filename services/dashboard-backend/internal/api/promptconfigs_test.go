@@ -309,6 +309,40 @@ func TestPromptConfigAPI(t *testing.T) {
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Post(
+				context.TODO(),
+				fmtListEndpoint("invalid", applicationId),
+				dto.PromptConfigCreateDTO{
+					Name:                   "test prompt config",
+					ModelParameters:        modelParameters,
+					ModelType:              db.ModelTypeGpt4,
+					ModelVendor:            db.ModelVendorOPENAI,
+					ProviderPromptMessages: promptMessages,
+				},
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Post(
+					context.TODO(),
+					fmtListEndpoint(projectId, "invalid"),
+					dto.PromptConfigCreateDTO{
+						Name:                   "test prompt config",
+						ModelParameters:        modelParameters,
+						ModelType:              db.ModelTypeGpt4,
+						ModelVendor:            db.ModelVendorOPENAI,
+						ProviderPromptMessages: promptMessages,
+					},
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.PromptConfigListEndpoint), func(t *testing.T) {
@@ -373,9 +407,30 @@ func TestPromptConfigAPI(t *testing.T) {
 
 			assert.Len(t, promptConfigs, 0)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				fmtListEndpoint("invalid", applicationId),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmtListEndpoint(projectId, "invalid"),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
-	t.Run(fmt.Sprintf("GET: %s", api.PromptConfigSetDefaultEndpoint), func(t *testing.T) {
+	t.Run(fmt.Sprintf("PATCH: %s", api.PromptConfigSetDefaultEndpoint), func(t *testing.T) {
 		fmtSetDefaultEndpoint := func(projectId string, applicationId string, promptConfigId string) string {
 			return fmt.Sprintf(
 				"/v1%s",
@@ -482,6 +537,56 @@ func TestPromptConfigAPI(t *testing.T) {
 
 				assert.NoError(t, retrivalErr)
 				assert.Equal(t, true, dbDefaultPromptConfig.IsDefault)
+			},
+		)
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			applicationId := createApplication(t, projectId)
+
+			uuidId, _ := db.StringToUUID(applicationId)
+			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidId)
+			promptConfigId := db.UUIDToString(&promptConfig.ID)
+
+			response, requestErr := testClient.Patch(
+				context.TODO(),
+				fmtSetDefaultEndpoint("invalid", applicationId, promptConfigId),
+				nil,
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				applicationId := createApplication(t, projectId)
+
+				uuidId, _ := db.StringToUUID(applicationId)
+				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidId)
+				promptConfigId := db.UUIDToString(&promptConfig.ID)
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtSetDefaultEndpoint(projectId, "invalid", promptConfigId),
+					nil,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if promptConfigId is invalid",
+			func(t *testing.T) {
+				applicationId := createApplication(t, projectId)
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtSetDefaultEndpoint(projectId, applicationId, "invalid"),
+					nil,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
 	})
@@ -681,6 +786,62 @@ func TestPromptConfigAPI(t *testing.T) {
 			assert.NoError(t, retrivalErr)
 			assert.Equal(t, newModelParameters, dbPromptConfig.ModelParameters)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			applicationId := createApplication(t, projectId)
+
+			uuidId, _ := db.StringToUUID(applicationId)
+			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidId)
+			promptConfigId := db.UUIDToString(&promptConfig.ID)
+
+			name := "new name"
+			response, requestErr := testClient.Patch(
+				context.TODO(),
+				fmtDetailEndpoint("invalid", applicationId, promptConfigId),
+				dto.PromptConfigUpdateDTO{
+					Name: &name,
+				})
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				applicationId := createApplication(t, projectId)
+
+				uuidId, _ := db.StringToUUID(applicationId)
+				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidId)
+				promptConfigId := db.UUIDToString(&promptConfig.ID)
+
+				name := "new name"
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtDetailEndpoint(projectId, "invalid", promptConfigId),
+					dto.PromptConfigUpdateDTO{
+						Name: &name,
+					})
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if promptConfigId is invalid",
+			func(t *testing.T) {
+				applicationId := createApplication(t, projectId)
+
+				name := "new name"
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtDetailEndpoint(projectId, applicationId, "invalid"),
+					dto.PromptConfigUpdateDTO{
+						Name: &name,
+					})
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("DELETE: %s", api.PromptConfigDetailEndpoint), func(t *testing.T) {
@@ -741,5 +902,52 @@ func TestPromptConfigAPI(t *testing.T) {
 				FindPromptConfigById(context.Background(), promptConfig.ID)
 			assert.NoError(t, retrivalErr)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			applicationId := createApplication(t, projectId)
+
+			uuidId, _ := db.StringToUUID(applicationId)
+			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidId)
+			promptConfigId := db.UUIDToString(&promptConfig.ID)
+
+			response, requestErr := testClient.Delete(
+				context.TODO(),
+				fmtDetailEndpoint("invalid", applicationId, promptConfigId),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				applicationId := createApplication(t, projectId)
+
+				uuidId, _ := db.StringToUUID(applicationId)
+				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidId)
+				promptConfigId := db.UUIDToString(&promptConfig.ID)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(projectId, "invalid", promptConfigId),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if promptConfigId is invalid",
+			func(t *testing.T) {
+				applicationId := createApplication(t, projectId)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(projectId, applicationId, "invalid"),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 }

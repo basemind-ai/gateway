@@ -2,23 +2,21 @@ package api
 
 import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
 // HandleCreateApplicationToken - creates a new application token.
 func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
-		return
-	}
+	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+
 	data := &dto.ApplicationTokenDTO{}
 	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
@@ -40,7 +38,7 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 	queries := db.GetQueries()
 
 	token, createTokenErr := queries.CreateToken(r.Context(), db.CreateTokenParams{
-		ApplicationID: *applicationId,
+		ApplicationID: applicationId,
 		Name:          data.Name,
 	})
 	if createTokenErr != nil {
@@ -85,13 +83,9 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 
 // HandleRetrieveApplicationTokens - retrieves a list of all applications tokens.
 func HandleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
-		return
-	}
+	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
 
-	tokens, retrievalErr := db.GetQueries().RetrieveApplicationTokens(r.Context(), *applicationId)
+	tokens, retrievalErr := db.GetQueries().RetrieveApplicationTokens(r.Context(), applicationId)
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve application tokens")
 		apierror.InternalServerError().Render(w, r)
@@ -113,12 +107,9 @@ func HandleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
 
 // HandleDeleteApplicationToken - deletes an application token.
 func HandleDeleteApplicationToken(w http.ResponseWriter, r *http.Request) {
-	tokenId, uuidErr := db.StringToUUID(chi.URLParam(r, "tokenId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidTokenIdError).Render(w, r)
-		return
-	}
-	if err := db.GetQueries().DeleteToken(r.Context(), *tokenId); err != nil {
+	tokenId := r.Context().Value(middleware.TokenIdContextKey).(pgtype.UUID)
+
+	if err := db.GetQueries().DeleteToken(r.Context(), tokenId); err != nil {
 		log.Error().Err(err).Msg("failed to delete application token")
 		apierror.InternalServerError().Render(w, r)
 		return

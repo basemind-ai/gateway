@@ -1,23 +1,20 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
 func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
-	projectId, uuidErr := db.StringToUUID(chi.URLParam(r, "projectId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidProjectIdError).Render(w, r)
-		return
-	}
+	projectId := r.Context().Value(middleware.ProjectIdContextKey).(pgtype.UUID)
 
 	data := &db.CreateApplicationParams{
-		ProjectID: *projectId,
+		ProjectID: projectId,
 	}
 	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
@@ -41,14 +38,10 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
-		return
-	}
+	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
 
 	application, applicationRetrieveErr := db.GetQueries().
-		FindApplicationById(r.Context(), *applicationId)
+		FindApplicationById(r.Context(), applicationId)
 	if applicationRetrieveErr != nil {
 		log.Error().Err(applicationRetrieveErr).Msg("failed to retrieve application")
 		apierror.InternalServerError().Render(w, r)
@@ -58,14 +51,10 @@ func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
-		return
-	}
+	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
 
 	data := &db.UpdateApplicationParams{
-		ID: *applicationId,
+		ID: applicationId,
 	}
 	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
@@ -89,13 +78,9 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidApplicationIdError).Render(w, r)
-		return
-	}
+	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
 
-	if applicationDeleteErr := db.GetQueries().DeleteApplication(r.Context(), *applicationId); applicationDeleteErr != nil {
+	if applicationDeleteErr := db.GetQueries().DeleteApplication(r.Context(), applicationId); applicationDeleteErr != nil {
 		log.Error().Err(applicationDeleteErr).Msg("failed to delete application")
 		apierror.InternalServerError().Render(w, r)
 		return

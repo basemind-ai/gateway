@@ -7,7 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"net/http"
 )
@@ -46,11 +46,7 @@ func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
 // HandleUpdateProject - allows updating the name and description of a project
 // requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
 func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
-	projectId, uuidErr := db.StringToUUID(chi.URLParam(r, "projectId"))
-	if uuidErr != nil {
-		apierror.NotFound(InvalidProjectIdError).Render(w, r)
-		return
-	}
+	projectId := r.Context().Value(middleware.ProjectIdContextKey).(pgtype.UUID)
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJson(r.Body, body); deserializationErr != nil {
@@ -58,7 +54,7 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingProject, retrivalErr := db.GetQueries().FindProjectById(r.Context(), *projectId)
+	existingProject, retrivalErr := db.GetQueries().FindProjectById(r.Context(), projectId)
 	if retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
@@ -66,7 +62,7 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updateParams := db.UpdateProjectParams{
-		ID:          *projectId,
+		ID:          projectId,
 		Name:        existingProject.Name,
 		Description: existingProject.Description,
 	}
@@ -101,19 +97,15 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 // HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these
 // requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
 func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
-	projectId, uuidErr := db.StringToUUID(chi.URLParam(r, "projectId"))
-	if uuidErr != nil {
-		apierror.NotFound(InvalidProjectIdError).Render(w, r)
-		return
-	}
+	projectId := r.Context().Value(middleware.ProjectIdContextKey).(pgtype.UUID)
 
-	if _, retrivalErr := db.GetQueries().FindProjectById(r.Context(), *projectId); retrivalErr != nil {
+	if _, retrivalErr := db.GetQueries().FindProjectById(r.Context(), projectId); retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
 		return
 	}
 
-	if deleteErr := repositories.DeleteProject(r.Context(), *projectId); deleteErr != nil {
+	if deleteErr := repositories.DeleteProject(r.Context(), projectId); deleteErr != nil {
 		log.Error().Err(deleteErr).Msg("failed to delete project")
 		apierror.InternalServerError().Render(w, r)
 		return
