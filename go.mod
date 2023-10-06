@@ -4,7 +4,6 @@ go 1.21
 
 require (
 	firebase.google.com/go/v4 v4.12.1
-	github.com/Goldziher/go-utils v1.7.4
 	github.com/basemind-ai/monorepo/e2e v0.0.0-00010101000000-000000000000
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/go-chi/chi/v5 v5.0.10
@@ -88,7 +87,6 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/exp v0.0.0-20230807204917-050eac23e9de // indirect
 	golang.org/x/mod v0.13.0 // indirect
 	golang.org/x/net v0.16.0 // indirect
 	golang.org/x/oauth2 v0.13.0 // indirect

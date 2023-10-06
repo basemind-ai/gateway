@@ -10,10 +10,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type ContextKeyType int
+type AuthContextKeyType int
 
 const (
-	FireBaseIdContextKey ContextKeyType = iota
+	FireBaseIdContextKey AuthContextKeyType = iota
 )
 
 func FirebaseAuthMiddleware(next http.Handler) http.Handler {

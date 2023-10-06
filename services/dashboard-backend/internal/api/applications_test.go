@@ -70,6 +70,22 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Post(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid"),
+				),
+				map[string]interface{}{
+					"name":        "test app",
+					"description": "test app description",
+				},
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
@@ -81,7 +97,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationDetailEndpoint,
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
 						"{applicationId}",
 						applicationId,
 					),
@@ -111,7 +127,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationDetailEndpoint,
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
 						"{applicationId}",
 						"invalid",
 					),
@@ -120,6 +136,45 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", "invalid"),
+						"{applicationId}",
+						"invalid",
+					),
+				),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								projectId,
+							),
+							"{applicationId}",
+							"invalid",
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("PATCH: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
@@ -131,7 +186,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationDetailEndpoint,
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
 						"{applicationId}",
 						applicationId,
 					),
@@ -164,7 +219,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationDetailEndpoint,
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
 						"{applicationId}",
 						"invalid",
 					),
@@ -185,7 +240,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationDetailEndpoint,
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
 						"{applicationId}",
 						applicationId,
 					),
@@ -195,6 +250,53 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Patch(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", "invalid"),
+						"{applicationId}",
+						"invalid",
+					),
+				),
+				map[string]interface{}{
+					"name":        "updated app",
+					"description": "updated app description",
+				},
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								projectId,
+							),
+							"{applicationId}",
+							"invalid",
+						),
+					),
+					map[string]interface{}{
+						"name":        "updated app",
+						"description": "updated app description",
+					},
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("DELETE: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
@@ -206,7 +308,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationDetailEndpoint,
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
 						"{applicationId}",
 						applicationId,
 					),
@@ -228,7 +330,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationDetailEndpoint,
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
 						"{applicationId}",
 						"invalid",
 					),
@@ -237,5 +339,43 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
+
+		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Delete(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", "invalid"),
+						"{applicationId}",
+						"invalid",
+					),
+				),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								projectId,
+							),
+							"{applicationId}",
+							"invalid",
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 }
