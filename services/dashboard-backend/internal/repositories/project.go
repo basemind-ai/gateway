@@ -79,6 +79,7 @@ func CreateProject(
 func DeleteProject(ctx context.Context, projectId pgtype.UUID) error {
 	applications, applicationsRetrievalErr := db.GetQueries().
 		FindApplicationsByProjectId(ctx, projectId)
+
 	if applicationsRetrievalErr != nil {
 		log.Error().Err(applicationsRetrievalErr).Msg("failed to retrieve applications")
 		return fmt.Errorf("failed to retrieve applications: %w", applicationsRetrievalErr)
