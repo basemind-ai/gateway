@@ -5,6 +5,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 
@@ -21,10 +22,40 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
+func createUser(t *testing.T) string {
+	t.Helper()
+	user, err := factories.CreateUserAccount(context.TODO())
+	assert.NoError(t, err)
+
+	return user.FirebaseID
+}
+
 func createProject(t *testing.T) string {
 	t.Helper()
 	project, _ := factories.CreateProject(context.TODO())
 	return db.UUIDToString(&project.ID)
+}
+
+func createUserProject(
+	t *testing.T,
+	firebaseId string,
+	projectId string,
+	permission db.AccessPermissionType,
+) {
+	t.Helper()
+	userAccount, err := db.GetQueries().
+		FindUserAccountByFirebaseId(context.Background(), firebaseId)
+	assert.NoError(t, err)
+
+	projectIdUUID, err := db.StringToUUID(projectId)
+	assert.NoError(t, err)
+
+	_, err = db.GetQueries().CreateUserProject(context.Background(), db.CreateUserProjectParams{
+		UserID:     userAccount.ID,
+		ProjectID:  *projectIdUUID,
+		Permission: permission,
+	})
+	assert.NoError(t, err)
 }
 
 func createApplication(t *testing.T, projectId string) string {

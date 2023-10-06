@@ -65,6 +65,17 @@ func CreateProject(ctx context.Context) (*db.Project, error) {
 	return &project, nil
 }
 
+func CreateUserAccount(ctx context.Context) (*db.UserAccount, error) {
+	firebaseId := RandomString(10)
+	user, userCreateErr := db.GetQueries().CreateUserAccount(ctx, firebaseId)
+
+	if userCreateErr != nil {
+		return nil, userCreateErr
+	}
+
+	return &user, nil
+}
+
 func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Application, error) {
 	application, applicationCreateErr := db.GetQueries().
 		CreateApplication(ctx, db.CreateApplicationParams{

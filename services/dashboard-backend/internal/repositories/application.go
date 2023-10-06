@@ -1,0 +1,56 @@
+package repositories
+
+import (
+	"context"
+	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/rs/zerolog/log"
+)
+
+// DeleteApplication deletes an application and all of its prompt configs by setting their deleted_at values.
+func DeleteApplication(ctx context.Context, applicationId pgtype.UUID) error {
+	promptConfigs, retrievalErr := db.GetQueries().FindApplicationPromptConfigs(ctx, applicationId)
+	if retrievalErr != nil {
+		return fmt.Errorf("failed to retrieve prompt configs: %w", retrievalErr)
+	}
+
+	tx, err := db.GetOrCreateTx(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to create transaction")
+		return fmt.Errorf("failed to get transaction: %w", err)
+	}
+	queries := db.GetQueries().WithTx(tx)
+
+	for _, promptConfig := range promptConfigs {
+		_, deleteErr := db.WithRollback[any](
+			tx,
+			func() (any, error) {
+				err := queries.DeletePromptConfig(ctx, promptConfig.ID)
+				return nil, err
+			})
+		if deleteErr != nil {
+			return fmt.Errorf("failed to delete prompt config: %w", deleteErr)
+		}
+	}
+
+	_, deleteErr := db.WithRollback[any](
+		tx,
+		func() (any, error) {
+			err := queries.DeleteApplication(ctx, applicationId)
+			return nil, err
+		},
+	)
+	if deleteErr != nil {
+		return fmt.Errorf("failed to delete application: %w", deleteErr)
+	}
+
+	if db.ShouldCommit(ctx) {
+		commitErr := tx.Commit(ctx)
+		if commitErr != nil {
+			return fmt.Errorf("failed to commit transaction: %w", commitErr)
+		}
+	}
+
+	return nil
+}
