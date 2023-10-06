@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 )
@@ -17,41 +18,63 @@ func RegisterHandlers(mux *chi.Mux) {
 		router.Post(ProjectsListEndpoint, HandleCreateProject)
 
 		router.Route(ProjectDetailEndpoint, func(projectsRouter chi.Router) {
+			projectsRouter.Use(middleware.PathParameterMiddleware("projectId"))
 			projectsRouter.Patch("/", HandleUpdateProject)
 			projectsRouter.Delete("/", HandleDeleteProject)
 		})
 
-		router.Route(ProjectUserDetailEndpoint, func(projectsRouter chi.Router) {
-			projectsRouter.Post("/", HandleAddUserToProject)
-			projectsRouter.Patch("/", HandleChangeUserProjectPermission)
-			projectsRouter.Delete("/", HandleRemoveUserFromProject)
+		router.Route(ProjectUserDetailEndpoint, func(projectsUserRouter chi.Router) {
+			projectsUserRouter.Use(middleware.PathParameterMiddleware("projectId", "userId"))
+			projectsUserRouter.Post("/", HandleAddUserToProject)
+			projectsUserRouter.Patch("/", HandleChangeUserProjectPermission)
+			projectsUserRouter.Delete("/", HandleRemoveUserFromProject)
+		})
+		router.Route(ApplicationsListEndpoint, func(applicationsRouter chi.Router) {
+			applicationsRouter.Use(middleware.PathParameterMiddleware("projectId"))
+			applicationsRouter.Post("/", HandleCreateApplication)
 		})
 
-		router.Post(ApplicationsListEndpoint, HandleCreateApplication)
-
 		router.Route(ApplicationDetailEndpoint, func(applicationsRouter chi.Router) {
+			applicationsRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
 			applicationsRouter.Get("/", HandleRetrieveApplication)
 			applicationsRouter.Patch("/", HandleUpdateApplication)
 			applicationsRouter.Delete("/", HandleDeleteApplication)
 		})
 
-		router.Route(ApplicationTokensListEndpoint, func(applicationsRouter chi.Router) {
-			applicationsRouter.Post("/", HandleCreateApplicationToken)
-			applicationsRouter.Get("/", HandleRetrieveApplicationTokens)
+		router.Route(ApplicationTokensListEndpoint, func(applicationTokensRouter chi.Router) {
+			applicationTokensRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "applicationId"),
+			)
+			applicationTokensRouter.Post("/", HandleCreateApplicationToken)
+			applicationTokensRouter.Get("/", HandleRetrieveApplicationTokens)
 		})
 
-		router.Delete(ApplicationTokenDetailEndpoint, HandleDeleteApplicationToken)
+		router.Route(ApplicationTokenDetailEndpoint, func(applicationTokensRouter chi.Router) {
+			applicationTokensRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "applicationId", "tokenId"),
+			)
+			applicationTokensRouter.Delete("/", HandleDeleteApplicationToken)
+		})
 
 		router.Route(PromptConfigListEndpoint, func(promptConfigRouter chi.Router) {
+			promptConfigRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
 			promptConfigRouter.Post("/", HandleCreatePromptConfig)
 			promptConfigRouter.Get("/", HandleRetrievePromptConfigs)
 		})
 
 		router.Route(PromptConfigDetailEndpoint, func(promptConfigRouter chi.Router) {
+			promptConfigRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "applicationId", "promptConfigId"),
+			)
 			promptConfigRouter.Patch("/", HandleUpdatePromptConfig)
 			promptConfigRouter.Delete("/", HandleDeletePromptConfig)
 		})
 
-		router.Patch(PromptConfigSetDefaultEndpoint, HandleSetApplicationDefaultPromptConfig)
+		router.Route(PromptConfigSetDefaultEndpoint, func(promptConfigRouter chi.Router) {
+			promptConfigRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "applicationId", "promptConfigId"),
+			)
+			promptConfigRouter.Patch("/", HandleSetApplicationDefaultPromptConfig)
+		})
 	})
 }

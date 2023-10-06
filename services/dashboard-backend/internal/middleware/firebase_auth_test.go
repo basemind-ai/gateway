@@ -13,14 +13,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type nextMock struct {
-	mock.Mock
-}
-
-func (m *nextMock) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	m.Called(w, r)
-}
-
 func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 	mockNext := &nextMock{}
 	mockNext.On("ServeHTTP", mock.Anything, mock.Anything).Return()
