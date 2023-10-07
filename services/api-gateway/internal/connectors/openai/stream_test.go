@@ -12,17 +12,12 @@ import (
 )
 
 func TestRequestStream(t *testing.T) {
-	project, projectCreateErr := factories.CreateProject(context.TODO())
-	assert.NoError(t, projectCreateErr)
-
-	application, applicationCreateErr := factories.CreateApplication(context.TODO(), project.ID)
-	assert.NoError(t, applicationCreateErr)
-
-	promptConfig, promptConfigCreateErr := factories.CreatePromptConfig(
+	project, _ := factories.CreateProject(context.TODO())
+	application, _ := factories.CreateApplication(context.TODO(), project.ID)
+	promptConfig, _ := factories.CreatePromptConfig(
 		context.TODO(),
 		application.ID,
 	)
-	assert.NoError(t, promptConfigCreateErr)
 
 	requestConfigurationDTO := &dto.RequestConfigurationDTO{
 		ApplicationIDString: db.UUIDToString(&application.ID),

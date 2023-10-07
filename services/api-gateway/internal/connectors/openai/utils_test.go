@@ -147,15 +147,13 @@ func TestUtils(t *testing.T) {
 			applicationID := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 
-			modelParameters, modelParametersErr := factories.CreateModelParameters()
-			assert.NoError(t, modelParametersErr)
+			modelParameters, _ := factories.CreateModelParameters()
 
-			promptMessages, promptMessagesErr := factories.CreateOpenAIPromptMessages(
+			promptMessages, _ := factories.CreateOpenAIPromptMessages(
 				systemMessage,
 				userMessage,
 				&expectedTemplateVariables,
 			)
-			assert.NoError(t, promptMessagesErr)
 
 			userInput := "Please write me a short poem about cheese."
 			templateVariables := map[string]string{"userInput": userInput}

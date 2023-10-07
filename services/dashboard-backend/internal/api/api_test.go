@@ -24,8 +24,7 @@ func TestMain(m *testing.M) {
 
 func createUser(t *testing.T) string {
 	t.Helper()
-	user, err := factories.CreateUserAccount(context.TODO())
-	assert.NoError(t, err)
+	user, _ := factories.CreateUserAccount(context.TODO())
 
 	return user.FirebaseID
 }

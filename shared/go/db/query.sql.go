@@ -646,6 +646,7 @@ SELECT
     up.permission,
     p.id AS project_id,
     p.created_at AS project_created_at,
+    p.updated_at AS project_updated_at,
     p.name AS project_name,
     p.description AS project_description,
     a.id AS application_id,
@@ -660,6 +661,7 @@ LEFT JOIN application AS a ON p.id = a.project_id
 WHERE
     u.firebase_id = $1
     AND p.deleted_at IS NULL
+ORDER BY up.is_user_default_project, p.name, a.name
 `
 
 type FindUserAccountDataRow struct {
@@ -670,6 +672,7 @@ type FindUserAccountDataRow struct {
 	Permission             NullAccessPermissionType `json:"permission"`
 	ProjectID              pgtype.UUID              `json:"projectId"`
 	ProjectCreatedAt       pgtype.Timestamptz       `json:"projectCreatedAt"`
+	ProjectUpdatedAt       pgtype.Timestamptz       `json:"projectUpdatedAt"`
 	ProjectName            pgtype.Text              `json:"projectName"`
 	ProjectDescription     pgtype.Text              `json:"projectDescription"`
 	ApplicationID          pgtype.UUID              `json:"applicationId"`
@@ -696,6 +699,7 @@ func (q *Queries) FindUserAccountData(ctx context.Context, firebaseID string) ([
 			&i.Permission,
 			&i.ProjectID,
 			&i.ProjectCreatedAt,
+			&i.ProjectUpdatedAt,
 			&i.ProjectName,
 			&i.ProjectDescription,
 			&i.ApplicationID,
