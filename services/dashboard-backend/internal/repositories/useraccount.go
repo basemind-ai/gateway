@@ -124,14 +124,6 @@ func CreateDefaultUserAccountData(
 	}
 
 	if commitErr := tx.Commit(ctx); commitErr != nil {
-		if rollBackErr := tx.Rollback(ctx); rollBackErr != nil {
-			log.Error().Err(rollBackErr).Msg("failed to rollback transaction")
-			return nil, fmt.Errorf(
-				"failed to rollback transaction - %w - %w",
-				rollBackErr,
-				commitErr,
-			)
-		}
 		log.Error().Err(commitErr).Msg("failed to commit transaction")
 		return nil, fmt.Errorf("failed to commit transaction - %w", commitErr)
 	}

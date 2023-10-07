@@ -80,6 +80,7 @@ func UpdateApplicationDefaultPromptConfig(
 			ctx,
 			applicationId,
 		)
+
 	if retrieveDefaultPromptConfigErr != nil {
 		return fmt.Errorf(
 			"failed to retrieve default prompt config - %w",

@@ -19,6 +19,7 @@ var (
 
 func parseOpenAIMessages(promptMessages json.RawMessage) ([]string, []byte, error) {
 	var openAIPromptMessages []*datatypes.OpenAIPromptMessageDTO
+
 	if jsonErr := json.Unmarshal(promptMessages, &openAIPromptMessages); jsonErr != nil {
 		return nil, nil, fmt.Errorf("failed to unmarshal prompt messages - %w", jsonErr)
 	}
