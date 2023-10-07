@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	ErrorApplicationIdNotInContext = "application ID not found in context"
+	ErrorApplicationIDNotInContext = "application ID not found in context"
 )
 
 type Server struct {
@@ -30,14 +30,14 @@ func (Server) RequestPrompt(
 	ctx context.Context,
 	request *gateway.PromptRequest,
 ) (*gateway.PromptResponse, error) {
-	applicationId, ok := ctx.Value(grpcutils.ApplicationIDContextKey).(string)
+	applicationID, ok := ctx.Value(grpcutils.ApplicationIDContextKey).(string)
 	if !ok {
-		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
+		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
 	}
 
-	cacheKey := applicationId
+	cacheKey := applicationID
 	if request.PromptConfigId != nil {
-		cacheKey = fmt.Sprintf("%s:%s", applicationId, *request.PromptConfigId)
+		cacheKey = fmt.Sprintf("%s:%s", applicationID, *request.PromptConfigId)
 	}
 
 	requestConfigurationDTO, retrievalErr := rediscache.With[dto.RequestConfigurationDTO](
@@ -45,7 +45,7 @@ func (Server) RequestPrompt(
 		cacheKey,
 		&dto.RequestConfigurationDTO{},
 		time.Minute*30,
-		RetrieveRequestConfiguration(ctx, applicationId, request.PromptConfigId),
+		RetrieveRequestConfiguration(ctx, applicationID, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
 		return nil, status.Error(
@@ -141,14 +141,14 @@ func (Server) RequestStreamingPrompt(
 	request *gateway.PromptRequest,
 	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
 ) error {
-	applicationId, ok := streamServer.Context().Value(grpcutils.ApplicationIDContextKey).(string)
+	applicationID, ok := streamServer.Context().Value(grpcutils.ApplicationIDContextKey).(string)
 	if !ok {
-		return status.Errorf(codes.Unauthenticated, ErrorApplicationIdNotInContext)
+		return status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
 	}
 
-	cacheKey := applicationId
+	cacheKey := applicationID
 	if request.PromptConfigId != nil {
-		cacheKey = fmt.Sprintf("%s:%s", applicationId, *request.PromptConfigId)
+		cacheKey = fmt.Sprintf("%s:%s", applicationID, *request.PromptConfigId)
 	}
 
 	requestConfigurationDTO, retrievalErr := rediscache.With[dto.RequestConfigurationDTO](
@@ -156,7 +156,7 @@ func (Server) RequestStreamingPrompt(
 		cacheKey,
 		&dto.RequestConfigurationDTO{},
 		time.Minute*30,
-		RetrieveRequestConfiguration(streamServer.Context(), applicationId, request.PromptConfigId),
+		RetrieveRequestConfiguration(streamServer.Context(), applicationID, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
 		return status.Error(

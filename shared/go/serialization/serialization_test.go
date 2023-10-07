@@ -17,14 +17,13 @@ func TestReadResponseBody(t *testing.T) {
 	assert.Equal(t, result, []byte("Hello World"))
 }
 
-func TestDeserializeJson(t *testing.T) {
-	// write a test for DeserializeJson[T any](response *http.Response, targetType T) error
+func TestDeserializeJSON(t *testing.T) {
 	body := io.NopCloser(strings.NewReader(`{"message":"Hello World"}`))
 
 	target := struct {
 		Message string
 	}{}
-	err := serialization.DeserializeJson(body, &target)
+	err := serialization.DeserializeJSON(body, &target)
 	assert.Nil(t, err)
 	assert.Equal(t, target.Message, "Hello World")
 }

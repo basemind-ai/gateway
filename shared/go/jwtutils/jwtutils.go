@@ -23,7 +23,7 @@ func CreateJWT(ttl time.Duration, secret []byte, sub string) (string, error) {
 func ParseJWT(encodedString string, secret []byte) (jwt.Claims, error) {
 	parsedToken, signingErr := jwt.Parse(
 		encodedString,
-		func(encodedToken *jwt.Token) (interface{}, error) {
+		func(encodedToken *jwt.Token) (any, error) {
 			_, ok := encodedToken.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
 				return nil, fmt.Errorf("signing method failure")

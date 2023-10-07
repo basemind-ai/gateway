@@ -144,7 +144,7 @@ func TestUtils(t *testing.T) {
 			systemMessage := "You are a helpful chat bot."
 			userMessage := "This is what the user asked for: {userInput}"
 			expectedTemplateVariables := []string{"userInput"}
-			applicationId := "12345"
+			applicationID := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 
 			modelParameters, modelParametersErr := factories.CreateModelParameters()
@@ -164,7 +164,7 @@ func TestUtils(t *testing.T) {
 
 			expectedPromptRequest := &openaiconnector.OpenAIPromptRequest{
 				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
-				ApplicationId: &applicationId,
+				ApplicationId: &applicationID,
 				Parameters:    expectedModelParameters,
 				Messages: []*openaiconnector.OpenAIMessage{
 					{
@@ -179,7 +179,7 @@ func TestUtils(t *testing.T) {
 			}
 
 			promptRequest, err := openai.CreatePromptRequest(
-				applicationId,
+				applicationID,
 				modelType,
 				modelParameters,
 				promptMessages,
@@ -190,14 +190,14 @@ func TestUtils(t *testing.T) {
 			assert.Equal(t, expectedPromptRequest, promptRequest)
 		})
 		t.Run("returns error for unknown model type", func(t *testing.T) {
-			applicationId := "12345"
+			applicationID := "12345"
 			modelType := "unknown"
 			modelParameters := []byte(`{}`)
 			promptMessages := []byte(`[]`)
 			templateVariables := map[string]string{}
 
 			_, err := openai.CreatePromptRequest(
-				applicationId,
+				applicationID,
 				db.ModelType(modelType),
 				modelParameters,
 				promptMessages,
@@ -209,14 +209,14 @@ func TestUtils(t *testing.T) {
 			assert.Equal(t, expectedError, err.Error())
 		})
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {
-			applicationId := "12345"
+			applicationID := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 			modelParameters := []byte(`invalid_json`)
 			promptMessages := []byte(`[]`)
 			templateVariables := make(map[string]string)
 
 			_, err := openai.CreatePromptRequest(
-				applicationId,
+				applicationID,
 				modelType,
 				modelParameters,
 				promptMessages,
@@ -226,7 +226,7 @@ func TestUtils(t *testing.T) {
 		})
 
 		t.Run("returns error if prompt messages is invalid json", func(t *testing.T) {
-			applicationId := "12345"
+			applicationID := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 			modelParameters := []byte(`{"temperature": 0.8}`)
 			promptMessages := []byte(`invalid_json`)
@@ -235,7 +235,7 @@ func TestUtils(t *testing.T) {
 			}
 
 			_, err := openai.CreatePromptRequest(
-				applicationId,
+				applicationID,
 				modelType,
 				modelParameters,
 				promptMessages,
@@ -259,13 +259,13 @@ func TestUtils(t *testing.T) {
 			}
 
 			systemMessage := "You are a helpful chat bot."
-			applicationId := "12345"
+			applicationID := "12345"
 			userInput := "Please write an essay on Dogs."
 			content := fmt.Sprintf("This is what the user asked for: %s", userInput)
 
 			promptRequest := &openaiconnector.OpenAIPromptRequest{
 				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
-				ApplicationId: &applicationId,
+				ApplicationId: &applicationID,
 				Parameters:    expectedModelParameters,
 				Messages: []*openaiconnector.OpenAIMessage{
 					{

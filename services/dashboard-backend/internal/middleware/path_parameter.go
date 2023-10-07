@@ -9,28 +9,28 @@ import (
 	"net/http"
 )
 
-type PathUrlContextKeyType int
+type PathURLContextKeyType int
 
 const (
-	ProjectIdContextKey      PathUrlContextKeyType = iota
-	ApplicationIdContextKey  PathUrlContextKeyType = iota
-	UserIdContextKey         PathUrlContextKeyType = iota
-	TokenIdContextKey        PathUrlContextKeyType = iota
-	PromptConfigIdContextKey PathUrlContextKeyType = iota
+	ProjectIDContextKey      PathURLContextKeyType = iota
+	ApplicationIDContextKey  PathURLContextKeyType = iota
+	UserIDContextKey         PathURLContextKeyType = iota
+	TokenIDContextKey        PathURLContextKeyType = iota
+	PromptConfigIDContextKey PathURLContextKeyType = iota
 )
 
-var pathParameterNameToContextKeyMap = map[string]PathUrlContextKeyType{
-	"projectId":      ProjectIdContextKey,
-	"applicationId":  ApplicationIdContextKey,
-	"userId":         UserIdContextKey,
-	"tokenId":        TokenIdContextKey,
-	"promptConfigId": PromptConfigIdContextKey,
+var pathParameterNameToContextKeyMap = map[string]PathURLContextKeyType{
+	"projectId":      ProjectIDContextKey,
+	"applicationId":  ApplicationIDContextKey,
+	"userId":         UserIDContextKey,
+	"tokenId":        TokenIDContextKey,
+	"promptConfigId": PromptConfigIDContextKey,
 }
 
 func PathParameterMiddleware(parameterNames ...string) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			parsedParameters := map[PathUrlContextKeyType]pgtype.UUID{}
+			parsedParameters := map[PathURLContextKeyType]pgtype.UUID{}
 
 			for _, parameterName := range parameterNames {
 				contextKey, ok := pathParameterNameToContextKeyMap[parameterName]

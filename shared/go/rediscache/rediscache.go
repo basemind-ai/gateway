@@ -18,9 +18,9 @@ func SetClient(c *cache.Cache) {
 	client = c
 }
 
-func New(redisUrl string) (*cache.Cache, error) {
+func New(redisURL string) (*cache.Cache, error) {
 	once.Do(func() {
-		opt, err := redis.ParseURL(redisUrl)
+		opt, err := redis.ParseURL(redisURL)
 		if err != nil {
 			clientErr = err
 			return
@@ -42,7 +42,7 @@ func GetClient() *cache.Cache {
 
 // With is a helper function that will check if a key exists in redis, and if it does, it will return the value. If it
 // does not exist, it will call the fallback function, set the value in redis, and return the value.
-func With[T interface{}](
+func With[T any](
 	ctx context.Context,
 	key string,
 	target *T,

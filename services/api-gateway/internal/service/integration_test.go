@@ -78,16 +78,16 @@ func CreateTestCache(
 	applicationIDString string,
 ) (*cache.Cache, redismock.ClientMock) {
 	t.Helper()
-	redisDb, mockRedis := redismock.NewClientMock()
+	redisDB, mockRedis := redismock.NewClientMock()
 
 	rediscache.SetClient(cache.New(&cache.Options{
-		Redis: redisDb,
+		Redis: redisDB,
 	}))
 
 	cacheClient := rediscache.GetClient()
 
 	t.Cleanup(func() {
-		redisDb.Del(context.TODO(), applicationIDString)
+		redisDB.Del(context.TODO(), applicationIDString)
 	})
 
 	return cacheClient, mockRedis

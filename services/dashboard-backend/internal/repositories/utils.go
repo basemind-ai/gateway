@@ -17,7 +17,9 @@ var (
 	validate = validator.New(validator.WithRequiredStructEnabled())
 )
 
-func parseOpenAIMessages(promptMessages json.RawMessage) ([]string, []byte, error) {
+func parseOpenAIMessages( //nolint: revive
+	promptMessages json.RawMessage,
+) ([]string, []byte, error) {
 	var openAIPromptMessages []*datatypes.OpenAIPromptMessageDTO
 
 	if jsonErr := json.Unmarshal(promptMessages, &openAIPromptMessages); jsonErr != nil {
@@ -55,7 +57,7 @@ func parseOpenAIMessages(promptMessages json.RawMessage) ([]string, []byte, erro
 	return expectedVariables, marshalledMessages, nil
 }
 
-func ParsePromptMessages(
+func ParsePromptMessages( //nolint: revive
 	promptMessages json.RawMessage,
 	vendor db.ModelVendor,
 ) ([]string, []byte, error) {

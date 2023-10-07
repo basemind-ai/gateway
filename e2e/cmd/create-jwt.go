@@ -14,12 +14,12 @@ func init() {
 }
 
 var createJwt = &cobra.Command{
-	Use:   "create-jwt [flags] {applicationId}",
+	Use:   "create-jwt [flags] {applicationID}",
 	Short: "Creates a JWT token",
-	Long:  `Creates a JWT token from the passed in applicationId`,
+	Long:  `Creates a JWT token from the passed in applicationID`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return errors.New("an applicationId arg is required")
+			return errors.New("an applicationID arg is required")
 		}
 		return nil
 	},

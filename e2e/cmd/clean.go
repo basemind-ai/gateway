@@ -20,7 +20,7 @@ var cleanCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Info().Msg("creating db connection")
 
-		conn, connErr := db.CreateConnection(cmd.Context(), dbUrl)
+		conn, connErr := db.CreateConnection(cmd.Context(), dbURL)
 		if connErr != nil {
 			log.Fatal().Err(connErr).Msg("failed to connect to DB")
 		}

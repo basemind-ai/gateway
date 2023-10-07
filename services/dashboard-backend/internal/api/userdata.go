@@ -13,15 +13,15 @@ import (
 // 1. user already exists, in which case it retrieves the projects for the user and their respective applications.
 // 2. user is new, in which case it creates the user entry and the default project, retrieve this project.
 func HandleRetrieveUserData(w http.ResponseWriter, r *http.Request) {
-	firebaseId := r.Context().Value(middleware.FireBaseIdContextKey).(string)
+	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
 
-	userData, err := repositories.GetOrCreateUserAccount(r.Context(), firebaseId)
+	userData, err := repositories.GetOrCreateUserAccount(r.Context(), firebaseID)
 	if err != nil {
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusOK, userData)
+	serialization.RenderJSONResponse(w, http.StatusOK, userData)
 }
 
 // HandleUpdateUserDefaultProject - sets the given project as the user's default project.

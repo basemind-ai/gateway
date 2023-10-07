@@ -3,7 +3,7 @@
 -- name: CheckUserAccountExists :one
 SELECT EXISTS(SELECT 1 FROM user_account WHERE firebase_id = $1);
 
--- name: FindUserAccountByFirebaseId :one
+-- name: FindUserAccountByFirebaseID :one
 SELECT
     id,
     firebase_id,
@@ -64,7 +64,7 @@ UPDATE project
 SET deleted_at = NOW()
 WHERE id = $1;
 
--- name: FindProjectById :one
+-- name: FindProjectByID :one
 SELECT
     id,
     description,
@@ -128,7 +128,7 @@ UPDATE application
 SET deleted_at = NOW()
 WHERE id = $1;
 
--- name: FindApplicationById :one
+-- name: FindApplicationByID :one
 SELECT
     id,
     description,
@@ -141,7 +141,7 @@ WHERE
     id = $1
     AND deleted_at IS NULL;
 
--- name: FindApplicationsByProjectId :many
+-- name: FindApplicationsByProjectID :many
 SELECT
     id,
     description,
@@ -209,7 +209,7 @@ UPDATE prompt_config
 SET deleted_at = NOW()
 WHERE id = $1;
 
--- name: FindPromptConfigById :one
+-- name: FindPromptConfigByID :one
 SELECT
     id,
     name,
@@ -245,7 +245,7 @@ WHERE
     application_id = $1
     AND deleted_at IS NULL;
 
--- name: FindDefaultPromptConfigByApplicationId :one
+-- name: FindDefaultPromptConfigByApplicationID :one
 SELECT
     id,
     name,

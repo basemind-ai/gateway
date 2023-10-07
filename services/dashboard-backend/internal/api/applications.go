@@ -11,12 +11,12 @@ import (
 )
 
 func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
-	projectId := r.Context().Value(middleware.ProjectIdContextKey).(pgtype.UUID)
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	data := &db.CreateApplicationParams{
-		ProjectID: projectId,
+		ProjectID: projectID,
 	}
-	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
+	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
@@ -34,29 +34,29 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusCreated, application)
+	serialization.RenderJSONResponse(w, http.StatusCreated, application)
 }
 
 func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	application, applicationRetrieveErr := db.GetQueries().
-		FindApplicationById(r.Context(), applicationId)
+		FindApplicationByID(r.Context(), applicationID)
 	if applicationRetrieveErr != nil {
 		log.Error().Err(applicationRetrieveErr).Msg("failed to retrieve application")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
-	serialization.RenderJsonResponse(w, http.StatusOK, application)
+	serialization.RenderJSONResponse(w, http.StatusOK, application)
 }
 
 func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	data := &db.UpdateApplicationParams{
-		ID: applicationId,
+		ID: applicationID,
 	}
-	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
+	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
@@ -74,13 +74,13 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusOK, application)
+	serialization.RenderJSONResponse(w, http.StatusOK, application)
 }
 
 func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	if applicationDeleteErr := db.GetQueries().DeleteApplication(r.Context(), applicationId); applicationDeleteErr != nil {
+	if applicationDeleteErr := db.GetQueries().DeleteApplication(r.Context(), applicationID); applicationDeleteErr != nil {
 		log.Error().Err(applicationDeleteErr).Msg("failed to delete application")
 		apierror.InternalServerError().Render(w, r)
 		return

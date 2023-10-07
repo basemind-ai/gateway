@@ -11,11 +11,11 @@ import (
 
 func CreateProject(
 	ctx context.Context,
-	firebaseId string,
+	firebaseID string,
 	name string,
 	description string,
 ) (*dto.ProjectDTO, error) {
-	userAccount, retrievalErr := db.GetQueries().FindUserAccountByFirebaseId(ctx, firebaseId)
+	userAccount, retrievalErr := db.GetQueries().FindUserAccountByFirebaseID(ctx, firebaseID)
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
 		return nil, fmt.Errorf("failed to retrieve user account: %w", retrievalErr)
@@ -55,10 +55,10 @@ func CreateProject(
 		return nil, fmt.Errorf("failed to commit transaction: %w", commitErr)
 	}
 
-	projectId := db.UUIDToString(&project.ID)
+	projectID := db.UUIDToString(&project.ID)
 
 	data := &dto.ProjectDTO{
-		ID:                   projectId,
+		ID:                   projectID,
 		Name:                 project.Name,
 		Description:          project.Description,
 		CreatedAt:            project.CreatedAt.Time,
@@ -71,9 +71,9 @@ func CreateProject(
 	return data, nil
 }
 
-func DeleteProject(ctx context.Context, projectId pgtype.UUID) error {
+func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
 	applications, applicationsRetrievalErr := db.GetQueries().
-		FindApplicationsByProjectId(ctx, projectId)
+		FindApplicationsByProjectID(ctx, projectID)
 
 	if applicationsRetrievalErr != nil {
 		log.Error().Err(applicationsRetrievalErr).Msg("failed to retrieve applications")
@@ -103,7 +103,7 @@ func DeleteProject(ctx context.Context, projectId pgtype.UUID) error {
 		}
 	}
 
-	if deleteErr := db.GetQueries().WithTx(tx).DeleteProject(ctx, projectId); deleteErr != nil {
+	if deleteErr := db.GetQueries().WithTx(tx).DeleteProject(ctx, projectID); deleteErr != nil {
 		log.Error().Err(deleteErr).Msg("failed to delete project")
 		return fmt.Errorf("failed to delete project: %w", deleteErr)
 	}

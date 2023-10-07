@@ -13,7 +13,7 @@ import (
 )
 
 func TestPromptConfigRepository(t *testing.T) {
-	params, _ := json.Marshal(map[string]interface{}{"maxTokens": 100})
+	params, _ := json.Marshal(map[string]any{"maxTokens": 100})
 	newModelParameters := json.RawMessage(params)
 
 	newName := "new name"
@@ -129,7 +129,7 @@ func TestPromptConfigRepository(t *testing.T) {
 			assert.NoError(t, err)
 
 			defaultPromptConfig, _ := db.GetQueries().
-				FindDefaultPromptConfigByApplicationId(context.TODO(), application.ID)
+				FindDefaultPromptConfigByApplicationID(context.TODO(), application.ID)
 
 			assert.Equal(t, promptConfig.ID, db.UUIDToString(&defaultPromptConfig.ID))
 		})
@@ -151,7 +151,7 @@ func TestPromptConfigRepository(t *testing.T) {
 		)
 
 		t.Run(
-			"returns error if the passed in promptConfigId is for the app default",
+			"returns error if the passed in promptConfigID is for the app default",
 			func(t *testing.T) {
 				application, _ := factories.CreateApplication(context.TODO(), project.ID)
 				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
@@ -212,7 +212,7 @@ func TestPromptConfigRepository(t *testing.T) {
 					assert.NoError(t, err)
 
 					retrievedPromptConfig, _ := db.GetQueries().
-						FindPromptConfigById(context.TODO(), promptConfig.ID)
+						FindPromptConfigByID(context.TODO(), promptConfig.ID)
 					assert.Equal(t, updatedPromptConfig.Name, retrievedPromptConfig.Name)
 					assert.Equal(t, updatedPromptConfig.ModelType, retrievedPromptConfig.ModelType)
 					assert.Equal(

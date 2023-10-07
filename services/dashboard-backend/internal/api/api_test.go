@@ -38,42 +38,42 @@ func createProject(t *testing.T) string {
 
 func createUserProject(
 	t *testing.T,
-	firebaseId string,
-	projectId string,
+	firebaseID string,
+	projectID string,
 	permission db.AccessPermissionType,
 ) {
 	t.Helper()
 	userAccount, err := db.GetQueries().
-		FindUserAccountByFirebaseId(context.Background(), firebaseId)
+		FindUserAccountByFirebaseID(context.Background(), firebaseID)
 	assert.NoError(t, err)
 
-	projectIdUUID, err := db.StringToUUID(projectId)
+	projectIDUUID, err := db.StringToUUID(projectID)
 	assert.NoError(t, err)
 
 	_, err = db.GetQueries().CreateUserProject(context.Background(), db.CreateUserProjectParams{
 		UserID:     userAccount.ID,
-		ProjectID:  *projectIdUUID,
+		ProjectID:  *projectIDUUID,
 		Permission: permission,
 	})
 	assert.NoError(t, err)
 }
 
-func createApplication(t *testing.T, projectId string) string {
+func createApplication(t *testing.T, projectID string) string {
 	t.Helper()
-	uuidId, _ := db.StringToUUID(projectId)
-	application, _ := factories.CreateApplication(context.TODO(), *uuidId)
-	applicationId := db.UUIDToString(&application.ID)
-	return applicationId
+	uuidID, _ := db.StringToUUID(projectID)
+	application, _ := factories.CreateApplication(context.TODO(), *uuidID)
+	applicationID := db.UUIDToString(&application.ID)
+	return applicationID
 }
 
-func createTestClient(t *testing.T, firebaseId string) httpclient.Client {
+func createTestClient(t *testing.T, firebaseID string) httpclient.Client {
 	t.Helper()
 	r := router.New(router.Options{
 		Environment:      "test",
 		ServiceName:      "test",
 		RegisterHandlers: api.RegisterHandlers,
 		Middlewares: []func(next http.Handler) http.Handler{
-			middleware.CreateMockFirebaseAuthMiddleware(firebaseId),
+			middleware.CreateMockFirebaseAuthMiddleware(firebaseID),
 		},
 	})
 

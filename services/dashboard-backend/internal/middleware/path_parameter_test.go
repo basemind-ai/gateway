@@ -38,27 +38,27 @@ func TestPathParameterMiddleware(t *testing.T) {
 	t.Run("should parse a valid value and set it context", func(t *testing.T) {
 		testCases := []struct {
 			Key        string
-			ContextKey middleware.PathUrlContextKeyType
+			ContextKey middleware.PathURLContextKeyType
 		}{
 			{
 				Key:        "projectId",
-				ContextKey: middleware.ProjectIdContextKey,
+				ContextKey: middleware.ProjectIDContextKey,
 			},
 			{
 				Key:        "applicationId",
-				ContextKey: middleware.ApplicationIdContextKey,
+				ContextKey: middleware.ApplicationIDContextKey,
 			},
 			{
 				Key:        "userId",
-				ContextKey: middleware.UserIdContextKey,
+				ContextKey: middleware.UserIDContextKey,
 			},
 			{
 				Key:        "tokenId",
-				ContextKey: middleware.TokenIdContextKey,
+				ContextKey: middleware.TokenIDContextKey,
 			},
 			{
 				Key:        "promptConfigId",
-				ContextKey: middleware.PromptConfigIdContextKey,
+				ContextKey: middleware.PromptConfigIDContextKey,
 			},
 		}
 
@@ -101,8 +101,8 @@ func TestPathParameterMiddleware(t *testing.T) {
 		mockNext := &nextMock{}
 		mockNext.On("ServeHTTP", mock.Anything, mock.Anything).Return()
 
-		projectId := "3a8c3c0a-6512-49e5-9b99-98a7d3336659"
-		applicationId := "b5cbc13e-9c5b-42e5-9c25-79e4a4be872a"
+		projectID := "3a8c3c0a-6512-49e5-9b99-98a7d3336659"
+		applicationID := "b5cbc13e-9c5b-42e5-9c25-79e4a4be872a"
 
 		pathParameterMiddleware := middleware.PathParameterMiddleware(
 			"projectId",
@@ -114,26 +114,26 @@ func TestPathParameterMiddleware(t *testing.T) {
 			createChiRouteContext(
 				context.TODO(),
 				[]string{"projectId", "applicationId"},
-				[]string{projectId, applicationId},
+				[]string{projectID, applicationID},
 			),
 		)
 		testRecorder := httptest.NewRecorder()
 		pathParameterMiddleware.ServeHTTP(testRecorder, request)
 		newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
 
-		ctxValue := newRequest.Context().Value(middleware.ProjectIdContextKey)
+		ctxValue := newRequest.Context().Value(middleware.ProjectIDContextKey)
 		uuidValue, ok := ctxValue.(pgtype.UUID)
 		assert.True(t, ok)
 
 		stringValue := db.UUIDToString(&uuidValue)
-		assert.Equal(t, projectId, stringValue)
+		assert.Equal(t, projectID, stringValue)
 
-		ctxValue = newRequest.Context().Value(middleware.ApplicationIdContextKey)
+		ctxValue = newRequest.Context().Value(middleware.ApplicationIDContextKey)
 		uuidValue, ok = ctxValue.(pgtype.UUID)
 		assert.True(t, ok)
 
 		stringValue = db.UUIDToString(&uuidValue)
-		assert.Equal(t, applicationId, stringValue)
+		assert.Equal(t, applicationID, stringValue)
 	})
 	t.Run("should panic for unknown parameter name", func(t *testing.T) {
 		mockNext := &nextMock{}

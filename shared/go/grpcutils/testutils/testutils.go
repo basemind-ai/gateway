@@ -46,7 +46,7 @@ func CreateTestServer[T any](
 	return listen
 }
 
-func CreateTestClient[T interface{}](
+func CreateTestClient[T any](
 	t *testing.T,
 	listen *bufconn.Listener,
 	clientFactory func(cc grpc.ClientConnInterface) T,

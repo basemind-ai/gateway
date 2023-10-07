@@ -67,7 +67,7 @@ func ParseTemplateVariables(
 }
 
 func CreatePromptRequest(
-	applicationId string,
+	applicationID string,
 	modelType db.ModelType,
 	modelParameters []byte,
 	promptMessages []byte,
@@ -80,12 +80,15 @@ func CreatePromptRequest(
 
 	promptRequest := &openaiconnector.OpenAIPromptRequest{
 		Model:         *model,
-		ApplicationId: &applicationId,
+		ApplicationId: &applicationID,
 		Parameters:    &openaiconnector.OpenAIModelParameters{},
 		Messages:      []*openaiconnector.OpenAIMessage{},
 	}
 
-	if parametersUnmarshalErr := json.Unmarshal(modelParameters, promptRequest.Parameters); parametersUnmarshalErr != nil {
+	if parametersUnmarshalErr := json.Unmarshal(
+		modelParameters,
+		promptRequest.Parameters,
+	); parametersUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
 	}
 

@@ -17,10 +17,10 @@ import (
 // HandleCreatePromptConfig - creates a prompt config for the given application.
 // The first prompt config created for an application is automatically set as the default.
 func HandleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	createPromptConfigDTO := dto.PromptConfigCreateDTO{}
-	if deserializationErr := serialization.DeserializeJson(r.Body, &createPromptConfigDTO); deserializationErr != nil {
+	if deserializationErr := serialization.DeserializeJSON(r.Body, &createPromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
@@ -34,7 +34,7 @@ func HandleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 
 	promptConfig, createErr := repositories.CreatePromptConfig(
 		r.Context(),
-		applicationId,
+		applicationID,
 		createPromptConfigDTO,
 	)
 
@@ -57,16 +57,16 @@ func HandleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusCreated, promptConfig)
+	serialization.RenderJSONResponse(w, http.StatusCreated, promptConfig)
 }
 
 // HandleRetrievePromptConfigs - retrieves all prompt configs for the given application.
 func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	promptConfigs, retrivalErr := db.
 		GetQueries().
-		FindApplicationPromptConfigs(r.Context(), applicationId)
+		FindApplicationPromptConfigs(r.Context(), applicationID)
 
 	if retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve prompt configs")
@@ -74,13 +74,13 @@ func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusOK, promptConfigs)
+	serialization.RenderJSONResponse(w, http.StatusOK, promptConfigs)
 }
 func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
-	promptConfigId := r.Context().Value(middleware.PromptConfigIdContextKey).(pgtype.UUID)
+	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	updatePromptConfigDTO := &dto.PromptConfigUpdateDTO{}
-	if deserializationErr := serialization.DeserializeJson(r.Body, updatePromptConfigDTO); deserializationErr != nil {
+	if deserializationErr := serialization.DeserializeJSON(r.Body, updatePromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
@@ -93,7 +93,7 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedPromptConfig, updatePromptConfigErr := repositories.UpdatePromptConfig(
-		r.Context(), promptConfigId, *updatePromptConfigDTO,
+		r.Context(), promptConfigID, *updatePromptConfigDTO,
 	)
 
 	if updatePromptConfigErr != nil {
@@ -114,19 +114,19 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusOK, updatedPromptConfig)
+	serialization.RenderJSONResponse(w, http.StatusOK, updatedPromptConfig)
 }
 
 // HandleSetApplicationDefaultPromptConfig - sets the default prompt config for the given application.
 // The default prompt config is used when no prompt config is specified in a prompt request.
 func HandleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
-	promptConfigId := r.Context().Value(middleware.PromptConfigIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
+	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	updateErr := repositories.UpdateApplicationDefaultPromptConfig(
 		r.Context(),
-		applicationId,
-		promptConfigId,
+		applicationID,
+		promptConfigID,
 	)
 	if updateErr != nil {
 		if strings.Contains(
@@ -143,16 +143,16 @@ func HandleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusOK, nil)
+	serialization.RenderJSONResponse(w, http.StatusOK, nil)
 }
 
 // HandleDeletePromptConfig - deletes the prompt config with the given ID.
 // The default prompt config cannot be deleted.
 func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
-	promptConfigId := r.Context().Value(middleware.PromptConfigIdContextKey).(pgtype.UUID)
+	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	promptConfig, retrievePromptConfigErr := db.GetQueries().
-		FindPromptConfigById(r.Context(), promptConfigId)
+		FindPromptConfigByID(r.Context(), promptConfigID)
 
 	if retrievePromptConfigErr != nil {
 		log.Error().Err(retrievePromptConfigErr).Msg("failed to retrieve prompt config")
@@ -165,7 +165,7 @@ func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if deleteErr := db.GetQueries().DeletePromptConfig(r.Context(), promptConfigId); deleteErr != nil {
+	if deleteErr := db.GetQueries().DeletePromptConfig(r.Context(), promptConfigID); deleteErr != nil {
 		log.Error().Err(deleteErr).Msg("failed to delete prompt config")
 		apierror.InternalServerError().Render(w, r)
 		return

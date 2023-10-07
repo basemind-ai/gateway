@@ -19,7 +19,7 @@ var (
 	pool        *pgxpool.Pool
 )
 
-func CreateConnection(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
+func CreateConnection(ctx context.Context, dbURL string) (*pgxpool.Pool, error) {
 	var err error
 
 	poolOnce.Do(func() {
@@ -28,7 +28,7 @@ func CreateConnection(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) 
 		exponentialBackoff.MaxElapsedTime = 20 * time.Second
 
 		if connErr := backoff.Retry(func() error {
-			conn, pgxErr := pgxpool.New(ctx, dbUrl)
+			conn, pgxErr := pgxpool.New(ctx, dbURL)
 			if pgxErr != nil {
 				return pgxErr
 			}

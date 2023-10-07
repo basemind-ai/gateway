@@ -9,8 +9,8 @@ import (
 )
 
 // DeleteApplication deletes an application and all of its prompt configs by setting their deleted_at values.
-func DeleteApplication(ctx context.Context, applicationId pgtype.UUID) error {
-	promptConfigs, retrievalErr := db.GetQueries().FindApplicationPromptConfigs(ctx, applicationId)
+func DeleteApplication(ctx context.Context, applicationID pgtype.UUID) error {
+	promptConfigs, retrievalErr := db.GetQueries().FindApplicationPromptConfigs(ctx, applicationID)
 	if retrievalErr != nil {
 		return fmt.Errorf("failed to retrieve prompt configs: %w", retrievalErr)
 	}
@@ -28,13 +28,12 @@ func DeleteApplication(ctx context.Context, applicationId pgtype.UUID) error {
 		}
 	}
 
-	if deleteErr := queries.DeleteApplication(ctx, applicationId); deleteErr != nil {
+	if deleteErr := queries.DeleteApplication(ctx, applicationID); deleteErr != nil {
 		return fmt.Errorf("failed to delete application: %w", deleteErr)
 	}
 
 	if db.ShouldCommit(ctx) {
-		commitErr := tx.Commit(ctx)
-		if commitErr != nil {
+		if commitErr := tx.Commit(ctx); commitErr != nil {
 			return fmt.Errorf("failed to commit transaction: %w", commitErr)
 		}
 	}

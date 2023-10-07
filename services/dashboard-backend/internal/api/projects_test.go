@@ -14,8 +14,8 @@ import (
 )
 
 func TestProjectsAPI(t *testing.T) {
-	firebaseId := createUser(t)
-	testClient := createTestClient(t, firebaseId)
+	firebaseID := createUser(t)
+	testClient := createTestClient(t, firebaseID)
 
 	t.Run(fmt.Sprintf("POST: %s", api.ProjectsListEndpoint), func(t *testing.T) {
 		t.Run("creates a new project and sets the user as ADMIN", func(t *testing.T) {
@@ -32,7 +32,7 @@ func TestProjectsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, response.StatusCode)
 
 			data := &dto.ProjectDTO{}
-			deserializationErr := serialization.DeserializeJson(response.Body, data)
+			deserializationErr := serialization.DeserializeJSON(response.Body, data)
 			assert.NoError(t, deserializationErr)
 
 			assert.NotEmpty(t, data.ID)
@@ -59,8 +59,8 @@ func TestProjectsAPI(t *testing.T) {
 	})
 	t.Run(fmt.Sprintf("PATCH: %s", api.ProjectDetailEndpoint), func(t *testing.T) {
 		t.Run("allows updating the name and description of a project", func(t *testing.T) {
-			projectId := createProject(t)
-			createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeADMIN)
+			projectID := createProject(t)
+			createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
 
 			body := &dto.ProjectDTO{
 				Name:        "New Name",
@@ -68,17 +68,17 @@ func TestProjectsAPI(t *testing.T) {
 			}
 			url := fmt.Sprintf(
 				"/v1%s",
-				strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectId),
+				strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
 			)
 			response, requestErr := testClient.Patch(context.Background(), url, body)
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			data := &dto.ProjectDTO{}
-			deserializationErr := serialization.DeserializeJson(response.Body, data)
+			deserializationErr := serialization.DeserializeJSON(response.Body, data)
 			assert.NoError(t, deserializationErr)
 
-			assert.Equal(t, projectId, data.ID)
+			assert.Equal(t, projectID, data.ID)
 			assert.Equal(t, body.Name, data.Name)
 			assert.Equal(t, body.Description, data.Description)
 		})
@@ -88,8 +88,8 @@ func TestProjectsAPI(t *testing.T) {
 			func(t *testing.T) {
 				t.Skip("should skip until the authorization middleware is in place")
 
-				projectId := createProject(t)
-				createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeMEMBER)
+				projectID := createProject(t)
+				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeMEMBER)
 
 				body := &dto.ProjectDTO{
 					Name:        "New Name",
@@ -97,7 +97,7 @@ func TestProjectsAPI(t *testing.T) {
 				}
 				url := fmt.Sprintf(
 					"/v1%s",
-					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectId),
+					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
 				)
 				response, requestErr := testClient.Patch(context.Background(), url, body)
 				assert.NoError(t, requestErr)
@@ -106,7 +106,7 @@ func TestProjectsAPI(t *testing.T) {
 		)
 
 		t.Run(
-			"responds with status 400 BAD REQUEST if the projectId is invalid",
+			"responds with status 400 BAD REQUEST if the projectID is invalid",
 			func(t *testing.T) {
 				body := &dto.ProjectDTO{
 					Name:        "New Name",
@@ -125,11 +125,11 @@ func TestProjectsAPI(t *testing.T) {
 		t.Run(
 			"responds with status 400 BAD REQUEST if no project matching the ID is found",
 			func(t *testing.T) {
-				projectId := createProject(t)
-				createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeADMIN)
+				projectID := createProject(t)
+				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
 
-				uuidId, _ := db.StringToUUID(projectId)
-				_ = db.GetQueries().DeleteProject(context.Background(), *uuidId)
+				uuidID, _ := db.StringToUUID(projectID)
+				_ = db.GetQueries().DeleteProject(context.Background(), *uuidID)
 
 				body := &dto.ProjectDTO{
 					Name:        "New Name",
@@ -137,7 +137,7 @@ func TestProjectsAPI(t *testing.T) {
 				}
 				url := fmt.Sprintf(
 					"/v1%s",
-					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectId),
+					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
 				)
 				response, requestErr := testClient.Patch(context.Background(), url, body)
 				assert.NoError(t, requestErr)
@@ -149,24 +149,24 @@ func TestProjectsAPI(t *testing.T) {
 		t.Run(
 			"deletes a project and all associated applications by setting the deleted_at timestamp on these",
 			func(t *testing.T) {
-				projectId := createProject(t)
-				createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeADMIN)
-				applicationId := createApplication(t, projectId)
+				projectID := createProject(t)
+				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
+				applicationID := createApplication(t, projectID)
 
 				url := fmt.Sprintf(
 					"/v1%s",
-					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectId),
+					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
 				)
 				response, requestErr := testClient.Delete(context.Background(), url)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
-				projectUUID, _ := db.StringToUUID(projectId)
-				_, err := db.GetQueries().FindProjectById(context.Background(), *projectUUID)
+				projectUUID, _ := db.StringToUUID(projectID)
+				_, err := db.GetQueries().FindProjectByID(context.Background(), *projectUUID)
 				assert.Error(t, err)
 
-				applicationUUID, _ := db.StringToUUID(applicationId)
-				_, err = db.GetQueries().FindApplicationById(context.Background(), *applicationUUID)
+				applicationUUID, _ := db.StringToUUID(applicationID)
+				_, err = db.GetQueries().FindApplicationByID(context.Background(), *applicationUUID)
 				assert.Error(t, err)
 			},
 		)
@@ -175,12 +175,12 @@ func TestProjectsAPI(t *testing.T) {
 			func(t *testing.T) {
 				t.Skip("should skip until the authorization middleware is in place")
 
-				projectId := createProject(t)
-				createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeMEMBER)
+				projectID := createProject(t)
+				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeMEMBER)
 
 				url := fmt.Sprintf(
 					"/v1%s",
-					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectId),
+					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
 				)
 				response, requestErr := testClient.Delete(context.Background(), url)
 				assert.NoError(t, requestErr)
@@ -188,7 +188,7 @@ func TestProjectsAPI(t *testing.T) {
 			},
 		)
 		t.Run(
-			"responds with status 400 BAD REQUEST if the projectId is invalid",
+			"responds with status 400 BAD REQUEST if the projectID is invalid",
 			func(t *testing.T) {
 				url := fmt.Sprintf(
 					"/v1%s",
@@ -203,15 +203,15 @@ func TestProjectsAPI(t *testing.T) {
 		t.Run(
 			"responds with status 400 BAD REQUEST if no project matching the ID is found",
 			func(t *testing.T) {
-				projectId := createProject(t)
-				createUserProject(t, firebaseId, projectId, db.AccessPermissionTypeADMIN)
+				projectID := createProject(t)
+				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
 
-				uuidId, _ := db.StringToUUID(projectId)
-				_ = db.GetQueries().DeleteProject(context.Background(), *uuidId)
+				uuidID, _ := db.StringToUUID(projectID)
+				_ = db.GetQueries().DeleteProject(context.Background(), *uuidID)
 
 				url := fmt.Sprintf(
 					"/v1%s",
-					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectId),
+					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
 				)
 				response, requestErr := testClient.Delete(context.Background(), url)
 				assert.NoError(t, requestErr)
