@@ -1,7 +1,8 @@
 import { UserInfo } from '@firebase/auth';
-import { Project } from 'shared/types';
 import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
+
+import { Project } from '@/types';
 
 export interface ApiStore {
 	user: UserInfo | null;

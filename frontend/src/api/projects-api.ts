@@ -1,7 +1,6 @@
-import { Project } from 'shared/types';
-
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
+import { Project } from '@/types';
 
 export async function handleRetrieveUserProjects(): Promise<Project[]> {
 	return await fetcher<Project[]>({
