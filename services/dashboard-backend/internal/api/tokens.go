@@ -15,10 +15,10 @@ import (
 
 // HandleCreateApplicationToken - creates a new application token.
 func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	data := &dto.ApplicationTokenDTO{}
-	if deserializationErr := serialization.DeserializeJson(r.Body, data); deserializationErr != nil {
+	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
 	}
@@ -43,7 +43,7 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 	queries := db.GetQueries()
 
 	token, createTokenErr := queries.CreateToken(r.Context(), db.CreateTokenParams{
-		ApplicationID: applicationId,
+		ApplicationID: applicationID,
 		Name:          data.Name,
 	})
 	if createTokenErr != nil {
@@ -52,14 +52,14 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenId := db.UUIDToString(&token.ID)
+	tokenID := db.UUIDToString(&token.ID)
 	cfg, configErr := config.Get(r.Context())
 	if configErr != nil {
 		log.Error().Err(configErr).Msg("failed to retrieve config")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
-	jwt, jwtErr := jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), tokenId)
+	jwt, jwtErr := jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), tokenID)
 	if jwtErr != nil {
 		log.Error().Err(jwtErr).Msg("failed to create jwt")
 		apierror.InternalServerError().Render(w, r)
@@ -72,8 +72,8 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusCreated, &dto.ApplicationTokenDTO{
-		ID:        tokenId,
+	serialization.RenderJSONResponse(w, http.StatusCreated, &dto.ApplicationTokenDTO{
+		ID:        tokenID,
 		CreatedAt: token.CreatedAt.Time,
 		Name:      token.Name,
 		Hash:      &jwt,
@@ -82,9 +82,9 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 
 // HandleRetrieveApplicationTokens - retrieves a list of all applications tokens.
 func HandleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
-	applicationId := r.Context().Value(middleware.ApplicationIdContextKey).(pgtype.UUID)
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	tokens, retrievalErr := db.GetQueries().RetrieveApplicationTokens(r.Context(), applicationId)
+	tokens, retrievalErr := db.GetQueries().RetrieveApplicationTokens(r.Context(), applicationID)
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve application tokens")
 		apierror.InternalServerError().Render(w, r)
@@ -93,22 +93,22 @@ func HandleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
 
 	ret := make([]*dto.ApplicationTokenDTO, 0)
 	for _, token := range tokens {
-		tokenId := token.ID
+		tokenID := token.ID
 		ret = append(ret, &dto.ApplicationTokenDTO{
-			ID:        db.UUIDToString(&tokenId),
+			ID:        db.UUIDToString(&tokenID),
 			CreatedAt: token.CreatedAt.Time,
 			Name:      token.Name,
 		})
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusOK, ret)
+	serialization.RenderJSONResponse(w, http.StatusOK, ret)
 }
 
 // HandleDeleteApplicationToken - deletes an application token.
 func HandleDeleteApplicationToken(w http.ResponseWriter, r *http.Request) {
-	tokenId := r.Context().Value(middleware.TokenIdContextKey).(pgtype.UUID)
+	tokenID := r.Context().Value(middleware.TokenIDContextKey).(pgtype.UUID)
 
-	if err := db.GetQueries().DeleteToken(r.Context(), tokenId); err != nil {
+	if err := db.GetQueries().DeleteToken(r.Context(), tokenID); err != nil {
 		log.Error().Err(err).Msg("failed to delete application token")
 		apierror.InternalServerError().Render(w, r)
 		return

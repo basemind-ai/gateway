@@ -39,6 +39,6 @@ func GetFirebaseAuth(ctx context.Context) FirebaseAuth {
 	return firebaseAuth
 }
 
-func SetFirebaseAuth(auth FirebaseAuth) {
-	firebaseAuth = auth
+func SetFirebaseAuth(a FirebaseAuth) {
+	firebaseAuth = a
 }

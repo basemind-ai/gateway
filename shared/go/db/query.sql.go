@@ -332,7 +332,7 @@ func (q *Queries) DeleteToken(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
-const findApplicationById = `-- name: FindApplicationById :one
+const findApplicationByID = `-- name: FindApplicationByID :one
 SELECT
     id,
     description,
@@ -346,7 +346,7 @@ WHERE
     AND deleted_at IS NULL
 `
 
-type FindApplicationByIdRow struct {
+type FindApplicationByIDRow struct {
 	ID          pgtype.UUID        `json:"id"`
 	Description string             `json:"description"`
 	Name        string             `json:"name"`
@@ -355,9 +355,9 @@ type FindApplicationByIdRow struct {
 	ProjectID   pgtype.UUID        `json:"projectId"`
 }
 
-func (q *Queries) FindApplicationById(ctx context.Context, id pgtype.UUID) (FindApplicationByIdRow, error) {
-	row := q.db.QueryRow(ctx, findApplicationById, id)
-	var i FindApplicationByIdRow
+func (q *Queries) FindApplicationByID(ctx context.Context, id pgtype.UUID) (FindApplicationByIDRow, error) {
+	row := q.db.QueryRow(ctx, findApplicationByID, id)
+	var i FindApplicationByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Description,
@@ -434,7 +434,7 @@ func (q *Queries) FindApplicationPromptConfigs(ctx context.Context, applicationI
 	return items, nil
 }
 
-const findApplicationsByProjectId = `-- name: FindApplicationsByProjectId :many
+const findApplicationsByProjectID = `-- name: FindApplicationsByProjectID :many
 SELECT
     id,
     description,
@@ -448,7 +448,7 @@ WHERE
     AND deleted_at IS NULL
 `
 
-type FindApplicationsByProjectIdRow struct {
+type FindApplicationsByProjectIDRow struct {
 	ID          pgtype.UUID        `json:"id"`
 	Description string             `json:"description"`
 	Name        string             `json:"name"`
@@ -457,15 +457,15 @@ type FindApplicationsByProjectIdRow struct {
 	ProjectID   pgtype.UUID        `json:"projectId"`
 }
 
-func (q *Queries) FindApplicationsByProjectId(ctx context.Context, projectID pgtype.UUID) ([]FindApplicationsByProjectIdRow, error) {
-	rows, err := q.db.Query(ctx, findApplicationsByProjectId, projectID)
+func (q *Queries) FindApplicationsByProjectID(ctx context.Context, projectID pgtype.UUID) ([]FindApplicationsByProjectIDRow, error) {
+	rows, err := q.db.Query(ctx, findApplicationsByProjectID, projectID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []FindApplicationsByProjectIdRow
+	var items []FindApplicationsByProjectIDRow
 	for rows.Next() {
-		var i FindApplicationsByProjectIdRow
+		var i FindApplicationsByProjectIDRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Description,
@@ -484,7 +484,7 @@ func (q *Queries) FindApplicationsByProjectId(ctx context.Context, projectID pgt
 	return items, nil
 }
 
-const findDefaultPromptConfigByApplicationId = `-- name: FindDefaultPromptConfigByApplicationId :one
+const findDefaultPromptConfigByApplicationID = `-- name: FindDefaultPromptConfigByApplicationID :one
 SELECT
     id,
     name,
@@ -504,7 +504,7 @@ WHERE
     AND is_default = TRUE
 `
 
-type FindDefaultPromptConfigByApplicationIdRow struct {
+type FindDefaultPromptConfigByApplicationIDRow struct {
 	ID                        pgtype.UUID        `json:"id"`
 	Name                      string             `json:"name"`
 	ModelParameters           []byte             `json:"modelParameters"`
@@ -518,9 +518,9 @@ type FindDefaultPromptConfigByApplicationIdRow struct {
 	ApplicationID             pgtype.UUID        `json:"applicationId"`
 }
 
-func (q *Queries) FindDefaultPromptConfigByApplicationId(ctx context.Context, applicationID pgtype.UUID) (FindDefaultPromptConfigByApplicationIdRow, error) {
-	row := q.db.QueryRow(ctx, findDefaultPromptConfigByApplicationId, applicationID)
-	var i FindDefaultPromptConfigByApplicationIdRow
+func (q *Queries) FindDefaultPromptConfigByApplicationID(ctx context.Context, applicationID pgtype.UUID) (FindDefaultPromptConfigByApplicationIDRow, error) {
+	row := q.db.QueryRow(ctx, findDefaultPromptConfigByApplicationID, applicationID)
+	var i FindDefaultPromptConfigByApplicationIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -537,7 +537,7 @@ func (q *Queries) FindDefaultPromptConfigByApplicationId(ctx context.Context, ap
 	return i, err
 }
 
-const findProjectById = `-- name: FindProjectById :one
+const findProjectByID = `-- name: FindProjectByID :one
 SELECT
     id,
     description,
@@ -548,7 +548,7 @@ FROM project
 WHERE id = $1 AND deleted_at IS NULL
 `
 
-type FindProjectByIdRow struct {
+type FindProjectByIDRow struct {
 	ID          pgtype.UUID        `json:"id"`
 	Description string             `json:"description"`
 	Name        string             `json:"name"`
@@ -556,9 +556,9 @@ type FindProjectByIdRow struct {
 	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
 }
 
-func (q *Queries) FindProjectById(ctx context.Context, id pgtype.UUID) (FindProjectByIdRow, error) {
-	row := q.db.QueryRow(ctx, findProjectById, id)
-	var i FindProjectByIdRow
+func (q *Queries) FindProjectByID(ctx context.Context, id pgtype.UUID) (FindProjectByIDRow, error) {
+	row := q.db.QueryRow(ctx, findProjectByID, id)
+	var i FindProjectByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Description,
@@ -569,7 +569,7 @@ func (q *Queries) FindProjectById(ctx context.Context, id pgtype.UUID) (FindProj
 	return i, err
 }
 
-const findPromptConfigById = `-- name: FindPromptConfigById :one
+const findPromptConfigByID = `-- name: FindPromptConfigByID :one
 SELECT
     id,
     name,
@@ -588,7 +588,7 @@ WHERE
     AND deleted_at IS NULL
 `
 
-type FindPromptConfigByIdRow struct {
+type FindPromptConfigByIDRow struct {
 	ID                        pgtype.UUID        `json:"id"`
 	Name                      string             `json:"name"`
 	ModelParameters           []byte             `json:"modelParameters"`
@@ -602,9 +602,9 @@ type FindPromptConfigByIdRow struct {
 	ApplicationID             pgtype.UUID        `json:"applicationId"`
 }
 
-func (q *Queries) FindPromptConfigById(ctx context.Context, id pgtype.UUID) (FindPromptConfigByIdRow, error) {
-	row := q.db.QueryRow(ctx, findPromptConfigById, id)
-	var i FindPromptConfigByIdRow
+func (q *Queries) FindPromptConfigByID(ctx context.Context, id pgtype.UUID) (FindPromptConfigByIDRow, error) {
+	row := q.db.QueryRow(ctx, findPromptConfigByID, id)
+	var i FindPromptConfigByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
@@ -621,7 +621,7 @@ func (q *Queries) FindPromptConfigById(ctx context.Context, id pgtype.UUID) (Fin
 	return i, err
 }
 
-const findUserAccountByFirebaseId = `-- name: FindUserAccountByFirebaseId :one
+const findUserAccountByFirebaseID = `-- name: FindUserAccountByFirebaseID :one
 SELECT
     id,
     firebase_id,
@@ -630,8 +630,8 @@ FROM user_account
 WHERE firebase_id = $1
 `
 
-func (q *Queries) FindUserAccountByFirebaseId(ctx context.Context, firebaseID string) (UserAccount, error) {
-	row := q.db.QueryRow(ctx, findUserAccountByFirebaseId, firebaseID)
+func (q *Queries) FindUserAccountByFirebaseID(ctx context.Context, firebaseID string) (UserAccount, error) {
+	row := q.db.QueryRow(ctx, findUserAccountByFirebaseID, firebaseID)
 	var i UserAccount
 	err := row.Scan(&i.ID, &i.FirebaseID, &i.CreatedAt)
 	return i, err

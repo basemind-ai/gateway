@@ -47,18 +47,18 @@ func CreateNamespaceTestDBModule(namespace string) func() {
 
 	_ = resource.Expire(120)
 
-	dbUrl := fmt.Sprintf(
+	dbURL := fmt.Sprintf(
 		"postgres://test:test@%s/%s?sslmode=disable",
 		resource.GetHostPort("5432/tcp"),
 		namespace,
 	)
 
-	connection, connectionErr := db.CreateConnection(context.TODO(), dbUrl)
+	connection, connectionErr := db.CreateConnection(context.TODO(), dbURL)
 	if connectionErr != nil {
 		log.Fatal().Err(connectionErr).Msg("failed to connect to test database")
 	}
 
-	if migrationsErr := MigrateTestDb(dbUrl); migrationsErr != nil {
+	if migrationsErr := MigrateTestDB(dbURL); migrationsErr != nil {
 		_ = connectionPool.Purge(resource)
 		log.Fatal().Err(migrationsErr).Msg("failed to migrate test database")
 	}
@@ -79,7 +79,7 @@ func CreateTestDB(t *testing.T) {
 	t.Cleanup(cleanup)
 }
 
-func MigrateTestDb(dbUrl string) error {
+func MigrateTestDB(dbURL string) error {
 	_, filePath, _, _ := runtime.Caller(1)
 	repositoryRoot, _ := filepath.Abs(filePath + "/../../../../../")
 	migrationsPath := fmt.Sprintf("file://%s/sql/migrations", repositoryRoot)
@@ -89,7 +89,7 @@ func MigrateTestDb(dbUrl string) error {
 		"migrate",
 		"apply",
 		"--url",
-		dbUrl,
+		dbURL,
 		"--dir",
 		migrationsPath,
 	)

@@ -16,8 +16,8 @@ import (
 func TestUserDataAPI(t *testing.T) {
 	t.Run(fmt.Sprintf("GET: %s", api.UserAccountEndpoint), func(t *testing.T) {
 		t.Run("creates a new user and returns its default project", func(t *testing.T) {
-			firebaseId := factories.RandomString(10)
-			testClient := createTestClient(t, firebaseId)
+			firebaseID := factories.RandomString(10)
+			testClient := createTestClient(t, firebaseID)
 
 			response, requestErr := testClient.Get(
 				context.TODO(),
@@ -27,22 +27,22 @@ func TestUserDataAPI(t *testing.T) {
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			userData := &dto.UserAccountDTO{}
-			deserializationErr := serialization.DeserializeJson(response.Body, userData)
+			deserializationErr := serialization.DeserializeJSON(response.Body, userData)
 
 			assert.NoError(t, deserializationErr)
 			assert.NotEmpty(t, userData.ID)
-			assert.Equal(t, firebaseId, userData.FirebaseID)
+			assert.Equal(t, firebaseID, userData.FirebaseID)
 			assert.Len(t, userData.Projects, 1)
 			assert.NotEmpty(t, userData.Projects[0].ID)
 		})
 
 		t.Run("retrieves projects for existing user", func(t *testing.T) {
-			firebaseId := factories.RandomString(10)
-			testClient := createTestClient(t, firebaseId)
+			firebaseID := factories.RandomString(10)
+			testClient := createTestClient(t, firebaseID)
 
 			_, userCreateErr := repositories.CreateDefaultUserAccountData(
 				context.Background(),
-				firebaseId,
+				firebaseID,
 			)
 			assert.NoError(t, userCreateErr)
 
@@ -54,10 +54,10 @@ func TestUserDataAPI(t *testing.T) {
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			userData := &dto.UserAccountDTO{}
-			deserializationErr := serialization.DeserializeJson(response.Body, userData)
+			deserializationErr := serialization.DeserializeJSON(response.Body, userData)
 			assert.NoError(t, deserializationErr)
 			assert.NotEmpty(t, userData.ID)
-			assert.Equal(t, firebaseId, userData.FirebaseID)
+			assert.Equal(t, firebaseID, userData.FirebaseID)
 			assert.Len(t, userData.Projects, 1)
 			assert.NotEmpty(t, userData.Projects[0].ID)
 		})

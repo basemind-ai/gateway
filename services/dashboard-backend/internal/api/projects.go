@@ -14,10 +14,10 @@ import (
 
 // HandleCreateProject - creates a new project and sets the user as an ADMIN.
 func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
-	firebaseId := r.Context().Value(middleware.FireBaseIdContextKey).(string)
+	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
 
 	body := &dto.ProjectDTO{}
-	if deserializationErr := serialization.DeserializeJson(r.Body, body); deserializationErr != nil {
+	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
 	}
@@ -29,7 +29,7 @@ func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
 
 	projectDto, createErr := repositories.CreateProject(
 		r.Context(),
-		firebaseId,
+		firebaseID,
 		body.Name,
 		body.Description,
 	)
@@ -40,21 +40,21 @@ func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusCreated, projectDto)
+	serialization.RenderJSONResponse(w, http.StatusCreated, projectDto)
 }
 
 // HandleUpdateProject - allows updating the name and description of a project
 // requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
 func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
-	projectId := r.Context().Value(middleware.ProjectIdContextKey).(pgtype.UUID)
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	body := &dto.ProjectDTO{}
-	if deserializationErr := serialization.DeserializeJson(r.Body, body); deserializationErr != nil {
+	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
 	}
 
-	existingProject, retrivalErr := db.GetQueries().FindProjectById(r.Context(), projectId)
+	existingProject, retrivalErr := db.GetQueries().FindProjectByID(r.Context(), projectID)
 	if retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
@@ -62,7 +62,7 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updateParams := db.UpdateProjectParams{
-		ID:          projectId,
+		ID:          projectID,
 		Name:        existingProject.Name,
 		Description: existingProject.Description,
 	}
@@ -91,21 +91,21 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 		Permission:           "",
 	}
 
-	serialization.RenderJsonResponse(w, http.StatusOK, data)
+	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
 // HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these
 // requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
 func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
-	projectId := r.Context().Value(middleware.ProjectIdContextKey).(pgtype.UUID)
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	if _, retrivalErr := db.GetQueries().FindProjectById(r.Context(), projectId); retrivalErr != nil {
+	if _, retrivalErr := db.GetQueries().FindProjectByID(r.Context(), projectID); retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
 		return
 	}
 
-	if deleteErr := repositories.DeleteProject(r.Context(), projectId); deleteErr != nil {
+	if deleteErr := repositories.DeleteProject(r.Context(), projectID); deleteErr != nil {
 		log.Error().Err(deleteErr).Msg("failed to delete project")
 		apierror.InternalServerError().Render(w, r)
 		return

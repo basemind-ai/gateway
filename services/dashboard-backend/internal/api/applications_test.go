@@ -14,9 +14,9 @@ import (
 )
 
 func TestApplicationsAPI(t *testing.T) {
-	projectId := createProject(t)
-	firebaseId := factories.RandomString(10)
-	testClient := createTestClient(t, firebaseId)
+	projectID := createProject(t)
+	firebaseID := factories.RandomString(10)
+	testClient := createTestClient(t, firebaseID)
 
 	t.Run(fmt.Sprintf("POST: %s", api.ApplicationsListEndpoint), func(t *testing.T) {
 		t.Run("creates a new application", func(t *testing.T) {
@@ -24,9 +24,9 @@ func TestApplicationsAPI(t *testing.T) {
 				context.TODO(),
 				fmt.Sprintf(
 					"/v1%s",
-					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId),
+					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectID),
 				),
-				map[string]interface{}{
+				map[string]any{
 					"name":        "test app",
 					"description": "test app description",
 				},
@@ -35,7 +35,7 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusCreated, response.StatusCode)
 
 			application := db.Application{}
-			deserializationErr := serialization.DeserializeJson(response.Body, &application)
+			deserializationErr := serialization.DeserializeJSON(response.Body, &application)
 			assert.NoError(t, deserializationErr)
 			assert.NotNil(t, application.ID)
 			assert.Equal(t, "test app", application.Name)
@@ -49,7 +49,7 @@ func TestApplicationsAPI(t *testing.T) {
 					"/v1%s",
 					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid"),
 				),
-				map[string]interface{}{
+				map[string]any{
 					"name":        "test app",
 					"description": "test app description",
 				},
@@ -63,7 +63,7 @@ func TestApplicationsAPI(t *testing.T) {
 				context.TODO(),
 				fmt.Sprintf(
 					"/v1%s",
-					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectId),
+					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", projectID),
 				),
 				"invalid",
 			)
@@ -71,14 +71,14 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 
-		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Post(
 				context.TODO(),
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid"),
 				),
-				map[string]interface{}{
+				map[string]any{
 					"name":        "test app",
 					"description": "test app description",
 				},
@@ -90,28 +90,28 @@ func TestApplicationsAPI(t *testing.T) {
 
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
 		t.Run("retrieves an existing application", func(t *testing.T) {
-			applicationId := createApplication(t, projectId)
+			applicationID := createApplication(t, projectID)
 
 			response, requestErr := testClient.Get(
 				context.TODO(),
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
 						"{applicationId}",
-						applicationId,
+						applicationID,
 					),
 				),
 			)
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			uuidId, _ := db.StringToUUID(applicationId)
+			uuidID, _ := db.StringToUUID(applicationID)
 
-			application, _ := db.GetQueries().FindApplicationById(context.TODO(), *uuidId)
+			application, _ := db.GetQueries().FindApplicationByID(context.TODO(), *uuidID)
 
 			responseApplication := db.Application{}
-			deserializationErr := serialization.DeserializeJson(
+			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseApplication,
 			)
@@ -127,7 +127,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
 						"{applicationId}",
 						"invalid",
 					),
@@ -137,7 +137,7 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 
-		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Get(
 				context.TODO(),
 				fmt.Sprintf(
@@ -154,7 +154,7 @@ func TestApplicationsAPI(t *testing.T) {
 		})
 
 		t.Run(
-			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			"responds with status 400 BAD REQUEST if applicationID is invalid",
 			func(t *testing.T) {
 				response, requestErr := testClient.Get(
 					context.TODO(),
@@ -164,7 +164,7 @@ func TestApplicationsAPI(t *testing.T) {
 							strings.ReplaceAll(
 								api.ApplicationDetailEndpoint,
 								"{projectId}",
-								projectId,
+								projectID,
 							),
 							"{applicationId}",
 							"invalid",
@@ -179,19 +179,19 @@ func TestApplicationsAPI(t *testing.T) {
 
 	t.Run(fmt.Sprintf("PATCH: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
 		t.Run("updates an existing application", func(t *testing.T) {
-			applicationId := createApplication(t, projectId)
+			applicationID := createApplication(t, projectID)
 
 			response, requestErr := testClient.Patch(
 				context.TODO(),
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
 						"{applicationId}",
-						applicationId,
+						applicationID,
 					),
 				),
-				map[string]interface{}{
+				map[string]any{
 					"name":        "updated app",
 					"description": "updated app description",
 				},
@@ -200,15 +200,15 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			responseApplication := db.Application{}
-			deserializationErr := serialization.DeserializeJson(
+			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseApplication,
 			)
 
-			uuidId, _ := db.StringToUUID(applicationId)
+			uuidID, _ := db.StringToUUID(applicationID)
 
 			assert.NoError(t, deserializationErr)
-			assert.Equal(t, *uuidId, responseApplication.ID)
+			assert.Equal(t, *uuidID, responseApplication.ID)
 			assert.Equal(t, "updated app", responseApplication.Name)
 			assert.Equal(t, "updated app description", responseApplication.Description)
 		})
@@ -219,12 +219,12 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
 						"{applicationId}",
 						"invalid",
 					),
 				),
-				map[string]interface{}{
+				map[string]any{
 					"name":        "updated app",
 					"description": "updated app description",
 				},
@@ -234,15 +234,15 @@ func TestApplicationsAPI(t *testing.T) {
 		})
 
 		t.Run("returns an error if the request body is invalid", func(t *testing.T) {
-			applicationId := createApplication(t, projectId)
+			applicationID := createApplication(t, projectID)
 			response, requestErr := testClient.Patch(
 				context.TODO(),
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
 						"{applicationId}",
-						applicationId,
+						applicationID,
 					),
 				),
 				"invalid",
@@ -251,7 +251,7 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 
-		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Patch(
 				context.TODO(),
 				fmt.Sprintf(
@@ -262,7 +262,7 @@ func TestApplicationsAPI(t *testing.T) {
 						"invalid",
 					),
 				),
-				map[string]interface{}{
+				map[string]any{
 					"name":        "updated app",
 					"description": "updated app description",
 				},
@@ -272,7 +272,7 @@ func TestApplicationsAPI(t *testing.T) {
 		})
 
 		t.Run(
-			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			"responds with status 400 BAD REQUEST if applicationID is invalid",
 			func(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
@@ -282,13 +282,13 @@ func TestApplicationsAPI(t *testing.T) {
 							strings.ReplaceAll(
 								api.ApplicationDetailEndpoint,
 								"{projectId}",
-								projectId,
+								projectID,
 							),
 							"{applicationId}",
 							"invalid",
 						),
 					),
-					map[string]interface{}{
+					map[string]any{
 						"name":        "updated app",
 						"description": "updated app description",
 					},
@@ -301,25 +301,25 @@ func TestApplicationsAPI(t *testing.T) {
 
 	t.Run(fmt.Sprintf("DELETE: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
 		t.Run("deletes an existing application", func(t *testing.T) {
-			applicationId := createApplication(t, projectId)
+			applicationID := createApplication(t, projectID)
 
 			response, requestErr := testClient.Delete(
 				context.TODO(),
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
 						"{applicationId}",
-						applicationId,
+						applicationID,
 					),
 				),
 			)
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
-			uuidId, _ := db.StringToUUID(applicationId)
+			uuidID, _ := db.StringToUUID(applicationID)
 			_, applicationRetrieveErr := db.GetQueries().
-				FindApplicationById(context.TODO(), *uuidId)
+				FindApplicationByID(context.TODO(), *uuidID)
 
 			assert.Error(t, applicationRetrieveErr)
 		})
@@ -330,7 +330,7 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectId),
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
 						"{applicationId}",
 						"invalid",
 					),
@@ -340,7 +340,7 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 
-		t.Run("responds with status 400 BAD REQUEST if projectId is invalid", func(t *testing.T) {
+		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Delete(
 				context.TODO(),
 				fmt.Sprintf(
@@ -356,7 +356,7 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 		t.Run(
-			"responds with status 400 BAD REQUEST if applicationId is invalid",
+			"responds with status 400 BAD REQUEST if applicationID is invalid",
 			func(t *testing.T) {
 				response, requestErr := testClient.Delete(
 					context.TODO(),
@@ -366,7 +366,7 @@ func TestApplicationsAPI(t *testing.T) {
 							strings.ReplaceAll(
 								api.ApplicationDetailEndpoint,
 								"{projectId}",
-								projectId,
+								projectID,
 							),
 							"{applicationId}",
 							"invalid",

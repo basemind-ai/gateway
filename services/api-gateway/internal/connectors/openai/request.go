@@ -53,12 +53,21 @@ func (c *Client) RequestPrompt(
 		recordParams.ErrorLog = pgtype.Text{String: requestErr.Error(), Valid: true}
 	}
 
-	if requestRecord, createRequestRecordErr := db.GetQueries().CreatePromptRequestRecord(ctx, recordParams); createRequestRecordErr != nil {
+	if requestRecord, createRequestRecordErr := db.
+		GetQueries().
+		CreatePromptRequestRecord(
+			ctx,
+			recordParams,
+		); createRequestRecordErr != nil {
 		log.Error().Err(createRequestRecordErr).Msg("failed to create prompt request record")
 		if promptResult.Error == nil {
 			promptResult.Error = createRequestRecordErr
 		} else {
-			promptResult.Error = fmt.Errorf("failed to save prompt record: %w...%w", promptResult.Error, createRequestRecordErr)
+			promptResult.Error = fmt.Errorf(
+				"failed to save prompt record: %w...%w",
+				promptResult.Error,
+				createRequestRecordErr,
+			)
 		}
 	} else {
 		promptResult.RequestRecord = &requestRecord

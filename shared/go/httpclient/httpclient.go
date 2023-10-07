@@ -11,8 +11,8 @@ import (
 )
 
 type Client struct {
-	BaseUrl    string
-	HttpClient *http.Client
+	BaseURL    string
+	HTTPClient *http.Client
 }
 
 type HTTPHeader struct {
@@ -20,14 +20,14 @@ type HTTPHeader struct {
 	Value string
 }
 
-func New(baseUrl string,
+func New(baseURL string,
 	httpClient *http.Client) Client {
 	if httpClient != nil {
-		return Client{BaseUrl: baseUrl, HttpClient: httpClient}
+		return Client{BaseURL: baseURL, HTTPClient: httpClient}
 	}
 	return Client{
-		BaseUrl:    baseUrl,
-		HttpClient: &http.Client{Timeout: time.Duration(1) * time.Second},
+		BaseURL:    baseURL,
+		HTTPClient: &http.Client{Timeout: time.Duration(1) * time.Second},
 	}
 }
 
@@ -44,7 +44,7 @@ func (client *Client) Request(
 		requestBody = bytes.NewBuffer(data)
 	}
 
-	url := fmt.Sprintf("%s%s", client.BaseUrl, path)
+	url := fmt.Sprintf("%s%s", client.BaseURL, path)
 
 	request, requestErr := http.NewRequestWithContext(ctx, method, url, requestBody)
 	if requestErr != nil {
@@ -57,7 +57,7 @@ func (client *Client) Request(
 		request.Header.Add(header.Key, header.Value)
 	}
 
-	response, responseErr := client.HttpClient.Do(request)
+	response, responseErr := client.HTTPClient.Do(request)
 	if responseErr != nil {
 		return nil, responseErr
 	}

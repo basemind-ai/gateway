@@ -25,7 +25,9 @@ func streamFromClient(
 	var builder strings.Builder
 
 	for {
-		if msg, receiveErr := stream.Recv(); receiveErr != nil {
+		msg, receiveErr := stream.Recv()
+
+		if receiveErr != nil {
 			recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 			if !errors.Is(receiveErr, io.EOF) {
@@ -34,15 +36,17 @@ func streamFromClient(
 			}
 
 			break
-		} else {
-			if recordParams.StreamResponseLatency.Int64 == 0 {
-				duration := int64(time.Until(startTime))
-				recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
-			}
-
-			builder.WriteString(msg.Content)
-			channel <- dto.PromptResultDTO{Content: &msg.Content}
 		}
+
+		if recordParams.StreamResponseLatency.Int64 == 0 {
+			duration := int64(time.Until(startTime))
+			recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
+		}
+
+		if _, writeErr := builder.WriteString(msg.Content); writeErr != nil {
+			log.Error().Err(writeErr).Msg("failed to write prompt content to write")
+		}
+		channel <- dto.PromptResultDTO{Content: &msg.Content}
 	}
 
 	return builder.String()
@@ -102,12 +106,20 @@ func (c *Client) RequestStream(
 		recordParams.ErrorLog = pgtype.Text{String: finalResult.Error.Error(), Valid: true}
 	}
 
-	if promptRecord, createRequestRecordErr := db.GetQueries().CreatePromptRequestRecord(ctx, *recordParams); createRequestRecordErr != nil {
+	if promptRecord, createRequestRecordErr := db.GetQueries().
+		CreatePromptRequestRecord(
+			ctx,
+			*recordParams,
+		); createRequestRecordErr != nil {
 		log.Error().Err(createRequestRecordErr).Msg("failed to create prompt request record")
 		if finalResult.Error == nil {
 			finalResult.Error = createRequestRecordErr
 		} else {
-			finalResult.Error = fmt.Errorf("failed to save prompt record: %w...%w", finalResult.Error, createRequestRecordErr)
+			finalResult.Error = fmt.Errorf("failed to save prompt record: "+
+				"%w...%w",
+				finalResult.Error,
+				createRequestRecordErr,
+			)
 		}
 	} else {
 		finalResult.RequestRecord = &promptRecord

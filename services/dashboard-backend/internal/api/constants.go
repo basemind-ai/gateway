@@ -15,9 +15,5 @@ const (
 )
 
 const (
-	InvalidProjectIdError      = "projectId is not a valid UUID value"
-	InvalidApplicationIdError  = "applicationId is not a valid UUID value"
-	InvalidPromptConfigIdError = "promptConfigId is not a valid UUID value"
-	InvalidTokenIdError        = "tokenId is not a valid UUID value"
-	InvalidRequestBodyError    = "invalid request body"
+	InvalidRequestBodyError = "invalid request body"
 )

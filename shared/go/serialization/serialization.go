@@ -20,7 +20,7 @@ func ReadBody(body io.ReadCloser) ([]byte, error) {
 	return data, nil
 }
 
-func DeserializeJson[T any](body io.ReadCloser, targetType T) error {
+func DeserializeJSON[T any](body io.ReadCloser, targetType T) error {
 	data, err := ReadBody(body)
 	if err != nil {
 		return err
@@ -28,7 +28,7 @@ func DeserializeJson[T any](body io.ReadCloser, targetType T) error {
 	return json.Unmarshal(data, targetType)
 }
 
-func RenderJsonResponse(w http.ResponseWriter, statusCode int, body any) {
+func RenderJSONResponse(w http.ResponseWriter, statusCode int, body any) {
 	w.WriteHeader(statusCode)
 	w.Header().Set("Content-Type", "application/json")
 	if renderErr := json.NewEncoder(w).Encode(body); renderErr != nil {

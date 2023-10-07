@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
 }
 
 var (
-	dbUrl  string
+	dbURL  string
 	secret string
 )
 
@@ -33,7 +33,7 @@ func init() {
 
 	// global flags
 	rootCmd.PersistentFlags().
-		StringVar(&dbUrl, "dbUrl", "postgresql://basemind:basemind@localhost:5432/basemind", "the url of the DB to use")
+		StringVar(&dbURL, "dbURL", "postgresql://basemind:basemind@localhost:5432/basemind", "the url of the DB to use")
 	createJwt.Flags().
 		StringVarP(&secret, "secret", "s", "jeronimo", "Secret to use for JWT creation and decoding")
 }

@@ -15,23 +15,39 @@ func TestApplicationRepository(t *testing.T) {
 	t.Run("deletes an application and all of its prompt configs", func(t *testing.T) {
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-		value, err := db.GetQueries().FindApplicationById(context.Background(), application.ID)
+		value, err := db.GetQueries().FindApplicationByID(context.Background(), application.ID)
 		assert.NoError(t, err)
 		assert.Equal(t, application.ID, value.ID)
 
 		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
-		promptConfigValue, err := db.GetQueries().
-			FindPromptConfigById(context.Background(), promptConfig.ID)
+		promptConfigValue, err := db.
+			GetQueries().
+			FindPromptConfigByID(context.Background(), promptConfig.ID)
+
 		assert.NoError(t, err)
 		assert.Equal(t, promptConfig.ID, promptConfigValue.ID)
 
 		err = repositories.DeleteApplication(context.Background(), application.ID)
 		assert.NoError(t, err)
 
-		_, err = db.GetQueries().FindApplicationById(context.Background(), application.ID)
+		_, err = db.GetQueries().FindApplicationByID(context.Background(), application.ID)
 		assert.Error(t, err)
 
-		_, err = db.GetQueries().FindPromptConfigById(context.Background(), promptConfig.ID)
+		_, err = db.GetQueries().FindPromptConfigByID(context.Background(), promptConfig.ID)
+		assert.Error(t, err)
+	})
+
+	t.Run("deletes an application that has no prompt configs", func(t *testing.T) {
+		application, _ := factories.CreateApplication(context.TODO(), project.ID)
+
+		value, err := db.GetQueries().FindApplicationByID(context.Background(), application.ID)
+		assert.NoError(t, err)
+		assert.Equal(t, application.ID, value.ID)
+
+		err = repositories.DeleteApplication(context.Background(), application.ID)
+		assert.NoError(t, err)
+
+		_, err = db.GetQueries().FindApplicationByID(context.Background(), application.ID)
 		assert.Error(t, err)
 	})
 }

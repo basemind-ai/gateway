@@ -10,18 +10,18 @@ import (
 
 // GetUserAccountData - retrieves the user data for the given firebase id,
 // joins the user data with any projects the user has access to, and each project with its related applications.
-func GetUserAccountData(ctx context.Context, firebaseId string) (*dto.UserAccountDTO, error) {
-	data, findError := db.GetQueries().FindUserAccountData(ctx, firebaseId)
+func GetUserAccountData(ctx context.Context, firebaseID string) (*dto.UserAccountDTO, error) {
+	data, findError := db.GetQueries().FindUserAccountData(ctx, firebaseID)
 	if findError != nil {
 		return nil, fmt.Errorf(
 			"failed to find user data for firebase id: %s - %w",
-			firebaseId,
+			firebaseID,
 			findError,
 		)
 	}
 
 	userData := &dto.UserAccountDTO{
-		FirebaseID: firebaseId,
+		FirebaseID: firebaseID,
 		Projects:   make([]dto.ProjectDTO, 0),
 	}
 
@@ -39,21 +39,21 @@ func GetUserAccountData(ctx context.Context, firebaseId string) (*dto.UserAccoun
 			userData.ID = db.UUIDToString(&u)
 		}
 
-		projectId := db.UUIDToString(&p)
-		applicationId := db.UUIDToString(&a)
+		projectID := db.UUIDToString(&p)
+		applicationID := db.UUIDToString(&a)
 
-		if _, ok := projects[projectId]; !ok {
-			projects[projectId] = dto.ProjectDTO{
-				ID:                   projectId,
+		if _, ok := projects[projectID]; !ok {
+			projects[projectID] = dto.ProjectDTO{
+				ID:                   projectID,
 				Name:                 datum.ProjectName.String,
 				Description:          datum.ProjectDescription.String,
 				CreatedAt:            datum.ProjectCreatedAt.Time,
 				IsUserDefaultProject: datum.IsUserDefaultProject.Bool,
 				Permission:           string(datum.Permission.AccessPermissionType),
 			}
-			applications[projectId] = []dto.ApplicationDTO{
+			applications[projectID] = []dto.ApplicationDTO{
 				{
-					ID:          applicationId,
+					ID:          applicationID,
 					Name:        datum.ApplicationName.String,
 					Description: datum.ApplicationDescription.String,
 					CreatedAt:   datum.ApplicationCreatedAt.Time,
@@ -63,8 +63,8 @@ func GetUserAccountData(ctx context.Context, firebaseId string) (*dto.UserAccoun
 			continue
 		}
 
-		applications[projectId] = append(applications[projectId], dto.ApplicationDTO{
-			ID:          applicationId,
+		applications[projectID] = append(applications[projectID], dto.ApplicationDTO{
+			ID:          applicationID,
 			Name:        datum.ApplicationName.String,
 			Description: datum.ApplicationDescription.String,
 			CreatedAt:   datum.ApplicationCreatedAt.Time,
@@ -72,8 +72,8 @@ func GetUserAccountData(ctx context.Context, firebaseId string) (*dto.UserAccoun
 		})
 	}
 
-	for projectId, project := range projects {
-		project.Applications = applications[projectId]
+	for projectID, project := range projects {
+		project.Applications = applications[projectID]
 		userData.Projects = append(userData.Projects, project)
 	}
 
@@ -83,7 +83,7 @@ func GetUserAccountData(ctx context.Context, firebaseId string) (*dto.UserAccoun
 // CreateDefaultUserAccountData - creates the user entry and a default project for the user.
 func CreateDefaultUserAccountData(
 	ctx context.Context,
-	firebaseId string,
+	firebaseID string,
 ) (*dto.UserAccountDTO, error) {
 	tx, err := db.GetTransaction(ctx)
 	if err != nil {
@@ -96,7 +96,7 @@ func CreateDefaultUserAccountData(
 	}()
 
 	queries := db.GetQueries().WithTx(tx)
-	user, createUserErr := queries.CreateUserAccount(ctx, firebaseId)
+	user, createUserErr := queries.CreateUserAccount(ctx, firebaseID)
 	if createUserErr != nil {
 		log.Error().Err(createUserErr).Msg("failed to create user")
 		return nil, fmt.Errorf("failed to create user row - %w", createUserErr)
@@ -124,21 +124,13 @@ func CreateDefaultUserAccountData(
 	}
 
 	if commitErr := tx.Commit(ctx); commitErr != nil {
-		if rollBackErr := tx.Rollback(ctx); rollBackErr != nil {
-			log.Error().Err(rollBackErr).Msg("failed to rollback transaction")
-			return nil, fmt.Errorf(
-				"failed to rollback transaction - %w - %w",
-				rollBackErr,
-				commitErr,
-			)
-		}
 		log.Error().Err(commitErr).Msg("failed to commit transaction")
 		return nil, fmt.Errorf("failed to commit transaction - %w", commitErr)
 	}
 
 	return &dto.UserAccountDTO{
 		ID:         db.UUIDToString(&user.ID),
-		FirebaseID: firebaseId,
+		FirebaseID: firebaseID,
 		Projects: []dto.ProjectDTO{
 			{
 				ID:                   db.UUIDToString(&project.ID),
@@ -156,16 +148,16 @@ func CreateDefaultUserAccountData(
 // GetOrCreateUserAccount - checks if the user exists, returning the user account and all projects the user has
 // access to.
 // Note: this logic is temporary. We will rework it once we support inviting users to join a project.
-func GetOrCreateUserAccount(ctx context.Context, firebaseId string) (*dto.UserAccountDTO, error) {
-	userExists, queryErr := db.GetQueries().CheckUserAccountExists(ctx, firebaseId)
+func GetOrCreateUserAccount(ctx context.Context, firebaseID string) (*dto.UserAccountDTO, error) {
+	userExists, queryErr := db.GetQueries().CheckUserAccountExists(ctx, firebaseID)
 
 	if queryErr != nil {
 		return nil, fmt.Errorf("failed to check if user exists - %w", queryErr)
 	}
 
 	if userExists {
-		return GetUserAccountData(ctx, firebaseId)
+		return GetUserAccountData(ctx, firebaseID)
 	}
 
-	return CreateDefaultUserAccountData(ctx, firebaseId)
+	return CreateDefaultUserAccountData(ctx, firebaseID)
 }

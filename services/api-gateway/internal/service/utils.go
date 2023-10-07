@@ -13,13 +13,20 @@ import (
 
 func RetrievePromptConfig(
 	ctx context.Context,
-	applicationId pgtype.UUID,
-	promptConfigId *pgtype.UUID,
-) (*datatypes.PromptConfigDTO, *pgtype.UUID, error) {
-	if promptConfigId != nil {
-		promptConfig, retrievalErr := db.GetQueries().FindPromptConfigById(ctx, *promptConfigId)
+	applicationID pgtype.UUID,
+	promptConfigID *string,
+) (*datatypes.PromptConfigDTO, error) {
+	if promptConfigID != nil {
+		uuid, uuidErr := db.StringToUUID(*promptConfigID)
+		if uuidErr != nil {
+			return nil, status.Errorf(
+				codes.InvalidArgument, "invalid prompt-config id: %v", uuidErr,
+			)
+		}
+
+		promptConfig, retrievalErr := db.GetQueries().FindPromptConfigByID(ctx, *uuid)
 		if retrievalErr != nil {
-			return nil, nil, fmt.Errorf("failed to retrieve prompt config - %w", retrievalErr)
+			return nil, fmt.Errorf("failed to retrieve prompt config - %w", retrievalErr)
 		}
 
 		return &datatypes.PromptConfigDTO{
@@ -33,13 +40,13 @@ func RetrievePromptConfig(
 			IsDefault:                 promptConfig.IsDefault,
 			CreatedAt:                 promptConfig.CreatedAt.Time,
 			UpdatedAt:                 promptConfig.UpdatedAt.Time,
-		}, &promptConfig.ID, nil
+		}, nil
 	}
 
 	promptConfig, retrieveDefaultErr := db.GetQueries().
-		FindDefaultPromptConfigByApplicationId(ctx, applicationId)
+		FindDefaultPromptConfigByApplicationID(ctx, applicationID)
 	if retrieveDefaultErr != nil {
-		return nil, nil, fmt.Errorf(
+		return nil, fmt.Errorf(
 			"failed to retrieve default prompt config - %w",
 			retrieveDefaultErr,
 		)
@@ -55,21 +62,21 @@ func RetrievePromptConfig(
 		IsDefault:                 promptConfig.IsDefault,
 		CreatedAt:                 promptConfig.CreatedAt.Time,
 		UpdatedAt:                 promptConfig.UpdatedAt.Time,
-	}, &promptConfig.ID, nil
+	}, nil
 }
 
 func RetrieveRequestConfiguration(
 	ctx context.Context,
-	applicationId string,
-	promptConfigId *string,
+	applicationID string,
+	promptConfigID *string,
 ) func() (*dto.RequestConfigurationDTO, error) {
 	return func() (*dto.RequestConfigurationDTO, error) {
-		appId, appIdErr := db.StringToUUID(applicationId)
-		if appIdErr != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid application id: %v", appIdErr)
+		appID, appIDErr := db.StringToUUID(applicationID)
+		if appIDErr != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid application id: %v", appIDErr)
 		}
 
-		application, applicationQueryErr := db.GetQueries().FindApplicationById(ctx, *appId)
+		application, applicationQueryErr := db.GetQueries().FindApplicationByID(ctx, *appID)
 		if applicationQueryErr != nil {
 			return nil, status.Errorf(
 				codes.NotFound,
@@ -78,21 +85,10 @@ func RetrieveRequestConfiguration(
 			)
 		}
 
-		var promptConfigDBId *pgtype.UUID
-		if promptConfigId != nil {
-			uuid, uuidErr := db.StringToUUID(*promptConfigId)
-			if uuidErr != nil {
-				return nil, status.Errorf(
-					codes.InvalidArgument, "invalid prompt-config id: %v", uuidErr,
-				)
-			}
-			promptConfigDBId = uuid
-		}
-
-		promptConfig, promptConfigDBId, retrievalError := RetrievePromptConfig(
+		promptConfig, retrievalError := RetrievePromptConfig(
 			ctx,
-			*appId,
-			promptConfigDBId,
+			*appID,
+			promptConfigID,
 		)
 		if retrievalError != nil {
 			return nil, status.Errorf(
@@ -102,11 +98,13 @@ func RetrieveRequestConfiguration(
 			)
 		}
 
+		promptConfigDBID, _ := db.StringToUUID(promptConfig.ID)
+
 		return &dto.RequestConfigurationDTO{
 			ApplicationIDString: db.UUIDToString(&application.ID),
 			ApplicationID:       application.ID,
 			ProjectID:           application.ProjectID,
-			PromptConfigID:      *promptConfigDBId,
+			PromptConfigID:      *promptConfigDBID,
 			PromptConfigData:    *promptConfig,
 		}, nil
 	}

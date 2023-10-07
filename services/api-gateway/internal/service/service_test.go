@@ -70,7 +70,7 @@ func (m MockServerStream) Context() context.Context {
 }
 
 func (m MockServerStream) Send(response *gateway.StreamingPromptResponse) error {
-	m.Response = response //nolint: staticcheck
+	m.Response = response //nolint: all
 	return m.Error
 }
 
@@ -86,17 +86,17 @@ func TestService(t *testing.T) {
 	t.Run("RequestPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			_, err := srv.RequestPrompt(context.TODO(), nil)
-			assert.Errorf(t, err, service.ErrorApplicationIdNotInContext)
+			assert.Errorf(t, err, service.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when a default prompt config is not found", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), configuration.ProjectID)
-			applicationIdContext := context.WithValue(
+			applicationIDContext := context.WithValue(
 				context.Background(),
 				grpcutils.ApplicationIDContextKey,
 				db.UUIDToString(&application.ID),
 			)
-			_, err := srv.RequestPrompt(applicationIdContext, &gateway.PromptRequest{})
+			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{})
 
 			assert.Errorf(t, err, "the application does not have an active prompt configuration")
 		})
@@ -108,13 +108,13 @@ func TestService(t *testing.T) {
 					context.TODO(),
 					configuration.ProjectID,
 				)
-				applicationIdContext := context.WithValue(
+				applicationIDContext := context.WithValue(
 					context.Background(),
 					grpcutils.ApplicationIDContextKey,
 					db.UUIDToString(&application.ID),
 				)
 				_, err := srv.RequestPrompt(
-					applicationIdContext,
+					applicationIDContext,
 					&gateway.PromptRequest{PromptConfigId: &configuration.PromptConfigData.ID},
 				)
 
@@ -127,12 +127,12 @@ func TestService(t *testing.T) {
 		)
 
 		t.Run("returns error when template variables are not valid", func(t *testing.T) {
-			applicationIdContext := context.WithValue(
+			applicationIDContext := context.WithValue(
 				context.Background(),
 				grpcutils.ApplicationIDContextKey,
 				configuration.ApplicationIDString,
 			)
-			_, err := srv.RequestPrompt(applicationIdContext, &gateway.PromptRequest{
+			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},
 			})
 
@@ -142,19 +142,19 @@ func TestService(t *testing.T) {
 	t.Run("RequestStreamingPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			err := srv.RequestStreamingPrompt(nil, MockServerStream{})
-			assert.Errorf(t, err, service.ErrorApplicationIdNotInContext)
+			assert.Errorf(t, err, service.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when prompt config is not found", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), configuration.ProjectID)
-			applicationIdContext := context.WithValue(
+			applicationIDContext := context.WithValue(
 				context.Background(),
 				grpcutils.ApplicationIDContextKey,
 				db.UUIDToString(&application.ID),
 			)
 			err := srv.RequestStreamingPrompt(
 				&gateway.PromptRequest{},
-				MockServerStream{Ctx: applicationIdContext},
+				MockServerStream{Ctx: applicationIDContext},
 			)
 			assert.Errorf(t, err, "the application does not have an active prompt configuration")
 		})
@@ -166,14 +166,14 @@ func TestService(t *testing.T) {
 					context.TODO(),
 					configuration.ProjectID,
 				)
-				applicationIdContext := context.WithValue(
+				applicationIDContext := context.WithValue(
 					context.Background(),
 					grpcutils.ApplicationIDContextKey,
 					db.UUIDToString(&application.ID),
 				)
 				err := srv.RequestStreamingPrompt(
 					&gateway.PromptRequest{PromptConfigId: &configuration.PromptConfigData.ID},
-					MockServerStream{Ctx: applicationIdContext},
+					MockServerStream{Ctx: applicationIDContext},
 				)
 
 				assert.Errorf(
@@ -185,14 +185,14 @@ func TestService(t *testing.T) {
 		)
 
 		t.Run("returns error when template variables are not valid", func(t *testing.T) {
-			applicationIdContext := context.WithValue(
+			applicationIDContext := context.WithValue(
 				context.Background(),
 				grpcutils.ApplicationIDContextKey,
 				configuration.ApplicationIDString,
 			)
 			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},
-			}, MockServerStream{Ctx: applicationIdContext})
+			}, MockServerStream{Ctx: applicationIDContext})
 
 			assert.Errorf(t, err, "missing template variable {userInput}")
 		})

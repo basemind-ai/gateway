@@ -11,56 +11,56 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestApiError(t *testing.T) {
+func TestAPIError(t *testing.T) {
 	t.Parallel()
 
 	for _, testCase := range []struct {
-		ApiErrType      *apierror.ApiError
+		APIErrType      *apierror.APIError
 		ExpectedStatus  int
 		ExpectedMessage string
 	}{
 		{
-			ApiErrType:      apierror.NotFound("err"),
+			APIErrType:      apierror.NotFound("err"),
 			ExpectedStatus:  http.StatusNotFound,
 			ExpectedMessage: "err",
 		},
 		{
-			ApiErrType:      apierror.BadRequest("err"),
+			APIErrType:      apierror.BadRequest("err"),
 			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedMessage: "err",
 		},
 		{
-			ApiErrType:      apierror.BadRequest(),
+			APIErrType:      apierror.BadRequest(),
 			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedMessage: http.StatusText(http.StatusBadRequest),
 		},
 		{
-			ApiErrType:      apierror.Unauthorized("err"),
+			APIErrType:      apierror.Unauthorized("err"),
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedMessage: "err",
 		},
 		{
-			ApiErrType:      apierror.Unauthorized(),
+			APIErrType:      apierror.Unauthorized(),
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedMessage: http.StatusText(http.StatusUnauthorized),
 		},
 		{
-			ApiErrType:      apierror.UnprocessableContent("err"),
+			APIErrType:      apierror.UnprocessableContent("err"),
 			ExpectedStatus:  http.StatusUnprocessableEntity,
 			ExpectedMessage: "err",
 		},
 		{
-			ApiErrType:      apierror.UnprocessableContent(),
+			APIErrType:      apierror.UnprocessableContent(),
 			ExpectedStatus:  http.StatusUnprocessableEntity,
 			ExpectedMessage: http.StatusText(http.StatusUnprocessableEntity),
 		},
 		{
-			ApiErrType:      apierror.InternalServerError("err"),
+			APIErrType:      apierror.InternalServerError("err"),
 			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedMessage: "err",
 		},
 		{
-			ApiErrType:      apierror.InternalServerError(),
+			APIErrType:      apierror.InternalServerError(),
 			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedMessage: http.StatusText(http.StatusInternalServerError),
 		},
@@ -68,15 +68,15 @@ func TestApiError(t *testing.T) {
 		client := testutils.CreateTestClient(
 			t,
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				testCase.ApiErrType.Render(w, r)
+				testCase.APIErrType.Render(w, r)
 			}),
 		)
 		res, err := client.Get(context.TODO(), "/")
 		assert.Nil(t, err)
 		assert.Equal(t, testCase.ExpectedStatus, res.StatusCode)
 
-		var body apierror.ApiError
-		_ = serialization.DeserializeJson(res.Body, &body)
+		var body apierror.APIError
+		_ = serialization.DeserializeJSON(res.Body, &body)
 		assert.Equal(t, testCase.ExpectedMessage, body.Message)
 	}
 }

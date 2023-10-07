@@ -66,8 +66,8 @@ func CreateProject(ctx context.Context) (*db.Project, error) {
 }
 
 func CreateUserAccount(ctx context.Context) (*db.UserAccount, error) {
-	firebaseId := RandomString(10)
-	user, userCreateErr := db.GetQueries().CreateUserAccount(ctx, firebaseId)
+	firebaseID := RandomString(10)
+	user, userCreateErr := db.GetQueries().CreateUserAccount(ctx, firebaseID)
 
 	if userCreateErr != nil {
 		return nil, userCreateErr
@@ -76,10 +76,10 @@ func CreateUserAccount(ctx context.Context) (*db.UserAccount, error) {
 	return &user, nil
 }
 
-func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Application, error) {
+func CreateApplication(ctx context.Context, projectID pgtype.UUID) (*db.Application, error) {
 	application, applicationCreateErr := db.GetQueries().
 		CreateApplication(ctx, db.CreateApplicationParams{
-			ProjectID:   projectId,
+			ProjectID:   projectID,
 			Name:        RandomString(10),
 			Description: RandomString(30),
 		})
@@ -93,7 +93,7 @@ func CreateApplication(ctx context.Context, projectId pgtype.UUID) (*db.Applicat
 
 func CreatePromptConfig(
 	ctx context.Context,
-	applicationId pgtype.UUID,
+	applicationID pgtype.UUID,
 ) (*db.PromptConfig, error) {
 	systemMessage := "You are a helpful chat bot."
 	userMessage := "This is what the user asked for: {userInput}"
@@ -123,7 +123,7 @@ func CreatePromptConfig(
 			ProviderPromptMessages:    promptMessages,
 			ExpectedTemplateVariables: []string{"userInput"},
 			IsDefault:                 true,
-			ApplicationID:             applicationId,
+			ApplicationID:             applicationID,
 		})
 	if promptConfigCreateErr != nil {
 		return nil, promptConfigCreateErr

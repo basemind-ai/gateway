@@ -41,11 +41,11 @@ func main() {
 
 	logging.Configure(cfg.Environment != "production")
 
-	if _, cacheClientErr := rediscache.New(cfg.RedisUrl); cacheClientErr != nil {
+	if _, cacheClientErr := rediscache.New(cfg.RedisURL); cacheClientErr != nil {
 		log.Fatal().Err(cacheClientErr).Msg("failed to init redis")
 	}
 
-	conn, connErr := db.CreateConnection(ctx, cfg.DatabaseUrl)
+	conn, connErr := db.CreateConnection(ctx, cfg.DatabaseURL)
 	if connErr != nil {
 		log.Fatal().Err(connErr).Msg("failed to connect to DB")
 	}

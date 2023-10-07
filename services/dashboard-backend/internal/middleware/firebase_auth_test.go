@@ -29,7 +29,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 
 	t.Run("returns Unauthorized for auth header without proper prefix", func(t *testing.T) {
 		request := httptest.NewRequest(http.MethodGet, "/", nil)
-		request.Header.Set("Authorization", "Apikey 123")
+		request.Header.Set("Authorization", "APIkey 123")
 		testRecorder := httptest.NewRecorder()
 
 		authMiddleware.ServeHTTP(testRecorder, request)
@@ -68,7 +68,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 		assert.Equal(t, 1, len(mockNext.Calls))
 
 		newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
-		ctxValue := newRequest.Context().Value(middleware.FireBaseIdContextKey)
+		ctxValue := newRequest.Context().Value(middleware.FireBaseIDContextKey)
 		assert.Equal(t, ctxValue, "123")
 	})
 }

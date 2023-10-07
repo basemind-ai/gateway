@@ -15,7 +15,7 @@ func TestGrpcUtils(t *testing.T) {
 	t.Run("CreateGRPCServer creates a server instance", func(t *testing.T) {
 		server := grpcutils.CreateGRPCServer(grpcutils.Options[any]{
 			Environment:   "development",
-			GrpcRegistrar: func(s grpc.ServiceRegistrar, srv interface{}) {},
+			GrpcRegistrar: func(s grpc.ServiceRegistrar, srv any) {},
 			Service:       struct{}{},
 			ServiceName:   "test-service",
 			AuthHandler: func(ctx context.Context) (context.Context, error) {

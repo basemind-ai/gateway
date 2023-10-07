@@ -21,23 +21,23 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestDbQueries(t *testing.T) {
+func TestDBQueries(t *testing.T) {
 	dbQueries := db.GetQueries()
 
 	t.Run("CheckUserAccountExists tests", func(t *testing.T) {
-		testUserId := uuid.NewString()
+		testUserID := uuid.NewString()
 
 		t.Run("returns false when user does not exist", func(t *testing.T) {
-			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserId)
+			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserID)
 			assert.Nil(t, err)
 			assert.False(t, userExists)
 		})
 
 		t.Run("returns true when user does exist", func(t *testing.T) {
-			_, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
+			_, err := dbQueries.CreateUserAccount(context.TODO(), testUserID)
 			assert.Nil(t, err)
 
-			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserId)
+			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserID)
 			assert.Nil(t, err)
 			assert.True(t, userExists)
 		})
@@ -45,24 +45,24 @@ func TestDbQueries(t *testing.T) {
 
 	t.Run("CreateUser tests", func(t *testing.T) {
 		t.Run("successfully creates a user", func(t *testing.T) {
-			testUserId := uuid.NewString()
-			user, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
+			testUserID := uuid.NewString()
+			user, err := dbQueries.CreateUserAccount(context.TODO(), testUserID)
 			assert.Nil(t, err)
 
-			assert.Equal(t, user.FirebaseID, testUserId)
+			assert.Equal(t, user.FirebaseID, testUserID)
 			assert.NotNil(t, user.ID)
 			assert.NotNil(t, user.CreatedAt)
 
-			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserId)
+			userExists, err := dbQueries.CheckUserAccountExists(context.TODO(), testUserID)
 			assert.Nil(t, err)
 			assert.True(t, userExists)
 		})
 
 		t.Run("fails when creating a user with duplicate firebase id", func(t *testing.T) {
-			testUserId := uuid.NewString()
-			_, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
+			testUserID := uuid.NewString()
+			_, err := dbQueries.CreateUserAccount(context.TODO(), testUserID)
 			assert.Nil(t, err)
-			_, err = dbQueries.CreateUserAccount(context.TODO(), testUserId)
+			_, err = dbQueries.CreateUserAccount(context.TODO(), testUserID)
 			assert.NotNil(t, err)
 		})
 	})
@@ -96,9 +96,9 @@ func TestDbQueries(t *testing.T) {
 	})
 
 	t.Run("CreateUserProject tests", func(t *testing.T) {
-		testUserId := uuid.NewString()
+		testUserID := uuid.NewString()
 
-		user, err := dbQueries.CreateUserAccount(context.TODO(), testUserId)
+		user, err := dbQueries.CreateUserAccount(context.TODO(), testUserID)
 		assert.Nil(t, err)
 
 		t.Run("successfully creates a user project", func(t *testing.T) {
@@ -211,7 +211,7 @@ func TestDbQueries(t *testing.T) {
 		})
 
 		t.Run("returns error when prompt config does not exist", func(t *testing.T) {
-			promptConfigId := pgtype.UUID{Bytes: uuid.New(), Valid: true}
+			promptConfigID := pgtype.UUID{Bytes: uuid.New(), Valid: true}
 			_, err := dbQueries.CreatePromptRequestRecord(
 				context.TODO(),
 				db.CreatePromptRequestRecordParams{
@@ -221,7 +221,7 @@ func TestDbQueries(t *testing.T) {
 					StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
 					FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
 					StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
-					PromptConfigID:        promptConfigId,
+					PromptConfigID:        promptConfigID,
 				},
 			)
 
