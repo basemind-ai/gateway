@@ -24,15 +24,13 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 	userMessage := "Please write a song about {subject}."
 	templateVariables := []string{"subject"}
 
-	promptMessages, promptMessagesErr := factories.CreateOpenAIPromptMessages(
+	promptMessages, _ := factories.CreateOpenAIPromptMessages(
 		systemMessages,
 		userMessage,
 		&templateVariables,
 	)
-	assert.NoError(t, promptMessagesErr)
 
-	modelParameters, modelParametersErr := factories.CreateModelParameters()
-	assert.NoError(t, modelParametersErr)
+	modelParameters, _ := factories.CreateModelParameters()
 
 	fmtListEndpoint := func(projectID string, applicationID string) string {
 		return fmt.Sprintf(

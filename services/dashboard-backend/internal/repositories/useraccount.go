@@ -6,13 +6,14 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/rs/zerolog/log"
+	"slices"
 )
 
 // GetUserAccountData - retrieves the user data for the given firebase id,
 // joins the user data with any projects the user has access to, and each project with its related applications.
 func GetUserAccountData(ctx context.Context, firebaseID string) (*dto.UserAccountDTO, error) {
 	data, findError := db.GetQueries().FindUserAccountData(ctx, firebaseID)
-	if findError != nil {
+	if findError != nil || len(data) == 0 {
 		return nil, fmt.Errorf(
 			"failed to find user data for firebase id: %s - %w",
 			firebaseID,
@@ -48,6 +49,7 @@ func GetUserAccountData(ctx context.Context, firebaseID string) (*dto.UserAccoun
 				Name:                 datum.ProjectName.String,
 				Description:          datum.ProjectDescription.String,
 				CreatedAt:            datum.ProjectCreatedAt.Time,
+				UpdatedAt:            datum.ProjectUpdatedAt.Time,
 				IsUserDefaultProject: datum.IsUserDefaultProject.Bool,
 				Permission:           string(datum.Permission.AccessPermissionType),
 			}
@@ -76,6 +78,13 @@ func GetUserAccountData(ctx context.Context, firebaseID string) (*dto.UserAccoun
 		project.Applications = applications[projectID]
 		userData.Projects = append(userData.Projects, project)
 	}
+
+	slices.SortFunc(userData.Projects, func(a, b dto.ProjectDTO) int {
+		if a.IsUserDefaultProject {
+			return -1
+		}
+		return 0
+	})
 
 	return userData, nil
 }
@@ -137,6 +146,7 @@ func CreateDefaultUserAccountData(
 				Name:                 project.Name,
 				Description:          project.Description,
 				CreatedAt:            project.CreatedAt.Time,
+				UpdatedAt:            project.UpdatedAt.Time,
 				IsUserDefaultProject: true,
 				Permission:           string(userProject.Permission),
 				Applications:         []dto.ApplicationDTO{},

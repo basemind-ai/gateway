@@ -25,6 +25,7 @@ SELECT
     up.permission,
     p.id AS project_id,
     p.created_at AS project_created_at,
+    p.updated_at AS project_updated_at,
     p.name AS project_name,
     p.description AS project_description,
     a.id AS application_id,
