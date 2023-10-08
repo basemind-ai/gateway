@@ -17,7 +17,7 @@ CREATE TYPE access_permission_type AS ENUM (
 CREATE TABLE project
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name varchar(256) NOT NULL,
+    name varchar(255) NOT NULL,
     description text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
@@ -47,7 +47,7 @@ CREATE TABLE application
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     description text NOT NULL,
-    name varchar(256) NOT NULL,
+    name varchar(255) NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
@@ -74,12 +74,12 @@ CREATE TYPE model_type AS ENUM (
 CREATE TABLE prompt_config
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name varchar(256) NOT NULL,
+    name varchar(255) NOT NULL,
     model_parameters json NOT NULL,
     model_type model_type NOT NULL,
     model_vendor model_vendor NOT NULL,
     provider_prompt_messages json NOT NULL,
-    expected_template_variables varchar(256) [] NOT NULL,
+    expected_template_variables varchar(255) [] NOT NULL,
     is_default boolean NOT NULL DEFAULT TRUE,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
@@ -124,7 +124,7 @@ CREATE INDEX idx_prompt_request_record_finish_time ON prompt_request_record (
 CREATE TABLE prompt_test
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name varchar(256) NOT NULL,
+    name varchar(255) NOT NULL,
     variable_values json NOT NULL,
     response text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
@@ -141,7 +141,7 @@ CREATE INDEX idx_prompt_test_created_at ON prompt_test (created_at);
 CREATE TABLE token
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name varchar(256) NOT NULL,
+    name varchar(255) NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
     application_id uuid NOT NULL,

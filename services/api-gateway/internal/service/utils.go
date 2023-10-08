@@ -24,7 +24,7 @@ func RetrievePromptConfig(
 			)
 		}
 
-		promptConfig, retrievalErr := db.GetQueries().FindPromptConfigByID(ctx, *uuid)
+		promptConfig, retrievalErr := db.GetQueries().RetrievePromptConfig(ctx, *uuid)
 		if retrievalErr != nil {
 			return nil, fmt.Errorf("failed to retrieve prompt config - %w", retrievalErr)
 		}
@@ -44,7 +44,7 @@ func RetrievePromptConfig(
 	}
 
 	promptConfig, retrieveDefaultErr := db.GetQueries().
-		FindDefaultPromptConfigByApplicationID(ctx, applicationID)
+		RetrieveDefaultPromptConfig(ctx, applicationID)
 	if retrieveDefaultErr != nil {
 		return nil, fmt.Errorf(
 			"failed to retrieve default prompt config - %w",
@@ -76,7 +76,7 @@ func RetrieveRequestConfiguration(
 			return nil, status.Errorf(codes.InvalidArgument, "invalid application id: %v", appIDErr)
 		}
 
-		application, applicationQueryErr := db.GetQueries().FindApplicationByID(ctx, *appID)
+		application, applicationQueryErr := db.GetQueries().RetrieveApplication(ctx, *appID)
 		if applicationQueryErr != nil {
 			return nil, status.Errorf(
 				codes.NotFound,

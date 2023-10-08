@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
@@ -10,6 +11,7 @@ import (
 	"net/http"
 )
 
+// HandleCreateApplication - create a new application .
 func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
@@ -34,22 +36,38 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJSONResponse(w, http.StatusCreated, application)
+	serialization.RenderJSONResponse(w, http.StatusCreated, dto.ApplicationDTO{
+		ID:          db.UUIDToString(&application.ID),
+		Name:        application.Name,
+		Description: application.Description,
+		CreatedAt:   application.CreatedAt.Time,
+		UpdatedAt:   application.UpdatedAt.Time,
+	})
 }
 
+// HandleRetrieveApplication - retrieve an application by ID.
 func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	application, applicationRetrieveErr := db.GetQueries().
-		FindApplicationByID(r.Context(), applicationID)
+	application, applicationRetrieveErr := db.
+		GetQueries().
+		RetrieveApplication(r.Context(), applicationID)
+
 	if applicationRetrieveErr != nil {
 		log.Error().Err(applicationRetrieveErr).Msg("failed to retrieve application")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
-	serialization.RenderJSONResponse(w, http.StatusOK, application)
+	serialization.RenderJSONResponse(w, http.StatusOK, dto.ApplicationDTO{
+		ID:          db.UUIDToString(&application.ID),
+		Name:        application.Name,
+		Description: application.Description,
+		CreatedAt:   application.CreatedAt.Time,
+		UpdatedAt:   application.UpdatedAt.Time,
+	})
 }
 
+// HandleUpdateApplication - update an application.
 func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
@@ -74,9 +92,16 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJSONResponse(w, http.StatusOK, application)
+	serialization.RenderJSONResponse(w, http.StatusOK, dto.ApplicationDTO{
+		ID:          db.UUIDToString(&application.ID),
+		Name:        application.Name,
+		Description: application.Description,
+		CreatedAt:   application.CreatedAt.Time,
+		UpdatedAt:   application.UpdatedAt.Time,
+	})
 }
 
+// HandleDeleteApplication - delete an application.
 func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 

@@ -133,7 +133,7 @@ func TestTokensAPI(t *testing.T) {
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
-			tokens, err := db.GetQueries().RetrieveApplicationTokens(context.TODO(), token.ID)
+			tokens, err := db.GetQueries().RetrieveTokens(context.TODO(), token.ID)
 			assert.NoError(t, err)
 			for _, dbToken := range tokens {
 				assert.NotEqual(t, token.ID, dbToken.ID)

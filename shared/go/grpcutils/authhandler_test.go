@@ -21,7 +21,7 @@ func TestAuthHandler(t *testing.T) {
 
 		handler := grpcutils.NewAuthHandler(secret)
 		ctx := metadata.NewIncomingContext(
-			context.Background(),
+			context.TODO(),
 			metadata.Pairs("authorization", fmt.Sprintf("bearer %s", encodedToken)),
 		)
 		newCtx, err := handler.HandleAuth(ctx)

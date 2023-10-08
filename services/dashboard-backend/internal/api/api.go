@@ -12,15 +12,22 @@ func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(router chi.Router) {
 		router.Route(UserAccountEndpoint, func(userAccountRouter chi.Router) {
 			userAccountRouter.Get("/", HandleRetrieveUserData)
-			userAccountRouter.Patch("/", HandleUpdateUserDefaultProject)
 		})
 
-		router.Post(ProjectsListEndpoint, HandleCreateProject)
+		router.Route(ProjectsListEndpoint, func(projectsRouter chi.Router) {
+			projectsRouter.Post("/", HandleCreateProject)
+			projectsRouter.Get("/", HandleRetrieveProjects)
+		})
 
 		router.Route(ProjectDetailEndpoint, func(projectsRouter chi.Router) {
 			projectsRouter.Use(middleware.PathParameterMiddleware("projectId"))
 			projectsRouter.Patch("/", HandleUpdateProject)
 			projectsRouter.Delete("/", HandleDeleteProject)
+		})
+
+		router.Route(ProjectSetDefaultEndpoint, func(projectsRouter chi.Router) {
+			projectsRouter.Use(middleware.PathParameterMiddleware("projectId"))
+			projectsRouter.Patch("/", HandleSetDefaultProject)
 		})
 
 		router.Route(ProjectUserDetailEndpoint, func(projectsUserRouter chi.Router) {
@@ -29,6 +36,7 @@ func RegisterHandlers(mux *chi.Mux) {
 			projectsUserRouter.Patch("/", HandleChangeUserProjectPermission)
 			projectsUserRouter.Delete("/", HandleRemoveUserFromProject)
 		})
+
 		router.Route(ApplicationsListEndpoint, func(applicationsRouter chi.Router) {
 			applicationsRouter.Use(middleware.PathParameterMiddleware("projectId"))
 			applicationsRouter.Post("/", HandleCreateApplication)

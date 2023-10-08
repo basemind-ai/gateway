@@ -16,7 +16,7 @@ func TestUtils(t *testing.T) {
 	t.Run("CreateTransactionContext", func(t *testing.T) {
 		t.Run("returns context with transaction", func(t *testing.T) {
 			mock := MockTx{}
-			ctx := db.CreateTransactionContext(context.Background(), &mock)
+			ctx := db.CreateTransactionContext(context.TODO(), &mock)
 			returnedTx, err := db.GetOrCreateTx(ctx)
 			assert.NoError(t, err)
 			assert.Equal(t, &mock, returnedTx)
@@ -25,7 +25,7 @@ func TestUtils(t *testing.T) {
 	t.Run("GetOrCreateTx", func(t *testing.T) {
 		t.Run("returns transaction from context", func(t *testing.T) {
 			mock := MockTx{}
-			ctx := db.CreateTransactionContext(context.Background(), &mock)
+			ctx := db.CreateTransactionContext(context.TODO(), &mock)
 			returnedTx, err := db.GetOrCreateTx(ctx)
 			assert.NoError(t, err)
 			assert.Equal(t, &mock, returnedTx)
@@ -34,12 +34,12 @@ func TestUtils(t *testing.T) {
 			returnedTx, err := db.GetOrCreateTx(context.TODO())
 			assert.NoError(t, err)
 			assert.NotNil(t, returnedTx)
-			_ = returnedTx.Rollback(context.Background())
+			_ = returnedTx.Rollback(context.TODO())
 		})
 	})
 	t.Run("CreateShouldCommitContext", func(t *testing.T) {
 		t.Run("returns context with should commit", func(t *testing.T) {
-			ctx := db.CreateShouldCommitContext(context.Background(), true)
+			ctx := db.CreateShouldCommitContext(context.TODO(), true)
 			shouldCommit := db.ShouldCommit(ctx)
 			assert.True(t, shouldCommit)
 		})
@@ -50,7 +50,7 @@ func TestUtils(t *testing.T) {
 			assert.True(t, shouldCommit)
 		})
 		t.Run("should return false when should commit is set to false", func(t *testing.T) {
-			ctx := db.CreateShouldCommitContext(context.Background(), false)
+			ctx := db.CreateShouldCommitContext(context.TODO(), false)
 			shouldCommit := db.ShouldCommit(ctx)
 			assert.False(t, shouldCommit)
 		})

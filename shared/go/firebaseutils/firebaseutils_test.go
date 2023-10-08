@@ -15,5 +15,5 @@ func TestGetFirebaseAuth(t *testing.T) {
 func TestSetFirebaseAuth(t *testing.T) {
 	assert.NotNil(t, firebaseutils.GetFirebaseAuth(context.TODO()))
 	firebaseutils.SetFirebaseAuth(nil)
-	assert.Nil(t, firebaseutils.GetFirebaseAuth(context.Background()))
+	assert.Nil(t, firebaseutils.GetFirebaseAuth(context.TODO()))
 }

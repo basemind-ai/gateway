@@ -15,7 +15,7 @@ func CreateProject(
 	name string,
 	description string,
 ) (*dto.ProjectDTO, error) {
-	userAccount, retrievalErr := db.GetQueries().FindUserAccountByFirebaseID(ctx, firebaseID)
+	userAccount, retrievalErr := db.GetQueries().RetrieveUserAccount(ctx, firebaseID)
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
 		return nil, fmt.Errorf("failed to retrieve user account: %w", retrievalErr)
@@ -71,9 +71,75 @@ func CreateProject(
 	return data, nil
 }
 
+func UpdateDefaultProject(ctx context.Context, firebaseID string, projectID pgtype.UUID) error {
+	userAccount, userAccountRetrievalErr := db.GetQueries().RetrieveUserAccount(ctx, firebaseID)
+	if userAccountRetrievalErr != nil {
+		log.Error().Err(userAccountRetrievalErr).Msg("failed to retrieve user account")
+		return fmt.Errorf("failed to retrieve user account: %w", userAccountRetrievalErr)
+	}
+
+	userDefaultProjectID, defaultProjectRetrievalErr := db.GetQueries().
+		RetrieveDefaultProject(ctx, firebaseID)
+	if defaultProjectRetrievalErr != nil {
+		if _, updateErr := db.GetQueries().UpdateUserDefaultProject(ctx, db.UpdateUserDefaultProjectParams{
+			UserID:               userAccount.ID,
+			ProjectID:            projectID,
+			IsUserDefaultProject: true,
+		}); updateErr != nil {
+			log.Error().Err(updateErr).Msg("failed to update user default project")
+			return fmt.Errorf("failed to update user default project: %w", updateErr)
+		}
+		return nil
+	}
+
+	if projectID != userDefaultProjectID {
+		tx, txErr := db.GetTransaction(ctx)
+		if txErr != nil {
+			log.Error().Err(txErr).Msg("failed to create transaction")
+			return fmt.Errorf("failed to create transaction: %w", txErr)
+		}
+
+		defer func() {
+			if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+				log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
+			}
+		}()
+
+		queries := db.GetQueries().WithTx(tx)
+
+		_, defaultProjectUpdateErr := queries.UpdateUserDefaultProject(
+			ctx,
+			db.UpdateUserDefaultProjectParams{
+				UserID:               userAccount.ID,
+				ProjectID:            userDefaultProjectID,
+				IsUserDefaultProject: false,
+			},
+		)
+		if defaultProjectUpdateErr != nil {
+			log.Error().Err(defaultProjectUpdateErr).Msg("failed to update user default project")
+			return fmt.Errorf("failed to update user default project: %w", defaultProjectUpdateErr)
+		}
+		_, updateErr := queries.UpdateUserDefaultProject(ctx, db.UpdateUserDefaultProjectParams{
+			UserID:               userAccount.ID,
+			ProjectID:            projectID,
+			IsUserDefaultProject: true,
+		})
+		if updateErr != nil {
+			log.Error().Err(updateErr).Msg("failed to update user default project")
+			return fmt.Errorf("failed to update user default project: %w", updateErr)
+		}
+		if commitErr := tx.Commit(ctx); commitErr != nil {
+			log.Error().Err(commitErr).Msg("failed to commit transaction")
+			return fmt.Errorf("failed to commit transaction: %w", commitErr)
+		}
+	}
+
+	return nil
+}
+
 func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
 	applications, applicationsRetrievalErr := db.GetQueries().
-		FindApplicationsByProjectID(ctx, projectID)
+		RetrieveApplications(ctx, projectID)
 
 	if applicationsRetrievalErr != nil {
 		log.Error().Err(applicationsRetrievalErr).Msg("failed to retrieve applications")

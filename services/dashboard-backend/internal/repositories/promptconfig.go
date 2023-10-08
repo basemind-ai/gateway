@@ -29,7 +29,7 @@ func CreatePromptConfig(
 
 	defaultExists, retrievalErr := db.
 		GetQueries().
-		CheckDefaultPromptConfigExistsForApplication(ctx, applicationID)
+		CheckDefaultPromptConfigExists(ctx, applicationID)
 
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve default prompt config")
@@ -76,7 +76,7 @@ func UpdateApplicationDefaultPromptConfig(
 	promptConfigID pgtype.UUID,
 ) error {
 	defaultPromptConfig, retrieveDefaultPromptConfigErr := db.GetQueries().
-		FindDefaultPromptConfigByApplicationID(
+		RetrieveDefaultPromptConfig(
 			ctx,
 			applicationID,
 		)
@@ -104,7 +104,7 @@ func UpdateApplicationDefaultPromptConfig(
 
 	queries := db.GetQueries().WithTx(tx)
 
-	if updateErr := queries.UpdatePromptConfigIsDefault(ctx, db.UpdatePromptConfigIsDefaultParams{
+	if updateErr := queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
 		ID:        defaultPromptConfig.ID,
 		IsDefault: false,
 	}); updateErr != nil {
@@ -114,7 +114,7 @@ func UpdateApplicationDefaultPromptConfig(
 		)
 	}
 
-	if updateErr := queries.UpdatePromptConfigIsDefault(ctx, db.UpdatePromptConfigIsDefaultParams{
+	if updateErr := queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
 		ID:        promptConfigID,
 		IsDefault: true,
 	}); updateErr != nil {
@@ -133,7 +133,7 @@ func UpdatePromptConfig(
 	promptConfigID pgtype.UUID,
 	updatePromptConfigDTO dto.PromptConfigUpdateDTO,
 ) (*datatypes.PromptConfigDTO, error) {
-	existingPromptConfig, retrievePromptConfigErr := db.GetQueries().FindPromptConfigByID(
+	existingPromptConfig, retrievePromptConfigErr := db.GetQueries().RetrievePromptConfig(
 		ctx,
 		promptConfigID,
 	)

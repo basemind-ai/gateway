@@ -48,6 +48,10 @@ func Unauthorized(message ...any) *APIError {
 	return NewAPIError(http.StatusUnauthorized, message...)
 }
 
+func Forbidden(message ...any) *APIError {
+	return NewAPIError(http.StatusForbidden, message...)
+}
+
 func UnprocessableContent(message ...any) *APIError {
 	return NewAPIError(http.StatusUnprocessableEntity, message...)
 }

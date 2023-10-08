@@ -12,7 +12,7 @@ import (
 // GetUserAccountData - retrieves the user data for the given firebase id,
 // joins the user data with any projects the user has access to, and each project with its related applications.
 func GetUserAccountData(ctx context.Context, firebaseID string) (*dto.UserAccountDTO, error) {
-	data, findError := db.GetQueries().FindUserAccountData(ctx, firebaseID)
+	data, findError := db.GetQueries().RetrieveUserAccountData(ctx, firebaseID)
 	if findError != nil || len(data) == 0 {
 		return nil, fmt.Errorf(
 			"failed to find user data for firebase id: %s - %w",

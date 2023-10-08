@@ -4,6 +4,7 @@ const (
 	UserAccountEndpoint            = "/user-account"
 	ProjectsListEndpoint           = "/projects"
 	ProjectDetailEndpoint          = "/projects/{projectId}"
+	ProjectSetDefaultEndpoint      = "/projects/{projectId}/set-default"
 	ProjectUserDetailEndpoint      = "/projects/{projectId}/users/{userId}"
 	ApplicationsListEndpoint       = "/projects/{projectId}/applications"
 	ApplicationDetailEndpoint      = "/projects/{projectId}/applications/{applicationId}"

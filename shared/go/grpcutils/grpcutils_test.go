@@ -39,10 +39,10 @@ func TestGrpcUtils(t *testing.T) {
 			var buf bytes.Buffer
 			log.Logger = log.Output(&buf)
 
-			loggerFunc.Log(context.Background(), loggingMiddleware.LevelDebug, "debug message")
-			loggerFunc.Log(context.Background(), loggingMiddleware.LevelInfo, "info message")
-			loggerFunc.Log(context.Background(), loggingMiddleware.LevelWarn, "warn message")
-			loggerFunc.Log(context.Background(), loggingMiddleware.LevelError, "error message")
+			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelDebug, "debug message")
+			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelInfo, "info message")
+			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelWarn, "warn message")
+			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelError, "error message")
 
 			assert.Contains(t, buf.String(), "debug message")
 			assert.Contains(t, buf.String(), "info message")
