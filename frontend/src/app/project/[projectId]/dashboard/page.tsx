@@ -25,7 +25,7 @@ export default function Dashboard({
 			<div>Project Description: {project.description}</div>
 			<div>Project Default: {project.isUserDefaultProject}</div>
 			<div>Project Permission: {project.permission}</div>
-			<div>Project Creation: {project.createdAt.toString()}</div>
+			<div>Project Creation: {project.createdAt}</div>
 		</div>
 	);
 }
