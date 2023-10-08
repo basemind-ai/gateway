@@ -1,7 +1,7 @@
 import locales from 'public/locales/en.json';
 import { render, screen } from 'tests/test-utils';
 
-import PromptConfigurations from '@/app/project/[projectId]/prompt/page';
+import PromptConfigurations from '@/app/projects/[projectId]/prompt/page';
 
 const promptTranslation = locales.prompt;
 

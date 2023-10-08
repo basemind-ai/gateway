@@ -1,8 +1,9 @@
-import { Preview } from '@storybook/react';
-import { reactIntl } from './reactIntl';
-import { withThemeByClassName } from '@storybook/addon-styling';
-
 import '@/styles/globals.scss';
+
+import { withThemeByClassName } from '@storybook/addon-styling';
+import { Preview } from '@storybook/react';
+
+import { reactIntl } from './react-intl';
 
 const preview: Preview = {
 	globals: {

@@ -1,4 +1,6 @@
 import type { StorybookConfig } from '@storybook/nextjs';
+import postcss from 'postcss';
+import sass from 'sass';
 
 const config: StorybookConfig = {
 	stories: [
@@ -15,10 +17,10 @@ const config: StorybookConfig = {
 			name: '@storybook/addon-styling',
 			options: {
 				sass: {
-					implementation: require('sass'),
+					implementation: sass,
 				},
 				postCss: {
-					implementation: require.resolve('postcss'),
+					implementation: postcss,
 				},
 			},
 		},

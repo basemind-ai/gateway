@@ -40,7 +40,13 @@ module.exports = {
 		project,
 	},
 	settings,
-	ignorePatterns: ['.eslintrc.js', '**/*.js', '*.js', 'gen/**/*.*'],
+	ignorePatterns: [
+		'.eslintrc.js',
+		'**/*.js',
+		'*.js',
+		'gen/**/*.*',
+		'!frontend/.storybook',
+	],
 	extends: ['@tool-belt/eslint-config'],
 	rules,
 	overrides: [

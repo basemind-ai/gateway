@@ -85,14 +85,6 @@ export interface Token {
 
 export type TokenCreateBody = Pick<Token, 'name'>;
 
-// UserAccount
-
-export interface UserAccount {
-	id: string;
-	firebaseId: string;
-	projects: Project[];
-}
-
 // Provider Message Types
 
 export type OpenAIPromptMessage = {

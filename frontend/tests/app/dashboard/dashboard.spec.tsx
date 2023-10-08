@@ -1,7 +1,7 @@
 import { ProjectFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
-import Dashboard from '@/app/project/[projectId]/dashboard/page';
+import Dashboard from '@/app/projects/[projectId]/dashboard/page';
 
 const mockDisplayName = 'testUser';
 

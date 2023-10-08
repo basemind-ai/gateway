@@ -1,11 +1,12 @@
 {
 	"extends": "../tsconfig.json",
 	"include": [
-		"*.d.ts",
 		"**/*.ts",
 		"**/*.tsx",
+		"*.d.ts",
 		"*.ts",
 		".next/types/**/*.ts",
+		".storybook/**/*.ts",
 		"dist/types/**/*.ts"
 	],
 	"exclude": ["node_modules"],
