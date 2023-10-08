@@ -12,9 +12,9 @@ import (
 func TestProjectRepository(t *testing.T) {
 	t.Run("CreateProject", func(t *testing.T) {
 		t.Run("creates a project and sets the creating user as ADMIN", func(t *testing.T) {
-			userAccount, _ := factories.CreateUserAccount(context.Background())
+			userAccount, _ := factories.CreateUserAccount(context.TODO())
 			projectDto, err := repositories.CreateProject(
-				context.Background(),
+				context.TODO(),
 				userAccount.FirebaseID,
 				"Test Project",
 				"Test Description",
@@ -34,7 +34,7 @@ func TestProjectRepository(t *testing.T) {
 			assert.NoError(t, err)
 
 			retrievedProject, err := db.GetQueries().
-				RetrieveProject(context.Background(), *uuidID)
+				RetrieveProject(context.TODO(), *uuidID)
 			assert.NoError(t, err)
 
 			assert.Equal(t, projectDto.ID, db.UUIDToString(&retrievedProject.ID))
@@ -43,7 +43,7 @@ func TestProjectRepository(t *testing.T) {
 		})
 		t.Run("returns an error when user does not exist", func(t *testing.T) {
 			projectDto, err := repositories.CreateProject(
-				context.Background(),
+				context.TODO(),
 				"1234",
 				"Test Project",
 				"Test Description",
@@ -59,22 +59,22 @@ func TestProjectRepository(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
 			retrievedProject, err := db.GetQueries().
-				RetrieveProject(context.Background(), project.ID)
+				RetrieveProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 			assert.Equal(t, project.ID, retrievedProject.ID)
 
 			retrievedApplication, err := db.GetQueries().
-				RetrieveApplication(context.Background(), application.ID)
+				RetrieveApplication(context.TODO(), application.ID)
 			assert.NoError(t, err)
 			assert.Equal(t, application.ID, retrievedApplication.ID)
 
-			err = repositories.DeleteProject(context.Background(), project.ID)
+			err = repositories.DeleteProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().RetrieveProject(context.Background(), project.ID)
+			_, err = db.GetQueries().RetrieveProject(context.TODO(), project.ID)
 			assert.Error(t, err)
 
-			_, err = db.GetQueries().RetrieveApplication(context.Background(), application.ID)
+			_, err = db.GetQueries().RetrieveApplication(context.TODO(), application.ID)
 			assert.Error(t, err)
 		})
 
@@ -82,14 +82,78 @@ func TestProjectRepository(t *testing.T) {
 			project, _ := factories.CreateProject(context.TODO())
 
 			retrievedProject, err := db.GetQueries().
-				RetrieveProject(context.Background(), project.ID)
+				RetrieveProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 			assert.Equal(t, project.ID, retrievedProject.ID)
 
-			err = repositories.DeleteProject(context.Background(), project.ID)
+			err = repositories.DeleteProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().RetrieveProject(context.Background(), project.ID)
+			_, err = db.GetQueries().RetrieveProject(context.TODO(), project.ID)
+			assert.Error(t, err)
+		})
+	})
+
+	t.Run("UpdateDefaultProject", func(t *testing.T) {
+		t.Run("updates the default project for a user account", func(t *testing.T) {
+			userAccount, _ := factories.CreateUserAccount(context.TODO())
+
+			defaultProject, _ := factories.CreateProject(context.TODO())
+			_, _ = db.GetQueries().
+				CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+					UserID:               userAccount.ID,
+					ProjectID:            defaultProject.ID,
+					Permission:           db.AccessPermissionTypeADMIN,
+					IsUserDefaultProject: true,
+				})
+
+			nonDefaultProject, _ := factories.CreateProject(context.TODO())
+			_, _ = db.GetQueries().
+				CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+					UserID:               userAccount.ID,
+					ProjectID:            nonDefaultProject.ID,
+					Permission:           db.AccessPermissionTypeADMIN,
+					IsUserDefaultProject: false,
+				})
+			err := repositories.UpdateDefaultProject(
+				context.TODO(),
+				userAccount.FirebaseID,
+				nonDefaultProject.ID,
+			)
+			assert.NoError(t, err)
+		})
+		t.Run("sets default project when no existing default project exists", func(t *testing.T) {
+			userAccount, _ := factories.CreateUserAccount(context.TODO())
+			project, _ := factories.CreateProject(context.TODO())
+			_, _ = db.GetQueries().
+				CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+					UserID:               userAccount.ID,
+					ProjectID:            project.ID,
+					Permission:           db.AccessPermissionTypeADMIN,
+					IsUserDefaultProject: false,
+				})
+
+			err := repositories.UpdateDefaultProject(
+				context.TODO(),
+				userAccount.FirebaseID,
+				project.ID,
+			)
+			assert.NoError(t, err)
+		})
+		t.Run("returns an error when the user account does not exist", func(t *testing.T) {
+			project, _ := factories.CreateProject(context.TODO())
+
+			err := repositories.UpdateDefaultProject(context.TODO(), "1234", project.ID)
+			assert.Error(t, err)
+		})
+		t.Run("returns an error when the project does not exist", func(t *testing.T) {
+			userAccount, _ := factories.CreateUserAccount(context.TODO())
+
+			err := repositories.UpdateDefaultProject(
+				context.TODO(),
+				userAccount.FirebaseID,
+				userAccount.ID,
+			)
 			assert.Error(t, err)
 		})
 	})

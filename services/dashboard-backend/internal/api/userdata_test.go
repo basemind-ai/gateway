@@ -41,7 +41,7 @@ func TestUserDataAPI(t *testing.T) {
 			testClient := createTestClient(t, firebaseID)
 
 			_, userCreateErr := repositories.CreateDefaultUserAccountData(
-				context.Background(),
+				context.TODO(),
 				firebaseID,
 			)
 			assert.NoError(t, userCreateErr)

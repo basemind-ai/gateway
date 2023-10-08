@@ -87,7 +87,7 @@ func TestService(t *testing.T) {
 		t.Run("returns error when a default prompt config is not found", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), configuration.ProjectID)
 			applicationIDContext := context.WithValue(
-				context.Background(),
+				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
 				db.UUIDToString(&application.ID),
 			)
@@ -104,7 +104,7 @@ func TestService(t *testing.T) {
 					configuration.ProjectID,
 				)
 				applicationIDContext := context.WithValue(
-					context.Background(),
+					context.TODO(),
 					grpcutils.ApplicationIDContextKey,
 					db.UUIDToString(&application.ID),
 				)
@@ -123,7 +123,7 @@ func TestService(t *testing.T) {
 
 		t.Run("returns error when template variables are not valid", func(t *testing.T) {
 			applicationIDContext := context.WithValue(
-				context.Background(),
+				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
 				configuration.ApplicationIDString,
 			)
@@ -143,7 +143,7 @@ func TestService(t *testing.T) {
 		t.Run("returns error when prompt config is not found", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), configuration.ProjectID)
 			applicationIDContext := context.WithValue(
-				context.Background(),
+				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
 				db.UUIDToString(&application.ID),
 			)
@@ -162,7 +162,7 @@ func TestService(t *testing.T) {
 					configuration.ProjectID,
 				)
 				applicationIDContext := context.WithValue(
-					context.Background(),
+					context.TODO(),
 					grpcutils.ApplicationIDContextKey,
 					db.UUIDToString(&application.ID),
 				)
@@ -181,7 +181,7 @@ func TestService(t *testing.T) {
 
 		t.Run("returns error when template variables are not valid", func(t *testing.T) {
 			applicationIDContext := context.WithValue(
-				context.Background(),
+				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
 				configuration.ApplicationIDString,
 			)

@@ -31,6 +31,15 @@ SELECT
 FROM project
 WHERE id = $1 AND deleted_at IS NULL;
 
+-- name: RetrieveDefaultProject :one
+SELECT p.id
+FROM project AS p
+LEFT JOIN user_project AS up ON p.id = up.project_id
+LEFT JOIN user_account AS ua ON up.user_id = ua.id
+WHERE
+    ua.firebase_id = $1 AND up.is_user_default_project = TRUE AND p.deleted_at IS NULL;
+
+
 -- name: RetrieveProjects :many
 SELECT
     p.id,
@@ -41,7 +50,7 @@ SELECT
     p.created_at,
     p.updated_at
 FROM user_project AS up
-LEFT JOIN user_account AS ua ON up.user_id = ua.id
 LEFT JOIN project AS p ON up.project_id = p.id
+LEFT JOIN user_account AS ua ON up.user_id = ua.id
 WHERE
     ua.firebase_id = $1 AND p.deleted_at IS NULL;

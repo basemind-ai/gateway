@@ -49,6 +49,23 @@ func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const retrieveDefaultProject = `-- name: RetrieveDefaultProject :one
+SELECT
+    p.id
+FROM project AS p
+         LEFT JOIN user_project AS up ON p.id = up.project_id
+         LEFT JOIN user_account AS ua ON up.user_id = ua.id
+WHERE
+        ua.firebase_id = $1 AND up.is_user_default_project = true AND p.deleted_at IS NULL
+`
+
+func (q *Queries) RetrieveDefaultProject(ctx context.Context, firebaseID string) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, retrieveDefaultProject, firebaseID)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const retrieveProject = `-- name: RetrieveProject :one
 SELECT
     id,
@@ -91,8 +108,8 @@ SELECT
     p.created_at,
     p.updated_at
 FROM user_project AS up
+LEFT JOIN project AS p ON p.id = up.project_id
 LEFT JOIN user_account AS ua ON up.user_id = ua.id
-LEFT JOIN project AS p ON up.project_id = p.id
 WHERE
     ua.firebase_id = $1 AND p.deleted_at IS NULL
 `

@@ -147,7 +147,27 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 // the project ID should be passed in the request body and it must (a) belong to a non-deleted project, and
 // (b) the user must have access to it.
 func HandleSetDefaultProject(w http.ResponseWriter, r *http.Request) {
-	apierror.InternalServerError().Render(w, r)
+	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
+
+	_, userProjectRetrievalErr := db.GetQueries().
+		RetrieveUserProject(r.Context(), db.RetrieveUserProjectParams{
+			FirebaseID: firebaseID,
+			ProjectID:  projectID,
+		})
+	if userProjectRetrievalErr != nil {
+		log.Error().Err(userProjectRetrievalErr).Msg("failed to retrieve user project")
+		apierror.BadRequest().Render(w, r)
+		return
+	}
+
+	if updateErr := repositories.UpdateDefaultProject(r.Context(), firebaseID, projectID); updateErr != nil {
+		log.Error().Err(updateErr).Msg("failed to update default project")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these
