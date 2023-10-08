@@ -23,10 +23,3 @@ func HandleRetrieveUserData(w http.ResponseWriter, r *http.Request) {
 
 	serialization.RenderJSONResponse(w, http.StatusOK, userData)
 }
-
-// HandleUpdateUserDefaultProject - sets the given project as the user's default project.
-// the project ID should be passed in the request body and it must (a) belong to a non-deleted project, and
-// (b) the user must have access to it.
-func HandleUpdateUserDefaultProject(w http.ResponseWriter, r *http.Request) {
-	apierror.InternalServerError().Render(w, r)
-}

@@ -51,7 +51,7 @@ func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 
 	application, applicationRetrieveErr := db.
 		GetQueries().
-		FindApplicationByID(r.Context(), applicationID)
+		RetrieveApplication(r.Context(), applicationID)
 
 	if applicationRetrieveErr != nil {
 		log.Error().Err(applicationRetrieveErr).Msg("failed to retrieve application")

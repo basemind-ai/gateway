@@ -108,7 +108,7 @@ func TestApplicationsAPI(t *testing.T) {
 
 			uuidID, _ := db.StringToUUID(applicationID)
 
-			application, _ := db.GetQueries().FindApplicationByID(context.TODO(), *uuidID)
+			application, _ := db.GetQueries().RetrieveApplication(context.TODO(), *uuidID)
 
 			responseApplication := db.Application{}
 			deserializationErr := serialization.DeserializeJSON(
@@ -319,7 +319,7 @@ func TestApplicationsAPI(t *testing.T) {
 
 			uuidID, _ := db.StringToUUID(applicationID)
 			_, applicationRetrieveErr := db.GetQueries().
-				FindApplicationByID(context.TODO(), *uuidID)
+				RetrieveApplication(context.TODO(), *uuidID)
 
 			assert.Error(t, applicationRetrieveErr)
 		})

@@ -162,11 +162,12 @@ func TestProjectsAPI(t *testing.T) {
 				assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
 				projectUUID, _ := db.StringToUUID(projectID)
-				_, err := db.GetQueries().FindProjectByID(context.Background(), *projectUUID)
+				_, err := db.GetQueries().RetrieveProject(context.Background(), *projectUUID)
 				assert.Error(t, err)
 
 				applicationUUID, _ := db.StringToUUID(applicationID)
-				_, err = db.GetQueries().FindApplicationByID(context.Background(), *applicationUUID)
+				_, err = db.GetQueries().
+					RetrieveApplication(context.Background(), *applicationUUID)
 				assert.Error(t, err)
 			},
 		)

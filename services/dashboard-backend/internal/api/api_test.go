@@ -43,7 +43,7 @@ func createUserProject(
 ) {
 	t.Helper()
 	userAccount, err := db.GetQueries().
-		FindUserAccountByFirebaseID(context.Background(), firebaseID)
+		RetrieveUserAccount(context.Background(), firebaseID)
 	assert.NoError(t, err)
 
 	projectIDUUID, err := db.StringToUUID(projectID)

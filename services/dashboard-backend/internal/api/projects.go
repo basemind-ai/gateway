@@ -43,10 +43,55 @@ func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusCreated, projectDto)
 }
 
+// HandleRetrieveProjects - retrieves all projects for the user.
+func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
+	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
+
+	projects, err := db.GetQueries().RetrieveProjects(r.Context(), firebaseID)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to retrieve projects")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	dtos := make([]dto.ProjectDTO, len(projects))
+	for i, project := range projects {
+		id := project.ID
+		dtos[i] = dto.ProjectDTO{
+			ID:                   db.UUIDToString(&id),
+			Name:                 project.Name.String,
+			Description:          project.Description.String,
+			CreatedAt:            project.CreatedAt.Time,
+			UpdatedAt:            project.UpdatedAt.Time,
+			IsUserDefaultProject: project.IsUserDefaultProject,
+			Permission:           string(project.Permission),
+		}
+	}
+
+	serialization.RenderJSONResponse(w, http.StatusOK, projects)
+}
+
 // HandleUpdateProject - allows updating the name and description of a project
 // requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
 func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
+	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
+
+	userProject, userProjectRetrievalErr := db.GetQueries().
+		RetrieveUserProject(r.Context(), db.RetrieveUserProjectParams{
+			FirebaseID: firebaseID,
+			ProjectID:  projectID,
+		})
+	if userProjectRetrievalErr != nil {
+		log.Error().Err(userProjectRetrievalErr).Msg("failed to retrieve user project")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	if userProject.Permission != db.AccessPermissionTypeADMIN {
+		apierror.Forbidden().Render(w, r)
+		return
+	}
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
@@ -54,9 +99,10 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingProject, retrivalErr := db.GetQueries().FindProjectByID(r.Context(), projectID)
-	if retrivalErr != nil {
-		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
+	existingProject, projectRetrivalErr := db.GetQueries().
+		RetrieveProject(r.Context(), projectID)
+	if projectRetrivalErr != nil {
+		log.Error().Err(projectRetrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
 		return
 	}
@@ -87,11 +133,18 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 		Description:          updatedProject.Description,
 		CreatedAt:            updatedProject.CreatedAt.Time,
 		UpdatedAt:            updatedProject.UpdatedAt.Time,
-		IsUserDefaultProject: false,
-		Permission:           "",
+		IsUserDefaultProject: userProject.IsUserDefaultProject,
+		Permission:           string(userProject.Permission),
 	}
 
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
+}
+
+// HandleSetDefaultProject - sets the given project as the user's default project.
+// the project ID should be passed in the request body and it must (a) belong to a non-deleted project, and
+// (b) the user must have access to it.
+func HandleSetDefaultProject(w http.ResponseWriter, r *http.Request) {
+	apierror.InternalServerError().Render(w, r)
 }
 
 // HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these
@@ -99,7 +152,7 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	if _, retrivalErr := db.GetQueries().FindProjectByID(r.Context(), projectID); retrivalErr != nil {
+	if _, retrivalErr := db.GetQueries().RetrieveProject(r.Context(), projectID); retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
 		return

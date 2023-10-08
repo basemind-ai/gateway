@@ -84,7 +84,7 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 func HandleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	tokens, retrievalErr := db.GetQueries().RetrieveApplicationTokens(r.Context(), applicationID)
+	tokens, retrievalErr := db.GetQueries().RetrieveTokens(r.Context(), applicationID)
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve application tokens")
 		apierror.InternalServerError().Render(w, r)

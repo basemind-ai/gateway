@@ -129,7 +129,7 @@ func TestPromptConfigRepository(t *testing.T) {
 			assert.NoError(t, err)
 
 			defaultPromptConfig, _ := db.GetQueries().
-				FindDefaultPromptConfigByApplicationID(context.TODO(), application.ID)
+				RetrieveDefaultPromptConfig(context.TODO(), application.ID)
 
 			assert.Equal(t, promptConfig.ID, db.UUIDToString(&defaultPromptConfig.ID))
 		})
@@ -212,7 +212,7 @@ func TestPromptConfigRepository(t *testing.T) {
 					assert.NoError(t, err)
 
 					retrievedPromptConfig, _ := db.GetQueries().
-						FindPromptConfigByID(context.TODO(), promptConfig.ID)
+						RetrievePromptConfig(context.TODO(), promptConfig.ID)
 					assert.Equal(t, updatedPromptConfig.Name, retrievedPromptConfig.Name)
 					assert.Equal(t, updatedPromptConfig.ModelType, retrievedPromptConfig.ModelType)
 					assert.Equal(

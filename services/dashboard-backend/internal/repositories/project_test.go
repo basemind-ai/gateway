@@ -33,7 +33,8 @@ func TestProjectRepository(t *testing.T) {
 			uuidID, err := db.StringToUUID(projectDto.ID)
 			assert.NoError(t, err)
 
-			retrievedProject, err := db.GetQueries().FindProjectByID(context.Background(), *uuidID)
+			retrievedProject, err := db.GetQueries().
+				RetrieveProject(context.Background(), *uuidID)
 			assert.NoError(t, err)
 
 			assert.Equal(t, projectDto.ID, db.UUIDToString(&retrievedProject.ID))
@@ -58,22 +59,22 @@ func TestProjectRepository(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
 			retrievedProject, err := db.GetQueries().
-				FindProjectByID(context.Background(), project.ID)
+				RetrieveProject(context.Background(), project.ID)
 			assert.NoError(t, err)
 			assert.Equal(t, project.ID, retrievedProject.ID)
 
 			retrievedApplication, err := db.GetQueries().
-				FindApplicationByID(context.Background(), application.ID)
+				RetrieveApplication(context.Background(), application.ID)
 			assert.NoError(t, err)
 			assert.Equal(t, application.ID, retrievedApplication.ID)
 
 			err = repositories.DeleteProject(context.Background(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().FindProjectByID(context.Background(), project.ID)
+			_, err = db.GetQueries().RetrieveProject(context.Background(), project.ID)
 			assert.Error(t, err)
 
-			_, err = db.GetQueries().FindApplicationByID(context.Background(), application.ID)
+			_, err = db.GetQueries().RetrieveApplication(context.Background(), application.ID)
 			assert.Error(t, err)
 		})
 
@@ -81,14 +82,14 @@ func TestProjectRepository(t *testing.T) {
 			project, _ := factories.CreateProject(context.TODO())
 
 			retrievedProject, err := db.GetQueries().
-				FindProjectByID(context.Background(), project.ID)
+				RetrieveProject(context.Background(), project.ID)
 			assert.NoError(t, err)
 			assert.Equal(t, project.ID, retrievedProject.ID)
 
 			err = repositories.DeleteProject(context.Background(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().FindProjectByID(context.Background(), project.ID)
+			_, err = db.GetQueries().RetrieveProject(context.Background(), project.ID)
 			assert.Error(t, err)
 		})
 	})

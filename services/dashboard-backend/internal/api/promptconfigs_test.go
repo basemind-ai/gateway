@@ -267,7 +267,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 
 			retrievedPromptConfig, retrieveErr := db.GetQueries().
-				FindPromptConfigByID(context.Background(), defaultPromptConfig.ID)
+				RetrievePromptConfig(context.Background(), defaultPromptConfig.ID)
 			assert.NoError(t, retrieveErr)
 			assert.True(t, retrievedPromptConfig.IsDefault)
 		})
@@ -486,14 +486,14 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 			dbDefaultPromptConfig, retrivalErr := db.
 				GetQueries().
-				FindPromptConfigByID(context.Background(), defaultPromptConfig.ID)
+				RetrievePromptConfig(context.Background(), defaultPromptConfig.ID)
 
 			assert.NoError(t, retrivalErr)
 			assert.Equal(t, false, dbDefaultPromptConfig.IsDefault)
 
 			dbNonDefaultPromptConfig, retrivalErr := db.
 				GetQueries().
-				FindPromptConfigByID(context.Background(), nonDefaultPromptConfig.ID)
+				RetrievePromptConfig(context.Background(), nonDefaultPromptConfig.ID)
 
 			assert.NoError(t, retrivalErr)
 			assert.Equal(t, true, dbNonDefaultPromptConfig.IsDefault)
@@ -531,7 +531,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 				dbDefaultPromptConfig, retrivalErr := db.
 					GetQueries().
-					FindPromptConfigByID(context.Background(), defaultPromptConfig.ID)
+					RetrievePromptConfig(context.Background(), defaultPromptConfig.ID)
 
 				assert.NoError(t, retrivalErr)
 				assert.Equal(t, true, dbDefaultPromptConfig.IsDefault)
@@ -621,7 +621,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			dbPromptConfig, retrivalErr := db.GetQueries().
-				FindPromptConfigByID(context.Background(), promptConfigToRename.ID)
+				RetrievePromptConfig(context.Background(), promptConfigToRename.ID)
 			assert.NoError(t, retrivalErr)
 			assert.Equal(t, newName, dbPromptConfig.Name)
 		})
@@ -703,7 +703,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			dbPromptConfig, retrivalErr := db.GetQueries().
-				FindPromptConfigByID(context.Background(), promptConfigToRename.ID)
+				RetrievePromptConfig(context.Background(), promptConfigToRename.ID)
 			assert.NoError(t, retrivalErr)
 			assert.Equal(t, newModel, dbPromptConfig.ModelType)
 		})
@@ -780,7 +780,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			dbPromptConfig, retrivalErr := db.GetQueries().
-				FindPromptConfigByID(context.Background(), promptConfigToRename.ID)
+				RetrievePromptConfig(context.Background(), promptConfigToRename.ID)
 			assert.NoError(t, retrivalErr)
 			assert.Equal(t, newModelParameters, dbPromptConfig.ModelParameters)
 		})
@@ -868,7 +868,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
 			_, retrivalErr := db.GetQueries().
-				FindPromptConfigByID(context.Background(), promptConfig.ID)
+				RetrievePromptConfig(context.Background(), promptConfig.ID)
 			assert.Error(t, retrivalErr)
 		})
 
@@ -897,7 +897,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 
 			_, retrivalErr := db.GetQueries().
-				FindPromptConfigByID(context.Background(), promptConfig.ID)
+				RetrievePromptConfig(context.Background(), promptConfig.ID)
 			assert.NoError(t, retrivalErr)
 		})
 

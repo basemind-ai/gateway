@@ -40,6 +40,11 @@ func TestAPIError(t *testing.T) {
 			ExpectedMessage: "err",
 		},
 		{
+			APIErrType:      apierror.Forbidden("err"),
+			ExpectedStatus:  http.StatusForbidden,
+			ExpectedMessage: "err",
+		},
+		{
 			APIErrType:      apierror.Unauthorized(),
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedMessage: http.StatusText(http.StatusUnauthorized),

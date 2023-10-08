@@ -66,7 +66,7 @@ func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 
 	promptConfigs, retrivalErr := db.
 		GetQueries().
-		FindApplicationPromptConfigs(r.Context(), applicationID)
+		RetrievePromptConfigs(r.Context(), applicationID)
 
 	if retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve prompt configs")
@@ -152,7 +152,7 @@ func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	promptConfig, retrievePromptConfigErr := db.GetQueries().
-		FindPromptConfigByID(r.Context(), promptConfigID)
+		RetrievePromptConfig(r.Context(), promptConfigID)
 
 	if retrievePromptConfigErr != nil {
 		log.Error().Err(retrievePromptConfigErr).Msg("failed to retrieve prompt config")

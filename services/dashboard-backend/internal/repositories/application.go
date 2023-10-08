@@ -10,7 +10,8 @@ import (
 
 // DeleteApplication deletes an application and all of its prompt configs by setting their deleted_at values.
 func DeleteApplication(ctx context.Context, applicationID pgtype.UUID) error {
-	promptConfigs, retrievalErr := db.GetQueries().FindApplicationPromptConfigs(ctx, applicationID)
+	promptConfigs, retrievalErr := db.GetQueries().
+		RetrievePromptConfigs(ctx, applicationID)
 	if retrievalErr != nil {
 		return fmt.Errorf("failed to retrieve prompt configs: %w", retrievalErr)
 	}

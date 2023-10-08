@@ -15,7 +15,7 @@ func CreateProject(
 	name string,
 	description string,
 ) (*dto.ProjectDTO, error) {
-	userAccount, retrievalErr := db.GetQueries().FindUserAccountByFirebaseID(ctx, firebaseID)
+	userAccount, retrievalErr := db.GetQueries().RetrieveUserAccount(ctx, firebaseID)
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
 		return nil, fmt.Errorf("failed to retrieve user account: %w", retrievalErr)
@@ -73,7 +73,7 @@ func CreateProject(
 
 func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
 	applications, applicationsRetrievalErr := db.GetQueries().
-		FindApplicationsByProjectID(ctx, projectID)
+		RetrieveApplications(ctx, projectID)
 
 	if applicationsRetrievalErr != nil {
 		log.Error().Err(applicationsRetrievalErr).Msg("failed to retrieve applications")
