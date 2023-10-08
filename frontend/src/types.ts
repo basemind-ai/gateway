@@ -75,6 +75,17 @@ export type PromptConfigCreateBody<
 
 export type PromptConfigUpdateBody = Partial<PromptConfigCreateBody>;
 
+// Token
+
+export interface Token {
+	id: string;
+	hash?: string;
+	name: string;
+	createdAt: string;
+}
+
+export type TokenCreateBody = Pick<Token, 'name'>;
+
 // UserAccount
 
 export interface UserAccount {

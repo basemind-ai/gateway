@@ -6,19 +6,6 @@ import {
 	ApplicationUpdateBody,
 } from '@/types';
 
-export async function handleRetrieveApplication({
-	applicationId,
-	projectId,
-}: {
-	applicationId: string;
-	projectId: string;
-}): Promise<Application> {
-	return await fetcher<Application>({
-		url: `/projects/${projectId}/applications/${applicationId}/`,
-		method: HttpMethod.Get,
-	});
-}
-
 export async function handleCreateApplication({
 	projectId,
 	data,
@@ -27,9 +14,22 @@ export async function handleCreateApplication({
 	data: ApplicationCreateBody;
 }): Promise<Application> {
 	return await fetcher<Application>({
-		url: `/projects/${projectId}/applications/`,
+		url: `projects/${projectId}/applications/`,
 		method: HttpMethod.Post,
 		data,
+	});
+}
+
+export async function handleRetrieveApplication({
+	applicationId,
+	projectId,
+}: {
+	applicationId: string;
+	projectId: string;
+}): Promise<Application> {
+	return await fetcher<Application>({
+		url: `projects/${projectId}/applications/${applicationId}/`,
+		method: HttpMethod.Get,
 	});
 }
 
@@ -43,7 +43,7 @@ export async function handleUpdateApplication({
 	data: ApplicationUpdateBody;
 }): Promise<Application> {
 	return await fetcher<Application>({
-		url: `/projects/${projectId}/applications/${applicationId}/`,
+		url: `projects/${projectId}/applications/${applicationId}/`,
 		method: HttpMethod.Patch,
 		data,
 	});
@@ -57,7 +57,7 @@ export async function handleDeleteApplication({
 	projectId: string;
 }): Promise<void> {
 	await fetcher<undefined>({
-		url: `/projects/${projectId}/applications/${applicationId}/`,
+		url: `projects/${projectId}/applications/${applicationId}/`,
 		method: HttpMethod.Delete,
 	});
 }
