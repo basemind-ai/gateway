@@ -66,14 +66,14 @@ func createApplication(t *testing.T, projectID string) string {
 	return applicationID
 }
 
-func createTestClient(t *testing.T, firebaseID string) httpclient.Client {
+func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Client {
 	t.Helper()
 	r := router.New(router.Options{
 		Environment:      "test",
 		ServiceName:      "test",
 		RegisterHandlers: api.RegisterHandlers,
 		Middlewares: []func(next http.Handler) http.Handler{
-			middleware.CreateMockFirebaseAuthMiddleware(firebaseID),
+			middleware.CreateMockFirebaseAuthMiddleware(userAccount),
 		},
 	})
 

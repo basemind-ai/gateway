@@ -17,9 +17,9 @@ import (
 )
 
 func TestPromptConfigAPI(t *testing.T) { //nolint: revive
+	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
-	firebaseID := factories.RandomString(10)
-	testClient := createTestClient(t, firebaseID)
+	testClient := createTestClient(t, userAccount)
 	systemMessages := "You are a chatbot."
 	userMessage := "Please write a song about {subject}."
 	templateVariables := []string{"subject"}

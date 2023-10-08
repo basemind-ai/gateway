@@ -22,7 +22,6 @@ export interface Project {
 	description?: string;
 	createdAt: string;
 	updatedAt: string;
-	isUserDefaultProject: boolean;
 	permission: AccessPermission;
 	applications: Application[];
 }

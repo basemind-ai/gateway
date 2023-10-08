@@ -49,48 +49,42 @@ func (q *Queries) DeleteProject(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
-const retrieveDefaultProject = `-- name: RetrieveDefaultProject :one
-SELECT p.id
+const retrieveProject = `-- name: RetrieveProject :one
+SELECT
+    p.id,
+    p.description,
+    p.name,
+    up.permission,
+    p.created_at,
+    p.updated_at
 FROM project AS p
 LEFT JOIN user_project AS up ON p.id = up.project_id
 LEFT JOIN user_account AS ua ON up.user_id = ua.id
-WHERE
-    ua.firebase_id = $1 AND up.is_user_default_project = TRUE AND p.deleted_at IS NULL
+WHERE p.id = $1 AND ua.firebase_id = $2 AND deleted_at IS NULL
 `
 
-func (q *Queries) RetrieveDefaultProject(ctx context.Context, firebaseID string) (pgtype.UUID, error) {
-	row := q.db.QueryRow(ctx, retrieveDefaultProject, firebaseID)
-	var id pgtype.UUID
-	err := row.Scan(&id)
-	return id, err
+type RetrieveProjectParams struct {
+	ID         pgtype.UUID `json:"id"`
+	FirebaseID string      `json:"firebaseId"`
 }
-
-const retrieveProject = `-- name: RetrieveProject :one
-SELECT
-    id,
-    description,
-    name,
-    created_at,
-    updated_at
-FROM project
-WHERE id = $1 AND deleted_at IS NULL
-`
 
 type RetrieveProjectRow struct {
-	ID          pgtype.UUID        `json:"id"`
-	Description string             `json:"description"`
-	Name        string             `json:"name"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
+	ID          pgtype.UUID              `json:"id"`
+	Description string                   `json:"description"`
+	Name        string                   `json:"name"`
+	Permission  NullAccessPermissionType `json:"permission"`
+	CreatedAt   pgtype.Timestamptz       `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz       `json:"updatedAt"`
 }
 
-func (q *Queries) RetrieveProject(ctx context.Context, id pgtype.UUID) (RetrieveProjectRow, error) {
-	row := q.db.QueryRow(ctx, retrieveProject, id)
+func (q *Queries) RetrieveProject(ctx context.Context, arg RetrieveProjectParams) (RetrieveProjectRow, error) {
+	row := q.db.QueryRow(ctx, retrieveProject, arg.ID, arg.FirebaseID)
 	var i RetrieveProjectRow
 	err := row.Scan(
 		&i.ID,
 		&i.Description,
 		&i.Name,
+		&i.Permission,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -103,7 +97,6 @@ SELECT
     p.name,
     p.description,
     up.permission,
-    up.is_user_default_project,
     p.created_at,
     p.updated_at
 FROM user_project AS up
@@ -114,13 +107,12 @@ WHERE
 `
 
 type RetrieveProjectsRow struct {
-	ID                   pgtype.UUID          `json:"id"`
-	Name                 pgtype.Text          `json:"name"`
-	Description          pgtype.Text          `json:"description"`
-	Permission           AccessPermissionType `json:"permission"`
-	IsUserDefaultProject bool                 `json:"isUserDefaultProject"`
-	CreatedAt            pgtype.Timestamptz   `json:"createdAt"`
-	UpdatedAt            pgtype.Timestamptz   `json:"updatedAt"`
+	ID          pgtype.UUID          `json:"id"`
+	Name        pgtype.Text          `json:"name"`
+	Description pgtype.Text          `json:"description"`
+	Permission  AccessPermissionType `json:"permission"`
+	CreatedAt   pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz   `json:"updatedAt"`
 }
 
 func (q *Queries) RetrieveProjects(ctx context.Context, firebaseID string) ([]RetrieveProjectsRow, error) {
@@ -137,7 +129,6 @@ func (q *Queries) RetrieveProjects(ctx context.Context, firebaseID string) ([]Re
 			&i.Name,
 			&i.Description,
 			&i.Permission,
-			&i.IsUserDefaultProject,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {

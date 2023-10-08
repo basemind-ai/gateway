@@ -109,28 +109,6 @@ func TestDBQueries(t *testing.T) {
 			assert.Nil(t, err)
 
 			createProjectParams := db.CreateUserProjectParams{
-				UserID:               user.ID,
-				ProjectID:            project.ID,
-				Permission:           db.AccessPermissionTypeADMIN,
-				IsUserDefaultProject: true,
-			}
-			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
-			assert.Nil(t, err)
-
-			assert.Equal(t, userProject.IsUserDefaultProject, true)
-			assert.Equal(t, userProject.ProjectID, project.ID)
-			assert.Equal(t, userProject.UserID, user.ID)
-			assert.Equal(t, userProject.Permission, db.AccessPermissionTypeADMIN)
-		})
-
-		t.Run("User default project is false by default", func(t *testing.T) {
-			project, err := dbQueries.CreateProject(
-				context.TODO(),
-				db.CreateProjectParams{Name: "test", Description: "test"},
-			)
-			assert.Nil(t, err)
-
-			createProjectParams := db.CreateUserProjectParams{
 				UserID:     user.ID,
 				ProjectID:  project.ID,
 				Permission: db.AccessPermissionTypeADMIN,
@@ -138,7 +116,9 @@ func TestDBQueries(t *testing.T) {
 			userProject, err := dbQueries.CreateUserProject(context.TODO(), createProjectParams)
 			assert.Nil(t, err)
 
-			assert.False(t, userProject.IsUserDefaultProject)
+			assert.Equal(t, userProject.ProjectID, project.ID)
+			assert.Equal(t, userProject.UserID, user.ID)
+			assert.Equal(t, userProject.Permission, db.AccessPermissionTypeADMIN)
 		})
 
 		t.Run("fails when creating a duplicate user project", func(t *testing.T) {

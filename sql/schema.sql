@@ -31,7 +31,6 @@ CREATE TABLE user_project
     user_id uuid NOT NULL,
     project_id uuid NOT NULL,
     permission access_permission_type NOT NULL,
-    is_user_default_project boolean NOT NULL DEFAULT FALSE,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (user_id, project_id),

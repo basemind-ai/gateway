@@ -10,10 +10,6 @@ var validate = validator.New(validator.WithRequiredStructEnabled())
 
 func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(router chi.Router) {
-		router.Route(UserAccountEndpoint, func(userAccountRouter chi.Router) {
-			userAccountRouter.Get("/", HandleRetrieveUserData)
-		})
-
 		router.Route(ProjectsListEndpoint, func(projectsRouter chi.Router) {
 			projectsRouter.Post("/", HandleCreateProject)
 			projectsRouter.Get("/", HandleRetrieveProjects)
@@ -23,11 +19,6 @@ func RegisterHandlers(mux *chi.Mux) {
 			projectsRouter.Use(middleware.PathParameterMiddleware("projectId"))
 			projectsRouter.Patch("/", HandleUpdateProject)
 			projectsRouter.Delete("/", HandleDeleteProject)
-		})
-
-		router.Route(ProjectSetDefaultEndpoint, func(projectsRouter chi.Router) {
-			projectsRouter.Use(middleware.PathParameterMiddleware("projectId"))
-			projectsRouter.Patch("/", HandleSetDefaultProject)
 		})
 
 		router.Route(ProjectUserDetailEndpoint, func(projectsUserRouter chi.Router) {

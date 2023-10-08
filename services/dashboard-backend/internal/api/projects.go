@@ -14,7 +14,7 @@ import (
 
 // HandleCreateProject - creates a new project and sets the user as an ADMIN.
 func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
-	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
@@ -29,7 +29,7 @@ func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
 
 	projectDto, createErr := repositories.CreateProject(
 		r.Context(),
-		firebaseID,
+		userAccount.FirebaseID,
 		body.Name,
 		body.Description,
 	)
@@ -45,9 +45,9 @@ func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
 
 // HandleRetrieveProjects - retrieves all projects for the user.
 func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
-	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 
-	projects, err := db.GetQueries().RetrieveProjects(r.Context(), firebaseID)
+	projects, err := db.GetQueries().RetrieveProjects(r.Context(), userAccount.FirebaseID)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to retrieve projects")
 		apierror.InternalServerError().Render(w, r)
@@ -58,13 +58,12 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	for i, project := range projects {
 		id := project.ID
 		dtos[i] = dto.ProjectDTO{
-			ID:                   db.UUIDToString(&id),
-			Name:                 project.Name.String,
-			Description:          project.Description.String,
-			CreatedAt:            project.CreatedAt.Time,
-			UpdatedAt:            project.UpdatedAt.Time,
-			IsUserDefaultProject: project.IsUserDefaultProject,
-			Permission:           string(project.Permission),
+			ID:          db.UUIDToString(&id),
+			Name:        project.Name.String,
+			Description: project.Description.String,
+			CreatedAt:   project.CreatedAt.Time,
+			UpdatedAt:   project.UpdatedAt.Time,
+			Permission:  string(project.Permission),
 		}
 	}
 
@@ -74,13 +73,13 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 // HandleUpdateProject - allows updating the name and description of a project
 // requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
 func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
-	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	userProject, userProjectRetrievalErr := db.
 		GetQueries().
 		RetrieveUserProject(r.Context(), db.RetrieveUserProjectParams{
-			FirebaseID: firebaseID,
+			FirebaseID: userAccount.FirebaseID,
 			ProjectID:  projectID,
 		})
 
@@ -101,8 +100,12 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingProject, projectRetrivalErr := db.GetQueries().
-		RetrieveProject(r.Context(), projectID)
+	existingProject, projectRetrivalErr := db.
+		GetQueries().
+		RetrieveProject(r.Context(), db.RetrieveProjectParams{
+			ID:         projectID,
+			FirebaseID: userAccount.FirebaseID,
+		})
 	if projectRetrivalErr != nil {
 		log.Error().Err(projectRetrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
@@ -131,51 +134,27 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := &dto.ProjectDTO{
-		ID:                   db.UUIDToString(&updatedProject.ID),
-		Name:                 updatedProject.Name,
-		Description:          updatedProject.Description,
-		CreatedAt:            updatedProject.CreatedAt.Time,
-		UpdatedAt:            updatedProject.UpdatedAt.Time,
-		IsUserDefaultProject: userProject.IsUserDefaultProject,
-		Permission:           string(userProject.Permission),
+		ID:          db.UUIDToString(&updatedProject.ID),
+		Name:        updatedProject.Name,
+		Description: updatedProject.Description,
+		CreatedAt:   updatedProject.CreatedAt.Time,
+		UpdatedAt:   updatedProject.UpdatedAt.Time,
+		Permission:  string(userProject.Permission),
 	}
 
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
-// HandleSetDefaultProject - sets the given project as the user's default project.
-// the project ID should be passed in the request body and it must (a) belong to a non-deleted project, and
-// (b) the user must have access to it.
-func HandleSetDefaultProject(w http.ResponseWriter, r *http.Request) {
-	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
-	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
-
-	_, userProjectRetrievalErr := db.GetQueries().
-		RetrieveUserProject(r.Context(), db.RetrieveUserProjectParams{
-			FirebaseID: firebaseID,
-			ProjectID:  projectID,
-		})
-	if userProjectRetrievalErr != nil {
-		log.Error().Err(userProjectRetrievalErr).Msg("failed to retrieve user project")
-		apierror.BadRequest().Render(w, r)
-		return
-	}
-
-	if updateErr := repositories.UpdateDefaultProject(r.Context(), firebaseID, projectID); updateErr != nil {
-		log.Error().Err(updateErr).Msg("failed to update default project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-}
-
 // HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these
 // requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
 func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	if _, retrivalErr := db.GetQueries().RetrieveProject(r.Context(), projectID); retrivalErr != nil {
+	if _, retrivalErr := db.GetQueries().RetrieveProject(r.Context(), db.RetrieveProjectParams{
+		ID:         projectID,
+		FirebaseID: userAccount.FirebaseID,
+	}); retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
 		apierror.BadRequest("project does not exist").Render(w, r)
 		return

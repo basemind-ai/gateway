@@ -210,10 +210,9 @@ type UserAccount struct {
 }
 
 type UserProject struct {
-	UserID               pgtype.UUID          `json:"userId"`
-	ProjectID            pgtype.UUID          `json:"projectId"`
-	Permission           AccessPermissionType `json:"permission"`
-	IsUserDefaultProject bool                 `json:"isUserDefaultProject"`
-	CreatedAt            pgtype.Timestamptz   `json:"createdAt"`
-	UpdatedAt            pgtype.Timestamptz   `json:"updatedAt"`
+	UserID     pgtype.UUID          `json:"userId"`
+	ProjectID  pgtype.UUID          `json:"projectId"`
+	Permission AccessPermissionType `json:"permission"`
+	CreatedAt  pgtype.Timestamptz   `json:"createdAt"`
+	UpdatedAt  pgtype.Timestamptz   `json:"updatedAt"`
 }

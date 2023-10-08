@@ -28,11 +28,10 @@ func createToken(t *testing.T, applicationID string, tokenName string) db.Token 
 
 func TestTokensAPI(t *testing.T) {
 	testutils.SetTestEnv(t)
+	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
 	applicationID := createApplication(t, projectID)
-
-	firebaseID := factories.RandomString(10)
-	testClient := createTestClient(t, firebaseID)
+	testClient := createTestClient(t, userAccount)
 
 	listURL := fmt.Sprintf(
 		"/v1%s",

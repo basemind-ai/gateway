@@ -15,8 +15,8 @@ import (
 )
 
 func TestProjectsAPI(t *testing.T) {
-	firebaseID := createUser(t)
-	testClient := createTestClient(t, firebaseID)
+	userAccount, _ := factories.CreateUserAccount(context.TODO())
+	testClient := createTestClient(t, userAccount)
 
 	t.Run(fmt.Sprintf("POST: %s", api.ProjectsListEndpoint), func(t *testing.T) {
 		t.Run("creates a new project and sets the user as ADMIN", func(t *testing.T) {
@@ -39,7 +39,6 @@ func TestProjectsAPI(t *testing.T) {
 			assert.NotEmpty(t, data.ID)
 			assert.Equal(t, body.Name, data.Name)
 			assert.Equal(t, body.Description, data.Description)
-			assert.Equal(t, false, data.IsUserDefaultProject)
 			assert.Equal(t, "ADMIN", data.Permission)
 		})
 		t.Run(
@@ -60,13 +59,23 @@ func TestProjectsAPI(t *testing.T) {
 	})
 	t.Run(fmt.Sprintf("GET: %s", api.ProjectsListEndpoint), func(t *testing.T) {
 		t.Run("retrieves all projects for the user", func(t *testing.T) {
-			newUserFirebaseID := createUser(t)
+			newUserAccount, _ := factories.CreateUserAccount(context.TODO())
 			project1ID := createProject(t)
 			project2ID := createProject(t)
-			createUserProject(t, newUserFirebaseID, project1ID, db.AccessPermissionTypeADMIN)
-			createUserProject(t, newUserFirebaseID, project2ID, db.AccessPermissionTypeMEMBER)
+			createUserProject(
+				t,
+				newUserAccount.FirebaseID,
+				project1ID,
+				db.AccessPermissionTypeADMIN,
+			)
+			createUserProject(
+				t,
+				newUserAccount.FirebaseID,
+				project2ID,
+				db.AccessPermissionTypeMEMBER,
+			)
 
-			client := createTestClient(t, newUserFirebaseID)
+			client := createTestClient(t, newUserAccount)
 
 			response, requestErr := client.Get(
 				context.TODO(),
@@ -86,7 +95,7 @@ func TestProjectsAPI(t *testing.T) {
 	t.Run(fmt.Sprintf("PATCH: %s", api.ProjectDetailEndpoint), func(t *testing.T) {
 		t.Run("allows updating the name and description of a project", func(t *testing.T) {
 			projectID := createProject(t)
-			createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
+			createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
 
 			body := &dto.ProjectDTO{
 				Name:        "New Name",
@@ -115,7 +124,12 @@ func TestProjectsAPI(t *testing.T) {
 				t.Skip("should skip until the authorization middleware is in place")
 
 				projectID := createProject(t)
-				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeMEMBER)
+				createUserProject(
+					t,
+					userAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeMEMBER,
+				)
 
 				body := &dto.ProjectDTO{
 					Name:        "New Name",
@@ -152,7 +166,12 @@ func TestProjectsAPI(t *testing.T) {
 			"responds with status 400 BAD REQUEST if no project matching the ID is found",
 			func(t *testing.T) {
 				projectID := createProject(t)
-				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
+				createUserProject(
+					t,
+					userAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
 
 				uuidID, _ := db.StringToUUID(projectID)
 				_ = db.GetQueries().DeleteProject(context.TODO(), *uuidID)
@@ -177,7 +196,12 @@ func TestProjectsAPI(t *testing.T) {
 			"deletes a project and all associated applications by setting the deleted_at timestamp on these",
 			func(t *testing.T) {
 				projectID := createProject(t)
-				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
+				createUserProject(
+					t,
+					userAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
 				applicationID := createApplication(t, projectID)
 
 				url := fmt.Sprintf(
@@ -189,7 +213,10 @@ func TestProjectsAPI(t *testing.T) {
 				assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
 				projectUUID, _ := db.StringToUUID(projectID)
-				_, err := db.GetQueries().RetrieveProject(context.TODO(), *projectUUID)
+				_, err := db.GetQueries().RetrieveProject(context.TODO(), db.RetrieveProjectParams{
+					ID:         *projectUUID,
+					FirebaseID: userAccount.FirebaseID,
+				})
 				assert.Error(t, err)
 
 				applicationUUID, _ := db.StringToUUID(applicationID)
@@ -204,7 +231,12 @@ func TestProjectsAPI(t *testing.T) {
 				t.Skip("should skip until the authorization middleware is in place")
 
 				projectID := createProject(t)
-				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeMEMBER)
+				createUserProject(
+					t,
+					userAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeMEMBER,
+				)
 
 				url := fmt.Sprintf(
 					"/v1%s",
@@ -232,7 +264,12 @@ func TestProjectsAPI(t *testing.T) {
 			"responds with status 400 BAD REQUEST if no project matching the ID is found",
 			func(t *testing.T) {
 				projectID := createProject(t)
-				createUserProject(t, firebaseID, projectID, db.AccessPermissionTypeADMIN)
+				createUserProject(
+					t,
+					userAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
 
 				uuidID, _ := db.StringToUUID(projectID)
 				_ = db.GetQueries().DeleteProject(context.TODO(), *uuidID)
@@ -242,110 +279,6 @@ func TestProjectsAPI(t *testing.T) {
 					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
 				)
 				response, requestErr := testClient.Delete(context.TODO(), url)
-				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-			},
-		)
-	})
-
-	t.Run(fmt.Sprintf("PATCH: %s", api.ProjectSetDefaultEndpoint), func(t *testing.T) {
-		t.Run("sets the project as the default project for the user", func(t *testing.T) {
-			userAccount, _ := factories.CreateUserAccount(context.TODO())
-
-			defaultProject, _ := factories.CreateProject(context.TODO())
-			_, _ = db.GetQueries().
-				CreateUserProject(context.TODO(), db.CreateUserProjectParams{
-					UserID:               userAccount.ID,
-					ProjectID:            defaultProject.ID,
-					Permission:           db.AccessPermissionTypeADMIN,
-					IsUserDefaultProject: true,
-				})
-
-			nonDefaultProject, _ := factories.CreateProject(context.TODO())
-			_, _ = db.GetQueries().
-				CreateUserProject(context.TODO(), db.CreateUserProjectParams{
-					UserID:               userAccount.ID,
-					ProjectID:            nonDefaultProject.ID,
-					Permission:           db.AccessPermissionTypeADMIN,
-					IsUserDefaultProject: false,
-				})
-
-			projectID := db.UUIDToString(&nonDefaultProject.ID)
-
-			client := createTestClient(t, userAccount.FirebaseID)
-
-			url := fmt.Sprintf(
-				"/v1%s",
-				strings.ReplaceAll(api.ProjectSetDefaultEndpoint, "{projectId}", projectID),
-			)
-			response, requestErr := client.Patch(context.TODO(), url, nil)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusOK, response.StatusCode)
-		})
-
-		t.Run(
-			"sets the default project even if there is no default project existing",
-			func(t *testing.T) {
-				userAccount, _ := factories.CreateUserAccount(context.TODO())
-
-				project, _ := factories.CreateProject(context.TODO())
-				_, _ = db.GetQueries().
-					CreateUserProject(context.TODO(), db.CreateUserProjectParams{
-						UserID:               userAccount.ID,
-						ProjectID:            project.ID,
-						Permission:           db.AccessPermissionTypeADMIN,
-						IsUserDefaultProject: false,
-					})
-
-				projectID := db.UUIDToString(&project.ID)
-
-				client := createTestClient(t, userAccount.FirebaseID)
-
-				url := fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(api.ProjectSetDefaultEndpoint, "{projectId}", projectID),
-				)
-				response, requestErr := client.Patch(context.TODO(), url, nil)
-				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusOK, response.StatusCode)
-			},
-		)
-
-		t.Run("responds with status 400 BAD REQUEST if there is no user", func(t *testing.T) {
-			projectID := createProject(t)
-			url := fmt.Sprintf(
-				"/v1%s",
-				strings.ReplaceAll(api.ProjectSetDefaultEndpoint, "{projectId}", projectID),
-			)
-			response, requestErr := testClient.Patch(context.TODO(), url, nil)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
-
-		t.Run(
-			"responds with status 400 BAD REQUEST if there is not user project",
-			func(t *testing.T) {
-				userAccount, _ := factories.CreateUserAccount(context.TODO())
-				projectID := createProject(t)
-				url := fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(api.ProjectSetDefaultEndpoint, "{projectId}", projectID),
-				)
-				client := createTestClient(t, userAccount.FirebaseID)
-				response, requestErr := client.Patch(context.TODO(), url, nil)
-				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-			},
-		)
-
-		t.Run(
-			"responds with status 400 BAD REQUEST if the projectID is invalid",
-			func(t *testing.T) {
-				url := fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(api.ProjectSetDefaultEndpoint, "{projectId}", "invalid"),
-				)
-				response, requestErr := testClient.Patch(context.TODO(), url, nil)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},

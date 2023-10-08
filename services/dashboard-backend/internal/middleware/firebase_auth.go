@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/firebaseutils"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 type AuthContextKeyType int
 
 const (
-	FireBaseIDContextKey AuthContextKeyType = iota
+	UserAccountContextKey AuthContextKeyType = iota
 )
 
 func FirebaseAuthMiddleware(next http.Handler) http.Handler {
@@ -37,7 +38,17 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), FireBaseIDContextKey, token.UID)
+		userAccount, retrieveUserAccountErr := repositories.GetOrCreateUserAccount(
+			r.Context(),
+			token.UID,
+		)
+		if retrieveUserAccountErr != nil {
+			log.Error().Err(retrieveUserAccountErr).Msg("failed to retrieve user account")
+			apierror.InternalServerError("failed to get or create user account").Render(w, r)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), UserAccountContextKey, userAccount)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

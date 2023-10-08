@@ -2,13 +2,16 @@ package middleware
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	"net/http"
 )
 
-func CreateMockFirebaseAuthMiddleware(userID string) func(next http.Handler) http.Handler {
+func CreateMockFirebaseAuthMiddleware(
+	userAccount *db.UserAccount,
+) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := context.WithValue(r.Context(), FireBaseIDContextKey, userID)
+			ctx := context.WithValue(r.Context(), UserAccountContextKey, userAccount)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

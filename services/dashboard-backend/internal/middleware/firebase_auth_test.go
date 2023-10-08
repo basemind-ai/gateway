@@ -3,6 +3,8 @@ package middleware_test
 import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
+	"github.com/basemind-ai/monorepo/shared/go/db"
+	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/firebaseutils/testutils"
 	"net/http"
 	"net/http/httptest"
@@ -14,6 +16,7 @@ import (
 )
 
 func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
+	dbTestUtils.CreateTestDB(t)
 	mockNext := &nextMock{}
 	mockNext.On("ServeHTTP", mock.Anything, mock.Anything).Return()
 	authMiddleware := middleware.FirebaseAuthMiddleware(mockNext)
@@ -68,7 +71,7 @@ func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
 		assert.Equal(t, 1, len(mockNext.Calls))
 
 		newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
-		ctxValue := newRequest.Context().Value(middleware.FireBaseIDContextKey)
-		assert.Equal(t, ctxValue, "123")
+		_, ok := newRequest.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+		assert.True(t, ok)
 	})
 }

@@ -15,20 +15,13 @@ type ApplicationDTO struct {
 }
 
 type ProjectDTO struct {
-	ID                   string           `json:"id,omitempty"`
-	Name                 string           `json:"name"                           validate:"required"`
-	Description          string           `json:"description,omitempty"`
-	CreatedAt            time.Time        `json:"createdAt,omitempty"`
-	UpdatedAt            time.Time        `json:"updatedAt,omitempty"`
-	IsUserDefaultProject bool             `json:"isUserDefaultProject,omitempty"`
-	Permission           string           `json:"permission,omitempty"`
-	Applications         []ApplicationDTO `json:"applications,omitempty"`
-}
-
-type UserAccountDTO struct {
-	ID         string       `json:"id"`
-	FirebaseID string       `json:"firebaseId"`
-	Projects   []ProjectDTO `json:"projects"`
+	ID           string           `json:"id,omitempty"`
+	Name         string           `json:"name"                   validate:"required"`
+	Description  string           `json:"description,omitempty"`
+	CreatedAt    time.Time        `json:"createdAt,omitempty"`
+	UpdatedAt    time.Time        `json:"updatedAt,omitempty"`
+	Permission   string           `json:"permission,omitempty"`
+	Applications []ApplicationDTO `json:"applications,omitempty"`
 }
 
 type PromptConfigCreateDTO struct {

@@ -13,11 +13,10 @@ export const UserFactory = new TypeFactory<UserInfo>(() => ({
 	uid: faker.string.uuid(),
 }));
 
-export const ProjectFactory = new TypeFactory<Project>((i) => ({
+export const ProjectFactory = new TypeFactory<Project>(() => ({
 	id: faker.string.uuid(),
 	name: faker.lorem.words(),
 	description: faker.lorem.paragraph(),
-	isUserDefaultProject: i % 2 === 0,
 	permission: AccessPermission.ADMIN,
 	createdAt: faker.date.past().toISOString(),
 	updatedAt: faker.date.past().toISOString(),

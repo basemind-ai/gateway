@@ -23,22 +23,16 @@ WHERE id = $1;
 
 -- name: RetrieveProject :one
 SELECT
-    id,
-    description,
-    name,
-    created_at,
-    updated_at
-FROM project
-WHERE id = $1 AND deleted_at IS NULL;
-
--- name: RetrieveDefaultProject :one
-SELECT p.id
+    p.id,
+    p.description,
+    p.name,
+    up.permission,
+    p.created_at,
+    p.updated_at
 FROM project AS p
 LEFT JOIN user_project AS up ON p.id = up.project_id
 LEFT JOIN user_account AS ua ON up.user_id = ua.id
-WHERE
-    ua.firebase_id = $1 AND up.is_user_default_project = TRUE AND p.deleted_at IS NULL;
-
+WHERE p.id = $1 AND ua.firebase_id = $2 AND p.deleted_at IS NULL;
 
 -- name: RetrieveProjects :many
 SELECT
@@ -46,7 +40,6 @@ SELECT
     p.name,
     p.description,
     up.permission,
-    up.is_user_default_project,
     p.created_at,
     p.updated_at
 FROM user_project AS up

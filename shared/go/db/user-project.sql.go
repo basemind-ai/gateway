@@ -13,32 +13,25 @@ import (
 
 const createUserProject = `-- name: CreateUserProject :one
 
-INSERT INTO user_project (user_id, project_id, permission, is_user_default_project)
-VALUES ($1, $2, $3, $4)
-RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
+INSERT INTO user_project (user_id, project_id, permission)
+VALUES ($1, $2, $3)
+RETURNING user_id, project_id, permission, created_at, updated_at
 `
 
 type CreateUserProjectParams struct {
-	UserID               pgtype.UUID          `json:"userId"`
-	ProjectID            pgtype.UUID          `json:"projectId"`
-	Permission           AccessPermissionType `json:"permission"`
-	IsUserDefaultProject bool                 `json:"isUserDefaultProject"`
+	UserID     pgtype.UUID          `json:"userId"`
+	ProjectID  pgtype.UUID          `json:"projectId"`
+	Permission AccessPermissionType `json:"permission"`
 }
 
 // -- user_project
 func (q *Queries) CreateUserProject(ctx context.Context, arg CreateUserProjectParams) (UserProject, error) {
-	row := q.db.QueryRow(ctx, createUserProject,
-		arg.UserID,
-		arg.ProjectID,
-		arg.Permission,
-		arg.IsUserDefaultProject,
-	)
+	row := q.db.QueryRow(ctx, createUserProject, arg.UserID, arg.ProjectID, arg.Permission)
 	var i UserProject
 	err := row.Scan(
 		&i.UserID,
 		&i.ProjectID,
 		&i.Permission,
-		&i.IsUserDefaultProject,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -50,7 +43,6 @@ SELECT
     up.user_id,
     up.project_id,
     up.permission,
-    up.is_user_default_project,
     up.created_at,
     up.updated_at
 FROM user_project AS up
@@ -73,38 +65,6 @@ func (q *Queries) RetrieveUserProject(ctx context.Context, arg RetrieveUserProje
 		&i.UserID,
 		&i.ProjectID,
 		&i.Permission,
-		&i.IsUserDefaultProject,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const updateUserDefaultProject = `-- name: UpdateUserDefaultProject :one
-UPDATE user_project
-SET
-    is_user_default_project = $3,
-    updated_at = NOW()
-WHERE
-    user_id = $1
-    AND project_id = $2
-RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
-`
-
-type UpdateUserDefaultProjectParams struct {
-	UserID               pgtype.UUID `json:"userId"`
-	ProjectID            pgtype.UUID `json:"projectId"`
-	IsUserDefaultProject bool        `json:"isUserDefaultProject"`
-}
-
-func (q *Queries) UpdateUserDefaultProject(ctx context.Context, arg UpdateUserDefaultProjectParams) (UserProject, error) {
-	row := q.db.QueryRow(ctx, updateUserDefaultProject, arg.UserID, arg.ProjectID, arg.IsUserDefaultProject)
-	var i UserProject
-	err := row.Scan(
-		&i.UserID,
-		&i.ProjectID,
-		&i.Permission,
-		&i.IsUserDefaultProject,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -119,7 +79,7 @@ SET
 WHERE
     user_id = $1
     AND project_id = $2
-RETURNING user_id, project_id, permission, is_user_default_project, created_at, updated_at
+RETURNING user_id, project_id, permission, created_at, updated_at
 `
 
 type UpdateUserProjectPermissionParams struct {
@@ -135,7 +95,6 @@ func (q *Queries) UpdateUserProjectPermission(ctx context.Context, arg UpdateUse
 		&i.UserID,
 		&i.ProjectID,
 		&i.Permission,
-		&i.IsUserDefaultProject,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

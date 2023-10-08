@@ -5,15 +5,15 @@ CREATE TYPE "model_vendor" AS ENUM ('OPEN_AI');
 -- Create enum type "model_type"
 CREATE TYPE "model_type" AS ENUM ('gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4', 'gpt-4-32k');
 -- Create "project" table
-CREATE TABLE "project" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(256) NOT NULL, "description" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, PRIMARY KEY ("id"));
+CREATE TABLE "project" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "description" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, PRIMARY KEY ("id"));
 -- Create index "idx_project_name" to table: "project"
 CREATE INDEX "idx_project_name" ON "project" ("name") WHERE (deleted_at IS NULL);
 -- Create "application" table
-CREATE TABLE "application" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "description" text NOT NULL, "name" character varying(256) NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "project_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "application_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "application" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "description" text NOT NULL, "name" character varying(255) NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "project_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "application_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_application_project_id" to table: "application"
 CREATE INDEX "idx_application_project_id" ON "application" ("project_id") WHERE (deleted_at IS NULL);
 -- Create "prompt_config" table
-CREATE TABLE "prompt_config" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(256) NOT NULL, "model_parameters" json NOT NULL, "model_type" "model_type" NOT NULL, "model_vendor" "model_vendor" NOT NULL, "provider_prompt_messages" json NOT NULL, "expected_template_variables" character varying(256)[] NOT NULL, "is_default" boolean NOT NULL DEFAULT true, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_config_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "prompt_config" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "model_parameters" json NOT NULL, "model_type" "model_type" NOT NULL, "model_vendor" "model_vendor" NOT NULL, "provider_prompt_messages" json NOT NULL, "expected_template_variables" character varying(255)[] NOT NULL, "is_default" boolean NOT NULL DEFAULT true, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_config_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_prompt_config_application_id" to table: "prompt_config"
 CREATE INDEX "idx_prompt_config_application_id" ON "prompt_config" ("application_id") WHERE (deleted_at IS NULL);
 -- Create index "idx_prompt_config_created_at" to table: "prompt_config"
@@ -31,13 +31,13 @@ CREATE INDEX "idx_prompt_request_record_prompt_config_id" ON "prompt_request_rec
 -- Create index "idx_prompt_request_record_start_time" to table: "prompt_request_record"
 CREATE INDEX "idx_prompt_request_record_start_time" ON "prompt_request_record" ("start_time") WHERE (deleted_at IS NULL);
 -- Create "prompt_test" table
-CREATE TABLE "prompt_test" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(256) NOT NULL, "variable_values" json NOT NULL, "response" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "prompt_request_record_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_test_prompt_request_record_id_fkey" FOREIGN KEY ("prompt_request_record_id") REFERENCES "prompt_request_record" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "prompt_test" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "variable_values" json NOT NULL, "response" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "prompt_request_record_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_test_prompt_request_record_id_fkey" FOREIGN KEY ("prompt_request_record_id") REFERENCES "prompt_request_record" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_prompt_test_created_at" to table: "prompt_test"
 CREATE INDEX "idx_prompt_test_created_at" ON "prompt_test" ("created_at");
 -- Create index "idx_prompt_test_prompt_request_record_id" to table: "prompt_test"
 CREATE INDEX "idx_prompt_test_prompt_request_record_id" ON "prompt_test" ("prompt_request_record_id");
 -- Create "token" table
-CREATE TABLE "token" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(256) NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "token_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "token" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "token_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_token_application_id" to table: "token"
 CREATE INDEX "idx_token_application_id" ON "token" ("application_id") WHERE (deleted_at IS NULL);
 -- Create "user_account" table
@@ -45,7 +45,7 @@ CREATE TABLE "user_account" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "fire
 -- Create index "user_account_firebase_id_key" to table: "user_account"
 CREATE UNIQUE INDEX "user_account_firebase_id_key" ON "user_account" ("firebase_id");
 -- Create "user_project" table
-CREATE TABLE "user_project" ("user_id" uuid NOT NULL, "project_id" uuid NOT NULL, "permission" "access_permission_type" NOT NULL, "is_user_default_project" boolean NOT NULL DEFAULT false, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), PRIMARY KEY ("user_id", "project_id"), CONSTRAINT "user_project_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project" ("id") ON UPDATE NO ACTION ON DELETE CASCADE, CONSTRAINT "user_project_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user_account" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "user_project" ("user_id" uuid NOT NULL, "project_id" uuid NOT NULL, "permission" "access_permission_type" NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), PRIMARY KEY ("user_id", "project_id"), CONSTRAINT "user_project_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "project" ("id") ON UPDATE NO ACTION ON DELETE CASCADE, CONSTRAINT "user_project_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user_account" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_user_project_project_id" to table: "user_project"
 CREATE INDEX "idx_user_project_project_id" ON "user_project" ("project_id");
 -- Create index "idx_user_project_user_id" to table: "user_project"
