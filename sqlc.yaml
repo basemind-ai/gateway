@@ -1,7 +1,14 @@
 version: '2'
 sql:
     - engine: 'postgresql'
-      queries: './sql/query.sql'
+      queries:
+          - './sql/queries/application.sql'
+          - './sql/queries/project.sql'
+          - './sql/queries/prompt-config.sql'
+          - './sql/queries/prompt-request-record.sql'
+          - './sql/queries/token.sql'
+          - './sql/queries/user-account.sql'
+          - './sql/queries/user-project.sql'
       schema: './sql/schema.sql'
       database:
           uri: postgresql://basemind:basemind@localhost:5432/basemind
