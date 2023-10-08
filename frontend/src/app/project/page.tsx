@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { handleRetrieveUserProjects } from '@/api/projects-api';
+import { handleRetrieveUserAccountData } from '@/api';
 import { LogoutButton } from '@/components/logout-button';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
@@ -15,12 +15,12 @@ export default function ProjectView() {
 	const router = useRouter();
 
 	async function fetchLoginData() {
-		const projects = await handleRetrieveUserProjects();
-		if (projects.length === 0) {
+		const userData = await handleRetrieveUserAccountData();
+		if (userData.projects.length === 0) {
 			return;
 		}
-		setProjects(projects);
-		const [project] = projects;
+		setProjects(userData.projects);
+		const [project] = userData.projects;
 		router.push(Navigation.Dashboard.replace(':projectId', project.id));
 	}
 

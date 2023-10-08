@@ -1,7 +1,7 @@
 import { ProjectFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 
-import { handleRetrieveUserProjects } from '@/api/projects-api';
+import { handleRetrieveUserAccountData } from '@/api';
 import { HttpMethod } from '@/constants';
 
 describe('handleRetrieveUserProjects tests', () => {
@@ -11,7 +11,7 @@ describe('handleRetrieveUserProjects tests', () => {
 			ok: true,
 			json: () => Promise.resolve(projects),
 		});
-		const data = await handleRetrieveUserProjects();
+		const data = await handleRetrieveUserAccountData();
 
 		expect(data).toEqual(projects);
 		expect(mockFetch).toHaveBeenCalledWith(

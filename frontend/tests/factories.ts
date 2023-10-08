@@ -20,4 +20,6 @@ export const ProjectFactory = new TypeFactory<Project>((i) => ({
 	isUserDefaultProject: i % 2 === 0,
 	permission: AccessPermission.ADMIN,
 	createdAt: faker.date.past().toISOString(),
+	updatedAt: faker.date.past().toISOString(),
+	applications: [],
 }));
