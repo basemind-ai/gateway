@@ -62,6 +62,7 @@ SELECT
     up.permission,
     p.id AS project_id,
     p.created_at AS project_created_at,
+    p.updated_at AS project_updated_at,
     p.name AS project_name,
     p.description AS project_description,
     a.id AS application_id,
@@ -86,6 +87,7 @@ type RetrieveUserAccountDataRow struct {
 	Permission             NullAccessPermissionType `json:"permission"`
 	ProjectID              pgtype.UUID              `json:"projectId"`
 	ProjectCreatedAt       pgtype.Timestamptz       `json:"projectCreatedAt"`
+	ProjectUpdatedAt       pgtype.Timestamptz       `json:"projectUpdatedAt"`
 	ProjectName            pgtype.Text              `json:"projectName"`
 	ProjectDescription     pgtype.Text              `json:"projectDescription"`
 	ApplicationID          pgtype.UUID              `json:"applicationId"`
@@ -112,6 +114,7 @@ func (q *Queries) RetrieveUserAccountData(ctx context.Context, firebaseID string
 			&i.Permission,
 			&i.ProjectID,
 			&i.ProjectCreatedAt,
+			&i.ProjectUpdatedAt,
 			&i.ProjectName,
 			&i.ProjectDescription,
 			&i.ApplicationID,
