@@ -15,8 +15,8 @@ func RegisterHandlers(mux *chi.Mux) {
 		})
 
 		router.Route(ProjectsListEndpoint, func(projectsRouter chi.Router) {
-			router.Post("/", HandleCreateProject)
-			router.Get("/", HandleRetrieveProjects)
+			projectsRouter.Post("/", HandleCreateProject)
+			projectsRouter.Get("/", HandleRetrieveProjects)
 		})
 
 		router.Route(ProjectDetailEndpoint, func(projectsRouter chi.Router) {

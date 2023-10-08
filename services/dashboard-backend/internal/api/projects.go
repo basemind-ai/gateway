@@ -77,21 +77,23 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	firebaseID := r.Context().Value(middleware.FireBaseIDContextKey).(string)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	userProject, userProjectRetrievalErr := db.GetQueries().
+	userProject, userProjectRetrievalErr := db.
+		GetQueries().
 		RetrieveUserProject(r.Context(), db.RetrieveUserProjectParams{
 			FirebaseID: firebaseID,
 			ProjectID:  projectID,
 		})
+
 	if userProjectRetrievalErr != nil {
 		log.Error().Err(userProjectRetrievalErr).Msg("failed to retrieve user project")
-		apierror.InternalServerError().Render(w, r)
+		apierror.BadRequest().Render(w, r)
 		return
 	}
 
-	if userProject.Permission != db.AccessPermissionTypeADMIN {
-		apierror.Forbidden().Render(w, r)
-		return
-	}
+	// if userProject.Permission != db.AccessPermissionTypeADMIN {
+	//	apierror.Forbidden().Render(w, r)
+	//	return
+	// }
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
@@ -116,6 +118,7 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	if body.Name != "" {
 		updateParams.Name = body.Name
 	}
+
 	if body.Description != "" {
 		updateParams.Description = body.Description
 	}
