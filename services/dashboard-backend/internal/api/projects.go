@@ -54,10 +54,10 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dtos := make([]dto.ProjectDTO, len(projects))
+	data := make([]dto.ProjectDTO, 0)
 	for i, project := range projects {
 		id := project.ID
-		dtos[i] = dto.ProjectDTO{
+		data[i] = dto.ProjectDTO{
 			ID:          db.UUIDToString(&id),
 			Name:        project.Name.String,
 			Description: project.Description.String,
@@ -66,8 +66,7 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 			Permission:  string(project.Permission),
 		}
 	}
-
-	serialization.RenderJSONResponse(w, http.StatusOK, projects)
+	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
 // HandleUpdateProject - allows updating the name and description of a project

@@ -6,6 +6,7 @@ module.exports = {
 		'*': ['common'],
 		'/sign-in': ['signin-firebase', 'signin-banner'],
 		'/dashboard': ['dashboard-navrail'],
+		'/projects': ['createProject'],
 	},
 	loadLocaleFrom: (language, namespace) =>
 		import(`./public/locales/${language}/${namespace}.json`).then(

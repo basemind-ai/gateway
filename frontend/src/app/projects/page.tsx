@@ -1,27 +1,25 @@
 'use client';
 
-import { UserInfo } from '@firebase/auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { handleRetrieveProjects } from '@/api';
+import { CreateProjectView } from '@/components/projects/create-project-view';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjects, useSetProjects } from '@/stores/api-store';
 import { Project } from '@/types';
 
-export function ProjectsView({
-	user,
-	projects,
-}: {
-	user: UserInfo;
-	projects: Project[];
-}) {
-	return null;
-}
-
-export function CreateProjectView({ user }: { user: UserInfo }) {
-	return null;
+export function ProjectsView({ projects }: { projects: Project[] }) {
+	return (
+		<div>
+			{projects.map((p, i) => (
+				<div key={i}>
+					<span>{p.name}</span>
+				</div>
+			))}
+		</div>
+	);
 }
 
 export default function Projects() {
@@ -29,25 +27,30 @@ export default function Projects() {
 	const user = useAuthenticatedUser();
 	const setProjects = useSetProjects();
 	const projects = useProjects();
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		if (!user) {
 			router.replace(Navigation.SignIn);
 			return;
 		}
+
+		setLoading(true);
 		(async () => {
 			const retrievedProjects = await handleRetrieveProjects();
 			setProjects(retrievedProjects);
+			setLoading(false);
 		})();
 	}, []);
 
-	if (!user) {
-		return null;
+	if (loading || !user) {
+		// TODO: implement loader
+		return <div>loading</div>;
 	}
 
 	return projects.length > 0 ? (
-		<ProjectsView user={user} projects={projects} />
+		<ProjectsView projects={projects} />
 	) : (
-		<CreateProjectView user={user} />
+		<CreateProjectView cancelHandler={() => null} />
 	);
 }

@@ -34,5 +34,19 @@
 		"promptGenerativeText": "Generative Text",
 		"savedPromptConfig": "Saved Templates",
 		"newPrompt": "+ New"
+	},
+	"createProject": {
+		"title": "Setup Project",
+		"Subtitle": "Create your first project, you can always edit later",
+		"projectInputLabel": "Project Name",
+		"projectInputPlaceholder": "Acme Corporation",
+		"projectInputHelperText": "This is the name of your project",
+		"applicationInputLabel": "Application Name",
+		"applicationInputPlaceholder": "Acme Chatbot",
+		"applicationInputHelperText": "This is the name of your application",
+		"cancelButton": "Later",
+		"cancelButtonHelperText": "Close the create project view",
+		"submitButton": "Create Project",
+		"submitButtonHelperText": "Create a new project and application with the given names"
 	}
 }

@@ -1,6 +1,8 @@
 FROM golang:1.21 AS install
 WORKDIR /go/src/app
-COPY go.mod go.sum ./
+COPY e2e/go.mod e2e/go.mod
+COPY e2e/go.sum e2e/go.sum
+COPY go.* .
 RUN go mod download \
   && go install github.com/mitranim/gow@latest
 
