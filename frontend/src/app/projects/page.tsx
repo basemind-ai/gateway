@@ -23,10 +23,12 @@ export function ProjectsView({ projects }: { projects: Project[] }) {
 }
 
 export default function Projects() {
-	const router = useRouter();
-	const user = useAuthenticatedUser();
-	const setProjects = useSetProjects();
 	const projects = useProjects();
+	const router = useRouter();
+	const setProjects = useSetProjects();
+	const user = useAuthenticatedUser();
+
+	const [error, setError] = useState<Error | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -44,13 +46,27 @@ export default function Projects() {
 	}, []);
 
 	if (loading || !user) {
-		// TODO: implement loader
+		// TODO: implement loading view
 		return <div>loading</div>;
 	}
 
-	return projects.length > 0 ? (
-		<ProjectsView projects={projects} />
+	if (error) {
+		// TODO: implement error view
+		return <div>{error.message}</div>;
+	}
+
+	const handleCreateProjectCancel = () => {
+		// TODO: implement cancel handler
+		return null;
+	};
+
+	return projects.length === 0 ? (
+		<CreateProjectView
+			cancelHandler={handleCreateProjectCancel}
+			setError={setError}
+			setLoading={setLoading}
+		/>
 	) : (
-		<CreateProjectView cancelHandler={() => null} />
+		<ProjectsView projects={projects} />
 	);
 }

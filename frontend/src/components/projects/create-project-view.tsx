@@ -7,8 +7,12 @@ import { handleChange } from '@/utils/helpers';
 
 export function CreateProjectView({
 	cancelHandler,
+	setLoading,
+	setError,
 }: {
 	cancelHandler: () => void;
+	setLoading: (loading: boolean) => void;
+	setError: (error: Error | null) => void;
 }) {
 	const t = useTranslations('createProject');
 	const [name, setName] = useState('');
@@ -16,10 +20,18 @@ export function CreateProjectView({
 	const addProject = useAddProject();
 
 	const handleSubmit = async () => {
-		const project = await handleCreateProject({
-			data: { name, description },
-		});
-		addProject(project);
+		setLoading(true);
+		setError(null);
+		try {
+			const project = await handleCreateProject({
+				data: { name, description },
+			});
+			addProject(project);
+		} catch (error) {
+			setError(error as Error);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
