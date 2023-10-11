@@ -55,6 +55,7 @@ export default function Projects() {
 		return <div>{error.message}</div>;
 	}
 
+	// eslint-disable-next-line unicorn/consistent-function-scoping
 	const handleCreateProjectCancel = () => {
 		// TODO: implement cancel handler
 		return null;
