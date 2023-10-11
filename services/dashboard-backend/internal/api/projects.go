@@ -54,7 +54,7 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := make([]dto.ProjectDTO, 0)
+	data := make([]dto.ProjectDTO, len(projects))
 	for i, project := range projects {
 		id := project.ID
 		data[i] = dto.ProjectDTO{

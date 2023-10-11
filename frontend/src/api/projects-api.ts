@@ -35,17 +35,6 @@ export async function handleUpdateProject({
 	});
 }
 
-export async function handleSetDefaultProject({
-	projectId,
-}: {
-	projectId: string;
-}): Promise<Project> {
-	return await fetcher<Project>({
-		url: `projects/${projectId}/set-default/`,
-		method: HttpMethod.Patch,
-	});
-}
-
 export async function handleDeleteProject({
 	projectId,
 }: {

@@ -41,12 +41,13 @@
 		"projectInputLabel": "Project Name",
 		"projectInputPlaceholder": "Acme Corporation",
 		"projectInputHelperText": "This is the name of your project",
-		"applicationInputLabel": "Application Name",
-		"applicationInputPlaceholder": "Acme Chatbot",
-		"applicationInputHelperText": "This is the name of your application",
+		"projectDescriptionInputLabel": "Description",
+		"projectDescriptionInputPlaceholder": "Describe your project",
+		"projectDescriptionInputHelperText": "This is the description of the the project",
 		"cancelButton": "Later",
 		"cancelButtonHelperText": "Close the create project view",
 		"submitButton": "Create Project",
-		"submitButtonHelperText": "Create a new project and application with the given names"
+		"submitButtonHelperText": "Create a new project and application with the given names",
+		"optional": "optional"
 	}
 }

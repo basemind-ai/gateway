@@ -10,11 +10,24 @@ export async function handleCreateToken({
 	applicationId: string;
 	projectId: string;
 	data: TokenCreateBody;
-}): Promise<Token> {
-	return await fetcher<Token>({
+}): Promise<Required<Token>> {
+	return await fetcher<Required<Token>>({
 		url: `projects/${projectId}/applications/${applicationId}/tokens/`,
 		method: HttpMethod.Post,
 		data,
+	});
+}
+
+export async function handleRetrieveTokens({
+	applicationId,
+	projectId,
+}: {
+	applicationId: string;
+	projectId: string;
+}): Promise<Token[]> {
+	return await fetcher<Token[]>({
+		url: `projects/${projectId}/applications/${applicationId}/tokens/`,
+		method: HttpMethod.Get,
 	});
 }
 

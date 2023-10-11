@@ -1,29 +1,9 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { handleCreateApplication, handleCreateProject } from '@/api';
+import { handleCreateProject } from '@/api';
 import { useAddProject } from '@/stores/api-store';
 import { handleChange } from '@/utils/helpers';
-
-export async function handleCreateProjectAndApplication({
-	projectName,
-	applicationName,
-}: {
-	projectName: string;
-	applicationName: string;
-}) {
-	// TODO: the logic below is based on the UI - which couples the creation of an application
-	// with the creation of a project. For now we are keeping this as is - but we must revisit
-	// this decision.
-	const project = await handleCreateProject({ data: { name: projectName } });
-	const application = await handleCreateApplication({
-		projectId: project.id,
-		data: { name: applicationName },
-	});
-	project.applications = [application];
-
-	return project;
-}
 
 export function CreateProjectView({
 	cancelHandler,
@@ -31,15 +11,13 @@ export function CreateProjectView({
 	cancelHandler: () => void;
 }) {
 	const t = useTranslations('createProject');
-	const [projectName, setProjectName] = useState('');
-	const [applicationName, setApplicationName] = useState('');
-
+	const [name, setName] = useState('');
+	const [description, setDescription] = useState('');
 	const addProject = useAddProject();
 
 	const handleSubmit = async () => {
-		const project = await handleCreateProjectAndApplication({
-			projectName,
-			applicationName,
+		const project = await handleCreateProject({
+			data: { name, description },
 		});
 		addProject(project);
 	};
@@ -80,25 +58,32 @@ export function CreateProjectView({
 						<input
 							type="text"
 							placeholder={t('projectInputPlaceholder')}
-							className="input input-bordered w-[85%]"
+							className="input input-bordered w-[60%]"
 							aria-description={t('projectInputHelperText')}
-							value={projectName}
-							onChange={handleChange(setProjectName)}
+							value={name}
+							onChange={handleChange(setName)}
 						/>
 					</div>
-					<div className="pl-10 pt-2 pb-10">
+					<div className="pl-10 pr-10 pt-2 pb-10">
 						<label className="label text-left font-bold">
 							<span className="label-text">
-								{t('applicationInputLabel')}
+								{t('projectDescriptionInputLabel')}
+							</span>
+							<span className="label-text-alt text-xs text-base-content/30">
+								{t('optional')}
 							</span>
 						</label>
 						<input
 							type="text"
-							placeholder={t('applicationInputPlaceholder')}
-							className="input input-bordered w-[85%]"
-							aria-description={t('applicationInputHelperText')}
-							value={applicationName}
-							onChange={handleChange(setApplicationName)}
+							placeholder={t(
+								'projectDescriptionInputPlaceholder',
+							)}
+							className="input input-bordered w-full"
+							aria-description={t(
+								'projectDescriptionInputHelperText',
+							)}
+							value={description}
+							onChange={handleChange(setDescription)}
 						/>
 					</div>
 				</div>
@@ -113,10 +98,7 @@ export function CreateProjectView({
 					<button
 						aria-description={t('submitButtonHelperText')}
 						className="btn-sm rounded-btn btn-primary h-9 mr-5"
-						disabled={
-							projectName.length === 0 ||
-							applicationName.length === 0
-						}
+						disabled={name.length === 0}
 						onClick={() => {
 							void handleSubmit();
 						}}
