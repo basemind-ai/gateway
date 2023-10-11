@@ -1,6 +1,9 @@
 package api
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
@@ -8,10 +11,17 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
+	"github.com/basemind-ai/monorepo/shared/go/utils"
+	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
-	"net/http"
 )
+
+type AnalyticsResponse struct {
+	TotalRequests int64   `json:"totalRequests"`
+	ProjectedCost float32 `json:"projectedCost"`
+}
 
 // HandleCreateApplication - create a new application .
 func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
@@ -118,4 +128,67 @@ func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) {
+	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
+	if uuidErr != nil {
+		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		return
+	}
+
+	to := r.URL.Query().Get("toDate")
+	if to == "" {
+		to = time.Now().Format(time.RFC3339)
+	}
+
+	from := r.URL.Query().Get("fromDate")
+	if from == "" {
+		from = utils.GetFirstDayOfMonth().Format(time.RFC3339)
+	}
+
+	fromDate, err := time.Parse(time.RFC3339, from)
+	if err != nil {
+		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		return
+	}
+
+	toDate, err := time.Parse(time.RFC3339, to)
+	if err != nil {
+		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		return
+	}
+
+	promptReqParam := db.RetrieveTotalPromptRequestRecordParams{
+		ApplicationID: *applicationId,
+		FromDate:      pgtype.Timestamptz{Time: fromDate, Valid: true},
+		ToDate:        pgtype.Timestamptz{Time: toDate, Valid: true},
+	}
+
+	totalRequests, dbErr := db.GetQueries().RetrieveTotalPromptRequestRecord(r.Context(), promptReqParam)
+	if dbErr != nil {
+		log.Error().Err(err).Msg("failed to retrieve total records")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	recordPerPromptConfig, dbErr := db.GetQueries().RetrieveTotalTokensPerPromptConfig(r.Context(), promptReqParam)
+	if dbErr != nil {
+		log.Error().Err(err).Msg("failed to retrieve total records")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	var totalCost float32
+	for _, record := range recordPerPromptConfig {
+		totalCost += tokenutils.GetCostByModelType(record.TotalTokens, record.ModelType)
+	}
+
+	response := AnalyticsResponse{
+		TotalRequests: totalRequests,
+		ProjectedCost: totalCost,
+	}
+
+	w.WriteHeader(http.StatusOK)
+	serialization.RenderJSONResponse(w, http.StatusOK, response)
 }

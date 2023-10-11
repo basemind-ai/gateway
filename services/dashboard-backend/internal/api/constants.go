@@ -9,6 +9,7 @@ const (
 	ApplicationDetailEndpoint      = "/projects/{projectId}/applications/{applicationId}"
 	ApplicationTokensListEndpoint  = "/projects/{projectId}/applications/{applicationId}/tokens"           //nolint: gosec
 	ApplicationTokenDetailEndpoint = "/projects/{projectId}/applications/{applicationId}/tokens/{tokenId}" //nolint: gosec
+	ApplicationAnalyticsEndpoint   = "projects/{projectId}/applications/{applicationId}/analytics"
 	PromptConfigListEndpoint       = "/projects/{projectId}/applications/{applicationId}/prompt-configs"
 	PromptConfigDetailEndpoint     = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}"
 	PromptConfigSetDefaultEndpoint = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}/set-default"

@@ -1,11 +1,12 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
-	"net/http"
 )
 
 var (
@@ -92,6 +93,20 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Delete("/", HandleDeleteApplication)
 			subRouter.Get("/", HandleRetrieveApplication)
 			subRouter.Patch("/", HandleUpdateApplication)
+		})
+
+		router.Route(ApplicationAnalyticsEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet:    allPermissions,
+						http.MethodPatch:  adminOnly,
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Get("/", HandleRetrieveApplicationAnalytics)
 		})
 
 		router.Route(ApplicationTokensListEndpoint, func(subRouter chi.Router) {
