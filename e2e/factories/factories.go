@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -138,4 +140,29 @@ func CreatePromptConfig(
 	}
 
 	return &promptConfig, nil
+}
+
+func CreatePromptRequestRecord(ctx context.Context,
+	applicationID pgtype.UUID,
+) (*db.PromptRequestRecord, error) {
+	tokenCnt := int32(10)
+	promptStartTime := time.Now()
+	promptFinishTime := promptStartTime.Add(10 * time.Second)
+
+	promptConfig, _ := CreatePromptConfig(ctx, applicationID)
+	promptRequestRecord, promptRequestRecordCreateErr := db.GetQueries().
+		CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+			IsStreamResponse:      true,
+			RequestTokens:         tokenCnt,
+			ResponseTokens:        tokenCnt,
+			StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+			FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+			StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
+			PromptConfigID:        promptConfig.ID,
+		})
+	if promptRequestRecordCreateErr != nil {
+		return nil, promptRequestRecordCreateErr
+	}
+
+	return &promptRequestRecord, nil
 }

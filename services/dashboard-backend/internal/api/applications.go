@@ -11,17 +11,11 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/timeutils"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
-	"github.com/basemind-ai/monorepo/shared/go/utils"
-	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 )
-
-type AnalyticsResponse struct {
-	TotalRequests int64   `json:"totalRequests"`
-	ProjectedCost float32 `json:"projectedCost"`
-}
 
 // HandleCreateApplication - create a new application .
 func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
@@ -131,11 +125,7 @@ func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) {
-	applicationId, uuidErr := db.StringToUUID(chi.URLParam(r, "applicationId"))
-	if uuidErr != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
-		return
-	}
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	to := r.URL.Query().Get("toDate")
 	if to == "" {
@@ -144,7 +134,7 @@ func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) 
 
 	from := r.URL.Query().Get("fromDate")
 	if from == "" {
-		from = utils.GetFirstDayOfMonth().Format(time.RFC3339)
+		from = timeutils.GetFirstDayOfMonth().Format(time.RFC3339)
 	}
 
 	fromDate, err := time.Parse(time.RFC3339, from)
@@ -159,20 +149,14 @@ func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	promptReqParam := db.RetrieveTotalPromptRequestRecordParams{
-		ApplicationID: *applicationId,
-		FromDate:      pgtype.Timestamptz{Time: fromDate, Valid: true},
-		ToDate:        pgtype.Timestamptz{Time: toDate, Valid: true},
-	}
-
-	totalRequests, dbErr := db.GetQueries().RetrieveTotalPromptRequestRecord(r.Context(), promptReqParam)
+	totalRequests, dbErr := repositories.GetPromptRequestCountByDateRange(r.Context(), applicationID, fromDate, toDate)
 	if dbErr != nil {
 		log.Error().Err(err).Msg("failed to retrieve total records")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
 
-	recordPerPromptConfig, dbErr := db.GetQueries().RetrieveTotalTokensPerPromptConfig(r.Context(), promptReqParam)
+	tokenCntMap, dbErr := repositories.GetTokenUsagePerModelTypeByDateRange(r.Context(), applicationID, fromDate, toDate)
 	if dbErr != nil {
 		log.Error().Err(err).Msg("failed to retrieve total records")
 		apierror.InternalServerError().Render(w, r)
@@ -180,11 +164,11 @@ func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) 
 	}
 
 	var totalCost float32
-	for _, record := range recordPerPromptConfig {
-		totalCost += tokenutils.GetCostByModelType(record.TotalTokens, record.ModelType)
+	for model, tokenCnt := range tokenCntMap {
+		totalCost += tokenutils.GetCostByModelType(tokenCnt, model)
 	}
 
-	response := AnalyticsResponse{
+	response := dto.ApplicationAnalyticsDTO{
 		TotalRequests: totalRequests,
 		ProjectedCost: totalCost,
 	}
