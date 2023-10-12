@@ -18,6 +18,8 @@ import (
 func TestApplicationsAPI(t *testing.T) {
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
+	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+
 	testClient := createTestClient(t, userAccount)
 
 	redisDB, redisMock := testutils.CreateMockRedisClient(t)

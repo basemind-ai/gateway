@@ -21,13 +21,6 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func createUser(t *testing.T) string {
-	t.Helper()
-	user, _ := factories.CreateUserAccount(context.TODO())
-
-	return user.FirebaseID
-}
-
 func createProject(t *testing.T) string {
 	t.Helper()
 	project, _ := factories.CreateProject(context.TODO())
@@ -41,9 +34,11 @@ func createUserProject(
 	permission db.AccessPermissionType,
 ) {
 	t.Helper()
+
 	userAccount, err := db.
 		GetQueries().
 		RetrieveUserAccount(context.TODO(), firebaseID)
+
 	assert.NoError(t, err)
 
 	projectIDUUID, err := db.StringToUUID(projectID)

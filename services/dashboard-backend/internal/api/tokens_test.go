@@ -31,6 +31,8 @@ func TestTokensAPI(t *testing.T) {
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
 	applicationID := createApplication(t, projectID)
+	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+
 	testClient := createTestClient(t, userAccount)
 
 	listURL := fmt.Sprintf(

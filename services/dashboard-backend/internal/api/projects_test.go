@@ -41,6 +41,7 @@ func TestProjectsAPI(t *testing.T) {
 			assert.Equal(t, body.Description, data.Description)
 			assert.Equal(t, "ADMIN", data.Permission)
 		})
+
 		t.Run(
 			"responds with status 400 BAD REQUEST if the request body is invalid",
 			func(t *testing.T) {
@@ -119,10 +120,8 @@ func TestProjectsAPI(t *testing.T) {
 		})
 
 		t.Run(
-			"responds with status 403 FORBIDDEN if user does not have ADMIN permission",
+			"responds with status 401 UNAUTHORIZED if user does not have ADMIN permission",
 			func(t *testing.T) {
-				t.Skip("should skip until the authorization middleware is in place")
-
 				projectID := createProject(t)
 				createUserProject(
 					t,
@@ -141,7 +140,7 @@ func TestProjectsAPI(t *testing.T) {
 				)
 				response, requestErr := testClient.Patch(context.TODO(), url, body)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+				assert.Equal(t, http.StatusUnauthorized, response.StatusCode)
 			},
 		)
 
@@ -163,7 +162,7 @@ func TestProjectsAPI(t *testing.T) {
 		)
 
 		t.Run(
-			"responds with status 400 BAD REQUEST if no project matching the ID is found",
+			"responds with status 403 Forbidden if no project matching the ID is found",
 			func(t *testing.T) {
 				projectID := createProject(t)
 				createUserProject(
@@ -186,7 +185,7 @@ func TestProjectsAPI(t *testing.T) {
 				)
 				response, requestErr := testClient.Patch(context.TODO(), url, body)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
 			},
 		)
 	})
@@ -226,10 +225,8 @@ func TestProjectsAPI(t *testing.T) {
 			},
 		)
 		t.Run(
-			"responds with status 403 FORBIDDEN if user does not have ADMIN permission",
+			"responds with status 401 UNAUTHORIZED if user does not have ADMIN permission",
 			func(t *testing.T) {
-				t.Skip("should skip until the authorization middleware is in place")
-
 				projectID := createProject(t)
 				createUserProject(
 					t,
@@ -244,7 +241,7 @@ func TestProjectsAPI(t *testing.T) {
 				)
 				response, requestErr := testClient.Delete(context.TODO(), url)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+				assert.Equal(t, http.StatusUnauthorized, response.StatusCode)
 			},
 		)
 		t.Run(
@@ -261,7 +258,7 @@ func TestProjectsAPI(t *testing.T) {
 		)
 
 		t.Run(
-			"responds with status 400 BAD REQUEST if no project matching the ID is found",
+			"responds with status 403 FORBIDDEN if no project matching the ID is found",
 			func(t *testing.T) {
 				projectID := createProject(t)
 				createUserProject(
@@ -280,7 +277,7 @@ func TestProjectsAPI(t *testing.T) {
 				)
 				response, requestErr := testClient.Delete(context.TODO(), url)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
 			},
 		)
 	})

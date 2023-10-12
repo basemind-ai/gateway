@@ -20,13 +20,6 @@ var (
 func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(router chi.Router) {
 		router.Route(ProjectsListEndpoint, func(subRouter chi.Router) {
-			subRouter.Use(
-				middleware.AuthorizationMiddleware(
-					middleware.MethodPermissionMap{
-						http.MethodGet: allPermissions,
-					},
-				),
-			)
 			subRouter.Post("/", HandleCreateProject)
 			subRouter.Get("/", HandleRetrieveProjects)
 		})
