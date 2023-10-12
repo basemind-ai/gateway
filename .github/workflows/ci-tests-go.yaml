@@ -18,6 +18,7 @@ env:
     GCP_PROJECT_NUMBER: 78794879644
     GCP_SERVICE_ACCOUNT_NAME: firebase-adminsdk-frgvx
     GCP_WORKLOAD_IDENTITY_POOL: dev-pool
+    TEST_SLEEP_TIMEOUT: 1s
 jobs:
     test:
         runs-on: ubuntu-latest

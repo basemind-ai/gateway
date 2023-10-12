@@ -178,7 +178,7 @@ func TestPromptConfigRepository(t *testing.T) {
 			)
 			assert.NoError(t, err)
 
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(testutils.GetSleepTimeout())
 
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
@@ -312,7 +312,7 @@ func TestPromptConfigRepository(t *testing.T) {
 			)
 			assert.NoError(t, err)
 
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(testutils.GetSleepTimeout())
 
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})

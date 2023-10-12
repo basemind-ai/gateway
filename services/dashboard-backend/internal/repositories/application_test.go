@@ -74,7 +74,7 @@ func TestApplicationRepository(t *testing.T) {
 		err := repositories.DeleteApplication(context.TODO(), application.ID)
 		assert.NoError(t, err)
 
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(testutils.GetSleepTimeout())
 
 		assert.NoError(t, redisMock.ExpectationsWereMet())
 	})
