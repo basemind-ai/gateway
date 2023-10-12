@@ -3,8 +3,8 @@ package apierror_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
-	"github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"net/http"
 	"testing"
 
@@ -70,7 +70,7 @@ func TestAPIError(t *testing.T) {
 			ExpectedMessage: http.StatusText(http.StatusInternalServerError),
 		},
 	} {
-		client := testutils.CreateTestClient(
+		client := testutils.CreateTestHTTPClient(
 			t,
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				testCase.APIErrType.Render(w, r)

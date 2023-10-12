@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func CreateTestClient(t *testing.T, handler http.Handler) httpclient.Client {
+func CreateTestHTTPClient(t *testing.T, handler http.Handler) httpclient.Client {
 	t.Helper()
 	server := httptest.NewServer(handler)
 

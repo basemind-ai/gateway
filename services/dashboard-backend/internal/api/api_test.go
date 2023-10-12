@@ -5,19 +5,18 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient"
+	httpTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
-	httpTestUtils "github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/router"
 )
 
 func TestMain(m *testing.M) {
-	cleanup := dbTestUtils.CreateNamespaceTestDBModule("api-test")
+	cleanup := httpTestUtils.CreateNamespaceTestDBModule("api-test")
 	defer cleanup()
 	m.Run()
 }
@@ -77,5 +76,5 @@ func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Clie
 		},
 	})
 
-	return httpTestUtils.CreateTestClient(t, r)
+	return httpTestUtils.CreateTestHTTPClient(t, r)
 }

@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestUserAccountRepository(t *testing.T) { //nolint: revive
+func TestUserAccountRepository(t *testing.T) {
 	t.Run("GetOrCreateUserAccount", func(t *testing.T) {
 		t.Run("should return a user account data if it exists", func(t *testing.T) {
 			userAccount, _ := factories.CreateUserAccount(context.TODO())

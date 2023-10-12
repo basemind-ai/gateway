@@ -5,8 +5,7 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai/testutils"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
-	"github.com/basemind-ai/monorepo/shared/go/grpcutils/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -15,7 +14,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	cleanup := dbTestUtils.CreateNamespaceTestDBModule("openai-test")
+	cleanup := testutils.CreateNamespaceTestDBModule("openai-test")
 	defer cleanup()
 	m.Run()
 }
@@ -23,7 +22,7 @@ func TestMain(m *testing.M) {
 func CreateClientAndService(t *testing.T) (*openai.Client, *openaitestutils.MockOpenAIService) {
 	t.Helper()
 	mockService := &openaitestutils.MockOpenAIService{T: t}
-	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](
+	listener := testutils.CreateTestGRPCServer[openaiconnector.OpenAIServiceServer](
 		t,
 		openaiconnector.RegisterOpenAIServiceServer,
 		mockService,

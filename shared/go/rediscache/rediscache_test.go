@@ -3,6 +3,7 @@ package rediscache_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/go-redis/cache/v9"
 	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
@@ -35,11 +36,7 @@ func TestRedisClient(t *testing.T) {
 		_, err := rediscache.New("redis://redis:6379")
 		assert.Nil(t, err)
 
-		db, mockRedis := redismock.NewClientMock()
-		rediscache.SetClient(cache.New(&cache.Options{
-			Redis: db,
-		}))
-
+		_, mockRedis := testutils.CreateMockRedisClient(t)
 		client := rediscache.GetClient()
 
 		expected, _ := client.Marshal("doe")
@@ -55,10 +52,7 @@ func TestRedisClient(t *testing.T) {
 		}
 
 		t.Run("returns value from cache if it exists", func(t *testing.T) {
-			db, mockRedis := redismock.NewClientMock()
-			rediscache.SetClient(cache.New(&cache.Options{
-				Redis: db,
-			}))
+			db, mockRedis := testutils.CreateMockRedisClient(t)
 
 			db.Set(context.TODO(), key, val, time.Second)
 			mockRedis.ExpectGet(key).SetVal("doe")

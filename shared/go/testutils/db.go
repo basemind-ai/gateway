@@ -81,7 +81,7 @@ func CreateTestDB(t *testing.T) {
 
 func MigrateTestDB(dbURL string) error {
 	_, filePath, _, _ := runtime.Caller(1)
-	repositoryRoot, _ := filepath.Abs(filePath + "/../../../../../")
+	repositoryRoot, _ := filepath.Abs(filePath + "/../../../../")
 	migrationsPath := fmt.Sprintf("file://%s/sql/migrations", repositoryRoot)
 
 	cmd := exec.Command(

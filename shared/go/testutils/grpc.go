@@ -3,16 +3,15 @@ package testutils
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/test/bufconn"
 	"log"
 	"net"
 	"testing"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/test/bufconn"
 )
 
-func CreateTestServer[T any](
+func CreateTestGRPCServer[T any](
 	t *testing.T,
 	grpcRegistrar func(s grpc.ServiceRegistrar, srv T),
 	service T,
@@ -46,7 +45,7 @@ func CreateTestServer[T any](
 	return listen
 }
 
-func CreateTestClient[T any](
+func CreateTestGRPCClient[T any](
 	t *testing.T,
 	listen *bufconn.Listener,
 	clientFactory func(cc grpc.ClientConnInterface) T,

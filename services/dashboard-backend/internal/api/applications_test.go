@@ -7,6 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strings"
@@ -17,6 +18,8 @@ func TestApplicationsAPI(t *testing.T) {
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
 	testClient := createTestClient(t, userAccount)
+
+	_, _ = testutils.CreateMockRedisClient(t)
 
 	t.Run(fmt.Sprintf("POST: %s", api.ApplicationsListEndpoint), func(t *testing.T) {
 		t.Run("creates a new application", func(t *testing.T) {
