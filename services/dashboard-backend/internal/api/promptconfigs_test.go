@@ -10,6 +10,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strings"
@@ -60,6 +61,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				promptConfigID),
 		)
 	}
+
+	redisDB, redisMock := testutils.CreateMockRedisClient(t)
 
 	t.Run(fmt.Sprintf("POST: %s", api.PromptConfigListEndpoint), func(t *testing.T) {
 		applicationID := createApplication(t, projectID)
@@ -499,6 +502,60 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, true, dbNonDefaultPromptConfig.IsDefault)
 		})
 
+		t.Run("invalidates prompt-config caches", func(t *testing.T) {
+			applicationID := createApplication(t, projectID)
+			uuidID, _ := db.StringToUUID(applicationID)
+
+			defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().
+				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					ApplicationID:             *uuidID,
+					Name:                      factories.RandomString(10),
+					ModelVendor:               db.ModelVendorOPENAI,
+					ModelType:                 db.ModelTypeGpt4,
+					ModelParameters:           modelParameters,
+					ProviderPromptMessages:    promptMessages,
+					ExpectedTemplateVariables: []string{""},
+					IsDefault:                 true,
+				})
+			assert.NoError(t, defaultPromptConfigCreateErr)
+
+			nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
+				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					ApplicationID:             *uuidID,
+					Name:                      factories.RandomString(10),
+					ModelVendor:               db.ModelVendorOPENAI,
+					ModelType:                 db.ModelTypeGpt4,
+					ModelParameters:           modelParameters,
+					ProviderPromptMessages:    promptMessages,
+					ExpectedTemplateVariables: []string{""},
+					IsDefault:                 false,
+				})
+			assert.NoError(t, nonDefaultPromptConfigCreateErr)
+
+			nonDefaultPromptConfigID := db.UUIDToString(&nonDefaultPromptConfig.ID)
+
+			cacheKeys := []string{
+				fmt.Sprintf("%s:%s", applicationID, db.UUIDToString(&defaultPromptConfig.ID)),
+				fmt.Sprintf("%s:%s", applicationID, nonDefaultPromptConfigID),
+				applicationID,
+			}
+
+			for _, cacheKey := range cacheKeys {
+				redisDB.Set(context.TODO(), cacheKey, "test", 0)
+				redisMock.ExpectDel(cacheKey).SetVal(1)
+			}
+
+			response, requestErr := testClient.Patch(
+				context.TODO(),
+				fmtSetDefaultEndpoint(projectID, applicationID, nonDefaultPromptConfigID),
+				nil,
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
+
+			assert.NoError(t, redisMock.ExpectationsWereMet())
+		})
+
 		t.Run(
 			"returns bad request when trying to set the default prompt config as default",
 			func(t *testing.T) {
@@ -785,6 +842,37 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, newModelParameters, dbPromptConfig.ModelParameters)
 		})
 
+		t.Run("invalidates prompt-config cache", func(t *testing.T) {
+			applicationID := createApplication(t, projectID)
+			uuidID, _ := db.StringToUUID(applicationID)
+
+			promptConfig, configCreateErr := db.GetQueries().
+				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					ApplicationID:             *uuidID,
+					Name:                      factories.RandomString(10),
+					ModelVendor:               db.ModelVendorOPENAI,
+					ModelType:                 db.ModelTypeGpt4,
+					ModelParameters:           modelParameters,
+					ProviderPromptMessages:    promptMessages,
+					ExpectedTemplateVariables: []string{""},
+					IsDefault:                 true,
+				})
+
+			assert.NoError(t, configCreateErr)
+			cacheKey := fmt.Sprintf("%s:%s", applicationID, db.UUIDToString(&promptConfig.ID))
+			redisDB.Set(context.TODO(), cacheKey, "test", 0)
+			redisMock.ExpectDel(cacheKey).SetVal(1)
+
+			response, requestErr := testClient.Patch(
+				context.TODO(),
+				fmtDetailEndpoint(projectID, applicationID, db.UUIDToString(&promptConfig.ID)),
+				dto.PromptConfigUpdateDTO{})
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
+
+			assert.NoError(t, redisMock.ExpectationsWereMet())
+		})
+
 		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			applicationID := createApplication(t, projectID)
 
@@ -870,6 +958,37 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			_, retrivalErr := db.GetQueries().
 				RetrievePromptConfig(context.TODO(), promptConfig.ID)
 			assert.Error(t, retrivalErr)
+		})
+
+		t.Run("invalidates prompt-config cache", func(t *testing.T) {
+			applicationID := createApplication(t, projectID)
+			uuidID, _ := db.StringToUUID(applicationID)
+
+			promptConfig, configCreateErr := db.GetQueries().
+				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					ApplicationID:             *uuidID,
+					Name:                      factories.RandomString(10),
+					ModelVendor:               db.ModelVendorOPENAI,
+					ModelType:                 db.ModelTypeGpt4,
+					ModelParameters:           modelParameters,
+					ProviderPromptMessages:    promptMessages,
+					ExpectedTemplateVariables: []string{""},
+					IsDefault:                 false,
+				})
+			assert.NoError(t, configCreateErr)
+
+			cacheKey := fmt.Sprintf("%s:%s", applicationID, db.UUIDToString(&promptConfig.ID))
+			redisDB.Set(context.TODO(), cacheKey, "test", 0)
+			redisMock.ExpectDel(cacheKey).SetVal(1)
+
+			response, requestErr := testClient.Delete(
+				context.TODO(),
+				fmtDetailEndpoint(projectID, applicationID, db.UUIDToString(&promptConfig.ID)),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusNoContent, response.StatusCode)
+
+			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
 
 		t.Run("returns bad request when deleting a default prompt config", func(t *testing.T) {

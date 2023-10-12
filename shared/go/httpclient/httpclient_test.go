@@ -3,7 +3,7 @@ package httpclient_test
 import (
 	"context"
 	"encoding/json"
-	"github.com/basemind-ai/monorepo/shared/go/httpclient/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"io"
 	"net/http"
 	"testing"
@@ -41,7 +41,7 @@ func TestClient(t *testing.T) {
 			Body:   &Body{Message: "ABC"},
 		},
 	} {
-		client := testutils.CreateTestClient(
+		client := testutils.CreateTestHTTPClient(
 			t,
 			http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 				assert.Equal(t, request.Method, testCase.Method)

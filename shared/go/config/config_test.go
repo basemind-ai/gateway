@@ -3,7 +3,7 @@ package config_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/config"
-	"github.com/basemind-ai/monorepo/shared/go/config/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

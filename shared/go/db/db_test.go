@@ -2,12 +2,12 @@ package db_test
 
 import (
 	"context"
+	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
 	"testing"
 	"time"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
 	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/google/uuid"

@@ -149,6 +149,7 @@ func HandleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Requ
 // HandleDeletePromptConfig - deletes the prompt config with the given ID.
 // The default prompt config cannot be deleted.
 func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	promptConfig, retrievePromptConfigErr := db.GetQueries().
@@ -165,7 +166,7 @@ func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if deleteErr := db.GetQueries().DeletePromptConfig(r.Context(), promptConfigID); deleteErr != nil {
+	if deleteErr := repositories.DeletePromptConfig(r.Context(), applicationID, promptConfigID); deleteErr != nil {
 		log.Error().Err(deleteErr).Msg("failed to delete prompt config")
 		apierror.InternalServerError().Render(w, r)
 		return

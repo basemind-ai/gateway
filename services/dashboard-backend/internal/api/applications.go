@@ -3,8 +3,10 @@ package api
 import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
@@ -92,6 +94,10 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	go func() {
+		rediscache.Invalidate(r.Context(), db.UUIDToString(&application.ID))
+	}()
+
 	serialization.RenderJSONResponse(w, http.StatusOK, dto.ApplicationDTO{
 		ID:          db.UUIDToString(&application.ID),
 		Name:        application.Name,
@@ -105,10 +111,11 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	if applicationDeleteErr := db.GetQueries().DeleteApplication(r.Context(), applicationID); applicationDeleteErr != nil {
+	if applicationDeleteErr := repositories.DeleteApplication(r.Context(), applicationID); applicationDeleteErr != nil {
 		log.Error().Err(applicationDeleteErr).Msg("failed to delete application")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }

@@ -1,12 +1,12 @@
 package repositories_test
 
 import (
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/db/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	cleanup := dbTestUtils.CreateNamespaceTestDBModule("repositories-test")
+	cleanup := testutils.CreateNamespaceTestDBModule("repositories-test")
 	defer cleanup()
 	m.Run()
 }

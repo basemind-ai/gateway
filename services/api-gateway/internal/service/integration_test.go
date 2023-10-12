@@ -10,9 +10,9 @@ import (
 	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/service"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
-	"github.com/basemind-ai/monorepo/shared/go/grpcutils/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/go-redis/cache/v9"
 	"github.com/go-redis/redismock/v9"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
@@ -31,7 +31,7 @@ const JWTSecret = "ABC123"
 func CreateOpenAIService(t *testing.T) *openaitestutils.MockOpenAIService {
 	t.Helper()
 	mockService := &openaitestutils.MockOpenAIService{T: t}
-	listener := testutils.CreateTestServer[openaiconnector.OpenAIServiceServer](
+	listener := testutils.CreateTestGRPCServer[openaiconnector.OpenAIServiceServer](
 		t,
 		openaiconnector.RegisterOpenAIServiceServer,
 		mockService,
@@ -54,7 +54,7 @@ func CreateOpenAIService(t *testing.T) *openaitestutils.MockOpenAIService {
 
 func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 	t.Helper()
-	listener := testutils.CreateTestServer[gateway.APIGatewayServiceServer](
+	listener := testutils.CreateTestGRPCServer[gateway.APIGatewayServiceServer](
 		t,
 		gateway.RegisterAPIGatewayServiceServer,
 		service.New(),
@@ -66,7 +66,7 @@ func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 			auth.StreamServerInterceptor(grpcutils.NewAuthHandler(JWTSecret).HandleAuth),
 		),
 	)
-	return testutils.CreateTestClient[gateway.APIGatewayServiceClient](
+	return testutils.CreateTestGRPCClient[gateway.APIGatewayServiceClient](
 		t,
 		listener,
 		gateway.NewAPIGatewayServiceClient,
