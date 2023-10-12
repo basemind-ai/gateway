@@ -41,7 +41,7 @@ func DeleteApplication(ctx context.Context, applicationID pgtype.UUID) error {
 	shouldCommitCtx := db.CreateShouldCommitContext(transactionCtx, false)
 
 	for _, promptConfig := range promptConfigs {
-		if deleteErr := queries.DeletePromptConfig(shouldCommitCtx, promptConfig.ID); deleteErr != nil {
+		if deleteErr := DeletePromptConfig(shouldCommitCtx, applicationID, promptConfig.ID); deleteErr != nil {
 			return fmt.Errorf("failed to delete prompt config: %w", deleteErr)
 		}
 	}
