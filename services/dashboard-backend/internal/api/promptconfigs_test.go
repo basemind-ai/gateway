@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestPromptConfigAPI(t *testing.T) { //nolint: revive
@@ -553,6 +554,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
+			time.Sleep(testutils.GetSleepTimeout())
+
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
 
@@ -870,6 +873,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
+			time.Sleep(testutils.GetSleepTimeout())
+
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
 
@@ -987,6 +992,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			)
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusNoContent, response.StatusCode)
+
+			time.Sleep(testutils.GetSleepTimeout())
 
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})

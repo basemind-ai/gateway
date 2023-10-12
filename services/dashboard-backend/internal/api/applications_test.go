@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestApplicationsAPI(t *testing.T) {
@@ -239,6 +240,8 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
+			time.Sleep(testutils.GetSleepTimeout())
+
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
 
@@ -373,6 +376,8 @@ func TestApplicationsAPI(t *testing.T) {
 
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusNoContent, response.StatusCode)
+
+			time.Sleep(testutils.GetSleepTimeout())
 
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
