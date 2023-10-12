@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
@@ -110,15 +111,11 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	if applicationDeleteErr := db.GetQueries().DeleteApplication(r.Context(), applicationID); applicationDeleteErr != nil {
+	if applicationDeleteErr := repositories.DeleteApplication(r.Context(), applicationID); applicationDeleteErr != nil {
 		log.Error().Err(applicationDeleteErr).Msg("failed to delete application")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
-
-	go func() {
-		rediscache.Invalidate(r.Context(), db.UUIDToString(&applicationID))
-	}()
 
 	w.WriteHeader(http.StatusNoContent)
 }

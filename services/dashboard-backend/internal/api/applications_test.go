@@ -19,7 +19,7 @@ func TestApplicationsAPI(t *testing.T) {
 	projectID := createProject(t)
 	testClient := createTestClient(t, userAccount)
 
-	_, _ = testutils.CreateMockRedisClient(t)
+	redisDB, redisMock := testutils.CreateMockRedisClient(t)
 
 	t.Run(fmt.Sprintf("POST: %s", api.ApplicationsListEndpoint), func(t *testing.T) {
 		t.Run("creates a new application", func(t *testing.T) {
@@ -215,6 +215,32 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, "updated app", responseApplication.Name)
 			assert.Equal(t, "updated app description", responseApplication.Description)
 		})
+		t.Run("invalidates application prompt-config default cache", func(t *testing.T) {
+			applicationID := createApplication(t, projectID)
+
+			redisDB.Set(context.TODO(), applicationID, "test", 0)
+			redisMock.ExpectDel(applicationID).SetVal(1)
+
+			response, requestErr := testClient.Patch(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
+						"{applicationId}",
+						applicationID,
+					),
+				),
+				map[string]any{
+					"name":        "updated app",
+					"description": "updated app description",
+				},
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
+
+			assert.NoError(t, redisMock.ExpectationsWereMet())
+		})
 
 		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Patch(
@@ -325,6 +351,30 @@ func TestApplicationsAPI(t *testing.T) {
 				RetrieveApplication(context.TODO(), *uuidID)
 
 			assert.Error(t, applicationRetrieveErr)
+		})
+
+		t.Run("invalidates application prompt-config default cache", func(t *testing.T) {
+			applicationID := createApplication(t, projectID)
+
+			redisDB.Set(context.TODO(), applicationID, "test", 0)
+			redisMock.ExpectDel(applicationID).SetVal(1)
+
+			response, requestErr := testClient.Delete(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
+						"{applicationId}",
+						applicationID,
+					),
+				),
+			)
+
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusNoContent, response.StatusCode)
+
+			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
 
 		t.Run("returns an error if the application id is invalid", func(t *testing.T) {

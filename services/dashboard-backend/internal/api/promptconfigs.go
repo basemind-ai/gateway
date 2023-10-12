@@ -7,7 +7,6 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
@@ -78,7 +77,6 @@ func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, promptConfigs)
 }
 func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
-	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	updatePromptConfigDTO := &dto.PromptConfigUpdateDTO{}
@@ -116,18 +114,6 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		cacheKeys := []string{
-			fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), db.UUIDToString(&promptConfigID)),
-		}
-
-		if updatedPromptConfig.IsDefault {
-			cacheKeys = append(cacheKeys, db.UUIDToString(&applicationID))
-		}
-
-		rediscache.Invalidate(r.Context(), cacheKeys...)
-	}()
-
 	serialization.RenderJSONResponse(w, http.StatusOK, updatedPromptConfig)
 }
 
@@ -157,14 +143,6 @@ func HandleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	go func() {
-		cacheKeys := []string{
-			db.UUIDToString(&applicationID),
-			fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), db.UUIDToString(&promptConfigID)),
-		}
-		rediscache.Invalidate(r.Context(), cacheKeys...)
-	}()
-
 	serialization.RenderJSONResponse(w, http.StatusOK, nil)
 }
 
@@ -188,23 +166,11 @@ func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if deleteErr := db.GetQueries().DeletePromptConfig(r.Context(), promptConfigID); deleteErr != nil {
+	if deleteErr := repositories.DeletePromptConfig(r.Context(), applicationID, promptConfigID); deleteErr != nil {
 		log.Error().Err(deleteErr).Msg("failed to delete prompt config")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
-
-	go func() {
-		cacheKeys := []string{
-			fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), db.UUIDToString(&promptConfigID)),
-		}
-
-		if promptConfig.IsDefault {
-			cacheKeys = append(cacheKeys, db.UUIDToString(&applicationID))
-		}
-
-		rediscache.Invalidate(r.Context(), cacheKeys...)
-	}()
 
 	w.WriteHeader(http.StatusNoContent)
 }

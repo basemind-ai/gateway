@@ -6,12 +6,11 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"strings"
 )
-
-// TODO: add cache invalidation
 
 func CreatePromptConfig(
 	ctx context.Context,
@@ -125,6 +124,20 @@ func UpdateApplicationDefaultPromptConfig(
 		return fmt.Errorf("failed to commit transaction - %w", commitErr)
 	}
 
+	go func() {
+		cacheKeys := []string{
+			fmt.Sprintf(
+				"%s:%s",
+				db.UUIDToString(&applicationID),
+				db.UUIDToString(&defaultPromptConfig.ID),
+			),
+			fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), db.UUIDToString(&promptConfigID)),
+			db.UUIDToString(&applicationID),
+		}
+
+		rediscache.Invalidate(ctx, cacheKeys...)
+	}()
+
 	return nil
 }
 
@@ -182,6 +195,22 @@ func UpdatePromptConfig(
 		return nil, fmt.Errorf("failed to update prompt config - %w", updateErr)
 	}
 
+	go func() {
+		cacheKeys := []string{
+			fmt.Sprintf(
+				"%s:%s",
+				db.UUIDToString(&updatedPromptConfig.ApplicationID),
+				db.UUIDToString(&promptConfigID),
+			),
+		}
+
+		if updatedPromptConfig.IsDefault {
+			cacheKeys = append(cacheKeys, db.UUIDToString(&updatedPromptConfig.ApplicationID))
+		}
+
+		rediscache.Invalidate(ctx, cacheKeys...)
+	}()
+
 	return &datatypes.PromptConfigDTO{
 		ID:                        db.UUIDToString(&updatedPromptConfig.ID),
 		Name:                      updatedPromptConfig.Name,
@@ -194,4 +223,44 @@ func UpdatePromptConfig(
 		CreatedAt:                 updatedPromptConfig.CreatedAt.Time,
 		UpdatedAt:                 updatedPromptConfig.UpdatedAt.Time,
 	}, nil
+}
+
+func DeletePromptConfig(ctx context.Context,
+	applicationID pgtype.UUID,
+	promptConfigID pgtype.UUID,
+) error {
+	tx, err := db.GetOrCreateTx(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to create transaction")
+		return fmt.Errorf("failed to get transaction: %w", err)
+	}
+	if db.ShouldCommit(ctx) {
+		defer func() {
+			if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
+				log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
+			}
+		}()
+	}
+
+	queries := db.GetQueries().WithTx(tx)
+
+	if deleteErr := queries.DeletePromptConfig(ctx, promptConfigID); deleteErr != nil {
+		log.Error().Err(deleteErr).Msg("failed to delete prompt config")
+		return fmt.Errorf("failed to delete prompt config: %w", deleteErr)
+	}
+
+	if db.ShouldCommit(ctx) {
+		if commitErr := tx.Commit(ctx); commitErr != nil {
+			return fmt.Errorf("failed to commit transaction: %w", commitErr)
+		}
+	}
+
+	go func() {
+		rediscache.Invalidate(
+			ctx,
+			fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), db.UUIDToString(&promptConfigID)),
+		)
+	}()
+
+	return nil
 }
