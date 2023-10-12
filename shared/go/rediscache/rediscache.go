@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-redis/cache/v9"
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog/log"
 	"sync"
 	"time"
 )
@@ -65,4 +66,12 @@ func With[T any](
 		return nil, setErr
 	}
 	return retrieved, nil
+}
+
+func Invalidate(ctx context.Context, keys ...string) {
+	for _, key := range keys {
+		if deleteErr := client.Delete(ctx, key); deleteErr != nil {
+			log.Error().Err(deleteErr).Msgf("failed to delete key from cache: %s", key)
+		}
+	}
 }
