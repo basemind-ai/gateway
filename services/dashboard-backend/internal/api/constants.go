@@ -3,6 +3,7 @@ package api
 const (
 	ProjectsListEndpoint           = "/projects"
 	ProjectDetailEndpoint          = "/projects/{projectId}"
+	ProjectUserListEndpoint        = "/projects/{projectId}/users"
 	ProjectUserDetailEndpoint      = "/projects/{projectId}/users/{userId}"
 	ApplicationsListEndpoint       = "/projects/{projectId}/applications"
 	ApplicationDetailEndpoint      = "/projects/{projectId}/applications/{applicationId}"

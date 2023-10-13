@@ -69,7 +69,7 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
-// HandleUpdateProject - allows updating the name and description of a project
+// HandleUpdateProject - allows updating the name and description of a project.
 func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
@@ -126,7 +126,7 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
-// HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these
+// HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these.
 func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
