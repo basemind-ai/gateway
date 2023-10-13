@@ -2,6 +2,7 @@
 import {
 	ApplicationFactory,
 	ProjectFactory,
+	ProjectUserAccountFactory,
 	PromptConfigFactory,
 	TokenFactory,
 } from 'tests/factories';
@@ -25,6 +26,11 @@ import {
 	handleUpdateProject,
 	handleUpdatePromptConfig,
 } from '@/api';
+import {
+	handleAddUserToProject,
+	handleRemoveUserFromProject,
+	handleUpdateUserToPermission,
+} from '@/api/project-users-api';
 import { HttpMethod } from '@/constants';
 
 describe('API tests', () => {
@@ -557,6 +563,148 @@ describe('API tests', () => {
 					expect(mockFetch).toHaveBeenCalledWith(
 						new URL(
 							`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/tokens/${token.id}/`,
+						),
+						{
+							headers: {
+								'Authorization': 'Bearer test_token',
+								'Content-Type': 'application/json',
+								'X-Request-Id': expect.any(String),
+							},
+							method: HttpMethod.Delete,
+						},
+					);
+				});
+			});
+		});
+
+		describe('Project Users', () => {
+			describe('handleRetrieveProjectUsers', () => {
+				it('returns a list of project users', async () => {
+					const project = await ProjectFactory.build();
+					const application = await ApplicationFactory.build();
+					const userAccounts =
+						await ProjectUserAccountFactory.batch(2);
+
+					mockFetch.mockResolvedValueOnce({
+						ok: true,
+						json: () => Promise.resolve(userAccounts),
+					});
+
+					const data = await handleRetrieveTokens({
+						projectId: project.id,
+						applicationId: application.id,
+					});
+
+					expect(data).toEqual(userAccounts);
+					expect(mockFetch).toHaveBeenCalledWith(
+						new URL(
+							`http://www.example.com/v1/projects/${project.id}/users/`,
+						),
+						{
+							headers: {
+								'Authorization': 'Bearer test_token',
+								'Content-Type': 'application/json',
+								'X-Request-Id': expect.any(String),
+							},
+							method: HttpMethod.Get,
+						},
+					);
+				});
+			});
+			describe('handleAddUserToProject', () => {
+				it('returns a project user', async () => {
+					const project = await ProjectFactory.build();
+					const userAccount = await ProjectUserAccountFactory.build();
+
+					mockFetch.mockResolvedValueOnce({
+						ok: true,
+						json: () => Promise.resolve(userAccount),
+					});
+
+					const body = {
+						email: userAccount.email,
+						permission: userAccount.permission,
+					};
+
+					const data = await handleAddUserToProject({
+						projectId: project.id,
+						data: body,
+					});
+
+					expect(data).toEqual(userAccount);
+					expect(mockFetch).toHaveBeenCalledWith(
+						new URL(
+							`http://www.example.com/v1/projects/${project.id}/users/`,
+						),
+						{
+							headers: {
+								'Authorization': 'Bearer test_token',
+								'Content-Type': 'application/json',
+								'X-Request-Id': expect.any(String),
+							},
+							method: HttpMethod.Post,
+							body: JSON.stringify(body),
+						},
+					);
+				});
+			});
+			describe('handleUpdateUserToPermission', () => {
+				it('returns a project user', async () => {
+					const project = await ProjectFactory.build();
+					const application = await ApplicationFactory.build();
+					const userAccount = await ProjectUserAccountFactory.build();
+
+					mockFetch.mockResolvedValueOnce({
+						ok: true,
+						json: () => Promise.resolve(userAccount),
+					});
+
+					const body = {
+						userId: userAccount.id,
+						permission: userAccount.permission,
+					};
+
+					const data = await handleUpdateUserToPermission({
+						projectId: project.id,
+						data: body,
+					});
+
+					expect(data).toEqual(userAccount);
+					expect(mockFetch).toHaveBeenCalledWith(
+						new URL(
+							`http://www.example.com/v1/projects/${project.id}/users/${userAccount.id}/`,
+						),
+						{
+							headers: {
+								'Authorization': 'Bearer test_token',
+								'Content-Type': 'application/json',
+								'X-Request-Id': expect.any(String),
+							},
+							method: HttpMethod.Patch,
+							body: JSON.stringify(body),
+						},
+					);
+				});
+			});
+			describe('handleDeleteProjectUser', () => {
+				it('returns undefined', async () => {
+					const project = await ProjectFactory.build();
+					const userAccount = await ProjectUserAccountFactory.build();
+
+					mockFetch.mockResolvedValueOnce({
+						ok: true,
+						json: () => Promise.resolve(),
+					});
+
+					const data = await handleRemoveUserFromProject({
+						projectId: project.id,
+						userId: userAccount.id,
+					});
+
+					expect(data).toBeUndefined();
+					expect(mockFetch).toHaveBeenCalledWith(
+						new URL(
+							`http://www.example.com/v1/projects/${project.id}/users/${userAccount.id}/`,
 						),
 						{
 							headers: {
