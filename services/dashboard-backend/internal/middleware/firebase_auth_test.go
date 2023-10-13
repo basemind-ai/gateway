@@ -14,8 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestFirebaseAuthMiddlewareFailureScenarios(t *testing.T) {
-	dbTestUtils.CreateTestDB(t)
+func TestFirebaseAuthMiddleware(t *testing.T) {
 	mockNext := &nextMock{}
 	mockNext.On("ServeHTTP", mock.Anything, mock.Anything).Return()
 	authMiddleware := middleware.FirebaseAuthMiddleware(mockNext)

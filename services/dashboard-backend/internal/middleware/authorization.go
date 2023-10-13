@@ -17,6 +17,7 @@ const (
 
 type MethodPermissionMap map[string][]db.AccessPermissionType
 
+// AuthorizationMiddleware - middleware that checks if the user has the required permissions to access an endpoint.
 func AuthorizationMiddleware(
 	methodPermissionMap MethodPermissionMap,
 ) func(next http.Handler) http.Handler {

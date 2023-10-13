@@ -17,6 +17,7 @@ const (
 	UserAccountContextKey AuthContextKeyType = iota
 )
 
+// FirebaseAuthMiddleware - middleware that verifies the firebase auth token and adds the user account to the context.
 func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")

@@ -27,6 +27,7 @@ var pathParameterNameToContextKeyMap = map[string]PathURLContextKeyType{
 	"promptConfigId": PromptConfigIDContextKey,
 }
 
+// PathParameterMiddleware - middleware that parses path parameters and adds them to the request context.
 func PathParameterMiddleware(parameterNames ...string) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

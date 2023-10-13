@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -13,21 +12,6 @@ import (
 	"net/http/httptest"
 	"testing"
 )
-
-func createChiRouteContext(ctx context.Context,
-	keys []string,
-	values []string) context.Context {
-	urlParams := chi.RouteParams{
-		Keys:   keys,
-		Values: values,
-	}
-
-	chiContext := chi.Context{
-		URLParams: urlParams,
-	}
-
-	return context.WithValue(ctx, chi.RouteCtxKey, &chiContext)
-}
 
 func TestPathParameterMiddleware(t *testing.T) {
 	t.Run("should return a middleware function", func(t *testing.T) {
