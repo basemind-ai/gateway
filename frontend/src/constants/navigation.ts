@@ -3,6 +3,7 @@ export enum Navigation {
 	Base = '/',
 	Dashboard = '/projects/:projectId/dashboard',
 	Projects = '/projects',
+	CreateProject = '/projects/create',
 	Prompt = '/projects/:projectId/prompt',
 	SignIn = '/sign-in',
 	Settings = '/projects/:projectId/settings',

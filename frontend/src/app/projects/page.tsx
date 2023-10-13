@@ -1,73 +1,41 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { handleRetrieveProjects } from '@/api';
-import { CreateProjectView } from '@/components/projects/create-project-view';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useProjects, useSetProjects } from '@/stores/api-store';
-import { Project } from '@/types';
-
-export function ProjectsView({ projects }: { projects: Project[] }) {
-	return (
-		<div>
-			{projects.map((p, i) => (
-				<div key={i}>
-					<span>{p.name}</span>
-				</div>
-			))}
-		</div>
-	);
-}
+import { useSetProjects } from '@/stores/api-store';
 
 export default function Projects() {
-	const projects = useProjects();
 	const router = useRouter();
 	const setProjects = useSetProjects();
-	const user = useAuthenticatedUser();
-
-	const [error, setError] = useState<Error | null>(null);
-	const [loading, setLoading] = useState(true);
+	useAuthenticatedUser();
 
 	useEffect(() => {
-		if (!user) {
-			router.replace(Navigation.SignIn);
-			return;
-		}
-
-		setLoading(true);
 		(async () => {
 			const retrievedProjects = await handleRetrieveProjects();
+			retrievedProjects.sort(
+				(a, b) =>
+					new Date(b.updatedAt).getTime() -
+					new Date(a.updatedAt).getTime(),
+			);
 			setProjects(retrievedProjects);
-			setLoading(false);
+			if (retrievedProjects.length > 0) {
+				router.replace(
+					`${Navigation.Projects}/${retrievedProjects[0].id}`,
+				);
+			} else {
+				router.replace(Navigation.CreateProject);
+			}
 		})();
 	}, []);
 
-	if (loading || !user) {
-		// TODO: implement loading view
-		return <div>loading</div>;
-	}
-
-	if (error) {
-		// TODO: implement error view
-		return <div>{error.message}</div>;
-	}
-
-	// eslint-disable-next-line unicorn/consistent-function-scoping
-	const handleCreateProjectCancel = () => {
-		// TODO: implement cancel handler
-		return null;
-	};
-
-	return projects.length === 0 ? (
-		<CreateProjectView
-			cancelHandler={handleCreateProjectCancel}
-			setError={setError}
-			setLoading={setLoading}
+	return (
+		<div
+			className="bg-base-100 flex h-full w-full animate-pulse"
+			data-testid="projects-view-loading"
 		/>
-	) : (
-		<ProjectsView projects={projects} />
 	);
 }

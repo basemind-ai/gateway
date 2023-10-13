@@ -46,8 +46,9 @@
 		"projectDescriptionInputHelperText": "This is the description of the the project",
 		"cancelButton": "Later",
 		"cancelButtonHelperText": "Close the create project view",
-		"submitButton": "Create Project",
+		"submitButton": "Create",
 		"submitButtonHelperText": "Create a new project and application with the given names",
-		"optional": "optional"
+		"optional": "optional",
+		"errorComment": "There was an error creating your project"
 	}
 }
