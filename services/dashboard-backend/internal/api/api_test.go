@@ -37,7 +37,7 @@ func createUserProject(
 
 	userAccount, err := db.
 		GetQueries().
-		RetrieveUserAccount(context.TODO(), firebaseID)
+		RetrieveUserAccountByFirebaseID(context.TODO(), firebaseID)
 
 	assert.NoError(t, err)
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -39,7 +39,7 @@ func TestFirebaseAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("returns Unauthorized for token error raised by firebase", func(t *testing.T) {
-		mockAuth := dbTestUtils.MockFirebaseAuth()
+		mockAuth := testutils.MockFirebaseAuth(t)
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{}, fmt.Errorf("test"))
 
@@ -54,9 +54,17 @@ func TestFirebaseAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("sets the firebase UID in the request context on success", func(t *testing.T) {
-		mockAuth := dbTestUtils.MockFirebaseAuth()
+		mockAuth := testutils.MockFirebaseAuth(t)
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{UID: "123"}, nil)
+		mockAuth.On("GetUser", mock.Anything, "123").Return(&auth.UserRecord{
+			UserInfo: &auth.UserInfo{
+				DisplayName: "Test User",
+				Email:       "test@example.com",
+				PhoneNumber: "123456789",
+				PhotoURL:    "https://example.com/photo.jpg",
+			},
+		}, nil)
 
 		request := httptest.NewRequest(http.MethodGet, "/", nil)
 		request.Header.Set("Authorization", "Bearer abc")
@@ -65,7 +73,7 @@ func TestFirebaseAuthMiddleware(t *testing.T) {
 		authMiddleware.ServeHTTP(testRecorder, request)
 
 		assert.Equal(t, http.StatusOK, testRecorder.Code)
-		assert.Equal(t, 1, len(mockAuth.Calls))
+		assert.Equal(t, 2, len(mockAuth.Calls))
 		assert.Equal(t, 1, len(mockNext.Calls))
 
 		newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)

@@ -2,7 +2,7 @@ package middleware_test
 
 import (
 	"context"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/mock"
 	"net/http"
@@ -10,7 +10,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	cleanup := dbTestUtils.CreateNamespaceTestDBModule("middleware-test")
+	cleanup := testutils.CreateNamespaceTestDBModule("middleware-test")
 	defer cleanup()
 	m.Run()
 }

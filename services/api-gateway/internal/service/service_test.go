@@ -9,14 +9,14 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	cleanup := dbTestUtils.CreateNamespaceTestDBModule("service-test")
+	cleanup := testutils.CreateNamespaceTestDBModule("service-test")
 	defer cleanup()
 	m.Run()
 }

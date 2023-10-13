@@ -8,6 +8,7 @@ import {
 	ModelVendor,
 	OpenAIPromptMessage,
 	Project,
+	ProjectUserAccount,
 	PromptConfig,
 	Token,
 } from '@/types';
@@ -67,3 +68,16 @@ export const TokenFactory = new TypeFactory<Token>(() => ({
 	name: faker.lorem.words(),
 	createdAt: faker.date.past().toISOString(),
 }));
+
+export const ProjectUserAccountFactory = new TypeFactory<ProjectUserAccount>(
+	() => ({
+		id: faker.string.uuid(),
+		displayName: faker.person.fullName(),
+		email: faker.internet.email(),
+		firebaseId: faker.string.uuid(),
+		phoneNumber: faker.phone.number(),
+		photoUrl: faker.internet.url(),
+		createdAt: faker.date.past().toISOString(),
+		permission: AccessPermission.ADMIN,
+	}),
+);
