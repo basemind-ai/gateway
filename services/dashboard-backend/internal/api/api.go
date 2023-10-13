@@ -2,78 +2,170 @@ package api
 
 import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
+	"net/http"
 )
 
-var validate = validator.New(validator.WithRequiredStructEnabled())
+var (
+	validate       = validator.New(validator.WithRequiredStructEnabled())
+	allPermissions = []db.AccessPermissionType{
+		db.AccessPermissionTypeMEMBER,
+		db.AccessPermissionTypeADMIN,
+	}
+	adminOnly = []db.AccessPermissionType{db.AccessPermissionTypeADMIN}
+)
 
 func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(router chi.Router) {
-		router.Route(ProjectsListEndpoint, func(projectsRouter chi.Router) {
-			projectsRouter.Post("/", HandleCreateProject)
-			projectsRouter.Get("/", HandleRetrieveProjects)
+		router.Route(ProjectsListEndpoint, func(subRouter chi.Router) {
+			subRouter.Post("/", HandleCreateProject)
+			subRouter.Get("/", HandleRetrieveProjects)
 		})
 
-		router.Route(ProjectDetailEndpoint, func(projectsRouter chi.Router) {
-			projectsRouter.Use(middleware.PathParameterMiddleware("projectId"))
-			projectsRouter.Patch("/", HandleUpdateProject)
-			projectsRouter.Delete("/", HandleDeleteProject)
+		router.Route(ProjectDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodPatch:  adminOnly,
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Patch("/", HandleUpdateProject)
+			subRouter.Delete("/", HandleDeleteProject)
 		})
 
-		router.Route(ProjectUserDetailEndpoint, func(projectsUserRouter chi.Router) {
-			projectsUserRouter.Use(middleware.PathParameterMiddleware("projectId", "userId"))
-			projectsUserRouter.Post("/", HandleAddUserToProject)
-			projectsUserRouter.Patch("/", HandleChangeUserProjectPermission)
-			projectsUserRouter.Delete("/", HandleRemoveUserFromProject)
+		router.Route(ProjectUserListEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet: allPermissions,
+					},
+				),
+			)
+			subRouter.Get("/", HandleRetrieveProjectUsers)
 		})
 
-		router.Route(ApplicationsListEndpoint, func(applicationsRouter chi.Router) {
-			applicationsRouter.Use(middleware.PathParameterMiddleware("projectId"))
-			applicationsRouter.Post("/", HandleCreateApplication)
+		router.Route(ProjectUserDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId", "userId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodPost:   adminOnly,
+						http.MethodPatch:  adminOnly,
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Post("/", HandleAddUserToProject)
+			subRouter.Patch("/", HandleChangeUserProjectPermission)
+			subRouter.Delete("/", HandleRemoveUserFromProject)
 		})
 
-		router.Route(ApplicationDetailEndpoint, func(applicationsRouter chi.Router) {
-			applicationsRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
-			applicationsRouter.Get("/", HandleRetrieveApplication)
-			applicationsRouter.Patch("/", HandleUpdateApplication)
-			applicationsRouter.Delete("/", HandleDeleteApplication)
+		router.Route(ApplicationsListEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodPost: allPermissions,
+					},
+				),
+			)
+			subRouter.Post("/", HandleCreateApplication)
 		})
 
-		router.Route(ApplicationTokensListEndpoint, func(applicationTokensRouter chi.Router) {
-			applicationTokensRouter.Use(
+		router.Route(ApplicationDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet:    allPermissions,
+						http.MethodPatch:  adminOnly,
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Get("/", HandleRetrieveApplication)
+			subRouter.Patch("/", HandleUpdateApplication)
+			subRouter.Delete("/", HandleDeleteApplication)
+		})
+
+		router.Route(ApplicationTokensListEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
 				middleware.PathParameterMiddleware("projectId", "applicationId"),
 			)
-			applicationTokensRouter.Post("/", HandleCreateApplicationToken)
-			applicationTokensRouter.Get("/", HandleRetrieveApplicationTokens)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodPost: allPermissions,
+						http.MethodGet:  allPermissions,
+					},
+				),
+			)
+			subRouter.Post("/", HandleCreateApplicationToken)
+			subRouter.Get("/", HandleRetrieveApplicationTokens)
 		})
 
-		router.Route(ApplicationTokenDetailEndpoint, func(applicationTokensRouter chi.Router) {
-			applicationTokensRouter.Use(
+		router.Route(ApplicationTokenDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
 				middleware.PathParameterMiddleware("projectId", "applicationId", "tokenId"),
 			)
-			applicationTokensRouter.Delete("/", HandleDeleteApplicationToken)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Delete("/", HandleDeleteApplicationToken)
 		})
 
-		router.Route(PromptConfigListEndpoint, func(promptConfigRouter chi.Router) {
-			promptConfigRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
-			promptConfigRouter.Post("/", HandleCreatePromptConfig)
-			promptConfigRouter.Get("/", HandleRetrievePromptConfigs)
+		router.Route(PromptConfigListEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodPost: allPermissions,
+						http.MethodGet:  allPermissions,
+					},
+				),
+			)
+			subRouter.Get("/", HandleRetrievePromptConfigs)
+			subRouter.Post("/", HandleCreatePromptConfig)
 		})
 
-		router.Route(PromptConfigDetailEndpoint, func(promptConfigRouter chi.Router) {
-			promptConfigRouter.Use(
+		router.Route(PromptConfigDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
 				middleware.PathParameterMiddleware("projectId", "applicationId", "promptConfigId"),
 			)
-			promptConfigRouter.Patch("/", HandleUpdatePromptConfig)
-			promptConfigRouter.Delete("/", HandleDeletePromptConfig)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodPatch:  adminOnly,
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Patch("/", HandleUpdatePromptConfig)
+			subRouter.Delete("/", HandleDeletePromptConfig)
 		})
 
-		router.Route(PromptConfigSetDefaultEndpoint, func(promptConfigRouter chi.Router) {
-			promptConfigRouter.Use(
+		router.Route(PromptConfigSetDefaultEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
 				middleware.PathParameterMiddleware("projectId", "applicationId", "promptConfigId"),
 			)
-			promptConfigRouter.Patch("/", HandleSetApplicationDefaultPromptConfig)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodPatch: adminOnly,
+					},
+				),
+			)
+			subRouter.Patch("/", HandleSetApplicationDefaultPromptConfig)
 		})
 	})
 }

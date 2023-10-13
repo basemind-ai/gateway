@@ -69,29 +69,11 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
-// HandleUpdateProject - allows updating the name and description of a project
-// requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
+// HandleUpdateProject - allows updating the name and description of a project.
 func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
-
-	userProject, userProjectRetrievalErr := db.
-		GetQueries().
-		RetrieveUserProject(r.Context(), db.RetrieveUserProjectParams{
-			FirebaseID: userAccount.FirebaseID,
-			ProjectID:  projectID,
-		})
-
-	if userProjectRetrievalErr != nil {
-		log.Error().Err(userProjectRetrievalErr).Msg("failed to retrieve user project")
-		apierror.BadRequest().Render(w, r)
-		return
-	}
-
-	// if userProject.Permission != db.AccessPermissionTypeADMIN {
-	//	apierror.Forbidden().Render(w, r)
-	//	return
-	// }
+	userProject := r.Context().Value(middleware.UserProjectContextKey).(db.UserProject)
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
@@ -144,8 +126,7 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
-// HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these
-// requires ADMIN permission, otherwise responds with status 403 FORBIDDEN.
+// HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these.
 func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
