@@ -593,7 +593,6 @@ func TestApplicationsAPI(t *testing.T) {
 		toDate := fromDate.AddDate(0, 0, 2)
 
 		t.Run("retrieves application analytics", func(t *testing.T) {
-			// fmt.Sprintf("/v1%s?fromDate=%s&toDate=%s", strings.ReplaceAll(strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", projectID), "{applicationId}", applicationID), fromDate.Format(time.RFC3339), toDate.Format(time.RFC3339))
 			response, requestErr := testClient.Get(
 				context.TODO(),
 				fmt.Sprintf(
@@ -617,11 +616,12 @@ func TestApplicationsAPI(t *testing.T) {
 			)
 
 			responseAnalytics := dto.ApplicationAnalyticsDTO{}
-			serialization.DeserializeJSON(
+			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseAnalytics,
 			)
-			// assert.NoError(t, deserializationErr)
+
+			assert.NoError(t, deserializationErr)
 			assert.Equal(t, promptReqAnalytics.TotalRequests, responseAnalytics.TotalRequests)
 			assert.Equal(t, promptReqAnalytics.ProjectedCost, responseAnalytics.ProjectedCost)
 		})
