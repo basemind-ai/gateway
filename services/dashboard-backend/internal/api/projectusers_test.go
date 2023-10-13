@@ -8,7 +8,7 @@ import (
 )
 
 func TestProjectUsersAPI(t *testing.T) {
-	t.Run(fmt.Sprintf("GET: %s", api.ProjectsListEndpoint), func(t *testing.T) {
+	t.Run(fmt.Sprintf("GET: %s", api.ProjectUserListEndpoint), func(t *testing.T) {
 		for _, permission := range []db.AccessPermissionType{
 			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
 		} {

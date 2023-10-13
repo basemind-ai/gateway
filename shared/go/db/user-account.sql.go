@@ -23,22 +23,54 @@ func (q *Queries) CheckUserAccountExists(ctx context.Context, firebaseID string)
 }
 
 const createUserAccount = `-- name: CreateUserAccount :one
-INSERT INTO user_account (firebase_id)
-VALUES ($1)
-RETURNING id, firebase_id, created_at
+INSERT INTO user_account (
+    display_name,
+    email,
+    firebase_id,
+    phone_number,
+    photo_url
+)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING id, display_name, email, firebase_id, phone_number, photo_url, created_at
 `
 
-func (q *Queries) CreateUserAccount(ctx context.Context, firebaseID string) (UserAccount, error) {
-	row := q.db.QueryRow(ctx, createUserAccount, firebaseID)
+type CreateUserAccountParams struct {
+	DisplayName string `json:"displayName"`
+	Email       string `json:"email"`
+	FirebaseID  string `json:"firebaseId"`
+	PhoneNumber string `json:"phoneNumber"`
+	PhotoUrl    string `json:"photoUrl"`
+}
+
+func (q *Queries) CreateUserAccount(ctx context.Context, arg CreateUserAccountParams) (UserAccount, error) {
+	row := q.db.QueryRow(ctx, createUserAccount,
+		arg.DisplayName,
+		arg.Email,
+		arg.FirebaseID,
+		arg.PhoneNumber,
+		arg.PhotoUrl,
+	)
 	var i UserAccount
-	err := row.Scan(&i.ID, &i.FirebaseID, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.DisplayName,
+		&i.Email,
+		&i.FirebaseID,
+		&i.PhoneNumber,
+		&i.PhotoUrl,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
 const retrieveUserAccount = `-- name: RetrieveUserAccount :one
 SELECT
     id,
+    display_name,
+    email,
     firebase_id,
+    phone_number,
+    photo_url,
     created_at
 FROM user_account
 WHERE firebase_id = $1
@@ -47,6 +79,14 @@ WHERE firebase_id = $1
 func (q *Queries) RetrieveUserAccount(ctx context.Context, firebaseID string) (UserAccount, error) {
 	row := q.db.QueryRow(ctx, retrieveUserAccount, firebaseID)
 	var i UserAccount
-	err := row.Scan(&i.ID, &i.FirebaseID, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.DisplayName,
+		&i.Email,
+		&i.FirebaseID,
+		&i.PhoneNumber,
+		&i.PhotoUrl,
+		&i.CreatedAt,
+	)
 	return i, err
 }

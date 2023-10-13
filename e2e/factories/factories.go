@@ -66,8 +66,16 @@ func CreateProject(ctx context.Context) (*db.Project, error) {
 }
 
 func CreateUserAccount(ctx context.Context) (*db.UserAccount, error) {
-	firebaseID := RandomString(10)
-	user, userCreateErr := db.GetQueries().CreateUserAccount(ctx, firebaseID)
+	user, userCreateErr := db.GetQueries().CreateUserAccount(
+		ctx,
+		db.CreateUserAccountParams{
+			DisplayName: "Moishe Zuchmir",
+			Email:       "moishe@zuchmir.com",
+			PhotoUrl:    "https://moishe.zuchmir.com",
+			PhoneNumber: "1234567890",
+			FirebaseID:  RandomString(10),
+		},
+	)
 
 	if userCreateErr != nil {
 		return nil, userCreateErr

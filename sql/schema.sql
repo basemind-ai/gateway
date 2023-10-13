@@ -2,7 +2,11 @@
 CREATE TABLE user_account
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    display_name varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
     firebase_id varchar(128) NOT NULL,
+    phone_number varchar(255) NOT NULL,
+    photo_url text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     UNIQUE (firebase_id)
 );

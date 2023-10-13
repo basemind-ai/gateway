@@ -12,6 +12,7 @@ import (
 
 type FirebaseAuth interface {
 	VerifyIDToken(ctx context.Context, idToken string) (*auth.Token, error)
+	GetUser(ctx context.Context, uid string) (*auth.UserRecord, error)
 }
 
 var (

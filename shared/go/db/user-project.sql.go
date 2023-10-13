@@ -50,7 +50,7 @@ LEFT JOIN user_account AS ua ON up.user_id = ua.id
 LEFT JOIN project AS p ON up.project_id = p.id
 WHERE
     ua.firebase_id = $1
-    AND project_id = $2 AND p.deleted_at IS NULL
+    AND up.project_id = $2 AND p.deleted_at IS NULL
 `
 
 type RetrieveUserProjectParams struct {

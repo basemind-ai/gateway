@@ -204,9 +204,13 @@ type Token struct {
 }
 
 type UserAccount struct {
-	ID         pgtype.UUID        `json:"id"`
-	FirebaseID string             `json:"firebaseId"`
-	CreatedAt  pgtype.Timestamptz `json:"createdAt"`
+	ID          pgtype.UUID        `json:"id"`
+	DisplayName string             `json:"displayName"`
+	Email       string             `json:"email"`
+	FirebaseID  string             `json:"firebaseId"`
+	PhoneNumber string             `json:"phoneNumber"`
+	PhotoUrl    string             `json:"photoUrl"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 }
 
 type UserProject struct {
