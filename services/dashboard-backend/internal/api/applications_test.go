@@ -3,21 +3,13 @@ package api_test
 import (
 	"context"
 	"fmt"
-<<<<<<< HEAD
-	"github.com/basemind-ai/monorepo/e2e/factories"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
-	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"github.com/basemind-ai/monorepo/shared/go/testutils"
-	"github.com/stretchr/testify/assert"
-=======
->>>>>>> 46f303a (chore: add unit tests for PromptRequestRecord analytics api)
 	"net/http"
 	"strings"
 	"testing"
 	"time"
-<<<<<<< HEAD
-=======
+
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
@@ -25,8 +17,6 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"github.com/stretchr/testify/assert"
->>>>>>> 46f303a (chore: add unit tests for PromptRequestRecord analytics api)
 )
 
 func TestApplicationsAPI(t *testing.T) {

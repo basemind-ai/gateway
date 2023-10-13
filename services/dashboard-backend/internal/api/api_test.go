@@ -61,19 +61,7 @@ func createApplication(t *testing.T, projectID string) string {
 	return applicationID
 }
 
-<<<<<<< HEAD
 func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Client {
-=======
-func createPromptRequestRecord(t *testing.T, applicationID string) string {
-	t.Helper()
-	uuidID, _ := db.StringToUUID(applicationID)
-	promptReqRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), *uuidID)
-	promptReqRecordID := db.UUIDToString(&promptReqRecord.ID)
-	return promptReqRecordID
-}
-
-func createTestClient(t *testing.T, firebaseID string) httpclient.Client {
->>>>>>> 46f303a (chore: add unit tests for PromptRequestRecord analytics api)
 	t.Helper()
 	r := router.New(router.Options{
 		Environment:      "test",
@@ -85,4 +73,12 @@ func createTestClient(t *testing.T, firebaseID string) httpclient.Client {
 	})
 
 	return httpTestUtils.CreateTestHTTPClient(t, r)
+}
+
+func createPromptRequestRecord(t *testing.T, applicationID string) string {
+	t.Helper()
+	uuidID, _ := db.StringToUUID(applicationID)
+	promptReqRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), *uuidID)
+	promptReqRecordID := db.UUIDToString(&promptReqRecord.ID)
+	return promptReqRecordID
 }
