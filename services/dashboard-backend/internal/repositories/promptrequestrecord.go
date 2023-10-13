@@ -4,9 +4,33 @@ import (
 	"context"
 	"time"
 
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+func GetPromptRequestAnalyticsByDateRange(ctx context.Context, applicationID pgtype.UUID, fromDate, toDate time.Time) (dto.ApplicationAnalyticsDTO, error) {
+	totalRequests, dbErr := GetPromptRequestCountByDateRange(ctx, applicationID, fromDate, toDate)
+	if dbErr != nil {
+		return dto.ApplicationAnalyticsDTO{}, dbErr
+	}
+
+	tokenCntMap, dbErr := GetTokenUsagePerModelTypeByDateRange(ctx, applicationID, fromDate, toDate)
+	if dbErr != nil {
+		return dto.ApplicationAnalyticsDTO{}, dbErr
+	}
+
+	var totalCost float32
+	for model, tokenCnt := range tokenCntMap {
+		totalCost += tokenutils.GetCostByModelType(tokenCnt, model)
+	}
+
+	return dto.ApplicationAnalyticsDTO{
+		TotalRequests: totalRequests,
+		ProjectedCost: totalCost,
+	}, nil
+}
 
 func GetPromptRequestCountByDateRange(ctx context.Context, applicationID pgtype.UUID, fromDate, toDate time.Time) (int64, error) {
 	promptReqParam := db.RetrieveTotalPromptRequestRecordParams{

@@ -3,16 +3,30 @@ package api_test
 import (
 	"context"
 	"fmt"
+<<<<<<< HEAD
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
+=======
+>>>>>>> 46f303a (chore: add unit tests for PromptRequestRecord analytics api)
 	"net/http"
 	"strings"
 	"testing"
 	"time"
+<<<<<<< HEAD
+=======
+
+	"github.com/basemind-ai/monorepo/e2e/factories"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
+	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/stretchr/testify/assert"
+>>>>>>> 46f303a (chore: add unit tests for PromptRequestRecord analytics api)
 )
 
 func TestApplicationsAPI(t *testing.T) {
@@ -579,5 +593,47 @@ func TestApplicationsAPI(t *testing.T) {
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
+	})
+
+	t.Run(fmt.Sprintf("GET: %s", api.ApplicationAnalyticsEndpoint), func(t *testing.T) {
+		applicationID := createApplication(t, projectID)
+		createPromptRequestRecord(t, applicationID)
+
+		fromDate := time.Now().AddDate(0, 0, -1)
+		toDate := fromDate.AddDate(0, 0, 2)
+
+		t.Run("retrieves application analytics", func(t *testing.T) {
+			// fmt.Sprintf("/v1%s?fromDate=%s&toDate=%s", strings.ReplaceAll(strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", projectID), "{applicationId}", applicationID), fromDate.Format(time.RFC3339), toDate.Format(time.RFC3339))
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", projectID),
+						"{applicationId}",
+						applicationID,
+					),
+				),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
+
+			applicationUUID, _ := db.StringToUUID(applicationID)
+			promptReqAnalytics, _ := repositories.GetPromptRequestAnalyticsByDateRange(
+				context.TODO(),
+				*applicationUUID,
+				fromDate,
+				toDate,
+			)
+
+			responseAnalytics := dto.ApplicationAnalyticsDTO{}
+			serialization.DeserializeJSON(
+				response.Body,
+				&responseAnalytics,
+			)
+			// assert.NoError(t, deserializationErr)
+			assert.Equal(t, promptReqAnalytics.TotalRequests, responseAnalytics.TotalRequests)
+			assert.Equal(t, promptReqAnalytics.ProjectedCost, responseAnalytics.ProjectedCost)
+		})
 	})
 }

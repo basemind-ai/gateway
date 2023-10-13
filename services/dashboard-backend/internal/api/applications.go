@@ -12,7 +12,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/basemind-ai/monorepo/shared/go/timeutils"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 )
@@ -127,52 +126,35 @@ func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	to := r.URL.Query().Get("toDate")
-	if to == "" {
-		to = time.Now().Format(time.RFC3339)
+	toDateStr := r.URL.Query().Get("toDate")
+	if toDateStr == "" {
+		toDateStr = time.Now().Format(time.RFC3339)
 	}
 
-	from := r.URL.Query().Get("fromDate")
-	if from == "" {
-		from = timeutils.GetFirstDayOfMonth().Format(time.RFC3339)
+	fromDateStr := r.URL.Query().Get("fromDate")
+	if fromDateStr == "" {
+		fromDateStr = timeutils.GetFirstDayOfMonth().Format(time.RFC3339)
 	}
 
-	fromDate, err := time.Parse(time.RFC3339, from)
+	fromDate, err := time.Parse(time.RFC3339, fromDateStr)
 	if err != nil {
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
 	}
 
-	toDate, err := time.Parse(time.RFC3339, to)
+	toDate, err := time.Parse(time.RFC3339, toDateStr)
 	if err != nil {
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
 		return
 	}
 
-	totalRequests, dbErr := repositories.GetPromptRequestCountByDateRange(r.Context(), applicationID, fromDate, toDate)
-	if dbErr != nil {
-		log.Error().Err(err).Msg("failed to retrieve total records")
+	promptAnalytics, promptErr := repositories.GetPromptRequestAnalyticsByDateRange(r.Context(), applicationID, fromDate, toDate)
+	if promptErr != nil {
+		log.Error().Err(err).Msg("failed to retrieve prompt analytics")
 		apierror.InternalServerError().Render(w, r)
 		return
-	}
-
-	tokenCntMap, dbErr := repositories.GetTokenUsagePerModelTypeByDateRange(r.Context(), applicationID, fromDate, toDate)
-	if dbErr != nil {
-		log.Error().Err(err).Msg("failed to retrieve total records")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
-
-	var totalCost float32
-	for model, tokenCnt := range tokenCntMap {
-		totalCost += tokenutils.GetCostByModelType(tokenCnt, model)
-	}
-
-	response := dto.ApplicationAnalyticsDTO{
-		TotalRequests: totalRequests,
-		ProjectedCost: totalCost,
 	}
 
 	w.WriteHeader(http.StatusOK)
-	serialization.RenderJSONResponse(w, http.StatusOK, response)
+	serialization.RenderJSONResponse(w, http.StatusOK, promptAnalytics)
 }
