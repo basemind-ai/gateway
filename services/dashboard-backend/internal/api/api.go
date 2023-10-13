@@ -100,9 +100,7 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
-						http.MethodGet:    allPermissions,
-						http.MethodPatch:  adminOnly,
-						http.MethodDelete: adminOnly,
+						http.MethodGet: allPermissions,
 					},
 				),
 			)
