@@ -51,3 +51,14 @@ type UserProjectDTO struct {
 	UserID     string                  `json:"userId"     validate:"required"`
 	Permission db.AccessPermissionType `json:"permission" validate:"required,oneof=ADMIN MEMBER"`
 }
+
+type ProjectUserAccountDTO struct {
+	ID          string    `json:"id"`
+	DisplayName string    `json:"displayName"`
+	Email       string    `json:"email"`
+	FirebaseID  string    `json:"firebaseId"`
+	PhoneNumber string    `json:"phoneNumber"`
+	PhotoURL    string    `json:"photoUrl"`
+	CreatedAt   time.Time `json:"createdAt"`
+	Permission  string    `json:"permission"`
+}

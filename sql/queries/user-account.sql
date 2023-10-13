@@ -3,7 +3,7 @@
 -- name: CheckUserAccountExists :one
 SELECT EXISTS(SELECT 1 FROM user_account WHERE firebase_id = $1);
 
--- name: RetrieveUserAccount :one
+-- name: RetrieveUserAccountByFirebaseID :one
 SELECT
     id,
     display_name,
@@ -15,6 +15,18 @@ SELECT
 FROM user_account
 WHERE firebase_id = $1;
 
+-- name: RetrieveUserAccountByID :one
+SELECT
+    id,
+    display_name,
+    email,
+    firebase_id,
+    phone_number,
+    photo_url,
+    created_at
+FROM user_account
+WHERE id = $1;
+
 -- name: CreateUserAccount :one
 INSERT INTO user_account (
     display_name,
@@ -25,3 +37,19 @@ INSERT INTO user_account (
 )
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
+
+-- name: RetrieveProjectUserAccounts :many
+SELECT
+    user_account.id,
+    user_account.display_name,
+    user_account.email,
+    user_account.firebase_id,
+    user_account.phone_number,
+    user_account.photo_url,
+    user_account.created_at,
+    up.permission
+FROM user_account
+LEFT JOIN user_project AS up ON user_account.id = up.user_id
+LEFT JOIN project AS p ON up.project_id = p.id
+WHERE p.id = $1
+ORDER BY user_account.display_name;

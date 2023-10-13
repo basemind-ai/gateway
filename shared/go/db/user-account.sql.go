@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const checkUserAccountExists = `-- name: CheckUserAccountExists :one
@@ -63,7 +65,64 @@ func (q *Queries) CreateUserAccount(ctx context.Context, arg CreateUserAccountPa
 	return i, err
 }
 
-const retrieveUserAccount = `-- name: RetrieveUserAccount :one
+const retrieveProjectUserAccounts = `-- name: RetrieveProjectUserAccounts :many
+SELECT
+    user_account.id,
+    user_account.display_name,
+    user_account.email,
+    user_account.firebase_id,
+    user_account.phone_number,
+    user_account.photo_url,
+    user_account.created_at,
+    up.permission
+FROM user_account
+LEFT JOIN user_project AS up ON up.user_id = user_account.id
+LEFT JOIN project AS p ON p.id = up.project_id
+WHERE p.id = $1
+ORDER BY user_account.display_name
+`
+
+type RetrieveProjectUserAccountsRow struct {
+	ID          pgtype.UUID              `json:"id"`
+	DisplayName string                   `json:"displayName"`
+	Email       string                   `json:"email"`
+	FirebaseID  string                   `json:"firebaseId"`
+	PhoneNumber string                   `json:"phoneNumber"`
+	PhotoUrl    string                   `json:"photoUrl"`
+	CreatedAt   pgtype.Timestamptz       `json:"createdAt"`
+	Permission  NullAccessPermissionType `json:"permission"`
+}
+
+func (q *Queries) RetrieveProjectUserAccounts(ctx context.Context, id pgtype.UUID) ([]RetrieveProjectUserAccountsRow, error) {
+	rows, err := q.db.Query(ctx, retrieveProjectUserAccounts, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RetrieveProjectUserAccountsRow
+	for rows.Next() {
+		var i RetrieveProjectUserAccountsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.DisplayName,
+			&i.Email,
+			&i.FirebaseID,
+			&i.PhoneNumber,
+			&i.PhotoUrl,
+			&i.CreatedAt,
+			&i.Permission,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const retrieveUserAccountByFirebaseID = `-- name: RetrieveUserAccountByFirebaseID :one
 SELECT
     id,
     display_name,
@@ -76,8 +135,36 @@ FROM user_account
 WHERE firebase_id = $1
 `
 
-func (q *Queries) RetrieveUserAccount(ctx context.Context, firebaseID string) (UserAccount, error) {
-	row := q.db.QueryRow(ctx, retrieveUserAccount, firebaseID)
+func (q *Queries) RetrieveUserAccountByFirebaseID(ctx context.Context, firebaseID string) (UserAccount, error) {
+	row := q.db.QueryRow(ctx, retrieveUserAccountByFirebaseID, firebaseID)
+	var i UserAccount
+	err := row.Scan(
+		&i.ID,
+		&i.DisplayName,
+		&i.Email,
+		&i.FirebaseID,
+		&i.PhoneNumber,
+		&i.PhotoUrl,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const retrieveUserAccountByID = `-- name: RetrieveUserAccountByID :one
+SELECT
+    id,
+    display_name,
+    email,
+    firebase_id,
+    phone_number,
+    photo_url,
+    created_at
+FROM user_account
+WHERE id = $1
+`
+
+func (q *Queries) RetrieveUserAccountByID(ctx context.Context, id pgtype.UUID) (UserAccount, error) {
+	row := q.db.QueryRow(ctx, retrieveUserAccountByID, id)
 	var i UserAccount
 	err := row.Scan(
 		&i.ID,

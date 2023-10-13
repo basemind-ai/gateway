@@ -30,7 +30,7 @@ func TestProjectUsersAPI(t *testing.T) {
 			"/v1%s",
 			strings.ReplaceAll(
 				strings.ReplaceAll(
-					api.ProjectUserListEndpoint,
+					api.ProjectUserDetailEndpoint,
 					"{projectId}",
 					projectID,
 				),
@@ -69,8 +69,12 @@ func TestProjectUsersAPI(t *testing.T) {
 			assert.NoError(t, serializationErr)
 
 			assert.Len(t, data, 2)
-			assert.Equal(t, db.UUIDToString(&requestingUserAccount.ID), data[0].ID)
-			assert.Equal(t, db.UUIDToString(&otherUserAccount.ID), data[1].ID)
+			assert.Equal(
+				t,
+				db.UUIDToString(&requestingUserAccount.ID),
+				db.UUIDToString(&data[0].ID),
+			)
+			assert.Equal(t, db.UUIDToString(&otherUserAccount.ID), db.UUIDToString(&data[1].ID))
 		})
 
 		for _, permission := range []db.AccessPermissionType{
@@ -148,7 +152,7 @@ func TestProjectUsersAPI(t *testing.T) {
 			)
 
 			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusOK, response.StatusCode)
+			assert.Equal(t, http.StatusCreated, response.StatusCode)
 
 			retrievedUserProject, retrievalErr := db.GetQueries().
 				RetrieveUserProject(context.TODO(), db.RetrieveUserProjectParams{
@@ -261,6 +265,74 @@ func TestProjectUsersAPI(t *testing.T) {
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			})
 		}
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user is already in the project",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				addedUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					addedUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeMEMBER,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Post(
+					context.TODO(),
+					fmtListEndpoint(projectID),
+					dto.UserProjectDTO{
+						UserID:     db.UUIDToString(&addedUserAccount.ID),
+						Permission: db.AccessPermissionTypeMEMBER,
+					},
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user does not exist",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Post(
+					context.TODO(),
+					fmtListEndpoint(projectID),
+					dto.UserProjectDTO{
+						UserID:     "9768fc28-cf97-4847-becc-07fc9fcdd230",
+						Permission: db.AccessPermissionTypeMEMBER,
+					},
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("PATCH: %s", api.ProjectUserListEndpoint), func(t *testing.T) {
@@ -376,6 +448,142 @@ func TestProjectUsersAPI(t *testing.T) {
 				assert.Equal(t, http.StatusForbidden, response.StatusCode)
 			},
 		)
+
+		testCases := []struct {
+			Name        string
+			RequestBody dto.UserProjectDTO
+		}{
+			{
+				Name: "responds with status 400 BAD REQUEST if the user does not exist",
+				RequestBody: dto.UserProjectDTO{
+					UserID:     "non-existent-user-id",
+					Permission: db.AccessPermissionTypeMEMBER,
+				},
+			},
+			{
+				Name: "responds with status 400 BAD REQUEST if the permission is invalid",
+				RequestBody: dto.UserProjectDTO{
+					UserID:     "non-existent-user-id",
+					Permission: "invalid-permission",
+				},
+			},
+		}
+
+		for _, testCase := range testCases {
+			t.Run(testCase.Name, func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtListEndpoint(projectID),
+					testCase.RequestBody,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			})
+		}
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user is not in the project",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				updatedUserAccount, _ := factories.CreateUserAccount(context.TODO())
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtListEndpoint(projectID),
+					dto.UserProjectDTO{
+						UserID:     db.UUIDToString(&updatedUserAccount.ID),
+						Permission: db.AccessPermissionTypeADMIN,
+					},
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user does not exist",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtListEndpoint(projectID),
+					dto.UserProjectDTO{
+						UserID:     "9768fc28-cf97-4847-becc-07fc9fcdd230",
+						Permission: db.AccessPermissionTypeMEMBER,
+					},
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user is trying to remove him or her self",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtListEndpoint(projectID),
+					dto.UserProjectDTO{
+						UserID:     db.UUIDToString(&requestUserAccount.ID),
+						Permission: db.AccessPermissionTypeMEMBER,
+					},
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("DELETE: %s", api.ProjectUserDetailEndpoint), func(t *testing.T) {
@@ -476,6 +684,84 @@ func TestProjectUsersAPI(t *testing.T) {
 
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user is not in the project",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				removedUserAccount, _ := factories.CreateUserAccount(context.TODO())
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(projectID, db.UUIDToString(&removedUserAccount.ID)),
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user does not exist",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(projectID, "9768fc28-cf97-4847-becc-07fc9fcdd230"),
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+		t.Run(
+			"responds with status 400 BAD REQUEST if the user is trying to remove him or her self",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(projectID, db.UUIDToString(&requestUserAccount.ID)),
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
 	})

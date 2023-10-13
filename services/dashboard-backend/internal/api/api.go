@@ -49,7 +49,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", HandleRetrieveProjectUsers)
+			subRouter.Get("/", HandleRetrieveProjectUserAccounts)
 			subRouter.Patch("/", HandleChangeUserProjectPermission)
 			subRouter.Post("/", HandleAddUserToProject)
 		})

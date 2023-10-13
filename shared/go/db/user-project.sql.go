@@ -11,8 +11,33 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createUserProject = `-- name: CreateUserProject :one
+const checkUserProjectExists = `-- name: CheckUserProjectExists :one
 
+SELECT EXISTS(
+    SELECT 1
+    FROM user_project
+    LEFT JOIN project AS p ON user_project.project_id = p.id
+    WHERE
+        user_id = $1
+        AND project_id = $2
+        AND p.deleted_at IS NULL
+)
+`
+
+type CheckUserProjectExistsParams struct {
+	UserID    pgtype.UUID `json:"userId"`
+	ProjectID pgtype.UUID `json:"projectId"`
+}
+
+// -- user_project
+func (q *Queries) CheckUserProjectExists(ctx context.Context, arg CheckUserProjectExistsParams) (bool, error) {
+	row := q.db.QueryRow(ctx, checkUserProjectExists, arg.UserID, arg.ProjectID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const createUserProject = `-- name: CreateUserProject :one
 INSERT INTO user_project (user_id, project_id, permission)
 VALUES ($1, $2, $3)
 RETURNING user_id, project_id, permission, created_at, updated_at
@@ -24,7 +49,6 @@ type CreateUserProjectParams struct {
 	Permission AccessPermissionType `json:"permission"`
 }
 
-// -- user_project
 func (q *Queries) CreateUserProject(ctx context.Context, arg CreateUserProjectParams) (UserProject, error) {
 	row := q.db.QueryRow(ctx, createUserProject, arg.UserID, arg.ProjectID, arg.Permission)
 	var i UserProject
@@ -36,6 +60,23 @@ func (q *Queries) CreateUserProject(ctx context.Context, arg CreateUserProjectPa
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const deleteUserProject = `-- name: DeleteUserProject :exec
+DELETE FROM user_project
+WHERE
+    user_id = $1
+    AND project_id = $2
+`
+
+type DeleteUserProjectParams struct {
+	UserID    pgtype.UUID `json:"userId"`
+	ProjectID pgtype.UUID `json:"projectId"`
+}
+
+func (q *Queries) DeleteUserProject(ctx context.Context, arg DeleteUserProjectParams) error {
+	_, err := q.db.Exec(ctx, deleteUserProject, arg.UserID, arg.ProjectID)
+	return err
 }
 
 const retrieveUserProject = `-- name: RetrieveUserProject :one

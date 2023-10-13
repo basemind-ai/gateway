@@ -9,7 +9,7 @@ import (
 
 // GetOrCreateUserAccount - return an existing user account or create a new user account.
 func GetOrCreateUserAccount(ctx context.Context, firebaseID string) (*db.UserAccount, error) {
-	existingUser, queryErr := db.GetQueries().RetrieveUserAccount(ctx, firebaseID)
+	existingUser, queryErr := db.GetQueries().RetrieveUserAccountByFirebaseID(ctx, firebaseID)
 
 	if queryErr == nil {
 		return &existingUser, nil
