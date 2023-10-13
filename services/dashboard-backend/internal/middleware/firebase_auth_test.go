@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	dbTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -39,7 +39,7 @@ func TestFirebaseAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("returns Unauthorized for token error raised by firebase", func(t *testing.T) {
-		mockAuth := dbTestUtils.MockFirebaseAuth(t)
+		mockAuth := testutils.MockFirebaseAuth(t)
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{}, fmt.Errorf("test"))
 
@@ -54,7 +54,7 @@ func TestFirebaseAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("sets the firebase UID in the request context on success", func(t *testing.T) {
-		mockAuth := dbTestUtils.MockFirebaseAuth(t)
+		mockAuth := testutils.MockFirebaseAuth(t)
 
 		mockAuth.On("VerifyIDToken", mock.Anything, "abc").Return(&auth.Token{UID: "123"}, nil)
 		mockAuth.On("GetUser", mock.Anything, "123").Return(&auth.UserRecord{
