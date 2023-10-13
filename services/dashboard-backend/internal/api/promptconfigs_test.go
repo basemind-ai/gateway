@@ -104,6 +104,71 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			)
 		})
 
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 201 CREATED if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					newApplicationID := createApplication(t, newProjectID)
+					createUserProject(
+						t,
+						newUserAccount.FirebaseID,
+						newProjectID,
+						db.AccessPermissionTypeADMIN,
+					)
+
+					client := createTestClient(t, newUserAccount)
+
+					createDto := dto.PromptConfigCreateDTO{
+						Name:                   "test prompt config",
+						ModelParameters:        modelParameters,
+						ModelType:              db.ModelTypeGpt4,
+						ModelVendor:            db.ModelVendorOPENAI,
+						ProviderPromptMessages: promptMessages,
+					}
+					response, requestErr := client.Post(
+						context.TODO(),
+						fmtListEndpoint(newProjectID, newApplicationID),
+						createDto,
+					)
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusCreated, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+
+				client := createTestClient(t, newUserAccount)
+
+				createDto := dto.PromptConfigCreateDTO{
+					Name:                   "test prompt config",
+					ModelParameters:        modelParameters,
+					ModelType:              db.ModelTypeGpt4,
+					ModelVendor:            db.ModelVendorOPENAI,
+					ProviderPromptMessages: promptMessages,
+				}
+				response, requestErr := client.Post(
+					context.TODO(),
+					fmtListEndpoint(newProjectID, newApplicationID),
+					createDto,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
 		t.Run("returns bad request for validation errors", func(t *testing.T) {
 			failureTestCases := []struct {
 				Name string
@@ -413,6 +478,55 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Len(t, promptConfigs, 0)
 		})
 
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 200 OK if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					newApplicationID := createApplication(t, newProjectID)
+					createUserProject(
+						t,
+						newUserAccount.FirebaseID,
+						newProjectID,
+						db.AccessPermissionTypeADMIN,
+					)
+
+					client := createTestClient(t, newUserAccount)
+
+					response, requestErr := client.Get(
+						context.TODO(),
+						fmtListEndpoint(newProjectID, newApplicationID),
+					)
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusOK, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+
+				client := createTestClient(t, newUserAccount)
+
+				response, requestErr := client.Get(
+					context.TODO(),
+					fmtListEndpoint(newProjectID, newApplicationID),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
 		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Get(
 				context.TODO(),
@@ -563,6 +677,115 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 		})
 
 		t.Run(
+			"responds with status 401 UNAUTHORIZED if the user does not have ADMIN permission",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+				uuidID, _ := db.StringToUUID(applicationID)
+
+				_, defaultPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
+				assert.NoError(t, defaultPromptConfigCreateErr)
+
+				nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 false,
+					})
+				assert.NoError(t, nonDefaultPromptConfigCreateErr)
+
+				nonDefaultPromptConfigID := db.UUIDToString(&nonDefaultPromptConfig.ID)
+
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					newUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeMEMBER,
+				)
+
+				client := createTestClient(t, newUserAccount)
+
+				response, requestErr := client.Patch(
+					context.TODO(),
+					fmtSetDefaultEndpoint(projectID, applicationID, nonDefaultPromptConfigID),
+					nil,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusUnauthorized, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
+				applicationID := createApplication(t, newProjectID)
+				uuidID, _ := db.StringToUUID(applicationID)
+
+				_, defaultPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
+				assert.NoError(t, defaultPromptConfigCreateErr)
+
+				nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 false,
+					})
+				assert.NoError(t, nonDefaultPromptConfigCreateErr)
+
+				nonDefaultPromptConfigID := db.UUIDToString(&nonDefaultPromptConfig.ID)
+
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					newUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeMEMBER,
+				)
+
+				client := createTestClient(t, newUserAccount)
+
+				response, requestErr := client.Patch(
+					context.TODO(),
+					fmtSetDefaultEndpoint(newProjectID, applicationID, nonDefaultPromptConfigID),
+					nil,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
+		t.Run(
 			"returns bad request when trying to set the default prompt config as default",
 			func(t *testing.T) {
 				applicationID := createApplication(t, projectID)
@@ -688,6 +911,86 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, retrivalErr)
 			assert.Equal(t, newName, dbPromptConfig.Name)
 		})
+
+		t.Run(
+			"responds with status 401 UNAUTHORIZED if the user does not have ADMIN permission",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+				uuidID, _ := db.StringToUUID(applicationID)
+
+				promptConfigToRename, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      "abc prompt config",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
+
+				assert.NoError(t, configCreateErr)
+
+				promptConfigToRenameID := db.UUIDToString(&promptConfigToRename.ID)
+
+				newName := "efg prompt config"
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					newUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeMEMBER,
+				)
+
+				client := createTestClient(t, newUserAccount)
+
+				response, requestErr := client.Patch(
+					context.TODO(),
+					fmtDetailEndpoint(projectID, applicationID, promptConfigToRenameID),
+					dto.PromptConfigUpdateDTO{
+						Name: &newName,
+					})
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusUnauthorized, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
+				applicationID := createApplication(t, newProjectID)
+				uuidID, _ := db.StringToUUID(applicationID)
+
+				promptConfigToRename, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      "abc prompt config",
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
+
+				assert.NoError(t, configCreateErr)
+
+				promptConfigToRenameID := db.UUIDToString(&promptConfigToRename.ID)
+
+				newName := "efg prompt config"
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtDetailEndpoint(newProjectID, applicationID, promptConfigToRenameID),
+					dto.PromptConfigUpdateDTO{
+						Name: &newName,
+					})
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
 
 		t.Run(
 			"returns bad request when duplicating a prompt config's name",
@@ -1000,6 +1303,75 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
+
+		t.Run(
+			"responds with status 401 UNAUTHORIZED if the user does not have ADMIN permission",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+				uuidID, _ := db.StringToUUID(applicationID)
+
+				promptConfig, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 false,
+					})
+				assert.NoError(t, configCreateErr)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(projectID, applicationID, db.UUIDToString(&promptConfig.ID)),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusNoContent, response.StatusCode)
+
+				_, retrivalErr := db.GetQueries().
+					RetrievePromptConfig(context.TODO(), promptConfig.ID)
+				assert.Error(t, retrivalErr)
+			},
+		)
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
+				applicationID := createApplication(t, newProjectID)
+				uuidID, _ := db.StringToUUID(applicationID)
+
+				promptConfig, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 false,
+					})
+				assert.NoError(t, configCreateErr)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(
+						newProjectID,
+						applicationID,
+						db.UUIDToString(&promptConfig.ID),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+
+				_, retrivalErr := db.GetQueries().
+					RetrievePromptConfig(context.TODO(), promptConfig.ID)
+				assert.NoError(t, retrivalErr)
+			},
+		)
 
 		t.Run("returns bad request when deleting a default prompt config", func(t *testing.T) {
 			applicationID := createApplication(t, projectID)

@@ -65,6 +65,67 @@ func TestTokensAPI(t *testing.T) {
 			assert.Equal(t, token2.Name, data[1].Name)               //nolint: gosec
 			assert.Nil(t, data[1].Hash)                              //nolint: gosec
 		})
+
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 200 OK if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					newApplicationID := createApplication(t, newProjectID)
+					createUserProject(t, newUserAccount.FirebaseID, newProjectID, permission)
+
+					client := createTestClient(t, newUserAccount)
+
+					response, requestErr := client.Get(context.TODO(), fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationTokensListEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
+							"{applicationId}",
+							newApplicationID,
+						),
+					))
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusOK, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+
+				client := createTestClient(t, newUserAccount)
+
+				response, requestErr := client.Get(context.TODO(), fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							api.ApplicationTokensListEndpoint,
+							"{projectId}",
+							newProjectID,
+						),
+						"{applicationId}",
+						newApplicationID,
+					),
+				))
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
 		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf(
 				"/v1%s",
@@ -95,6 +156,71 @@ func TestTokensAPI(t *testing.T) {
 			assert.NotNil(t, data.Hash)
 			assert.NotEmpty(t, *data.Hash)
 		})
+
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 201 CREATED if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					newApplicationID := createApplication(t, newProjectID)
+					createUserProject(t, newUserAccount.FirebaseID, newProjectID, permission)
+
+					client := createTestClient(t, newUserAccount)
+
+					response, requestErr := client.Post(context.TODO(), fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationTokensListEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
+							"{applicationId}",
+							newApplicationID,
+						),
+					), map[string]any{
+						"name": "test token",
+					})
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusCreated, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+
+				client := createTestClient(t, newUserAccount)
+
+				response, requestErr := client.Post(context.TODO(), fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							api.ApplicationTokensListEndpoint,
+							"{projectId}",
+							newProjectID,
+						),
+						"{applicationId}",
+						newApplicationID,
+					),
+				), map[string]any{
+					"name": "test token",
+				})
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
 		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Post(context.TODO(), fmt.Sprintf(
 				"/v1%s",
@@ -140,6 +266,76 @@ func TestTokensAPI(t *testing.T) {
 				assert.NotEqual(t, token.ID, dbToken.ID)
 			}
 		})
+
+		t.Run(
+			"responds with status 401 UNAUTHORIZED if the user does not have ADMIN permission",
+			func(t *testing.T) {
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+				createUserProject(
+					t,
+					newUserAccount.FirebaseID,
+					newProjectID,
+					db.AccessPermissionTypeMEMBER,
+				)
+
+				client := createTestClient(t, newUserAccount)
+
+				token := createToken(t, newApplicationID, "test token")
+				tokenID := db.UUIDToString(&token.ID)
+				url := fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationTokenDetailEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
+							"{applicationId}",
+							newApplicationID,
+						),
+						"{tokenId}", tokenID),
+				)
+
+				response, requestErr := client.Delete(context.TODO(), url)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusUnauthorized, response.StatusCode)
+			},
+		)
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+
+				client := createTestClient(t, newUserAccount)
+
+				token := createToken(t, newApplicationID, "test token")
+				tokenID := db.UUIDToString(&token.ID)
+				url := fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationTokenDetailEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
+							"{applicationId}",
+							newApplicationID,
+						),
+						"{tokenId}", tokenID),
+				)
+
+				response, requestErr := client.Delete(context.TODO(), url)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
 		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Delete(context.TODO(), fmt.Sprintf(
 				"/v1%s",

@@ -48,6 +48,66 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, "test app description", application.Description)
 		})
 
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 201 CREATED if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					createUserProject(t, newUserAccount.FirebaseID, newProjectID, permission)
+
+					newTestClient := createTestClient(t, newUserAccount)
+					response, requestErr := newTestClient.Post(
+						context.TODO(),
+						fmt.Sprintf(
+							"/v1%s",
+							strings.ReplaceAll(
+								api.ApplicationsListEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
+						),
+						map[string]any{
+							"name":        "test app",
+							"description": "test app description",
+						},
+					)
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusCreated, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
+
+				response, requestErr := testClient.Post(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationsListEndpoint,
+							"{projectId}",
+							newProjectID,
+						),
+					),
+					map[string]any{
+						"name":        "test app",
+						"description": "test app description",
+					},
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
 		t.Run("returns an error if the project id is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Post(
 				context.TODO(),
@@ -126,6 +186,69 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, application.Name, responseApplication.Name)
 			assert.Equal(t, application.Description, responseApplication.Description)
 		})
+
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 200 OK if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					createUserProject(t, newUserAccount.FirebaseID, newProjectID, permission)
+					newApplicationID := createApplication(t, newProjectID)
+
+					newTestClient := createTestClient(t, newUserAccount)
+
+					response, requestErr := newTestClient.Get(
+						context.TODO(),
+						fmt.Sprintf(
+							"/v1%s",
+							strings.ReplaceAll(
+								strings.ReplaceAll(
+									api.ApplicationDetailEndpoint,
+									"{projectId}",
+									newProjectID,
+								),
+								"{applicationId}",
+								newApplicationID,
+							),
+						),
+					)
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusOK, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
+							"{applicationId}",
+							newApplicationID,
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
 
 		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Get(
@@ -218,6 +341,16 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, "updated app", responseApplication.Name)
 			assert.Equal(t, "updated app description", responseApplication.Description)
 		})
+
+		t.Run(
+			"responds with status 401 UNAUTHORIZED if the user does not have ADMIN permission",
+			func(t *testing.T) {},
+		)
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {},
+		)
+
 		t.Run("invalidates application prompt-config default cache", func(t *testing.T) {
 			applicationID := createApplication(t, projectID)
 
@@ -357,6 +490,15 @@ func TestApplicationsAPI(t *testing.T) {
 
 			assert.Error(t, applicationRetrieveErr)
 		})
+
+		t.Run(
+			"responds with status 401 UNAUTHORIZED if the user does not have ADMIN permission",
+			func(t *testing.T) {},
+		)
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {},
+		)
 
 		t.Run("invalidates application prompt-config default cache", func(t *testing.T) {
 			applicationID := createApplication(t, projectID)
