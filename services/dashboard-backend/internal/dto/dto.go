@@ -46,3 +46,8 @@ type ApplicationTokenDTO struct {
 	Name      string    `json:"name"           validate:"required"`
 	Hash      *string   `json:"hash,omitempty"`
 }
+
+type UserProjectDTO struct {
+	UserID     string                  `json:"userId"     validate:"required"`
+	Permission db.AccessPermissionType `json:"permission" validate:"required,oneof=ADMIN MEMBER"`
+}

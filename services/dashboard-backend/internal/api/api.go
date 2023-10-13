@@ -20,8 +20,8 @@ var (
 func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(router chi.Router) {
 		router.Route(ProjectsListEndpoint, func(subRouter chi.Router) {
-			subRouter.Post("/", HandleCreateProject)
 			subRouter.Get("/", HandleRetrieveProjects)
+			subRouter.Post("/", HandleCreateProject)
 		})
 
 		router.Route(ProjectDetailEndpoint, func(subRouter chi.Router) {
@@ -29,13 +29,13 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
-						http.MethodPatch:  adminOnly,
 						http.MethodDelete: adminOnly,
+						http.MethodPatch:  adminOnly,
 					},
 				),
 			)
-			subRouter.Patch("/", HandleUpdateProject)
 			subRouter.Delete("/", HandleDeleteProject)
+			subRouter.Patch("/", HandleUpdateProject)
 		})
 
 		router.Route(ProjectUserListEndpoint, func(subRouter chi.Router) {
@@ -43,11 +43,15 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
-						http.MethodGet: allPermissions,
+						http.MethodGet:   allPermissions,
+						http.MethodPatch: adminOnly,
+						http.MethodPost:  adminOnly,
 					},
 				),
 			)
 			subRouter.Get("/", HandleRetrieveProjectUsers)
+			subRouter.Patch("/", HandleChangeUserProjectPermission)
+			subRouter.Post("/", HandleAddUserToProject)
 		})
 
 		router.Route(ProjectUserDetailEndpoint, func(subRouter chi.Router) {
@@ -55,14 +59,10 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
-						http.MethodPost:   adminOnly,
-						http.MethodPatch:  adminOnly,
 						http.MethodDelete: adminOnly,
 					},
 				),
 			)
-			subRouter.Post("/", HandleAddUserToProject)
-			subRouter.Patch("/", HandleChangeUserProjectPermission)
 			subRouter.Delete("/", HandleRemoveUserFromProject)
 		})
 
@@ -83,15 +83,15 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
+						http.MethodDelete: adminOnly,
 						http.MethodGet:    allPermissions,
 						http.MethodPatch:  adminOnly,
-						http.MethodDelete: adminOnly,
 					},
 				),
 			)
+			subRouter.Delete("/", HandleDeleteApplication)
 			subRouter.Get("/", HandleRetrieveApplication)
 			subRouter.Patch("/", HandleUpdateApplication)
-			subRouter.Delete("/", HandleDeleteApplication)
 		})
 
 		router.Route(ApplicationTokensListEndpoint, func(subRouter chi.Router) {
@@ -101,13 +101,13 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
-						http.MethodPost: allPermissions,
 						http.MethodGet:  allPermissions,
+						http.MethodPost: allPermissions,
 					},
 				),
 			)
-			subRouter.Post("/", HandleCreateApplicationToken)
 			subRouter.Get("/", HandleRetrieveApplicationTokens)
+			subRouter.Post("/", HandleCreateApplicationToken)
 		})
 
 		router.Route(ApplicationTokenDetailEndpoint, func(subRouter chi.Router) {
@@ -129,8 +129,8 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
-						http.MethodPost: allPermissions,
 						http.MethodGet:  allPermissions,
+						http.MethodPost: allPermissions,
 					},
 				),
 			)
@@ -145,13 +145,13 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
-						http.MethodPatch:  adminOnly,
 						http.MethodDelete: adminOnly,
+						http.MethodPatch:  adminOnly,
 					},
 				),
 			)
-			subRouter.Patch("/", HandleUpdatePromptConfig)
 			subRouter.Delete("/", HandleDeletePromptConfig)
+			subRouter.Patch("/", HandleUpdatePromptConfig)
 		})
 
 		router.Route(PromptConfigSetDefaultEndpoint, func(subRouter chi.Router) {
