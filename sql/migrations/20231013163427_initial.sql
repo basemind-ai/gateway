@@ -42,6 +42,8 @@ CREATE TABLE "token" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" chara
 CREATE INDEX "idx_token_application_id" ON "token" ("application_id") WHERE (deleted_at IS NULL);
 -- Create "user_account" table
 CREATE TABLE "user_account" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "display_name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "firebase_id" character varying(128) NOT NULL, "phone_number" character varying(255) NOT NULL, "photo_url" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), PRIMARY KEY ("id"));
+-- Create index "user_account_email_key" to table: "user_account"
+CREATE UNIQUE INDEX "user_account_email_key" ON "user_account" ("email");
 -- Create index "user_account_firebase_id_key" to table: "user_account"
 CREATE UNIQUE INDEX "user_account_firebase_id_key" ON "user_account" ("firebase_id");
 -- Create "user_project" table

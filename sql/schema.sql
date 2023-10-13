@@ -8,7 +8,8 @@ CREATE TABLE user_account
     phone_number varchar(255) NOT NULL,
     photo_url text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
-    UNIQUE (firebase_id)
+    UNIQUE (firebase_id),
+    UNIQUE (email)
 );
 
 -- permission_type

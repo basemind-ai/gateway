@@ -15,11 +15,11 @@ const checkUserProjectExists = `-- name: CheckUserProjectExists :one
 
 SELECT EXISTS(
     SELECT 1
-    FROM user_project
-    LEFT JOIN project AS p ON user_project.project_id = p.id
+    FROM user_project AS up
+    LEFT JOIN project AS p ON up.project_id = p.id
     WHERE
-        user_id = $1
-        AND project_id = $2
+        up.user_id = $1
+        AND up.project_id = $2
         AND p.deleted_at IS NULL
 )
 `

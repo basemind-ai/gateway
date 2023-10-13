@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-func TestProjectUsersAPI(t *testing.T) {
+func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 	fmtListEndpoint := func(projectID string) string {
 		return fmt.Sprintf(
 			"/v1%s",
@@ -126,7 +126,7 @@ func TestProjectUsersAPI(t *testing.T) {
 	})
 
 	t.Run(fmt.Sprintf("POST: %s", api.ProjectUserListEndpoint), func(t *testing.T) {
-		t.Run("adds a user to the project", func(t *testing.T) {
+		t.Run("adds a user to the project using userID", func(t *testing.T) {
 			project, _ := factories.CreateProject(context.TODO())
 			projectID := db.UUIDToString(&project.ID)
 
@@ -145,8 +145,45 @@ func TestProjectUsersAPI(t *testing.T) {
 			response, requestErr := testClient.Post(
 				context.TODO(),
 				fmtListEndpoint(projectID),
-				dto.UserProjectDTO{
+				dto.AddUserAccountToProjectDTO{
 					UserID:     db.UUIDToString(&addedUserAccount.ID),
+					Permission: db.AccessPermissionTypeMEMBER,
+				},
+			)
+
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusCreated, response.StatusCode)
+
+			retrievedUserProject, retrievalErr := db.GetQueries().
+				RetrieveUserProject(context.TODO(), db.RetrieveUserProjectParams{
+					ProjectID:  project.ID,
+					FirebaseID: addedUserAccount.FirebaseID,
+				})
+			assert.NoError(t, retrievalErr)
+			assert.Equal(t, db.AccessPermissionTypeMEMBER, retrievedUserProject.Permission)
+		})
+
+		t.Run("adds a user to the project using email", func(t *testing.T) {
+			project, _ := factories.CreateProject(context.TODO())
+			projectID := db.UUIDToString(&project.ID)
+
+			requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+			createUserProject(
+				t,
+				requestUserAccount.FirebaseID,
+				projectID,
+				db.AccessPermissionTypeADMIN,
+			)
+
+			testClient := createTestClient(t, requestUserAccount)
+
+			addedUserAccount, _ := factories.CreateUserAccount(context.TODO())
+
+			response, requestErr := testClient.Post(
+				context.TODO(),
+				fmtListEndpoint(projectID),
+				dto.AddUserAccountToProjectDTO{
+					Email:      addedUserAccount.Email,
 					Permission: db.AccessPermissionTypeMEMBER,
 				},
 			)
@@ -184,7 +221,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Post(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.AddUserAccountToProjectDTO{
 						UserID:     db.UUIDToString(&addedUserAccount.ID),
 						Permission: db.AccessPermissionTypeMEMBER,
 					},
@@ -210,7 +247,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Post(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.AddUserAccountToProjectDTO{
 						UserID:     db.UUIDToString(&addedUserAccount.ID),
 						Permission: db.AccessPermissionTypeMEMBER,
 					},
@@ -223,18 +260,18 @@ func TestProjectUsersAPI(t *testing.T) {
 
 		testCases := []struct {
 			Name        string
-			RequestBody dto.UserProjectDTO
+			RequestBody dto.AddUserAccountToProjectDTO
 		}{
 			{
 				Name: "responds with status 400 BAD REQUEST if the user does not exist",
-				RequestBody: dto.UserProjectDTO{
+				RequestBody: dto.AddUserAccountToProjectDTO{
 					UserID:     "non-existent-user-id",
 					Permission: db.AccessPermissionTypeMEMBER,
 				},
 			},
 			{
 				Name: "responds with status 400 BAD REQUEST if the permission is invalid",
-				RequestBody: dto.UserProjectDTO{
+				RequestBody: dto.AddUserAccountToProjectDTO{
 					UserID:     "non-existent-user-id",
 					Permission: "invalid-permission",
 				},
@@ -293,7 +330,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Post(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.AddUserAccountToProjectDTO{
 						UserID:     db.UUIDToString(&addedUserAccount.ID),
 						Permission: db.AccessPermissionTypeMEMBER,
 					},
@@ -323,7 +360,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Post(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.AddUserAccountToProjectDTO{
 						UserID:     "9768fc28-cf97-4847-becc-07fc9fcdd230",
 						Permission: db.AccessPermissionTypeMEMBER,
 					},
@@ -361,7 +398,7 @@ func TestProjectUsersAPI(t *testing.T) {
 			response, requestErr := testClient.Patch(
 				context.TODO(),
 				fmtListEndpoint(projectID),
-				dto.UserProjectDTO{
+				dto.UpdateUserAccountProjectPermissionDTO{
 					UserID:     db.UUIDToString(&updatedUserAccount.ID),
 					Permission: db.AccessPermissionTypeADMIN,
 				},
@@ -406,7 +443,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&updatedUserAccount.ID),
 						Permission: db.AccessPermissionTypeADMIN,
 					},
@@ -438,7 +475,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&updatedUserAccount.ID),
 						Permission: db.AccessPermissionTypeADMIN,
 					},
@@ -451,18 +488,18 @@ func TestProjectUsersAPI(t *testing.T) {
 
 		testCases := []struct {
 			Name        string
-			RequestBody dto.UserProjectDTO
+			RequestBody dto.UpdateUserAccountProjectPermissionDTO
 		}{
 			{
 				Name: "responds with status 400 BAD REQUEST if the user does not exist",
-				RequestBody: dto.UserProjectDTO{
+				RequestBody: dto.UpdateUserAccountProjectPermissionDTO{
 					UserID:     "non-existent-user-id",
 					Permission: db.AccessPermissionTypeMEMBER,
 				},
 			},
 			{
 				Name: "responds with status 400 BAD REQUEST if the permission is invalid",
-				RequestBody: dto.UserProjectDTO{
+				RequestBody: dto.UpdateUserAccountProjectPermissionDTO{
 					UserID:     "non-existent-user-id",
 					Permission: "invalid-permission",
 				},
@@ -515,7 +552,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&updatedUserAccount.ID),
 						Permission: db.AccessPermissionTypeADMIN,
 					},
@@ -544,7 +581,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     "9768fc28-cf97-4847-becc-07fc9fcdd230",
 						Permission: db.AccessPermissionTypeMEMBER,
 					},
@@ -574,7 +611,7 @@ func TestProjectUsersAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(
 					context.TODO(),
 					fmtListEndpoint(projectID),
-					dto.UserProjectDTO{
+					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&requestUserAccount.ID),
 						Permission: db.AccessPermissionTypeMEMBER,
 					},

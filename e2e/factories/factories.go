@@ -70,7 +70,7 @@ func CreateUserAccount(ctx context.Context) (*db.UserAccount, error) {
 		ctx,
 		db.CreateUserAccountParams{
 			DisplayName: "Moishe Zuchmir",
-			Email:       "moishe@zuchmir.com",
+			Email:       fmt.Sprintf("%s@zuchmir.com", RandomString(10)),
 			PhotoUrl:    "https://moishe.zuchmir.com",
 			PhoneNumber: "1234567890",
 			FirebaseID:  RandomString(10),

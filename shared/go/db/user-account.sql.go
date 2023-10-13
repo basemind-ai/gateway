@@ -76,8 +76,8 @@ SELECT
     user_account.created_at,
     up.permission
 FROM user_account
-LEFT JOIN user_project AS up ON up.user_id = user_account.id
-LEFT JOIN project AS p ON p.id = up.project_id
+LEFT JOIN user_project AS up ON user_account.id = up.user_id
+LEFT JOIN project AS p ON up.project_id = p.id
 WHERE p.id = $1
 ORDER BY user_account.display_name
 `
@@ -120,6 +120,34 @@ func (q *Queries) RetrieveProjectUserAccounts(ctx context.Context, id pgtype.UUI
 		return nil, err
 	}
 	return items, nil
+}
+
+const retrieveUserAccountByEmail = `-- name: RetrieveUserAccountByEmail :one
+SELECT
+    id,
+    display_name,
+    email,
+    firebase_id,
+    phone_number,
+    photo_url,
+    created_at
+FROM user_account
+WHERE email = $1
+`
+
+func (q *Queries) RetrieveUserAccountByEmail(ctx context.Context, email string) (UserAccount, error) {
+	row := q.db.QueryRow(ctx, retrieveUserAccountByEmail, email)
+	var i UserAccount
+	err := row.Scan(
+		&i.ID,
+		&i.DisplayName,
+		&i.Email,
+		&i.FirebaseID,
+		&i.PhoneNumber,
+		&i.PhotoUrl,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const retrieveUserAccountByFirebaseID = `-- name: RetrieveUserAccountByFirebaseID :one

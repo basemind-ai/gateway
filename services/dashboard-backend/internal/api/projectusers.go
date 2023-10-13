@@ -43,7 +43,7 @@ func HandleRetrieveProjectUserAccounts(w http.ResponseWriter, r *http.Request) {
 func HandleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	data := dto.UserProjectDTO{}
+	data := dto.AddUserAccountToProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
@@ -56,29 +56,38 @@ func HandleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := db.StringToUUID(data.UserID)
-	if err != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+	var (
+		userAccount  db.UserAccount
+		retrievalErr error
+	)
+
+	if data.Email != "" {
+		userAccount, retrievalErr = db.GetQueries().
+			RetrieveUserAccountByEmail(r.Context(), data.Email)
+	} else {
+		userID, err := db.StringToUUID(data.UserID)
+		if err != nil {
+			apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+			return
+		}
+		userAccount, retrievalErr = db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
+	}
+
+	if retrievalErr != nil {
+		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
+		apierror.BadRequest("user does not exist").Render(w, r)
 		return
 	}
 
 	userAlreadyInProject, checkErr := db.GetQueries().
 		CheckUserProjectExists(r.Context(), db.CheckUserProjectExistsParams{
 			ProjectID: projectID,
-			UserID:    *userID,
+			UserID:    userAccount.ID,
 		})
 
 	if checkErr != nil {
 		log.Error().Err(checkErr).Msg("failed to check if user is already in project")
 		apierror.InternalServerError().Render(w, r)
-		return
-	}
-
-	userAccount, retrievalErr := db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
-
-	if retrievalErr != nil {
-		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
-		apierror.BadRequest("user does not exist").Render(w, r)
 		return
 	}
 
@@ -90,7 +99,7 @@ func HandleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	userProject, userProjectCreateErr := db.GetQueries().
 		CreateUserProject(r.Context(), db.CreateUserProjectParams{
 			ProjectID:  projectID,
-			UserID:     *userID,
+			UserID:     userAccount.ID,
 			Permission: data.Permission,
 		})
 
@@ -116,7 +125,7 @@ func HandleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 	requestUserAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	data := dto.UserProjectDTO{}
+	data := dto.UpdateUserAccountProjectPermissionDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
 		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)

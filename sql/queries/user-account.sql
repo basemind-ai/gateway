@@ -27,6 +27,18 @@ SELECT
 FROM user_account
 WHERE id = $1;
 
+-- name: RetrieveUserAccountByEmail :one
+SELECT
+    id,
+    display_name,
+    email,
+    firebase_id,
+    phone_number,
+    photo_url,
+    created_at
+FROM user_account
+WHERE email = $1;
+
 -- name: CreateUserAccount :one
 INSERT INTO user_account (
     display_name,

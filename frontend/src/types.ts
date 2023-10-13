@@ -101,3 +101,24 @@ export type OpenAIPromptMessage = {
 			role: 'function';
 	  }
 );
+// UserAccount
+
+export type AddUserToProjectBody = {
+	permission: AccessPermission;
+} & ({ userId: string } | { email: string });
+
+export interface UserProjectPermissionUpdateBody {
+	userId: string;
+	permission: AccessPermission;
+}
+
+export interface ProjectUserAccount {
+	id: string;
+	displayName: string;
+	email: string;
+	firebaseId: string;
+	phoneNumber: string;
+	photoUrl: string;
+	createdAt: string;
+	permission: AccessPermission;
+}
