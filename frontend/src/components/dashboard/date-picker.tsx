@@ -12,7 +12,7 @@ export function DatePicker() {
 	};
 
 	return (
-		<div>
+		<div data-testid="datapicker">
 			<Datepicker
 				value={value}
 				onChange={handleValueChange}
