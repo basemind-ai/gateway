@@ -74,12 +74,15 @@ export async function handleApplicationAnalytics({
 	fromDate?: string;
 	toDate?: string;
 }): Promise<ApplicationAnalytics> {
-	let url = `projects/${projectId}/applications/${applicationId}/analytics`;
-	if (fromDate && toDate) {
-		url += `?fromDate=${fromDate}&toDate=${toDate}`;
-	}
 	return await fetcher<ApplicationAnalytics>({
-		url,
+		url: `projects/${projectId}/applications/${applicationId}/analytics`,
 		method: HttpMethod.Get,
+		queryParams:
+			fromDate && toDate
+				? {
+						fromDate,
+						toDate,
+				  }
+				: undefined,
 	});
 }
