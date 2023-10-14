@@ -194,6 +194,8 @@ describe('applications', () => {
 			const data = await handleApplicationAnalytics({
 				projectId: project.id,
 				applicationId: application.id,
+				fromDate,
+				toDate,
 			});
 
 			expect(data).toEqual(applicationAnalytics);
