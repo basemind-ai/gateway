@@ -77,11 +77,9 @@ export async function handleApplicationAnalytics({
 	return await fetcher<ApplicationAnalytics>({
 		url: `projects/${projectId}/applications/${applicationId}/analytics`,
 		method: HttpMethod.Get,
-		queryParams: fromDate
-			? {
-					fromDate,
-					toDate,
-			  }
-			: undefined,
+		queryParams: {
+			fromDate,
+			toDate,
+		},
 	});
 }
