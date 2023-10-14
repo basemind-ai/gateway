@@ -2,13 +2,14 @@ package api_test
 
 import (
 	"context"
+	"net/http"
+	"testing"
+
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient"
-	httpTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
@@ -16,7 +17,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	cleanup := httpTestUtils.CreateNamespaceTestDBModule("api-test")
+	cleanup := testutils.CreateNamespaceTestDBModule("api-test")
 	defer cleanup()
 	m.Run()
 }
@@ -71,5 +72,13 @@ func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Clie
 		},
 	})
 
-	return httpTestUtils.CreateTestHTTPClient(t, r)
+	return testutils.CreateTestHTTPClient(t, r)
+}
+
+func createPromptRequestRecord(t *testing.T, applicationID string) string {
+	t.Helper()
+	uuidID, _ := db.StringToUUID(applicationID)
+	promptReqRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), *uuidID)
+	promptReqRecordID := db.UUIDToString(&promptReqRecord.ID)
+	return promptReqRecordID
 }

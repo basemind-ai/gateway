@@ -24,6 +24,7 @@ require (
 	golang.org/x/sync v0.4.0
 	google.golang.org/grpc v1.58.3
 	google.golang.org/protobuf v1.31.0
+	gotest.tools/v3 v3.3.0
 )
 
 require (

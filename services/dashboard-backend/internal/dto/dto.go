@@ -2,8 +2,9 @@ package dto
 
 import (
 	"encoding/json"
-	"github.com/basemind-ai/monorepo/shared/go/db"
 	"time"
+
+	"github.com/basemind-ai/monorepo/shared/go/db"
 )
 
 type ApplicationDTO struct {
@@ -67,4 +68,9 @@ type ProjectUserAccountDTO struct {
 	PhotoURL    string    `json:"photoUrl"`
 	CreatedAt   time.Time `json:"createdAt"`
 	Permission  string    `json:"permission"`
+}
+
+type ApplicationAnalyticsDTO struct {
+	TotalRequests int64   `json:"totalRequests"`
+	ProjectedCost float64 `json:"projectedCost"`
 }

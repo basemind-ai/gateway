@@ -1,6 +1,9 @@
 package api
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
@@ -8,9 +11,9 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/timeutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
-	"net/http"
 )
 
 // HandleCreateApplication - create a new application .
@@ -118,4 +121,26 @@ func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) {
+	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
+
+	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())
+	fromDate := timeutils.ParseDate(r.URL.Query().Get("fromDate"), timeutils.GetFirstDayOfMonth())
+
+	promptAnalytics, promptErr := repositories.GetPromptRequestAnalyticsByDateRange(
+		r.Context(),
+		applicationID,
+		fromDate,
+		toDate,
+	)
+	if promptErr != nil {
+		log.Error().Err(promptErr).Msg("failed to retrieve prompt analytics")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	serialization.RenderJSONResponse(w, http.StatusOK, promptAnalytics)
 }
