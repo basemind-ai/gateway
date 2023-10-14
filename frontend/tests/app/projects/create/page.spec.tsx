@@ -22,7 +22,7 @@ describe('ProjectCreatePage', () => {
 		expect(projectsViewSetup).toBeInTheDocument();
 	});
 
-	it('submit is disable when name is empty', () => {
+	it('disables submit when name is empty', () => {
 		render(<CreateProjectPage />);
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		expect(submitButton).toBeDisabled();
@@ -37,7 +37,7 @@ describe('ProjectCreatePage', () => {
 		expect(submitButton).toBeEnabled();
 	});
 
-	it('submit should call handleCreateProject', async () => {
+	it('submit calls handleCreateProject', async () => {
 		const handleCreateProjectSpy = vi.spyOn(
 			projectsAPI,
 			'handleCreateProject',
@@ -58,7 +58,7 @@ describe('ProjectCreatePage', () => {
 		expect(handleCreateProjectSpy).toHaveBeenCalled();
 	});
 
-	it('submit should show loading spinner then remove', async () => {
+	it('submit shows loading spinner then remove', async () => {
 		render(<CreateProjectPage />);
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const nameInput = screen.getByTestId('create-project-name-input');
@@ -121,6 +121,25 @@ describe('ProjectCreatePage', () => {
 				'create-project-error-comment',
 			);
 			expect(errorView).toBeInTheDocument();
+		});
+	});
+
+	it('navigate to new project after creation', async () => {
+		const handleCreateProjectSpy = vi.spyOn(
+			projectsAPI,
+			'handleCreateProject',
+		);
+		const newProject = await ProjectFactory.build();
+		handleCreateProjectSpy.mockResolvedValueOnce(newProject);
+		render(<CreateProjectPage />);
+		const submitButton = screen.getByTestId('create-project-submit-button');
+		const nameInput = screen.getByTestId('create-project-name-input');
+		fireEvent.change(nameInput, { target: { value: 'test' } });
+		fireEvent.click(submitButton);
+		await vi.waitFor(() => {
+			expect(routerReplaceMock).toHaveBeenCalledWith(
+				`${Navigation.Projects}/${newProject.id}`,
+			);
 		});
 	});
 });

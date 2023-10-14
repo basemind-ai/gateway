@@ -16,14 +16,12 @@ export default function Projects() {
 	useEffect(() => {
 		(async () => {
 			const retrievedProjects = await handleRetrieveProjects();
-			setProjects(retrievedProjects);
-			if (retrievedProjects.length > 0) {
-				router.replace(
-					`${Navigation.Projects}/${retrievedProjects[0].id}`,
-				);
-			} else {
+			if (retrievedProjects.length === 0) {
 				router.replace(Navigation.CreateProject);
+				return;
 			}
+			setProjects(retrievedProjects);
+			router.replace(`${Navigation.Projects}/${retrievedProjects[0].id}`);
 		})();
 	}, []);
 

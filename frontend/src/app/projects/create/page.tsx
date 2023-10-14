@@ -26,6 +26,7 @@ export default function CreateProjectPage() {
 				data: { name, description },
 			});
 			addProject(project);
+			router.replace(`${Navigation.Projects}/${project.id}`);
 		} catch (error_) {
 			setError(error_ as Error);
 		} finally {
