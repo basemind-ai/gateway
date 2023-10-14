@@ -16,11 +16,6 @@ export default function Projects() {
 	useEffect(() => {
 		(async () => {
 			const retrievedProjects = await handleRetrieveProjects();
-			retrievedProjects.sort(
-				(a, b) =>
-					new Date(b.updatedAt).getTime() -
-					new Date(a.updatedAt).getTime(),
-			);
 			setProjects(retrievedProjects);
 			if (retrievedProjects.length > 0) {
 				router.replace(

@@ -37,30 +37,6 @@ describe('projects page tests', () => {
 		});
 	});
 
-	it('navigate to project who was updated last', async () => {
-		const projects = await ProjectFactory.batch(3);
-		projects.sort(
-			(a, b) =>
-				new Date(a.updatedAt).getTime() -
-				new Date(b.updatedAt).getTime(),
-		);
-		const oldestId = projects[0].id;
-		const newestId = projects[2].id;
-		mockFetch.mockResolvedValueOnce({
-			ok: true,
-			json: () => Promise.resolve(projects),
-		});
-		render(<Projects />);
-		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalledWith(
-				`${Navigation.Projects}/${newestId}`,
-			);
-		});
-		expect(routerReplaceMock).not.toHaveBeenCalledWith(
-			`${Navigation.Projects}/${oldestId}`,
-		);
-	});
-
 	it('navigate to create project when user has no projects', async () => {
 		mockFetch.mockResolvedValueOnce({
 			ok: true,
