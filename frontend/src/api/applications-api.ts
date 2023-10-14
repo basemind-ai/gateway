@@ -2,6 +2,7 @@ import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
 import {
 	Application,
+	ApplicationAnalytics,
 	ApplicationCreateBody,
 	ApplicationUpdateBody,
 } from '@/types';
@@ -59,5 +60,26 @@ export async function handleDeleteApplication({
 	await fetcher<undefined>({
 		url: `projects/${projectId}/applications/${applicationId}/`,
 		method: HttpMethod.Delete,
+	});
+}
+
+export async function handleApplicationAnalytics({
+	applicationId,
+	projectId,
+	fromDate,
+	toDate,
+}: {
+	applicationId: string;
+	projectId: string;
+	fromDate?: string;
+	toDate?: string;
+}): Promise<ApplicationAnalytics> {
+	let url = `projects/${projectId}/applications/${applicationId}/analytics`;
+	if (fromDate && toDate) {
+		url += `?fromDate=${fromDate}&toDate=${toDate}`;
+	}
+	return await fetcher<ApplicationAnalytics>({
+		url,
+		method: HttpMethod.Get,
 	});
 }

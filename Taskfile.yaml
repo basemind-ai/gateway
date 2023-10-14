@@ -152,3 +152,8 @@ tasks:
         desc: Create a JWT from the given applicationId arg
         cmds:
             - go run e2e/main.go create-jwt {{.CLI_ARGS}}
+    # frontend
+    format:ts:
+        desc: Format the typescript code
+        cmds:
+            - npx prettier --write '**/*.{yml,yaml,json,md,ts,html,tsx}'
