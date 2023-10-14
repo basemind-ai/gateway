@@ -1,7 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	important: true,
-	content: ['./src/**/*.{tsx,scss}', 'node_modules/preline/dist/*.js'],
+	content: [
+		'./src/**/*.{tsx,scss}',
+		'node_modules/react-tailwindcss-datepicker/dist/*.js',
+	],
 	theme: {
 		extend: {
 			backgroundImage: {

@@ -4,11 +4,12 @@
 	"private": true,
 	"license": "UNLICENSED",
 	"scripts": {
-		"dev": "next dev",
 		"build": "next build",
+		"build-storybook": "storybook build",
+		"dev": "next dev",
+		"format": "prettier --write '**/*.{yml,yaml,json,md,ts,html,tsx}'",
 		"start": "next start",
-		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"storybook": "storybook dev -p 6006"
 	},
 	"dependencies": {
 		"@firebase/analytics": "^0.10.0",
@@ -26,6 +27,7 @@
 		"react-dom": "18.2.0",
 		"react-icons": "^4.11.0",
 		"react-intl": "^6.4.7",
+		"react-tailwindcss-datepicker": "^1.6.6",
 		"zustand": "^4.4.3"
 	},
 	"devDependencies": {
