@@ -146,7 +146,7 @@ describe('Prompt Configs', () => {
 		});
 	});
 	describe('handleDeletePromptConfig', () => {
-		it('returns undefined', async () => {
+		it('returns undefined for delete prompt config api', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
 			const promptConfig = await PromptConfigFactory.build();
@@ -284,7 +284,7 @@ describe('Prompt Configs', () => {
 			});
 		});
 		describe('handleDeleteToken', () => {
-			it('returns undefined', async () => {
+			it('returns undefined for delete token api', async () => {
 				const project = await ProjectFactory.build();
 				const application = await ApplicationFactory.build();
 				const token = await TokenFactory.build();
@@ -426,7 +426,7 @@ describe('Prompt Configs', () => {
 			});
 		});
 		describe('handleDeleteProjectUser', () => {
-			it('returns undefined', async () => {
+			it('returns undefined for delete project user api', async () => {
 				const project = await ProjectFactory.build();
 				const userAccount = await ProjectUserAccountFactory.build();
 
