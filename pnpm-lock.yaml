@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
     autoInstallPeers: true
@@ -7056,7 +7056,7 @@ packages:
                 integrity: sha512-95X8guJYhfqiuVVhRFxVQcf4hW/2bCuoPwDasMf/531STFoNoWTT7YDnWdXHEZKqAGUigmpG31r2FE70LwnzJw==,
             }
         dependencies:
-            '@types/node': 20.8.4
+            '@types/node': 20.8.5
             form-data: 4.0.0
 
     /@types/node@16.18.58:
@@ -13755,7 +13755,7 @@ packages:
             }
         engines: { node: '>= 10.13.0' }
         dependencies:
-            '@types/node': 20.8.4
+            '@types/node': 20.8.5
             merge-stream: 2.0.0
             supports-color: 8.1.1
         dev: true
