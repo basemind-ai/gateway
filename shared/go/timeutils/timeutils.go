@@ -9,3 +9,11 @@ func GetFirstDayOfMonth() time.Time {
 
 	return time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
 }
+
+func ParseDate(date string, fallback time.Time) time.Time {
+	parsedDate, parseErr := time.Parse(time.RFC3339, date)
+	if parseErr != nil {
+		return fallback
+	}
+	return parsedDate
+}

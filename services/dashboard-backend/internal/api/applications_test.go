@@ -586,6 +586,7 @@ func TestApplicationsAPI(t *testing.T) {
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationAnalyticsEndpoint), func(t *testing.T) {
+		invalidUUID := "invalid"
 		applicationID := createApplication(t, projectID)
 		createPromptRequestRecord(t, applicationID)
 
@@ -625,5 +626,95 @@ func TestApplicationsAPI(t *testing.T) {
 			assert.Equal(t, promptReqAnalytics.TotalRequests, responseAnalytics.TotalRequests)
 			assert.Equal(t, promptReqAnalytics.ProjectedCost, responseAnalytics.ProjectedCost)
 		})
+
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 200 OK if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					createUserProject(t, newUserAccount.FirebaseID, newProjectID, permission)
+					newApplicationID := createApplication(t, newProjectID)
+
+					newTestClient := createTestClient(t, newUserAccount)
+
+					response, requestErr := newTestClient.Get(
+						context.TODO(),
+						fmt.Sprintf(
+							"/v1%s",
+							strings.ReplaceAll(
+								strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", newProjectID),
+								"{applicationId}",
+								newApplicationID,
+							),
+						),
+					)
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusOK, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
+				newApplicationID := createApplication(t, newProjectID)
+
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", newProjectID),
+							"{applicationId}",
+							newApplicationID,
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
+		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", invalidUUID),
+						"{applicationId}",
+						applicationID,
+					),
+				),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationID is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", projectID),
+							"{applicationId}",
+							invalidUUID,
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 }

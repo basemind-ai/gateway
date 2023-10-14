@@ -72,5 +72,5 @@ type ProjectUserAccountDTO struct {
 
 type ApplicationAnalyticsDTO struct {
 	TotalRequests int64   `json:"totalRequests"`
-	ProjectedCost float32 `json:"projectedCost"`
+	ProjectedCost float64 `json:"projectedCost"`
 }

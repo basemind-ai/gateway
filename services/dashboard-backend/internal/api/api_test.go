@@ -8,7 +8,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient"
-	httpTestUtils "github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
@@ -17,7 +17,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	cleanup := httpTestUtils.CreateNamespaceTestDBModule("api-test")
+	cleanup := testutils.CreateNamespaceTestDBModule("api-test")
 	defer cleanup()
 	m.Run()
 }
@@ -72,7 +72,7 @@ func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Clie
 		},
 	})
 
-	return httpTestUtils.CreateTestHTTPClient(t, r)
+	return testutils.CreateTestHTTPClient(t, r)
 }
 
 func createPromptRequestRecord(t *testing.T, applicationID string) string {

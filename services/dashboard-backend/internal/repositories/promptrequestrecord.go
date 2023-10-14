@@ -21,7 +21,7 @@ func GetPromptRequestAnalyticsByDateRange(ctx context.Context, applicationID pgt
 		return dto.ApplicationAnalyticsDTO{}, dbErr
 	}
 
-	var totalCost float32
+	var totalCost float64
 	for model, tokenCnt := range tokenCntMap {
 		totalCost += tokenutils.GetCostByModelType(tokenCnt, model)
 	}

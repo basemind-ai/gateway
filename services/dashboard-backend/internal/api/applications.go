@@ -126,31 +126,17 @@ func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	toDateStr := r.URL.Query().Get("toDate")
-	if toDateStr == "" {
-		toDateStr = time.Now().Format(time.RFC3339)
-	}
+	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())
+	fromDate := timeutils.ParseDate(r.URL.Query().Get("fromDate"), timeutils.GetFirstDayOfMonth())
 
-	fromDateStr := r.URL.Query().Get("fromDate")
-	if fromDateStr == "" {
-		fromDateStr = timeutils.GetFirstDayOfMonth().Format(time.RFC3339)
-	}
-
-	fromDate, err := time.Parse(time.RFC3339, fromDateStr)
-	if err != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
-		return
-	}
-
-	toDate, err := time.Parse(time.RFC3339, toDateStr)
-	if err != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
-		return
-	}
-
-	promptAnalytics, promptErr := repositories.GetPromptRequestAnalyticsByDateRange(r.Context(), applicationID, fromDate, toDate)
+	promptAnalytics, promptErr := repositories.GetPromptRequestAnalyticsByDateRange(
+		r.Context(),
+		applicationID,
+		fromDate,
+		toDate,
+	)
 	if promptErr != nil {
-		log.Error().Err(err).Msg("failed to retrieve prompt analytics")
+		log.Error().Err(promptErr).Msg("failed to retrieve prompt analytics")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
