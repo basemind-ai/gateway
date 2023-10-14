@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-confusing-void-expression */
 import {
 	ApplicationFactory,
@@ -26,6 +27,7 @@ import {
 import { HttpMethod } from '@/constants';
 
 describe('Prompt Configs', () => {
+	const bearerToken = 'Bearer test_token';
 	describe('handleCreatePromptConfig', () => {
 		it('returns a newly created prompt config', async () => {
 			const project = await ProjectFactory.build();
@@ -58,7 +60,7 @@ describe('Prompt Configs', () => {
 				),
 				{
 					headers: {
-						'Authorization': 'Bearer test_token',
+						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
@@ -91,7 +93,7 @@ describe('Prompt Configs', () => {
 				),
 				{
 					headers: {
-						'Authorization': 'Bearer test_token',
+						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
@@ -133,7 +135,7 @@ describe('Prompt Configs', () => {
 				),
 				{
 					headers: {
-						'Authorization': 'Bearer test_token',
+						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
@@ -167,7 +169,7 @@ describe('Prompt Configs', () => {
 				),
 				{
 					headers: {
-						'Authorization': 'Bearer test_token',
+						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
@@ -200,7 +202,7 @@ describe('Prompt Configs', () => {
 				),
 				{
 					headers: {
-						'Authorization': 'Bearer test_token',
+						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
@@ -239,7 +241,7 @@ describe('Prompt Configs', () => {
 					),
 					{
 						headers: {
-							'Authorization': 'Bearer test_token',
+							'Authorization': bearerToken,
 							'Content-Type': 'application/json',
 							'X-Request-Id': expect.any(String),
 						},
@@ -272,7 +274,7 @@ describe('Prompt Configs', () => {
 					),
 					{
 						headers: {
-							'Authorization': 'Bearer test_token',
+							'Authorization': bearerToken,
 							'Content-Type': 'application/json',
 							'X-Request-Id': expect.any(String),
 						},
@@ -305,7 +307,7 @@ describe('Prompt Configs', () => {
 					),
 					{
 						headers: {
-							'Authorization': 'Bearer test_token',
+							'Authorization': bearerToken,
 							'Content-Type': 'application/json',
 							'X-Request-Id': expect.any(String),
 						},
@@ -340,7 +342,7 @@ describe('Prompt Configs', () => {
 					),
 					{
 						headers: {
-							'Authorization': 'Bearer test_token',
+							'Authorization': bearerToken,
 							'Content-Type': 'application/json',
 							'X-Request-Id': expect.any(String),
 						},
@@ -376,7 +378,7 @@ describe('Prompt Configs', () => {
 					),
 					{
 						headers: {
-							'Authorization': 'Bearer test_token',
+							'Authorization': bearerToken,
 							'Content-Type': 'application/json',
 							'X-Request-Id': expect.any(String),
 						},
@@ -389,7 +391,6 @@ describe('Prompt Configs', () => {
 		describe('handleUpdateUserToPermission', () => {
 			it('returns a project user', async () => {
 				const project = await ProjectFactory.build();
-				const application = await ApplicationFactory.build();
 				const userAccount = await ProjectUserAccountFactory.build();
 
 				mockFetch.mockResolvedValueOnce({
@@ -414,7 +415,7 @@ describe('Prompt Configs', () => {
 					),
 					{
 						headers: {
-							'Authorization': 'Bearer test_token',
+							'Authorization': bearerToken,
 							'Content-Type': 'application/json',
 							'X-Request-Id': expect.any(String),
 						},
@@ -446,7 +447,7 @@ describe('Prompt Configs', () => {
 					),
 					{
 						headers: {
-							'Authorization': 'Bearer test_token',
+							'Authorization': bearerToken,
 							'Content-Type': 'application/json',
 							'X-Request-Id': expect.any(String),
 						},
