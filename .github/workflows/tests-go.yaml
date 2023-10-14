@@ -48,9 +48,9 @@ jobs:
               run: curl -sSf https://atlasgo.sh | sh
             - name: Authenticate with GCP
               id: auth
-              uses: google-github-actions/auth@v1.1.1
+              uses: google-github-actions/auth@v1
               with:
-                  workload_identity_provider: 'projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GCP_WORKLOAD_IDENTITY_POOL}/providers/${GCP_OIDC_PROVIDER_NAME}'
-                  service_account: '${GCP_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com'
+                  workload_identity_provider: projects/${{env.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{env.GCP_WORKLOAD_IDENTITY_POOL}}/providers/${{env.GCP_OIDC_PROVIDER_NAME}}
+                  service_account: ${{env.GCP_SERVICE_ACCOUNT_NAME}}@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
             - name: Test
               run: go test ./...
