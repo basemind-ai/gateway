@@ -599,7 +599,11 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", projectID),
+						strings.ReplaceAll(
+							api.ApplicationAnalyticsEndpoint,
+							"{projectId}",
+							projectID,
+						),
 						"{applicationId}",
 						applicationID,
 					),
@@ -648,7 +652,11 @@ func TestApplicationsAPI(t *testing.T) {
 						fmt.Sprintf(
 							"/v1%s",
 							strings.ReplaceAll(
-								strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", newProjectID),
+								strings.ReplaceAll(
+									api.ApplicationAnalyticsEndpoint,
+									"{projectId}",
+									newProjectID,
+								),
 								"{applicationId}",
 								newApplicationID,
 							),
@@ -671,7 +679,11 @@ func TestApplicationsAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", newProjectID),
+							strings.ReplaceAll(
+								api.ApplicationAnalyticsEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
 							"{applicationId}",
 							newApplicationID,
 						),
@@ -688,7 +700,11 @@ func TestApplicationsAPI(t *testing.T) {
 				fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", invalidUUID),
+						strings.ReplaceAll(
+							api.ApplicationAnalyticsEndpoint,
+							"{projectId}",
+							invalidUUID,
+						),
 						"{applicationId}",
 						applicationID,
 					),
@@ -706,7 +722,11 @@ func TestApplicationsAPI(t *testing.T) {
 					fmt.Sprintf(
 						"/v1%s",
 						strings.ReplaceAll(
-							strings.ReplaceAll(api.ApplicationAnalyticsEndpoint, "{projectId}", projectID),
+							strings.ReplaceAll(
+								api.ApplicationAnalyticsEndpoint,
+								"{projectId}",
+								projectID,
+							),
 							"{applicationId}",
 							invalidUUID,
 						),

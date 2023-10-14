@@ -10,7 +10,11 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func GetPromptRequestAnalyticsByDateRange(ctx context.Context, applicationID pgtype.UUID, fromDate, toDate time.Time) (dto.ApplicationAnalyticsDTO, error) {
+func GetPromptRequestAnalyticsByDateRange(
+	ctx context.Context,
+	applicationID pgtype.UUID,
+	fromDate, toDate time.Time,
+) (dto.ApplicationAnalyticsDTO, error) {
 	totalRequests, dbErr := GetPromptRequestCountByDateRange(ctx, applicationID, fromDate, toDate)
 	if dbErr != nil {
 		return dto.ApplicationAnalyticsDTO{}, dbErr
@@ -32,7 +36,11 @@ func GetPromptRequestAnalyticsByDateRange(ctx context.Context, applicationID pgt
 	}, nil
 }
 
-func GetPromptRequestCountByDateRange(ctx context.Context, applicationID pgtype.UUID, fromDate, toDate time.Time) (int64, error) {
+func GetPromptRequestCountByDateRange(
+	ctx context.Context,
+	applicationID pgtype.UUID,
+	fromDate, toDate time.Time,
+) (int64, error) {
 	promptReqParam := db.RetrieveTotalPromptRequestRecordParams{
 		ApplicationID: applicationID,
 		FromDate:      pgtype.Timestamptz{Time: fromDate, Valid: true},
@@ -47,14 +55,19 @@ func GetPromptRequestCountByDateRange(ctx context.Context, applicationID pgtype.
 	return totalRequests, nil
 }
 
-func GetTokenUsagePerModelTypeByDateRange(ctx context.Context, applicationID pgtype.UUID, fromDate, toDate time.Time) (map[db.ModelType]int64, error) {
+func GetTokenUsagePerModelTypeByDateRange(
+	ctx context.Context,
+	applicationID pgtype.UUID,
+	fromDate, toDate time.Time,
+) (map[db.ModelType]int64, error) {
 	promptReqParam := db.RetrieveTotalPromptRequestRecordParams{
 		ApplicationID: applicationID,
 		FromDate:      pgtype.Timestamptz{Time: fromDate, Valid: true},
 		ToDate:        pgtype.Timestamptz{Time: toDate, Valid: true},
 	}
 
-	recordPerPromptConfig, dbErr := db.GetQueries().RetrieveTotalTokensPerPromptConfig(ctx, promptReqParam)
+	recordPerPromptConfig, dbErr := db.GetQueries().
+		RetrieveTotalTokensPerPromptConfig(ctx, promptReqParam)
 	if dbErr != nil {
 		return nil, dbErr
 	}

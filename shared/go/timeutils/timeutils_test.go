@@ -14,7 +14,11 @@ func TestGetFirstDayOfMonth(t *testing.T) {
 	location := now.Location()
 
 	t.Run("get first day of the month", func(t *testing.T) {
-		assert.Equal(t, time.Date(year, month, 1, 0, 0, 0, 0, location), timeutils.GetFirstDayOfMonth())
+		assert.Equal(
+			t,
+			time.Date(year, month, 1, 0, 0, 0, 0, location),
+			timeutils.GetFirstDayOfMonth(),
+		)
 	})
 }
 
@@ -38,7 +42,11 @@ func TestParseDate(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run("test date parser", func(t *testing.T) {
-			assert.Equal(t, testCase.expected, timeutils.ParseDate(testCase.date, testCase.fallback))
+			assert.Equal(
+				t,
+				testCase.expected,
+				timeutils.ParseDate(testCase.date, testCase.fallback),
+			)
 		})
 	}
 }
