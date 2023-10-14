@@ -1,7 +1,17 @@
 import { useState } from 'react';
 import Datepicker, { DateValueType } from 'react-tailwindcss-datepicker';
 
-export function DatePicker() {
+export interface DatePickerProps {
+	showShortcuts: boolean;
+	useRange: boolean;
+	displayFormat: string;
+}
+
+export function DatePicker({
+	showShortcuts,
+	useRange,
+	displayFormat,
+}: DatePickerProps) {
 	const [value, setValue] = useState<DateValueType>({
 		startDate: new Date(),
 		endDate: new Date().setMonth(11).toString(),
@@ -12,13 +22,13 @@ export function DatePicker() {
 	};
 
 	return (
-		<div data-testid="datapicker">
+		<div data-testid="datepicker">
 			<Datepicker
 				value={value}
 				onChange={handleValueChange}
-				showShortcuts={true}
-				useRange={false}
-				displayFormat="DD/MM/YYYY"
+				showShortcuts={showShortcuts}
+				useRange={useRange}
+				displayFormat={displayFormat}
 			/>
 		</div>
 	);
