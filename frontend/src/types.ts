@@ -39,6 +39,11 @@ export interface Application {
 	updatedAt: string;
 }
 
+export interface ApplicationAnalytics {
+	totalRequests: number;
+	projectedCost: number;
+}
+
 export type ApplicationCreateBody = Pick<Application, 'name' | 'description'>;
 export type ApplicationUpdateBody = Partial<ApplicationCreateBody>;
 

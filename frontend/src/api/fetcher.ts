@@ -9,12 +9,14 @@ export async function fetcher<T>({
 	method,
 	version = 1,
 	data,
+	queryParams,
 	...rest
 }: {
 	url: string;
 	method: HttpMethod;
 	version?: number;
 	data?: Record<string, any> | any[] | string | number;
+	queryParams?: Record<string, string | undefined>;
 } & Omit<RequestInit, 'method' | 'body'>): Promise<T> {
 	const auth = await getFirebaseAuth();
 	const token = await auth.currentUser?.getIdToken();
@@ -41,6 +43,12 @@ export async function fetcher<T>({
 		`v${version}/${url}`,
 		process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
 	);
+	const searchParams = new URLSearchParams();
+
+	for (const [key, value] of Object.entries(queryParams ?? {})) {
+		searchParams.set(key, value ?? '');
+	}
+	path.search = searchParams.toString();
 
 	const response = await fetch(path, request);
 	const body =

@@ -59,7 +59,7 @@ describe('projects page tests', () => {
 	it('rendering projects component change store value', async () => {
 		const projects = await ProjectFactory.batch(3);
 		const { result } = renderHook(() => useProjects());
-		expect(result.current).toEqual([]);
+		expect(result.current[0].applications).toEqual([]);
 		act(() => {
 			mockFetch.mockResolvedValueOnce({
 				ok: true,

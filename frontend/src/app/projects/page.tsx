@@ -21,7 +21,9 @@ export default function Projects() {
 				return;
 			}
 			setProjects(retrievedProjects);
-			router.replace(`${Navigation.Projects}/${retrievedProjects[0].id}`);
+			router.replace(
+				`${Navigation.Projects}/${retrievedProjects[0]?.id}`,
+			);
 		})();
 	}, []);
 

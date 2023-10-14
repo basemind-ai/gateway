@@ -121,4 +121,30 @@ describe('fetcher tests', () => {
 			},
 		);
 	});
+
+	it('handles request with query params', async () => {
+		mockFetch.mockResolvedValueOnce({
+			ok: true,
+			status: 200,
+			json: () => Promise.resolve({}),
+		});
+
+		await fetcher({
+			url: 'test',
+			method: HttpMethod.Get,
+			queryParams: { foo: 'bar' },
+		});
+
+		expect(mockFetch).toHaveBeenCalledWith(
+			new URL('http://www.example.com/v1/test?foo=bar'),
+			{
+				method: HttpMethod.Get,
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer test_token',
+					'X-Request-Id': expect.any(String),
+				},
+			},
+		);
+	});
 });
