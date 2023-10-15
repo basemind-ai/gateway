@@ -1,15 +1,18 @@
 package api
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/timeutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
-	"net/http"
 )
 
 // HandleCreateProject - creates a new project and sets the user as an ADMIN.
@@ -147,4 +150,27 @@ func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// HandleRetrieveProjectAnalytics - retrieves the analytics for a project which includes the total API calls and model costs for all the applications in the project
+func HandleRetrieveProjectAnalytics(w http.ResponseWriter, r *http.Request) {
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
+
+	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())
+	fromDate := timeutils.ParseDate(r.URL.Query().Get("fromDate"), timeutils.GetFirstDayOfMonth())
+
+	projectAnalytics, err := repositories.GetProjectAnalyticsByDateRange(
+		r.Context(),
+		projectID,
+		fromDate,
+		toDate,
+	)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to retrieve project analytics")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	serialization.RenderJSONResponse(w, http.StatusOK, projectAnalytics)
 }

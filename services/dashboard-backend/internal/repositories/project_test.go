@@ -2,11 +2,15 @@ package repositories_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestProjectRepository(t *testing.T) {
@@ -119,6 +123,80 @@ func TestProjectRepository(t *testing.T) {
 				FirebaseID: userAccount.FirebaseID,
 			})
 			assert.Error(t, err)
+		})
+	})
+
+	t.Run("Project Analytics", func(t *testing.T) {
+		project, _ := factories.CreateProject(context.TODO())
+		application, _ := factories.CreateApplication(context.TODO(), project.ID)
+		factories.CreatePromptRequestRecord(context.TODO(), application.ID)
+
+		fromDate := time.Now().AddDate(0, 0, -1)
+		toDate := fromDate.AddDate(0, 0, 2)
+		totalTokensUsed := int64(20)
+
+		t.Run("GetTotalAPICountByDateRange", func(t *testing.T) {
+			t.Run("get total api count by date range", func(t *testing.T) {
+				totalRequests, dbErr := repositories.GetTotalAPICountByDateRange(
+					context.TODO(),
+					project.ID,
+					time.Now().AddDate(0, 0, -1),
+					time.Now().AddDate(0, 0, 1),
+				)
+				assert.NoError(t, dbErr)
+				assert.Equal(t, int64(1), totalRequests)
+			})
+			t.Run("fails to get total api count for invalid project id", func(t *testing.T) {
+				invalidProjectId := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+				totalRequests, _ := repositories.GetTotalAPICountByDateRange(
+					context.TODO(),
+					invalidProjectId,
+					time.Now().AddDate(0, 0, -1),
+					time.Now().AddDate(0, 0, 1),
+				)
+				assert.Equal(t, int64(0), totalRequests)
+			})
+		})
+
+		t.Run("GetTokenConsumedByProjectByDateRange", func(t *testing.T) {
+			t.Run("get total api count by date range", func(t *testing.T) {
+				projectTokenCntMap, dbErr := repositories.GetTokenConsumedByProjectByDateRange(
+					context.TODO(),
+					project.ID,
+					time.Now().AddDate(0, 0, -1),
+					time.Now().AddDate(0, 0, 1),
+				)
+				assert.NoError(t, dbErr)
+				assert.Equal(t, int64(20), projectTokenCntMap[db.ModelTypeGpt35Turbo])
+			})
+			t.Run("fails to get total api count for invalid project id", func(t *testing.T) {
+				invalidProjectId := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+				projectTokenCntMap, _ := repositories.GetTokenConsumedByProjectByDateRange(
+					context.TODO(),
+					invalidProjectId,
+					time.Now().AddDate(0, 0, -1),
+					time.Now().AddDate(0, 0, 1),
+				)
+				assert.Equal(t, int64(0), projectTokenCntMap[db.ModelTypeGpt35Turbo])
+			})
+		})
+
+		t.Run("GetProjectAnalyticsByDateRange", func(t *testing.T) {
+			t.Run("get token usage for each model types by date range", func(t *testing.T) {
+				projectAnalytics, dbErr := repositories.GetProjectAnalyticsByDateRange(
+					context.TODO(),
+					project.ID,
+					fromDate,
+					toDate,
+				)
+				assert.NoError(t, dbErr)
+				assert.Equal(t, int64(1), projectAnalytics.TotalAPICalls)
+				assert.Equal(
+					t,
+					tokenutils.GetCostByModelType(totalTokensUsed, db.ModelTypeGpt35Turbo),
+					projectAnalytics.ModelsCost,
+				)
+			})
 		})
 	})
 }

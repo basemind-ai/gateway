@@ -2,11 +2,12 @@ package api
 
 const (
 	ProjectsListEndpoint           = "/projects"
+	ProjectAnalyticsEndpoint       = "/projects/{projectId}/analytics"
 	ProjectDetailEndpoint          = "/projects/{projectId}"
 	ProjectUserListEndpoint        = "/projects/{projectId}/users"
 	ProjectUserDetailEndpoint      = "/projects/{projectId}/users/{userId}"
-	ApplicationAnalyticsEndpoint   = "/projects/{projectId}/applications/{applicationId}/analytics"
 	ApplicationsListEndpoint       = "/projects/{projectId}/applications"
+	ApplicationAnalyticsEndpoint   = "/projects/{projectId}/applications/{applicationId}/analytics"
 	ApplicationDetailEndpoint      = "/projects/{projectId}/applications/{applicationId}"
 	ApplicationTokensListEndpoint  = "/projects/{projectId}/applications/{applicationId}/tokens"           //nolint: gosec
 	ApplicationTokenDetailEndpoint = "/projects/{projectId}/applications/{applicationId}/tokens/{tokenId}" //nolint: gosec

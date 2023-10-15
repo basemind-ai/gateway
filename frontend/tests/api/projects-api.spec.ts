@@ -5,10 +5,12 @@ import { mockFetch } from 'tests/mocks';
 import {
 	handleCreateProject,
 	handleDeleteProject,
+	handleProjectAnalytics,
 	handleRetrieveProjects,
 	handleUpdateProject,
 } from '@/api';
 import { HttpMethod } from '@/constants';
+import { ProjectAnalytics } from '@/types';
 
 describe('Projects', () => {
 	describe('handleCreateProject', () => {
@@ -120,6 +122,73 @@ describe('Projects', () => {
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Delete,
+				},
+			);
+		});
+	});
+	describe('handleProjectAnalytics', () => {
+		it('returns an application analytics', async () => {
+			const project = await ProjectFactory.build();
+			const projectAnalytics = {
+				modelsCost: 10,
+				totalAPICalls: 1000,
+			} satisfies ProjectAnalytics;
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(projectAnalytics),
+			});
+			const data = await handleProjectAnalytics({
+				projectId: project.id,
+			});
+
+			expect(data).toEqual(projectAnalytics);
+			expect(mockFetch).toHaveBeenCalledWith(
+				new URL(
+					`http://www.example.com/v1/projects/${project.id}/analytics`,
+				),
+				{
+					headers: {
+						'Authorization': 'Bearer test_token',
+						'Content-Type': 'application/json',
+						'X-Request-Id': expect.any(String),
+					},
+					method: HttpMethod.Get,
+				},
+			);
+		});
+		it('returns application analytics for a given date range', async () => {
+			const project = await ProjectFactory.build();
+			const projectAnalytics = {
+				modelsCost: 10,
+				totalAPICalls: 1000,
+			} satisfies ProjectAnalytics;
+
+			const fromDate = '2023-09-30T15:34:09.136Z';
+			const toDate = '2023-10-02T15:34:09.136Z';
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(projectAnalytics),
+			});
+			const data = await handleProjectAnalytics({
+				projectId: project.id,
+				fromDate,
+				toDate,
+			});
+
+			expect(data).toEqual(projectAnalytics);
+			expect(mockFetch).toHaveBeenCalledWith(
+				new URL(
+					`http://www.example.com/v1/projects/${project.id}/analytics?fromDate=${fromDate}&toDate=${toDate}`,
+				),
+				{
+					headers: {
+						'Authorization': 'Bearer test_token',
+						'Content-Type': 'application/json',
+						'X-Request-Id': expect.any(String),
+					},
+					method: HttpMethod.Get,
 				},
 			);
 		});
