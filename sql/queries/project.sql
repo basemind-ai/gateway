@@ -47,3 +47,24 @@ LEFT JOIN project AS p ON up.project_id = p.id
 LEFT JOIN user_account AS ua ON up.user_id = ua.id
 WHERE
     ua.firebase_id = $1 AND p.deleted_at IS NULL;
+
+-- name: RetrieveTotalPromptAPICalls :one
+SELECT COUNT(prr.id) AS total_requests
+FROM prompt_request_record AS prr
+INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
+INNER JOIN application AS app ON pc.application_id = app.id
+WHERE
+    app.project_id = $1
+    AND prr.created_at BETWEEN $2 AND $3;
+
+-- name: RetrieveTotalTokensConsumed :many
+SELECT
+    pc.model_type,
+    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
+FROM prompt_request_record AS prr
+INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
+INNER JOIN application AS app ON pc.application_id = app.id
+WHERE
+    app.project_id = $1
+    AND prr.created_at BETWEEN $2 AND $3
+GROUP BY pc.model_type;
