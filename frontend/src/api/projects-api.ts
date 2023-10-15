@@ -1,6 +1,6 @@
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
-import { Project, ProjectCreateBody } from '@/types';
+import { Project, ProjectAnalytics, ProjectCreateBody } from '@/types';
 
 export async function handleCreateProject({
 	data,
@@ -43,5 +43,24 @@ export async function handleDeleteProject({
 	await fetcher<undefined>({
 		url: `projects/${projectId}/`,
 		method: HttpMethod.Delete,
+	});
+}
+
+export async function handleProjectAnalytics({
+	projectId,
+	fromDate,
+	toDate,
+}: {
+	projectId: string;
+	fromDate?: string;
+	toDate?: string;
+}): Promise<ProjectAnalytics> {
+	return await fetcher<ProjectAnalytics>({
+		url: `projects/${projectId}/analytics`,
+		method: HttpMethod.Get,
+		queryParams: {
+			fromDate,
+			toDate,
+		},
 	});
 }
