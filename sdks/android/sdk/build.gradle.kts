@@ -43,7 +43,7 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.grpc.kotlin.stub)
-    implementation(libs.grpc.protobuf.kotlin.lite)
+    api(libs.grpc.protobuf.kotlin.lite)
     implementation(libs.grpc.protobuf.lite)
     implementation(libs.grpc.stub)
     implementation(libs.androidx.core.ktx)

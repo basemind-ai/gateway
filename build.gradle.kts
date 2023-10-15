@@ -55,6 +55,7 @@ spotless {
     }
     kotlin {
         target("**/*.kt")
+        targetExclude("sdks/android/test-app/**/*.kt")
         ktfmt()
         ktlint()
     }
