@@ -152,6 +152,7 @@ func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// HandleRetrieveProjectAnalytics - retrieves the analytics for a project which includes the total API calls and model costs for all the applications in the project
 func HandleRetrieveProjectAnalytics(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
