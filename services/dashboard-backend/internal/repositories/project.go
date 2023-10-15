@@ -171,7 +171,12 @@ func GetProjectAnalyticsByDateRange(
 		return dto.ProjectAnalyticsDTO{}, dbErr
 	}
 
-	projectTokenCntMap, dbErr := GetTokenConsumedByProjectByDateRange(ctx, projectID, fromDate, toDate)
+	projectTokenCntMap, dbErr := GetTokenConsumedByProjectByDateRange(
+		ctx,
+		projectID,
+		fromDate,
+		toDate,
+	)
 	if dbErr != nil {
 		return dto.ProjectAnalyticsDTO{}, dbErr
 	}
