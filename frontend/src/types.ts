@@ -26,6 +26,11 @@ export interface Project {
 	applications: Application[];
 }
 
+export interface ProjectAnalytics {
+	totalAPICalls: number;
+	modelsCost: number;
+}
+
 export type ProjectCreateBody = Pick<Project, 'name' | 'description'>;
 export type ProjectUpdateBody = Partial<ProjectCreateBody>;
 
