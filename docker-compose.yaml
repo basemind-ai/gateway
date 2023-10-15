@@ -89,7 +89,6 @@ services:
             target: install
             args:
                 BUILD_TARGET: openai-connector
-                NODE_ENV: development
                 PORT: 8000
         ports:
             - '8000:8000'
@@ -110,8 +109,6 @@ services:
             dockerfile: docker/Dockerfile.frontend
             context: .
             target: install
-            args:
-                - NODE_ENV=development
         ports:
             - '3000:3000'
         volumes:

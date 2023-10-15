@@ -3,10 +3,8 @@ RUN npm i -g pnpm
 
 FROM base AS install
 WORKDIR /app/
-ARG NODE_ENV="production"
-ENV NODE_ENV=${NODE_ENV}
 COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
-COPY frontend/tsconfig.json frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/i18n.js frontend/postcss.config.js frontend/tailwind.config.js ./frontend/
+COPY frontend/*.json frontend/*.js frontend/*.d.ts frontend/*.yaml ./frontend/
 RUN pnpm install -r --ignore-scripts \
     && pnpm add -D @next/swc-linux-arm64-gnu @next/swc-linux-arm64-musl -w
 
@@ -31,8 +29,8 @@ COPY frontend/public frontend/public
 COPY --from=build --chown=app:nodejs /app/frontend/dist frontend/dist
 
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
-COPY frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/next-i18next.config.js frontend/tailwind.config.js ./frontend/
-RUN pnpm install -r --ignore-scripts
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/i18n.js frontend/tailwind.config.js ./frontend/
+RUN pnpm install -r --prod
 
 WORKDIR /app/frontend
 USER app

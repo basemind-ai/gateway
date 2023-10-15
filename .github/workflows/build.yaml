@@ -1,0 +1,69 @@
+name: 'Build'
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+env:
+    GCP_OIDC_PROVIDER_NAME: github-provider
+    GCP_PROJECT_ID: basemind-ai-development
+    GCP_PROJECT_NUMBER: 78794879644
+    GCP_SERVICE_ACCOUNT_NAME: github-actions
+    GCP_WORKLOAD_IDENTITY_POOL: dev-pool
+    GCP_REGION: europe-west3
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                service:
+                    - api-gateway
+                    - dashboard-backend
+                    - openai-connector
+                    - frontend
+                include:
+                    - file_path: ./docker/Dockerfile.go-services
+                      service: api-gateway
+                    - file_path: ./docker/Dockerfile.go-services
+                      service: dashboard-backend
+                    - file_path: ./docker/Dockerfile.ts-services
+                      service: openai-connector
+                    - file_path: ./docker/Dockerfile.frontend
+                      service: frontend
+        permissions:
+            contents: 'read'
+            id-token: 'write'
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
+            - name: Authenticate to Google Cloud
+              id: auth
+              uses: google-github-actions/auth@v1
+              with:
+                  token_format: access_token
+                  workload_identity_provider: projects/${{env.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{env.GCP_WORKLOAD_IDENTITY_POOL}}/providers/${{env.GCP_OIDC_PROVIDER_NAME}}
+                  service_account: ${{env.GCP_SERVICE_ACCOUNT_NAME}}@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
+            - name: Login to Artifact Registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{env.GCP_REGION}}-docker.pkg.dev
+                  username: oauth2accesstoken
+                  password: ${{ steps.auth.outputs.access_token }}
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+            - name: Set up Docker BuildX
+              uses: docker/setup-buildx-action@v3
+            - name: Build and push
+              uses: docker/build-push-action@v5
+              with:
+                  push: ${{github.event_name == 'push' && startsWith(github.ref, 'refs/tags')}}
+                  context: .
+                  file: ${{matrix.file_path}}
+                  build-args: |
+                      BUILD_TARGET=${{matrix.service}}
+                  tags: |
+                      ${{env.GCP_REGION}}-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/basemind/${{matrix.service}}:latest
+                      ${{env.GCP_REGION}}-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/basemind/${{matrix.service}}:${{github.sha}}

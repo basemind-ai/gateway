@@ -4,8 +4,6 @@ RUN npm i -g pnpm
 FROM base AS install
 WORKDIR /app/
 ARG BUILD_TARGET
-ARG NODE_ENV="production"
-ENV NODE_ENV=${NODE_ENV}
 COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
 COPY services/${BUILD_TARGET}/tsconfig* services/${BUILD_TARGET}/package.json services/${BUILD_TARGET}/webpack.config.ts ./services/${BUILD_TARGET}/
 RUN pnpm install -r --ignore-scripts
