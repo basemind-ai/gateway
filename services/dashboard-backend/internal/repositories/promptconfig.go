@@ -298,7 +298,8 @@ func GetTotalTokensConsumedByDateRange(
 		ToDate:         pgtype.Timestamptz{Time: toDate, Valid: true},
 	}
 
-	promptRequests, dbErr := db.GetQueries().RetrieveTotalTokensConsumedPerPromptConfig(ctx, reqParam)
+	promptRequests, dbErr := db.GetQueries().
+		RetrieveTotalTokensConsumedPerPromptConfig(ctx, reqParam)
 	if dbErr != nil {
 		return nil, dbErr
 	}
@@ -316,7 +317,12 @@ func GetPromptConfigAnalyticsByDateRange(
 	promptConfigID pgtype.UUID,
 	fromDate, toDate time.Time,
 ) (dto.PromptConfigAnalyticsDTO, error) {
-	totalRequests, dbErr := GetTotalPromptRequestCountByDateRange(ctx, promptConfigID, fromDate, toDate)
+	totalRequests, dbErr := GetTotalPromptRequestCountByDateRange(
+		ctx,
+		promptConfigID,
+		fromDate,
+		toDate,
+	)
 	if dbErr != nil {
 		return dto.PromptConfigAnalyticsDTO{}, dbErr
 	}

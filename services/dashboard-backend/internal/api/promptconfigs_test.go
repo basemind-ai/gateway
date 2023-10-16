@@ -1502,7 +1502,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			)
 
 			assert.NoError(t, deserializationErr)
-			assert.Equal(t, promptReqAnalytics.TotalPromptRequests, responseAnalytics.TotalPromptRequests)
+			assert.Equal(
+				t,
+				promptReqAnalytics.TotalPromptRequests,
+				responseAnalytics.TotalPromptRequests,
+			)
 			assert.Equal(t, promptReqAnalytics.ModelsCost, responseAnalytics.ModelsCost)
 		})
 
@@ -1599,52 +1603,58 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 
-		t.Run("responds with status 400 BAD REQUEST if applicationID is invalid", func(t *testing.T) {
-			response, requestErr := testClient.Get(
-				context.TODO(),
-				fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationID is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
 						strings.ReplaceAll(
 							strings.ReplaceAll(
-								api.PromptConfigAnalyticsEndpoint,
-								"{projectId}",
-								projectID,
+								strings.ReplaceAll(
+									api.PromptConfigAnalyticsEndpoint,
+									"{projectId}",
+									projectID,
+								),
+								"{applicationId}",
+								invalidUUID,
 							),
-							"{applicationId}",
+							"{promptConfigId}",
+							promptConfigID,
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if promptConfigID is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								strings.ReplaceAll(
+									api.PromptConfigAnalyticsEndpoint,
+									"{projectId}",
+									projectID,
+								),
+								"{applicationId}",
+								applicationID,
+							),
+							"{promptConfigId}",
 							invalidUUID,
 						),
-						"{promptConfigId}",
-						promptConfigID,
 					),
-				),
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
-
-		t.Run("responds with status 400 BAD REQUEST if promptConfigID is invalid", func(t *testing.T) {
-			response, requestErr := testClient.Get(
-				context.TODO(),
-				fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(
-						strings.ReplaceAll(
-							strings.ReplaceAll(
-								api.PromptConfigAnalyticsEndpoint,
-								"{projectId}",
-								projectID,
-							),
-							"{applicationId}",
-							applicationID,
-						),
-						"{promptConfigId}",
-						invalidUUID,
-					),
-				),
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 }

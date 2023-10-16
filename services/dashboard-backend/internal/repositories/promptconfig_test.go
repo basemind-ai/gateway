@@ -386,16 +386,19 @@ func TestPromptConfigRepository(t *testing.T) {
 				assert.NoError(t, dbErr)
 				assert.Equal(t, int64(1), totalRequests)
 			})
-			t.Run("fails to get total prompt requests for invalid prompt-config id", func(t *testing.T) {
-				invalidUUID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
-				totalRequests, _ := repositories.GetTotalPromptRequestCountByDateRange(
-					context.TODO(),
-					invalidUUID,
-					fromDate,
-					toDate,
-				)
-				assert.Equal(t, int64(0), totalRequests)
-			})
+			t.Run(
+				"fails to get total prompt requests for invalid prompt-config id",
+				func(t *testing.T) {
+					invalidUUID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+					totalRequests, _ := repositories.GetTotalPromptRequestCountByDateRange(
+						context.TODO(),
+						invalidUUID,
+						fromDate,
+						toDate,
+					)
+					assert.Equal(t, int64(0), totalRequests)
+				},
+			)
 		})
 
 		t.Run("GetTotalTokensConsumedByDateRange", func(t *testing.T) {
