@@ -70,6 +70,11 @@ export interface PromptConfig<
 	updatedAt: string;
 }
 
+export interface PromptConfigAnalytics {
+	totalPromptRequests: number;
+	modelsCost: number;
+}
+
 export type PromptConfigCreateBody<
 	P extends Record<string, string | number> = Record<string, string | number>,
 	M extends Record<string, string | number> = Record<string, string | number>,

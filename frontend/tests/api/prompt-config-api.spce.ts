@@ -14,6 +14,7 @@ import {
 	handleCreateToken,
 	handleDeletePromptConfig,
 	handleDeleteToken,
+	handlePromptConfigAnalytics,
 	handleRetrievePromptConfigs,
 	handleRetrieveTokens,
 	handleSetDefaultPromptConfig,
@@ -25,6 +26,7 @@ import {
 	handleUpdateUserToPermission,
 } from '@/api/project-users-api';
 import { HttpMethod } from '@/constants';
+import { PromptConfigAnalytics } from '@/types';
 
 describe('Prompt Configs', () => {
 	const bearerToken = 'Bearer test_token';
@@ -455,6 +457,81 @@ describe('Prompt Configs', () => {
 					},
 				);
 			});
+		});
+	});
+
+	describe('handlePromptConfigAnalytics', () => {
+		it('returns prompt config analytics', async () => {
+			const project = await ProjectFactory.build();
+			const application = await ApplicationFactory.build();
+			const promptConfig = await PromptConfigFactory.build();
+			const promptConfigAnalytics = {
+				modelsCost: 10,
+				totalPromptRequests: 1000,
+			} satisfies PromptConfigAnalytics;
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(promptConfigAnalytics),
+			});
+			const data = await handlePromptConfigAnalytics({
+				projectId: project.id,
+				applicationId: application.id,
+				promptConfigId: promptConfig.id,
+			});
+
+			expect(data).toEqual(promptConfigAnalytics);
+			expect(mockFetch).toHaveBeenCalledWith(
+				new URL(
+					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/prompt-configs/${promptConfig.id}/analytics`,
+				),
+				{
+					headers: {
+						'Authorization': bearerToken,
+						'Content-Type': 'application/json',
+						'X-Request-Id': expect.any(String),
+					},
+					method: HttpMethod.Get,
+				},
+			);
+		});
+		it('returns prompt config analytics for a given date range', async () => {
+			const project = await ProjectFactory.build();
+			const application = await ApplicationFactory.build();
+			const promptConfig = await PromptConfigFactory.build();
+			const promptConfigAnalytics = {
+				modelsCost: 10,
+				totalPromptRequests: 1000,
+			} satisfies PromptConfigAnalytics;
+
+			const fromDate = '2023-09-30T15:34:09.136Z';
+			const toDate = '2023-10-02T15:34:09.136Z';
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(promptConfigAnalytics),
+			});
+			const data = await handlePromptConfigAnalytics({
+				projectId: project.id,
+				applicationId: application.id,
+				promptConfigId: promptConfig.id,
+				fromDate,
+				toDate,
+			});
+
+			expect(data).toEqual(promptConfigAnalytics);
+			expect(mockFetch).toHaveBeenCalledWith(
+				new URL(
+					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/prompt-configs/${promptConfig.id}/analytics?fromDate=${fromDate}&toDate=${toDate}`,
+				),
+				{
+					headers: {
+						'Authorization': bearerToken,
+						'Content-Type': 'application/json',
+						'X-Request-Id': expect.any(String),
+					},
+					method: HttpMethod.Get,
+				},
+			);
 		});
 	});
 });
