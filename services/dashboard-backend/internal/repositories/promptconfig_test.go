@@ -5,14 +5,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestPromptConfigRepository(t *testing.T) {
@@ -359,6 +362,81 @@ func TestPromptConfigRepository(t *testing.T) {
 				dto.PromptConfigUpdateDTO{ProviderPromptMessages: &badMessage},
 			)
 			assert.Error(t, err)
+		})
+	})
+
+	t.Run("Prompt Config Analytics", func(t *testing.T) {
+		project, _ := factories.CreateProject(context.TODO())
+		application, _ := factories.CreateApplication(context.TODO(), project.ID)
+		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+		factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
+
+		fromDate := time.Now().AddDate(0, 0, -1)
+		toDate := fromDate.AddDate(0, 0, 2)
+		totalTokensUsed := int64(20)
+
+		t.Run("GetTotalPromptRequestCountByDateRange", func(t *testing.T) {
+			t.Run("get total prompt requests by date range", func(t *testing.T) {
+				totalRequests, dbErr := repositories.GetTotalPromptRequestCountByDateRange(
+					context.TODO(),
+					promptConfig.ID,
+					fromDate,
+					toDate,
+				)
+				assert.NoError(t, dbErr)
+				assert.Equal(t, int64(1), totalRequests)
+			})
+			t.Run("fails to get total prompt requests for invalid prompt-config id", func(t *testing.T) {
+				invalidUUID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+				totalRequests, _ := repositories.GetTotalPromptRequestCountByDateRange(
+					context.TODO(),
+					invalidUUID,
+					fromDate,
+					toDate,
+				)
+				assert.Equal(t, int64(0), totalRequests)
+			})
+		})
+
+		t.Run("GetTotalTokensConsumedByDateRange", func(t *testing.T) {
+			t.Run("get token usage for each model types by date range", func(t *testing.T) {
+				modelTokenCntMap, dbErr := repositories.GetTotalTokensConsumedByDateRange(
+					context.TODO(),
+					promptConfig.ID,
+					fromDate,
+					toDate,
+				)
+				assert.NoError(t, dbErr)
+				assert.Equal(t, int64(20), modelTokenCntMap[db.ModelTypeGpt35Turbo])
+			})
+			t.Run("fails to get token usage for invalid prompt-config id", func(t *testing.T) {
+				invalidUUID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+				modelTokenCntMap, _ := repositories.GetTotalTokensConsumedByDateRange(
+					context.TODO(),
+					invalidUUID,
+					fromDate,
+					toDate,
+				)
+				assert.Equal(t, int64(0), modelTokenCntMap[db.ModelTypeGpt35Turbo])
+			})
+		})
+
+		t.Run("GetPromptConfigAnalyticsByDateRange", func(t *testing.T) {
+			t.Run("get token usage for each model types by date range", func(t *testing.T) {
+				promptConfigAnalytics, dbErr := repositories.GetPromptConfigAnalyticsByDateRange(
+					context.TODO(),
+					promptConfig.ID,
+					fromDate,
+					toDate,
+				)
+				assert.NoError(t, dbErr)
+				assert.Equal(t, int64(1), promptConfigAnalytics.TotalPromptRequests)
+				assert.Equal(
+					t,
+					tokenutils.GetCostByModelType(totalTokensUsed, db.ModelTypeGpt35Turbo),
+					promptConfigAnalytics.ModelsCost,
+				)
+			})
 		})
 	})
 }

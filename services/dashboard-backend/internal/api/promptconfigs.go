@@ -2,16 +2,19 @@ package api
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/timeutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
-	"net/http"
-	"strings"
 )
 
 // HandleCreatePromptConfig - creates a prompt config for the given application.
@@ -173,4 +176,27 @@ func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// HandlePromptConfigAnalytics - retrieves the analytics for a prompt config with the given ID.
+func HandlePromptConfigAnalytics(w http.ResponseWriter, r *http.Request) {
+	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
+
+	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())
+	fromDate := timeutils.ParseDate(r.URL.Query().Get("fromDate"), timeutils.GetFirstDayOfMonth())
+
+	promptConfigAnalytics, repositoryErr := repositories.GetPromptConfigAnalyticsByDateRange(
+		r.Context(),
+		promptConfigID,
+		fromDate,
+		toDate,
+	)
+	if repositoryErr != nil {
+		log.Error().Err(repositoryErr).Msg("failed to retrieve prompt config analytics")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	serialization.RenderJSONResponse(w, http.StatusOK, promptConfigAnalytics)
 }

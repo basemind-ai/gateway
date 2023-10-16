@@ -291,7 +291,8 @@ func TestProjectsAPI(t *testing.T) {
 		createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
 
 		applicationID := createApplication(t, projectID)
-		createPromptRequestRecord(t, applicationID)
+		promptConfigID := createPrompConfig(t, applicationID)
+		createPromptRequestRecord(t, promptConfigID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)
 		toDate := fromDate.AddDate(0, 0, 2)

@@ -3,13 +3,16 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
-	"strings"
 )
 
 func CreatePromptConfig(
@@ -263,4 +266,73 @@ func DeletePromptConfig(ctx context.Context,
 	}()
 
 	return nil
+}
+
+func GetTotalPromptRequestCountByDateRange(
+	ctx context.Context,
+	promptConfigID pgtype.UUID,
+	fromDate, toDate time.Time,
+) (int64, error) {
+	reqParam := db.RetrieveTotalPromptRequestsParams{
+		PromptConfigID: promptConfigID,
+		FromDate:       pgtype.Timestamptz{Time: fromDate, Valid: true},
+		ToDate:         pgtype.Timestamptz{Time: toDate, Valid: true},
+	}
+
+	totalRequests, dbErr := db.GetQueries().RetrieveTotalPromptRequests(ctx, reqParam)
+	if dbErr != nil {
+		return -1, dbErr
+	}
+
+	return totalRequests, nil
+}
+
+func GetTotalTokensConsumedByDateRange(
+	ctx context.Context,
+	promptConfigID pgtype.UUID,
+	fromDate, toDate time.Time,
+) (map[db.ModelType]int64, error) {
+	reqParam := db.RetrieveTotalTokensConsumedPerPromptConfigParams{
+		PromptConfigID: promptConfigID,
+		FromDate:       pgtype.Timestamptz{Time: fromDate, Valid: true},
+		ToDate:         pgtype.Timestamptz{Time: toDate, Valid: true},
+	}
+
+	promptRequests, dbErr := db.GetQueries().RetrieveTotalTokensConsumedPerPromptConfig(ctx, reqParam)
+	if dbErr != nil {
+		return nil, dbErr
+	}
+
+	tokenCntMap := make(map[db.ModelType]int64)
+	for _, record := range promptRequests {
+		tokenCntMap[record.ModelType] += record.TotalTokens
+	}
+
+	return tokenCntMap, nil
+}
+
+func GetPromptConfigAnalyticsByDateRange(
+	ctx context.Context,
+	promptConfigID pgtype.UUID,
+	fromDate, toDate time.Time,
+) (dto.PromptConfigAnalyticsDTO, error) {
+	totalRequests, dbErr := GetTotalPromptRequestCountByDateRange(ctx, promptConfigID, fromDate, toDate)
+	if dbErr != nil {
+		return dto.PromptConfigAnalyticsDTO{}, dbErr
+	}
+
+	tokenCntMap, dbErr := GetTotalTokensConsumedByDateRange(ctx, promptConfigID, fromDate, toDate)
+	if dbErr != nil {
+		return dto.PromptConfigAnalyticsDTO{}, dbErr
+	}
+
+	var modelCost float64
+	for model, tokenCnt := range tokenCntMap {
+		modelCost += tokenutils.GetCostByModelType(tokenCnt, model)
+	}
+
+	return dto.PromptConfigAnalyticsDTO{
+		TotalPromptRequests: totalRequests,
+		ModelsCost:          modelCost,
+	}, nil
 }

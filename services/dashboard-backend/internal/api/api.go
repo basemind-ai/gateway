@@ -163,6 +163,20 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Post("/", HandleCreatePromptConfig)
 		})
 
+		router.Route(PromptConfigAnalyticsEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "applicationId", "promptConfigId"),
+			)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet: allPermissions,
+					},
+				),
+			)
+			subRouter.Get("/", HandlePromptConfigAnalytics)
+		})
+
 		router.Route(PromptConfigDetailEndpoint, func(subRouter chi.Router) {
 			subRouter.Use(
 				middleware.PathParameterMiddleware("projectId", "applicationId", "promptConfigId"),
