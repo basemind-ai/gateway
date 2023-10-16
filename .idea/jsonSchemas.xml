@@ -84,6 +84,63 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="buf.gen.yaml">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="buf.gen.yaml" />
+              <option
+								name="relativePathToSchema"
+								value="https://json.schemastore.org/buf.gen.json"
+							/>
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="buf.gen.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="buf.work.yaml">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="buf.work.yaml" />
+              <option
+								name="relativePathToSchema"
+								value="https://json.schemastore.org/buf.work.json"
+							/>
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="buf.work.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="buf.yaml">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="buf.yaml" />
+              <option
+								name="relativePathToSchema"
+								value="https://json.schemastore.org/buf.json"
+							/>
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="proto/buf.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
       </map>
     </state>
   </component>

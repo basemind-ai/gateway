@@ -206,5 +206,19 @@ func RegisterHandlers(mux *chi.Mux) {
 			)
 			subRouter.Patch("/", handleSetApplicationDefaultPromptConfig)
 		})
+		router.Route(PromptConfigTestingEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "applicationId"),
+			)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet: allPermissions,
+					},
+				),
+			)
+			// we are mounting the websocket here instead of using a regular route because we need chi to pass control.
+			subRouter.Mount("/", http.HandlerFunc(WebsocketHandler))
+		})
 	})
 }

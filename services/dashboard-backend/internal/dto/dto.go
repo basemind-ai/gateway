@@ -84,3 +84,10 @@ type PromptConfigAnalyticsDTO struct {
 	TotalPromptRequests int64   `json:"totalPromptRequests"`
 	ModelsCost          float64 `json:"modelsCost"`
 }
+
+type PromptConfigTestDTO struct {
+	ModelParameters        json.RawMessage `json:"modelParameters" validate:"required"`
+	ModelType              db.ModelType    `json:"modelType"       validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelVendor            db.ModelVendor  `json:"modelVendor"     validate:"oneof=OPEN_AI"`
+	ProviderPromptMessages json.RawMessage `json:"promptMessages"  validate:"required"`
+}
