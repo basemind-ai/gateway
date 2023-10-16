@@ -281,7 +281,7 @@ func GetTotalPromptRequestCountByDateRange(
 
 	totalRequests, dbErr := db.GetQueries().RetrieveTotalPromptRequests(ctx, reqParam)
 	if dbErr != nil {
-		return -1, dbErr
+		return -1, fmt.Errorf("failed to retrieve total prompt requests: %w", dbErr)
 	}
 
 	return totalRequests, nil
@@ -301,7 +301,7 @@ func GetTotalTokensConsumedByDateRange(
 	promptRequests, dbErr := db.GetQueries().
 		RetrieveTotalTokensConsumedPerPromptConfig(ctx, reqParam)
 	if dbErr != nil {
-		return nil, dbErr
+		return nil, fmt.Errorf("failed to retrieve total tokens consumed: %w", dbErr)
 	}
 
 	tokenCntMap := make(map[db.ModelType]int64)
