@@ -32,4 +32,4 @@ jobs:
             - name: Enable gradlew execution
               run: chmod +x gradlew
             - name: Lint
-              run: task lint
+              run: task lint:android
