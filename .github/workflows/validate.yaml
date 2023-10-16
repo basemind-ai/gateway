@@ -27,7 +27,6 @@ jobs:
               if: steps.cached-go-dependencies.outputs.cache-hit != 'true'
               shell: bash
               run: go get -v -t ./...
-
             - name: Setup Node
               uses: actions/setup-node@v3
               with:
@@ -60,5 +59,23 @@ jobs:
               with:
                   path: ~/.cache/pre-commit/
                   key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-            - name: Execute Pre-Commit
+            - name: Lint
+              if: github.ref != 'refs/heads/main'
               run: pre-commit run --show-diff-on-failure --color=always --all-files
+            # on main we are executing the longer linting which includes spotless - but its very slow, so only on main.
+            - name: Install Task
+              if: github.ref == 'refs/heads/main'
+              uses: arduino/setup-task@v1
+            - name: Setup Java
+              if: github.ref == 'refs/heads/main'
+              uses: actions/setup-java@v3
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+                  cache: gradle
+            - name: Enable gradlew execution
+              if: github.ref == 'refs/heads/main'
+              run: chmod +x gradlew
+            - name: Lint
+              if: github.ref == 'refs/heads/main'
+              run: task lint

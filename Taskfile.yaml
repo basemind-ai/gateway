@@ -95,7 +95,7 @@ tasks:
     lint:
         desc: Lint the project
         cmds:
-            - pre-commit run --all-files
+            - pre-commit run --show-diff-on-failure --color=always --all-files
             - task: lint:android
     # database
     db:up:
