@@ -191,12 +191,12 @@ class BaseMindClientTest {
         BaseMindClient.getInstance(
             this.toString(),
             options =
-                Options(debug = true, debugLogger = {
-                        tag,
-                        message,
-                    ->
-                    logHandler(tag, message)
-                }),
+            Options(debug = true, debugLogger = {
+                    tag,
+                    message,
+                ->
+                logHandler(tag, message)
+            }),
         )
         assertEquals("$LOGGING_TAG: Connecting to $DEFAULT_API_GATEWAY_ADDRESS:$DEFAULT_API_GATEWAY_PORT", result)
     }

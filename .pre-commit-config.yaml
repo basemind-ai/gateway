@@ -55,11 +55,3 @@ repos:
       hooks:
           - id: sqlfluff-fix
             exclude: 'sql/migrations'
-    - repo: local
-      hooks:
-          - id: detekt
-            name: detekt
-            description: Runs `detekt` on modified .kt files.
-            language: script
-            entry: .bin/detekt.sh
-            files: \.kt

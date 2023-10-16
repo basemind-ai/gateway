@@ -2,23 +2,21 @@ package com.ai.basemind.client.testapp.ui
 
 import ai.basemind.client.BaseMindClient
 import ai.basemind.client.Options
-import com.ai.basemind.client.testapp.ui.model.ChatUiModel
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ai.basemind.client.testapp.ui.model.ChatUiModel
 import com.ai.basemind.client.testapp.ui.model.ConfigModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
 class MainViewModel : ViewModel() {
-
     val conversation: StateFlow<List<ChatUiModel.Message>>
         get() = _conversation
-    private val _conversation = MutableStateFlow(
-        listOf(ChatUiModel.Message.initConv)
-    )
+    private val _conversation =
+        MutableStateFlow(
+            listOf(ChatUiModel.Message.initConv),
+        )
 
     suspend fun emitBotMessage(message: String) {
         val botChat = ChatUiModel.Message(message, ChatUiModel.Author.bot)
@@ -43,12 +41,13 @@ class MainViewModel : ViewModel() {
                     val response = client.requestPrompt(map)
                     emitBotMessage(response.content)
 
-                    val metaData = """
+                    val metaData =
+                        """
                         [MetaData]
                         Request Tokens: ${response.requestTokens}
                         Response Tokens: ${response.responseTokens}
                         Request Duration: ${response.requestDuration}
-                    """.trimIndent()
+                        """.trimIndent()
                     emitBotMessage(metaData)
                 }
             } catch (e: Exception) {

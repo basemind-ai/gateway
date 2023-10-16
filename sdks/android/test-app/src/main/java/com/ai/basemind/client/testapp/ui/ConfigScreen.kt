@@ -22,18 +22,18 @@ fun ConfigScreen(navController: NavController) {
             TopAppBar(
                 title = {
                     Text("Test App")
-                }
+                },
             )
         },
     ) { innerPadding ->
         Surface(
             modifier = Modifier.fillMaxSize().padding(innerPadding),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(16.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 TextField(
                     label = { Text("API Key") },
@@ -44,7 +44,7 @@ fun ConfigScreen(navController: NavController) {
                         println(ConfigModel.apiKey)
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(text = "Enter the API Key") }
+                    placeholder = { Text(text = "Enter the API Key") },
                 )
                 Spacer(Modifier.height(16.dp))
 
@@ -61,7 +61,6 @@ fun ConfigScreen(navController: NavController) {
                 }, modifier = Modifier.fillMaxWidth(), enabled = valid) {
                     Text("Launch Streaming Prompt Example")
                 }
-
             }
         }
     }

@@ -12,16 +12,17 @@ data class ChatUiModel(
             get() = author.id == MY_ID
 
         companion object {
-            val initConv = Message(
-                text = "Hi there, how you doing?",
-                author = Author.bot
-            )
+            val initConv =
+                Message(
+                    text = "Hi there, how you doing?",
+                    author = Author.bot,
+                )
         }
     }
 
     data class Author(
         val id: String,
-        val name: String
+        val name: String,
     ) {
         companion object {
             val bot = Author("1", "Bot")

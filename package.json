@@ -11,7 +11,7 @@
 		"@bufbuild/buf": "^1.27.0",
 		"@commitlint/cli": "^17.8.0",
 		"@commitlint/config-conventional": "^17.8.0",
-		"@faker-js/faker": "^8.1.0",
+		"@faker-js/faker": "^8.2.0",
 		"@grpc/grpc-js": "^1.9.5",
 		"@next/eslint-plugin-next": "^13.5.4",
 		"@prettier/plugin-xml": "^3.2.1",

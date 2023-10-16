@@ -39,23 +39,25 @@ import com.ai.basemind.client.testapp.ui.model.ChatUiModel
 import com.ai.basemind.client.testapp.ui.theme.BaseMindAITheme
 import com.ai.basemind.client.testapp.ui.theme.PurpleGrey80
 
-
 @Preview(showSystemUi = true)
 @Composable
 fun ChatScreenPreview() {
     BaseMindAITheme {
         ChatScreen(
-            model = ChatUiModel(
-                messages = listOf(
+            model =
+            ChatUiModel(
+                messages =
+                listOf(
                     ChatUiModel.Message(
                         "Hi Tree, How you doing?",
-                        ChatUiModel.Author("0", "Branch")
+                        ChatUiModel.Author("0", "Branch"),
                     ),
                     ChatUiModel.Message(
                         "Hi Branch, good. You?",
-                        ChatUiModel.Author("-1", "Tree"))
+                        ChatUiModel.Author("-1", "Tree"),
+                    ),
                 ),
-                addressee = ChatUiModel.Author("0", "Branch")
+                addressee = ChatUiModel.Author("0", "Branch"),
             ),
             onSendChatClickListener = {},
             modifier = Modifier,
@@ -78,7 +80,8 @@ fun ChatScreen(
         }
         LazyColumn(
             state = listState,
-            modifier = Modifier
+            modifier =
+            Modifier
                 .fillMaxWidth()
                 .constrainAs(messages) {
                     top.linkTo(parent.top)
@@ -87,7 +90,7 @@ fun ChatScreen(
                     end.linkTo(parent.end)
                     height = Dimension.fillToConstraints
                 },
-            contentPadding = PaddingValues(16.dp)
+            contentPadding = PaddingValues(16.dp),
         ) {
             items(model.messages) { item ->
                 ChatItem(item)
@@ -95,35 +98,40 @@ fun ChatScreen(
         }
         ChatBox(
             onSendChatClickListener,
-            modifier = Modifier
+            modifier =
+            Modifier
                 .fillMaxWidth()
                 .constrainAs(chatBox) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                }
+                },
         )
     }
 }
 
 @Composable
 fun ChatItem(message: ChatUiModel.Message) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(4.dp)) {
+    Column(
+        modifier =
+        Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+    ) {
         Box(
-            modifier = Modifier
+            modifier =
+            Modifier
                 .align(if (message.isFromMe) Alignment.End else Alignment.Start)
                 .clip(
                     RoundedCornerShape(
                         topStart = 48f,
                         topEnd = 48f,
                         bottomStart = if (message.isFromMe) 48f else 0f,
-                        bottomEnd = if (message.isFromMe) 0f else 48f
-                    )
+                        bottomEnd = if (message.isFromMe) 0f else 48f,
+                    ),
                 )
                 .background(PurpleGrey80)
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             Text(text = message.text)
         }
@@ -134,7 +142,7 @@ fun ChatItem(message: ChatUiModel.Message) {
 @Composable
 fun ChatBox(
     onSendChatClickListener: (String) -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
     Row(modifier = modifier.padding(16.dp)) {
@@ -143,18 +151,20 @@ fun ChatBox(
             onValueChange = { newText ->
                 chatBoxValue = newText
             },
-            modifier = Modifier
+            modifier =
+            Modifier
                 .weight(1f)
                 .padding(4.dp),
             shape = RoundedCornerShape(24.dp),
-            colors = TextFieldDefaults.textFieldColors(
+            colors =
+            TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+                disabledIndicatorColor = Color.Transparent,
             ),
             placeholder = {
                 Text(text = "Type something")
-            }
+            },
         )
         IconButton(
             onClick = {
@@ -163,15 +173,16 @@ fun ChatBox(
                 onSendChatClickListener(chatBoxValue.text)
                 chatBoxValue = TextFieldValue("")
             },
-            modifier = Modifier
+            modifier =
+            Modifier
                 .clip(CircleShape)
                 .background(color = PurpleGrey80)
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
         ) {
             Icon(
                 imageVector = Icons.Filled.Send,
                 contentDescription = "Send",
-                modifier = Modifier.fillMaxSize().padding(8.dp)
+                modifier = Modifier.fillMaxSize().padding(8.dp),
             )
         }
     }

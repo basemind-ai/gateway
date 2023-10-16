@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
             BaseMindAITheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     App(viewModel)
                 }
@@ -37,9 +37,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
-fun App(vm: MainViewModel){
+fun App(vm: MainViewModel) {
     val navController = rememberNavController()
     val conversation = vm.conversation.collectAsState()
 
@@ -49,14 +48,14 @@ fun App(vm: MainViewModel){
         }
         composable(route = "chat") {
             ChatScreen(
-                model = ChatUiModel(
+                model =
+                ChatUiModel(
                     messages = conversation.value,
-                    addressee = ChatUiModel.Author.bot
+                    addressee = ChatUiModel.Author.bot,
                 ),
                 onSendChatClickListener = { msg -> vm.sendPromt(msg) },
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
-
     }
 }
