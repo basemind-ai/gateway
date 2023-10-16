@@ -5,7 +5,8 @@
 		name="ProjectRootManager"
 		version="2"
 		languageLevel="JDK_17"
-		project-jdk-name="openjdk-21"
+		default="true"
+		project-jdk-name="temurin-17"
 		project-jdk-type="JavaSDK"
 	/>
 </project>

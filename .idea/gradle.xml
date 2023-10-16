@@ -5,13 +5,13 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="temurin-17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/sdks" />
             <option value="$PROJECT_DIR$/sdks/android" />
             <option value="$PROJECT_DIR$/sdks/android/sdk" />
+            <option value="$PROJECT_DIR$/sdks/android/test-app" />
           </set>
         </option>
       </GradleProjectSettings>

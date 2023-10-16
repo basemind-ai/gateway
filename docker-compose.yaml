@@ -116,7 +116,7 @@ services:
             - ./frontend/public:/app/frontend/public:cached
             - ./frontend/src:/app/frontend/src:cached
         environment:
-            NEXT_PUBLIC_BACKEND_BASE_URL: http://0.0.0.0:4100
+            NEXT_PUBLIC_BACKEND_BASE_URL: http://localhost:4100
             NODE_ENV: development
         working_dir: /app/frontend
         command: ['pnpm', 'run', 'dev']

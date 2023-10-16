@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "BaseMind.AI"
 include(":sdks:android:sdk")
+include(":sdks:android:test-app")

@@ -26,7 +26,7 @@
 		"react-bootstrap-icons": "^1.10.3",
 		"react-dom": "18.2.0",
 		"react-icons": "^4.11.0",
-		"react-intl": "^6.4.7",
+		"react-intl": "^6.5.0",
 		"react-tailwindcss-datepicker": "^1.6.6",
 		"zustand": "^4.4.3"
 	},
@@ -52,7 +52,7 @@
 		"autoprefixer": "10.4.16",
 		"daisyui": "^3.9.2",
 		"jsdom": "^22.1.0",
-		"next-translate-plugin": "^2.6.0",
+		"next-translate-plugin": "^2.6.1",
 		"postcss": "8.4.31",
 		"sass": "^1.69.3",
 		"storybook": "^7.4.6",
