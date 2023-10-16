@@ -34,7 +34,12 @@ tasks:
             - command -v sqlc &> /dev/null || exit 1
     install-atlas:
         cmds:
-            - curl -sSf https://atlasgo.sh | sh
+            - |
+                if command -v brew &> /dev/null; then
+                  brew install ariga/tap/atlas
+                else
+                  curl -sSf https://atlasgo.sh | sh
+                fi
         status:
             - command -v atlas &> /dev/null || exit 1
     install-buf:

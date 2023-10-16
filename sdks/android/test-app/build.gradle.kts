@@ -53,14 +53,14 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
 
     implementation(libs.activity.compose)
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.constraint.layout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.compose.material3)
     implementation(libs.compose.navigation)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.constrained.layout)
+    implementation(libs.compose.constraint.layout)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
 }

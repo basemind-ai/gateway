@@ -3,7 +3,7 @@
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source
 			source="LOCAL"
-			name="faithapp@localhost"
+			name="basemind@localhost"
 			uuid="68b58791-c191-40de-8d48-201ed7ad5ca1"
 		>
       <driver-ref>postgresql</driver-ref>
