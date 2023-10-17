@@ -20,7 +20,7 @@ describe('FirebaseLogin tests', () => {
 		});
 		render(<FirebaseLogin />);
 
-		const loader = screen.getByTestId('firebase-login-loader');
+		const loader = screen.getByTestId('loader-anim');
 
 		expect(loader).toBeInTheDocument();
 	});
@@ -74,7 +74,7 @@ describe('FirebaseLogin tests', () => {
 		);
 		expect(greetingContainer).not.toHaveClass('hidden');
 
-		const loader = screen.queryByTestId('firebase-login-loader');
+		const loader = screen.queryByTestId('loader-anim');
 		expect(loader).not.toBeInTheDocument();
 
 		const authHeader = screen.getByText(signinLocales.authHeader);
@@ -121,7 +121,7 @@ describe('FirebaseLogin tests', () => {
 		);
 		expect(greetingContainer).not.toBeInTheDocument();
 
-		const loader = screen.queryByTestId('firebase-login-loader');
+		const loader = screen.queryByTestId('loader-anim');
 		expect(loader).toBeInTheDocument();
 
 		expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);

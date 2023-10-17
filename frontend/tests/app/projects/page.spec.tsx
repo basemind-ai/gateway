@@ -28,7 +28,7 @@ describe('projects page tests', () => {
 		render(<Projects />);
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(
-				`${Navigation.Projects}/${projects[0].id}`,
+				`${Navigation.Projects}/${projects[0].id}/dashboard`,
 			);
 		});
 	});

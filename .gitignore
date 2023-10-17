@@ -33,3 +33,4 @@ coverage/
 dist/
 local.properties
 node_modules/
+.env.local

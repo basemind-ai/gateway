@@ -22,7 +22,7 @@ export default function Projects() {
 			}
 			setProjects(retrievedProjects);
 			router.replace(
-				`${Navigation.Projects}/${retrievedProjects[0]?.id}`,
+				`${Navigation.Projects}/${retrievedProjects[0]?.id}/dashboard`,
 			);
 		})();
 	}, []);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 import { Navigation } from '@/constants';
 import { useProject } from '@/stores/api-store';
@@ -13,8 +14,13 @@ export default function Dashboard({
 	const router = useRouter();
 	const project = useProject(projectId);
 
+	useEffect(() => {
+		if (!project) {
+			router.replace(Navigation.Projects);
+		}
+	}, []);
+
 	if (!project) {
-		router.replace(Navigation.Projects);
 		return;
 	}
 
