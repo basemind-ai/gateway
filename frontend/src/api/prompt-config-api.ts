@@ -2,6 +2,7 @@ import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
 import {
 	PromptConfig,
+	PromptConfigAnalytics,
 	PromptConfigCreateBody,
 	PromptConfigUpdateBody,
 } from '@/types';
@@ -80,5 +81,28 @@ export async function handleSetDefaultPromptConfig({
 	return await fetcher<PromptConfig>({
 		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/set-default/`,
 		method: HttpMethod.Patch,
+	});
+}
+
+export async function handlePromptConfigAnalytics({
+	promptConfigId,
+	applicationId,
+	projectId,
+	fromDate,
+	toDate,
+}: {
+	promptConfigId: string;
+	applicationId: string;
+	projectId: string;
+	fromDate?: string;
+	toDate?: string;
+}): Promise<PromptConfigAnalytics> {
+	return await fetcher<PromptConfigAnalytics>({
+		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/analytics`,
+		method: HttpMethod.Get,
+		queryParams: {
+			fromDate,
+			toDate,
+		},
 	});
 }

@@ -131,7 +131,7 @@ func GetTotalAPICountByDateRange(
 
 	totalAPICalls, dbErr := db.GetQueries().RetrieveTotalPromptAPICalls(ctx, reqParam)
 	if dbErr != nil {
-		return -1, dbErr
+		return -1, fmt.Errorf("failed to retrieve total prompt api calls: %w", dbErr)
 	}
 
 	return totalAPICalls, nil
@@ -150,7 +150,7 @@ func GetTokenConsumedByProjectByDateRange(
 
 	tokensConsumed, dbErr := db.GetQueries().RetrieveTotalTokensConsumed(ctx, reqParam)
 	if dbErr != nil {
-		return nil, dbErr
+		return nil, fmt.Errorf("failed to retrieve total tokens consumed: %w", dbErr)
 	}
 
 	projectTokenCntMap := make(map[db.ModelType]int64)

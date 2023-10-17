@@ -588,7 +588,8 @@ func TestApplicationsAPI(t *testing.T) {
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationAnalyticsEndpoint), func(t *testing.T) {
 		invalidUUID := "invalid"
 		applicationID := createApplication(t, projectID)
-		createPromptRequestRecord(t, applicationID)
+		promptConfigID := createPrompConfig(t, applicationID)
+		createPromptRequestRecord(t, promptConfigID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)
 		toDate := fromDate.AddDate(0, 0, 2)

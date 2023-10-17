@@ -4,18 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
+	"testing"
+	"time"
+
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"strings"
-	"testing"
-	"time"
 )
 
 func TestPromptConfigAPI(t *testing.T) { //nolint: revive
@@ -1443,6 +1445,212 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				response, requestErr := testClient.Delete(
 					context.TODO(),
 					fmtDetailEndpoint(projectID, applicationID, "invalid"),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+	})
+
+	t.Run(fmt.Sprintf("GET: %s", api.PromptConfigAnalyticsEndpoint), func(t *testing.T) {
+		invalidUUID := "invalid"
+		projectID := createProject(t)
+		createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+
+		applicationID := createApplication(t, projectID)
+		promptConfigID := createPrompConfig(t, applicationID)
+		createPromptRequestRecord(t, promptConfigID)
+
+		fromDate := time.Now().AddDate(0, 0, -1)
+		toDate := fromDate.AddDate(0, 0, 2)
+
+		t.Run("retrieves prompt config analytics", func(t *testing.T) {
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.PromptConfigAnalyticsEndpoint,
+								"{projectId}",
+								projectID,
+							),
+							"{applicationId}",
+							applicationID,
+						),
+						"{promptConfigId}",
+						promptConfigID,
+					),
+				),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
+
+			promptConfigUUID, _ := db.StringToUUID(promptConfigID)
+			promptReqAnalytics, _ := repositories.GetPromptConfigAnalyticsByDateRange(
+				context.TODO(),
+				*promptConfigUUID,
+				fromDate,
+				toDate,
+			)
+
+			responseAnalytics := dto.PromptConfigAnalyticsDTO{}
+			deserializationErr := serialization.DeserializeJSON(
+				response.Body,
+				&responseAnalytics,
+			)
+
+			assert.NoError(t, deserializationErr)
+			assert.Equal(
+				t,
+				promptReqAnalytics.TotalPromptRequests,
+				responseAnalytics.TotalPromptRequests,
+			)
+			assert.Equal(t, promptReqAnalytics.ModelsCost, responseAnalytics.ModelsCost)
+		})
+
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
+				fmt.Sprintf(
+					"responds with status 200 OK if the user has %s permission",
+					permission,
+				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					createUserProject(t, newUserAccount.FirebaseID, newProjectID, permission)
+
+					newTestClient := createTestClient(t, newUserAccount)
+
+					response, requestErr := newTestClient.Get(
+						context.TODO(),
+						fmt.Sprintf(
+							"/v1%s",
+							strings.ReplaceAll(
+								strings.ReplaceAll(
+									strings.ReplaceAll(
+										api.PromptConfigAnalyticsEndpoint,
+										"{projectId}",
+										newProjectID,
+									),
+									"{applicationId}",
+									applicationID,
+								),
+								"{promptConfigId}",
+								promptConfigID,
+							),
+						),
+					)
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusOK, response.StatusCode)
+				},
+			)
+		}
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have projects access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
+
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								strings.ReplaceAll(
+									api.PromptConfigAnalyticsEndpoint,
+									"{projectId}",
+									newProjectID,
+								),
+								"{applicationId}",
+								applicationID,
+							),
+							"{promptConfigId}",
+							promptConfigID,
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
+
+		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.PromptConfigAnalyticsEndpoint,
+								"{projectId}",
+								invalidUUID,
+							),
+							"{applicationId}",
+							applicationID,
+						),
+						"{promptConfigId}",
+						promptConfigID,
+					),
+				),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if applicationID is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								strings.ReplaceAll(
+									api.PromptConfigAnalyticsEndpoint,
+									"{projectId}",
+									projectID,
+								),
+								"{applicationId}",
+								invalidUUID,
+							),
+							"{promptConfigId}",
+							promptConfigID,
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if promptConfigID is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								strings.ReplaceAll(
+									api.PromptConfigAnalyticsEndpoint,
+									"{projectId}",
+									projectID,
+								),
+								"{applicationId}",
+								applicationID,
+							),
+							"{promptConfigId}",
+							invalidUUID,
+						),
+					),
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)

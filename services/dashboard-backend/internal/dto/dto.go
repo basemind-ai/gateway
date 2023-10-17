@@ -79,3 +79,8 @@ type ProjectAnalyticsDTO struct {
 	TotalAPICalls int64   `json:"totalAPICalls"`
 	ModelsCost    float64 `json:"modelsCost"`
 }
+
+type PromptConfigAnalyticsDTO struct {
+	TotalPromptRequests int64   `json:"totalPromptRequests"`
+	ModelsCost          float64 `json:"modelsCost"`
+}

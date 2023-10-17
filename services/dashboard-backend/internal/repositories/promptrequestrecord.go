@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
@@ -49,7 +50,7 @@ func GetPromptRequestCountByDateRange(
 
 	totalRequests, dbErr := db.GetQueries().RetrieveTotalPromptRequestRecord(ctx, promptReqParam)
 	if dbErr != nil {
-		return -1, dbErr
+		return -1, fmt.Errorf("failed to retrieve total prompt request records: %w", dbErr)
 	}
 
 	return totalRequests, nil
@@ -69,7 +70,7 @@ func GetTokenUsagePerModelTypeByDateRange(
 	recordPerPromptConfig, dbErr := db.GetQueries().
 		RetrieveTotalTokensPerPromptConfig(ctx, promptReqParam)
 	if dbErr != nil {
-		return nil, dbErr
+		return nil, fmt.Errorf("failed to retrieve total tokens per prompt config: %w", dbErr)
 	}
 
 	tokenCntMap := make(map[db.ModelType]int64)

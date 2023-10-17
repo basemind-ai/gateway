@@ -143,13 +143,12 @@ func CreatePromptConfig(
 }
 
 func CreatePromptRequestRecord(ctx context.Context,
-	applicationID pgtype.UUID,
+	promptConfigID pgtype.UUID,
 ) (*db.PromptRequestRecord, error) {
 	tokenCnt := int32(10)
 	promptStartTime := time.Now()
 	promptFinishTime := promptStartTime.Add(10 * time.Second)
 
-	promptConfig, _ := CreatePromptConfig(ctx, applicationID)
 	promptRequestRecord, promptRequestRecordCreateErr := db.GetQueries().
 		CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
 			IsStreamResponse:      true,
@@ -158,7 +157,7 @@ func CreatePromptRequestRecord(ctx context.Context,
 			StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
 			FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
 			StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
-			PromptConfigID:        promptConfig.ID,
+			PromptConfigID:        promptConfigID,
 		})
 	if promptRequestRecordCreateErr != nil {
 		return nil, promptRequestRecordCreateErr
