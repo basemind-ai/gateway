@@ -1,6 +1,8 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/lxzan/gws"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -41,7 +43,13 @@ func (Handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 			log.Error().Err(err).Msg("failed to close message")
 		}
 	}()
-	if writeErr := socket.WriteMessage(message.Opcode, message.Bytes()); writeErr != nil {
+
+	data := dto.PromptConfigTestDTO{}
+	if deserializationErr := serialization.DeserializeJSON(message, &data); deserializationErr != nil {
+		log.Error().Err(deserializationErr).Msg("failed to deserialize message")
+	}
+
+	if writeErr := socket.WriteMessage(message.Opcode, []byte("ok")); writeErr != nil {
 		log.Error().Err(writeErr).Msg("failed to write message")
 	}
 }
