@@ -186,13 +186,25 @@ type PromptRequestRecord struct {
 	DeletedAt             pgtype.Timestamptz `json:"deletedAt"`
 }
 
-type PromptTest struct {
-	ID                    pgtype.UUID        `json:"id"`
-	Name                  string             `json:"name"`
-	VariableValues        []byte             `json:"variableValues"`
-	Response              string             `json:"response"`
-	CreatedAt             pgtype.Timestamptz `json:"createdAt"`
-	PromptRequestRecordID pgtype.UUID        `json:"promptRequestRecordId"`
+type PromptTestRecord struct {
+	ID                     pgtype.UUID        `json:"id"`
+	Name                   string             `json:"name"`
+	ModelParameters        []byte             `json:"modelParameters"`
+	ModelType              ModelType          `json:"modelType"`
+	ModelVendor            ModelVendor        `json:"modelVendor"`
+	ProviderPromptMessages []byte             `json:"providerPromptMessages"`
+	TemplateVariables      []byte             `json:"templateVariables"`
+	ResponseContent        string             `json:"responseContent"`
+	RequestTokens          int32              `json:"requestTokens"`
+	ResponseTokens         int32              `json:"responseTokens"`
+	StartTime              pgtype.Timestamptz `json:"startTime"`
+	FinishTime             pgtype.Timestamptz `json:"finishTime"`
+	StreamResponseLatency  pgtype.Int8        `json:"streamResponseLatency"`
+	ErrorLog               pgtype.Text        `json:"errorLog"`
+	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
+	DeletedAt              pgtype.Timestamptz `json:"deletedAt"`
+	ApplicationID          pgtype.UUID        `json:"applicationId"`
+	PromptConfigID         pgtype.UUID        `json:"promptConfigId"`
 }
 
 type Token struct {

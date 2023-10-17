@@ -30,12 +30,12 @@ CREATE INDEX "idx_prompt_request_record_finish_time" ON "prompt_request_record" 
 CREATE INDEX "idx_prompt_request_record_prompt_config_id" ON "prompt_request_record" ("prompt_config_id") WHERE (deleted_at IS NULL);
 -- Create index "idx_prompt_request_record_start_time" to table: "prompt_request_record"
 CREATE INDEX "idx_prompt_request_record_start_time" ON "prompt_request_record" ("start_time") WHERE (deleted_at IS NULL);
--- Create "prompt_test" table
-CREATE TABLE "prompt_test" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "variable_values" json NOT NULL, "response" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "prompt_request_record_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_test_prompt_request_record_id_fkey" FOREIGN KEY ("prompt_request_record_id") REFERENCES "prompt_request_record" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
--- Create index "idx_prompt_test_created_at" to table: "prompt_test"
-CREATE INDEX "idx_prompt_test_created_at" ON "prompt_test" ("created_at");
--- Create index "idx_prompt_test_prompt_request_record_id" to table: "prompt_test"
-CREATE INDEX "idx_prompt_test_prompt_request_record_id" ON "prompt_test" ("prompt_request_record_id");
+-- Create "prompt_test_record" table
+CREATE TABLE "prompt_test_record" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "model_parameters" json NOT NULL, "model_type" "model_type" NOT NULL, "model_vendor" "model_vendor" NOT NULL, "provider_prompt_messages" json NOT NULL, "template_variables" json NOT NULL, "response_content" text NOT NULL, "request_tokens" integer NOT NULL, "response_tokens" integer NOT NULL, "start_time" timestamptz NOT NULL, "finish_time" timestamptz NOT NULL, "stream_response_latency" bigint NULL, "error_log" text NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, "prompt_config_id" uuid NULL, PRIMARY KEY ("id"), CONSTRAINT "prompt_test_record_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE, CONSTRAINT "prompt_test_record_prompt_config_id_fkey" FOREIGN KEY ("prompt_config_id") REFERENCES "prompt_config" ("id") ON UPDATE NO ACTION ON DELETE SET NULL);
+-- Create index "idx_prompt_test_record_application_id" to table: "prompt_test_record"
+CREATE INDEX "idx_prompt_test_record_application_id" ON "prompt_test_record" ("application_id") WHERE (deleted_at IS NULL);
+-- Create index "idx_prompt_test_record_prompt_config_id" to table: "prompt_test_record"
+CREATE INDEX "idx_prompt_test_record_prompt_config_id" ON "prompt_test_record" ("prompt_config_id") WHERE (deleted_at IS NULL);
 -- Create "token" table
 CREATE TABLE "token" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "token_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_token_application_id" to table: "token"

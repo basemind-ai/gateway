@@ -278,12 +278,12 @@ WHERE
 
 type RetrieveTotalPromptRequestsParams struct {
 	PromptConfigID pgtype.UUID        `json:"promptConfigId"`
-	FromDate       pgtype.Timestamptz `json:"fromDate"`
-	ToDate         pgtype.Timestamptz `json:"toDate"`
+	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2    pgtype.Timestamptz `json:"createdAt2"`
 }
 
 func (q *Queries) RetrieveTotalPromptRequests(ctx context.Context, arg RetrieveTotalPromptRequestsParams) (int64, error) {
-	row := q.db.QueryRow(ctx, retrieveTotalPromptRequests, arg.PromptConfigID, arg.FromDate, arg.ToDate)
+	row := q.db.QueryRow(ctx, retrieveTotalPromptRequests, arg.PromptConfigID, arg.CreatedAt, arg.CreatedAt_2)
 	var total_requests int64
 	err := row.Scan(&total_requests)
 	return total_requests, err
@@ -303,8 +303,8 @@ GROUP BY pc.model_type
 
 type RetrieveTotalTokensConsumedPerPromptConfigParams struct {
 	PromptConfigID pgtype.UUID        `json:"promptConfigId"`
-	FromDate       pgtype.Timestamptz `json:"fromDate"`
-	ToDate    		 pgtype.Timestamptz `json:"toDate"`
+	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2    pgtype.Timestamptz `json:"createdAt2"`
 }
 
 type RetrieveTotalTokensConsumedPerPromptConfigRow struct {
@@ -313,7 +313,7 @@ type RetrieveTotalTokensConsumedPerPromptConfigRow struct {
 }
 
 func (q *Queries) RetrieveTotalTokensConsumedPerPromptConfig(ctx context.Context, arg RetrieveTotalTokensConsumedPerPromptConfigParams) ([]RetrieveTotalTokensConsumedPerPromptConfigRow, error) {
-	rows, err := q.db.Query(ctx, retrieveTotalTokensConsumedPerPromptConfig, arg.PromptConfigID, arg.FromDate, arg.ToDate)
+	rows, err := q.db.Query(ctx, retrieveTotalTokensConsumedPerPromptConfig, arg.PromptConfigID, arg.CreatedAt, arg.CreatedAt_2)
 	if err != nil {
 		return nil, err
 	}

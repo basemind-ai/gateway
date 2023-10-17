@@ -69,57 +69,65 @@ func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromp
 
 const retrieveTotalPromptRequestRecord = `-- name: RetrieveTotalPromptRequestRecord :one
 SELECT COUNT(prr.id) AS total_requests
-FROM prompt_request_record prr
-JOIN prompt_config pc ON prr.prompt_config_id = pc.id
+FROM prompt_request_record AS prr
+INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
 WHERE
     pc.application_id = $1
     AND prr.created_at BETWEEN $2 AND $3
 `
 
 type RetrieveTotalPromptRequestRecordParams struct {
-  ApplicationID pgtype.UUID        `json:"applicationId"`
-  FromDate      pgtype.Timestamptz `json:"fromDate"`
-  ToDate        pgtype.Timestamptz `json:"toDate"`
+	ApplicationID pgtype.UUID        `json:"applicationId"`
+	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2   pgtype.Timestamptz `json:"createdAt2"`
 }
 
 func (q *Queries) RetrieveTotalPromptRequestRecord(ctx context.Context, arg RetrieveTotalPromptRequestRecordParams) (int64, error) {
-  row := q.db.QueryRow(ctx, retrieveTotalPromptRequestRecord, arg.ApplicationID, arg.FromDate, arg.ToDate)
-  var total_requests int64
-  err := row.Scan(&total_requests)
-  return total_requests, err
+	row := q.db.QueryRow(ctx, retrieveTotalPromptRequestRecord, arg.ApplicationID, arg.CreatedAt, arg.CreatedAt_2)
+	var total_requests int64
+	err := row.Scan(&total_requests)
+	return total_requests, err
 }
 
 const retrieveTotalTokensPerPromptConfig = `-- name: RetrieveTotalTokensPerPromptConfig :many
-SELECT SUM(prr.request_tokens + prr.response_tokens) AS total_tokens, pc.model_type
-FROM prompt_request_record prr
-JOIN prompt_config pc ON prr.prompt_config_id = pc.id
+SELECT
+    pc.model_type,
+    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
+FROM prompt_request_record AS prr
+INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
 WHERE
     pc.application_id = $1
     AND prr.created_at BETWEEN $2 AND $3
 GROUP BY pc.model_type
 `
 
-type RetrieveTotalTokensPerPromptConfigRow struct {
-  TotalTokens int64     `json:"totalTokens"`
-  ModelType   ModelType `json:"modelType"`
+type RetrieveTotalTokensPerPromptConfigParams struct {
+	ApplicationID pgtype.UUID        `json:"applicationId"`
+	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2   pgtype.Timestamptz `json:"createdAt2"`
 }
 
-func (q *Queries) RetrieveTotalTokensPerPromptConfig(ctx context.Context, arg RetrieveTotalPromptRequestRecordParams) ([]RetrieveTotalTokensPerPromptConfigRow, error) {
-  rows, err := q.db.Query(ctx, retrieveTotalTokensPerPromptConfig, arg.ApplicationID, arg.FromDate, arg.ToDate)
-  if err != nil {
-    return nil, err
-  }
-  defer rows.Close()
-  var items []RetrieveTotalTokensPerPromptConfigRow
-  for rows.Next() {
-    var i RetrieveTotalTokensPerPromptConfigRow
-    if err := rows.Scan(&i.TotalTokens, &i.ModelType); err != nil {
-      return nil, err
-    }
-    items = append(items, i)
-  }
-  if err := rows.Err(); err != nil {
-    return nil, err
-  }
-  return items, nil
+type RetrieveTotalTokensPerPromptConfigRow struct {
+	ModelType   ModelType `json:"modelType"`
+	TotalTokens int64     `json:"totalTokens"`
+}
+
+func (q *Queries) RetrieveTotalTokensPerPromptConfig(ctx context.Context, arg RetrieveTotalTokensPerPromptConfigParams) ([]RetrieveTotalTokensPerPromptConfigRow, error) {
+	rows, err := q.db.Query(ctx, retrieveTotalTokensPerPromptConfig, arg.ApplicationID, arg.CreatedAt, arg.CreatedAt_2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RetrieveTotalTokensPerPromptConfigRow
+	for rows.Next() {
+		var i RetrieveTotalTokensPerPromptConfigRow
+		if err := rows.Scan(&i.ModelType, &i.TotalTokens); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

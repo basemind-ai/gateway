@@ -154,12 +154,12 @@ WHERE
 
 type RetrieveTotalPromptAPICallsParams struct {
 	ProjectID   pgtype.UUID        `json:"projectId"`
-	FromDate      pgtype.Timestamptz `json:"fromDate"`
-  ToDate        pgtype.Timestamptz `json:"toDate"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
 }
 
 func (q *Queries) RetrieveTotalPromptAPICalls(ctx context.Context, arg RetrieveTotalPromptAPICallsParams) (int64, error) {
-	row := q.db.QueryRow(ctx, retrieveTotalPromptAPICalls, arg.ProjectID, arg.FromDate, arg.ToDate)
+	row := q.db.QueryRow(ctx, retrieveTotalPromptAPICalls, arg.ProjectID, arg.CreatedAt, arg.CreatedAt_2)
 	var total_requests int64
 	err := row.Scan(&total_requests)
 	return total_requests, err
@@ -180,8 +180,8 @@ GROUP BY pc.model_type
 
 type RetrieveTotalTokensConsumedParams struct {
 	ProjectID   pgtype.UUID        `json:"projectId"`
-	FromDate      pgtype.Timestamptz `json:"fromDate"`
-  ToDate        pgtype.Timestamptz `json:"toDate"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
 }
 
 type RetrieveTotalTokensConsumedRow struct {
@@ -190,7 +190,7 @@ type RetrieveTotalTokensConsumedRow struct {
 }
 
 func (q *Queries) RetrieveTotalTokensConsumed(ctx context.Context, arg RetrieveTotalTokensConsumedParams) ([]RetrieveTotalTokensConsumedRow, error) {
-	rows, err := q.db.Query(ctx, retrieveTotalTokensConsumed, arg.ProjectID, arg.FromDate, arg.ToDate)
+	rows, err := q.db.Query(ctx, retrieveTotalTokensConsumed, arg.ProjectID, arg.CreatedAt, arg.CreatedAt_2)
 	if err != nil {
 		return nil, err
 	}
