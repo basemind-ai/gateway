@@ -4,7 +4,6 @@ import (
 	"context"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
-	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -19,9 +18,9 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func CreateClientAndService(t *testing.T) (*openai.Client, *openaitestutils.MockOpenAIService) {
+func CreateClientAndService(t *testing.T) (*openai.Client, *testutils.MockOpenAIService) {
 	t.Helper()
-	mockService := &openaitestutils.MockOpenAIService{T: t}
+	mockService := &testutils.MockOpenAIService{T: t}
 	listener := testutils.CreateTestGRPCServer[openaiconnector.OpenAIServiceServer](
 		t,
 		openaiconnector.RegisterOpenAIServiceServer,

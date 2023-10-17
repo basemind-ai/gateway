@@ -7,7 +7,6 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
-	openaitestutils "github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai/testutils"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/service"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
@@ -28,9 +27,9 @@ import (
 
 const JWTSecret = "ABC123"
 
-func CreateOpenAIService(t *testing.T) *openaitestutils.MockOpenAIService {
+func CreateOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 	t.Helper()
-	mockService := &openaitestutils.MockOpenAIService{T: t}
+	mockService := &testutils.MockOpenAIService{T: t}
 	listener := testutils.CreateTestGRPCServer[openaiconnector.OpenAIServiceServer](
 		t,
 		openaiconnector.RegisterOpenAIServiceServer,

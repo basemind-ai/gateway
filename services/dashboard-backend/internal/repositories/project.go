@@ -123,13 +123,12 @@ func GetTotalAPICountByDateRange(
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
 ) (int64, error) {
-	reqParam := db.RetrieveTotalPromptAPICallsParams{
-		ProjectID: projectID,
-		FromDate:  pgtype.Timestamptz{Time: fromDate, Valid: true},
-		ToDate:    pgtype.Timestamptz{Time: toDate, Valid: true},
-	}
-
-	totalAPICalls, dbErr := db.GetQueries().RetrieveTotalPromptAPICalls(ctx, reqParam)
+	totalAPICalls, dbErr := db.GetQueries().
+		RetrieveProjectAPIRequestCount(ctx, db.RetrieveProjectAPIRequestCountParams{
+			ID:          projectID,
+			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
+			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
+		})
 	if dbErr != nil {
 		return -1, fmt.Errorf("failed to retrieve total prompt api calls: %w", dbErr)
 	}
@@ -142,13 +141,12 @@ func GetTokenConsumedByProjectByDateRange(
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
 ) (map[db.ModelType]int64, error) {
-	reqParam := db.RetrieveTotalTokensConsumedParams{
-		ProjectID: projectID,
-		FromDate:  pgtype.Timestamptz{Time: fromDate, Valid: true},
-		ToDate:    pgtype.Timestamptz{Time: toDate, Valid: true},
-	}
-
-	tokensConsumed, dbErr := db.GetQueries().RetrieveTotalTokensConsumed(ctx, reqParam)
+	tokensConsumed, dbErr := db.GetQueries().
+		RetrieveProjectTokensCount(ctx, db.RetrieveProjectTokensCountParams{
+			ID:          projectID,
+			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
+			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
+		})
 	if dbErr != nil {
 		return nil, fmt.Errorf("failed to retrieve total tokens consumed: %w", dbErr)
 	}

@@ -197,10 +197,10 @@ type PromptTestRecord struct {
 	ResponseContent        string             `json:"responseContent"`
 	RequestTokens          int32              `json:"requestTokens"`
 	ResponseTokens         int32              `json:"responseTokens"`
-	StartTime              pgtype.Timestamptz `json:"startTime"`
-	FinishTime             pgtype.Timestamptz `json:"finishTime"`
 	StreamResponseLatency  pgtype.Int8        `json:"streamResponseLatency"`
 	ErrorLog               pgtype.Text        `json:"errorLog"`
+	StartTime              pgtype.Timestamptz `json:"startTime"`
+	FinishTime             pgtype.Timestamptz `json:"finishTime"`
 	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
 	DeletedAt              pgtype.Timestamptz `json:"deletedAt"`
 	ApplicationID          pgtype.UUID        `json:"applicationId"`

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
-	dto2 "github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/lxzan/gws"
 	"github.com/stretchr/testify/assert"
@@ -63,14 +63,14 @@ func TestPromptTestingAPI(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusSwitchingProtocols, response.StatusCode)
 
-		dto := &dto2.PromptConfigTestDTO{
+		data := &dto.PromptConfigTestDTO{
 			ModelVendor:            promptConfig.ModelVendor,
 			ModelType:              promptConfig.ModelType,
 			ModelParameters:        promptConfig.ModelParameters,
 			ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 		}
 
-		serializedDTO, serializationErr := json.Marshal(dto)
+		serializedDTO, serializationErr := json.Marshal(data)
 		assert.NoError(t, serializationErr)
 
 		writeErr := client.WriteMessage(gws.OpcodeText, serializedDTO)

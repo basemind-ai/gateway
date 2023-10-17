@@ -92,6 +92,73 @@ func (q *Queries) RetrieveApplication(ctx context.Context, id pgtype.UUID) (Retr
 	return i, err
 }
 
+const retrieveApplicationAPIRequestCount = `-- name: RetrieveApplicationAPIRequestCount :one
+SELECT COUNT(prr.id) AS total_requests
+FROM application AS a
+INNER JOIN prompt_config AS pc ON a.id = pc.application_id
+INNER JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE
+    a.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
+`
+
+type RetrieveApplicationAPIRequestCountParams struct {
+	ID          pgtype.UUID        `json:"id"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
+}
+
+func (q *Queries) RetrieveApplicationAPIRequestCount(ctx context.Context, arg RetrieveApplicationAPIRequestCountParams) (int64, error) {
+	row := q.db.QueryRow(ctx, retrieveApplicationAPIRequestCount, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
+	var total_requests int64
+	err := row.Scan(&total_requests)
+	return total_requests, err
+}
+
+const retrieveApplicationTokensCount = `-- name: RetrieveApplicationTokensCount :many
+SELECT
+    pc.model_type,
+    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
+FROM application AS a
+INNER JOIN prompt_config AS pc ON a.id = pc.application_id
+INNER JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE
+    a.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
+GROUP BY pc.model_type
+`
+
+type RetrieveApplicationTokensCountParams struct {
+	ID          pgtype.UUID        `json:"id"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
+}
+
+type RetrieveApplicationTokensCountRow struct {
+	ModelType   ModelType `json:"modelType"`
+	TotalTokens int64     `json:"totalTokens"`
+}
+
+func (q *Queries) RetrieveApplicationTokensCount(ctx context.Context, arg RetrieveApplicationTokensCountParams) ([]RetrieveApplicationTokensCountRow, error) {
+	rows, err := q.db.Query(ctx, retrieveApplicationTokensCount, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RetrieveApplicationTokensCountRow
+	for rows.Next() {
+		var i RetrieveApplicationTokensCountRow
+		if err := rows.Scan(&i.ModelType, &i.TotalTokens); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const retrieveApplications = `-- name: RetrieveApplications :many
 SELECT
     id,

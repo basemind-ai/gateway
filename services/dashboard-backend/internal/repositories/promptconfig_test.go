@@ -369,7 +369,7 @@ func TestPromptConfigRepository(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
 		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
-		factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
+		_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)
 		toDate := fromDate.AddDate(0, 0, 2)
