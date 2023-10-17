@@ -2,11 +2,10 @@ package api_test
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
@@ -60,27 +59,6 @@ func createApplication(t *testing.T, projectID string) string {
 	application, _ := factories.CreateApplication(context.TODO(), *uuidID)
 	applicationID := db.UUIDToString(&application.ID)
 	return applicationID
-}
-
-func createTestServer(t *testing.T, userAccount *db.UserAccount) *httptest.Server {
-	t.Helper()
-	r := router.New(router.Options{
-		Environment:      "test",
-		ServiceName:      "test",
-		RegisterHandlers: api.RegisterHandlers,
-		Middlewares: []func(next http.Handler) http.Handler{
-			middleware.CreateMockFirebaseAuthMiddleware(userAccount),
-		},
-	})
-
-	server := httptest.NewServer(r)
-
-	t.Cleanup(func() {
-		server.CloseClientConnections()
-		server.Close()
-	})
-
-	return server
 }
 
 func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Client {

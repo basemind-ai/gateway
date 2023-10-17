@@ -1,7 +1,9 @@
-package api
+package ws
 
 import (
+	"context"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/lxzan/gws"
 	"github.com/rs/zerolog/log"
@@ -12,6 +14,7 @@ import (
 const (
 	PingInterval = 10 * time.Second
 	PingWait     = 5 * time.Second
+	ContextKey   = "context"
 )
 
 var upgrader = gws.NewUpgrader(&Handler{}, &gws.ServerOption{
@@ -42,8 +45,16 @@ func (Handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 		if err := message.Close(); err != nil {
 			log.Error().Err(err).Msg("failed to close message")
 		}
+		socket.Session().Delete("context")
 	}()
 
+	value, exists := socket.Session().Load(ContextKey)
+	if !exists {
+		log.Error().Msg("failed to load context from session")
+		return
+	}
+	ctx := value.(context.Context)
+	log.Info().Msgf("context: %v", ctx)
 	data := dto.PromptConfigTestDTO{}
 	if deserializationErr := serialization.DeserializeJSON(message, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize message")
@@ -54,16 +65,16 @@ func (Handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 	}
 }
 
-func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
+func PromptTestingWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	socket, err := upgrader.Upgrade(w, r)
 	if err != nil {
+		log.Error().Err(err).Msg("failed to upgrade connection")
+		apierror.InternalServerError().Render(w, r)
 		return
 	}
+	socket.Session().Store(ContextKey, r.Context())
+
 	go func() {
 		socket.ReadLoop()
 	}()
-}
-
-type WebsocketServerConfig struct {
-	Port int `env:"WEBSOCKET_PORT,required"`
 }

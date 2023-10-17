@@ -1,4 +1,4 @@
-package api_test
+package ws_test
 
 import (
 	"context"
@@ -7,13 +7,44 @@ import (
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/router"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/lxzan/gws"
 	"github.com/stretchr/testify/assert"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	cleanup := testutils.CreateNamespaceTestDBModule("api-test")
+	defer cleanup()
+	m.Run()
+}
+
+func createTestServer(t *testing.T, userAccount *db.UserAccount) *httptest.Server {
+	t.Helper()
+	r := router.New(router.Options{
+		Environment:      "test",
+		ServiceName:      "test",
+		RegisterHandlers: api.RegisterHandlers,
+		Middlewares: []func(next http.Handler) http.Handler{
+			middleware.CreateMockFirebaseAuthMiddleware(userAccount),
+		},
+	})
+
+	server := httptest.NewServer(r)
+
+	t.Cleanup(func() {
+		server.CloseClientConnections()
+		server.Close()
+	})
+
+	return server
+}
 
 type ClientHandler struct {
 	gws.BuiltinEventHandler
@@ -31,13 +62,17 @@ func (c ClientHandler) OnMessage(socket *gws.Conn, message *gws.Message) {
 
 func TestPromptTestingAPI(t *testing.T) {
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
-	projectID := createProject(t)
-	applicationID := createApplication(t, projectID)
+	project, _ := factories.CreateProject(context.TODO())
+	application, _ := factories.CreateApplication(context.TODO(), project.ID)
+	_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+		UserID:     userAccount.ID,
+		ProjectID:  project.ID,
+		Permission: db.AccessPermissionTypeADMIN,
+	})
+	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
 
-	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
-
-	appID, _ := db.StringToUUID(applicationID)
-	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *appID)
+	projectID := db.UUIDToString(&project.ID)
+	applicationID := db.UUIDToString(&application.ID)
 
 	createWSUrl := func(serverURL string) string {
 		endpointPath := fmt.Sprintf(
