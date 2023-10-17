@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPromptConfigRepository(t *testing.T) {
+func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 	params, _ := json.Marshal(map[string]any{"maxTokens": 100})
 	newModelParameters := json.RawMessage(params)
 

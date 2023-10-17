@@ -97,12 +97,10 @@ func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Clie
 	return testutils.CreateTestHTTPClient(t, r)
 }
 
-func createPromptRequestRecord(t *testing.T, promptConfigID string) string {
+func createPromptRequestRecord(t *testing.T, promptConfigID string) {
 	t.Helper()
 	uuidID, _ := db.StringToUUID(promptConfigID)
-	promptReqRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), *uuidID)
-	promptReqRecordID := db.UUIDToString(&promptReqRecord.ID)
-	return promptReqRecordID
+	_, _ = factories.CreatePromptRequestRecord(context.TODO(), *uuidID)
 }
 
 func createPromptConfig(t *testing.T, applicationID string) string {

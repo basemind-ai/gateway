@@ -19,7 +19,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 )
 
-func TestApplicationsAPI(t *testing.T) { //nolint:revive
+func TestApplicationsAPI(t *testing.T) { //nolint: revive
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
 	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)

@@ -164,7 +164,7 @@ func GetProjectAnalyticsByDateRange(
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
 ) (dto.ProjectAnalyticsDTO, error) {
-	totalApiCalls, dbErr := GetTotalAPICountByDateRange(ctx, projectID, fromDate, toDate)
+	totalAPICalls, dbErr := GetTotalAPICountByDateRange(ctx, projectID, fromDate, toDate)
 	if dbErr != nil {
 		return dto.ProjectAnalyticsDTO{}, dbErr
 	}
@@ -185,7 +185,7 @@ func GetProjectAnalyticsByDateRange(
 	}
 
 	return dto.ProjectAnalyticsDTO{
-		TotalAPICalls: totalApiCalls,
+		TotalAPICalls: totalAPICalls,
 		ModelsCost:    modelCost,
 	}, nil
 }
