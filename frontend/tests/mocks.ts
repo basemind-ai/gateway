@@ -70,7 +70,7 @@ Object.defineProperties(global.HTMLElement.prototype, {
 
 export const routerReplaceMock = vi.fn();
 export const useParamsMock = vi.fn();
-export const usePathnameMock = vi.fn();
+export const usePathnameMock = vi.fn(() => '');
 
 export const nextRouterMock = {
 	basePath: '',

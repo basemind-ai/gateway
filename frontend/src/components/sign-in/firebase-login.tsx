@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
+import { Loader } from '@/components/loader';
 import { Navigation } from '@/constants';
 import { useSetUser } from '@/stores/api-store';
 import { firebaseUIConfig, getFirebaseAuth } from '@/utils/firebase';
@@ -79,18 +80,7 @@ export function FirebaseLogin() {
 			className="bg-base-200 flex items-center h-full w-full"
 		>
 			<div className="mx-auto p-16 bg-base-200 border-1 rounded-box shadow transition-all duration-700 ease-in-out h-full">
-				{loading && (
-					<div
-						data-testid="firebase-login-loader"
-						className="m-10 flex justify-center items-center h-full"
-					>
-						<span
-							className="animate-spin inline-block w-6 h-6 border-[4px] border-current border-t-transparent text-primary rounded-full"
-							role="status"
-							aria-label="loading"
-						></span>
-					</div>
-				)}
+				{loading && <Loader />}
 				{!isSignedIn && (
 					<div id="firebaseui-auth-container" className="w-112 h-102">
 						<div

@@ -16,7 +16,6 @@ import { Navigation } from '@/constants';
 
 export default function NavRailList() {
 	const t = useTranslations('navrail');
-
 	const [pathname] = usePathname().split('?');
 
 	return (
