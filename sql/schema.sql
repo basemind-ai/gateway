@@ -107,7 +107,7 @@ CREATE TABLE prompt_request_record
     start_time timestamptz NOT NULL,
     finish_time timestamptz NOT NULL,
     stream_response_latency bigint NULL,
-    prompt_config_id uuid NOT NULL,
+    prompt_config_id uuid NULL,
     error_log text NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
@@ -125,39 +125,21 @@ CREATE INDEX idx_prompt_request_record_finish_time ON prompt_request_record (
 ) WHERE deleted_at IS NULL;
 
 -- prompt-test-record
--- this table is intentionally denormalized from prompt-request-record and prompt-config
--- because the prompt-config might not be saved to the DB when testing is performed.
 CREATE TABLE prompt_test_record
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(255) NOT NULL,
-    model_parameters json NOT NULL,
-    model_type model_type NOT NULL,
-    model_vendor model_vendor NOT NULL,
-    provider_prompt_messages json NOT NULL,
-    template_variables json NOT NULL,
-    response_content text NOT NULL,
-    request_tokens int NOT NULL,
-    response_tokens int NOT NULL,
-    stream_response_latency bigint NULL,
-    error_log text NULL,
-    start_time timestamptz NOT NULL,
-    finish_time timestamptz NOT NULL,
+    variable_values json NOT NULL,
+    response text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
-    deleted_at timestamptz NULL,
-    application_id uuid NOT NULL,
-    prompt_config_id uuid NULL,
-    FOREIGN KEY (prompt_config_id) REFERENCES prompt_config (id) ON DELETE SET NULL,
-    FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE
+    prompt_request_record_id uuid NOT NULL,
+    FOREIGN KEY (prompt_request_record_id) REFERENCES prompt_request_record (id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_prompt_test_record_application_id ON prompt_test_record (
-    application_id
-) WHERE deleted_at IS NULL;
-
-CREATE INDEX idx_prompt_test_record_prompt_config_id ON prompt_test_record (
-    prompt_config_id
-) WHERE deleted_at IS NULL;
+CREATE INDEX idx_prompt_test_record_prompt_request_record_id ON prompt_test_record (
+    prompt_request_record_id
+);
+CREATE INDEX idx_prompt_test_record_created_at ON prompt_test_record (created_at);
 
 -- token
 CREATE TABLE token

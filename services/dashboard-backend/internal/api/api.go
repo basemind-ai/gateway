@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ws"
 	"net/http"
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
@@ -219,7 +218,7 @@ func RegisterHandlers(mux *chi.Mux) {
 				),
 			)
 			// we are mounting the websocket here instead of using a regular route because we need chi to pass control.
-			subRouter.Mount("/", http.HandlerFunc(ws.PromptTestingWebsocketHandler))
+			subRouter.Mount("/", http.HandlerFunc(PromptTestingWebsocketHandler))
 		})
 	})
 }

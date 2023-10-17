@@ -26,7 +26,7 @@ func createToken(t *testing.T, applicationID string, tokenName string) db.Token 
 	return token
 }
 
-func TestTokensAPI(t *testing.T) { //nolint: revive
+func TestTokensAPI(t *testing.T) {
 	testutils.SetTestEnv(t)
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)

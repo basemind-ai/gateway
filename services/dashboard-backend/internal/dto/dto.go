@@ -2,12 +2,14 @@ package dto
 
 import (
 	"encoding/json"
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/db"
 )
 
 type ApplicationDTO struct {
+	datatypes.DTO
 	ID          string    `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
@@ -16,6 +18,7 @@ type ApplicationDTO struct {
 }
 
 type ProjectDTO struct {
+	datatypes.DTO
 	ID           string           `json:"id,omitempty"`
 	Name         string           `json:"name"                   validate:"required"`
 	Description  string           `json:"description,omitempty"`
@@ -26,6 +29,7 @@ type ProjectDTO struct {
 }
 
 type PromptConfigCreateDTO struct {
+	datatypes.DTO
 	Name                   string          `json:"name"            validate:"required"`
 	ModelParameters        json.RawMessage `json:"modelParameters" validate:"required"`
 	ModelType              db.ModelType    `json:"modelType"       validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
@@ -34,6 +38,7 @@ type PromptConfigCreateDTO struct {
 }
 
 type PromptConfigUpdateDTO struct {
+	datatypes.DTO
 	Name                   *string          `json:"name,omitempty"            validate:"omitempty,required"`
 	ModelParameters        *json.RawMessage `json:"modelParameters,omitempty" validate:"omitempty,required"`
 	ModelType              *db.ModelType    `json:"modelType,omitempty"       validate:"omitempty,oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
@@ -42,6 +47,7 @@ type PromptConfigUpdateDTO struct {
 }
 
 type ApplicationTokenDTO struct {
+	datatypes.DTO
 	ID        string    `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	Name      string    `json:"name"           validate:"required"`
@@ -49,17 +55,20 @@ type ApplicationTokenDTO struct {
 }
 
 type AddUserAccountToProjectDTO struct {
+	datatypes.DTO
 	UserID     string                  `json:"userId,omitempty" validate:"omitempty,required"`
 	Email      string                  `json:"email,omitempty"  validate:"omitempty,required"`
 	Permission db.AccessPermissionType `json:"permission"       validate:"required,oneof=ADMIN MEMBER"`
 }
 
 type UpdateUserAccountProjectPermissionDTO struct {
+	datatypes.DTO
 	UserID     string                  `json:"userId"     validate:"required"`
 	Permission db.AccessPermissionType `json:"permission" validate:"required,oneof=ADMIN MEMBER"`
 }
 
 type ProjectUserAccountDTO struct {
+	datatypes.DTO
 	ID          string    `json:"id"`
 	DisplayName string    `json:"displayName"`
 	Email       string    `json:"email"`
@@ -71,25 +80,38 @@ type ProjectUserAccountDTO struct {
 }
 
 type ApplicationAnalyticsDTO struct {
+	datatypes.DTO
 	TotalRequests int64   `json:"totalRequests"`
 	ProjectedCost float64 `json:"projectedCost"`
 }
 
 type ProjectAnalyticsDTO struct {
+	datatypes.DTO
 	TotalAPICalls int64   `json:"totalAPICalls"`
 	ModelsCost    float64 `json:"modelsCost"`
 }
 
 type PromptConfigAnalyticsDTO struct {
+	datatypes.DTO
 	TotalPromptRequests int64   `json:"totalPromptRequests"`
 	ModelsCost          float64 `json:"modelsCost"`
 }
 
 type PromptConfigTestDTO struct {
+	datatypes.DTO
+	Name                   string          `json:"name"                     validate:"required"`
 	ModelParameters        json.RawMessage `json:"modelParameters"          validate:"required"`
 	ModelType              db.ModelType    `json:"modelType"                validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	ModelVendor            db.ModelVendor  `json:"modelVendor"              validate:"oneof=OPEN_AI"`
 	ProviderPromptMessages json.RawMessage `json:"promptMessages"           validate:"required"`
 	TemplateVariables      json.RawMessage `json:"templateVariables"        validate:"required"`
 	PromptConfigID         *string         `json:"promptConfigId,omitempty"`
+}
+
+type PromptConfigTestResultDTO struct {
+	datatypes.DTO
+	Content            *string `json:"content,omitempty"`
+	ErrorMessage       *string `json:"errorMessage,omitempty"`
+	FinishReason       *string `json:"finishReason,omitempty"`
+	PromptTestRecordID *string `json:"promptTestRecordId,omitempty"`
 }

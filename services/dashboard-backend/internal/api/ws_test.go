@@ -1,4 +1,4 @@
-package ws_test
+package api_test
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/router"
-	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/lxzan/gws"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -18,12 +17,6 @@ import (
 	"strings"
 	"testing"
 )
-
-func TestMain(m *testing.M) {
-	cleanup := testutils.CreateNamespaceTestDBModule("api-test")
-	defer cleanup()
-	m.Run()
-}
 
 func createTestServer(t *testing.T, userAccount *db.UserAccount) *httptest.Server {
 	t.Helper()

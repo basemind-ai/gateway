@@ -30,11 +30,7 @@ class PromptTestingStreamingPromptResponse$Type extends MessageType {
         super("prompt_testing.v1.PromptTestingStreamingPromptResponse", [
             { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "finish_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "request_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 4, name: "response_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 5, name: "stream_duration", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 6, name: "error_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "prompt_test_record_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "prompt_request_record_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

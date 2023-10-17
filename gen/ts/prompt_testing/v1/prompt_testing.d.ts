@@ -71,35 +71,11 @@ export interface PromptTestingStreamingPromptResponse {
      */
     finishReason?: string;
     /**
-     * Number of tokens used for the prompt request, given when the stream ends
+     * The prompt request record ID, given when the stream ends
      *
-     * @generated from protobuf field: optional uint32 request_tokens = 3;
+     * @generated from protobuf field: optional string prompt_request_record_id = 3;
      */
-    requestTokens?: number;
-    /**
-     * Number of tokens used for the prompt response, given when the stream ends
-     *
-     * @generated from protobuf field: optional uint32 response_tokens = 4;
-     */
-    responseTokens?: number;
-    /**
-     * Stream duration, given when the stream ends
-     *
-     * @generated from protobuf field: optional uint32 stream_duration = 5;
-     */
-    streamDuration?: number;
-    /**
-     * An error message, if an error occurs
-     *
-     * @generated from protobuf field: optional string error_message = 6;
-     */
-    errorMessage?: string;
-    /**
-     * The test record ID, given when the stream ends
-     *
-     * @generated from protobuf field: optional string prompt_test_record_id = 7;
-     */
-    promptTestRecordId?: string;
+    promptRequestRecordId?: string;
 }
 declare class PromptTestRequest$Type extends MessageType<PromptTestRequest> {
     constructor();

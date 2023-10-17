@@ -35,14 +35,6 @@ message PromptTestingStreamingPromptResponse {
   string content = 1;
   // Finish reason, given when the stream ends
   optional string finish_reason = 2;
-  // Number of tokens used for the prompt request, given when the stream ends
-  optional uint32 request_tokens = 3;
-  // Number of tokens used for the prompt response, given when the stream ends
-  optional uint32 response_tokens = 4;
-  // Stream duration, given when the stream ends
-  optional uint32 stream_duration = 5;
-  // An error message, if an error occurs
-  optional string error_message = 6;
-  // The test record ID, given when the stream ends
-  optional string prompt_test_record_id = 7;
+  // The prompt request record ID, given when the stream ends
+  optional string prompt_request_record_id = 3;
 }
