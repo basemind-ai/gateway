@@ -1,4 +1,4 @@
-package grpcclient
+package ptgrpcclient
 
 import (
 	"context"
