@@ -11,7 +11,7 @@ import { describe } from 'vitest';
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/projects/create/page';
 import { Navigation } from '@/constants';
-import { useSetProjects } from '@/stores/api-store';
+import { useSetProjects } from '@/stores/project-store';
 
 describe('ProjectCreatePage', () => {
 	it('should render without crashing', () => {

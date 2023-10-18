@@ -19,7 +19,8 @@
 		"abTesting": "A/B Testing",
 		"bannerTitle": "Need Help?",
 		"bannerBody": "Our customer success team is \nhere for you",
-		"bannerCTA": "Get Support"
+		"bannerCTA": "Get Support",
+		"application": "Application"
 	},
 	"signin": {
 		"authHeader": "Welcome to BaseMind",

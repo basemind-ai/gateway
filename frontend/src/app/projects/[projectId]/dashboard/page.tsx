@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { Navigation } from '@/constants';
-import { useProject } from '@/stores/api-store';
+import { useProject } from '@/stores/project-store';
 
 export default function Dashboard({
 	params: { projectId },

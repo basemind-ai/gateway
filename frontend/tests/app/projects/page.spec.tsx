@@ -1,11 +1,11 @@
-import { ProjectFactory } from 'tests/factories';
+import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { getAuthMock, mockFetch, routerReplaceMock } from 'tests/mocks';
 import { act, render, renderHook, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import Projects from '@/app/projects/page';
 import { Navigation } from '@/constants';
-import { useProjects } from '@/stores/api-store';
+import { useProjects } from '@/stores/project-store';
 
 describe('projects page tests', () => {
 	it('should route to sign in page when user is not present', async () => {
@@ -13,6 +13,10 @@ describe('projects page tests', () => {
 			setPersistence: vi.fn(),
 			currentUser: null,
 		}));
+		mockFetch.mockResolvedValueOnce({
+			ok: true,
+			json: () => Promise.resolve([]),
+		});
 		render(<Projects />);
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.SignIn);
@@ -58,17 +62,24 @@ describe('projects page tests', () => {
 
 	it('rendering projects component change store value', async () => {
 		const projects = await ProjectFactory.batch(3);
+		const applications = await ApplicationFactory.batch(2);
 		const { result } = renderHook(() => useProjects());
-		expect(result.current[0].applications).toEqual([]);
 		act(() => {
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				json: () => Promise.resolve(projects),
 			});
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(applications),
+			});
 		});
+		const updatedProjects = structuredClone(projects);
+		updatedProjects[0].applications = applications;
+
 		render(<Projects />);
 		await waitFor(() => {
-			expect(result.current).toEqual(projects);
+			expect(result.current).toEqual(updatedProjects);
 		});
 	});
 });

@@ -88,6 +88,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
+			subRouter.Get("/", handleRetrieveApplications)
 			subRouter.Post("/", handleCreateApplication)
 		})
 

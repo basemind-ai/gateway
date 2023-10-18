@@ -1,14 +1,8 @@
-import { ProjectFactory, UserFactory } from 'tests/factories';
+import { UserFactory } from 'tests/factories';
 import { renderHook } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
 
-import {
-	apiStoreStateCreator,
-	useProject,
-	useSetProjects,
-	useSetUser,
-	useUser,
-} from '@/stores/api-store';
+import { apiStoreStateCreator, useSetUser, useUser } from '@/stores/api-store';
 
 describe('api-store tests', () => {
 	describe('apiStoreStateCreator', () => {
@@ -24,13 +18,6 @@ describe('api-store tests', () => {
 			const user = await UserFactory.build();
 			store.setUser(user);
 			expect(set).toHaveBeenCalledWith({ user });
-		});
-
-		it('sets projects', async () => {
-			const store = apiStoreStateCreator(set, get, {} as any);
-			const projects = await ProjectFactory.batch(1);
-			store.setProjects(projects);
-			expect(set).toHaveBeenCalledWith({ projects });
 		});
 	});
 
@@ -48,23 +35,6 @@ describe('api-store tests', () => {
 			} = renderHook(useUser);
 
 			expect(storedUser).toEqual(user);
-		});
-	});
-
-	describe('setProjects and useProject', () => {
-		it('sets and returns projects', async () => {
-			const {
-				result: { current: setProjects },
-			} = renderHook(useSetProjects);
-
-			const projects = await ProjectFactory.batch(1);
-			setProjects(projects);
-
-			const {
-				result: { current: storedProjects },
-			} = renderHook(() => useProject(projects[0].id));
-
-			expect(storedProjects).toEqual(projects[0]);
 		});
 	});
 });

@@ -50,6 +50,33 @@ func handleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// handleRetrieveApplications - retrieve applications of a project.
+func handleRetrieveApplications(w http.ResponseWriter, r *http.Request) {
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
+
+	applications, applicationsRetrieveErr := db.
+		GetQueries().
+		RetrieveApplications(r.Context(), projectID)
+
+	if applicationsRetrieveErr != nil {
+		log.Error().Err(applicationsRetrieveErr).Msg("failed to retrieve applications")
+		apierror.InternalServerError().Render(w, r)
+		return
+	}
+
+	data := make([]dto.ApplicationDTO, len(applications))
+	for i, application := range applications {
+		data[i] = dto.ApplicationDTO{
+			ID:          db.UUIDToString(&application.ID),
+			Name:        application.Name,
+			Description: application.Description,
+			CreatedAt:   application.CreatedAt.Time,
+			UpdatedAt:   application.UpdatedAt.Time,
+		}
+	}
+	serialization.RenderJSONResponse(w, http.StatusOK, data)
+}
+
 // handleRetrieveApplication - retrieve an application by ID.
 func handleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)

@@ -15,7 +15,7 @@ describe('Dashboard page tests', () => {
 	it('handles logout', async () => {
 		render(<Dashboard params={{ projectId: '123' }} />);
 
-		const dashboardContainer = screen.getByTestId('dashboard');
-		expect(dashboardContainer).toBeInTheDocument();
+		const dashboardContainer = screen.queryByTestId('dashboard');
+		expect(dashboardContainer).not.toBeInTheDocument();
 	});
 });

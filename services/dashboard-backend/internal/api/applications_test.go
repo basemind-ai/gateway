@@ -158,6 +158,31 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 		})
 	})
 
+	t.Run(fmt.Sprintf("GET: %s", api.ApplicationsListEndpoint), func(t *testing.T) {
+		t.Run("retrieves all applications for a project", func(t *testing.T) {
+			newProjectID := createProject(t)
+
+			_ = createApplication(t, newProjectID)
+			_ = createApplication(t, newProjectID)
+
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", newProjectID),
+				),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
+
+			data := &[]dto.ApplicationDTO{}
+			deserializationErr := serialization.DeserializeJSON(response.Body, data)
+			assert.NoError(t, deserializationErr)
+
+			assert.Len(t, *data, 2)
+		})
+	})
+
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
 		t.Run("retrieves an existing application", func(t *testing.T) {
 			applicationID := createApplication(t, projectID)
