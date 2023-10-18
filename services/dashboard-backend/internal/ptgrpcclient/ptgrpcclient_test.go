@@ -50,20 +50,57 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
 	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
 	promptRequestRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
-	modelParameters, _ := factories.CreateModelParameters()
-	promptMessages, _ := factories.CreateOpenAIPromptMessages("", "", nil)
 
 	applicationID := db.UUIDToString(&application.ID)
 	promptRequestRecordID := db.UUIDToString(&promptRequestRecord.ID)
 	data := dto.PromptConfigTestDTO{
 		Name:                   "TEST",
-		ModelParameters:        modelParameters,
+		ModelParameters:        promptConfig.ModelParameters,
 		ModelType:              db.ModelTypeGpt432k,
 		ModelVendor:            db.ModelVendorOPENAI,
-		ProviderPromptMessages: promptMessages,
+		ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 		TemplateVariables:      nil,
 		PromptConfigID:         nil,
 	}
+
+	t.Run("Init", func(t *testing.T) {
+		t.Run("panics if the env is not set", func(t *testing.T) {
+			assert.Panics(t, func() {
+				ptgrpcclient.Init(
+					context.Background(),
+					grpc.WithTransportCredentials(insecure.NewCredentials()),
+				)
+			})
+		})
+		t.Run("does not panic if the env is set", func(t *testing.T) {
+			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
+			assert.NotPanics(t, func() {
+				ptgrpcclient.Init(
+					context.Background(),
+					grpc.WithTransportCredentials(insecure.NewCredentials()),
+				)
+			})
+		})
+	})
+
+	t.Run("GetClient", func(t *testing.T) {
+		t.Run("does not panic if init is called", func(t *testing.T) {
+			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
+			ptgrpcclient.Init(
+				context.Background(),
+				grpc.WithTransportCredentials(insecure.NewCredentials()),
+			)
+			assert.NotPanics(t, func() {
+				ptgrpcclient.GetClient()
+			})
+		})
+		t.Run("panics if init is not called", func(t *testing.T) {
+			ptgrpcclient.SetClient(nil)
+			assert.Panics(t, func() {
+				ptgrpcclient.GetClient()
+			})
+		})
+	})
 
 	t.Run("handles a stream response", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)

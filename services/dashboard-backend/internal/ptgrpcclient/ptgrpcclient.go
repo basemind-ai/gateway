@@ -10,13 +10,9 @@ import (
 	"github.com/sethvargo/go-envconfig"
 	"google.golang.org/grpc"
 	"io"
-	"sync"
 )
 
-var (
-	client *Client
-	once   sync.Once
-)
+var client *Client
 
 // SetClient - sets the PromptTesting gRPC client.
 func SetClient(c *Client) {
@@ -31,7 +27,7 @@ func GetClient() *Client {
 	return client
 }
 
-type ClientConfig struct {
+type clientConfig struct {
 	APIGatewayAddress string `env:"API_GATEWAY_ADDRESS,required"`
 }
 
@@ -55,17 +51,15 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 
 // Init - initializes the PromptTesting gRPC client. This function is called once.
 func Init(ctx context.Context, opts ...grpc.DialOption) {
-	once.Do(func() {
-		config := &ClientConfig{}
-		if envErr := envconfig.Process(ctx, config); envErr != nil {
-			panic(envErr)
-		}
-		c, err := New(config.APIGatewayAddress, opts...)
-		if err != nil {
-			panic(err)
-		}
-		SetClient(c)
-	})
+	config := &clientConfig{}
+	if envErr := envconfig.Process(ctx, config); envErr != nil {
+		panic(envErr)
+	}
+	c, err := New(config.APIGatewayAddress, opts...)
+	if err != nil {
+		panic(err)
+	}
+	SetClient(c)
 }
 
 // StreamPromptTest - streams a prompt test to the PromptTesting gRPC service.

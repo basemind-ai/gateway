@@ -217,8 +217,9 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
+
 			// we are mounting the websocket here instead of using a regular route because we need chi to pass control.
-			subRouter.Mount("/", http.HandlerFunc(PromptTestingWebsocketHandler))
+			subRouter.Mount("/", http.HandlerFunc(promptTestingWebsocketHandler))
 		})
 	})
 }

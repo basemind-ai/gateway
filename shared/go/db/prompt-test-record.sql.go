@@ -17,7 +17,7 @@ INSERT INTO prompt_test_record (name,
                                 variable_values,
                                 response,
                                 prompt_request_record_id)
-values ($1, $2, $3, $4)
+VALUES ($1, $2, $3, $4)
 RETURNING id, name, variable_values, response, created_at, prompt_request_record_id
 `
 
@@ -44,6 +44,56 @@ func (q *Queries) CreatePromptTestRecord(ctx context.Context, arg CreatePromptTe
 		&i.Response,
 		&i.CreatedAt,
 		&i.PromptRequestRecordID,
+	)
+	return i, err
+}
+
+const retrievePromptTestRecord = `-- name: RetrievePromptTestRecord :one
+SELECT ptr.id,
+       ptr.name,
+       ptr.variable_values,
+       ptr.response,
+       ptr.created_at,
+       prr.error_log,
+       prr.start_time,
+       prr.finish_time,
+       prr.request_tokens,
+       prr.response_tokens,
+       prr.stream_response_latency
+FROM prompt_test_record AS ptr
+         LEFT JOIN prompt_request_record prr on ptr.prompt_request_record_id = prr.id
+WHERE ptr.id = $1
+`
+
+type RetrievePromptTestRecordRow struct {
+	ID                    pgtype.UUID        `json:"id"`
+	Name                  string             `json:"name"`
+	VariableValues        []byte             `json:"variableValues"`
+	Response              string             `json:"response"`
+	CreatedAt             pgtype.Timestamptz `json:"createdAt"`
+	ErrorLog              pgtype.Text        `json:"errorLog"`
+	StartTime             pgtype.Timestamptz `json:"startTime"`
+	FinishTime            pgtype.Timestamptz `json:"finishTime"`
+	RequestTokens         pgtype.Int4        `json:"requestTokens"`
+	ResponseTokens        pgtype.Int4        `json:"responseTokens"`
+	StreamResponseLatency pgtype.Int8        `json:"streamResponseLatency"`
+}
+
+func (q *Queries) RetrievePromptTestRecord(ctx context.Context, id pgtype.UUID) (RetrievePromptTestRecordRow, error) {
+	row := q.db.QueryRow(ctx, retrievePromptTestRecord, id)
+	var i RetrievePromptTestRecordRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.VariableValues,
+		&i.Response,
+		&i.CreatedAt,
+		&i.ErrorLog,
+		&i.StartTime,
+		&i.FinishTime,
+		&i.RequestTokens,
+		&i.ResponseTokens,
+		&i.StreamResponseLatency,
 	)
 	return i, err
 }
