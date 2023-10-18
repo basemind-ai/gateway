@@ -53,7 +53,7 @@ fun App(vm: MainViewModel) {
                     messages = conversation.value,
                     addressee = ChatUiModel.Author.bot,
                 ),
-                onSendChatClickListener = { msg -> vm.sendPromt(msg) },
+                onSendChatClickListener = { msg -> vm.sendPrompt(msg) },
                 modifier = Modifier,
             )
         }

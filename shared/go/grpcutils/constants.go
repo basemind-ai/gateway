@@ -1,7 +1,7 @@
 package grpcutils
 
-type ContextKeyType int
+type contextKeyType int
 
 const (
-	ApplicationIDContextKey ContextKeyType = iota
+	ApplicationIDContextKey contextKeyType = iota
 )

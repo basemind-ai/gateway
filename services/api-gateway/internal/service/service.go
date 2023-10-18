@@ -45,7 +45,7 @@ func (Server) RequestPrompt(
 		cacheKey,
 		&dto.RequestConfigurationDTO{},
 		time.Minute*30,
-		RetrieveRequestConfiguration(ctx, applicationID, request.PromptConfigId),
+		retrieveRequestConfiguration(ctx, applicationID, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
 		return nil, status.Error(
@@ -54,7 +54,7 @@ func (Server) RequestPrompt(
 		)
 	}
 
-	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
+	if validationError := validateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
 		// the validation error is already a grpc status error
 		return nil, validationError
 	}
@@ -156,7 +156,7 @@ func (Server) RequestStreamingPrompt(
 		cacheKey,
 		&dto.RequestConfigurationDTO{},
 		time.Minute*30,
-		RetrieveRequestConfiguration(streamServer.Context(), applicationID, request.PromptConfigId),
+		retrieveRequestConfiguration(streamServer.Context(), applicationID, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
 		return status.Error(
@@ -165,7 +165,7 @@ func (Server) RequestStreamingPrompt(
 		)
 	}
 
-	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
+	if validationError := validateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
 		// the validation error is already a grpc status error
 		return validationError
 	}

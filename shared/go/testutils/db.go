@@ -4,12 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/rs/zerolog/log"
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"testing"
-
-	"github.com/rs/zerolog/log"
 
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
@@ -58,7 +56,7 @@ func CreateNamespaceTestDBModule(namespace string) func() {
 		log.Fatal().Err(connectionErr).Msg("failed to connect to test database")
 	}
 
-	if migrationsErr := MigrateTestDB(dbURL); migrationsErr != nil {
+	if migrationsErr := migrateTestDB(dbURL); migrationsErr != nil {
 		_ = connectionPool.Purge(resource)
 		log.Fatal().Err(migrationsErr).Msg("failed to migrate test database")
 	}
@@ -71,15 +69,7 @@ func CreateNamespaceTestDBModule(namespace string) func() {
 	}
 }
 
-func CreateTestDB(t *testing.T) {
-	t.Helper()
-
-	cleanup := CreateNamespaceTestDBModule(t.Name())
-
-	t.Cleanup(cleanup)
-}
-
-func MigrateTestDB(dbURL string) error {
+func migrateTestDB(dbURL string) error {
 	_, filePath, _, _ := runtime.Caller(1)
 	repositoryRoot, _ := filepath.Abs(filePath + "/../../../../")
 	migrationsPath := fmt.Sprintf("file://%s/sql/migrations", repositoryRoot)

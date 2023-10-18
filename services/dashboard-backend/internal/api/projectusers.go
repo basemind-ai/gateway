@@ -11,8 +11,8 @@ import (
 	"net/http"
 )
 
-// HandleRetrieveProjectUserAccounts - retrieves all users for a project.
-func HandleRetrieveProjectUserAccounts(w http.ResponseWriter, r *http.Request) {
+// handleRetrieveProjectUserAccounts - retrieves all users for a project.
+func handleRetrieveProjectUserAccounts(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	userProjects, err := db.GetQueries().RetrieveProjectUserAccounts(r.Context(), projectID)
@@ -39,20 +39,20 @@ func HandleRetrieveProjectUserAccounts(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, ret)
 }
 
-// HandleAddUserToProject - adds a user to a project with the specified permission level.
-func HandleAddUserToProject(w http.ResponseWriter, r *http.Request) {
+// handleAddUserToProject - adds a user to a project with the specified permission level.
+func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	data := dto.AddUserAccountToProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
 	if validationErr := validate.Struct(data); validationErr != nil {
 		log.Error().Err(validationErr).Msg("failed to validate request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -67,7 +67,7 @@ func HandleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	} else {
 		userID, err := db.StringToUUID(data.UserID)
 		if err != nil {
-			apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+			apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 			return
 		}
 		userAccount, retrievalErr = db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
@@ -120,21 +120,21 @@ func HandleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// HandleChangeUserProjectPermission - changes the user's permission to the one specified.
-func HandleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
+// handleChangeUserProjectPermission - changes the user's permission to the one specified.
+func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 	requestUserAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	data := dto.UpdateUserAccountProjectPermissionDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
 	if validationErr := validate.Struct(data); validationErr != nil {
 		log.Error().Err(validationErr).Msg("failed to validate request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -145,7 +145,7 @@ func HandleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := db.StringToUUID(data.UserID)
 	if err != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -198,8 +198,8 @@ func HandleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// HandleRemoveUserFromProject - removes a user from a project.
-func HandleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
+// handleRemoveUserFromProject - removes a user from a project.
+func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(middleware.UserIDContextKey).(pgtype.UUID)
 	requestUserAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)

@@ -19,7 +19,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 )
 
-func TestApplicationsAPI(t *testing.T) {
+func TestApplicationsAPI(t *testing.T) { //nolint:revive
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
 	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
@@ -588,7 +588,7 @@ func TestApplicationsAPI(t *testing.T) {
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationAnalyticsEndpoint), func(t *testing.T) {
 		invalidUUID := "invalid"
 		applicationID := createApplication(t, projectID)
-		promptConfigID := createPrompConfig(t, applicationID)
+		promptConfigID := createPromptConfig(t, applicationID)
 		createPromptRequestRecord(t, promptConfigID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)

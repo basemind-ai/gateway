@@ -23,7 +23,7 @@ class MainViewModel : ViewModel() {
         _conversation.emit(_conversation.value + botChat)
     }
 
-    fun sendPromt(msg: String) {
+    fun sendPrompt(msg: String) {
         val myChat = ChatUiModel.Message(msg, ChatUiModel.Author.me)
         viewModelScope.launch {
             _conversation.emit(_conversation.value + myChat)

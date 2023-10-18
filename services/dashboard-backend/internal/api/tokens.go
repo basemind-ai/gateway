@@ -13,13 +13,13 @@ import (
 	"net/http"
 )
 
-// HandleCreateApplicationToken - creates a new application token.
-func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
+// handleCreateApplicationToken - creates a new application token.
+func handleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	data := &dto.ApplicationTokenDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -80,8 +80,8 @@ func HandleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// HandleRetrieveApplicationTokens - retrieves a list of all applications tokens.
-func HandleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
+// handleRetrieveApplicationTokens - retrieves a list of all applications tokens.
+func handleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	tokens, retrievalErr := db.GetQueries().RetrieveTokens(r.Context(), applicationID)
@@ -104,8 +104,8 @@ func HandleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, ret)
 }
 
-// HandleDeleteApplicationToken - deletes an application token.
-func HandleDeleteApplicationToken(w http.ResponseWriter, r *http.Request) {
+// handleDeleteApplicationToken - deletes an application token.
+func handleDeleteApplicationToken(w http.ResponseWriter, r *http.Request) {
 	tokenID := r.Context().Value(middleware.TokenIDContextKey).(pgtype.UUID)
 
 	if err := db.GetQueries().DeleteToken(r.Context(), tokenID); err != nil {

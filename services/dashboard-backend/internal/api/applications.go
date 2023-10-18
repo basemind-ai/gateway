@@ -16,8 +16,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// HandleCreateApplication - create a new application .
-func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
+// handleCreateApplication - create a new application .
+func handleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	data := &db.CreateApplicationParams{
@@ -25,7 +25,7 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -50,8 +50,8 @@ func HandleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// HandleRetrieveApplication - retrieve an application by ID.
-func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
+// handleRetrieveApplication - retrieve an application by ID.
+func handleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	application, applicationRetrieveErr := db.
@@ -72,8 +72,8 @@ func HandleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// HandleUpdateApplication - update an application.
-func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
+// handleUpdateApplication - update an application.
+func handleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	data := &db.UpdateApplicationParams{
@@ -81,7 +81,7 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 	}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -110,8 +110,8 @@ func HandleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// HandleDeleteApplication - delete an application.
-func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
+// handleDeleteApplication - delete an application.
+func handleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	if applicationDeleteErr := repositories.DeleteApplication(r.Context(), applicationID); applicationDeleteErr != nil {
@@ -123,7 +123,7 @@ func HandleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func HandleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) {
+func handleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())

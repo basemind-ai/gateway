@@ -15,13 +15,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// HandleCreateProject - creates a new project and sets the user as an ADMIN.
-func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
+// handleCreateProject - creates a new project and sets the user as an ADMIN.
+func handleCreateProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -46,8 +46,8 @@ func HandleCreateProject(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusCreated, projectDto)
 }
 
-// HandleRetrieveProjects - retrieves all projects for the user.
-func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
+// handleRetrieveProjects - retrieves all projects for the user.
+func handleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 
 	projects, err := db.GetQueries().RetrieveProjects(r.Context(), userAccount.FirebaseID)
@@ -72,15 +72,15 @@ func HandleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
-// HandleUpdateProject - allows updating the name and description of a project.
-func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
+// handleUpdateProject - allows updating the name and description of a project.
+func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 	userProject := r.Context().Value(middleware.UserProjectContextKey).(db.UserProject)
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -129,8 +129,8 @@ func HandleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, data)
 }
 
-// HandleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these.
-func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
+// handleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these.
+func handleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
@@ -152,9 +152,9 @@ func HandleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// HandleRetrieveProjectAnalytics - retrieves the analytics for a project.
+// handleRetrieveProjectAnalytics - retrieves the analytics for a project.
 // The analytics includes the total API calls and model costs for all the applications in the project.
-func HandleRetrieveProjectAnalytics(w http.ResponseWriter, r *http.Request) {
+func handleRetrieveProjectAnalytics(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())

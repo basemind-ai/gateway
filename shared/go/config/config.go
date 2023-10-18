@@ -7,6 +7,7 @@ import (
 	"github.com/sethvargo/go-envconfig"
 )
 
+//goland:noinspection GoUnnecessarilyExportedIdentifiers
 type Config struct {
 	DatabaseURL string `env:"DATABASE_URL,required"`
 	Environment string `env:"ENVIRONMENT,default=test"`

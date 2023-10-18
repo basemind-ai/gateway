@@ -11,10 +11,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type AuthContextKeyType int
+type authContextKeyType int
 
 const (
-	UserAccountContextKey AuthContextKeyType = iota
+	UserAccountContextKey authContextKeyType = iota
 )
 
 // FirebaseAuthMiddleware - middleware that verifies the firebase auth token and adds the user account to the context.

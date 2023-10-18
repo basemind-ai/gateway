@@ -18,5 +18,5 @@ const (
 )
 
 const (
-	InvalidRequestBodyError = "invalid request body"
+	invalidRequestBodyError = "invalid request body"
 )

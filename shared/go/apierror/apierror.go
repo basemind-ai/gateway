@@ -21,7 +21,7 @@ func (e *APIError) Error() string {
 	return fmt.Sprintf("status: %d, message: %s", e.StatusCode, e.Message)
 }
 
-func NewAPIError(statusCode int, args ...any) *APIError {
+func newAPIError(statusCode int, args ...any) *APIError {
 	var message string
 	if l := len(args); l == 1 && reflect.TypeOf(args[0]).Kind() == reflect.String {
 		message = args[0].(string)
@@ -37,25 +37,25 @@ func NewAPIError(statusCode int, args ...any) *APIError {
 }
 
 func NotFound(message ...any) *APIError {
-	return NewAPIError(http.StatusNotFound, message...)
+	return newAPIError(http.StatusNotFound, message...)
 }
 
 func BadRequest(message ...any) *APIError {
-	return NewAPIError(http.StatusBadRequest, message...)
+	return newAPIError(http.StatusBadRequest, message...)
 }
 
 func Unauthorized(message ...any) *APIError {
-	return NewAPIError(http.StatusUnauthorized, message...)
+	return newAPIError(http.StatusUnauthorized, message...)
 }
 
 func Forbidden(message ...any) *APIError {
-	return NewAPIError(http.StatusForbidden, message...)
+	return newAPIError(http.StatusForbidden, message...)
 }
 
 func UnprocessableContent(message ...any) *APIError {
-	return NewAPIError(http.StatusUnprocessableEntity, message...)
+	return newAPIError(http.StatusUnprocessableEntity, message...)
 }
 
 func InternalServerError(message ...any) *APIError {
-	return NewAPIError(http.StatusInternalServerError, message...)
+	return newAPIError(http.StatusInternalServerError, message...)
 }

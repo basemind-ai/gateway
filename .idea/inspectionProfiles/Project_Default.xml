@@ -416,6 +416,12 @@
 			enabled_by_default="true"
 		/>
     <inspection_tool
+			class="GoUnnecessarilyExportedIdentifiers"
+			enabled="true"
+			level="WEAK WARNING"
+			enabled_by_default="true"
+		/>
+    <inspection_tool
 			class="GoUnusedExportedFunction"
 			enabled="false"
 			level="WARNING"

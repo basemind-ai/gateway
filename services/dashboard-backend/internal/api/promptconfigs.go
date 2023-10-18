@@ -17,21 +17,21 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// HandleCreatePromptConfig - creates a prompt config for the given application.
+// handleCreatePromptConfig - creates a prompt config for the given application.
 // The first prompt config created for an application is automatically set as the default.
-func HandleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
+func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	createPromptConfigDTO := dto.PromptConfigCreateDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &createPromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
 	if validateErr := validate.Struct(&createPromptConfigDTO); validateErr != nil {
 		log.Error().Err(validateErr).Msg("invalid request")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -63,8 +63,8 @@ func HandleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusCreated, promptConfig)
 }
 
-// HandleRetrievePromptConfigs - retrieves all prompt configs for the given application.
-func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
+// handleRetrievePromptConfigs - retrieves all prompt configs for the given application.
+func handleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
 	promptConfigs, retrivalErr := db.
@@ -79,19 +79,19 @@ func HandleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 
 	serialization.RenderJSONResponse(w, http.StatusOK, promptConfigs)
 }
-func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
+func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	updatePromptConfigDTO := &dto.PromptConfigUpdateDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, updatePromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
 	if validateErr := validate.Struct(updatePromptConfigDTO); validateErr != nil {
 		log.Error().Err(validateErr).Msg("invalid request")
-		apierror.BadRequest(InvalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
 	}
 
@@ -120,9 +120,9 @@ func HandleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, updatedPromptConfig)
 }
 
-// HandleSetApplicationDefaultPromptConfig - sets the default prompt config for the given application.
+// handleSetApplicationDefaultPromptConfig - sets the default prompt config for the given application.
 // The default prompt config is used when no prompt config is specified in a prompt request.
-func HandleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Request) {
+func handleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
@@ -149,9 +149,9 @@ func HandleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Requ
 	serialization.RenderJSONResponse(w, http.StatusOK, nil)
 }
 
-// HandleDeletePromptConfig - deletes the prompt config with the given ID.
+// handleDeletePromptConfig - deletes the prompt config with the given ID.
 // The default prompt config cannot be deleted.
-func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
+func handleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
@@ -178,8 +178,8 @@ func HandleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// HandlePromptConfigAnalytics - retrieves the analytics for a prompt config with the given ID.
-func HandlePromptConfigAnalytics(w http.ResponseWriter, r *http.Request) {
+// handlePromptConfigAnalytics - retrieves the analytics for a prompt config with the given ID.
+func handlePromptConfigAnalytics(w http.ResponseWriter, r *http.Request) {
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
 
 	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())

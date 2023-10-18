@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func RetrievePromptConfig(
+func retrievePromptConfig(
 	ctx context.Context,
 	applicationID pgtype.UUID,
 	promptConfigID *string,
@@ -65,7 +65,7 @@ func RetrievePromptConfig(
 	}, nil
 }
 
-func RetrieveRequestConfiguration(
+func retrieveRequestConfiguration(
 	ctx context.Context,
 	applicationID string,
 	promptConfigID *string,
@@ -85,7 +85,7 @@ func RetrieveRequestConfiguration(
 			)
 		}
 
-		promptConfig, retrievalError := RetrievePromptConfig(
+		promptConfig, retrievalError := retrievePromptConfig(
 			ctx,
 			*appID,
 			promptConfigID,
@@ -110,7 +110,7 @@ func RetrieveRequestConfiguration(
 	}
 }
 
-func ValidateExpectedVariables(
+func validateExpectedVariables(
 	templateVariables map[string]string,
 	expectedVariables []string,
 ) error {

@@ -9,10 +9,10 @@ import (
 	"slices"
 )
 
-type AuthorizationContextKeyType int
+type authorizationContextKeyType int
 
 const (
-	UserProjectContextKey AuthorizationContextKeyType = iota
+	UserProjectContextKey authorizationContextKeyType = iota
 )
 
 type MethodPermissionMap map[string][]db.AccessPermissionType

@@ -15,7 +15,7 @@ var (
 	openaiConnectorClient *openai.Client
 )
 
-type ConnectorConfig struct {
+type connectorConfig struct {
 	OpenAIConnectorAddress string `env:"OPENAI_CONNECTOR_ADDRESS,required"`
 }
 
@@ -37,7 +37,7 @@ func Init(ctx context.Context, opts ...grpc.DialOption) error {
 	var err error
 
 	once.Do(func() {
-		config := &ConnectorConfig{}
+		config := &connectorConfig{}
 		if envErr := envconfig.Process(ctx, config); envErr != nil {
 			err = envErr
 

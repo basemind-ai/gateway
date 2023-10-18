@@ -83,7 +83,7 @@ func createPromptRequestRecord(t *testing.T, promptConfigID string) string {
 	return promptReqRecordID
 }
 
-func createPrompConfig(t *testing.T, applicationID string) string {
+func createPromptConfig(t *testing.T, applicationID string) string {
 	t.Helper()
 	uuidID, _ := db.StringToUUID(applicationID)
 	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)

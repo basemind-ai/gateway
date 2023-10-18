@@ -31,7 +31,7 @@ func New(baseURL string,
 	}
 }
 
-func (client *Client) Request(
+func (client *Client) request(
 	ctx context.Context,
 	method string,
 	path string,
@@ -69,7 +69,7 @@ func (client *Client) Get(
 	path string,
 	headers ...HTTPHeader,
 ) (*http.Response, error) {
-	return client.Request(ctx, http.MethodGet, path, nil, headers...)
+	return client.request(ctx, http.MethodGet, path, nil, headers...)
 }
 
 func (client *Client) Delete(
@@ -77,7 +77,7 @@ func (client *Client) Delete(
 	path string,
 	headers ...HTTPHeader,
 ) (*http.Response, error) {
-	return client.Request(ctx, http.MethodDelete, path, nil, headers...)
+	return client.request(ctx, http.MethodDelete, path, nil, headers...)
 }
 
 func (client *Client) Post(
@@ -86,7 +86,7 @@ func (client *Client) Post(
 	body any,
 	headers ...HTTPHeader,
 ) (*http.Response, error) {
-	return client.Request(ctx, http.MethodPost, path, body, headers...)
+	return client.request(ctx, http.MethodPost, path, body, headers...)
 }
 
 func (client *Client) Put(
@@ -95,7 +95,7 @@ func (client *Client) Put(
 	body any,
 	headers ...HTTPHeader,
 ) (*http.Response, error) {
-	return client.Request(ctx, http.MethodPut, path, body, headers...)
+	return client.request(ctx, http.MethodPut, path, body, headers...)
 }
 
 func (client *Client) Patch(
@@ -104,5 +104,5 @@ func (client *Client) Patch(
 	body any,
 	headers ...HTTPHeader,
 ) (*http.Response, error) {
-	return client.Request(ctx, http.MethodPatch, path, body, headers...)
+	return client.request(ctx, http.MethodPatch, path, body, headers...)
 }

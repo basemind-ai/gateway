@@ -1458,7 +1458,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 		createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
 
 		applicationID := createApplication(t, projectID)
-		promptConfigID := createPrompConfig(t, applicationID)
+		promptConfigID := createPromptConfig(t, applicationID)
 		createPromptRequestRecord(t, promptConfigID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)

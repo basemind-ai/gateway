@@ -21,8 +21,8 @@ var (
 func RegisterHandlers(mux *chi.Mux) {
 	mux.Route("/v1", func(router chi.Router) {
 		router.Route(ProjectsListEndpoint, func(subRouter chi.Router) {
-			subRouter.Get("/", HandleRetrieveProjects)
-			subRouter.Post("/", HandleCreateProject)
+			subRouter.Get("/", handleRetrieveProjects)
+			subRouter.Post("/", handleCreateProject)
 		})
 
 		router.Route(ProjectDetailEndpoint, func(subRouter chi.Router) {
@@ -35,8 +35,8 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Delete("/", HandleDeleteProject)
-			subRouter.Patch("/", HandleUpdateProject)
+			subRouter.Delete("/", handleDeleteProject)
+			subRouter.Patch("/", handleUpdateProject)
 		})
 
 		router.Route(ProjectAnalyticsEndpoint, func(subRouter chi.Router) {
@@ -48,7 +48,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", HandleRetrieveProjectAnalytics)
+			subRouter.Get("/", handleRetrieveProjectAnalytics)
 		})
 
 		router.Route(ProjectUserListEndpoint, func(subRouter chi.Router) {
@@ -62,9 +62,9 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", HandleRetrieveProjectUserAccounts)
-			subRouter.Patch("/", HandleChangeUserProjectPermission)
-			subRouter.Post("/", HandleAddUserToProject)
+			subRouter.Get("/", handleRetrieveProjectUserAccounts)
+			subRouter.Patch("/", handleChangeUserProjectPermission)
+			subRouter.Post("/", handleAddUserToProject)
 		})
 
 		router.Route(ProjectUserDetailEndpoint, func(subRouter chi.Router) {
@@ -76,7 +76,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Delete("/", HandleRemoveUserFromProject)
+			subRouter.Delete("/", handleRemoveUserFromProject)
 		})
 
 		router.Route(ApplicationsListEndpoint, func(subRouter chi.Router) {
@@ -88,7 +88,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Post("/", HandleCreateApplication)
+			subRouter.Post("/", handleCreateApplication)
 		})
 
 		router.Route(ApplicationDetailEndpoint, func(subRouter chi.Router) {
@@ -102,9 +102,9 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Delete("/", HandleDeleteApplication)
-			subRouter.Get("/", HandleRetrieveApplication)
-			subRouter.Patch("/", HandleUpdateApplication)
+			subRouter.Delete("/", handleDeleteApplication)
+			subRouter.Get("/", handleRetrieveApplication)
+			subRouter.Patch("/", handleUpdateApplication)
 		})
 
 		router.Route(ApplicationAnalyticsEndpoint, func(subRouter chi.Router) {
@@ -116,7 +116,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", HandleRetrieveApplicationAnalytics)
+			subRouter.Get("/", handleRetrieveApplicationAnalytics)
 		})
 
 		router.Route(ApplicationTokensListEndpoint, func(subRouter chi.Router) {
@@ -131,8 +131,8 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", HandleRetrieveApplicationTokens)
-			subRouter.Post("/", HandleCreateApplicationToken)
+			subRouter.Get("/", handleRetrieveApplicationTokens)
+			subRouter.Post("/", handleCreateApplicationToken)
 		})
 
 		router.Route(ApplicationTokenDetailEndpoint, func(subRouter chi.Router) {
@@ -146,7 +146,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Delete("/", HandleDeleteApplicationToken)
+			subRouter.Delete("/", handleDeleteApplicationToken)
 		})
 
 		router.Route(PromptConfigListEndpoint, func(subRouter chi.Router) {
@@ -159,8 +159,8 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", HandleRetrievePromptConfigs)
-			subRouter.Post("/", HandleCreatePromptConfig)
+			subRouter.Get("/", handleRetrievePromptConfigs)
+			subRouter.Post("/", handleCreatePromptConfig)
 		})
 
 		router.Route(PromptConfigAnalyticsEndpoint, func(subRouter chi.Router) {
@@ -174,7 +174,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", HandlePromptConfigAnalytics)
+			subRouter.Get("/", handlePromptConfigAnalytics)
 		})
 
 		router.Route(PromptConfigDetailEndpoint, func(subRouter chi.Router) {
@@ -189,8 +189,8 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Delete("/", HandleDeletePromptConfig)
-			subRouter.Patch("/", HandleUpdatePromptConfig)
+			subRouter.Delete("/", handleDeletePromptConfig)
+			subRouter.Patch("/", handleUpdatePromptConfig)
 		})
 
 		router.Route(PromptConfigSetDefaultEndpoint, func(subRouter chi.Router) {
@@ -204,7 +204,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Patch("/", HandleSetApplicationDefaultPromptConfig)
+			subRouter.Patch("/", handleSetApplicationDefaultPromptConfig)
 		})
 	})
 }
