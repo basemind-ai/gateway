@@ -13,10 +13,10 @@ export default function Application({
 }: {
 	params: { projectId: string; applicationId: string };
 }) {
-	const router = useRouter();
-	const t = useTranslations('navrail');
-	const application = useGetApplication()(projectId, applicationId);
 	useAuthenticatedUser();
+	const t = useTranslations('navrail');
+	const router = useRouter();
+	const application = useGetApplication()(projectId, applicationId);
 
 	useEffect(() => {
 		if (!application) {
@@ -25,7 +25,7 @@ export default function Application({
 	}, []);
 
 	if (!application) {
-		return;
+		return null;
 	}
 
 	return (

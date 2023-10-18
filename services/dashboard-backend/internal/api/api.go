@@ -85,6 +85,7 @@ func RegisterHandlers(mux *chi.Mux) {
 				middleware.AuthorizationMiddleware(
 					middleware.MethodPermissionMap{
 						http.MethodPost: allPermissions,
+						http.MethodGet:  allPermissions,
 					},
 				),
 			)

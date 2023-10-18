@@ -159,28 +159,65 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationsListEndpoint), func(t *testing.T) {
-		t.Run("retrieves all applications for a project", func(t *testing.T) {
-			newProjectID := createProject(t)
-
-			_ = createApplication(t, newProjectID)
-			_ = createApplication(t, newProjectID)
-
-			response, requestErr := testClient.Get(
-				context.TODO(),
+		for _, permission := range []db.AccessPermissionType{
+			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		} {
+			t.Run(
 				fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", newProjectID),
+					"responds with status 200 OK if the user has %s permission and retrives applications",
+					permission,
 				),
+				func(t *testing.T) {
+					newUserAccount, _ := factories.CreateUserAccount(context.TODO())
+					newProjectID := createProject(t)
+					createUserProject(t, newUserAccount.FirebaseID, newProjectID, permission)
+					_ = createApplication(t, newProjectID)
+					_ = createApplication(t, newProjectID)
+					newTestClient := createTestClient(t, newUserAccount)
+
+					response, requestErr := newTestClient.Get(
+						context.TODO(),
+						fmt.Sprintf(
+							"/v1%s",
+							strings.ReplaceAll(
+								api.ApplicationsListEndpoint,
+								"{projectId}",
+								newProjectID,
+							),
+						),
+					)
+					assert.NoError(t, requestErr)
+					assert.Equal(t, http.StatusOK, response.StatusCode)
+
+					data := &[]dto.ApplicationDTO{}
+					deserializationErr := serialization.DeserializeJSON(response.Body, data)
+					assert.NoError(t, deserializationErr)
+
+					assert.Len(t, *data, 2)
+				},
 			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusOK, response.StatusCode)
+		}
 
-			data := &[]dto.ApplicationDTO{}
-			deserializationErr := serialization.DeserializeJSON(response.Body, data)
-			assert.NoError(t, deserializationErr)
+		t.Run(
+			"responds with status 403 FORBIDDEN if the user does not have project access",
+			func(t *testing.T) {
+				newProjectID := createProject(t)
 
-			assert.Len(t, *data, 2)
-		})
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							api.ApplicationsListEndpoint,
+							"{projectId}",
+							newProjectID,
+						),
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
