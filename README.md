@@ -17,8 +17,9 @@ root                        # repository root, holding all tooling configuration
 │    ├─── go                # golang gen-code
 │    └─── ts                # typescript gen-code
 ├─── proto                  # protobuf schemas
-│    ├─── gateway           # api-gate protobuf schema
-│    └─── openai            # openai-connector protobuf schema
+│    ├─── gateway           # api-gateway protobuf schema
+│    ├─── openai            # openai-connector protobuf schema
+│    └─── prompt_testing    # api-gateway prompt testing protobuf schema
 ├─── sdks                   # client libraries that connect to our API gateway
 │    └─── android           # android apps
 │         ├─── test-app     # test application
@@ -42,13 +43,7 @@ root                        # repository root, holding all tooling configuration
     - Go >= 1.21
     - Docker >= 24.0
     - Python >= 3.11
-    - Java >= 21.0
-
-    Notes:
-
-    - Its recommended to use [nvm](https://github.com/nvm-sh/nvm) to manage Node versions.
-    - Its recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage Python versions.
-    - Its recommended to use [jenv](https://github.com/jenv/jenv) to manage Java versions.
+    - Java >= 17.0
 
 2. Execute the setup task with:
 
