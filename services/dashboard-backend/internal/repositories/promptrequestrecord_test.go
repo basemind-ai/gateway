@@ -17,7 +17,7 @@ func TestPromptRequestRecordRepository(t *testing.T) {
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
 	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
-	factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
+	_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 	fromDate := time.Now().AddDate(0, 0, -1)
 	toDate := fromDate.AddDate(0, 0, 2)
@@ -36,10 +36,10 @@ func TestPromptRequestRecordRepository(t *testing.T) {
 		})
 
 		t.Run("fails to get total prompt requests for invalid application id", func(t *testing.T) {
-			invalidAppId := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+			invalidAppID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
 			totalRequests, _ := repositories.GetPromptRequestCountByDateRange(
 				context.TODO(),
-				invalidAppId,
+				invalidAppID,
 				fromDate,
 				toDate,
 			)
@@ -60,10 +60,10 @@ func TestPromptRequestRecordRepository(t *testing.T) {
 		})
 
 		t.Run("fails to get token usage for invalid application id", func(t *testing.T) {
-			invalidAppId := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+			invalidAppID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
 			modelTokenCntMap, _ := repositories.GetTokenUsagePerModelTypeByDateRange(
 				context.TODO(),
-				invalidAppId,
+				invalidAppID,
 				fromDate,
 				toDate,
 			)

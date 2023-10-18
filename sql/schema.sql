@@ -107,7 +107,7 @@ CREATE TABLE prompt_request_record
     start_time timestamptz NOT NULL,
     finish_time timestamptz NOT NULL,
     stream_response_latency bigint NULL,
-    prompt_config_id uuid NOT NULL,
+    prompt_config_id uuid NULL,
     error_log text NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
@@ -124,8 +124,8 @@ CREATE INDEX idx_prompt_request_record_finish_time ON prompt_request_record (
     finish_time
 ) WHERE deleted_at IS NULL;
 
--- prompt-test
-CREATE TABLE prompt_test
+-- prompt-test-record
+CREATE TABLE prompt_test_record
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(255) NOT NULL,
@@ -136,10 +136,10 @@ CREATE TABLE prompt_test
     FOREIGN KEY (prompt_request_record_id) REFERENCES prompt_request_record (id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_prompt_test_prompt_request_record_id ON prompt_test (
+CREATE INDEX idx_prompt_test_record_prompt_request_record_id ON prompt_test_record (
     prompt_request_record_id
 );
-CREATE INDEX idx_prompt_test_created_at ON prompt_test (created_at);
+CREATE INDEX idx_prompt_test_record_created_at ON prompt_test_record (created_at);
 
 -- token
 CREATE TABLE token

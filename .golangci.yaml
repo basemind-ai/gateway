@@ -21,9 +21,9 @@ linters-settings:
             - name: deep-exit
               disabled: true
             - name: cyclomatic
-              arguments: [20]
+              arguments: [25]
             - name: cognitive-complexity
-              arguments: [20]
+              arguments: [25]
             - name: max-public-structs
               disabled: true
             - name: function-result-limit

@@ -2,10 +2,10 @@ package api_test
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"net/http"
 	"testing"
 
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/httpclient"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
@@ -75,12 +75,10 @@ func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Clie
 	return testutils.CreateTestHTTPClient(t, r)
 }
 
-func createPromptRequestRecord(t *testing.T, promptConfigID string) string {
+func createPromptRequestRecord(t *testing.T, promptConfigID string) {
 	t.Helper()
 	uuidID, _ := db.StringToUUID(promptConfigID)
-	promptReqRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), *uuidID)
-	promptReqRecordID := db.UUIDToString(&promptReqRecord.ID)
-	return promptReqRecordID
+	_, _ = factories.CreatePromptRequestRecord(context.TODO(), *uuidID)
 }
 
 func createPromptConfig(t *testing.T, applicationID string) string {

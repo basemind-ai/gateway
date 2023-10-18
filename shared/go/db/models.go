@@ -186,7 +186,7 @@ type PromptRequestRecord struct {
 	DeletedAt             pgtype.Timestamptz `json:"deletedAt"`
 }
 
-type PromptTest struct {
+type PromptTestRecord struct {
 	ID                    pgtype.UUID        `json:"id"`
 	Name                  string             `json:"name"`
 	VariableValues        []byte             `json:"variableValues"`

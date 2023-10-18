@@ -130,7 +130,7 @@ func TestProjectRepository(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
 		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
-		factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
+		_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)
 		toDate := fromDate.AddDate(0, 0, 2)
@@ -148,10 +148,10 @@ func TestProjectRepository(t *testing.T) {
 				assert.Equal(t, int64(1), totalRequests)
 			})
 			t.Run("fails to get total api count for invalid project id", func(t *testing.T) {
-				invalidProjectId := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+				invalidProjectID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
 				totalRequests, _ := repositories.GetTotalAPICountByDateRange(
 					context.TODO(),
-					invalidProjectId,
+					invalidProjectID,
 					time.Now().AddDate(0, 0, -1),
 					time.Now().AddDate(0, 0, 1),
 				)
@@ -171,10 +171,10 @@ func TestProjectRepository(t *testing.T) {
 				assert.Equal(t, int64(20), projectTokenCntMap[db.ModelTypeGpt35Turbo])
 			})
 			t.Run("fails to get total api count for invalid project id", func(t *testing.T) {
-				invalidProjectId := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
+				invalidProjectID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
 				projectTokenCntMap, _ := repositories.GetTokenConsumedByProjectByDateRange(
 					context.TODO(),
-					invalidProjectId,
+					invalidProjectID,
 					time.Now().AddDate(0, 0, -1),
 					time.Now().AddDate(0, 0, 1),
 				)

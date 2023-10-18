@@ -42,13 +42,14 @@ func GetPromptRequestCountByDateRange(
 	applicationID pgtype.UUID,
 	fromDate, toDate time.Time,
 ) (int64, error) {
-	promptReqParam := db.RetrieveTotalPromptRequestRecordParams{
-		ApplicationID: applicationID,
-		FromDate:      pgtype.Timestamptz{Time: fromDate, Valid: true},
-		ToDate:        pgtype.Timestamptz{Time: toDate, Valid: true},
-	}
-
-	totalRequests, dbErr := db.GetQueries().RetrieveTotalPromptRequestRecord(ctx, promptReqParam)
+	totalRequests, dbErr := db.GetQueries().RetrieveApplicationAPIRequestCount(
+		ctx,
+		db.RetrieveApplicationAPIRequestCountParams{
+			ID:          applicationID,
+			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
+			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
+		},
+	)
 	if dbErr != nil {
 		return -1, fmt.Errorf("failed to retrieve total prompt request records: %w", dbErr)
 	}
@@ -61,14 +62,14 @@ func GetTokenUsagePerModelTypeByDateRange(
 	applicationID pgtype.UUID,
 	fromDate, toDate time.Time,
 ) (map[db.ModelType]int64, error) {
-	promptReqParam := db.RetrieveTotalPromptRequestRecordParams{
-		ApplicationID: applicationID,
-		FromDate:      pgtype.Timestamptz{Time: fromDate, Valid: true},
-		ToDate:        pgtype.Timestamptz{Time: toDate, Valid: true},
-	}
-
-	recordPerPromptConfig, dbErr := db.GetQueries().
-		RetrieveTotalTokensPerPromptConfig(ctx, promptReqParam)
+	recordPerPromptConfig, dbErr := db.GetQueries().RetrieveApplicationTokensCount(
+		ctx,
+		db.RetrieveApplicationTokensCountParams{
+			ID:          applicationID,
+			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
+			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
+		},
+	)
 	if dbErr != nil {
 		return nil, fmt.Errorf("failed to retrieve total tokens per prompt config: %w", dbErr)
 	}

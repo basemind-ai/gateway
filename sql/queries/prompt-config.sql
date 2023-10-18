@@ -108,21 +108,21 @@ WHERE
     AND deleted_at IS NULL
     AND is_default = TRUE;
 
--- name: RetrieveTotalPromptRequests :one
+-- name: RetrievePromptConfigAPIRequestCount :one
 SELECT COUNT(prr.id) AS total_requests
-FROM prompt_request_record AS prr
-INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
+FROM prompt_config AS pc
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
 WHERE
-    prr.prompt_config_id = $1
+    pc.id = $1
     AND prr.created_at BETWEEN $2 AND $3;
 
--- name: RetrieveTotalTokensConsumedPerPromptConfig :many
+-- name: RetrievePromptConfigTokensCount :many
 SELECT
     pc.model_type,
     SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
-FROM prompt_request_record AS prr
-INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
+FROM prompt_config AS pc
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
 WHERE
-    prr.prompt_config_id = $1
+    pc.id = $1
     AND prr.created_at BETWEEN $2 AND $3
 GROUP BY pc.model_type;

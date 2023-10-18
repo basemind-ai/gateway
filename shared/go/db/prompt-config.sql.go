@@ -202,6 +202,71 @@ func (q *Queries) RetrievePromptConfig(ctx context.Context, id pgtype.UUID) (Ret
 	return i, err
 }
 
+const retrievePromptConfigAPIRequestCount = `-- name: RetrievePromptConfigAPIRequestCount :one
+SELECT COUNT(prr.id) AS total_requests
+FROM prompt_config AS pc
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE
+    pc.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
+`
+
+type RetrievePromptConfigAPIRequestCountParams struct {
+	ID          pgtype.UUID        `json:"id"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
+}
+
+func (q *Queries) RetrievePromptConfigAPIRequestCount(ctx context.Context, arg RetrievePromptConfigAPIRequestCountParams) (int64, error) {
+	row := q.db.QueryRow(ctx, retrievePromptConfigAPIRequestCount, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
+	var total_requests int64
+	err := row.Scan(&total_requests)
+	return total_requests, err
+}
+
+const retrievePromptConfigTokensCount = `-- name: RetrievePromptConfigTokensCount :many
+SELECT
+    pc.model_type,
+    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
+FROM prompt_config AS pc
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE
+    pc.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
+GROUP BY pc.model_type
+`
+
+type RetrievePromptConfigTokensCountParams struct {
+	ID          pgtype.UUID        `json:"id"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
+}
+
+type RetrievePromptConfigTokensCountRow struct {
+	ModelType   ModelType `json:"modelType"`
+	TotalTokens int64     `json:"totalTokens"`
+}
+
+func (q *Queries) RetrievePromptConfigTokensCount(ctx context.Context, arg RetrievePromptConfigTokensCountParams) ([]RetrievePromptConfigTokensCountRow, error) {
+	rows, err := q.db.Query(ctx, retrievePromptConfigTokensCount, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RetrievePromptConfigTokensCountRow
+	for rows.Next() {
+		var i RetrievePromptConfigTokensCountRow
+		if err := rows.Scan(&i.ModelType, &i.TotalTokens); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const retrievePromptConfigs = `-- name: RetrievePromptConfigs :many
 SELECT
     id,
@@ -257,71 +322,6 @@ func (q *Queries) RetrievePromptConfigs(ctx context.Context, applicationID pgtyp
 			&i.UpdatedAt,
 			&i.ApplicationID,
 		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const retrieveTotalPromptRequests = `-- name: RetrieveTotalPromptRequests :one
-SELECT COUNT(prr.id) AS total_requests
-FROM prompt_request_record AS prr
-INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
-WHERE
-    prr.prompt_config_id = $1
-    AND prr.created_at BETWEEN $2 AND $3
-`
-
-type RetrieveTotalPromptRequestsParams struct {
-	PromptConfigID pgtype.UUID        `json:"promptConfigId"`
-	FromDate       pgtype.Timestamptz `json:"fromDate"`
-	ToDate         pgtype.Timestamptz `json:"toDate"`
-}
-
-func (q *Queries) RetrieveTotalPromptRequests(ctx context.Context, arg RetrieveTotalPromptRequestsParams) (int64, error) {
-	row := q.db.QueryRow(ctx, retrieveTotalPromptRequests, arg.PromptConfigID, arg.FromDate, arg.ToDate)
-	var total_requests int64
-	err := row.Scan(&total_requests)
-	return total_requests, err
-}
-
-const retrieveTotalTokensConsumedPerPromptConfig = `-- name: RetrieveTotalTokensConsumedPerPromptConfig :many
-SELECT
-    pc.model_type,
-    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
-FROM prompt_request_record AS prr
-INNER JOIN prompt_config AS pc ON prr.prompt_config_id = pc.id
-WHERE
-    prr.prompt_config_id = $1
-    AND prr.created_at BETWEEN $2 AND $3
-GROUP BY pc.model_type
-`
-
-type RetrieveTotalTokensConsumedPerPromptConfigParams struct {
-	PromptConfigID pgtype.UUID        `json:"promptConfigId"`
-	FromDate       pgtype.Timestamptz `json:"fromDate"`
-	ToDate    		 pgtype.Timestamptz `json:"toDate"`
-}
-
-type RetrieveTotalTokensConsumedPerPromptConfigRow struct {
-	ModelType   ModelType `json:"modelType"`
-	TotalTokens int64     `json:"totalTokens"`
-}
-
-func (q *Queries) RetrieveTotalTokensConsumedPerPromptConfig(ctx context.Context, arg RetrieveTotalTokensConsumedPerPromptConfigParams) ([]RetrieveTotalTokensConsumedPerPromptConfigRow, error) {
-	rows, err := q.db.Query(ctx, retrieveTotalTokensConsumedPerPromptConfig, arg.PromptConfigID, arg.FromDate, arg.ToDate)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []RetrieveTotalTokensConsumedPerPromptConfigRow
-	for rows.Next() {
-		var i RetrieveTotalTokensConsumedPerPromptConfigRow
-		if err := rows.Scan(&i.ModelType, &i.TotalTokens); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
