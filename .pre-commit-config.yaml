@@ -46,12 +46,12 @@ repos:
       hooks:
           - id: golines
     - repo: https://github.com/bufbuild/buf
-      rev: v1.27.0
+      rev: v1.27.1
       hooks:
           - id: buf-format
           - id: buf-lint
     - repo: https://github.com/sqlfluff/sqlfluff
-      rev: 2.3.3
+      rev: 2.3.4
       hooks:
           - id: sqlfluff-fix
             exclude: 'sql/migrations'
