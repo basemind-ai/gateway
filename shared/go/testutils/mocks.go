@@ -3,7 +3,7 @@ package testutils
 import (
 	"context"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
-	prompttesting "github.com/basemind-ai/monorepo/gen/go/prompt_testing/v1"
+	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

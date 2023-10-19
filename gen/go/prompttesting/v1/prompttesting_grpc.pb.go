@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: prompt_testing/v1/prompt_testing.proto
+// source: prompttesting/v1/prompttesting.proto
 
 package prompttesting
 
@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	PromptTestingService_TestPrompt_FullMethodName = "/prompt_testing.v1.PromptTestingService/TestPrompt"
+	PromptTestingService_TestPrompt_FullMethodName = "/prompttesting.v1.PromptTestingService/TestPrompt"
 )
 
 // PromptTestingServiceClient is the client API for PromptTestingService service.
@@ -124,7 +124,7 @@ func (x *promptTestingServiceTestPromptServer) Send(m *PromptTestingStreamingPro
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PromptTestingService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "prompt_testing.v1.PromptTestingService",
+	ServiceName: "prompttesting.v1.PromptTestingService",
 	HandlerType: (*PromptTestingServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
@@ -134,5 +134,5 @@ var PromptTestingService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "prompt_testing/v1/prompt_testing.proto",
+	Metadata: "prompttesting/v1/prompttesting.proto",
 }

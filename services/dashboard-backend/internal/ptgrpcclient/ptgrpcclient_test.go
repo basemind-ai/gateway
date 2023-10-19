@@ -3,7 +3,7 @@ package ptgrpcclient_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	prompttesting "github.com/basemind-ai/monorepo/gen/go/prompt_testing/v1"
+	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptgrpcclient"
 	"github.com/basemind-ai/monorepo/shared/go/db"
@@ -65,31 +65,32 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 
 	t.Run("Init", func(t *testing.T) {
 		t.Run("panics if the env is not set", func(t *testing.T) {
-			assert.Panics(t, func() {
+			assert.Error(t,
 				ptgrpcclient.Init(
 					context.Background(),
 					grpc.WithTransportCredentials(insecure.NewCredentials()),
-				)
-			})
+				),
+			)
 		})
 		t.Run("does not panic if the env is set", func(t *testing.T) {
 			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
-			assert.NotPanics(t, func() {
+			assert.NoError(t,
 				ptgrpcclient.Init(
 					context.Background(),
 					grpc.WithTransportCredentials(insecure.NewCredentials()),
-				)
-			})
+				),
+			)
 		})
 	})
 
 	t.Run("GetClient", func(t *testing.T) {
 		t.Run("does not panic if init is called", func(t *testing.T) {
 			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
-			ptgrpcclient.Init(
+			err := ptgrpcclient.Init(
 				context.Background(),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
+			assert.NoError(t, err)
 			assert.NotPanics(t, func() {
 				ptgrpcclient.GetClient()
 			})

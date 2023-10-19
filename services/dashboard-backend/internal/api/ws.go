@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	prompttesting "github.com/basemind-ai/monorepo/gen/go/prompt_testing/v1"
+	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptgrpcclient"

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package prompt_testing.v1;
+package prompttesting.v1;
 
 option go_package = "github.com/basemind-ai/monorepo/gen/prompttesting";
 

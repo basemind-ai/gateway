@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/basemind-ai/monorepo/gen/go/prompt_testing/v1"
+	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/rs/zerolog/log"
 	"github.com/sethvargo/go-envconfig"
@@ -50,16 +50,17 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 }
 
 // Init - initializes the PromptTesting gRPC client. This function is called once.
-func Init(ctx context.Context, opts ...grpc.DialOption) {
+func Init(ctx context.Context, opts ...grpc.DialOption) error {
 	config := &clientConfig{}
 	if envErr := envconfig.Process(ctx, config); envErr != nil {
-		panic(envErr)
+		return fmt.Errorf("failed to parse env")
 	}
 	c, err := New(config.APIGatewayAddress, opts...)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to create grpc client")
 	}
 	SetClient(c)
+	return nil
 }
 
 // StreamPromptTest - streams a prompt test to the PromptTesting gRPC service.

@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptgrpcclient"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/router"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
 	"os"
 	"os/signal"
@@ -40,6 +43,11 @@ func main() {
 	}
 
 	logging.Configure(cfg.Environment != "production")
+
+	// FIXME: this is a temporary work-around for testing
+	if grpcClientErr := ptgrpcclient.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials())); grpcClientErr != nil {
+		log.Fatal().Err(grpcClientErr).Msg("failed to initialize grpc client")
+	}
 
 	if _, cacheClientErr := rediscache.New(cfg.RedisURL); cacheClientErr != nil {
 		log.Fatal().Err(cacheClientErr).Msg("failed to init redis")
