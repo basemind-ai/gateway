@@ -166,6 +166,7 @@ type PromptConfig struct {
 	ProviderPromptMessages    []byte             `json:"providerPromptMessages"`
 	ExpectedTemplateVariables []string           `json:"expectedTemplateVariables"`
 	IsDefault                 bool               `json:"isDefault"`
+	IsTestConfig              bool               `json:"isTestConfig"`
 	CreatedAt                 pgtype.Timestamptz `json:"createdAt"`
 	UpdatedAt                 pgtype.Timestamptz `json:"updatedAt"`
 	DeletedAt                 pgtype.Timestamptz `json:"deletedAt"`

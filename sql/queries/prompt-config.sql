@@ -9,9 +9,10 @@ INSERT INTO prompt_config (
     provider_prompt_messages,
     expected_template_variables,
     is_default,
-    application_id
+    application_id,
+    is_test_config
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING *;
 
 -- name: CheckDefaultPromptConfigExists :one
@@ -31,7 +32,7 @@ SET
     updated_at = NOW()
 WHERE
     id = $1
-    AND deleted_at IS NULL;
+    AND deleted_at IS NULL AND is_test_config = FALSE;
 
 -- name: UpdatePromptConfig :one
 UPDATE prompt_config
@@ -42,6 +43,7 @@ SET
     model_vendor = $5,
     provider_prompt_messages = $6,
     expected_template_variables = $7,
+    is_test_config = $8,
     updated_at = NOW()
 WHERE
     id = $1
@@ -69,7 +71,7 @@ SELECT
 FROM prompt_config
 WHERE
     id = $1
-    AND deleted_at IS NULL;
+    AND deleted_at IS NULL AND is_test_config = FALSE;
 
 -- name: RetrievePromptConfigs :many
 SELECT
@@ -87,7 +89,7 @@ SELECT
 FROM prompt_config
 WHERE
     application_id = $1
-    AND deleted_at IS NULL;
+    AND deleted_at IS NULL AND is_test_config = FALSE;
 
 -- name: RetrieveDefaultPromptConfig :one
 SELECT
@@ -106,7 +108,7 @@ FROM prompt_config
 WHERE
     application_id = $1
     AND deleted_at IS NULL
-    AND is_default = TRUE;
+    AND is_default = TRUE AND is_test_config = FALSE;
 
 -- name: RetrievePromptConfigAPIRequestCount :one
 SELECT COUNT(prr.id) AS total_requests

@@ -15,7 +15,7 @@ message PromptTestRequest {
   // The application ID
   string application_id = 1;
   // The project ID
-  optional string prompt_config_id = 2;
+  string prompt_config_id = 2;
   // The model vendor, for example "OPEN_AI"
   string model_vendor = 3;
   // The model type to use, for example "gpt-3.5-turbo"
@@ -25,8 +25,9 @@ message PromptTestRequest {
   // A serialized JSON array of provider message objects
   bytes provider_prompt_messages = 6;
   // The User prompt variables
-  // This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
-  bytes template_variables = 7;
+  map<string, string> template_variables = 7;
+  // A list of expected prompt variables
+  repeated string expected_template_variables = 8;
 }
 
 // An Streaming Prompt Response Message

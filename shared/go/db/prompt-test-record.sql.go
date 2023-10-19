@@ -13,10 +13,12 @@ import (
 
 const createPromptTestRecord = `-- name: CreatePromptTestRecord :one
 
-INSERT INTO prompt_test_record (name,
-                                variable_values,
-                                response,
-                                prompt_request_record_id)
+INSERT INTO prompt_test_record (
+    name,
+    variable_values,
+    response,
+    prompt_request_record_id
+)
 VALUES ($1, $2, $3, $4)
 RETURNING id, name, variable_values, response, created_at, prompt_request_record_id
 `
@@ -49,19 +51,20 @@ func (q *Queries) CreatePromptTestRecord(ctx context.Context, arg CreatePromptTe
 }
 
 const retrievePromptTestRecord = `-- name: RetrievePromptTestRecord :one
-SELECT ptr.id,
-       ptr.name,
-       ptr.variable_values,
-       ptr.response,
-       ptr.created_at,
-       prr.error_log,
-       prr.start_time,
-       prr.finish_time,
-       prr.request_tokens,
-       prr.response_tokens,
-       prr.stream_response_latency
+SELECT
+    ptr.id,
+    ptr.name,
+    ptr.variable_values,
+    ptr.response,
+    ptr.created_at,
+    prr.error_log,
+    prr.start_time,
+    prr.finish_time,
+    prr.request_tokens,
+    prr.response_tokens,
+    prr.stream_response_latency
 FROM prompt_test_record AS ptr
-         LEFT JOIN prompt_request_record prr on ptr.prompt_request_record_id = prr.id
+LEFT JOIN prompt_request_record AS prr ON ptr.prompt_request_record_id = prr.id
 WHERE ptr.id = $1
 `
 

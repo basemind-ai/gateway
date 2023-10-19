@@ -99,5 +99,6 @@ type PromptConfigTestResultDTO struct {
 	Content            *string `json:"content,omitempty"`
 	ErrorMessage       *string `json:"errorMessage,omitempty"`
 	FinishReason       *string `json:"finishReason,omitempty"`
+	PromptConfigID     *string `json:"promptConfigId,omitempty"`
 	PromptTestRecordID *string `json:"promptTestRecordId,omitempty"`
 }

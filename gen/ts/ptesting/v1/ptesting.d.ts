@@ -17,9 +17,9 @@ export interface PromptTestRequest {
     /**
      * The project ID
      *
-     * @generated from protobuf field: optional string prompt_config_id = 2;
+     * @generated from protobuf field: string prompt_config_id = 2;
      */
-    promptConfigId?: string;
+    promptConfigId: string;
     /**
      * The model vendor, for example "OPEN_AI"
      *
@@ -46,11 +46,18 @@ export interface PromptTestRequest {
     providerPromptMessages: Uint8Array;
     /**
      * The User prompt variables
-     * This is a hash-map of variables that should have the same keys as those contained by the PromptConfigResponse
      *
-     * @generated from protobuf field: bytes template_variables = 7;
+     * @generated from protobuf field: map<string, string> template_variables = 7;
      */
-    templateVariables: Uint8Array;
+    templateVariables: {
+        [key: string]: string;
+    };
+    /**
+     * A list of expected prompt variables
+     *
+     * @generated from protobuf field: repeated string expected_template_variables = 8;
+     */
+    expectedTemplateVariables: string[];
 }
 /**
  * An Streaming Prompt Response Message

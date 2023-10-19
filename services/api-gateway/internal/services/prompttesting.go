@@ -1,7 +1,6 @@
 package services
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
@@ -33,7 +32,7 @@ func (PromptTestingServer) TestPrompt(
 			ModelType:                 db.ModelType(request.ModelType),
 			ModelVendor:               db.ModelVendor(request.ModelVendor),
 			ProviderPromptMessages:    request.ProviderPromptMessages,
-			ExpectedTemplateVariables: make([]string, 0),
+			ExpectedTemplateVariables: request.ExpectedTemplateVariables,
 		},
 	}
 
@@ -45,16 +44,11 @@ func (PromptTestingServer) TestPrompt(
 		}
 	}
 
-	templateVariables := map[string]string{}
-	if unmarshalErr := json.Unmarshal(request.TemplateVariables, &templateVariables); unmarshalErr != nil {
-		return fmt.Errorf("failed to unmarshal template variables: %w", unmarshalErr)
-	}
-
 	go connectors.GetProviderConnector(db.ModelVendor(request.ModelVendor)).
 		RequestStream(
 			streamServer.Context(),
 			requestConfigurationDTO,
-			templateVariables,
+			request.TemplateVariables,
 			channel,
 		)
 
