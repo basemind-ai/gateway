@@ -76,7 +76,7 @@ func (c *Client) RequestStream(
 	startTime := time.Now()
 
 	recordParams := &db.CreatePromptRequestRecordParams{
-		PromptConfigID:   requestConfiguration.PromptConfigID,
+		PromptConfigID:   *requestConfiguration.PromptConfigID,
 		IsStreamResponse: true,
 		StartTime:        pgtype.Timestamptz{Time: startTime, Valid: true},
 		RequestTokens: tokenutils.GetPromptTokenCount(

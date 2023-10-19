@@ -23,8 +23,7 @@ func TestRequestPrompt(t *testing.T) {
 	requestConfigurationDTO := &dto.RequestConfigurationDTO{
 		ApplicationIDString: db.UUIDToString(&application.ID),
 		ApplicationID:       application.ID,
-		ProjectID:           project.ID,
-		PromptConfigID:      promptConfig.ID,
+		PromptConfigID:      &promptConfig.ID,
 		PromptConfigData: datatypes.PromptConfigDTO{
 			ID:                        db.UUIDToString(&promptConfig.ID),
 			Name:                      promptConfig.Name,

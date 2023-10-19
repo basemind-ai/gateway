@@ -1,4 +1,4 @@
-package apigateway
+package services
 
 import (
 	"context"
@@ -79,60 +79,6 @@ func (APIGatewayServer) RequestPrompt(
 	}, nil
 }
 
-func createStreamMessage(result dto.PromptResultDTO) *gateway.StreamingPromptResponse {
-	msg := &gateway.StreamingPromptResponse{}
-	if result.Error != nil {
-		reason := "error"
-		msg.FinishReason = &reason
-	}
-	if result.RequestRecord != nil {
-		if msg.FinishReason == nil {
-			reason := "done"
-			msg.FinishReason = &reason
-		}
-		requestTokens := uint32(result.RequestRecord.RequestTokens)
-		responseTokens := uint32(result.RequestRecord.ResponseTokens)
-		streamDuration := uint32(
-			result.RequestRecord.FinishTime.Time.
-				Sub(result.RequestRecord.StartTime.Time).
-				Seconds(),
-		)
-		msg.RequestTokens = &requestTokens
-		msg.ResponseTokens = &responseTokens
-		msg.StreamDuration = &streamDuration
-	}
-
-	if result.Content != nil {
-		msg.Content = *result.Content
-	}
-	return msg
-}
-
-func streamFromChannel(
-	channel chan dto.PromptResultDTO,
-	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
-) error {
-	for result := range channel {
-		msg := createStreamMessage(result)
-
-		if sendErr := streamServer.SendMsg(msg); sendErr != nil {
-			log.Error().Err(sendErr).Msg("failed to send message")
-			return status.Error(codes.Internal, "failed to send message")
-		}
-
-		if result.Error != nil {
-			log.Error().Err(result.Error).Msg("error in prompt request")
-			return status.Error(codes.Internal, "error communicating with AI provider")
-		}
-
-		if msg.FinishReason != nil {
-			break
-		}
-	}
-
-	return nil
-}
-
 func (APIGatewayServer) RequestStreamingPrompt(
 	request *gateway.PromptRequest,
 	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
@@ -176,5 +122,36 @@ func (APIGatewayServer) RequestStreamingPrompt(
 			channel,
 		)
 
-	return streamFromChannel(channel, streamServer)
+	return streamFromChannel(channel, streamServer, createAPIGatewayStreamMessage)
+}
+
+func createAPIGatewayStreamMessage(
+	result dto.PromptResultDTO,
+) (*gateway.StreamingPromptResponse, bool) {
+	msg := &gateway.StreamingPromptResponse{}
+	if result.Error != nil {
+		reason := "error"
+		msg.FinishReason = &reason
+	}
+	if result.RequestRecord != nil {
+		if msg.FinishReason == nil {
+			reason := "done"
+			msg.FinishReason = &reason
+		}
+		requestTokens := uint32(result.RequestRecord.RequestTokens)
+		responseTokens := uint32(result.RequestRecord.ResponseTokens)
+		streamDuration := uint32(
+			result.RequestRecord.FinishTime.Time.
+				Sub(result.RequestRecord.StartTime.Time).
+				Seconds(),
+		)
+		msg.RequestTokens = &requestTokens
+		msg.ResponseTokens = &responseTokens
+		msg.StreamDuration = &streamDuration
+	}
+
+	if result.Content != nil {
+		msg.Content = *result.Content
+	}
+	return msg, msg.FinishReason != nil
 }

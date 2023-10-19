@@ -6,8 +6,7 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/apigateway"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/prompttesting"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
@@ -65,12 +64,12 @@ func main() {
 			ServiceName: "api-gateway",
 			ServiceRegistrars: []grpcutils.ServiceRegistrar{
 				func(s grpc.ServiceRegistrar) {
-					gateway.RegisterAPIGatewayServiceServer(s, apigateway.APIGatewayServer{})
+					gateway.RegisterAPIGatewayServiceServer(s, services.APIGatewayServer{})
 				},
 				func(s grpc.ServiceRegistrar) {
 					ptesting.RegisterPromptTestingServiceServer(
 						s,
-						prompttesting.PromptTestingServer{},
+						services.PromptTestingServer{},
 					)
 				},
 			},

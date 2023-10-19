@@ -1,13 +1,14 @@
-package apigateway_test
+package services_test
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/apigateway"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
@@ -56,7 +57,7 @@ func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 	listener := testutils.CreateTestGRPCServer[gateway.APIGatewayServiceServer](
 		t,
 		gateway.RegisterAPIGatewayServiceServer,
-		apigateway.APIGatewayServer{},
+		services.APIGatewayServer{},
 		// we are using the same auth middleware as we do on main.go in this test
 		grpc.ChainUnaryInterceptor(
 			auth.UnaryServerInterceptor(grpcutils.NewAuthHandler(JWTSecret).HandleAuth),
@@ -94,7 +95,8 @@ func CreateTestCache(
 
 func TestIntegration(t *testing.T) {
 	openaiService := CreateOpenAIService(t)
-	requestConfigurationDTO := createRequestConfigurationDTO(t)
+	project, _ := factories.CreateProject(context.Background())
+	requestConfigurationDTO := createRequestConfigurationDTO(t, project.ID)
 
 	jwtToken, jwtCreateErr := jwtutils.CreateJWT(
 		time.Minute,

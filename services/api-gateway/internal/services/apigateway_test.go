@@ -1,15 +1,16 @@
-package apigateway_test
+package services_test
 
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/apigateway"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"testing"
@@ -21,10 +22,12 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func createRequestConfigurationDTO(t *testing.T) dto.RequestConfigurationDTO {
+func createRequestConfigurationDTO(
+	t *testing.T,
+	projectID pgtype.UUID,
+) dto.RequestConfigurationDTO {
 	t.Helper()
-	project, _ := factories.CreateProject(context.TODO())
-	application, _ := factories.CreateApplication(context.TODO(), project.ID)
+	application, _ := factories.CreateApplication(context.TODO(), projectID)
 	promptConfig, _ := factories.CreatePromptConfig(
 		context.TODO(),
 		application.ID,
@@ -33,8 +36,7 @@ func createRequestConfigurationDTO(t *testing.T) dto.RequestConfigurationDTO {
 	return dto.RequestConfigurationDTO{
 		ApplicationIDString: db.UUIDToString(&application.ID),
 		ApplicationID:       application.ID,
-		ProjectID:           project.ID,
-		PromptConfigID:      promptConfig.ID,
+		PromptConfigID:      &promptConfig.ID,
 		PromptConfigData: datatypes.PromptConfigDTO{
 			ID:                        db.UUIDToString(&promptConfig.ID),
 			Name:                      promptConfig.Name,
@@ -70,22 +72,23 @@ func (m MockServerStream) Send(response *gateway.StreamingPromptResponse) error 
 }
 
 func TestService(t *testing.T) {
-	srv := apigateway.APIGatewayServer{}
+	srv := services.APIGatewayServer{}
+	project, _ := factories.CreateProject(context.TODO())
+	configuration := createRequestConfigurationDTO(t, project.ID)
 
-	configuration := createRequestConfigurationDTO(t)
 	_, _ = CreateTestCache(t, "")
 
 	t.Run("New", func(t *testing.T) {
-		assert.IsType(t, apigateway.APIGatewayServer{}, srv)
+		assert.IsType(t, services.APIGatewayServer{}, srv)
 	})
 	t.Run("RequestPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			_, err := srv.RequestPrompt(context.TODO(), nil)
-			assert.Errorf(t, err, apigateway.ErrorApplicationIDNotInContext)
+			assert.Errorf(t, err, services.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when a default prompt config is not found", func(t *testing.T) {
-			application, _ := factories.CreateApplication(context.TODO(), configuration.ProjectID)
+			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
@@ -101,7 +104,7 @@ func TestService(t *testing.T) {
 			func(t *testing.T) {
 				application, _ := factories.CreateApplication(
 					context.TODO(),
-					configuration.ProjectID,
+					project.ID,
 				)
 				applicationIDContext := context.WithValue(
 					context.TODO(),
@@ -137,11 +140,11 @@ func TestService(t *testing.T) {
 	t.Run("RequestStreamingPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			err := srv.RequestStreamingPrompt(nil, MockServerStream{})
-			assert.Errorf(t, err, apigateway.ErrorApplicationIDNotInContext)
+			assert.Errorf(t, err, services.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when prompt config is not found", func(t *testing.T) {
-			application, _ := factories.CreateApplication(context.TODO(), configuration.ProjectID)
+			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
@@ -159,7 +162,7 @@ func TestService(t *testing.T) {
 			func(t *testing.T) {
 				application, _ := factories.CreateApplication(
 					context.TODO(),
-					configuration.ProjectID,
+					project.ID,
 				)
 				applicationIDContext := context.WithValue(
 					context.TODO(),
