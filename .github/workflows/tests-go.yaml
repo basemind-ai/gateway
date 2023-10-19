@@ -19,6 +19,7 @@ env:
     GCP_SERVICE_ACCOUNT_NAME: firebase-adminsdk-frgvx
     GCP_WORKLOAD_IDENTITY_POOL: dev-pool
     TEST_SLEEP_TIMEOUT: 1s
+    DEEPSOURCE_DSN: ${{secrets:DEEPSOURCE_DSN}}
 jobs:
     test:
         runs-on: ubuntu-latest
@@ -26,11 +27,16 @@ jobs:
             contents: read
             id-token: write
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.pull_request.head.sha }}
             - name: Setup Golang
               uses: actions/setup-go@v4
               with:
                   go-version: '1.21'
+            - name: Download the DeepSource CLI
+              run: curl https://deepsource.io/cli | sh
             - name: Load cached Golang dependencies
               id: cached-go-dependencies
               uses: actions/cache@v3
@@ -53,4 +59,6 @@ jobs:
                   workload_identity_provider: projects/${{env.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{env.GCP_WORKLOAD_IDENTITY_POOL}}/providers/${{env.GCP_OIDC_PROVIDER_NAME}}
                   service_account: ${{env.GCP_SERVICE_ACCOUNT_NAME}}@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
             - name: Test
-              run: go test ./...
+              run: go test ./... -coverprofile=cover.out
+            - name: Upload Coverage Report
+              run: ./bin/deepsource report --analyzer test-coverage --key go --value-file ./coverage.out

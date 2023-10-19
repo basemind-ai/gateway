@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.protobuf)
     alias(libs.plugins.android.junit.jupiter)
+    alias(libs.plugins.kover)
     id("org.jetbrains.kotlin.jvm") apply false
 }
 
