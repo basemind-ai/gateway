@@ -15,6 +15,7 @@ grpcKotlin = "1.4.0"
 junitJupiter = "5.10.0"
 kotlin = "1.9.10"
 kotlinX = "1.7.3"
+koverPlugin = "0.7.4"
 lifecycleRuntimeKtx = "2.6.2"
 marerialThree = "1.2.0-alpha09"
 protobuf = "3.24.3"
@@ -57,6 +58,7 @@ android-junit-jupiter = { id = "de.mannodermaus.android-junit5", version.ref = "
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 gradle-dependency-update = { id = "com.github.ben-manes.versions", version.ref = "dependencyUpdatePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "koverPlugin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotlessPlugin" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }

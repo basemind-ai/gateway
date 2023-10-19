@@ -4,7 +4,7 @@ export default defineConfig({
 	test: {
 		globals: true,
 		coverage: {
-			reporter: ['text', 'json-summary', 'json'],
+			reporter: ['text', 'cobertura'],
 			exclude: [
 				...(configDefaults.coverage.exclude ?? []),
 				'**/tests/**/*.*',
