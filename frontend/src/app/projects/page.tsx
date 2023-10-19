@@ -3,14 +3,20 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { handleRetrieveProjects } from '@/api';
+import { handleRetrieveApplications, handleRetrieveProjects } from '@/api';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useSetProjects } from '@/stores/api-store';
+import {
+	useSetCurrentProject,
+	useSetProjectApplications,
+	useSetProjects,
+} from '@/stores/project-store';
 
 export default function Projects() {
 	const router = useRouter();
 	const setProjects = useSetProjects();
+	const setCurrentProject = useSetCurrentProject();
+	const setProjectApplications = useSetProjectApplications();
 	useAuthenticatedUser();
 
 	useEffect(() => {
@@ -20,10 +26,14 @@ export default function Projects() {
 				router.replace(Navigation.CreateProject);
 				return;
 			}
+			const [{ id: projectId }] = retrievedProjects;
 			setProjects(retrievedProjects);
-			router.replace(
-				`${Navigation.Projects}/${retrievedProjects[0]?.id}/dashboard`,
-			);
+			setCurrentProject(projectId);
+			router.replace(`${Navigation.Projects}/${projectId}/dashboard`);
+
+			const projectApplications =
+				await handleRetrieveApplications(projectId);
+			setProjectApplications(projectId, projectApplications);
 		})();
 	}, []);
 

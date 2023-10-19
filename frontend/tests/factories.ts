@@ -29,7 +29,7 @@ export const ProjectFactory = new TypeFactory<Project>(() => ({
 	permission: AccessPermission.ADMIN,
 	createdAt: faker.date.past().toISOString(),
 	updatedAt: faker.date.past().toISOString(),
-	applications: [],
+	applications: undefined,
 }));
 
 export const ApplicationFactory = new TypeFactory<Application>(() => ({

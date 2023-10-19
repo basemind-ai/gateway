@@ -12,35 +12,64 @@ import {
 
 import Badge from '@/components/badge';
 import LinkMenu from '@/components/link-menu';
-import { Navigation } from '@/constants';
+import { useCurrentProject } from '@/stores/project-store';
+import { contextNavigation, populateApplicationId } from '@/utils/navigation';
+
+const ICON_CLASSES = 'w-3.5 h-3.5';
 
 export default function NavRailList() {
 	const t = useTranslations('navrail');
 	const [pathname] = usePathname().split('?');
+	const currentProject = useCurrentProject()();
+	const navigation = contextNavigation(currentProject?.id);
 
 	return (
-		<div className="mt-12 ml-2 " data-testid="nav-rail-list">
+		<div
+			className="mt-12 ml-2 gap-0.5 flex flex-col "
+			data-testid="nav-rail-list"
+		>
 			<LinkMenu
-				href={Navigation.Dashboard}
+				href={navigation.Dashboard}
 				text={t('overview')}
-				icon={<HouseDoor className="w-3 h-3" />}
-				isCurrent={Navigation.Dashboard === pathname}
+				icon={<HouseDoor className={ICON_CLASSES} />}
+				isCurrent={navigation.Dashboard === pathname}
 			/>
 			<LinkMenu
-				href={Navigation.Prompt}
+				href={navigation.Prompt}
 				text={t('testing')}
-				icon={<Search className="w-3 h-3" />}
-				isCurrent={Navigation.Prompt === pathname}
+				icon={<Search className={ICON_CLASSES} />}
+				isCurrent={navigation.Prompt === pathname}
 			/>
+			{currentProject?.applications?.length && (
+				<LinkMenu
+					isDisabled={true}
+					text={t('application')}
+					icon={<Boxes className={ICON_CLASSES} />}
+				>
+					{currentProject.applications.map((application) => {
+						const applicationUrl = populateApplicationId(
+							navigation.Application,
+							application.id,
+						);
+						return (
+							<LinkMenu
+								href={applicationUrl}
+								text={application.name}
+								isCurrent={applicationUrl === pathname}
+							/>
+						);
+					})}
+				</LinkMenu>
+			)}
 			<LinkMenu
-				href={Navigation.Api}
+				href={navigation.Api}
 				text={t('api')}
-				icon={<Boxes className="w-3 h-3" />}
-				isCurrent={Navigation.Api === pathname}
+				icon={<Boxes className={ICON_CLASSES} />}
+				isCurrent={navigation.Api === pathname}
 			/>
 			<LinkMenu
 				text={t('persistence')}
-				icon={<HddStack className="w-3 h-3" />}
+				icon={<HddStack className={ICON_CLASSES} />}
 				isDisabled={true}
 				badge={
 					<Badge
@@ -52,7 +81,7 @@ export default function NavRailList() {
 			/>
 			<LinkMenu
 				text={t('middleware')}
-				icon={<Lightning className="w-3 h-3" />}
+				icon={<Lightning className={ICON_CLASSES} />}
 				isDisabled={true}
 				badge={
 					<Badge
@@ -64,7 +93,7 @@ export default function NavRailList() {
 			/>
 			<LinkMenu
 				text={t('abTesting')}
-				icon={<Speedometer2 className="w-3 h-3" />}
+				icon={<Speedometer2 className={ICON_CLASSES} />}
 				isDisabled={true}
 				badge={
 					<Badge

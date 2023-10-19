@@ -7,6 +7,7 @@ import {
 	handleCreateApplication,
 	handleDeleteApplication,
 	handleRetrieveApplication,
+	handleRetrieveApplications,
 	handleUpdateApplication,
 } from '@/api';
 import { HttpMethod } from '@/constants';
@@ -45,6 +46,32 @@ describe('applications', () => {
 						name: application.name,
 						description: application.description,
 					}),
+				},
+			);
+		});
+	});
+	describe('handleRetrieveApplications', () => {
+		it('returns applications of a project', async () => {
+			const project = await ProjectFactory.build();
+			const application = await ApplicationFactory.build();
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve([application]),
+			});
+			const data = await handleRetrieveApplications(project.id);
+
+			expect(data).toEqual([application]);
+			expect(mockFetch).toHaveBeenCalledWith(
+				new URL(
+					`http://www.example.com/v1/projects/${project.id}/applications`,
+				),
+				{
+					headers: {
+						'Authorization': 'Bearer test_token',
+						'Content-Type': 'application/json',
+						'X-Request-Id': expect.any(String),
+					},
+					method: HttpMethod.Get,
 				},
 			);
 		});

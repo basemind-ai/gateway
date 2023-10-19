@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { handleCreateProject } from '@/api';
 import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
-import { useAddProject, useProjects } from '@/stores/api-store';
+import { useAddProject, useProjects } from '@/stores/project-store';
 import { handleChange } from '@/utils/helpers';
 
 export default function CreateProjectPage() {

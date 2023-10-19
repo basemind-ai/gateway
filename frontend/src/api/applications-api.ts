@@ -21,6 +21,15 @@ export async function handleCreateApplication({
 	});
 }
 
+export async function handleRetrieveApplications(
+	projectId: string,
+): Promise<Application[]> {
+	return await fetcher<Application[]>({
+		url: `projects/${projectId}/applications`,
+		method: HttpMethod.Get,
+	});
+}
+
 export async function handleRetrieveApplication({
 	applicationId,
 	projectId,
