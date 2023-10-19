@@ -19,29 +19,28 @@ func (PromptTestingServer) TestPrompt(
 ) error {
 	channel := make(chan dto.PromptResultDTO)
 
-	applicationID, parseErr := db.StringToUUID(request.ApplicationId)
-	if parseErr != nil {
-		return fmt.Errorf("failed to parse application ID: %w", parseErr)
+	applicationID, applicationIDParseErr := db.StringToUUID(request.ApplicationId)
+	if applicationIDParseErr != nil {
+		return fmt.Errorf("failed to parse application ID: %w", applicationIDParseErr)
+	}
+
+	promptConfigID, promptConfigIDParseErr := db.StringToUUID(request.PromptConfigId)
+	if promptConfigIDParseErr != nil {
+		return fmt.Errorf("failed to parse prompt config ID: %w", promptConfigIDParseErr)
 	}
 
 	requestConfigurationDTO := &dto.RequestConfigurationDTO{
 		ApplicationIDString: request.ApplicationId,
 		ApplicationID:       *applicationID,
+		PromptConfigID:      *promptConfigID,
 		PromptConfigData: datatypes.PromptConfigDTO{
+			ID:                        request.PromptConfigId,
 			ModelParameters:           request.ModelParameters,
 			ModelType:                 db.ModelType(request.ModelType),
 			ModelVendor:               db.ModelVendor(request.ModelVendor),
 			ProviderPromptMessages:    request.ProviderPromptMessages,
 			ExpectedTemplateVariables: request.ExpectedTemplateVariables,
 		},
-	}
-
-	if request.PromptConfigId != nil {
-		requestConfigurationDTO.PromptConfigData.ID = *request.PromptConfigId
-		requestConfigurationDTO.PromptConfigID, parseErr = db.StringToUUID(*request.PromptConfigId)
-		if parseErr != nil {
-			return fmt.Errorf("failed to parse prompt config ID: %w", parseErr)
-		}
 	}
 
 	go connectors.GetProviderConnector(db.ModelVendor(request.ModelVendor)).

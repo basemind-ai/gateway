@@ -67,13 +67,13 @@ func Init(ctx context.Context, opts ...grpc.DialOption) error {
 func (c *Client) StreamPromptTest(
 	ctx context.Context,
 	applicationID string,
-	data dto.PromptConfigTestDTO,
+	data *dto.PromptConfigTestDTO,
 	responseChannel chan<- *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan<- error,
 ) {
 	stream, streamErr := c.client.TestPrompt(ctx, &ptesting.PromptTestRequest{
 		ApplicationId:          applicationID,
-		PromptConfigId:         data.PromptConfigID,
+		PromptConfigId:         *data.PromptConfigID,
 		ModelVendor:            string(data.ModelVendor),
 		ModelType:              string(data.ModelType),
 		ModelParameters:        data.ModelParameters,

@@ -52,6 +52,7 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	promptRequestRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 	applicationID := db.UUIDToString(&application.ID)
+	promptConfigID := db.UUIDToString(&promptConfig.ID)
 	promptRequestRecordID := db.UUIDToString(&promptRequestRecord.ID)
 	data := dto.PromptConfigTestDTO{
 		Name:                   "TEST",
@@ -59,8 +60,8 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		ModelType:              db.ModelTypeGpt432k,
 		ModelVendor:            db.ModelVendorOPENAI,
 		ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-		TemplateVariables:      nil,
-		PromptConfigID:         nil,
+		TemplateVariables:      map[string]string{},
+		PromptConfigID:         &promptConfigID,
 	}
 
 	t.Run("Init", func(t *testing.T) {
@@ -123,7 +124,7 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		go client.StreamPromptTest(
 			context.TODO(),
 			applicationID,
-			data,
+			&data,
 			responseChannel,
 			errorChannel,
 		)
@@ -155,7 +156,7 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		go client.StreamPromptTest(
 			context.TODO(),
 			applicationID,
-			data,
+			&data,
 			responseChannel,
 			errorChannel,
 		)

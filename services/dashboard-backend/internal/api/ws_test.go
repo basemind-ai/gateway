@@ -96,7 +96,7 @@ func TestPromptTestingAPI(t *testing.T) {
 	})
 	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
 	promptRequestRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
-	templateVariables, _ := json.Marshal(map[string]string{"userInput": "test"})
+	templateVariables := map[string]string{"userInput": "test"}
 
 	projectID := db.UUIDToString(&project.ID)
 	applicationID := db.UUIDToString(&application.ID)
@@ -207,7 +207,13 @@ func TestPromptTestingAPI(t *testing.T) {
 
 		assert.Equal(t, promptTestRecord.Name, data.Name)
 		assert.Equal(t, promptTestRecord.Response, "123")
-		assert.Equal(t, json.RawMessage(promptTestRecord.VariableValues), data.TemplateVariables)
+
+		serializedTemplateVariables, _ := json.Marshal(templateVariables)
+		assert.Equal(
+			t,
+			json.RawMessage(promptTestRecord.VariableValues),
+			json.RawMessage(serializedTemplateVariables),
+		)
 	})
 
 	t.Run("sends error message as expected", func(t *testing.T) {

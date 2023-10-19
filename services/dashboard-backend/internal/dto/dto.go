@@ -31,6 +31,7 @@ type PromptConfigCreateDTO struct {
 	ModelType              db.ModelType    `json:"modelType"       validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	ModelVendor            db.ModelVendor  `json:"modelVendor"     validate:"oneof=OPEN_AI"`
 	ProviderPromptMessages json.RawMessage `json:"promptMessages"  validate:"required"`
+	IsTest                 bool            `json:"isTest"`
 }
 
 type PromptConfigUpdateDTO struct {
@@ -86,13 +87,13 @@ type PromptConfigAnalyticsDTO struct {
 }
 
 type PromptConfigTestDTO struct {
-	Name                   string          `json:"name"                     validate:"required"`
-	ModelParameters        json.RawMessage `json:"modelParameters"          validate:"required"`
-	ModelType              db.ModelType    `json:"modelType"                validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
-	ModelVendor            db.ModelVendor  `json:"modelVendor"              validate:"oneof=OPEN_AI"`
-	ProviderPromptMessages json.RawMessage `json:"promptMessages"           validate:"required"`
-	TemplateVariables      json.RawMessage `json:"templateVariables"        validate:"required"`
-	PromptConfigID         *string         `json:"promptConfigId,omitempty"`
+	Name                   string            `json:"name"                     validate:"required"`
+	ModelParameters        json.RawMessage   `json:"modelParameters"          validate:"required"`
+	ModelType              db.ModelType      `json:"modelType"                validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelVendor            db.ModelVendor    `json:"modelVendor"              validate:"oneof=OPEN_AI"`
+	ProviderPromptMessages json.RawMessage   `json:"promptMessages"           validate:"required"`
+	TemplateVariables      map[string]string `json:"templateVariables"        validate:"required"`
+	PromptConfigID         *string           `json:"promptConfigId,omitempty"`
 }
 
 type PromptConfigTestResultDTO struct {

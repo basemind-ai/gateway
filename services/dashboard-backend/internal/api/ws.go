@@ -8,6 +8,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -42,7 +43,7 @@ var upgrader = gws.NewUpgrader(&handler{}, &gws.ServerOption{
 func createPromptTestRecord(
 	ctx context.Context,
 	promptRequestRecordID string,
-	data dto.PromptConfigTestDTO,
+	data *dto.PromptConfigTestDTO,
 	responseContent string,
 ) (*string, error) {
 	promptRequestRecordUUID, parseErr := db.StringToUUID(promptRequestRecordID)
@@ -50,12 +51,17 @@ func createPromptTestRecord(
 		return nil, parseErr
 	}
 
+	templateVariable, marshalErr := json.Marshal(data.TemplateVariables)
+	if marshalErr != nil {
+		return nil, fmt.Errorf("failed to marshal template variables: %w", marshalErr)
+	}
+
 	promptTestRecord, err := db.GetQueries().
 		CreatePromptTestRecord(ctx, db.CreatePromptTestRecordParams{
 			Name:                  data.Name,
 			PromptRequestRecordID: *promptRequestRecordUUID,
 			Response:              responseContent,
-			VariableValues:        data.TemplateVariables,
+			VariableValues:        templateVariable,
 		})
 
 	if err != nil {
@@ -67,7 +73,7 @@ func createPromptTestRecord(
 
 func createPayloadFromMessage(
 	ctx context.Context,
-	data dto.PromptConfigTestDTO,
+	data *dto.PromptConfigTestDTO,
 	msg *ptesting.PromptTestingStreamingPromptResponse,
 	builder *strings.Builder,
 ) ([]byte, error) {
@@ -95,7 +101,7 @@ func createPayloadFromMessage(
 func streamGRPCMessages(
 	ctx context.Context,
 	socket *gws.Conn,
-	data dto.PromptConfigTestDTO,
+	data *dto.PromptConfigTestDTO,
 	responseChannel chan *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan error,
 ) error {
@@ -150,6 +156,43 @@ func streamGRPCMessages(
 	}
 }
 
+func parseMessageData(
+	message *gws.Message,
+	applicationID pgtype.UUID,
+) (*dto.PromptConfigTestDTO, error) {
+	data := dto.PromptConfigTestDTO{}
+	if deserializationErr := serialization.DeserializeJSON(message, &data); deserializationErr != nil {
+		return nil, fmt.Errorf("failed to deserialize message: %w", deserializationErr)
+	}
+
+	if validationErr := validate.Struct(data); validationErr != nil {
+		log.Error().Interface("data", data).Msg("data failed validation")
+		return nil, fmt.Errorf("failed to validate message: %w", validationErr)
+	}
+
+	if data.PromptConfigID == nil {
+		// if the frontend is testing a prompt config that does not exist yet, we have to create a provisional
+		// prompt config.
+		promptConfig, createErr := repositories.CreatePromptConfig(
+			context.Background(),
+			applicationID,
+			dto.PromptConfigCreateDTO{
+				Name:                   fmt.Sprintf("prompt config for test: %s", data.Name),
+				ModelParameters:        data.ModelParameters,
+				ModelType:              data.ModelType,
+				ModelVendor:            data.ModelVendor,
+				ProviderPromptMessages: data.ProviderPromptMessages,
+				IsTest:                 true,
+			},
+		)
+		if createErr != nil {
+			return nil, fmt.Errorf("failed to create prompt config: %w", createErr)
+		}
+		data.PromptConfigID = &promptConfig.ID
+	}
+	return &data, nil
+}
+
 type handler struct {
 	gws.BuiltinEventHandler
 }
@@ -186,31 +229,29 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 		}
 		applicationID := value.(pgtype.UUID)
 
-		data := dto.PromptConfigTestDTO{}
-		if deserializationErr := serialization.DeserializeJSON(message, &data); deserializationErr != nil {
-			log.Error().Err(deserializationErr).Msg("failed to deserialize message")
-			socket.WriteClose(statusWSUnsupportedPayload, []byte(deserializationErr.Error()))
+		data, parseErr := parseMessageData(message, applicationID)
+		if parseErr != nil {
+			log.Error().Err(parseErr).Msg("failed to parse message data")
+			socket.WriteClose(statusWSUnsupportedPayload, []byte("invalid context"))
 			return
 		}
 
-		if validationErr := validate.Struct(data); validationErr == nil {
-			client := ptestingclient.GetClient()
+		client := ptestingclient.GetClient()
 
-			responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
-			errorChannel := make(chan error, 1)
+		responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
+		errorChannel := make(chan error, 1)
 
-			go client.StreamPromptTest(
-				context.Background(),
-				db.UUIDToString(&applicationID),
-				data,
-				responseChannel,
-				errorChannel,
-			)
+		go client.StreamPromptTest(
+			context.Background(),
+			db.UUIDToString(&applicationID),
+			data,
+			responseChannel,
+			errorChannel,
+		)
 
-			if streamErr := streamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
-				socket.WriteClose(statusWSServerError, []byte(streamErr.Error()))
-				return
-			}
+		if streamErr := streamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
+			socket.WriteClose(statusWSServerError, []byte(streamErr.Error()))
+			return
 		}
 	}
 }

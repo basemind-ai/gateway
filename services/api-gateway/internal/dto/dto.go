@@ -19,7 +19,7 @@ type RequestConfigurationDTO struct {
 	// ApplicationID is the application DB ID
 	ApplicationID pgtype.UUID `json:"applicationUUID"`
 	// PromptConfigID is the promptConfig DB ID
-	PromptConfigID *pgtype.UUID `json:"promptConfigId,omitempty"`
+	PromptConfigID pgtype.UUID `json:"promptConfigId,omitempty"`
 	// PromptConfigData the prompt config DB record
 	PromptConfigData datatypes.PromptConfigDTO `json:"promptConfigDTO"`
 }

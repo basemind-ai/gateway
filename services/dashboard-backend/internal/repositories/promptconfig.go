@@ -50,7 +50,8 @@ func CreatePromptConfig(
 			ModelVendor:               createPromptConfigDTO.ModelVendor,
 			ProviderPromptMessages:    promptMessages,
 			ExpectedTemplateVariables: expectedTemplateVariables,
-			IsDefault:                 !defaultExists,
+			IsDefault:                 !createPromptConfigDTO.IsTest && !defaultExists,
+			IsTestConfig:              createPromptConfigDTO.IsTest,
 		})
 
 	if createErr != nil {

@@ -45,7 +45,8 @@ func retrievePromptConfig(
 		}, nil
 	}
 
-	promptConfig, retrieveDefaultErr := db.GetQueries().
+	promptConfig, retrieveDefaultErr := db.
+		GetQueries().
 		RetrieveDefaultPromptConfig(ctx, applicationID)
 	if retrieveDefaultErr != nil {
 		return nil, fmt.Errorf(
@@ -100,12 +101,12 @@ func retrieveRequestConfiguration(
 			)
 		}
 
-		promptConfigDBID, _ := db.StringToUUID(promptConfig.ID)
+		promptConfigUUID, _ := db.StringToUUID(promptConfig.ID)
 
 		return &dto.RequestConfigurationDTO{
 			ApplicationIDString: db.UUIDToString(&application.ID),
 			ApplicationID:       application.ID,
-			PromptConfigID:      promptConfigDBID,
+			PromptConfigID:      *promptConfigUUID,
 			PromptConfigData:    *promptConfig,
 		}, nil
 	}

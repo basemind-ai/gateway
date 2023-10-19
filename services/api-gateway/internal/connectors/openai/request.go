@@ -28,7 +28,7 @@ func (c *Client) RequestPrompt(
 	}
 
 	recordParams := db.CreatePromptRequestRecordParams{
-		PromptConfigID:   *requestConfiguration.PromptConfigID,
+		PromptConfigID:   requestConfiguration.PromptConfigID,
 		IsStreamResponse: false,
 		StartTime:        pgtype.Timestamptz{Time: time.Now(), Valid: true},
 	}
