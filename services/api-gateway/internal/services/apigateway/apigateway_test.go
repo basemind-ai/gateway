@@ -1,11 +1,11 @@
-package service_test
+package apigateway_test
 
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/service"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/apigateway"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
@@ -70,18 +70,18 @@ func (m MockServerStream) Send(response *gateway.StreamingPromptResponse) error 
 }
 
 func TestService(t *testing.T) {
-	srv := service.New()
+	srv := apigateway.APIGatewayServer{}
 
 	configuration := createRequestConfigurationDTO(t)
 	_, _ = CreateTestCache(t, "")
 
 	t.Run("New", func(t *testing.T) {
-		assert.IsType(t, service.Server{}, srv)
+		assert.IsType(t, apigateway.APIGatewayServer{}, srv)
 	})
 	t.Run("RequestPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			_, err := srv.RequestPrompt(context.TODO(), nil)
-			assert.Errorf(t, err, service.ErrorApplicationIDNotInContext)
+			assert.Errorf(t, err, apigateway.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when a default prompt config is not found", func(t *testing.T) {
@@ -137,7 +137,7 @@ func TestService(t *testing.T) {
 	t.Run("RequestStreamingPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			err := srv.RequestStreamingPrompt(nil, MockServerStream{})
-			assert.Errorf(t, err, service.ErrorApplicationIDNotInContext)
+			assert.Errorf(t, err, apigateway.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when prompt config is not found", func(t *testing.T) {

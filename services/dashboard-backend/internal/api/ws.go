@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
+	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptgrpcclient"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -68,7 +68,7 @@ func createPromptTestRecord(
 func createPayloadFromMessage(
 	ctx context.Context,
 	data dto.PromptConfigTestDTO,
-	msg *prompttesting.PromptTestingStreamingPromptResponse,
+	msg *ptesting.PromptTestingStreamingPromptResponse,
 	builder *strings.Builder,
 ) ([]byte, error) {
 	payload := dto.PromptConfigTestResultDTO{
@@ -96,7 +96,7 @@ func streamGRPCMessages(
 	ctx context.Context,
 	socket *gws.Conn,
 	data dto.PromptConfigTestDTO,
-	responseChannel chan *prompttesting.PromptTestingStreamingPromptResponse,
+	responseChannel chan *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan error,
 ) error {
 	var builder strings.Builder
@@ -194,9 +194,9 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 		}
 
 		if validationErr := validate.Struct(data); validationErr == nil {
-			client := ptgrpcclient.GetClient()
+			client := ptestingclient.GetClient()
 
-			responseChannel := make(chan *prompttesting.PromptTestingStreamingPromptResponse)
+			responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
 			errorChannel := make(chan error, 1)
 
 			go client.StreamPromptTest(

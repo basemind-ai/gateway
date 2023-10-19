@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
+	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptgrpcclient"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/router"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -64,12 +64,12 @@ func createMockGRPCServer(
 ) *testutils.MockPromptTestingService {
 	t.Helper()
 	mockService := &testutils.MockPromptTestingService{T: t}
-	listener := testutils.CreateTestGRPCServer[prompttesting.PromptTestingServiceServer](
+	listener := testutils.CreateTestGRPCServer[ptesting.PromptTestingServiceServer](
 		t,
-		prompttesting.RegisterPromptTestingServiceServer,
+		ptesting.RegisterPromptTestingServiceServer,
 		mockService,
 	)
-	client, clientErr := ptgrpcclient.New(
+	client, clientErr := ptestingclient.New(
 		"",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
@@ -81,7 +81,7 @@ func createMockGRPCServer(
 
 	assert.NoError(t, clientErr)
 
-	ptgrpcclient.SetClient(client)
+	ptestingclient.SetClient(client)
 	return mockService
 }
 
@@ -151,7 +151,7 @@ func TestPromptTestingAPI(t *testing.T) {
 
 		finishReason := "done"
 
-		mockService.Stream = []*prompttesting.PromptTestingStreamingPromptResponse{
+		mockService.Stream = []*ptesting.PromptTestingStreamingPromptResponse{
 			{Content: "1"},
 			{Content: "2"},
 			{

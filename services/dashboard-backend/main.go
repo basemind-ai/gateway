@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptgrpcclient"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
@@ -45,7 +45,7 @@ func main() {
 	logging.Configure(cfg.Environment != "production")
 
 	// FIXME: this is a temporary work-around for testing
-	if grpcClientErr := ptgrpcclient.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials())); grpcClientErr != nil {
+	if grpcClientErr := ptestingclient.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials())); grpcClientErr != nil {
 		log.Fatal().Err(grpcClientErr).Msg("failed to initialize grpc client")
 	}
 

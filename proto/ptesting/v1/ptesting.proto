@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package prompttesting.v1;
+package ptesting.v1;
 
-option go_package = "github.com/basemind-ai/monorepo/gen/prompttesting";
+option go_package = "github.com/basemind-ai/monorepo/gen/ptesting";
 
 // The Prompt Testing service definition.
 service PromptTestingService {

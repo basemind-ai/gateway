@@ -1,4 +1,4 @@
-package service_test
+package apigateway_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/service"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/apigateway"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
@@ -56,7 +56,7 @@ func CreateGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 	listener := testutils.CreateTestGRPCServer[gateway.APIGatewayServiceServer](
 		t,
 		gateway.RegisterAPIGatewayServiceServer,
-		service.New(),
+		apigateway.APIGatewayServer{},
 		// we are using the same auth middleware as we do on main.go in this test
 		grpc.ChainUnaryInterceptor(
 			auth.UnaryServerInterceptor(grpcutils.NewAuthHandler(JWTSecret).HandleAuth),

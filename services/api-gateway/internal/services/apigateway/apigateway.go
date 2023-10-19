@@ -1,4 +1,4 @@
-package service
+package apigateway
 
 import (
 	"context"
@@ -18,15 +18,11 @@ const (
 	ErrorApplicationIDNotInContext = "application ID not found in context"
 )
 
-type Server struct {
+type APIGatewayServer struct {
 	gateway.UnimplementedAPIGatewayServiceServer
 }
 
-func New() gateway.APIGatewayServiceServer {
-	return Server{}
-}
-
-func (Server) RequestPrompt(
+func (APIGatewayServer) RequestPrompt(
 	ctx context.Context,
 	request *gateway.PromptRequest,
 ) (*gateway.PromptResponse, error) {
@@ -137,7 +133,7 @@ func streamFromChannel(
 	return nil
 }
 
-func (Server) RequestStreamingPrompt(
+func (APIGatewayServer) RequestStreamingPrompt(
 	request *gateway.PromptRequest,
 	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
 ) error {

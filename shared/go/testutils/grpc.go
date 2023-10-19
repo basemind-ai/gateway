@@ -19,12 +19,15 @@ func CreateTestGRPCServer[T any](
 ) *bufconn.Listener {
 	t.Helper()
 	listen := bufconn.Listen(101024 * 1024)
-	server := grpcutils.CreateGRPCServer[T](
-		grpcutils.Options[T]{
-			Environment:   "test",
-			Service:       service,
-			GrpcRegistrar: grpcRegistrar,
-			ServiceName:   "test-service",
+	server := grpcutils.CreateGRPCServer(
+		grpcutils.Options{
+			Environment: "test",
+			ServiceName: "test-service",
+			ServiceRegistrars: []grpcutils.ServiceRegistrar{
+				func(s grpc.ServiceRegistrar) {
+					grpcRegistrar(s, service)
+				},
+			},
 		},
 		serverOpts...,
 	)

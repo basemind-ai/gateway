@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
+	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/service"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/apigateway"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services/prompttesting"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	grpcutils2 "github.com/basemind-ai/monorepo/shared/go/grpcutils"
+	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/rs/zerolog/log"
@@ -56,13 +58,22 @@ func main() {
 
 	defer conn.Close()
 
-	server := grpcutils2.CreateGRPCServer[gateway.APIGatewayServiceServer](
-		grpcutils2.Options[gateway.APIGatewayServiceServer]{
-			AuthHandler:   grpcutils2.NewAuthHandler(cfg.JWTSecret).HandleAuth,
-			Environment:   cfg.Environment,
-			GrpcRegistrar: gateway.RegisterAPIGatewayServiceServer,
-			Service:       service.New(),
-			ServiceName:   "api-gateway",
+	server := grpcutils.CreateGRPCServer(
+		grpcutils.Options{
+			AuthHandler: grpcutils.NewAuthHandler(cfg.JWTSecret).HandleAuth,
+			Environment: cfg.Environment,
+			ServiceName: "api-gateway",
+			ServiceRegistrars: []grpcutils.ServiceRegistrar{
+				func(s grpc.ServiceRegistrar) {
+					gateway.RegisterAPIGatewayServiceServer(s, apigateway.APIGatewayServer{})
+				},
+				func(s grpc.ServiceRegistrar) {
+					ptesting.RegisterPromptTestingServiceServer(
+						s,
+						prompttesting.PromptTestingServer{},
+					)
+				},
+			},
 		},
 	)
 
