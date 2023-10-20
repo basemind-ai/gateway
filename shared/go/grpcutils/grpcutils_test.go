@@ -13,13 +13,14 @@ import (
 
 func TestGrpcUtils(t *testing.T) {
 	t.Run("CreateGRPCServer creates a server instance", func(t *testing.T) {
-		server := grpcutils.CreateGRPCServer(grpcutils.Options[any]{
-			Environment:   "development",
-			GrpcRegistrar: func(s grpc.ServiceRegistrar, srv any) {},
-			Service:       struct{}{},
-			ServiceName:   "test-service",
+		server := grpcutils.CreateGRPCServer(grpcutils.Options{
 			AuthHandler: func(ctx context.Context) (context.Context, error) {
 				return ctx, nil
+			},
+			Environment: "development",
+			ServiceName: "test-service",
+			ServiceRegistrars: []grpcutils.ServiceRegistrar{
+				func(s grpc.ServiceRegistrar) {},
 			},
 		})
 		assert.NotNil(t, server)

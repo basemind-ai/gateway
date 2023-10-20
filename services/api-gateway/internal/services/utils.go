@@ -1,4 +1,4 @@
-package service
+package services
 
 import (
 	"context"
@@ -7,6 +7,8 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -43,7 +45,8 @@ func retrievePromptConfig(
 		}, nil
 	}
 
-	promptConfig, retrieveDefaultErr := db.GetQueries().
+	promptConfig, retrieveDefaultErr := db.
+		GetQueries().
 		RetrieveDefaultPromptConfig(ctx, applicationID)
 	if retrieveDefaultErr != nil {
 		return nil, fmt.Errorf(
@@ -98,13 +101,12 @@ func retrieveRequestConfiguration(
 			)
 		}
 
-		promptConfigDBID, _ := db.StringToUUID(promptConfig.ID)
+		promptConfigUUID, _ := db.StringToUUID(promptConfig.ID)
 
 		return &dto.RequestConfigurationDTO{
 			ApplicationIDString: db.UUIDToString(&application.ID),
 			ApplicationID:       application.ID,
-			ProjectID:           application.ProjectID,
-			PromptConfigID:      *promptConfigDBID,
+			PromptConfigID:      *promptConfigUUID,
 			PromptConfigData:    *promptConfig,
 		}, nil
 	}
@@ -132,6 +134,32 @@ func validateExpectedVariables(
 			"missing template variables: %v",
 			missingVariables,
 		)
+	}
+
+	return nil
+}
+
+func streamFromChannel[T any](
+	channel chan dto.PromptResultDTO,
+	streamServer grpc.ServerStream,
+	messageFactory func(dto.PromptResultDTO) (T, bool),
+) error {
+	for result := range channel {
+		msg, isFinished := messageFactory(result)
+
+		if sendErr := streamServer.SendMsg(msg); sendErr != nil {
+			log.Error().Err(sendErr).Msg("failed to send message")
+			return status.Error(codes.Internal, "failed to send message")
+		}
+
+		if result.Error != nil {
+			log.Error().Err(result.Error).Msg("error in prompt request")
+			return status.Error(codes.Internal, "error communicating with AI provider")
+		}
+
+		if isFinished {
+			break
+		}
 	}
 
 	return nil

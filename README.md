@@ -19,7 +19,7 @@ root                        # repository root, holding all tooling configuration
 ├─── proto                  # protobuf schemas
 │    ├─── gateway           # api-gateway protobuf schema
 │    ├─── openai            # openai-connector protobuf schema
-│    └─── prompt_testing    # api-gateway prompt testing protobuf schema
+│    └─── ptesting          # api-gateway prompt testing protobuf schema
 ├─── sdks                   # client libraries that connect to our API gateway
 │    └─── android           # android apps
 │         ├─── test-app     # test application

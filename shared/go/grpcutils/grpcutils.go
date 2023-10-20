@@ -51,12 +51,13 @@ func CreateInterceptorLogger(isDebug bool) (loggingMiddleware.Logger, []loggingM
 	return handlerFunc, loggingOptions
 }
 
-type Options[T any] struct {
-	Environment   string
-	GrpcRegistrar func(s grpc.ServiceRegistrar, srv T)
-	Service       T
-	ServiceName   string
-	AuthHandler   auth.AuthFunc
+type ServiceRegistrar func(s grpc.ServiceRegistrar)
+
+type Options struct {
+	Environment       string
+	ServiceRegistrars []ServiceRegistrar
+	ServiceName       string
+	AuthHandler       auth.AuthFunc
 }
 
 func RecoveryHandler(p any) (err error) {
@@ -64,7 +65,7 @@ func RecoveryHandler(p any) (err error) {
 	return status.Errorf(codes.Unknown, "panic triggered: %v", p)
 }
 
-func CreateGRPCServer[T any](opts Options[T], serverOpts ...grpc.ServerOption) *grpc.Server {
+func CreateGRPCServer(opts Options, serverOpts ...grpc.ServerOption) *grpc.Server {
 	if opts.Environment != "test" {
 		interceptorLogger, loggingOptions := CreateInterceptorLogger(
 			opts.Environment != "production",
@@ -86,6 +87,10 @@ func CreateGRPCServer[T any](opts Options[T], serverOpts ...grpc.ServerOption) *
 	}
 
 	server := grpc.NewServer(serverOpts...)
-	opts.GrpcRegistrar(server, opts.Service)
+
+	for _, registrar := range opts.ServiceRegistrars {
+		registrar(server)
+	}
+
 	return server
 }

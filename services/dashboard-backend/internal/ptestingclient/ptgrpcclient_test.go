@@ -1,11 +1,11 @@
-package ptgrpcclient_test
+package ptestingclient_test
 
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
+	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptgrpcclient"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
@@ -23,15 +23,15 @@ func TestMain(m *testing.M) {
 
 func CreateClientAndService(
 	t *testing.T,
-) (*ptgrpcclient.Client, *testutils.MockPromptTestingService) {
+) (*ptestingclient.Client, *testutils.MockPromptTestingService) {
 	t.Helper()
 	mockService := &testutils.MockPromptTestingService{T: t}
-	listener := testutils.CreateTestGRPCServer[prompttesting.PromptTestingServiceServer](
+	listener := testutils.CreateTestGRPCServer[ptesting.PromptTestingServiceServer](
 		t,
-		prompttesting.RegisterPromptTestingServiceServer,
+		ptesting.RegisterPromptTestingServiceServer,
 		mockService,
 	)
-	client, clientErr := ptgrpcclient.New(
+	client, clientErr := ptestingclient.New(
 		"",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
@@ -52,6 +52,7 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	promptRequestRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 	applicationID := db.UUIDToString(&application.ID)
+	promptConfigID := db.UUIDToString(&promptConfig.ID)
 	promptRequestRecordID := db.UUIDToString(&promptRequestRecord.ID)
 	data := dto.PromptConfigTestDTO{
 		Name:                   "TEST",
@@ -59,14 +60,14 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		ModelType:              db.ModelTypeGpt432k,
 		ModelVendor:            db.ModelVendorOPENAI,
 		ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-		TemplateVariables:      nil,
-		PromptConfigID:         nil,
+		TemplateVariables:      map[string]string{},
+		PromptConfigID:         &promptConfigID,
 	}
 
 	t.Run("Init", func(t *testing.T) {
 		t.Run("panics if the env is not set", func(t *testing.T) {
 			assert.Error(t,
-				ptgrpcclient.Init(
+				ptestingclient.Init(
 					context.Background(),
 					grpc.WithTransportCredentials(insecure.NewCredentials()),
 				),
@@ -75,7 +76,7 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		t.Run("does not panic if the env is set", func(t *testing.T) {
 			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
 			assert.NoError(t,
-				ptgrpcclient.Init(
+				ptestingclient.Init(
 					context.Background(),
 					grpc.WithTransportCredentials(insecure.NewCredentials()),
 				),
@@ -86,31 +87,31 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	t.Run("GetClient", func(t *testing.T) {
 		t.Run("does not panic if init is called", func(t *testing.T) {
 			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
-			err := ptgrpcclient.Init(
+			err := ptestingclient.Init(
 				context.Background(),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
 			assert.NoError(t, err)
 			assert.NotPanics(t, func() {
-				ptgrpcclient.GetClient()
+				ptestingclient.GetClient()
 			})
 		})
 		t.Run("panics if init is not called", func(t *testing.T) {
-			ptgrpcclient.SetClient(nil)
+			ptestingclient.SetClient(nil)
 			assert.Panics(t, func() {
-				ptgrpcclient.GetClient()
+				ptestingclient.GetClient()
 			})
 		})
 	})
 
 	t.Run("handles a stream response", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)
-		responseChannel := make(chan *prompttesting.PromptTestingStreamingPromptResponse)
+		responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
 		errorChannel := make(chan error)
 
 		finishReason := "done"
 
-		mockService.Stream = []*prompttesting.PromptTestingStreamingPromptResponse{
+		mockService.Stream = []*ptesting.PromptTestingStreamingPromptResponse{
 			{Content: "1"},
 			{Content: "2"},
 			{
@@ -123,12 +124,12 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		go client.StreamPromptTest(
 			context.TODO(),
 			applicationID,
-			data,
+			&data,
 			responseChannel,
 			errorChannel,
 		)
 
-		chunks := make([]*prompttesting.PromptTestingStreamingPromptResponse, 0)
+		chunks := make([]*ptesting.PromptTestingStreamingPromptResponse, 0)
 
 		for chunk := range responseChannel {
 			chunks = append(chunks, chunk)
@@ -147,7 +148,7 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	})
 	t.Run("sends error using the error channel on stream error", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)
-		responseChannel := make(chan *prompttesting.PromptTestingStreamingPromptResponse)
+		responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
 		errorChannel := make(chan error)
 
 		mockService.Error = assert.AnError
@@ -155,7 +156,7 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		go client.StreamPromptTest(
 			context.TODO(),
 			applicationID,
-			data,
+			&data,
 			responseChannel,
 			errorChannel,
 		)

@@ -1,10 +1,10 @@
-package ptgrpcclient
+package ptestingclient
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
+	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/rs/zerolog/log"
 	"github.com/sethvargo/go-envconfig"
@@ -33,7 +33,7 @@ type clientConfig struct {
 
 // Client - a handler client for the PromptTesting gRPC service.
 type Client struct {
-	client prompttesting.PromptTestingServiceClient
+	client ptesting.PromptTestingServiceClient
 }
 
 // New - creates a new PromptTesting gRPC client.
@@ -43,7 +43,7 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 		return nil, dialErr
 	}
 
-	client := prompttesting.NewPromptTestingServiceClient(conn)
+	client := ptesting.NewPromptTestingServiceClient(conn)
 	log.Info().Msg("initialized PromptTesting client")
 
 	return &Client{client: client}, nil
@@ -67,13 +67,13 @@ func Init(ctx context.Context, opts ...grpc.DialOption) error {
 func (c *Client) StreamPromptTest(
 	ctx context.Context,
 	applicationID string,
-	data dto.PromptConfigTestDTO,
-	responseChannel chan<- *prompttesting.PromptTestingStreamingPromptResponse,
+	data *dto.PromptConfigTestDTO,
+	responseChannel chan<- *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan<- error,
 ) {
-	stream, streamErr := c.client.TestPrompt(ctx, &prompttesting.PromptTestRequest{
+	stream, streamErr := c.client.TestPrompt(ctx, &ptesting.PromptTestRequest{
 		ApplicationId:          applicationID,
-		PromptConfigId:         data.PromptConfigID,
+		PromptConfigId:         *data.PromptConfigID,
 		ModelVendor:            string(data.ModelVendor),
 		ModelType:              string(data.ModelType),
 		ModelParameters:        data.ModelParameters,

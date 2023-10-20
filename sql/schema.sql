@@ -85,6 +85,7 @@ CREATE TABLE prompt_config
     provider_prompt_messages json NOT NULL,
     expected_template_variables varchar(255) [] NOT NULL,
     is_default boolean NOT NULL DEFAULT TRUE,
+    is_test_config boolean NOT NULL DEFAULT FALSE,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,

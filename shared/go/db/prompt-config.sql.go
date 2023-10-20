@@ -39,10 +39,11 @@ INSERT INTO prompt_config (
     provider_prompt_messages,
     expected_template_variables,
     is_default,
-    application_id
+    application_id,
+    is_test_config
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, created_at, updated_at, deleted_at, application_id
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, is_test_config, created_at, updated_at, deleted_at, application_id
 `
 
 type CreatePromptConfigParams struct {
@@ -54,6 +55,7 @@ type CreatePromptConfigParams struct {
 	ExpectedTemplateVariables []string    `json:"expectedTemplateVariables"`
 	IsDefault                 bool        `json:"isDefault"`
 	ApplicationID             pgtype.UUID `json:"applicationId"`
+	IsTestConfig              bool        `json:"isTestConfig"`
 }
 
 // -- prompt config
@@ -67,6 +69,7 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 		arg.ExpectedTemplateVariables,
 		arg.IsDefault,
 		arg.ApplicationID,
+		arg.IsTestConfig,
 	)
 	var i PromptConfig
 	err := row.Scan(
@@ -78,6 +81,7 @@ func (q *Queries) CreatePromptConfig(ctx context.Context, arg CreatePromptConfig
 		&i.ProviderPromptMessages,
 		&i.ExpectedTemplateVariables,
 		&i.IsDefault,
+		&i.IsTestConfig,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -114,7 +118,7 @@ FROM prompt_config
 WHERE
     application_id = $1
     AND deleted_at IS NULL
-    AND is_default = TRUE
+    AND is_default = TRUE AND is_test_config = FALSE
 `
 
 type RetrieveDefaultPromptConfigRow struct {
@@ -166,7 +170,7 @@ SELECT
 FROM prompt_config
 WHERE
     id = $1
-    AND deleted_at IS NULL
+    AND deleted_at IS NULL AND is_test_config = FALSE
 `
 
 type RetrievePromptConfigRow struct {
@@ -283,7 +287,7 @@ SELECT
 FROM prompt_config
 WHERE
     application_id = $1
-    AND deleted_at IS NULL
+    AND deleted_at IS NULL AND is_test_config = FALSE
 `
 
 type RetrievePromptConfigsRow struct {
@@ -339,7 +343,7 @@ SET
     updated_at = NOW()
 WHERE
     id = $1
-    AND deleted_at IS NULL
+    AND deleted_at IS NULL AND is_test_config = FALSE
 `
 
 type UpdateDefaultPromptConfigParams struct {
@@ -361,11 +365,12 @@ SET
     model_vendor = $5,
     provider_prompt_messages = $6,
     expected_template_variables = $7,
+    is_test_config = $8,
     updated_at = NOW()
 WHERE
     id = $1
     AND deleted_at IS NULL
-RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, created_at, updated_at, deleted_at, application_id
+RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, is_test_config, created_at, updated_at, deleted_at, application_id
 `
 
 type UpdatePromptConfigParams struct {
@@ -376,6 +381,7 @@ type UpdatePromptConfigParams struct {
 	ModelVendor               ModelVendor `json:"modelVendor"`
 	ProviderPromptMessages    []byte      `json:"providerPromptMessages"`
 	ExpectedTemplateVariables []string    `json:"expectedTemplateVariables"`
+	IsTestConfig              bool        `json:"isTestConfig"`
 }
 
 func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfigParams) (PromptConfig, error) {
@@ -387,6 +393,7 @@ func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfig
 		arg.ModelVendor,
 		arg.ProviderPromptMessages,
 		arg.ExpectedTemplateVariables,
+		arg.IsTestConfig,
 	)
 	var i PromptConfig
 	err := row.Scan(
@@ -398,6 +405,7 @@ func (q *Queries) UpdatePromptConfig(ctx context.Context, arg UpdatePromptConfig
 		&i.ProviderPromptMessages,
 		&i.ExpectedTemplateVariables,
 		&i.IsDefault,
+		&i.IsTestConfig,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,

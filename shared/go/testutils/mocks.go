@@ -3,7 +3,7 @@ package testutils
 import (
 	"context"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
-	"github.com/basemind-ai/monorepo/gen/go/prompttesting/v1"
+	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -80,17 +80,17 @@ func (m MockOpenAIService) OpenAIStream(
 // Prompt Testing Service
 
 type MockPromptTestingService struct {
-	prompttesting.UnimplementedPromptTestingServiceServer
+	ptesting.UnimplementedPromptTestingServiceServer
 	Context         context.Context
 	Error           error
-	ExpectedRequest *prompttesting.PromptTestRequest
-	Stream          []*prompttesting.PromptTestingStreamingPromptResponse
+	ExpectedRequest *ptesting.PromptTestRequest
+	Stream          []*ptesting.PromptTestingStreamingPromptResponse
 	T               *testing.T
 }
 
 func (m MockPromptTestingService) TestPrompt(
-	request *prompttesting.PromptTestRequest,
-	stream prompttesting.PromptTestingService_TestPromptServer,
+	request *ptesting.PromptTestRequest,
+	stream ptesting.PromptTestingService_TestPromptServer,
 ) error {
 	if m.Error != nil {
 		return m.Error
