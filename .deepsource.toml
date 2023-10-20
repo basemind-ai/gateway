@@ -21,6 +21,10 @@ test_patterns = [
 ]
 
 [[analyzers]]
+name = "test-coverage"
+enabled = true
+
+[[analyzers]]
 name = "kotlin"
 
 [analyzers.meta]
