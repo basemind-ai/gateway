@@ -15,6 +15,7 @@ test_patterns = [
     "**/mocks/**",
     "**/test/**",
     "**/tests/**",
+    "**/testutils/**",
     "**/vitest.*",
     "vitest.*",
 ]

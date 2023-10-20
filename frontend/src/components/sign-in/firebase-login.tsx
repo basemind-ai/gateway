@@ -25,7 +25,7 @@ export function FirebaseLogin() {
 			if (auth.currentUser) {
 				setUser(auth.currentUser);
 				router.replace(Navigation.Projects);
-				return;
+				return null;
 			}
 
 			const firebaseUI = await import('firebaseui');

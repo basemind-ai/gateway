@@ -8,7 +8,7 @@ export async function handleCreateProject({
 	data: ProjectCreateBody;
 }): Promise<Project> {
 	return await fetcher<Project>({
-		url: `projects`,
+		url: 'projects',
 		method: HttpMethod.Post,
 		data,
 	});
@@ -16,7 +16,7 @@ export async function handleCreateProject({
 
 export async function handleRetrieveProjects(): Promise<Project[]> {
 	return await fetcher<Project[]>({
-		url: `projects`,
+		url: 'projects',
 		method: HttpMethod.Get,
 	});
 }

@@ -18,7 +18,7 @@ on:
             - 'vitest.*'
 env:
     NODE_OPTIONS: '--max_old_space_size=4096'
-    DEEPSOURCE_DSN: ${{secrets:DEEPSOURCE_DSN}}
+    DEEPSOURCE_DSN: ${{secrets.DEEPSOURCE_DSN}}
 jobs:
     test:
         runs-on: ubuntu-latest

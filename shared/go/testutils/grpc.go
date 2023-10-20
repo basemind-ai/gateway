@@ -34,7 +34,7 @@ func CreateTestGRPCServer[T any](
 
 	go func() {
 		if err := server.Serve(listen); err != nil {
-			log.Fatalf("error serving test gRPC server: %v", err)
+			log.Fatalf("error serving test gRPC server: %v", err) //	skipcq: RVV-A0003
 		}
 	}()
 

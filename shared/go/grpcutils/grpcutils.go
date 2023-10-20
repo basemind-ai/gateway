@@ -86,7 +86,7 @@ func CreateGRPCServer(opts Options, serverOpts ...grpc.ServerOption) *grpc.Serve
 		)
 	}
 
-	server := grpc.NewServer(serverOpts...)
+	server := grpc.NewServer(serverOpts...) // skipcq: GO-S0902
 
 	for _, registrar := range opts.ServiceRegistrars {
 		registrar(server)

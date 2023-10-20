@@ -6,15 +6,7 @@ import ai.basemind.grpc.APIGatewayServiceGrpcKt
 import ai.basemind.grpc.PromptRequest
 import ai.basemind.grpc.PromptResponse
 import ai.basemind.grpc.StreamingPromptResponse
-import io.grpc.Context
-import io.grpc.Contexts
-import io.grpc.ManagedChannel
-import io.grpc.Metadata
-import io.grpc.ServerCall
-import io.grpc.ServerCallHandler
-import io.grpc.ServerInterceptor
-import io.grpc.ServerInterceptors
-import io.grpc.StatusException
+import io.grpc.*
 import io.grpc.inprocess.InProcessChannelBuilder
 import io.grpc.inprocess.InProcessServerBuilder
 import io.grpc.testing.GrpcCleanupRule
@@ -22,12 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertDoesNotThrow
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -82,14 +69,14 @@ class MockAPIGatewayServer : APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineI
 
     override suspend fun requestPrompt(request: PromptRequest): PromptResponse {
         if (exc != null) {
-            throw exc!!
+            throw exc!! // skipcq: KT-E1010
         }
         return PromptResponse.newBuilder().setContent("test prompt").build()
     }
 
     override fun requestStreamingPrompt(request: PromptRequest): Flow<StreamingPromptResponse> {
         if (exc != null) {
-            throw exc!!
+            throw exc!! // skipcq: KT-E1010
         }
         return arrayOf("1", "2", "3").map {
             StreamingPromptResponse.newBuilder().setContent(it).build()

@@ -24,7 +24,7 @@ export default function Projects() {
 			const retrievedProjects = await handleRetrieveProjects();
 			if (retrievedProjects.length === 0) {
 				router.replace(Navigation.CreateProject);
-				return;
+				return null;
 			}
 			const [{ id: projectId }] = retrievedProjects;
 			setProjects(retrievedProjects);

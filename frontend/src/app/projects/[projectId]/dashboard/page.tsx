@@ -21,7 +21,7 @@ export default function Dashboard({
 	}, []);
 
 	if (!project) {
-		return;
+		return null;
 	}
 
 	return (

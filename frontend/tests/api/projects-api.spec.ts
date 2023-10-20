@@ -29,7 +29,7 @@ describe('Projects', () => {
 
 			expect(data).toEqual(project);
 			expect(mockFetch).toHaveBeenCalledWith(
-				new URL(`http://www.example.com/v1/projects`),
+				new URL('http://www.example.com/v1/projects'),
 				{
 					headers: {
 						'Authorization': 'Bearer test_token',
@@ -56,7 +56,7 @@ describe('Projects', () => {
 
 			expect(data).toEqual(projects);
 			expect(mockFetch).toHaveBeenCalledWith(
-				new URL(`http://www.example.com/v1/projects`),
+				new URL('http://www.example.com/v1/projects'),
 				{
 					headers: {
 						'Authorization': 'Bearer test_token',

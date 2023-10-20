@@ -19,7 +19,7 @@ env:
     GCP_SERVICE_ACCOUNT_NAME: firebase-adminsdk-frgvx
     GCP_WORKLOAD_IDENTITY_POOL: dev-pool
     TEST_SLEEP_TIMEOUT: 1s
-    DEEPSOURCE_DSN: ${{secrets:DEEPSOURCE_DSN}}
+    DEEPSOURCE_DSN: ${{secrets.DEEPSOURCE_DSN}}
 jobs:
     test:
         runs-on: ubuntu-latest
