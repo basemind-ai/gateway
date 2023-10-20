@@ -5,7 +5,7 @@ import { expect } from 'vitest';
 
 import Projects from '@/app/projects/page';
 import { Navigation } from '@/constants';
-import { useProjects } from '@/stores/project-store';
+import { useGetApplications, useProjects } from '@/stores/project-store';
 
 describe('projects page tests', () => {
 	it('should route to sign in page when user is not present', async () => {
@@ -64,6 +64,9 @@ describe('projects page tests', () => {
 		const projects = await ProjectFactory.batch(3);
 		const applications = await ApplicationFactory.batch(2);
 		const { result } = renderHook(() => useProjects());
+		const { result: applicationsResult } = renderHook(() =>
+			useGetApplications(),
+		);
 		act(() => {
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
@@ -74,12 +77,13 @@ describe('projects page tests', () => {
 				json: () => Promise.resolve(applications),
 			});
 		});
-		const updatedProjects = structuredClone(projects);
-		updatedProjects[0].applications = applications;
 
 		render(<Projects />);
 		await waitFor(() => {
-			expect(result.current).toEqual(updatedProjects);
+			expect(result.current).toEqual(projects);
 		});
+		expect(applicationsResult.current[projects[0].id]).toEqual(
+			applications,
+		);
 	});
 });

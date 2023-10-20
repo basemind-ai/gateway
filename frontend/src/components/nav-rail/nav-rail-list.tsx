@@ -12,7 +12,7 @@ import {
 
 import Badge from '@/components/badge';
 import LinkMenu from '@/components/link-menu';
-import { useCurrentProject } from '@/stores/project-store';
+import { useCurrentProject, useGetApplications } from '@/stores/project-store';
 import { contextNavigation, populateApplicationId } from '@/utils/navigation';
 
 const ICON_CLASSES = 'w-3.5 h-3.5';
@@ -22,6 +22,11 @@ export default function NavRailList() {
 	const [pathname] = usePathname().split('?');
 	const currentProject = useCurrentProject()();
 	const navigation = contextNavigation(currentProject?.id);
+	const applications = useGetApplications();
+
+	const projectApplications = currentProject
+		? applications[currentProject.id]
+		: undefined;
 
 	return (
 		<div
@@ -40,28 +45,31 @@ export default function NavRailList() {
 				icon={<Search className={ICON_CLASSES} />}
 				isCurrent={navigation.Prompt === pathname}
 			/>
-			{currentProject?.applications?.length ? (
+			<LinkMenu
+				isDisabled={true}
+				text={t('application')}
+				icon={<Boxes className={ICON_CLASSES} />}
+			>
+				{projectApplications?.map((application) => {
+					const applicationUrl = populateApplicationId(
+						navigation.Application,
+						application.id,
+					);
+					return (
+						<LinkMenu
+							key={applicationUrl}
+							href={applicationUrl}
+							text={application.name}
+							isCurrent={applicationUrl === pathname}
+						/>
+					);
+				})}
 				<LinkMenu
-					isDisabled={true}
-					text={t('application')}
-					icon={<Boxes className={ICON_CLASSES} />}
-				>
-					{currentProject.applications.map((application) => {
-						const applicationUrl = populateApplicationId(
-							navigation.Application,
-							application.id,
-						);
-						return (
-							<LinkMenu
-								key={applicationUrl}
-								href={applicationUrl}
-								text={application.name}
-								isCurrent={applicationUrl === pathname}
-							/>
-						);
-					})}
-				</LinkMenu>
-			) : null}
+					href={'TODO:newapp'}
+					text={t('newApplication')}
+					isCurrent={'TODO:newapp' === pathname}
+				/>
+			</LinkMenu>
 			<LinkMenu
 				href={navigation.Api}
 				text={t('api')}

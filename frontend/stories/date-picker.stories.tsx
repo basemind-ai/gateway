@@ -19,7 +19,6 @@ export const Default = {
 	args: {
 		showShortcuts: true,
 		useRange: false,
-		displayFormat: 'DD/MM/YYYY',
 		value: {
 			startDate: oneWeekAgo,
 			endDate: new Date(),

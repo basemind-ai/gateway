@@ -67,6 +67,7 @@ export const TokenFactory = new TypeFactory<Token>(() => ({
 	hash: faker.string.uuid(),
 	name: faker.lorem.words(),
 	createdAt: faker.date.past().toISOString(),
+	isDefault: faker.datatype.boolean(),
 }));
 
 export const ProjectUserAccountFactory = new TypeFactory<ProjectUserAccount>(

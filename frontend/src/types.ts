@@ -23,7 +23,6 @@ export interface Project {
 	createdAt: string;
 	updatedAt: string;
 	permission: AccessPermission;
-	applications?: Application[];
 }
 
 export interface ProjectAnalytics {
