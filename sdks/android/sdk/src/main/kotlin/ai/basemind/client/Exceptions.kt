@@ -3,7 +3,7 @@ package ai.basemind.client
 /**
  * Base exception for all BaseMind exceptions.
  */
-class BaseMindException(message: String, cause: Throwable? = null) : Exception(message, cause)
+abstract class BaseMindException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 /**
  * Thrown when the API key is an empty string.
