@@ -39,6 +39,20 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Patch("/", handleUpdateProject)
 		})
 
+		router.Route(ProjectOTPEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
+				middleware.PathParameterMiddleware("projectId"),
+			)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet: allPermissions,
+					},
+				),
+			)
+			subRouter.Get("/", handleRetrieveProjectOTP)
+		})
+
 		router.Route(ProjectAnalyticsEndpoint, func(subRouter chi.Router) {
 			subRouter.Use(middleware.PathParameterMiddleware("projectId"))
 			subRouter.Use(
