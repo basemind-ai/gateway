@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
-import { Application, Project } from '@/types';
+import { Application, Project, PromptConfig } from '@/types';
 
 export interface ProjectStore {
 	projects: Project[];
+	promptConfigs: Record<string, PromptConfig[] | undefined>;
 	currentProjectId: string | null;
 	setProjects: (projects: Project[]) => void;
 	addProject: (project: Project) => void;
@@ -18,6 +19,10 @@ export interface ProjectStore {
 		projectId: string,
 		applicationId: string,
 	) => Application | undefined;
+	setPromptConfig: (
+		applicationId: string,
+		promptConfig: PromptConfig[],
+	) => void;
 }
 
 export const projectStoreStateCreator: StateCreator<ProjectStore> = (
@@ -25,6 +30,7 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 	get,
 ) => ({
 	projects: [],
+	promptConfigs: {},
 	currentProjectId: null,
 	setProjects: (projects: Project[]) => {
 		set({ projects });
@@ -69,6 +75,14 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 				(application) => application.id === applicationId,
 			);
 	},
+	setPromptConfig: (applicationId: string, promptConfig: PromptConfig[]) => {
+		set((state) => ({
+			promptConfigs: {
+				...state.promptConfigs,
+				[applicationId]: promptConfig,
+			},
+		}));
+	},
 });
 
 export const useProjectStore = create(projectStoreStateCreator);
@@ -86,3 +100,6 @@ export const useSetCurrentProject = () =>
 export const useSetProjectApplications = () =>
 	useProjectStore((s) => s.setProjectApplications);
 export const useGetApplication = () => useProjectStore((s) => s.getApplication);
+export const useGetPromptConfig = () => useProjectStore((s) => s.promptConfigs);
+export const useSetPromptConfig = () =>
+	useProjectStore((s) => s.setPromptConfig);

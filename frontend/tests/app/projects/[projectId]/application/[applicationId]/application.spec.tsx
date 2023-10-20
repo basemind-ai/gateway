@@ -5,6 +5,7 @@ import ApplicationPage from '@/app/projects/[projectId]/application/[application
 import { Navigation } from '@/constants';
 
 describe('ApplicationPage', () => {
+	// TODO: add more tests when tab overview is complete and this page can render all the screens
 	it('should route to projects page when no application is present', async () => {
 		render(
 			<ApplicationPage params={{ projectId: '', applicationId: '' }} />,

@@ -3,12 +3,20 @@ import { fireEvent, render, screen } from 'tests/test-utils';
 import { DatePicker } from '@/components/dashboard/date-picker';
 
 describe('Date Picker tests', () => {
+	const dateRange = {
+		startDate: new Date(),
+		endDate: new Date(),
+	};
+	const onDateChange = vi.fn();
+
 	it('render date picker', () => {
 		render(
 			<DatePicker
 				showShortcuts={true}
 				useRange={false}
 				displayFormat="DD/MM/YYYY"
+				value={dateRange}
+				onValueChange={onDateChange}
 			/>,
 		);
 
@@ -22,6 +30,8 @@ describe('Date Picker tests', () => {
 				showShortcuts={true}
 				useRange={false}
 				displayFormat="DD/MM/YYYY"
+				value={dateRange}
+				onValueChange={onDateChange}
 			/>,
 		);
 
@@ -39,6 +49,8 @@ describe('Date Picker tests', () => {
 				showShortcuts={true}
 				useRange={false}
 				displayFormat="DD/MM/YYYY"
+				value={dateRange}
+				onValueChange={onDateChange}
 			/>,
 		);
 
@@ -47,6 +59,12 @@ describe('Date Picker tests', () => {
 
 		const todayBtn = screen.getByText('Today');
 		fireEvent.click(todayBtn);
+
+		const today = new Date().toISOString().split('T')[0];
+		expect(onDateChange).toHaveBeenCalledWith({
+			endDate: today,
+			startDate: today,
+		});
 
 		expect(screen.getByRole('presentation')).toBeInTheDocument();
 	});

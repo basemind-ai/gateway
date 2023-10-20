@@ -33,3 +33,31 @@ div#__next,
 div#__next > div {
 	height: 100%;
 }
+
+@layer components {
+	.custom-table {
+		@apply table border-white w-full;
+
+		th {
+			@apply font-medium text-neutral-content;
+		}
+
+		th + th {
+			@apply text-center;
+		}
+
+		tbody {
+			tr {
+				@apply border-b-neutral border-b;
+			}
+		}
+
+		td {
+			@apply text-neutral-content;
+		}
+
+		td + td {
+			@apply text-center;
+		}
+	}
+}
