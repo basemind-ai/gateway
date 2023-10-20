@@ -6,21 +6,21 @@ import PromptConfigurations from '@/app/projects/[projectId]/prompt/page';
 const promptTranslation = locales.prompt;
 
 describe('Prompt page tests', () => {
-	it('render Prompt testing', async () => {
+	it('render Prompt testing', () => {
 		render(<PromptConfigurations />);
 
 		const dashboardContainer = screen.getByTestId('prompt-page');
 		expect(dashboardContainer).toBeInTheDocument();
 	});
 
-	it('render Prompt testing heading', async () => {
+	it('render Prompt testing heading', () => {
 		render(<PromptConfigurations />);
 
 		const promptHeader = screen.getByText(promptTranslation.promptHeader);
 		expect(promptHeader).toBeInTheDocument();
 	});
 
-	it('render Prompt testing saved template', async () => {
+	it('render Prompt testing saved template', () => {
 		render(<PromptConfigurations />);
 
 		const savedPromptConfig = screen.getByText(

@@ -12,7 +12,7 @@ vi.mock('@/stores/api-store', () => ({
 }));
 
 describe('Dashboard page tests', () => {
-	it('handles logout', async () => {
+	it('handles logout', () => {
 		render(<Dashboard params={{ projectId: '123' }} />);
 
 		const dashboardContainer = screen.queryByTestId('dashboard');

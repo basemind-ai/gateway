@@ -46,13 +46,14 @@ export default function NavRailList() {
 					text={t('application')}
 					icon={<Boxes className={ICON_CLASSES} />}
 				>
-					{currentProject.applications.map((application) => {
+					{currentProject.applications.map((application, i) => {
 						const applicationUrl = populateApplicationId(
 							navigation.Application,
 							application.id,
 						);
 						return (
 							<LinkMenu
+								key={i}
 								href={applicationUrl}
 								text={application.name}
 								isCurrent={applicationUrl === pathname}

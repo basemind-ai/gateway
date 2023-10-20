@@ -32,7 +32,7 @@ require (
 	cloud.google.com/go v0.110.9 // indirect
 	cloud.google.com/go/compute v1.23.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/firestore v1.13.0 // indirect
+	cloud.google.com/go/firestore v1.14.0 // indirect
 	cloud.google.com/go/iam v1.1.3 // indirect
 	cloud.google.com/go/longrunning v0.5.2 // indirect
 	cloud.google.com/go/storage v1.33.0 // indirect

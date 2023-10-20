@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/consistent-function-scoping */
+/* eslint-disable unicorn/consistent-function-scoping,@typescript-eslint/require-await */
 import {
 	sendUnaryData,
 	ServerUnaryCall,

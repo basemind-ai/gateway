@@ -3,7 +3,7 @@ import { render, screen } from 'tests/test-utils';
 import { TemplateDetail } from '@/components/prompt-config/template-detail';
 
 describe('Template Detail tests', () => {
-	it('render Template Detail name', async () => {
+	it('render Template Detail name', () => {
 		render(
 			<TemplateDetail
 				name={'Album Recommendation'}
@@ -16,7 +16,7 @@ describe('Template Detail tests', () => {
 		expect(template_name).toBeInTheDocument();
 	});
 
-	it('render Template Detail status active', async () => {
+	it('render Template Detail status active', () => {
 		render(
 			<TemplateDetail
 				name={'Album Recommendation'}
@@ -29,7 +29,7 @@ describe('Template Detail tests', () => {
 		expect(template_status_active).toBeInTheDocument();
 	});
 
-	it('render Template Detail status draft', async () => {
+	it('render Template Detail status draft', () => {
 		render(
 			<TemplateDetail
 				name={'Album Recommendation'}

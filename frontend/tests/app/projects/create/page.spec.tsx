@@ -82,7 +82,7 @@ describe('ProjectCreatePage', () => {
 		expect(cancelButton).toBeInTheDocument();
 	});
 
-	it('cancel should not be rendered when there are no projects', async () => {
+	it('cancel should not be rendered when there are no projects', () => {
 		const { result } = renderHook(() => useSetProjects());
 		result.current([]);
 		render(<CreateProjectPage />);

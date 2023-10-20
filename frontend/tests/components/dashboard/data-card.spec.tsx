@@ -4,7 +4,7 @@ import { render, screen } from 'tests/test-utils';
 import { DataCard } from '@/components/dashboard/data-card';
 
 describe('Data Card tests', () => {
-	it('render Data Card metric API Call', async () => {
+	it('render Data Card metric API Call', () => {
 		render(
 			<DataCard
 				imageSrc={<Activity />}
@@ -19,7 +19,7 @@ describe('Data Card tests', () => {
 		expect(metric).toBeInTheDocument();
 	});
 
-	it('render Data Card metric Users', async () => {
+	it('render Data Card metric Users', () => {
 		render(
 			<DataCard
 				imageSrc={<Activity />}
@@ -34,7 +34,7 @@ describe('Data Card tests', () => {
 		expect(metric).toBeInTheDocument();
 	});
 
-	it('render Data Card metric Models Cost', async () => {
+	it('render Data Card metric Models Cost', () => {
 		render(
 			<DataCard
 				imageSrc={<Activity />}
@@ -49,7 +49,7 @@ describe('Data Card tests', () => {
 		expect(metric).toBeInTheDocument();
 	});
 
-	it('render Data Card total value', async () => {
+	it('render Data Card total value', () => {
 		render(
 			<DataCard
 				imageSrc={<Activity />}

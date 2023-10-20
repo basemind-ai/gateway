@@ -48,7 +48,7 @@ describe('useAuthenticatedUser', () => {
 		expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.SignIn);
 	});
 
-	it("should return the user if it's already set in the store", async () => {
+	it("should return the user if it's already set in the store", () => {
 		const user = UserFactory.buildSync();
 
 		useUserSpy.mockReturnValue(user);

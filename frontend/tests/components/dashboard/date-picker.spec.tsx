@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from 'tests/test-utils';
 import { DatePicker } from '@/components/dashboard/date-picker';
 
 describe('Date Picker tests', () => {
-	it('render date picker', async () => {
+	it('render date picker', () => {
 		render(
 			<DatePicker
 				showShortcuts={true}
@@ -16,7 +16,7 @@ describe('Date Picker tests', () => {
 		expect(datePicker).toBeInTheDocument();
 	});
 
-	it('render date picker calendar text', async () => {
+	it('render date picker calendar text', () => {
 		render(
 			<DatePicker
 				showShortcuts={true}
@@ -33,7 +33,7 @@ describe('Date Picker tests', () => {
 		expect(screen.getByText('Yesterday')).toBeInTheDocument();
 	});
 
-	it('render date picker calendar date', async () => {
+	it('render date picker calendar date', () => {
 		render(
 			<DatePicker
 				showShortcuts={true}

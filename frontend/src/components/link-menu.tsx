@@ -21,11 +21,7 @@ export default function LinkMenu({
 	children,
 }: LinkMenuProps) {
 	const Wrapper = ({ children }: { children: React.ReactNode }) =>
-		isDisabled ? (
-			<>{children}</>
-		) : (
-			<Link href={href ?? '#'}>{children}</Link>
-		);
+		isDisabled ? { children } : <Link href={href ?? '#'}>{children}</Link>;
 
 	return (
 		<>

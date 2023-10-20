@@ -15,7 +15,7 @@ import (
 	"testing"
 )
 
-func createToken(t *testing.T, applicationID string, tokenName string) db.Token {
+func createToken(t *testing.T, applicationID, tokenName string) db.Token {
 	t.Helper()
 	appID, _ := db.StringToUUID(applicationID)
 	token, err := db.GetQueries().CreateToken(context.TODO(), db.CreateTokenParams{

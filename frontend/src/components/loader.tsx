@@ -8,7 +8,7 @@ export function Loader() {
 				className="animate-spin inline-block w-6 h-6 border-[4px] border-current border-t-transparent text-primary rounded-full"
 				role="status"
 				aria-label="loading"
-			></span>
+			/>
 		</div>
 	);
 }
