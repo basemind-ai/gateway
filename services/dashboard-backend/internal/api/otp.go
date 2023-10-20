@@ -31,5 +31,5 @@ func handleRetrieveProjectOTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJSONResponse(w, http.StatusCreated, dto.OtpDTO{OTP: jwt})
+	serialization.RenderJSONResponse(w, http.StatusOK, dto.OtpDTO{OTP: jwt})
 }

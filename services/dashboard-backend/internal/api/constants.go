@@ -16,7 +16,7 @@ const (
 	PromptConfigDetailEndpoint     = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}"
 	PromptConfigListEndpoint       = "/projects/{projectId}/applications/{applicationId}/prompt-configs"
 	PromptConfigSetDefaultEndpoint = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}/set-default"
-	PromptConfigTestingEndpoint    = "/projects/{projectId}/applications/{applicationId}/prompt-configs/test/{otpHash}"
+	PromptConfigTestingEndpoint    = "/projects/{projectId}/applications/{applicationId}/prompt-configs/test/{otp}"
 )
 
 const (

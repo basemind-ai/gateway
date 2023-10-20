@@ -15,6 +15,15 @@ func SetTestEnv(t *testing.T) {
 	t.Setenv("REDIS_CONNECTION_STRING", "ABC123")
 }
 
+func UnsetTestEnv(t *testing.T) {
+	t.Helper()
+	_ = os.Unsetenv("DATABASE_URL")
+	_ = os.Unsetenv("ENVIRONMENT")
+	_ = os.Unsetenv("JWT_SECRET")
+	_ = os.Unsetenv("PORT")
+	_ = os.Unsetenv("REDIS_CONNECTION_STRING")
+}
+
 func GetSleepTimeout() time.Duration {
 	sleepTimeout, err := time.ParseDuration(os.Getenv("TEST_SLEEP_TIMEOUT"))
 	if err != nil {

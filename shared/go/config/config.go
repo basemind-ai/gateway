@@ -2,8 +2,6 @@ package config
 
 import (
 	"context"
-	"sync"
-
 	"github.com/sethvargo/go-envconfig"
 )
 
@@ -17,14 +15,20 @@ type Config struct {
 }
 
 var (
-	config Config
-	once   sync.Once
+	config *Config
 	err    error
 )
 
-func Get(ctx context.Context) (Config, error) {
-	once.Do(func() {
-		err = envconfig.Process(ctx, &config)
-	})
+func Set(cfg *Config) {
+	config = cfg
+}
+
+func Get(ctx context.Context) (*Config, error) {
+	if config == nil {
+		cfg := Config{}
+		err = envconfig.Process(ctx, &cfg)
+		Set(&cfg)
+	}
+
 	return config, err
 }

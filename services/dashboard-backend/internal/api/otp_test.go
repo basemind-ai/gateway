@@ -38,7 +38,7 @@ func TestOTPAPI(t *testing.T) {
 			url,
 		)
 		assert.NoError(t, requestErr)
-		assert.Equal(t, http.StatusCreated, response.StatusCode)
+		assert.Equal(t, http.StatusOK, response.StatusCode)
 
 		body := dto.OtpDTO{}
 		deserializationErr := serialization.DeserializeJSON(response.Body, &body)
