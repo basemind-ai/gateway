@@ -1,8 +1,7 @@
 name: 'Build'
 on:
-    push:
-        branches:
-            - main
+    release:
+        types: [created]
 env:
     GCP_OIDC_PROVIDER_NAME: github-provider
     GCP_PROJECT_ID: basemind-ai-development
