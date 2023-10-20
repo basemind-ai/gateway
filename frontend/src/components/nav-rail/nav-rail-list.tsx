@@ -40,20 +40,20 @@ export default function NavRailList() {
 				icon={<Search className={ICON_CLASSES} />}
 				isCurrent={navigation.Prompt === pathname}
 			/>
-			{currentProject?.applications?.length && (
+			{currentProject?.applications?.length ? (
 				<LinkMenu
 					isDisabled={true}
 					text={t('application')}
 					icon={<Boxes className={ICON_CLASSES} />}
 				>
-					{currentProject.applications.map((application, i) => {
+					{currentProject.applications.map((application) => {
 						const applicationUrl = populateApplicationId(
 							navigation.Application,
 							application.id,
 						);
 						return (
 							<LinkMenu
-								key={i}
+								key={applicationUrl}
 								href={applicationUrl}
 								text={application.name}
 								isCurrent={applicationUrl === pathname}
@@ -61,7 +61,7 @@ export default function NavRailList() {
 						);
 					})}
 				</LinkMenu>
-			)}
+			) : null}
 			<LinkMenu
 				href={navigation.Api}
 				text={t('api')}

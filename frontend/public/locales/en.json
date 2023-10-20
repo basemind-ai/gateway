@@ -11,16 +11,16 @@
 		"submit": "Submit"
 	},
 	"navrail": {
-		"overview": "Overview",
-		"testing": "Testing",
-		"api": "API",
-		"persistence": "Persistence",
-		"middleware": "Middleware",
 		"abTesting": "A/B Testing",
-		"bannerTitle": "Need Help?",
+		"api": "API",
+		"application": "Application",
 		"bannerBody": "Our customer success team is \nhere for you",
 		"bannerCTA": "Get Support",
-		"application": "Application"
+		"bannerTitle": "Need Help?",
+		"middleware": "Middleware",
+		"overview": "Overview",
+		"persistence": "Persistence",
+		"testing": "Testing"
 	},
 	"signin": {
 		"authHeader": "Welcome to BaseMind",
@@ -37,19 +37,35 @@
 		"newPrompt": "+ New"
 	},
 	"createProject": {
-		"title": "Setup Project",
-		"subTitle": "Create your first project, you can always edit later",
-		"projectInputLabel": "Project Name",
-		"projectInputPlaceholder": "Acme Corporation",
-		"projectInputHelperText": "This is the name of your project",
-		"projectDescriptionInputLabel": "Description",
-		"projectDescriptionInputPlaceholder": "Describe your project",
-		"projectDescriptionInputHelperText": "This is the description of the the project",
 		"cancelButton": "Later",
 		"cancelButtonHelperText": "Close the create project view",
+		"errorComment": "There was an error creating your project",
+		"optional": "optional",
+		"projectDescriptionInputHelperText": "This is the description of the the project",
+		"projectDescriptionInputLabel": "Description",
+		"projectDescriptionInputPlaceholder": "Describe your project",
+		"projectInputHelperText": "This is the name of your project",
+		"projectInputLabel": "Project Name",
+		"projectInputPlaceholder": "Acme Corporation",
 		"submitButton": "Create",
 		"submitButtonHelperText": "Create a new project and application with the given names",
-		"optional": "optional",
-		"errorComment": "There was an error creating your project"
+		"subTitle": "Create your first project, you can always edit later",
+		"title": "Setup Project"
+	},
+	"application": {
+		"apiCalls": "API Calls",
+		"application": "Application",
+		"edit": "Edit",
+		"model": "Model",
+		"modelsCost": "Models Cost",
+		"name": "Name",
+		"newConfiguration": "New Configuration",
+		"overview": "Overview",
+		"promptConfiguration": "Prompt Configuration",
+		"settings": "Settings",
+		"status": "Status",
+		"test": "Test",
+		"tokens": "Tokens",
+		"type": "Type"
 	}
 }

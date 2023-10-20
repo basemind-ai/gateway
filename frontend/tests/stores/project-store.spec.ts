@@ -1,4 +1,8 @@
-import { ApplicationFactory, ProjectFactory } from 'tests/factories';
+import {
+	ApplicationFactory,
+	ProjectFactory,
+	PromptConfigFactory,
+} from 'tests/factories';
 import { renderHook } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
 
@@ -7,10 +11,12 @@ import {
 	useAddProject,
 	useCurrentProject,
 	useGetApplication,
+	useGetPromptConfig,
 	useProject,
 	useSetCurrentProject,
 	useSetProjectApplications,
 	useSetProjects,
+	useSetPromptConfig,
 } from '@/stores/project-store';
 
 describe('project-store tests', () => {
@@ -108,6 +114,25 @@ describe('project-store tests', () => {
 				applications[0].id,
 			);
 			expect(application).toEqual(applications[0]);
+		});
+	});
+
+	describe('useGetPromptConfig and useSetPromptConfig', () => {
+		it('sets and gets prompt config', async () => {
+			const applicationId = '1';
+			const {
+				result: { current: setPromptConfig },
+			} = renderHook(useSetPromptConfig);
+			const promptConfigs = await PromptConfigFactory.batch(2);
+			setPromptConfig(applicationId, promptConfigs);
+
+			const {
+				result: { current: getPromptConfig },
+			} = renderHook(useGetPromptConfig);
+
+			const config = getPromptConfig[applicationId];
+
+			expect(config).toEqual(promptConfigs);
 		});
 	});
 });

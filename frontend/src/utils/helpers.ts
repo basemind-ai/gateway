@@ -12,3 +12,7 @@ export function handleChange<T = any>(
 		cb(event.target.value);
 	};
 }
+
+export function copyToClipboard(text: string) {
+	void navigator.clipboard.writeText(text);
+}

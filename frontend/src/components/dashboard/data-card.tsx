@@ -1,11 +1,12 @@
 import { ReactElement } from 'react';
+import { ArrowUpRight } from 'react-bootstrap-icons';
 
 export interface DataCardProps {
 	imageSrc: ReactElement;
 	metric: string;
-	totalValue: string;
-	currentValue: string;
-	percentage: string;
+	totalValue: string | number;
+	currentValue?: string;
+	percentage?: string;
 }
 
 export function DataCard({
@@ -16,15 +17,25 @@ export function DataCard({
 	percentage,
 }: DataCardProps) {
 	return (
-		<div className="flex flex-col">
-			<div className="text-neutral-content">{metric}</div>
-			<div className="text-2xl font-semibold text-neutral-content flex">
-				{totalValue}
-				<div className="ml-5">{imageSrc}</div>
+		<div className="flex items-center gap-4">
+			<div>
+				<p className="text-neutral-content text-sm">{metric}</p>
+				<h1
+					data-testid="data-card-total-value"
+					className="text-3xl font-semibold text-neutral-content"
+				>
+					{totalValue}
+				</h1>
+				{currentValue && percentage && (
+					<p className="text-neutral-content text-xs font-light flex gap-1.5 items-center">
+						<ArrowUpRight className="w-3 h-3 text-neutral-content" />
+						<span>
+							{currentValue} ({percentage})
+						</span>
+					</p>
+				)}
 			</div>
-			<div className="text-neutral-content">
-				{currentValue} ({percentage})
-			</div>
+			{imageSrc}
 		</div>
 	);
 }
