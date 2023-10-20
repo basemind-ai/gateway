@@ -5,6 +5,8 @@ const rules = {
 	'n/no-process-exit': 0,
 	'sonarjs/elseif-without-else': 0,
 	'unicorn/no-process-exit': 0,
+	'unicorn/catch-error-name': 0,
+	'unicorn/explicit-length-check': 0,
 };
 
 const tsWebRules = {

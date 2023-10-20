@@ -38,7 +38,7 @@
 	},
 	"createProject": {
 		"title": "Setup Project",
-		"Subtitle": "Create your first project, you can always edit later",
+		"subTitle": "Create your first project, you can always edit later",
 		"projectInputLabel": "Project Name",
 		"projectInputPlaceholder": "Acme Corporation",
 		"projectInputHelperText": "This is the name of your project",

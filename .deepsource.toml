@@ -10,6 +10,9 @@ exclude_patterns = [
 
 test_patterns = [
     "**/*_test.go",
+    "**/__mocks__/**",
+    "**/mocks.*",
+    "**/mocks/**",
     "**/test/**",
     "**/tests/**",
 ]
