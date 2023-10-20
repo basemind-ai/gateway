@@ -61,4 +61,4 @@ jobs:
             - name: Test
               run: go test ./... -coverprofile=cover.out
             - name: Upload Coverage Report
-              run: ./bin/deepsource report --analyzer test-coverage --key go --value-file ./coverage.out
+              run: ./bin/deepsource report --analyzer test-coverage --key go --value-file ./cover.out
