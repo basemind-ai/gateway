@@ -13,7 +13,7 @@ import {
 import { HttpMethod } from '@/constants';
 import { ApplicationAnalytics } from '@/types';
 
-describe('applications', () => {
+describe('applications API tests', () => {
 	describe('handleCreateApplication', () => {
 		it('returns an application', async () => {
 			const project = await ProjectFactory.build();

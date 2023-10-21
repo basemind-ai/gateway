@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 import { ProjectFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 
@@ -12,7 +11,7 @@ import {
 import { HttpMethod } from '@/constants';
 import { ProjectAnalytics } from '@/types';
 
-describe('Projects', () => {
+describe('projects API tests', () => {
 	describe('handleCreateProject', () => {
 		it('returns a project', async () => {
 			const project = await ProjectFactory.build();
@@ -108,6 +107,7 @@ describe('Projects', () => {
 				ok: true,
 				json: () => Promise.resolve(),
 			});
+			// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
 			const data = await handleDeleteProject({
 				projectId: project.id,
 			});
