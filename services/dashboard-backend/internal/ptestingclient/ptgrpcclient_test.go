@@ -136,15 +136,15 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		}
 
 		assert.Len(t, chunks, 3)
-		assert.Equal(t, "1", chunks[0].Content)                                  //nolint: gosec
-		assert.Nil(t, chunks[0].FinishReason)                                    //nolint: gosec
-		assert.Nil(t, chunks[0].PromptRequestRecordId)                           //nolint: gosec
-		assert.Equal(t, "2", chunks[1].Content)                                  //nolint: gosec
-		assert.Nil(t, chunks[1].FinishReason)                                    //nolint: gosec
-		assert.Nil(t, chunks[1].PromptRequestRecordId)                           //nolint: gosec
-		assert.Equal(t, "3", chunks[2].Content)                                  //nolint: gosec
-		assert.Equal(t, finishReason, *chunks[2].FinishReason)                   //nolint: gosec
-		assert.Equal(t, promptRequestRecordID, *chunks[2].PromptRequestRecordId) //nolint: gosec
+		assert.Equal(t, "1", chunks[0].Content)
+		assert.Nil(t, chunks[0].FinishReason)
+		assert.Nil(t, chunks[0].PromptRequestRecordId)
+		assert.Equal(t, "2", chunks[1].Content)
+		assert.Nil(t, chunks[1].FinishReason)
+		assert.Nil(t, chunks[1].PromptRequestRecordId)
+		assert.Equal(t, "3", chunks[2].Content)
+		assert.Equal(t, finishReason, *chunks[2].FinishReason)
+		assert.Equal(t, promptRequestRecordID, *chunks[2].PromptRequestRecordId)
 	})
 	t.Run("sends error using the error channel on stream error", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)

@@ -202,12 +202,12 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				}
 
 				assert.Len(t, chunks, 4)
-				assert.Equal(t, "1", chunks[0].Content)            //nolint: gosec
-				assert.Equal(t, "2", chunks[1].Content)            //nolint: gosec
-				assert.Equal(t, "3", chunks[2].Content)            //nolint: gosec
-				assert.Equal(t, "done", *chunks[3].FinishReason)   //nolint: gosec
-				assert.Equal(t, 1, int(*chunks[3].ResponseTokens)) //nolint: gosec
-				assert.Equal(t, 16, int(*chunks[3].RequestTokens)) //nolint: gosec
+				assert.Equal(t, "1", chunks[0].Content)
+				assert.Equal(t, "2", chunks[1].Content)
+				assert.Equal(t, "3", chunks[2].Content)
+				assert.Equal(t, "done", *chunks[3].FinishReason)
+				assert.Equal(t, 1, int(*chunks[3].ResponseTokens))
+				assert.Equal(t, 16, int(*chunks[3].RequestTokens))
 			})
 		})
 	})
@@ -258,11 +258,11 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				}
 
 				assert.Len(t, chunks, 4)
-				assert.Equal(t, "1", chunks[0].Content)           //nolint: gosec
-				assert.Equal(t, "2", chunks[1].Content)           //nolint: gosec
-				assert.Equal(t, "3", chunks[2].Content)           //nolint: gosec
-				assert.Equal(t, "done", *chunks[3].FinishReason)  //nolint: gosec
-				assert.NotNil(t, chunks[3].PromptRequestRecordId) //nolint: gosec
+				assert.Equal(t, "1", chunks[0].Content)
+				assert.Equal(t, "2", chunks[1].Content)
+				assert.Equal(t, "3", chunks[2].Content)
+				assert.Equal(t, "done", *chunks[3].FinishReason)
+				assert.NotNil(t, chunks[3].PromptRequestRecordId)
 			})
 		})
 	})

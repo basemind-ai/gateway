@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
-	loggingMiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	loggingmiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -13,34 +13,34 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func CreateInterceptorLogger(isDebug bool) (loggingMiddleware.Logger, []loggingMiddleware.Option) {
-	loggingEvents := []loggingMiddleware.LoggableEvent{
-		loggingMiddleware.StartCall, loggingMiddleware.FinishCall,
+func CreateInterceptorLogger(isDebug bool) (loggingmiddleware.Logger, []loggingmiddleware.Option) {
+	loggingEvents := []loggingmiddleware.LoggableEvent{
+		loggingmiddleware.StartCall, loggingmiddleware.FinishCall,
 	}
 
 	if isDebug {
 		loggingEvents = append(
 			loggingEvents,
-			loggingMiddleware.PayloadSent, loggingMiddleware.PayloadReceived,
+			loggingmiddleware.PayloadSent, loggingmiddleware.PayloadReceived,
 		)
 	}
 
-	loggingOptions := []loggingMiddleware.Option{
-		loggingMiddleware.WithLogOnEvents(loggingEvents...),
+	loggingOptions := []loggingmiddleware.Option{
+		loggingmiddleware.WithLogOnEvents(loggingEvents...),
 	}
 
-	handlerFunc := loggingMiddleware.LoggerFunc(
-		func(ctx context.Context, lvl loggingMiddleware.Level, msg string, fields ...any) {
+	handlerFunc := loggingmiddleware.LoggerFunc(
+		func(ctx context.Context, lvl loggingmiddleware.Level, msg string, fields ...any) {
 			logger := log.Logger.With().Fields(fields).Logger()
 
 			switch lvl {
-			case loggingMiddleware.LevelDebug:
+			case loggingmiddleware.LevelDebug:
 				logger.Debug().Msg(msg)
-			case loggingMiddleware.LevelInfo:
+			case loggingmiddleware.LevelInfo:
 				logger.Info().Msg(msg)
-			case loggingMiddleware.LevelWarn:
+			case loggingmiddleware.LevelWarn:
 				logger.Warn().Msg(msg)
-			case loggingMiddleware.LevelError:
+			case loggingmiddleware.LevelError:
 				logger.Error().Msg(msg)
 			default:
 				panic(fmt.Sprintf("unknown level %v", lvl))
@@ -74,12 +74,12 @@ func CreateGRPCServer(opts Options, serverOpts ...grpc.ServerOption) *grpc.Serve
 		serverOpts = append(
 			serverOpts,
 			grpc.ChainUnaryInterceptor(
-				loggingMiddleware.UnaryServerInterceptor(interceptorLogger, loggingOptions...),
+				loggingmiddleware.UnaryServerInterceptor(interceptorLogger, loggingOptions...),
 				auth.UnaryServerInterceptor(opts.AuthHandler),
 				recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(RecoveryHandler)),
 			),
 			grpc.ChainStreamInterceptor(
-				loggingMiddleware.StreamServerInterceptor(interceptorLogger, loggingOptions...),
+				loggingmiddleware.StreamServerInterceptor(interceptorLogger, loggingOptions...),
 				auth.StreamServerInterceptor(opts.AuthHandler),
 				recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(RecoveryHandler)),
 			),

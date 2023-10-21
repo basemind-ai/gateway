@@ -66,18 +66,18 @@ func TestRequestStream(t *testing.T) {
 		}
 
 		assert.Len(t, chunks, 4)
-		assert.Equal(t, "1", *chunks[0].Content)  //nolint: gosec
-		assert.Nil(t, chunks[0].RequestRecord)    //nolint: gosec
-		assert.Nil(t, chunks[0].Error)            //nolint: gosec
-		assert.Equal(t, "2", *chunks[1].Content)  //nolint: gosec
-		assert.Nil(t, chunks[1].RequestRecord)    //nolint: gosec
-		assert.Nil(t, chunks[1].Error)            //nolint: gosec
-		assert.Equal(t, "3", *chunks[2].Content)  //nolint: gosec
-		assert.Nil(t, chunks[2].RequestRecord)    //nolint: gosec
-		assert.Nil(t, chunks[2].Error)            //nolint: gosec
-		assert.Nil(t, chunks[3].Content)          //nolint: gosec
-		assert.Nil(t, chunks[3].Error)            //nolint: gosec
-		assert.NotNil(t, chunks[3].RequestRecord) //nolint: gosec
+		assert.Equal(t, "1", *chunks[0].Content)
+		assert.Nil(t, chunks[0].RequestRecord)
+		assert.Nil(t, chunks[0].Error)
+		assert.Equal(t, "2", *chunks[1].Content)
+		assert.Nil(t, chunks[1].RequestRecord)
+		assert.Nil(t, chunks[1].Error)
+		assert.Equal(t, "3", *chunks[2].Content)
+		assert.Nil(t, chunks[2].RequestRecord)
+		assert.Nil(t, chunks[2].Error)
+		assert.Nil(t, chunks[3].Content)
+		assert.Nil(t, chunks[3].Error)
+		assert.NotNil(t, chunks[3].RequestRecord)
 	})
 
 	t.Run("returns an error if the request fails", func(t *testing.T) {

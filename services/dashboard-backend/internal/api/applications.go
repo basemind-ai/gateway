@@ -66,8 +66,9 @@ func handleRetrieveApplications(w http.ResponseWriter, r *http.Request) {
 
 	data := make([]dto.ApplicationDTO, len(applications))
 	for i, application := range applications {
+		appID := application.ID
 		data[i] = dto.ApplicationDTO{
-			ID:          db.UUIDToString(&application.ID),
+			ID:          db.UUIDToString(&appID),
 			Name:        application.Name,
 			Description: application.Description,
 			CreatedAt:   application.CreatedAt.Time,

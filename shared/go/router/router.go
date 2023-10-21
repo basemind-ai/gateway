@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	chiMiddlewares "github.com/go-chi/chi/v5/middleware"
+	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog"
 	"github.com/rs/zerolog/log"
 )
@@ -21,8 +21,8 @@ func New(opts Options) chi.Router {
 	router := chi.NewRouter()
 
 	if opts.Environment != "test" {
-		router.Use(chiMiddlewares.RequestID)
-		router.Use(chiMiddlewares.RealIP)
+		router.Use(chimiddleware.RequestID)
+		router.Use(chimiddleware.RealIP)
 		router.Use(cors.Handler(cors.Options{
 			AllowedOrigins: []string{"*"},
 			AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
@@ -31,8 +31,8 @@ func New(opts Options) chi.Router {
 			Debug:          opts.Environment == "development",
 		}))
 		router.Use(httplog.RequestLogger(log.With().Str("service", opts.ServiceName).Logger()))
-		router.Use(chiMiddlewares.Recoverer)
-		router.Use(chiMiddlewares.Heartbeat("/health-check"))
+		router.Use(chimiddleware.Recoverer)
+		router.Use(chimiddleware.Heartbeat("/health-check"))
 	}
 
 	for _, middleware := range opts.Middlewares {

@@ -459,8 +459,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, deserializationErr)
 
 			assert.Len(t, promptConfigs, 2)
-			assert.Equal(t, firstPromptConfig.Name, promptConfigs[0].Name)  //nolint:gosec
-			assert.Equal(t, secondPromptConfig.Name, promptConfigs[1].Name) //nolint:gosec
+			assert.Equal(t, firstPromptConfig.Name, promptConfigs[0].Name)
+			assert.Equal(t, secondPromptConfig.Name, promptConfigs[1].Name)
 		})
 
 		t.Run("returns empty array when no prompt configs are found", func(t *testing.T) {

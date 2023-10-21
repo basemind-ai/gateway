@@ -58,12 +58,12 @@ func TestTokensAPI(t *testing.T) {
 			assert.NoError(t, deserializationErr)
 
 			assert.Len(t, data, 2)
-			assert.Equal(t, db.UUIDToString(&token1.ID), data[0].ID) //nolint: gosec
-			assert.Equal(t, token1.Name, data[0].Name)               //nolint: gosec
-			assert.Nil(t, data[0].Hash)                              //nolint: gosec
-			assert.Equal(t, db.UUIDToString(&token2.ID), data[1].ID) //nolint: gosec
-			assert.Equal(t, token2.Name, data[1].Name)               //nolint: gosec
-			assert.Nil(t, data[1].Hash)                              //nolint: gosec
+			assert.Equal(t, db.UUIDToString(&token1.ID), data[0].ID)
+			assert.Equal(t, token1.Name, data[0].Name)
+			assert.Nil(t, data[0].Hash)
+			assert.Equal(t, db.UUIDToString(&token2.ID), data[1].ID)
+			assert.Equal(t, token2.Name, data[1].Name)
+			assert.Nil(t, data[1].Hash)
 		})
 
 		for _, permission := range []db.AccessPermissionType{

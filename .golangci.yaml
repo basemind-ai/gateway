@@ -6,6 +6,8 @@ linters-settings:
         rules:
             - name: file-header
               disabled: true
+            - name: unchecked-type-assertion
+              disabled: true
             - name: comment-spacings
               disabled: true
             - name: function-length

@@ -186,18 +186,18 @@ func TestPromptTestingAPI(t *testing.T) {
 		}
 
 		assert.Len(t, chunks, 3)
-		assert.Equal(t, &mockService.Stream[0].Content, chunks[0].Content) //nolint: gosec
-		assert.Nil(t, chunks[0].FinishReason)                              //nolint: gosec
-		assert.Nil(t, chunks[0].PromptTestRecordID)                        //nolint: gosec
-		assert.Equal(t, &mockService.Stream[1].Content, chunks[1].Content) //nolint: gosec
-		assert.Nil(t, chunks[1].FinishReason)                              //nolint: gosec
-		assert.Nil(t, chunks[1].PromptTestRecordID)                        //nolint: gosec
-		assert.Equal(t, &mockService.Stream[2].Content, chunks[2].Content) //nolint: gosec
-		assert.Equal(t, finishReason, *chunks[2].FinishReason)             //nolint: gosec
-		assert.NotNil(t, *chunks[2].PromptTestRecordID)                    //nolint: gosec
+		assert.Equal(t, &mockService.Stream[0].Content, chunks[0].Content)
+		assert.Nil(t, chunks[0].FinishReason)
+		assert.Nil(t, chunks[0].PromptTestRecordID)
+		assert.Equal(t, &mockService.Stream[1].Content, chunks[1].Content)
+		assert.Nil(t, chunks[1].FinishReason)
+		assert.Nil(t, chunks[1].PromptTestRecordID)
+		assert.Equal(t, &mockService.Stream[2].Content, chunks[2].Content)
+		assert.Equal(t, finishReason, *chunks[2].FinishReason)
+		assert.NotNil(t, *chunks[2].PromptTestRecordID)
 
 		promptTestRecordID, parseErr := db.StringToUUID(
-			*chunks[2].PromptTestRecordID, //nolint: gosec
+			*chunks[2].PromptTestRecordID,
 		)
 		assert.NoError(t, parseErr)
 
@@ -246,8 +246,8 @@ func TestPromptTestingAPI(t *testing.T) {
 			break
 		}
 
-		assert.NotNil(t, chunks[0].ErrorMessage)               //nolint: gosec
-		assert.Equal(t, *chunks[0].FinishReason, finishReason) //nolint: gosec
+		assert.NotNil(t, chunks[0].ErrorMessage)
+		assert.Equal(t, *chunks[0].FinishReason, finishReason)
 	})
 
 	t.Run(

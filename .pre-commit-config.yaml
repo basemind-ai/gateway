@@ -36,7 +36,7 @@ repos:
             args: [--fix]
             exclude: 'gen/ts'
     - repo: https://github.com/golangci/golangci-lint
-      rev: 'v1.54.2'
+      rev: 'v1.55.0'
       hooks:
           - id: golangci-lint
             args: ['--timeout', '3m0s']

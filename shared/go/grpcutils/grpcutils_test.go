@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
-	loggingMiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	loggingmiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -40,10 +40,10 @@ func TestGrpcUtils(t *testing.T) {
 			var buf bytes.Buffer
 			log.Logger = log.Output(&buf)
 
-			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelDebug, "debug message")
-			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelInfo, "info message")
-			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelWarn, "warn message")
-			loggerFunc.Log(context.TODO(), loggingMiddleware.LevelError, "error message")
+			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelDebug, "debug message")
+			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelInfo, "info message")
+			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelWarn, "warn message")
+			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelError, "error message")
 
 			assert.Contains(t, buf.String(), "debug message")
 			assert.Contains(t, buf.String(), "info message")
