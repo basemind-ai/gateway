@@ -8,6 +8,7 @@ const rules = {
 	'unicorn/no-process-exit': 0,
 	'unicorn/catch-error-name': 0,
 	'unicorn/explicit-length-check': 0,
+	'@typescript-eslint/no-confusing-void-expression': 0,
 };
 
 const tsWebRules = {

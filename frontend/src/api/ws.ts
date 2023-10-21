@@ -2,7 +2,7 @@ import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
 import { OTP, PromptConfigTestDTO, PromptConfigTestResultChunk } from '@/types';
 
-async function handleCreateOTP({
+export async function handleCreateOTP({
 	projectId,
 }: {
 	projectId: string;
@@ -18,16 +18,18 @@ export async function createWebsocket<
 	M extends Record<string, string | number> = Record<string, string | number>,
 >({
 	applicationId,
+	projectId,
 	data,
 	handleClose,
 	handleMessage,
-	projectId,
+	handleError,
 }: {
 	projectId: string;
 	applicationId: string;
 	data: PromptConfigTestDTO<P, M>;
 	handleClose: (event: CloseEvent) => void;
 	handleMessage: (event: MessageEvent<PromptConfigTestResultChunk>) => void;
+	handleError: (event: Event) => void;
 }) {
 	// we need to create an OTP to access the websocket.
 	// The OTP is valid for one minute and it should be sent as a query param.
@@ -38,8 +40,13 @@ export async function createWebsocket<
 	);
 
 	websocket.addEventListener('open', () => {
-		websocket.send(JSON.stringify(data));
+		if (websocket.readyState === WebSocket.OPEN) {
+			websocket.send(JSON.stringify(data));
+		}
 	});
 	websocket.addEventListener('message', handleMessage);
 	websocket.addEventListener('close', handleClose);
+	websocket.addEventListener('error', handleError);
+
+	return websocket;
 }
