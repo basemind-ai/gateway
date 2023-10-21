@@ -75,6 +75,7 @@ export function ApplicationAnalytics({
 
 	const oneWeekAgo = new Date();
 	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
 	const [dateRange, setDateRange] = useState<DateValueType>({
 		startDate: oneWeekAgo,
 		endDate: new Date(),
