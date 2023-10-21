@@ -115,6 +115,7 @@ export type OpenAIPromptMessage = {
 			role: 'function';
 	  }
 );
+
 // UserAccount
 
 export type AddUserToProjectBody = {
@@ -135,4 +136,33 @@ export interface ProjectUserAccount {
 	photoUrl: string;
 	createdAt: string;
 	permission: AccessPermission;
+}
+
+// OTP
+
+export interface OTP {
+	otp: string;
+}
+
+// Prompt Testing
+
+export interface PromptConfigTestDTO<
+	P extends Record<string, string | number> = Record<string, string | number>,
+	M extends Record<string, string | number> = Record<string, string | number>,
+> {
+	name: string;
+	modelParameters: P;
+	modelType: ModelType;
+	modelVendor: ModelVendor;
+	promptMessages: M[];
+	templateVariables: Record<string, string>;
+	promptConfigId?: string;
+}
+
+export interface PromptConfigTestResultChunk {
+	content?: string;
+	errorMessage?: string;
+	finishReason?: string;
+	promptConfigId?: string;
+	promptTestRecordId?: string;
 }
