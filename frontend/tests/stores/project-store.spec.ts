@@ -10,18 +10,18 @@ import { beforeEach, describe, expect } from 'vitest';
 import {
 	projectStoreStateCreator,
 	useAddProject,
+	useApplication,
+	useApplications,
 	useCurrentProject,
 	useDeleteApplication,
-	useGetApplication,
-	useGetApplications,
-	useGetPromptConfig,
-	useGetTokens,
 	useProject,
+	usePromptConfig,
 	useSetCurrentProject,
 	useSetProjectApplications,
 	useSetProjects,
 	useSetPromptConfig,
 	useSetTokens,
+	useTokens,
 	useUpdateApplication,
 } from '@/stores/project-store';
 
@@ -88,10 +88,9 @@ describe('project-store tests', () => {
 			setCurrentProject(projects[0].id);
 
 			const {
-				result: { current: getCurrentProject },
+				result: { current: currentProject },
 			} = renderHook(useCurrentProject);
 
-			const currentProject = getCurrentProject();
 			expect(currentProject).toEqual(projects[0]);
 		});
 	});
@@ -112,10 +111,10 @@ describe('project-store tests', () => {
 			setProjectApplications(projects[0].id, applications);
 
 			const {
-				result: { current: applicationMap },
-			} = renderHook(useGetApplications);
+				result: { current: applicationRes },
+			} = renderHook(() => useApplications(projects[0].id));
 
-			expect(applicationMap[projects[0].id]).toEqual(applications);
+			expect(applicationRes).toEqual(applications);
 		});
 
 		it('deletes project application', async () => {
@@ -139,7 +138,7 @@ describe('project-store tests', () => {
 			const {
 				result: { current: application },
 			} = renderHook(() =>
-				useGetApplication(projects[0].id, applications[0].id),
+				useApplication(projects[0].id, applications[0].id),
 			);
 			expect(application).toBeUndefined();
 		});
@@ -173,7 +172,7 @@ describe('project-store tests', () => {
 			const {
 				result: { current: application },
 			} = renderHook(() =>
-				useGetApplication(projects[0].id, applications[0].id),
+				useApplication(projects[0].id, applications[0].id),
 			);
 			expect(application).toStrictEqual(modifiedApplication);
 		});
@@ -190,7 +189,7 @@ describe('project-store tests', () => {
 
 			const {
 				result: { current: getPromptConfig },
-			} = renderHook(useGetPromptConfig);
+			} = renderHook(usePromptConfig);
 
 			const config = getPromptConfig[applicationId];
 
@@ -210,7 +209,7 @@ describe('project-store tests', () => {
 
 			const {
 				result: { current: tokenRes },
-			} = renderHook(() => useGetTokens(applicationId));
+			} = renderHook(() => useTokens(applicationId));
 
 			expect(tokenRes).toBe(tokens);
 		});

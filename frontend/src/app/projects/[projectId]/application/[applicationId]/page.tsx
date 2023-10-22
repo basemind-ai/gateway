@@ -34,13 +34,14 @@ import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import {
+	useApplication,
 	useDeleteApplication,
-	useGetApplication,
-	useGetPromptConfig,
-	useGetTokens,
+	usePromptConfig,
 	useSetPromptConfig,
 	useSetTokens,
+	useTokens,
 	useUpdateApplication,
 } from '@/stores/project-store';
 import { useDateFormat } from '@/stores/user-config-store';
@@ -60,9 +61,9 @@ export default function Application({
 	params: { projectId: string; applicationId: string };
 }) {
 	useAuthenticatedUser();
+	useProjectBootstrap(false);
 	const t = useTranslations('application');
-	const router = useRouter();
-	const application = useGetApplication(projectId, applicationId);
+	const application = useApplication(projectId, applicationId);
 
 	const tabs: TabData<TAB_NAMES>[] = [
 		{
@@ -82,12 +83,6 @@ export default function Application({
 		},
 	];
 	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
-
-	useEffect(() => {
-		if (!application) {
-			router.replace(Navigation.Projects);
-		}
-	}, []);
 
 	if (!application) {
 		return null;
@@ -218,7 +213,7 @@ export function ApplicationPromptConfigs({
 }) {
 	const t = useTranslations('application');
 	const setPromptConfig = useSetPromptConfig();
-	const promptConfigs = useGetPromptConfig();
+	const promptConfigs = usePromptConfig();
 
 	async function fetchPromptConfig() {
 		const promptConfigRes = await handleRetrievePromptConfigs({
@@ -299,7 +294,7 @@ export function ApplicationGeneralSettings({
 	applicationId: string;
 }) {
 	const t = useTranslations('application');
-	const application = useGetApplication(projectId, applicationId);
+	const application = useApplication(projectId, applicationId);
 	const updateApplication = useUpdateApplication();
 
 	const [name, setName] = useState(application?.name);
@@ -312,7 +307,7 @@ export function ApplicationGeneralSettings({
 		string | undefined
 	>();
 	const setPromptConfig = useSetPromptConfig();
-	const promptConfigs = useGetPromptConfig();
+	const promptConfigs = usePromptConfig();
 
 	const isChanged =
 		name !== application?.name ||
@@ -460,7 +455,7 @@ export function ApplicationDeletion({
 }) {
 	const router = useRouter();
 	const t = useTranslations('application');
-	const application = useGetApplication(projectId, applicationId);
+	const application = useApplication(projectId, applicationId);
 	const deleteApplicationHook = useDeleteApplication();
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -538,7 +533,7 @@ export function ApiKeys({
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
 
-	const tokens = useGetTokens(applicationId);
+	const tokens = useTokens(applicationId);
 	const setTokens = useSetTokens();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);

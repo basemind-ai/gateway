@@ -12,7 +12,7 @@ import {
 
 import Badge from '@/components/badge';
 import LinkMenu from '@/components/link-menu';
-import { useCurrentProject, useGetApplications } from '@/stores/project-store';
+import { useApplications, useCurrentProject } from '@/stores/project-store';
 import { contextNavigation, populateApplicationId } from '@/utils/navigation';
 
 const ICON_CLASSES = 'w-3.5 h-3.5';
@@ -20,13 +20,10 @@ const ICON_CLASSES = 'w-3.5 h-3.5';
 export default function NavRailList() {
 	const t = useTranslations('navrail');
 	const [pathname] = usePathname().split('?');
-	const currentProject = useCurrentProject()();
+	// TODO: Remove this hook if current project can be ALWAYS derived from path
+	const currentProject = useCurrentProject();
 	const navigation = contextNavigation(currentProject?.id);
-	const applications = useGetApplications();
-
-	const projectApplications = currentProject
-		? applications[currentProject.id]
-		: undefined;
+	const projectApplications = useApplications(currentProject?.id);
 
 	return (
 		<div
@@ -34,10 +31,10 @@ export default function NavRailList() {
 			data-testid="nav-rail-list"
 		>
 			<LinkMenu
-				href={navigation.Dashboard}
+				href={navigation.Overview}
 				text={t('overview')}
 				icon={<HouseDoor className={ICON_CLASSES} />}
-				isCurrent={navigation.Dashboard === pathname}
+				isCurrent={navigation.Overview === pathname}
 			/>
 			<LinkMenu
 				href={navigation.Prompt}

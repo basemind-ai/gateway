@@ -1,7 +1,7 @@
 export enum Navigation {
 	Api = '/projects/:projectId/api',
 	Base = '/',
-	Dashboard = '/projects/:projectId/dashboard',
+	Overview = '/projects/:projectId',
 	Projects = '/projects',
 	CreateProject = '/projects/create',
 	Prompt = '/projects/:projectId/prompt',

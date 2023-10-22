@@ -5,7 +5,11 @@ import { expect } from 'vitest';
 
 import Projects from '@/app/projects/page';
 import { Navigation } from '@/constants';
-import { useGetApplications, useProjects } from '@/stores/project-store';
+import {
+	useApplications,
+	useProjects,
+	useSetProjects,
+} from '@/stores/project-store';
 
 describe('projects page tests', () => {
 	it('should route to sign in page when user is not present', async () => {
@@ -29,10 +33,17 @@ describe('projects page tests', () => {
 			ok: true,
 			json: () => Promise.resolve(projects),
 		});
+		mockFetch.mockResolvedValueOnce({
+			ok: true,
+			json: () => Promise.resolve([]),
+		});
+		const { result: setProjects } = renderHook(() => useSetProjects());
+		setProjects.current([]);
+
 		render(<Projects />);
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(
-				`${Navigation.Projects}/${projects[0].id}/dashboard`,
+				`${Navigation.Projects}/${projects[0].id}`,
 			);
 		});
 	});
@@ -42,6 +53,9 @@ describe('projects page tests', () => {
 			ok: true,
 			json: () => Promise.resolve([]),
 		});
+		const { result: setProjects } = renderHook(() => useSetProjects());
+		setProjects.current([]);
+
 		render(<Projects />);
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(
@@ -55,17 +69,22 @@ describe('projects page tests', () => {
 			ok: true,
 			json: () => Promise.resolve([]),
 		});
+		const { result: setProjects } = renderHook(() => useSetProjects());
+		setProjects.current([]);
 		render(<Projects />);
 		const projectsViewLoading = screen.getByTestId('projects-view-loading');
 		expect(projectsViewLoading).toBeInTheDocument();
 	});
 
 	it('rendering projects component change store value', async () => {
+		const { result: setProjects } = renderHook(() => useSetProjects());
+		setProjects.current([]);
+
 		const projects = await ProjectFactory.batch(3);
 		const applications = await ApplicationFactory.batch(2);
 		const { result } = renderHook(() => useProjects());
 		const { result: applicationsResult } = renderHook(() =>
-			useGetApplications(),
+			useApplications(projects[0].id),
 		);
 		act(() => {
 			mockFetch.mockResolvedValueOnce({
@@ -82,8 +101,6 @@ describe('projects page tests', () => {
 		await waitFor(() => {
 			expect(result.current).toEqual(projects);
 		});
-		expect(applicationsResult.current[projects[0].id]).toEqual(
-			applications,
-		);
+		expect(applicationsResult.current).toEqual(applications);
 	});
 });
