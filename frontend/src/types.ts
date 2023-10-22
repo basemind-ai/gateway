@@ -146,7 +146,7 @@ export interface OTP {
 
 // Prompt Testing
 
-export interface PromptConfigTestDTO<
+export interface PromptConfigTest<
 	P extends Record<string, string | number> = Record<string, string | number>,
 	M extends Record<string, string | number> = Record<string, string | number>,
 > {

@@ -29,7 +29,7 @@
 		"react-icons": "^4.11.0",
 		"react-intl": "^6.5.0",
 		"react-tailwindcss-datepicker": "^1.6.6",
-		"zustand": "^4.4.3"
+		"zustand": "^4.4.4"
 	},
 	"devDependencies": {
 		"@storybook/addon-essentials": "^7.5.1",
