@@ -38,10 +38,12 @@ export function createWebsocketURL({
 	return url.toString();
 }
 
-export async function createWebsocket<
-	P extends Record<string, string | number> = Record<string, string | number>,
-	M extends Record<string, string | number> = Record<string, string | number>,
->({
+export interface WebsocketHandler<P, M> {
+	closeSocket: () => void;
+	sendMessage: (message: PromptConfigTest<P, M>) => Promise<void>;
+}
+
+export async function createWebsocket<P, M>({
 	applicationId,
 	projectId,
 	handleClose,
@@ -53,10 +55,7 @@ export async function createWebsocket<
 	handleClose: (isError: boolean, reason: string) => void;
 	handleMessage: (event: MessageEvent<PromptConfigTestResultChunk>) => void;
 	handleError: (event: Event) => void;
-}): Promise<{
-	closeSocket: () => void;
-	sendMessage: (message: PromptConfigTest<P, M>) => Promise<void>;
-}> {
+}): Promise<WebsocketHandler<P, M>> {
 	// we need to create an OTP to access the websocket.
 	// The OTP is valid for one minute and it should be sent as a query param.
 	const { otp } = await handleCreateOTP({ projectId });
