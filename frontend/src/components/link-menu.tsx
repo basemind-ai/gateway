@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 
-interface LinkMenuProps {
+export interface LinkMenuProps {
 	text?: string;
 	icon?: React.ReactElement;
 	badge?: React.ReactNode;
@@ -24,7 +24,9 @@ export default function LinkMenu({
 		isDisabled ? (
 			<>{children}</>
 		) : (
-			<Link href={href ?? '#'}>{children}</Link>
+			<Link data-testid="link-menu-anchor" href={href ?? '#'}>
+				{children}
+			</Link>
 		);
 
 	return (

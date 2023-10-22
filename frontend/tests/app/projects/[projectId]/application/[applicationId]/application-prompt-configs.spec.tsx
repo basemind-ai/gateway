@@ -8,6 +8,7 @@ import { ApplicationPromptConfigs } from '@/app/projects/[projectId]/application
 
 describe('ApplicationPromptConfigs', () => {
 	// TODO: add more tests when adding new config, test and edit functionality
+	// This component is incomplete as of now
 	const projectId = '1';
 	const applicationId = '2';
 	const handleRetrievePromptConfigsSpy = vi.spyOn(

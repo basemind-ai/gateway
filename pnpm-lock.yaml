@@ -130,6 +130,9 @@ importers:
             '@firebase/auth':
                 specifier: ^1.3.0
                 version: 1.3.0(@firebase/app@0.9.20)(encoding@0.1.13)
+            dayjs:
+                specifier: ^1.11.10
+                version: 1.11.10
             deepmerge-ts:
                 specifier: ^5.1.0
                 version: 5.1.0

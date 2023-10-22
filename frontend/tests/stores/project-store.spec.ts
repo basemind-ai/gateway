@@ -2,21 +2,27 @@ import {
 	ApplicationFactory,
 	ProjectFactory,
 	PromptConfigFactory,
+	TokenFactory,
 } from 'tests/factories';
 import { renderHook } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
+import { beforeEach, describe, expect } from 'vitest';
 
 import {
 	projectStoreStateCreator,
 	useAddProject,
 	useCurrentProject,
+	useDeleteApplication,
 	useGetApplication,
+	useGetApplications,
 	useGetPromptConfig,
+	useGetTokens,
 	useProject,
 	useSetCurrentProject,
 	useSetProjectApplications,
 	useSetProjects,
 	useSetPromptConfig,
+	useSetTokens,
+	useUpdateApplication,
 } from '@/stores/project-store';
 
 describe('project-store tests', () => {
@@ -68,7 +74,7 @@ describe('project-store tests', () => {
 		});
 	});
 
-	describe('setCurrentProject and getCurrentProject', () => {
+	describe('setCurrentProject and currentProject', () => {
 		it('sets and gets current project', async () => {
 			const {
 				result: { current: setProjects },
@@ -90,7 +96,7 @@ describe('project-store tests', () => {
 		});
 	});
 
-	describe('setProjectApplications and getApplication', () => {
+	describe('setProjectApplications, getApplications, getApplication, deleteApplication and updateApplication', () => {
 		it('sets and gets project applications', async () => {
 			const {
 				result: { current: setProjects },
@@ -106,18 +112,74 @@ describe('project-store tests', () => {
 			setProjectApplications(projects[0].id, applications);
 
 			const {
-				result: { current: getApplication },
-			} = renderHook(useGetApplication);
+				result: { current: applicationMap },
+			} = renderHook(useGetApplications);
 
-			const application = getApplication(
+			expect(applicationMap[projects[0].id]).toEqual(applications);
+		});
+
+		it('deletes project application', async () => {
+			const {
+				result: { current: setProjects },
+			} = renderHook(useSetProjects);
+			const projects = await ProjectFactory.batch(1);
+			setProjects(projects);
+
+			const {
+				result: { current: setProjectApplications },
+			} = renderHook(useSetProjectApplications);
+			const applications = await ApplicationFactory.batch(1);
+			setProjectApplications(projects[0].id, applications);
+
+			const {
+				result: { current: deleteApplication },
+			} = renderHook(useDeleteApplication);
+			deleteApplication(projects[0].id, applications[0].id);
+
+			const {
+				result: { current: application },
+			} = renderHook(() =>
+				useGetApplication(projects[0].id, applications[0].id),
+			);
+			expect(application).toBeUndefined();
+		});
+
+		it('updates project application', async () => {
+			const {
+				result: { current: setProjects },
+			} = renderHook(useSetProjects);
+			const projects = await ProjectFactory.batch(1);
+			setProjects(projects);
+
+			const {
+				result: { current: setProjectApplications },
+			} = renderHook(useSetProjectApplications);
+			const applications = await ApplicationFactory.batch(1);
+			setProjectApplications(projects[0].id, applications);
+
+			const {
+				result: { current: updateApplication },
+			} = renderHook(useUpdateApplication);
+			const modifiedApplication = {
+				...applications[0],
+				name: 'newName',
+			};
+			updateApplication(
 				projects[0].id,
 				applications[0].id,
+				modifiedApplication,
 			);
-			expect(application).toEqual(applications[0]);
+
+			const {
+				result: { current: application },
+			} = renderHook(() =>
+				useGetApplication(projects[0].id, applications[0].id),
+			);
+			expect(application).toStrictEqual(modifiedApplication);
 		});
 	});
 
-	describe('useGetPromptConfig and useSetPromptConfig', () => {
+	describe('getPromptConfig and setPromptConfig', () => {
 		it('sets and gets prompt config', async () => {
 			const applicationId = '1';
 			const {
@@ -133,6 +195,24 @@ describe('project-store tests', () => {
 			const config = getPromptConfig[applicationId];
 
 			expect(config).toEqual(promptConfigs);
+		});
+	});
+
+	describe('getTokens and setTokens', () => {
+		it('sets and gets tokens', async () => {
+			const {
+				result: { current: setTokens },
+			} = renderHook(useSetTokens);
+			const tokens = await TokenFactory.batch(2);
+
+			const applicationId = '1';
+			setTokens(applicationId, tokens);
+
+			const {
+				result: { current: tokenRes },
+			} = renderHook(() => useGetTokens(applicationId));
+
+			expect(tokenRes).toBe(tokens);
 		});
 	});
 });

@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
-import { Application, Project, PromptConfig } from '@/types';
+import { Application, Project, PromptConfig, Token } from '@/types';
 
 export interface ProjectStore {
 	projects: Project[];
+	applications: Record<string, Application[] | undefined>;
 	promptConfigs: Record<string, PromptConfig[] | undefined>;
+	tokens: Record<string, Token[] | undefined>;
 	currentProjectId: string | null;
 	setProjects: (projects: Project[]) => void;
 	addProject: (project: Project) => void;
@@ -15,14 +17,17 @@ export interface ProjectStore {
 		projectId: string,
 		applications: Application[],
 	) => void;
-	getApplication: (
+	deleteApplication: (projectId: string, applicationId: string) => void;
+	updateApplication: (
 		projectId: string,
 		applicationId: string,
-	) => Application | undefined;
+		application: Application,
+	) => void;
 	setPromptConfig: (
 		applicationId: string,
 		promptConfig: PromptConfig[],
 	) => void;
+	setTokens: (applicationId: string, tokens: Token[]) => void;
 }
 
 export const projectStoreStateCreator: StateCreator<ProjectStore> = (
@@ -30,7 +35,9 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 	get,
 ) => ({
 	projects: [],
+	applications: {},
 	promptConfigs: {},
+	tokens: {},
 	currentProjectId: null,
 	setProjects: (projects: Project[]) => {
 		set({ projects });
@@ -52,34 +59,64 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 		projectId: string,
 		applications: Application[],
 	) => {
-		const project = get().projects.find(
-			(project) => project.id === projectId,
-		);
-		if (!project) {
-			return;
-		}
-		const updatedProject = {
-			...project,
-			applications,
-		};
-		set(() => ({
-			projects: get().projects.map((project) =>
-				project.id === projectId ? updatedProject : project,
-			),
+		set((state) => ({
+			applications: {
+				...state.applications,
+				[projectId]: applications,
+			},
 		}));
 	},
-	getApplication: (projectId: string, applicationId: string) => {
-		return get()
-			.projects.find((project) => project.id === projectId)
-			?.applications?.find(
-				(application) => application.id === applicationId,
-			);
+	deleteApplication: (projectId: string, applicationId: string) => {
+		const projectApplications = get().applications[projectId];
+		if (!projectApplications) {
+			return;
+		}
+
+		const applications = projectApplications.filter(
+			(application) => application.id !== applicationId,
+		);
+
+		set((state) => ({
+			applications: {
+				...state.applications,
+				[projectId]: applications,
+			},
+		}));
+	},
+	updateApplication: (
+		projectId: string,
+		applicationId: string,
+		updatedApplication: Application,
+	) => {
+		const projectApplications = get().applications[projectId];
+		if (!projectApplications) {
+			return;
+		}
+
+		const applications = projectApplications.map((application) =>
+			application.id === applicationId ? updatedApplication : application,
+		);
+
+		set((state) => ({
+			applications: {
+				...state.applications,
+				[projectId]: applications,
+			},
+		}));
 	},
 	setPromptConfig: (applicationId: string, promptConfig: PromptConfig[]) => {
 		set((state) => ({
 			promptConfigs: {
 				...state.promptConfigs,
 				[applicationId]: promptConfig,
+			},
+		}));
+	},
+	setTokens: (applicationId: string, tokens: Token[]) => {
+		set((state) => ({
+			tokens: {
+				...state.tokens,
+				[applicationId]: tokens,
 			},
 		}));
 	},
@@ -99,7 +136,24 @@ export const useSetCurrentProject = () =>
 	useProjectStore((s) => s.setCurrentProject);
 export const useSetProjectApplications = () =>
 	useProjectStore((s) => s.setProjectApplications);
-export const useGetApplication = () => useProjectStore((s) => s.getApplication);
+export const useGetApplications = () => useProjectStore((s) => s.applications);
+export const useGetApplication = (projectId: string, applicationId: string) =>
+	useProjectStore((s) => {
+		const projectApplications = s.applications[projectId];
+		if (!projectApplications) {
+			return;
+		}
+		return projectApplications.find(
+			(application) => application.id === applicationId,
+		);
+	});
+export const useDeleteApplication = () =>
+	useProjectStore((s) => s.deleteApplication);
+export const useUpdateApplication = () =>
+	useProjectStore((s) => s.updateApplication);
 export const useGetPromptConfig = () => useProjectStore((s) => s.promptConfigs);
 export const useSetPromptConfig = () =>
 	useProjectStore((s) => s.setPromptConfig);
+export const useGetTokens = (applicationId: string) =>
+	useProjectStore((s) => s.tokens[applicationId]);
+export const useSetTokens = () => useProjectStore((s) => s.setTokens);

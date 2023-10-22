@@ -20,3 +20,9 @@ export enum HttpMethod {
 	Put = 'PUT',
 	Delete = 'DELETE',
 }
+
+export enum DateFormat {
+	ISO = 'DD/MM/YYYY',
+	AMERICAN = 'MM/DD/YYYY',
+	CHINESE = 'YYYY/MM/DD',
+}
