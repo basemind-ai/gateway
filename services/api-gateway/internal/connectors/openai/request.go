@@ -17,7 +17,7 @@ func (c *Client) RequestPrompt(
 	templateVariables map[string]string,
 ) dto.PromptResultDTO {
 	promptRequest, createPromptRequestErr := CreatePromptRequest(
-		requestConfiguration.ApplicationIDString,
+		requestConfiguration.ApplicationID,
 		requestConfiguration.PromptConfigData.ModelType,
 		requestConfiguration.PromptConfigData.ModelParameters,
 		requestConfiguration.PromptConfigData.ProviderPromptMessages,

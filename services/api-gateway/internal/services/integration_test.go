@@ -79,23 +79,26 @@ func createTestCache(
 
 func TestIntegration(t *testing.T) { //nolint: revive
 	project, _ := factories.CreateProject(context.Background())
-	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	promptConfig, _ := factories.CreatePromptConfig(context.Background(), application.ID)
+
 	modelParameters, _ := factories.CreateModelParameters()
 	promptMessages, _ := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
 
 	openaiService := createOpenAIService(t)
 	requestConfigurationDTO := createRequestConfigurationDTO(t, project.ID)
+	token, _ := factories.CreateApplicationInternalToken(
+		context.TODO(),
+		requestConfigurationDTO.ApplicationID,
+	)
 	jwtToken, jwtCreateErr := jwtutils.CreateJWT(
 		time.Minute,
 		[]byte(JWTSecret),
-		requestConfigurationDTO.ApplicationIDString,
+		db.UUIDToString(&token.ID),
 	)
 	templateVariables := map[string]string{"userInput": "I'm a rainbow"}
 	expectedTemplateVariables := []string{"userInput"}
 
-	applicationID := db.UUIDToString(&application.ID)
-	promptConfigID := db.UUIDToString(&promptConfig.ID)
+	applicationID := db.UUIDToString(&requestConfigurationDTO.ApplicationID)
+	promptConfigID := db.UUIDToString(&requestConfigurationDTO.PromptConfigID)
 
 	assert.NoError(t, jwtCreateErr)
 
@@ -105,7 +108,7 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				client := createGatewayServiceClient(t)
 				cacheClient, mockRedis := createTestCache(
 					t,
-					requestConfigurationDTO.ApplicationIDString,
+					db.UUIDToString(&requestConfigurationDTO.ApplicationID),
 				)
 
 				expectedResponseContent := "Response content"
@@ -117,8 +120,9 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
 				assert.NoError(t, marshalErr)
 
-				mockRedis.ExpectGet(requestConfigurationDTO.ApplicationIDString).RedisNil()
-				mockRedis.ExpectSet(requestConfigurationDTO.ApplicationIDString, expectedCacheValue, time.Hour/2).
+				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+					RedisNil()
+				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
 					SetVal("OK")
 
 				outgoingContext := metadata.AppendToOutgoingContext(
@@ -136,7 +140,7 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				assert.NoError(t, firstResponseErr)
 				assert.Equal(t, expectedResponseContent, firstResponse.Content)
 
-				mockRedis.ExpectGet(requestConfigurationDTO.ApplicationIDString).
+				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 					SetVal(string(expectedCacheValue))
 
 				secondResponse, secondResponseErr := client.RequestPrompt(
@@ -155,7 +159,7 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				client := createGatewayServiceClient(t)
 				cacheClient, mockRedis := createTestCache(
 					t,
-					requestConfigurationDTO.ApplicationIDString,
+					db.UUIDToString(&requestConfigurationDTO.ApplicationID),
 				)
 
 				finishReason := "done"
@@ -169,8 +173,9 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
 				assert.NoError(t, marshalErr)
 
-				mockRedis.ExpectGet(requestConfigurationDTO.ApplicationIDString).RedisNil()
-				mockRedis.ExpectSet(requestConfigurationDTO.ApplicationIDString, expectedCacheValue, time.Hour/2).
+				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+					RedisNil()
+				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
 					SetVal("OK")
 
 				outgoingContext := metadata.AppendToOutgoingContext(

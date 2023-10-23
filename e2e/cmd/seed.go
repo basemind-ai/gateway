@@ -46,5 +46,14 @@ var seedCommand = &cobra.Command{
 			log.Fatal().Err(promptConfigCreateErr).Msg("failed to create application prompt config")
 		}
 		log.Info().Interface("promptConfig", promptConfig).Msg("created prompt config")
+
+		token, tokenCreateErr := factories.CreateApplicationInternalToken(
+			cmd.Context(),
+			application.ID,
+		)
+		if tokenCreateErr != nil {
+			log.Fatal().Err(tokenCreateErr).Msg("failed to create application internal token")
+		}
+		log.Info().Interface("token", token).Msg("created token")
 	},
 }

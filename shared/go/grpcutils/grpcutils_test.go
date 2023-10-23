@@ -4,12 +4,19 @@ import (
 	"bytes"
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	loggingmiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	cleanup := testutils.CreateNamespaceTestDBModule("grpc-utils")
+	defer cleanup()
+	m.Run()
+}
 
 func TestGrpcUtils(t *testing.T) {
 	t.Run("CreateGRPCServer creates a server instance", func(t *testing.T) {

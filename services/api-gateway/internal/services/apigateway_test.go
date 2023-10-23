@@ -29,9 +29,8 @@ func createRequestConfigurationDTO(
 	)
 
 	return dto.RequestConfigurationDTO{
-		ApplicationIDString: db.UUIDToString(&application.ID),
-		ApplicationID:       application.ID,
-		PromptConfigID:      promptConfig.ID,
+		ApplicationID:  application.ID,
+		PromptConfigID: promptConfig.ID,
 		PromptConfigData: datatypes.PromptConfigDTO{
 			ID:                        db.UUIDToString(&promptConfig.ID),
 			Name:                      promptConfig.Name,
@@ -89,12 +88,12 @@ func createGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 
 func TestAPIGatewayService(t *testing.T) {
 	srv := services.APIGatewayServer{}
-	project, _ := factories.CreateProject(context.Background())
+	project, _ := factories.CreateProject(context.TODO())
 	configuration := createRequestConfigurationDTO(t, project.ID)
 
 	_, _ = createTestCache(
 		t,
-		configuration.ApplicationIDString,
+		db.UUIDToString(&configuration.ApplicationID),
 	)
 
 	t.Run("RequestPrompt", func(t *testing.T) {
@@ -108,7 +107,7 @@ func TestAPIGatewayService(t *testing.T) {
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
-				db.UUIDToString(&application.ID),
+				application.ID,
 			)
 			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{})
 
@@ -125,7 +124,7 @@ func TestAPIGatewayService(t *testing.T) {
 				applicationIDContext := context.WithValue(
 					context.TODO(),
 					grpcutils.ApplicationIDContextKey,
-					db.UUIDToString(&application.ID),
+					application.ID,
 				)
 				_, err := srv.RequestPrompt(
 					applicationIDContext,
@@ -144,7 +143,7 @@ func TestAPIGatewayService(t *testing.T) {
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
-				configuration.ApplicationIDString,
+				configuration.ApplicationID,
 			)
 			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},
@@ -165,7 +164,7 @@ func TestAPIGatewayService(t *testing.T) {
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
-				db.UUIDToString(&application.ID),
+				application.ID,
 			)
 			err := srv.RequestStreamingPrompt(
 				&gateway.PromptRequest{},
@@ -184,7 +183,7 @@ func TestAPIGatewayService(t *testing.T) {
 				applicationIDContext := context.WithValue(
 					context.TODO(),
 					grpcutils.ApplicationIDContextKey,
-					db.UUIDToString(&application.ID),
+					application.ID,
 				)
 				err := srv.RequestStreamingPrompt(
 					&gateway.PromptRequest{PromptConfigId: &configuration.PromptConfigData.ID},
@@ -203,7 +202,7 @@ func TestAPIGatewayService(t *testing.T) {
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
-				configuration.ApplicationIDString,
+				configuration.ApplicationID,
 			)
 			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},

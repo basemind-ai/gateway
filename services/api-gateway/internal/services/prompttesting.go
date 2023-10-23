@@ -30,9 +30,8 @@ func (PromptTestingServer) TestPrompt(
 	}
 
 	requestConfigurationDTO := &dto.RequestConfigurationDTO{
-		ApplicationIDString: request.ApplicationId,
-		ApplicationID:       *applicationID,
-		PromptConfigID:      *promptConfigID,
+		ApplicationID:  *applicationID,
+		PromptConfigID: *promptConfigID,
 		PromptConfigData: datatypes.PromptConfigDTO{
 			ID:                        request.PromptConfigId,
 			ModelParameters:           request.ModelParameters,

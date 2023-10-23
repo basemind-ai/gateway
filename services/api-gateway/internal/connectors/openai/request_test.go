@@ -20,10 +20,11 @@ func TestRequestPrompt(t *testing.T) {
 		application.ID,
 	)
 
+	applicationID := db.UUIDToString(&application.ID)
+
 	requestConfigurationDTO := &dto.RequestConfigurationDTO{
-		ApplicationIDString: db.UUIDToString(&application.ID),
-		ApplicationID:       application.ID,
-		PromptConfigID:      promptConfig.ID,
+		ApplicationID:  application.ID,
+		PromptConfigID: promptConfig.ID,
 		PromptConfigData: datatypes.PromptConfigDTO{
 			ID:                        db.UUIDToString(&promptConfig.ID),
 			Name:                      promptConfig.Name,
@@ -64,7 +65,7 @@ func TestRequestPrompt(t *testing.T) {
 
 		mockService.ExpectedRequest = &openaiconnector.OpenAIPromptRequest{
 			Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
-			ApplicationId: &requestConfigurationDTO.ApplicationIDString,
+			ApplicationId: &applicationID,
 			Parameters:    expectedModelParameters,
 			Messages: []*openaiconnector.OpenAIMessage{
 				{

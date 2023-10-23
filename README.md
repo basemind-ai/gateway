@@ -118,8 +118,8 @@ To test the project end-to-end do the following:
 1. If you haven't migrated the database, begin by executing `task migrations:apply`.
 2. Seed the database by executing `task e2e:seed`. You might want to first clean the database of previous
    data by executing `task e2e:clean` before hand, but this is optional.
-3. The `e2e:seed` command will log into the terminal the applicationId for the application that has been created.
-   Copy this value into you clipboard, and now execute `task e2e:create-jwt <applicationId>`, where <applicationId> is
+3. The `e2e:seed` command will log into the terminal the `tokenID` for the application that has been created.
+   Copy this value into you clipboard, and now execute `task e2e:create-jwt <tokenID>`, where <tokenID> is
    the value you copied to your clipboard.
 4. The `e2e:create-jwt` command will print an encoded JWT token into the terminal, copy this value and save it.
 5. Bring up the docker services with `docker compose up --build`.

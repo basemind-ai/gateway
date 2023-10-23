@@ -70,16 +70,11 @@ func retrievePromptConfig(
 
 func retrieveRequestConfiguration(
 	ctx context.Context,
-	applicationID string,
+	applicationID pgtype.UUID,
 	promptConfigID *string,
 ) func() (*dto.RequestConfigurationDTO, error) {
 	return func() (*dto.RequestConfigurationDTO, error) {
-		appID, appIDErr := db.StringToUUID(applicationID)
-		if appIDErr != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "invalid application id: %v", appIDErr)
-		}
-
-		application, applicationQueryErr := db.GetQueries().RetrieveApplication(ctx, *appID)
+		application, applicationQueryErr := db.GetQueries().RetrieveApplication(ctx, applicationID)
 		if applicationQueryErr != nil {
 			return nil, status.Errorf(
 				codes.NotFound,
@@ -90,7 +85,7 @@ func retrieveRequestConfiguration(
 
 		promptConfig, retrievalError := retrievePromptConfig(
 			ctx,
-			*appID,
+			applicationID,
 			promptConfigID,
 		)
 		if retrievalError != nil {
@@ -104,10 +99,9 @@ func retrieveRequestConfiguration(
 		promptConfigUUID, _ := db.StringToUUID(promptConfig.ID)
 
 		return &dto.RequestConfigurationDTO{
-			ApplicationIDString: db.UUIDToString(&application.ID),
-			ApplicationID:       application.ID,
-			PromptConfigID:      *promptConfigUUID,
-			PromptConfigData:    *promptConfig,
+			ApplicationID:    application.ID,
+			PromptConfigID:   *promptConfigUUID,
+			PromptConfigData: *promptConfig,
 		}, nil
 	}
 }
