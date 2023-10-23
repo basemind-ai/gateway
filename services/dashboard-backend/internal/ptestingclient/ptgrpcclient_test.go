@@ -46,6 +46,8 @@ func CreateClientAndService(
 }
 
 func TestPromptTestingGRPCClient(t *testing.T) {
+	testutils.SetTestEnv(t)
+
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
 	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
