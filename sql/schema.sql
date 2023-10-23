@@ -147,6 +147,7 @@ CREATE TABLE token
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(255) NOT NULL,
+    is_internal boolean NOT NULL DEFAULT FALSE,
     created_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
     application_id uuid NOT NULL,

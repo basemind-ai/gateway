@@ -37,7 +37,7 @@ CREATE INDEX "idx_prompt_test_record_created_at" ON "prompt_test_record" ("creat
 -- Create index "idx_prompt_test_record_prompt_request_record_id" to table: "prompt_test_record"
 CREATE INDEX "idx_prompt_test_record_prompt_request_record_id" ON "prompt_test_record" ("prompt_request_record_id");
 -- Create "token" table
-CREATE TABLE "token" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "token_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
+CREATE TABLE "token" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "name" character varying(255) NOT NULL, "is_internal" boolean NOT NULL DEFAULT false, "created_at" timestamptz NOT NULL DEFAULT now(), "deleted_at" timestamptz NULL, "application_id" uuid NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "token_application_id_fkey" FOREIGN KEY ("application_id") REFERENCES "application" ("id") ON UPDATE NO ACTION ON DELETE CASCADE);
 -- Create index "idx_token_application_id" to table: "token"
 CREATE INDEX "idx_token_application_id" ON "token" ("application_id") WHERE (deleted_at IS NULL);
 -- Create "user_account" table

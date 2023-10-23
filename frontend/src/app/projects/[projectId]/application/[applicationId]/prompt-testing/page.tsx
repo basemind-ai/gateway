@@ -27,18 +27,14 @@ export default function PromptTesting({
 			OpenAIPromptMessage
 		>>(null);
 
-	if (!websocketHandler) {
-		return null;
-	}
-
 	const closeWebsocket = () => {
-		websocketHandler.closeSocket();
+		websocketHandler?.closeSocket();
 		setIsClosed(true);
 	};
 
 	const sendMessage = () => {
-		void websocketHandler.sendMessage({
-			name: 'test',
+		void websocketHandler?.sendMessage({
+			name: `test${new Date().toISOString()}`,
 			modelParameters: {},
 			modelType: ModelType.Gpt35Turbo,
 			modelVendor: ModelVendor.OpenAI,
@@ -61,10 +57,13 @@ export default function PromptTesting({
 				handleMessage: ({ data }) => {
 					setMessages((messages) => [...messages, data]);
 				},
-				handleClose: () => {
+				handleClose: (isError, reason) => {
+					console.log('closing connection', isError, reason);
 					setIsClosed(true);
+					setIsError(isError);
 				},
-				handleError: () => {
+				handleError: (event) => {
+					console.log('err', event);
 					setIsError(true);
 				},
 			});
@@ -72,13 +71,18 @@ export default function PromptTesting({
 		})();
 	}, []);
 
+	if (!websocketHandler) {
+		return null;
+	}
+
 	return (
 		<div className="container">
 			<div className="accent-red-50">{isError && 'websocket error'}</div>
 			<div className="accent-red-50">
 				{isClosed && 'websocket is closed'}
 			</div>
-			<div className="w-full h-full flex flex-col justify-evenly">
+			<h1>messages received:</h1>
+			<div className="w-full h-full flex flex-col justify-evenly min-h-16 border-2">
 				{messages.map((message, index) => (
 					<div key={index}>
 						<div>{`content: ${message.content}`}</div>
@@ -91,26 +95,27 @@ export default function PromptTesting({
 					</div>
 				))}
 			</div>
-			<div>
-				<label>Enter a prompt</label>
-				<input
-					type="text"
-					className="input"
+			<div className="divider" />
+			<div className="p-4">
+				<label className="label">Enter a prompt:</label>
+				<textarea
+					className="textarea textarea-bordered textarea-primary min-w-[50%]"
 					value={prompt}
 					onChange={handleChange(setPrompt)}
 				/>
 			</div>
-			<div className="flex justify-between">
+			<div className="join p-4">
 				<button
-					className="btn rounded-btn btn-secondary"
+					className="btn rounded-btn btn-secondary join-item"
 					onClick={closeWebsocket}
+					disabled={isClosed || !websocketHandler}
 				>
 					Close Websocket
 				</button>
 				<button
-					className="btn rounded-btn btn-secondary"
+					className="btn rounded-btn btn-primary join-item"
 					onClick={sendMessage}
-					disabled={!prompt}
+					disabled={!prompt || isClosed || !websocketHandler}
 				>
 					Submit
 				</button>

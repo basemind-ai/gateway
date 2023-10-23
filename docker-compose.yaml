@@ -75,7 +75,7 @@ services:
             REDIS_CONNECTION_STRING: redis://redis:6379
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
-            API_GATEWAY_ADDRESS: http://localhost:4000
+            API_GATEWAY_ADDRESS: api-gateway:4000
             JWT_SECRET: 'jeronimo'
         command:
             [

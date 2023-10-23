@@ -67,10 +67,7 @@ func main() {
 					gateway.RegisterAPIGatewayServiceServer(s, services.APIGatewayServer{})
 				},
 				func(s grpc.ServiceRegistrar) {
-					ptesting.RegisterPromptTestingServiceServer(
-						s,
-						services.PromptTestingServer{},
-					)
+					ptesting.RegisterPromptTestingServiceServer(s, services.PromptTestingServer{})
 				},
 			},
 		},
