@@ -18,12 +18,8 @@ import (
 func handleRetrieveProjectOTP(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 
-	cfg, configErr := config.Get(r.Context())
-	if configErr != nil {
-		log.Error().Err(configErr).Msg("failed to retrieve config")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	cfg := config.Get(r.Context())
+
 	jwt, jwtErr := jwtutils.CreateJWT(time.Minute, []byte(cfg.JWTSecret), userAccount.FirebaseID)
 	if jwtErr != nil {
 		log.Error().Err(jwtErr).Msg("failed to create jwt")

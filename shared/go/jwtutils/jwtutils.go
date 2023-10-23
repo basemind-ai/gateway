@@ -2,7 +2,6 @@ package jwtutils
 
 import (
 	"fmt"
-	"maps"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -12,14 +11,9 @@ func CreateJWT(
 	ttl time.Duration,
 	secret []byte,
 	sub string,
-	extraClaims ...jwt.MapClaims,
 ) (string, error) {
 	claims := jwt.MapClaims{
 		"sub": sub,
-	}
-
-	for _, extraClaim := range extraClaims {
-		maps.Copy(claims, extraClaim)
 	}
 
 	if ttl > 0 {

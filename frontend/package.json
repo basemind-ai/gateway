@@ -27,7 +27,7 @@
 		"react-bootstrap-icons": "^1.10.3",
 		"react-dom": "18.2.0",
 		"react-icons": "^4.11.0",
-		"react-intl": "^6.5.0",
+		"react-intl": "^6.5.1",
 		"react-tailwindcss-datepicker": "^1.6.6",
 		"zustand": "^4.4.4"
 	},

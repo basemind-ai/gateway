@@ -20,11 +20,8 @@ const (
 )
 
 func parseOTP(r *http.Request, otp string) (string, *apierror.APIError) {
-	cfg, cfgErr := config.Get(r.Context())
-	if cfgErr != nil {
-		log.Error().Err(cfgErr).Msg("failed to retrieve config")
-		return "", apierror.InternalServerError()
-	}
+	cfg := config.Get(r.Context())
+
 	parsedJwt, parseErr := jwtutils.ParseJWT(otp, []byte(cfg.JWTSecret))
 	if parseErr != nil {
 		log.Error().Err(parseErr).Msg("failed to parse jwt")

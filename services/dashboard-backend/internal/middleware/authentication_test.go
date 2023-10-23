@@ -119,29 +119,8 @@ func TestAuthenticationMiddleware(t *testing.T) {
 			strings.ReplaceAll(api.ProjectOTPEndpoint, "{projectId}", db.UUIDToString(&project.ID)),
 		)
 
-		t.Run("returns error on cfg error", func(t *testing.T) {
-			testutils.SetTestEnv(t)
-			response, err := testClient.Get(context.TODO(), url)
-			assert.NoError(t, err)
-			assert.Equal(t, http.StatusOK, response.StatusCode)
-
-			data := dto.OtpDTO{}
-			_ = serialization.DeserializeJSON(response.Body, &data)
-
-			assert.NotEmpty(t, data.OTP)
-
-			testutils.UnsetTestEnv(t)
-			config.Set(nil)
-			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/?otp=%s", data.OTP), nil)
-			testRecorder := httptest.NewRecorder()
-
-			authMiddleware.ServeHTTP(testRecorder, request)
-			assert.Equal(t, http.StatusInternalServerError, testRecorder.Code)
-		})
-
 		t.Run("returns error on jwt error", func(t *testing.T) {
 			testutils.SetTestEnv(t)
-			config.Set(nil)
 			request := httptest.NewRequest(http.MethodGet, "/?otp=invalid", nil)
 			testRecorder := httptest.NewRecorder()
 
@@ -151,8 +130,7 @@ func TestAuthenticationMiddleware(t *testing.T) {
 
 		t.Run("returns error on missing sub", func(t *testing.T) {
 			testutils.SetTestEnv(t)
-			config.Set(nil)
-			cfg, _ := config.Get(context.Background())
+			cfg := config.Get(context.Background())
 			jwt, _ := jwtutils.CreateJWT(time.Second, []byte(cfg.JWTSecret), "")
 
 			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/?otp=%s", jwt), nil)

@@ -45,8 +45,7 @@ func TestOTPAPI(t *testing.T) {
 		assert.NoError(t, deserializationErr)
 		assert.NotEmpty(t, body.OTP)
 
-		cfg, err := config.Get(context.TODO())
-		assert.NoError(t, err)
+		cfg := config.Get(context.TODO())
 
 		claims, parseErr := jwtutils.ParseJWT(body.OTP, []byte(cfg.JWTSecret))
 		assert.NoError(t, parseErr)

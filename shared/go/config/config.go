@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"github.com/sethvargo/go-envconfig"
+	"sync"
 )
 
 //goland:noinspection GoUnnecessarilyExportedIdentifiers
@@ -16,19 +17,16 @@ type Config struct {
 
 var (
 	config *Config
-	err    error
+	once   sync.Once
 )
 
-func Set(cfg *Config) {
-	config = cfg
-}
+func Get(ctx context.Context) *Config {
+	once.Do(func() {
+		config = &Config{}
+		if err := envconfig.Process(ctx, config); err != nil {
+			panic(err)
+		}
+	})
 
-func Get(ctx context.Context) (*Config, error) {
-	if config == nil {
-		cfg := Config{}
-		err = envconfig.Process(ctx, &cfg)
-		Set(&cfg)
-	}
-
-	return config, err
+	return config
 }
