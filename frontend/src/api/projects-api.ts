@@ -1,3 +1,5 @@
+import { DateType } from 'react-tailwindcss-datepicker';
+
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
 import { Project, ProjectAnalytics, ProjectCreateBody } from '@/types';
@@ -52,15 +54,15 @@ export async function handleProjectAnalytics({
 	toDate,
 }: {
 	projectId: string;
-	fromDate?: string;
-	toDate?: string;
+	fromDate?: DateType;
+	toDate?: DateType;
 }): Promise<ProjectAnalytics> {
 	return await fetcher<ProjectAnalytics>({
 		url: `projects/${projectId}/analytics`,
 		method: HttpMethod.Get,
 		queryParams: {
-			fromDate,
-			toDate,
+			fromDate: fromDate ? new Date(fromDate).toISOString() : undefined,
+			toDate: toDate ? new Date(toDate).toISOString() : undefined,
 		},
 	});
 }

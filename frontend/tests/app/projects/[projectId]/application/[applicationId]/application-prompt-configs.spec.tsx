@@ -31,9 +31,7 @@ describe('ApplicationPromptConfigs', () => {
 
 		for (const promptConfig of promptConfigs) {
 			const nameElement = screen.getByText(promptConfig.name);
-			const modelTypeElement = screen.getByText(promptConfig.name);
 			expect(nameElement).toBeInTheDocument();
-			expect(modelTypeElement).toBeInTheDocument();
 		}
 	});
 

@@ -12,7 +12,6 @@ export interface ProjectStore {
 	setProjects: (projects: Project[]) => void;
 	addProject: (project: Project) => void;
 	setCurrentProject: (currentProjectId: string) => void;
-	getCurrentProject: () => Project | undefined;
 	setProjectApplications: (
 		projectId: string,
 		applications: Application[],
@@ -47,13 +46,6 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 	},
 	setCurrentProject: (currentProjectId: string) => {
 		set(() => ({ currentProjectId }));
-	},
-	getCurrentProject: () => {
-		const { projects, currentProjectId } = get();
-		if (!currentProjectId) {
-			return;
-		}
-		return projects.find((project) => project.id === currentProjectId);
 	},
 	setProjectApplications: (
 		projectId: string,
@@ -131,13 +123,20 @@ export const useProject = (projectId: string) =>
 	);
 export const useProjects = () => useProjectStore((s) => s.projects);
 export const useCurrentProject = () =>
-	useProjectStore((s) => s.getCurrentProject);
+	useProjectStore((s) => {
+		const { projects, currentProjectId } = s;
+		if (!currentProjectId) {
+			return;
+		}
+		return projects.find((project) => project.id === currentProjectId);
+	});
 export const useSetCurrentProject = () =>
 	useProjectStore((s) => s.setCurrentProject);
 export const useSetProjectApplications = () =>
 	useProjectStore((s) => s.setProjectApplications);
-export const useGetApplications = () => useProjectStore((s) => s.applications);
-export const useGetApplication = (projectId: string, applicationId: string) =>
+export const useApplications = (projectId?: string) =>
+	useProjectStore((s) => (projectId ? s.applications[projectId] : undefined));
+export const useApplication = (projectId: string, applicationId: string) =>
 	useProjectStore((s) => {
 		const projectApplications = s.applications[projectId];
 		if (!projectApplications) {
@@ -151,9 +150,9 @@ export const useDeleteApplication = () =>
 	useProjectStore((s) => s.deleteApplication);
 export const useUpdateApplication = () =>
 	useProjectStore((s) => s.updateApplication);
-export const useGetPromptConfig = () => useProjectStore((s) => s.promptConfigs);
+export const usePromptConfig = () => useProjectStore((s) => s.promptConfigs);
 export const useSetPromptConfig = () =>
 	useProjectStore((s) => s.setPromptConfig);
-export const useGetTokens = (applicationId: string) =>
+export const useTokens = (applicationId: string) =>
 	useProjectStore((s) => s.tokens[applicationId]);
 export const useSetTokens = () => useProjectStore((s) => s.setTokens);
