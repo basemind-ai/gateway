@@ -33,11 +33,7 @@ func main() {
 		cancel()
 	}()
 
-	cfg, configParseErr := config.Get(ctx)
-
-	if configParseErr != nil {
-		log.Fatal().Err(configParseErr).Msg("failed to parse config, terminating")
-	}
+	cfg := config.Get(ctx)
 
 	logging.Configure(cfg.Environment != "production")
 
@@ -67,10 +63,7 @@ func main() {
 					gateway.RegisterAPIGatewayServiceServer(s, services.APIGatewayServer{})
 				},
 				func(s grpc.ServiceRegistrar) {
-					ptesting.RegisterPromptTestingServiceServer(
-						s,
-						services.PromptTestingServer{},
-					)
+					ptesting.RegisterPromptTestingServiceServer(s, services.PromptTestingServer{})
 				},
 			},
 		},

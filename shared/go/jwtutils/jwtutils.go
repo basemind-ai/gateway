@@ -7,7 +7,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func CreateJWT(ttl time.Duration, secret []byte, sub string) (string, error) {
+func CreateJWT(
+	ttl time.Duration,
+	secret []byte,
+	sub string,
+) (string, error) {
 	claims := jwt.MapClaims{
 		"sub": sub,
 	}

@@ -53,16 +53,13 @@ export type ApplicationUpdateBody = Partial<ApplicationCreateBody>;
 
 // PromptConfig
 
-export interface PromptConfig<
-	P extends Record<string, string | number> = Record<string, string | number>,
-	M extends Record<string, string | number> = Record<string, string | number>,
-> {
+export interface PromptConfig<P = any, M = any> {
 	id: string;
 	name: string;
 	modelParameters: P;
 	modelType: ModelType;
 	modelVendor: ModelVendor;
-	providerPromptMessages: M;
+	providerPromptMessages: M[];
 	expectedTemplateVariables: string[];
 	isDefault: boolean;
 	createdAt: string;
@@ -74,10 +71,7 @@ export interface PromptConfigAnalytics {
 	modelsCost: number;
 }
 
-export type PromptConfigCreateBody<
-	P extends Record<string, string | number> = Record<string, string | number>,
-	M extends Record<string, string | number> = Record<string, string | number>,
-> = Pick<
+export type PromptConfigCreateBody<P = any, M = any> = Pick<
 	PromptConfig<P, M>,
 	| 'name'
 	| 'modelParameters'
@@ -115,6 +109,17 @@ export type OpenAIPromptMessage = {
 			role: 'function';
 	  }
 );
+
+// Provider Model Parameters
+
+export interface OpenAIModelParameters {
+	temperature?: number;
+	maxTokens?: number;
+	topP?: number;
+	frequencyPenalty?: number;
+	presencePenalty?: number;
+}
+
 // UserAccount
 
 export type AddUserToProjectBody = {
@@ -135,4 +140,30 @@ export interface ProjectUserAccount {
 	photoUrl: string;
 	createdAt: string;
 	permission: AccessPermission;
+}
+
+// OTP
+
+export interface OTP {
+	otp: string;
+}
+
+// Prompt Testing
+
+export interface PromptConfigTest<P, M> {
+	name: string;
+	modelParameters: P;
+	modelType: ModelType;
+	modelVendor: ModelVendor;
+	promptMessages: M[];
+	templateVariables: Record<string, string>;
+	promptConfigId?: string;
+}
+
+export interface PromptConfigTestResultChunk {
+	content?: string;
+	errorMessage?: string;
+	finishReason?: string;
+	promptConfigId?: string;
+	promptTestRecordId?: string;
 }

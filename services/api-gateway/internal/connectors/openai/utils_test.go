@@ -1,6 +1,7 @@
 package openai_test
 
 import (
+	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"testing"
@@ -129,6 +130,9 @@ func TestUtils(t *testing.T) {
 	})
 
 	t.Run("CreatePromptRequest", func(t *testing.T) {
+		project, _ := factories.CreateProject(context.TODO())
+		application, _ := factories.CreateApplication(context.TODO(), project.ID)
+
 		t.Run("creates a prompt request correctly", func(t *testing.T) {
 			floatValue := float32(1)
 			uintValue := uint32(1)
@@ -144,7 +148,7 @@ func TestUtils(t *testing.T) {
 			systemMessage := "You are a helpful chat bot."
 			userMessage := "This is what the user asked for: {userInput}"
 			expectedTemplateVariables := []string{"userInput"}
-			applicationID := "12345"
+			applicationID := db.UUIDToString(&application.ID)
 			modelType := db.ModelTypeGpt35Turbo
 
 			modelParameters, _ := factories.CreateModelParameters()
@@ -177,7 +181,7 @@ func TestUtils(t *testing.T) {
 			}
 
 			promptRequest, err := openai.CreatePromptRequest(
-				applicationID,
+				application.ID,
 				modelType,
 				modelParameters,
 				promptMessages,
@@ -188,14 +192,13 @@ func TestUtils(t *testing.T) {
 			assert.Equal(t, expectedPromptRequest, promptRequest)
 		})
 		t.Run("returns error for unknown model type", func(t *testing.T) {
-			applicationID := "12345"
 			modelType := "unknown"
 			modelParameters := []byte(`{}`)
 			promptMessages := []byte(`[]`)
 			templateVariables := map[string]string{}
 
 			_, err := openai.CreatePromptRequest(
-				applicationID,
+				application.ID,
 				db.ModelType(modelType),
 				modelParameters,
 				promptMessages,
@@ -207,14 +210,13 @@ func TestUtils(t *testing.T) {
 			assert.Equal(t, expectedError, err.Error())
 		})
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {
-			applicationID := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 			modelParameters := []byte(`invalid_json`)
 			promptMessages := []byte(`[]`)
 			templateVariables := make(map[string]string)
 
 			_, err := openai.CreatePromptRequest(
-				applicationID,
+				application.ID,
 				modelType,
 				modelParameters,
 				promptMessages,
@@ -224,7 +226,6 @@ func TestUtils(t *testing.T) {
 		})
 
 		t.Run("returns error if prompt messages is invalid json", func(t *testing.T) {
-			applicationID := "12345"
 			modelType := db.ModelTypeGpt35Turbo
 			modelParameters := []byte(`{"temperature": 0.8}`)
 			promptMessages := []byte(`invalid_json`)
@@ -233,7 +234,7 @@ func TestUtils(t *testing.T) {
 			}
 
 			_, err := openai.CreatePromptRequest(
-				applicationID,
+				application.ID,
 				modelType,
 				modelParameters,
 				promptMessages,

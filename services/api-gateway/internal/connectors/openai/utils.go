@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"strings"
@@ -67,7 +68,7 @@ func ParseTemplateVariables(
 }
 
 func CreatePromptRequest(
-	applicationID string,
+	applicationID pgtype.UUID,
 	modelType db.ModelType,
 	modelParameters []byte,
 	promptMessages []byte,
@@ -78,9 +79,11 @@ func CreatePromptRequest(
 		return nil, modelErr
 	}
 
+	applicationIDString := db.UUIDToString(&applicationID)
+
 	promptRequest := &openaiconnector.OpenAIPromptRequest{
 		Model:         *model,
-		ApplicationId: &applicationID,
+		ApplicationId: &applicationIDString,
 		Parameters:    &openaiconnector.OpenAIModelParameters{},
 		Messages:      []*openaiconnector.OpenAIMessage{},
 	}

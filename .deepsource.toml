@@ -1,11 +1,12 @@
 version = 1
 
 exclude_patterns = [
-    "gen/**",
-    "e2e/**",
-    "sdks/android/test-app/**",
     "**/node_modules/",
-    "js/**/*.js"
+    "e2e/**",
+    "gen/**",
+    "**/*.js",
+    "sdks/android/test-app/**",
+    "shared/go/db/*.sql.go",
 ]
 
 test_patterns = [

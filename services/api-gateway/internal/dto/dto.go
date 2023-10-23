@@ -14,8 +14,6 @@ type PromptResultDTO struct {
 
 // RequestConfigurationDTO is a data type used encapsulate the current application prompt configuration.
 type RequestConfigurationDTO struct {
-	// The application ApplicationIDString as a string
-	ApplicationIDString string `json:"applicationId"`
 	// ApplicationID is the application DB ID
 	ApplicationID pgtype.UUID `json:"applicationUUID"`
 	// PromptConfigID is the promptConfig DB ID

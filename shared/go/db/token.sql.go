@@ -13,23 +13,25 @@ import (
 
 const createToken = `-- name: CreateToken :one
 
-INSERT INTO token (application_id, name)
-VALUES ($1, $2)
-RETURNING id, name, created_at, deleted_at, application_id
+INSERT INTO token (application_id, name, is_internal)
+VALUES ($1, $2, $3)
+RETURNING id, name, is_internal, created_at, deleted_at, application_id
 `
 
 type CreateTokenParams struct {
 	ApplicationID pgtype.UUID `json:"applicationId"`
 	Name          string      `json:"name"`
+	IsInternal    bool        `json:"isInternal"`
 }
 
 // -- token
 func (q *Queries) CreateToken(ctx context.Context, arg CreateTokenParams) (Token, error) {
-	row := q.db.QueryRow(ctx, createToken, arg.ApplicationID, arg.Name)
+	row := q.db.QueryRow(ctx, createToken, arg.ApplicationID, arg.Name, arg.IsInternal)
 	var i Token
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.IsInternal,
 		&i.CreatedAt,
 		&i.DeletedAt,
 		&i.ApplicationID,
@@ -48,16 +50,50 @@ func (q *Queries) DeleteToken(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const retrieveApplicationIDForToken = `-- name: RetrieveApplicationIDForToken :one
+SELECT
+    app.id
+FROM token AS t
+    LEFT JOIN application AS app ON app.id = t.application_id
+WHERE t.id = $1
+    AND t.deleted_at IS NULL
+    AND app.deleted_at IS NULL
+`
+
+func (q *Queries) RetrieveApplicationIDForToken(ctx context.Context, id pgtype.UUID) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, retrieveApplicationIDForToken, id)
+	err := row.Scan(&id)
+	return id, err
+}
+
+const retrieveApplicationInternalTokenID = `-- name: RetrieveApplicationInternalTokenID :one
+SELECT
+    t.id
+FROM token AS t
+    LEFT JOIN application AS app ON app.id = t.application_id
+WHERE app.id = $1
+    AND t.deleted_at IS NULL
+    AND app.deleted_at IS NULL
+    AND t.is_internal = TRUE
+`
+
+func (q *Queries) RetrieveApplicationInternalTokenID(ctx context.Context, id pgtype.UUID) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, retrieveApplicationInternalTokenID, id)
+	err := row.Scan(&id)
+	return id, err
+}
+
 const retrieveTokens = `-- name: RetrieveTokens :many
 SELECT
-    id,
-    name,
-    created_at
-FROM token
+    t.id,
+    t.name,
+    t.created_at
+FROM token AS t
+     LEFT JOIN application AS app ON app.id = t.application_id
 WHERE
-    application_id = $1
-    AND deleted_at IS NULL
-ORDER BY created_at
+    app.id = $1
+    AND t.deleted_at IS NULL AND app.deleted_at IS NULL AND t.is_internal = FALSE
+ORDER BY t.created_at
 `
 
 type RetrieveTokensRow struct {
@@ -66,8 +102,8 @@ type RetrieveTokensRow struct {
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }
 
-func (q *Queries) RetrieveTokens(ctx context.Context, applicationID pgtype.UUID) ([]RetrieveTokensRow, error) {
-	rows, err := q.db.Query(ctx, retrieveTokens, applicationID)
+func (q *Queries) RetrieveTokens(ctx context.Context, id pgtype.UUID) ([]RetrieveTokensRow, error) {
+	rows, err := q.db.Query(ctx, retrieveTokens, id)
 	if err != nil {
 		return nil, err
 	}

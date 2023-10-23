@@ -22,7 +22,7 @@ import (
 
 const (
 	applicationIDSessionKey    = "application"
-	socketDeadline             = 15 * time.Second
+	socketDeadline             = time.Minute
 	statusWSServerError        = 1011
 	statusWSUnsupportedPayload = 1007
 )

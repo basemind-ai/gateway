@@ -59,7 +59,7 @@ func (c *Client) RequestStream(
 	channel chan<- dto.PromptResultDTO,
 ) {
 	promptRequest, promptRequestErr := CreatePromptRequest(
-		requestConfiguration.ApplicationIDString,
+		requestConfiguration.ApplicationID,
 		requestConfiguration.PromptConfigData.ModelType,
 		requestConfiguration.PromptConfigData.ModelParameters,
 		requestConfiguration.PromptConfigData.ProviderPromptMessages,

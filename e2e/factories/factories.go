@@ -142,7 +142,8 @@ func CreatePromptConfig(
 	return &promptConfig, nil
 }
 
-func CreatePromptRequestRecord(ctx context.Context,
+func CreatePromptRequestRecord(
+	ctx context.Context,
 	promptConfigID pgtype.UUID,
 ) (*db.PromptRequestRecord, error) {
 	tokenCnt := int32(10)
@@ -164,4 +165,21 @@ func CreatePromptRequestRecord(ctx context.Context,
 	}
 
 	return &promptRequestRecord, nil
+}
+
+func CreateApplicationInternalToken(
+	ctx context.Context,
+	applicationID pgtype.UUID,
+) (*db.Token, error) {
+	token, err := db.GetQueries().CreateToken(ctx, db.CreateTokenParams{
+		ApplicationID: applicationID,
+		Name:          "_internal token",
+		IsInternal:    true,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &token, nil
 }

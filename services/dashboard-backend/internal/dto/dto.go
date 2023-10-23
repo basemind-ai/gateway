@@ -103,3 +103,7 @@ type PromptConfigTestResultDTO struct {
 	PromptConfigID     *string `json:"promptConfigId,omitempty"`
 	PromptTestRecordID *string `json:"promptTestRecordId,omitempty"`
 }
+
+type OtpDTO struct {
+	OTP string `json:"otp"`
+}

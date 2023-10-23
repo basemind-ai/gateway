@@ -199,6 +199,7 @@ type PromptTestRecord struct {
 type Token struct {
 	ID            pgtype.UUID        `json:"id"`
 	Name          string             `json:"name"`
+	IsInternal    bool               `json:"isInternal"`
 	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
 	DeletedAt     pgtype.Timestamptz `json:"deletedAt"`
 	ApplicationID pgtype.UUID        `json:"applicationId"`

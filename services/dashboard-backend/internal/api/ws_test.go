@@ -26,14 +26,14 @@ import (
 	"time"
 )
 
-func createTestServer(t *testing.T, userAccount *db.UserAccount) *httptest.Server {
+func createTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
 	r := router.New(router.Options{
 		Environment:      "test",
 		ServiceName:      "test",
 		RegisterHandlers: api.RegisterHandlers,
 		Middlewares: []func(next http.Handler) http.Handler{
-			middleware.CreateMockFirebaseAuthMiddleware(userAccount),
+			middleware.FirebaseAuthMiddleware,
 		},
 	})
 
@@ -85,7 +85,27 @@ func createMockGRPCServer(
 	return mockService
 }
 
+func createOTP(t *testing.T, userAccount *db.UserAccount, projectID string) string {
+	t.Helper()
+	testClient := createTestClient(t, userAccount)
+
+	url := fmt.Sprintf(
+		"/v1%s",
+		strings.ReplaceAll(api.ProjectOTPEndpoint, "{projectId}", projectID),
+	)
+
+	response, requestErr := testClient.Get(context.TODO(), url)
+	assert.NoError(t, requestErr)
+
+	data := dto.OtpDTO{}
+	deserializationErr := serialization.DeserializeJSON(response.Body, &data)
+	assert.NoError(t, deserializationErr)
+
+	return data.OTP
+}
+
 func TestPromptTestingAPI(t *testing.T) {
+	testutils.SetTestEnv(t)
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
@@ -116,9 +136,9 @@ func TestPromptTestingAPI(t *testing.T) {
 	serializedDTO, serializationErr := json.Marshal(data)
 	assert.NoError(t, serializationErr)
 
-	createWSUrl := func(serverURL string) string {
+	createWSUrl := func(serverURL string, otp string) string {
 		endpointPath := fmt.Sprintf(
-			"/v1%s",
+			"/v1%s?otp=%s",
 			strings.ReplaceAll(
 				strings.ReplaceAll(
 					api.PromptConfigTestingEndpoint,
@@ -127,16 +147,23 @@ func TestPromptTestingAPI(t *testing.T) {
 				"{applicationId}",
 				applicationID,
 			),
+			otp,
 		)
-		return fmt.Sprintf("%s%s", strings.ReplaceAll(serverURL, "http:", "ws:"), endpointPath)
+		return fmt.Sprintf(
+			"%s%s",
+			strings.ReplaceAll(serverURL, "http:", "ws:"),
+			endpointPath,
+		)
 	}
 
 	t.Run("establishes web socket connection", func(t *testing.T) {
 		channel := make(chan *dto.PromptConfigTestResultDTO)
-		testServer := createTestServer(t, userAccount)
+		testServer := createTestServer(t)
 		client, response, err := gws.NewClient(
 			ClientHandler{T: t, Channel: channel},
-			&gws.ClientOption{Addr: createWSUrl(testServer.URL)},
+			&gws.ClientOption{
+				Addr: createWSUrl(testServer.URL, createOTP(t, userAccount, projectID)),
+			},
 		)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusSwitchingProtocols, response.StatusCode)
@@ -160,11 +187,13 @@ func TestPromptTestingAPI(t *testing.T) {
 				PromptRequestRecordId: &promptRequestRecordID,
 			},
 		}
-		testServer := createTestServer(t, userAccount)
+		testServer := createTestServer(t)
 		handler := ClientHandler{T: t, Channel: channel}
 		client, response, err := gws.NewClient(
 			&handler,
-			&gws.ClientOption{Addr: createWSUrl(testServer.URL)},
+			&gws.ClientOption{
+				Addr: createWSUrl(testServer.URL, createOTP(t, userAccount, projectID)),
+			},
 		)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusSwitchingProtocols, response.StatusCode)
@@ -223,11 +252,13 @@ func TestPromptTestingAPI(t *testing.T) {
 		finishReason := "error"
 
 		mockService.Error = assert.AnError
-		testServer := createTestServer(t, userAccount)
+		testServer := createTestServer(t)
 		handler := ClientHandler{T: t, Channel: channel}
 		client, response, err := gws.NewClient(
 			&handler,
-			&gws.ClientOption{Addr: createWSUrl(testServer.URL)},
+			&gws.ClientOption{
+				Addr: createWSUrl(testServer.URL, createOTP(t, userAccount, projectID)),
+			},
 		)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusSwitchingProtocols, response.StatusCode)
@@ -251,16 +282,21 @@ func TestPromptTestingAPI(t *testing.T) {
 	})
 
 	t.Run(
-		"responds with status 403 FORBIDDEN if the user does not have projects access",
+		"responds with status 401 NOT AUTHORIZED if the user does not have projects access",
 		func(t *testing.T) {
 			userWithoutProjectsAccess, _ := factories.CreateUserAccount(context.TODO())
-			testServer := createTestServer(t, userWithoutProjectsAccess)
+			testServer := createTestServer(t)
 			_, response, err := gws.NewClient(
 				ClientHandler{},
-				&gws.ClientOption{Addr: createWSUrl(testServer.URL)},
+				&gws.ClientOption{
+					Addr: createWSUrl(
+						testServer.URL,
+						createOTP(t, userWithoutProjectsAccess, projectID),
+					),
+				},
 			)
 			assert.Error(t, err)
-			assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			assert.Equal(t, http.StatusUnauthorized, response.StatusCode)
 		},
 	)
 }

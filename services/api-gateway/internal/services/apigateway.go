@@ -6,8 +6,10 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -26,14 +28,14 @@ func (APIGatewayServer) RequestPrompt(
 	ctx context.Context,
 	request *gateway.PromptRequest,
 ) (*gateway.PromptResponse, error) {
-	applicationID, ok := ctx.Value(grpcutils.ApplicationIDContextKey).(string)
+	applicationID, ok := ctx.Value(grpcutils.ApplicationIDContextKey).(pgtype.UUID)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
 	}
 
-	cacheKey := applicationID
+	cacheKey := db.UUIDToString(&applicationID)
 	if request.PromptConfigId != nil {
-		cacheKey = fmt.Sprintf("%s:%s", applicationID, *request.PromptConfigId)
+		cacheKey = fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), *request.PromptConfigId)
 	}
 
 	requestConfigurationDTO, retrievalErr := rediscache.With[dto.RequestConfigurationDTO](
@@ -83,14 +85,14 @@ func (APIGatewayServer) RequestStreamingPrompt(
 	request *gateway.PromptRequest,
 	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
 ) error {
-	applicationID, ok := streamServer.Context().Value(grpcutils.ApplicationIDContextKey).(string)
+	applicationID, ok := streamServer.Context().Value(grpcutils.ApplicationIDContextKey).(pgtype.UUID)
 	if !ok {
 		return status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
 	}
 
-	cacheKey := applicationID
+	cacheKey := db.UUIDToString(&applicationID)
 	if request.PromptConfigId != nil {
-		cacheKey = fmt.Sprintf("%s:%s", applicationID, *request.PromptConfigId)
+		cacheKey = fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), *request.PromptConfigId)
 	}
 
 	requestConfigurationDTO, retrievalErr := rediscache.With[dto.RequestConfigurationDTO](

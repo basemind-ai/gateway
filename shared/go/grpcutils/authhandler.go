@@ -2,7 +2,7 @@ package grpcutils
 
 import (
 	"context"
-	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"google.golang.org/grpc/codes"
@@ -24,7 +24,7 @@ func NewAuthHandler(jwtSecret string) *AuthHandler {
 func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, error) {
 	token, metadataErr := auth.AuthFromMD(ctx, "bearer")
 	if metadataErr != nil {
-		return nil, fmt.Errorf("failed to get metadata: %w", metadataErr)
+		return nil, status.Errorf(codes.Unauthenticated, "failed to get metadata: %v", metadataErr)
 	}
 
 	if token == "" {
@@ -37,9 +37,23 @@ func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, er
 	}
 
 	sub, subErr := claims.GetSubject()
-	if subErr != nil {
+	if subErr != nil || sub == "" {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", subErr)
 	}
 
-	return context.WithValue(ctx, ApplicationIDContextKey, sub), nil
+	tokenID, parseErr := db.StringToUUID(sub)
+	if parseErr != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "failed to parse token id: %v", parseErr)
+	}
+
+	applicationID, retrieveErr := db.GetQueries().RetrieveApplicationIDForToken(ctx, *tokenID)
+	if retrieveErr != nil {
+		return nil, status.Errorf(
+			codes.Unauthenticated,
+			"failed to retrieve application id for token: %v",
+			retrieveErr,
+		)
+	}
+
+	return context.WithValue(ctx, ApplicationIDContextKey, applicationID), nil
 }

@@ -53,12 +53,8 @@ func handleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tokenID := db.UUIDToString(&token.ID)
-	cfg, configErr := config.Get(r.Context())
-	if configErr != nil {
-		log.Error().Err(configErr).Msg("failed to retrieve config")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	cfg := config.Get(r.Context())
+
 	jwt, jwtErr := jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), tokenID)
 	if jwtErr != nil {
 		log.Error().Err(jwtErr).Msg("failed to create jwt")
