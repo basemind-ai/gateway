@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Bank2, Gear, QuestionCircle } from 'react-bootstrap-icons';
+import { Gear, QuestionCircle } from 'react-bootstrap-icons';
 
 import { Navigation } from '@/constants';
 
@@ -25,15 +25,7 @@ export default function NavRailFooter() {
 				<Gear />
 			</a>
 			<a
-				data-testid="nav-rail-footer-billing"
-				href={Navigation.Billing}
-				className={`${linkStyle(
-					Navigation.Billing,
-				)} hover:text-primary`}
-			>
-				<Bank2 />
-			</a>
-			<a
+				data-testid="nav-rail-footer-support"
 				href={Navigation.Support}
 				className={`${linkStyle(
 					Navigation.Support,

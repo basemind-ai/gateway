@@ -1,9 +1,10 @@
 module.exports = {
-	trailingComma: 'all',
-	tabWidth: 4,
-	semi: true,
-	quoteProps: 'consistent',
-	singleQuote: true,
-	useTabs: true,
+	jsonRecursiveSort: true,
 	plugins: ['@prettier/plugin-xml', 'prettier-plugin-sort-json'],
+	quoteProps: 'consistent',
+	semi: true,
+	singleQuote: true,
+	tabWidth: 4,
+	trailingComma: 'all',
+	useTabs: true,
 };

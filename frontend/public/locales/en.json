@@ -11,7 +11,7 @@
 		"close": "Close",
 		"create": "Create",
 		"createApiKey": "Create API Key",
-		"createApiKeyDescription": "Keep the API key private and use it only with our SDK.  You can view it once, It's not stored on our end for security.",
+		"createApiKeyDescription": "Keep the API key private and use it only with our SDK. You can view it once, It's not stored on our end for security.",
 		"createApiKeyPlaceholder": "Provide a name for your new API key",
 		"createdAt": "Created at",
 		"defaultPromptConfig": "Default Prompt Configuration",
@@ -70,7 +70,9 @@
 	"deletionBanner": {
 		"cancel": "Cancel",
 		"continueMessage": "To continue, write: ",
-		"delete": "Delete"
+		"delete": "Delete",
+		"title": "Warning",
+		"type": "Type"
 	},
 	"navrail": {
 		"abTesting": "A/B Testing",
@@ -130,5 +132,18 @@
 		"bannerHeading": "Feature 1",
 		"bannerSubtitle": "Try all paid functions for free, just register and create your first widget, its simple and fast",
 		"bannerTitle": "This feature is good for AI"
+	},
+	"userSettings": {
+		"deleteYourAccount": "Delete your account",
+		"deleteYourAccountButton": "Delete",
+		"deleteYourAccountDetails": "This act is irreversible, it will delete your account, and all of your data.",
+		"email": "Email",
+		"fullName": "Full Name",
+		"headline": "User Settings",
+		"headlineDeleteCard": "Permanent Account Deletion",
+		"headlineDetailsCard": "General",
+		"profilePicture": "Profile Picture",
+		"warning": "Warning",
+		"writeYourEmail": "Write your email"
 	}
 }

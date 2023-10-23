@@ -44,7 +44,7 @@ export function FirebaseLogin() {
 					signInSuccessWithAuthResult: () => {
 						// prevent the UI from redirecting the user using a preconfigured redirect-url
 						setIsSignedIn(true);
-						setUser(auth.currentUser!);
+						setUser(auth.currentUser);
 						return false;
 					},
 				},

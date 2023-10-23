@@ -27,8 +27,6 @@ repos:
       hooks:
           - id: prettier
             exclude: 'go.mod|gen/ts|.idea/modules'
-            args:
-                - '--json-recursive-sort'
     - repo: https://github.com/pre-commit/mirrors-eslint
       rev: 'v8.52.0'
       hooks:

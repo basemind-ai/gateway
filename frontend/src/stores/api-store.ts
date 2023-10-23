@@ -4,12 +4,12 @@ import { StateCreator } from 'zustand/vanilla';
 
 export interface ApiStore {
 	user: UserInfo | null;
-	setUser: (user: UserInfo) => void;
+	setUser: (user: UserInfo | null) => void;
 }
 
 export const apiStoreStateCreator: StateCreator<ApiStore> = (set, _) => ({
 	user: null,
-	setUser: (user: UserInfo) => {
+	setUser: (user: UserInfo | null) => {
 		set({ user });
 	},
 });
