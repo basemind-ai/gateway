@@ -6,6 +6,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -28,12 +29,8 @@ func handleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, txErr := db.GetTransaction(r.Context())
-	if txErr != nil {
-		log.Error().Err(txErr).Msg("failed to create transaction")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	tx := exc.MustResult(db.GetTransaction(r.Context()))
+
 	defer func() {
 		if rollbackErr := tx.Rollback(r.Context()); rollbackErr != nil {
 			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
@@ -80,12 +77,7 @@ func handleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 func handleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	tokens, retrievalErr := db.GetQueries().RetrieveTokens(r.Context(), applicationID)
-	if retrievalErr != nil {
-		log.Error().Err(retrievalErr).Msg("failed to retrieve application tokens")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	tokens := exc.MustResult(db.GetQueries().RetrieveTokens(r.Context(), applicationID))
 
 	ret := make([]*dto.ApplicationTokenDTO, 0)
 	for _, token := range tokens {
@@ -104,11 +96,7 @@ func handleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
 func handleDeleteApplicationToken(w http.ResponseWriter, r *http.Request) {
 	tokenID := r.Context().Value(middleware.TokenIDContextKey).(pgtype.UUID)
 
-	if err := db.GetQueries().DeleteToken(r.Context(), tokenID); err != nil {
-		log.Error().Err(err).Msg("failed to delete application token")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	exc.Must(db.GetQueries().DeleteToken(r.Context(), tokenID))
 
 	w.WriteHeader(http.StatusNoContent)
 }

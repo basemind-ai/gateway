@@ -14,7 +14,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -375,64 +374,38 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 		toDate := fromDate.AddDate(0, 0, 2)
 		totalTokensUsed := int64(20)
 
-		t.Run("GetTotalPromptRequestCountByDateRange", func(t *testing.T) {
+		t.Run("GetPromptConfigAPIRequestCountByDateRange", func(t *testing.T) {
 			t.Run("get total prompt requests by date range", func(t *testing.T) {
-				totalRequests, dbErr := repositories.GetTotalPromptRequestCountByDateRange(
+				totalRequests := repositories.GetPromptConfigAPIRequestCountByDateRange(
 					context.TODO(),
 					promptConfig.ID,
 					fromDate,
 					toDate,
 				)
-				assert.NoError(t, dbErr)
 				assert.Equal(t, int64(1), totalRequests)
 			})
-			t.Run(
-				"fails to get total prompt requests for invalid prompt-config id",
-				func(t *testing.T) {
-					invalidUUID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
-					totalRequests, _ := repositories.GetTotalPromptRequestCountByDateRange(
-						context.TODO(),
-						invalidUUID,
-						fromDate,
-						toDate,
-					)
-					assert.Equal(t, int64(0), totalRequests)
-				},
-			)
 		})
 
-		t.Run("GetTotalTokensConsumedByDateRange", func(t *testing.T) {
+		t.Run("GetPromptConfigTokensCountByDateRange", func(t *testing.T) {
 			t.Run("get token usage for each model types by date range", func(t *testing.T) {
-				modelTokenCntMap, dbErr := repositories.GetTotalTokensConsumedByDateRange(
+				modelTokenCntMap := repositories.GetPromptConfigTokensCountByDateRange(
 					context.TODO(),
 					promptConfig.ID,
 					fromDate,
 					toDate,
 				)
-				assert.NoError(t, dbErr)
 				assert.Equal(t, int64(20), modelTokenCntMap[db.ModelTypeGpt35Turbo])
-			})
-			t.Run("fails to get token usage for invalid prompt-config id", func(t *testing.T) {
-				invalidUUID := pgtype.UUID{Bytes: [16]byte{}, Valid: false}
-				modelTokenCntMap, _ := repositories.GetTotalTokensConsumedByDateRange(
-					context.TODO(),
-					invalidUUID,
-					fromDate,
-					toDate,
-				)
-				assert.Equal(t, int64(0), modelTokenCntMap[db.ModelTypeGpt35Turbo])
 			})
 		})
 
 		t.Run("GetPromptConfigAnalyticsByDateRange", func(t *testing.T) {
 			t.Run("get token usage for each model types by date range", func(t *testing.T) {
-				promptConfigAnalytics, dbErr := repositories.GetPromptConfigAnalyticsByDateRange(
+				promptConfigAnalytics := repositories.GetPromptConfigAnalyticsByDateRange(
 					context.TODO(),
 					promptConfig.ID,
 					fromDate,
 					toDate,
 				)
-				assert.NoError(t, dbErr)
 				assert.Equal(t, int64(1), promptConfigAnalytics.TotalPromptRequests)
 				assert.Equal(
 					t,

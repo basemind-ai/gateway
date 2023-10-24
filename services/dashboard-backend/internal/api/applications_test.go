@@ -676,7 +676,7 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			applicationUUID, _ := db.StringToUUID(applicationID)
-			promptReqAnalytics, _ := repositories.GetPromptRequestAnalyticsByDateRange(
+			promptReqAnalytics := repositories.GetApplicationAnalyticsByDateRange(
 				context.TODO(),
 				*applicationUUID,
 				fromDate,

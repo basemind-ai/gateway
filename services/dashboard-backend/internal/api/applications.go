@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"net/http"
 	"time"
 
@@ -34,12 +35,7 @@ func handleCreateApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	application, createApplicationErr := db.GetQueries().CreateApplication(r.Context(), *data)
-	if createApplicationErr != nil {
-		log.Error().Err(createApplicationErr).Msg("failed to create application")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	application := exc.MustResult(db.GetQueries().CreateApplication(r.Context(), *data))
 
 	serialization.RenderJSONResponse(w, http.StatusCreated, dto.ApplicationDTO{
 		ID:          db.UUIDToString(&application.ID),
@@ -54,15 +50,9 @@ func handleCreateApplication(w http.ResponseWriter, r *http.Request) {
 func handleRetrieveApplications(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	applications, applicationsRetrieveErr := db.
+	applications := exc.MustResult(db.
 		GetQueries().
-		RetrieveApplications(r.Context(), projectID)
-
-	if applicationsRetrieveErr != nil {
-		log.Error().Err(applicationsRetrieveErr).Msg("failed to retrieve applications")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+		RetrieveApplications(r.Context(), projectID))
 
 	data := make([]dto.ApplicationDTO, len(applications))
 	for i, application := range applications {
@@ -91,6 +81,7 @@ func handleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
+
 	serialization.RenderJSONResponse(w, http.StatusOK, dto.ApplicationDTO{
 		ID:          db.UUIDToString(&application.ID),
 		Name:        application.Name,
@@ -118,12 +109,7 @@ func handleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	application, applicationUpdateError := db.GetQueries().UpdateApplication(r.Context(), *data)
-	if applicationUpdateError != nil {
-		log.Error().Err(applicationUpdateError).Msg("failed to update application")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	application := exc.MustResult(db.GetQueries().UpdateApplication(r.Context(), *data))
 
 	go func() {
 		rediscache.Invalidate(r.Context(), db.UUIDToString(&application.ID))
@@ -157,17 +143,12 @@ func handleRetrieveApplicationAnalytics(w http.ResponseWriter, r *http.Request) 
 	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())
 	fromDate := timeutils.ParseDate(r.URL.Query().Get("fromDate"), timeutils.GetFirstDayOfMonth())
 
-	promptAnalytics, promptErr := repositories.GetPromptRequestAnalyticsByDateRange(
+	promptAnalytics := repositories.GetApplicationAnalyticsByDateRange(
 		r.Context(),
 		applicationID,
 		fromDate,
 		toDate,
 	)
-	if promptErr != nil {
-		log.Error().Err(promptErr).Msg("failed to retrieve prompt analytics")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
 
 	w.WriteHeader(http.StatusOK)
 	serialization.RenderJSONResponse(w, http.StatusOK, promptAnalytics)

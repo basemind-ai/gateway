@@ -9,8 +9,8 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
-	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lxzan/gws"
@@ -262,12 +262,7 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 // The socket then runs in a separate go routine that prevents GC.
 // See the OnMessage receive of the handler above for the actual handling of websocket messages.
 func promptTestingWebsocketHandler(w http.ResponseWriter, r *http.Request) {
-	socket, err := upgrader.Upgrade(w, r)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to upgrade connection")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	socket := exc.MustResult(upgrader.Upgrade(w, r))
 	// we have to pass the request applicationID via the socket session storage, because the GWS library
 	// does not expose another API for this purpose.
 	// The GWS session storage is concurrency safe, and is unique per socket - so we can be certain
