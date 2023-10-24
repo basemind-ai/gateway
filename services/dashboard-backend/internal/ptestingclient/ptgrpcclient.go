@@ -7,12 +7,15 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
+	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/rs/zerolog/log"
 	"github.com/sethvargo/go-envconfig"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"io"
+	"time"
 )
 
 var client *Client
@@ -54,11 +57,11 @@ func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
 
 // Init - initializes the PromptTesting gRPC client. This function is called once.
 func Init(ctx context.Context, opts ...grpc.DialOption) error {
-	config := &clientConfig{}
-	if envErr := envconfig.Process(ctx, config); envErr != nil {
+	cfg := &clientConfig{}
+	if envErr := envconfig.Process(ctx, cfg); envErr != nil {
 		return fmt.Errorf("failed to parse env")
 	}
-	c, err := New(config.APIGatewayAddress, opts...)
+	c, err := New(cfg.APIGatewayAddress, opts...)
 	if err != nil {
 		return fmt.Errorf("failed to create grpc client")
 	}
@@ -78,6 +81,7 @@ func (c *Client) StreamPromptTest(
 		ctx,
 		applicationID,
 	)
+
 	if getOrCreateErr != nil {
 		log.Error().Err(getOrCreateErr).Msg("failed to get or create internal token")
 		errorChannel <- fmt.Errorf("failed to get or create internal token: %w", getOrCreateErr)
@@ -88,10 +92,26 @@ func (c *Client) StreamPromptTest(
 		return
 	}
 
+	jwt, jwtCreateErr := jwtutils.CreateJWT(
+		time.Minute,
+		[]byte(config.Get(ctx).JWTSecret),
+		db.UUIDToString(tokenID),
+	)
+
+	if jwtCreateErr != nil {
+		log.Error().Err(jwtCreateErr).Msg("failed to create jwt")
+		errorChannel <- fmt.Errorf("failed to create jwt: %w", jwtCreateErr)
+
+		close(responseChannel)
+		close(errorChannel)
+
+		return
+	}
+
 	contextWithMetadata := metadata.AppendToOutgoingContext(
 		ctx,
 		"authorization",
-		fmt.Sprintf("bearer %s", db.UUIDToString(tokenID)),
+		fmt.Sprintf("bearer %s", jwt),
 	)
 
 	stream, streamErr := c.client.TestPrompt(contextWithMetadata, &ptesting.PromptTestRequest{

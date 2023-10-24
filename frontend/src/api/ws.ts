@@ -78,7 +78,10 @@ export async function createWebsocket<P, M>({
 		handleClose(code !== WS_STATUS_OK, reason);
 	});
 	websocket.addEventListener('error', handleError);
-	websocket.addEventListener('message', handleMessage);
+	websocket.addEventListener('message', (event: MessageEvent<string>) => {
+		const data = JSON.parse(event.data) as PromptConfigTestResultChunk;
+		handleMessage({ ...event, data });
+	});
 
 	return {
 		closeSocket: () => {

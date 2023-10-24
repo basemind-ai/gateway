@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { createWebsocket, WebsocketHandler } from '@/api/ws';
 import {
@@ -46,6 +46,27 @@ export default function PromptTesting({
 		});
 	};
 
+	const handleMessage = useCallback(
+		({ data }: MessageEvent<PromptConfigTestResultChunk>) => {
+			console.debug(data);
+			setMessages((messages) => [...messages, data]);
+		},
+		[messages],
+	);
+
+	const handleClose = useCallback((isError: boolean, reason: string) => {
+		// TODO: console.debug is left here just to demo the existence of isError and reason, they should be used.
+		console.debug('closing connection', isError, reason);
+		setIsClosed(true);
+		setIsError(isError);
+	}, []);
+
+	const handleError = useCallback((event: Event) => {
+		// TODO: console.debug is left here just to demo the existence of event
+		console.debug('err', event);
+		setIsError(true);
+	}, []);
+
 	useEffect(() => {
 		(async () => {
 			const handler = await createWebsocket<
@@ -54,21 +75,14 @@ export default function PromptTesting({
 			>({
 				applicationId,
 				projectId,
-				handleMessage: ({ data }) => {
-					setMessages((messages) => [...messages, data]);
-				},
-				handleClose: (isError, reason) => {
-					console.log('closing connection', isError, reason);
-					setIsClosed(true);
-					setIsError(isError);
-				},
-				handleError: (event) => {
-					console.log('err', event);
-					setIsError(true);
-				},
+				handleMessage: handleMessage,
+				handleClose: handleClose,
+				handleError: handleError,
 			});
 			setWebsocketHandler(handler);
 		})();
+
+		return () => websocketHandler?.closeSocket();
 	}, []);
 
 	if (!websocketHandler) {
@@ -81,19 +95,9 @@ export default function PromptTesting({
 			<div className="accent-red-50">
 				{isClosed && 'websocket is closed'}
 			</div>
-			<h1>messages received:</h1>
-			<div className="w-full h-full flex flex-col justify-evenly min-h-16 border-2">
-				{messages.map((message, index) => (
-					<div key={index}>
-						<div>{`content: ${message.content}`}</div>
-						<div>{`error: ${message.errorMessage}`}</div>
-						<div>
-							{`promptTestRecordId: ${message.promptTestRecordId}`}
-						</div>
-						<div>{`finishReason: ${message.finishReason}`}</div>
-						<div>{`promptConfigId: ${message.promptConfigId}`}</div>
-					</div>
-				))}
+			<h1>prompt stream:</h1>
+			<div className="w-full h-full flex min-h-16 border-2">
+				{messages.map((m) => m.content).join('')}
 			</div>
 			<div className="divider" />
 			<div className="p-4">

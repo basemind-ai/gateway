@@ -204,8 +204,9 @@ func (handler) OnOpen(socket *gws.Conn) {
 }
 
 // OnPing - handles websocket pings. Called each time the frontend sends a ping via the websocket.
-func (handler) OnPing(socket *gws.Conn, _ []byte) {
+func (handler) OnPing(socket *gws.Conn, msg []byte) {
 	// We reset the deadline, since we got a ping.
+	log.Debug().Bytes("msg", msg).Msg("received ping")
 	_ = socket.SetDeadline(time.Now().Add(socketDeadline))
 	_ = socket.WritePong(nil)
 }
@@ -219,7 +220,7 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 			log.Error().Err(err).Msg("failed to close message")
 		}
 	}()
-	if message.Data != nil && message.Data.Len() > 0 && message.Opcode == gws.OpcodeText {
+	if message.Data != nil && message.Data.String() != "ping" {
 		// We are retrieving the request context we passed into the socket session.
 		value, exists := socket.Session().Load(applicationIDSessionKey)
 		if !exists {
@@ -228,7 +229,7 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 			return
 		}
 		applicationID := value.(pgtype.UUID)
-
+		log.Debug().Interface("applicationID", applicationID).Msg("applicationID")
 		data, parseErr := parseMessageData(message, applicationID)
 		if parseErr != nil {
 			log.Error().Err(parseErr).Msg("failed to parse message data")
