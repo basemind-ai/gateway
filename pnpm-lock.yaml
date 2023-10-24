@@ -88,6 +88,9 @@ importers:
             prettier:
                 specifier: ^3.0.3
                 version: 3.0.3
+            prettier-plugin-sort-json:
+                specifier: ^3.1.0
+                version: 3.1.0(prettier@3.0.3)
             ts-loader:
                 specifier: ^9.5.0
                 version: 9.5.0(typescript@5.2.2)(webpack@5.89.0)
@@ -16120,6 +16123,18 @@ packages:
         engines: { node: '>=6.0.0' }
         dependencies:
             fast-diff: 1.3.0
+        dev: true
+
+    /prettier-plugin-sort-json@3.1.0(prettier@3.0.3):
+        resolution:
+            {
+                integrity: sha512-eIDEUjwzekiVd+oKrpd0aoACBTp5zOW71wDTNy+qQ5C9Q8oqt9n9wCm4F+SeRZbXfgblh/WYIguJynImlBXrvQ==,
+            }
+        engines: { node: '>=16.0.0' }
+        peerDependencies:
+            prettier: ^3.0.0
+        dependencies:
+            prettier: 3.0.3
         dev: true
 
     /prettier@2.8.8:

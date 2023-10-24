@@ -1,16 +1,16 @@
 {
-	"extends": "./tsconfig.json",
-	"include": ["src/*.ts"],
-	"exclude": ["node_modules", "dist"],
 	"compilerOptions": {
 		"allowJs": true,
 		"baseUrl": ".",
 		"declaration": false,
-		"noEmit": false,
-		"sourceMap": true,
 		"module": "CommonJS",
 		"moduleResolution": "node",
+		"noEmit": false,
 		"outDir": "dist",
-		"skipLibCheck": true
-	}
+		"skipLibCheck": true,
+		"sourceMap": true
+	},
+	"exclude": ["node_modules", "dist"],
+	"extends": "./tsconfig.json",
+	"include": ["src/*.ts"]
 }

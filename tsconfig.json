@@ -1,10 +1,8 @@
 {
-	"include": ["*.ts", "shared/**/*.ts", "gen/**/*.ts"],
-	"exclude": ["node_modules"],
 	"compilerOptions": {
-		"baseUrl": ".",
 		"allowJs": false,
 		"allowSyntheticDefaultImports": true,
+		"baseUrl": ".",
 		"declaration": false,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
@@ -16,6 +14,10 @@
 		"noImplicitAny": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
+		"paths": {
+			"gen/*": ["gen/ts/*"],
+			"shared/*": ["shared/ts/src/*"]
+		},
 		"removeComments": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
@@ -26,10 +28,8 @@
 		"strictNullChecks": true,
 		"strictPropertyInitialization": true,
 		"target": "esnext",
-		"types": ["vitest/globals"],
-		"paths": {
-			"shared/*": ["shared/ts/src/*"],
-			"gen/*": ["gen/ts/*"]
-		}
-	}
+		"types": ["vitest/globals"]
+	},
+	"exclude": ["node_modules"],
+	"include": ["*.ts", "shared/**/*.ts", "gen/**/*.ts"]
 }

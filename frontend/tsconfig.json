@@ -1,4 +1,28 @@
 {
+	"compilerOptions": {
+		"baseUrl": "./",
+		"importHelpers": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"lib": ["dom", "dom.iterable", "ESNext"],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"noEmit": false,
+		"paths": {
+			"@/*": ["src/*"],
+			"public/*": ["public/*"],
+			"shared/*": ["../shared/ts/src/*"],
+			"tests/*": ["tests/*"]
+		},
+		"plugins": [
+			{
+				"name": "next"
+			}
+		],
+		"sourceMap": true,
+		"types": ["vitest/globals", "@testing-library/jest-dom"]
+	},
+	"exclude": ["node_modules"],
 	"extends": "../tsconfig.json",
 	"include": [
 		"**/*.ts",
@@ -8,29 +32,5 @@
 		".next/types/**/*.ts",
 		".storybook/**/*.ts",
 		"dist/types/**/*.ts"
-	],
-	"exclude": ["node_modules"],
-	"compilerOptions": {
-		"baseUrl": "./",
-		"importHelpers": true,
-		"jsx": "preserve",
-		"lib": ["dom", "dom.iterable", "ESNext"],
-		"types": ["vitest/globals", "@testing-library/jest-dom"],
-		"isolatedModules": true,
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"sourceMap": true,
-		"noEmit": false,
-		"paths": {
-			"@/*": ["src/*"],
-			"tests/*": ["tests/*"],
-			"public/*": ["public/*"],
-			"shared/*": ["../shared/ts/src/*"]
-		},
-		"plugins": [
-			{
-				"name": "next"
-			}
-		]
-	}
+	]
 }

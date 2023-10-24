@@ -1,24 +1,24 @@
 {
-	"extends": "../../tsconfig.json",
-	"include": ["**/*.ts", "*.ts"],
-	"exclude": ["node_modules"],
 	"compilerOptions": {
 		"baseUrl": ".",
 		"isolatedModules": false,
 		"paths": {
 			"@/*": ["src/*"],
-			"tests/*": ["tests/*"],
+			"gen/*": ["../../gen/ts/*"],
 			"shared/*": ["../../shared/ts/src/*"],
-			"gen/*": ["../../gen/ts/*"]
+			"tests/*": ["tests/*"]
 		},
 		"types": ["vitest/globals"]
 	},
+	"exclude": ["node_modules"],
+	"extends": "../../tsconfig.json",
+	"include": ["**/*.ts", "*.ts"],
 	"ts-node": {
 		"compilerOptions": {
-			"sourceMap": true,
-			"noEmit": false,
 			"module": "CommonJS",
-			"moduleResolution": "node"
+			"moduleResolution": "node",
+			"noEmit": false,
+			"sourceMap": true
 		}
 	}
 }

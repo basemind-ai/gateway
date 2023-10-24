@@ -5,5 +5,5 @@ module.exports = {
 	quoteProps: 'consistent',
 	singleQuote: true,
 	useTabs: true,
-	plugins: ['@prettier/plugin-xml'],
+	plugins: ['@prettier/plugin-xml', 'prettier-plugin-sort-json'],
 };
