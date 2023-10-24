@@ -5,7 +5,7 @@ import { render, renderHook, screen } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
-import { ApplicationDeletion } from '@/app/projects/[projectId]/application/[applicationId]/page';
+import { ApplicationDeletion } from '@/app/projects/[projectId]/applications/[applicationId]/page';
 import {
 	useSetProjectApplications,
 	useSetProjects,

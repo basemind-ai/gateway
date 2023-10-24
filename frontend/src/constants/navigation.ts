@@ -9,5 +9,5 @@ export enum Navigation {
 	Settings = '/projects/:projectId/settings',
 	Billing = '/projects/:projectId/billing',
 	Support = '/support',
-	Application = '/projects/:projectId/application/:applicationId',
+	Applications = '/projects/:projectId/applications/:applicationId',
 }

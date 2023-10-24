@@ -21,7 +21,7 @@ export function DataCard({
 			<div>
 				<p className="text-neutral-content text-sm">{metric}</p>
 				<h1
-					data-testid="data-card-total-value"
+					data-testid={`data-card-total-value-${metric}`}
 					className="text-3xl font-semibold text-neutral-content"
 				>
 					{totalValue}

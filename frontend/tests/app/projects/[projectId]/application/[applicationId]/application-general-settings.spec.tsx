@@ -9,7 +9,7 @@ import { beforeEach, describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { ApplicationGeneralSettings } from '@/app/projects/[projectId]/application/[applicationId]/page';
+import { ApplicationGeneralSettings } from '@/app/projects/[projectId]/applications/[applicationId]/page';
 import {
 	useSetProjectApplications,
 	useSetProjects,

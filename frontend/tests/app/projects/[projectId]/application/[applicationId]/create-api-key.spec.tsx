@@ -5,7 +5,7 @@ import { render, screen } from 'tests/test-utils';
 import { beforeEach, describe, expect } from 'vitest';
 
 import * as TokenAPI from '@/api/tokens-api';
-import { CreateApiKey } from '@/app/projects/[projectId]/application/[applicationId]/page';
+import { CreateApiKey } from '@/app/projects/[projectId]/applications/[applicationId]/page';
 
 describe('CreateApiKey tests', () => {
 	const handleCreateTokenSpy = vi.spyOn(TokenAPI, 'handleCreateToken');

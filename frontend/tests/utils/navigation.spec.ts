@@ -15,8 +15,8 @@ describe('contextNavigation tests', () => {
 		const projectId = '2';
 		const navigation = contextNavigation(projectId);
 
-		expect(navigation.Application).toContain(projectId);
-		expect(navigation.Application).not.toContain(':projectId');
+		expect(navigation.Applications).toContain(projectId);
+		expect(navigation.Applications).not.toContain(':projectId');
 	});
 });
 
@@ -35,9 +35,9 @@ describe('populateApplicationId tests', () => {
 	it('replaces :applicationId in string with the given application id', () => {
 		const applicationId = '123';
 		const url = populateApplicationId(
-			'/projects/:projectId/application/:applicationId',
+			'/projects/:projectId/applications/:applicationId',
 			applicationId,
 		);
-		expect(url).toBe('/projects/:projectId/application/123');
+		expect(url).toBe('/projects/:projectId/applications/123');
 	});
 });

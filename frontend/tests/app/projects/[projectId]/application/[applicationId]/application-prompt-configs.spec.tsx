@@ -4,7 +4,7 @@ import { render, screen } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { ApplicationPromptConfigs } from '@/app/projects/[projectId]/application/[applicationId]/page';
+import { ApplicationPromptConfigs } from '@/app/projects/[projectId]/applications/[applicationId]/page';
 
 describe('ApplicationPromptConfigs', () => {
 	// TODO: add more tests when adding new config, test and edit functionality

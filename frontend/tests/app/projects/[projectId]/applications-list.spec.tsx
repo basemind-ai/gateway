@@ -5,7 +5,7 @@ import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { ApplicationsList } from '@/app/projects/[projectId]/page';
+import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
 import { Navigation } from '@/constants';
 import { populateApplicationId, populateProjectId } from '@/utils/navigation';
 
@@ -60,7 +60,7 @@ describe('ApplicationsList', () => {
 		await waitFor(() => render(<ApplicationsList projectId={projectId} />));
 
 		const applicationUrl = populateApplicationId(
-			populateProjectId(Navigation.Application, projectId),
+			populateProjectId(Navigation.Applications, projectId),
 			applications[0].id,
 		);
 
