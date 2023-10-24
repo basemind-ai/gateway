@@ -94,7 +94,7 @@ export function AccountDeletion({ user }: { user: UserInfo | null }) {
 
 	async function deleteUserAccount() {
 		if (user) {
-			await handleDeleteUserAccount(user);
+			await handleDeleteUserAccount();
 			closeDeleteConfirmationPopup();
 			setUser(null);
 			router.replace(Navigation.Base);

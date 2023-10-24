@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"net/http"
 	"strings"
 	"testing"
@@ -20,6 +21,7 @@ import (
 func TestProjectsAPI(t *testing.T) {
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	testClient := createTestClient(t, userAccount)
+	testutils.CreateMockRedisClient(t)
 
 	t.Run(fmt.Sprintf("POST: %s", api.ProjectsListEndpoint), func(t *testing.T) {
 		t.Run("creates a new project and sets the user as ADMIN", func(t *testing.T) {

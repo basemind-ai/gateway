@@ -4,3 +4,4 @@ export * from './project-users-api';
 export * from './projects-api';
 export * from './prompt-config-api';
 export * from './tokens-api';
+export * from './users-api';
