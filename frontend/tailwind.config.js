@@ -21,6 +21,9 @@ module.exports = {
 				102: '25.5rem',
 				112: '28rem',
 			},
+			borderRadius: {
+				'4xl': '30px',
+			},
 		},
 	},
 	plugins: [

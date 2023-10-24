@@ -48,6 +48,7 @@ export default function PromptTesting({
 
 	const handleMessage = useCallback(
 		({ data }: MessageEvent<PromptConfigTestResultChunk>) => {
+			// eslint-disable-next-line no-console
 			console.debug(data);
 			setMessages((messages) => [...messages, data]);
 		},
@@ -56,6 +57,7 @@ export default function PromptTesting({
 
 	const handleClose = useCallback((isError: boolean, reason: string) => {
 		// TODO: console.debug is left here just to demo the existence of isError and reason, they should be used.
+		// eslint-disable-next-line no-console
 		console.debug('closing connection', isError, reason);
 		setIsClosed(true);
 		setIsError(isError);
@@ -63,6 +65,7 @@ export default function PromptTesting({
 
 	const handleError = useCallback((event: Event) => {
 		// TODO: console.debug is left here just to demo the existence of event
+		// eslint-disable-next-line no-console
 		console.debug('err', event);
 		setIsError(true);
 	}, []);

@@ -18,7 +18,7 @@ describe('NavRailFooter tests', () => {
 	it('should not highlight links on different urls', () => {
 		render(<NavRailFooter />);
 
-		const billingLink = screen.getByTestId('nav-rail-footer-billing');
+		const billingLink = screen.getByTestId('nav-rail-footer-support');
 		expect(billingLink.className).toContain('text-base-content');
 	});
 });
