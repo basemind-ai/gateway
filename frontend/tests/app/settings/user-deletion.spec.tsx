@@ -8,14 +8,14 @@ import {
 } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
-import * as ApplicationAPI from '@/api/applications-api';
+import * as UsersAPI from '@/api/users-api';
 import { AccountDeletion } from '@/app/settings/page';
 import { Navigation } from '@/constants';
 import { useSetUser, useUser } from '@/stores/api-store';
 
 describe('user account deletion tests', () => {
 	const handleDeleteUserAccountSpy = vi.spyOn(
-		ApplicationAPI,
+		UsersAPI,
 		'handleDeleteUserAccount',
 	);
 	const {
@@ -58,7 +58,7 @@ describe('user account deletion tests', () => {
 
 	it('clicking on delete account modal delete button should call backend to delete the account', async () => {
 		const handleDeleteUserAccountSpy = vi.spyOn(
-			ApplicationAPI,
+			UsersAPI,
 			'handleDeleteUserAccount',
 		);
 		render(<AccountDeletion user={mockUser} />);

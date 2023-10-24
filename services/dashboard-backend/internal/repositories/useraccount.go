@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/firebaseutils"
+	"github.com/rs/zerolog/log"
 )
 
 // GetOrCreateUserAccount - return an existing user account or create a new user account.
@@ -32,4 +34,21 @@ func GetOrCreateUserAccount(ctx context.Context, firebaseID string) (*db.UserAcc
 		return nil, fmt.Errorf("failed to create user account: %w", createUserErr)
 	}
 	return &createdUser, nil
+}
+
+// DeleteUserAccount - hard deletes a user account and expunges it from firebase - conforming with GDPR.
+func DeleteUserAccount(ctx context.Context, userAccount db.UserAccount) error {
+	if exc.MustResult(db.GetQueries().CheckUserIsSoleAdminInAnyProject(ctx, userAccount.ID)) {
+		return fmt.Errorf("user is the sole admin in a project")
+	}
+
+	exc.Must(db.GetQueries().DeleteUserAccount(ctx, userAccount.ID))
+
+	go func() {
+		if err := firebaseutils.GetFirebaseAuth(ctx).DeleteUser(ctx, userAccount.FirebaseID); err != nil {
+			log.Error().Err(err).Msg("failed to delete firebase user")
+		}
+	}()
+
+	return nil
 }

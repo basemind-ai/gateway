@@ -1,18 +1,14 @@
 <component name="ProjectRunConfigurationManager">
   <configuration
 		default="false"
-		name="go test github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+		name="go test github.com/basemind-ai/monorepo/shared/go/config"
 		type="GoTestRunConfiguration"
 		factoryName="Go Test"
-		nameIsGenerated="true"
 	>
     <module name="BaseMind.AI" />
     <working_directory value="$PROJECT_DIR$" />
-    <go_parameters value="-count=1" />
     <kind value="PACKAGE" />
-    <package
-			value="github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
-		/>
+    <package value="github.com/basemind-ai/monorepo/shared/go/config" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$" />
     <framework value="gotest" />

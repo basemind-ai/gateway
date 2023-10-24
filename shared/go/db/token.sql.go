@@ -51,11 +51,11 @@ func (q *Queries) DeleteToken(ctx context.Context, id pgtype.UUID) error {
 }
 
 const retrieveApplicationIDForToken = `-- name: RetrieveApplicationIDForToken :one
-SELECT
-    app.id
+SELECT app.id
 FROM token AS t
-    LEFT JOIN application AS app ON app.id = t.application_id
-WHERE t.id = $1
+LEFT JOIN application AS app ON t.application_id = app.id
+WHERE
+    t.id = $1
     AND t.deleted_at IS NULL
     AND app.deleted_at IS NULL
 `
@@ -67,11 +67,11 @@ func (q *Queries) RetrieveApplicationIDForToken(ctx context.Context, id pgtype.U
 }
 
 const retrieveApplicationInternalTokenID = `-- name: RetrieveApplicationInternalTokenID :one
-SELECT
-    t.id
+SELECT t.id
 FROM token AS t
-    LEFT JOIN application AS app ON app.id = t.application_id
-WHERE app.id = $1
+LEFT JOIN application AS app ON t.application_id = app.id
+WHERE
+    app.id = $1
     AND t.deleted_at IS NULL
     AND app.deleted_at IS NULL
     AND t.is_internal = TRUE
@@ -89,7 +89,7 @@ SELECT
     t.name,
     t.created_at
 FROM token AS t
-     LEFT JOIN application AS app ON app.id = t.application_id
+LEFT JOIN application AS app ON t.application_id = app.id
 WHERE
     app.id = $1
     AND t.deleted_at IS NULL AND app.deleted_at IS NULL AND t.is_internal = FALSE

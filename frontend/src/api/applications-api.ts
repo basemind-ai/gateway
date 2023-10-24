@@ -1,4 +1,3 @@
-import { UserInfo } from '@firebase/auth';
 import { type DateType } from 'react-tailwindcss-datepicker';
 
 import { fetcher } from '@/api/fetcher';
@@ -94,10 +93,4 @@ export async function handleApplicationAnalytics({
 			toDate: toDate ? new Date(toDate).toISOString() : undefined,
 		},
 	});
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function handleDeleteUserAccount(_: UserInfo): Promise<void> {
-	await new Promise((resolve) => setTimeout(resolve, 1000));
-	// TODO: Naaman Implement this please
 }

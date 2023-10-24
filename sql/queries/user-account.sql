@@ -50,6 +50,23 @@ INSERT INTO user_account (
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
+-- name: DeleteUserAccount :exec
+DELETE FROM user_account WHERE id = $1;
+
+-- name: CheckUserIsSoleAdminInAnyProject :one
+SELECT EXISTS(
+    SELECT 1
+    FROM project AS p
+    LEFT JOIN user_project AS up ON p.id = up.project_id
+    WHERE
+        up.user_id = $1 AND up.permission = 'ADMIN' AND p.deleted_at IS NULL
+        AND NOT EXISTS (
+            SELECT 1
+            FROM user_project AS up2
+            WHERE up2.project_id = p.id AND up2.user_id != $1 AND up2.permission = 'ADMIN'
+        )
+);
+
 -- name: RetrieveProjectUserAccounts :many
 SELECT
     user_account.id,

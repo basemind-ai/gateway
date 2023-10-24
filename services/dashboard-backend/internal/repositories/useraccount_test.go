@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
+	"time"
 )
 
 func TestUserAccountRepository(t *testing.T) {
@@ -51,6 +52,53 @@ func TestUserAccountRepository(t *testing.T) {
 			assert.Equal(t, "test@example.com", userAccount.Email)
 			assert.Equal(t, "123456789", userAccount.PhoneNumber)
 			assert.Equal(t, "https://example.com/photo.jpg", userAccount.PhotoUrl)
+		})
+	})
+
+	t.Run("DeleteUserAccount", func(t *testing.T) {
+		t.Run("deletes user account and expunges it from firebase", func(t *testing.T) {
+			project, _ := factories.CreateProject(context.TODO())
+			userAccount, _ := factories.CreateUserAccount(context.TODO())
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+				UserID:     userAccount.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			})
+
+			otherUserAccount, _ := factories.CreateUserAccount(context.TODO())
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+				UserID:     otherUserAccount.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			})
+
+			mockAuth := testutils.MockFirebaseAuth(t)
+
+			mockAuth.On("DeleteUser", mock.Anything, userAccount.FirebaseID).Return(nil)
+
+			err := repositories.DeleteUserAccount(context.TODO(), *userAccount)
+			assert.NoError(t, err)
+
+			time.Sleep(100 * time.Millisecond)
+
+			mockAuth.AssertExpectations(t)
+		})
+
+		t.Run("does not allow delete if user is sole ADMIN of project", func(t *testing.T) {
+			project, _ := factories.CreateProject(context.TODO())
+			userAccount, _ := factories.CreateUserAccount(context.TODO())
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+				UserID:     userAccount.ID,
+				ProjectID:  project.ID,
+				Permission: db.AccessPermissionTypeADMIN,
+			})
+
+			mockAuth := testutils.MockFirebaseAuth(t)
+
+			err := repositories.DeleteUserAccount(context.TODO(), *userAccount)
+			assert.Error(t, err)
+
+			mockAuth.AssertNotCalled(t, "DeleteUser", mock.Anything, userAccount.FirebaseID)
 		})
 	})
 }
