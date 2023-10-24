@@ -49,7 +49,7 @@ export default function NavRailList() {
 			>
 				{projectApplications?.map((application) => {
 					const applicationUrl = populateApplicationId(
-						navigation.Application,
+						navigation.Applications,
 						application.id,
 					);
 					return (

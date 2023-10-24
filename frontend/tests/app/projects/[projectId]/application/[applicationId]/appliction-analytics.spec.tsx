@@ -1,9 +1,10 @@
 import { waitFor } from '@testing-library/react';
-import { fireEvent, render, screen } from 'tests/test-utils';
+import { useTranslations } from 'next-intl';
+import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
-import { ApplicationAnalytics } from '@/app/projects/[projectId]/application/[applicationId]/page';
+import { ApplicationAnalytics } from '@/app/projects/[projectId]/applications/[applicationId]/page';
 
 describe('ApplicationAnalytics', () => {
 	const projectId = '1';
@@ -14,6 +15,9 @@ describe('ApplicationAnalytics', () => {
 	);
 
 	it('renders analytics', async () => {
+		const {
+			result: { current: t },
+		} = renderHook(() => useTranslations('application'));
 		const analytics = {
 			totalRequests: 434,
 			projectedCost: 3,
@@ -28,9 +32,11 @@ describe('ApplicationAnalytics', () => {
 				/>,
 			),
 		);
-
-		const [apiCalls, modelsCost] = screen.getAllByTestId(
-			'data-card-total-value',
+		const apiCalls = screen.getByTestId(
+			`data-card-total-value-${t('apiCalls')}`,
+		);
+		const modelsCost = screen.getByTestId(
+			`data-card-total-value-${t('modelsCost')}`,
 		);
 
 		expect(apiCalls.innerHTML).toBe(analytics.totalRequests.toString());
@@ -38,6 +44,9 @@ describe('ApplicationAnalytics', () => {
 	});
 
 	it('renders updated analytics on date change', async () => {
+		const {
+			result: { current: t },
+		} = renderHook(() => useTranslations('application'));
 		const initialAnalytics = {
 			totalRequests: 434,
 			projectedCost: 3,
@@ -53,7 +62,9 @@ describe('ApplicationAnalytics', () => {
 			),
 		);
 
-		const [apiCalls] = screen.getAllByTestId('data-card-total-value');
+		const apiCalls = screen.getByTestId(
+			`data-card-total-value-${t('apiCalls')}`,
+		);
 		expect(apiCalls.innerHTML).toBe(
 			initialAnalytics.totalRequests.toString(),
 		);

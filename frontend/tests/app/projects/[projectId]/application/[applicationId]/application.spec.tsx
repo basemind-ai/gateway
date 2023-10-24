@@ -10,7 +10,7 @@ import { describe, expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import * as TokensAPI from '@/api/tokens-api';
-import ApplicationPage from '@/app/projects/[projectId]/application/[applicationId]/page';
+import ApplicationPage from '@/app/projects/[projectId]/applications/[applicationId]/page';
 import {
 	useSetProjectApplications,
 	useSetProjects,

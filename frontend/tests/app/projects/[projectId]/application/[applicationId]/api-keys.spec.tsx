@@ -5,7 +5,7 @@ import { render, screen } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
 import * as TokenAPI from '@/api/tokens-api';
-import { ApiKeys } from '@/app/projects/[projectId]/application/[applicationId]/page';
+import { ApiKeys } from '@/app/projects/[projectId]/applications/[applicationId]/page';
 
 describe('ApiKeys tests', () => {
 	const handleRetrieveTokensSpy = vi.spyOn(TokenAPI, 'handleRetrieveTokens');
