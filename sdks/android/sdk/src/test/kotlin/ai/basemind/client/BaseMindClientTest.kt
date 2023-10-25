@@ -38,9 +38,10 @@ import java.io.PrintStream
 fun createTestClient(
     channel: ManagedChannel,
     apiToken: String = "testToken",
+    promptConfigId: String? = null,
     options: Options = Options(),
 ): BaseMindClient {
-    val client = BaseMindClient.getInstance(apiToken = apiToken, options = options)
+    val client = BaseMindClient.getInstance(apiToken = apiToken, promptConfigId = promptConfigId, options = options)
     client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
     return client
 }
@@ -56,6 +57,7 @@ class HeaderServerInterceptor(private val server: MockAPIGatewayServer) : Server
     ): ServerCall.Listener<ReqT> {
         val key = Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER)
         server.authHeader = requestHeaders.get(key)
+
         return Contexts.interceptCall(Context.current(), call, requestHeaders, serverCallHandler)
     }
 }
@@ -66,11 +68,16 @@ class HeaderServerInterceptor(private val server: MockAPIGatewayServer) : Server
 class MockAPIGatewayServer : APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineImplBase() {
     var exc: StatusException? = null
     var authHeader: String? = null
+    var templateVariableValue: String? = null
+    var promptConfigId: String? = null
 
     override suspend fun requestPrompt(request: PromptRequest): PromptResponse {
         if (exc != null) {
             throw exc!! // skipcq: KT-E1010
         }
+
+        promptConfigId = request.promptConfigId
+        templateVariableValue = request.templateVariablesMap["key"]
         return PromptResponse.newBuilder().setContent("test prompt").build()
     }
 
@@ -78,6 +85,9 @@ class MockAPIGatewayServer : APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineI
         if (exc != null) {
             throw exc!! // skipcq: KT-E1010
         }
+
+        promptConfigId = request.promptConfigId
+        templateVariableValue = request.templateVariablesMap["key"]
         return arrayOf("1", "2", "3").map {
             StreamingPromptResponse.newBuilder().setContent(it).build()
         }.asFlow()
@@ -92,6 +102,7 @@ class BaseMindClientTest {
     private fun createTestClientForServer(
         mockServer: MockAPIGatewayServer,
         isDebug: Boolean = false,
+        promptConfigId: String? = null,
     ): BaseMindClient {
         // we create a server name to register, this is basically a UUID
         val serverName: String = InProcessServerBuilder.generateName()
@@ -119,7 +130,7 @@ class BaseMindClientTest {
                     .build(),
             )
 
-        return createTestClient(channel, options = Options(debug = isDebug))
+        return createTestClient(channel, promptConfigId = promptConfigId, options = Options(debug = isDebug))
     }
 
     private val originalOut = System.out
@@ -233,6 +244,24 @@ class BaseMindClientTest {
             }
         }
 
+    @Test
+    fun requestPromptMethodSendsTemplateVariables() = runTest {
+        val mock = MockAPIGatewayServer()
+        val testClient = createTestClientForServer(mock)
+
+        testClient.requestPrompt(hashMapOf("key" to "value"))
+        assertEquals("value", mock.templateVariableValue)
+    }
+
+    @Test
+    fun requestPromptMethodSetsPromptConfigId() = runTest {
+        val mock = MockAPIGatewayServer()
+        val testClient = createTestClientForServer(mock, promptConfigId = "testPromptConfigId")
+
+        testClient.requestPrompt(HashMap())
+        assertEquals("testPromptConfigId", mock.promptConfigId)
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
     fun requestPromptMethodThrowsMissingPromptVariableExceptionForGrpcStatusMissingArgument(isDebug: Boolean) =
@@ -300,6 +329,34 @@ class BaseMindClientTest {
             }
         }
 
+    @Test
+    fun requestStreamingPromptMethodSendsTemplateVariables() =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            val testClient = createTestClientForServer(mock)
+            val response = testClient.requestStream(hashMapOf("key" to "value"))
+
+            val results: MutableList<String> = mutableListOf()
+            response.collect { chunk -> results.add(chunk.content) }
+            assertEquals(listOf("1", "2", "3"), results)
+
+            assertEquals("value", mock.templateVariableValue)
+        }
+
+    @Test
+    fun requestStreamingPromptMethodSetsPromptConfigId() =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            val testClient = createTestClientForServer(mock, promptConfigId = "testPromptConfigId")
+            val response = testClient.requestStream(HashMap())
+
+            val results: MutableList<String> = mutableListOf()
+            response.collect { chunk -> results.add(chunk.content) }
+            assertEquals(listOf("1", "2", "3"), results)
+
+            assertEquals("testPromptConfigId", mock.promptConfigId)
+        }
+
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
     fun requestStreamingPromptMethodThrowsMissingPromptVariableExceptionForGrpcStatusMissingArgument(isDebug: Boolean) =
@@ -308,9 +365,11 @@ class BaseMindClientTest {
             mock.exc = StatusException(io.grpc.Status.INVALID_ARGUMENT, null)
 
             val testClient = createTestClientForServer(mock, isDebug)
+            val results: MutableList<String> = mutableListOf()
 
             try {
-                testClient.requestStream(HashMap())
+                val response = testClient.requestStream(HashMap())
+                response.collect { chunk -> results.add(chunk.content) }
             } catch (e: BaseMindException) {
                 assertEquals(MissingPromptVariableException::class.java, e.javaClass)
 
@@ -332,9 +391,11 @@ class BaseMindClientTest {
             mock.exc = StatusException(io.grpc.Status.INTERNAL, null)
 
             val testClient = createTestClientForServer(mock, isDebug)
+            val results: MutableList<String> = mutableListOf()
 
             try {
-                testClient.requestStream(HashMap())
+                val response = testClient.requestStream(HashMap())
+                response.collect { chunk -> results.add(chunk.content) }
             } catch (e: BaseMindException) {
                 assertEquals(APIGatewayException::class.java, e.javaClass)
 
@@ -346,6 +407,13 @@ class BaseMindClientTest {
                 }
             }
         }
+
+    @Test
+    fun TestClientClose() {
+        val mock = MockAPIGatewayServer()
+        val testClient = createTestClientForServer(mock)
+        assertDoesNotThrow { testClient.close() }
+    }
 }
 
 suspend fun getPrompt(userInput: String): String {
