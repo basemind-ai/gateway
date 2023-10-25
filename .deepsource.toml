@@ -1,12 +1,14 @@
 version = 1
 
 exclude_patterns = [
-    "**/node_modules/",
+    "**/*.js",
+    "**/*.sql.go",
+    "**/node_modules/**",
+    "build/**",
+    "dist/**",
     "e2e/**",
     "gen/**",
-    "**/*.js",
-    "sdks/android/test-app/**",
-    "shared/go/db/*.sql.go",
+    "node_modules/**",
 ]
 
 test_patterns = [
@@ -14,9 +16,7 @@ test_patterns = [
     "**/__mocks__/**",
     "**/mocks.*",
     "**/mocks/**",
-    "**/test/**",
-    "**/tests/**",
-    "**/testutils/**",
+    "**/test*/**",
     "**/vitest.*",
     "vitest.*",
 ]
