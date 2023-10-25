@@ -14,9 +14,7 @@ export function Contact({ user }: { user: UserInfo | null }) {
 		SupportTopics.None,
 	);
 	const [tellUsMore, setTellUsMore] = useState('');
-	const handleButtonClick = () => {
-		void handleSubmitTicket();
-	};
+
 	const handleSubmitTicket = async () => {
 		try {
 			if (!user) {
@@ -32,6 +30,9 @@ export function Contact({ user }: { user: UserInfo | null }) {
 		//TODO: implement success toast
 	};
 
+	const handleButtonClick = () => {
+		void handleSubmitTicket();
+	};
 	return (
 		<DashboardCard title={t('contactUs')}>
 			<div className="flex flex-col flex-end grow gap-8">
@@ -73,7 +74,7 @@ export function Contact({ user }: { user: UserInfo | null }) {
 						onChange={(e) => {
 							setTellUsMore(e.target.value);
 						}}
-					></textarea>
+					/>
 				</div>
 				<button
 					className="btn btn-primary self-end"

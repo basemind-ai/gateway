@@ -17,7 +17,7 @@ describe('get-in-touch tests', () => {
 		const headline = screen.getByText(t('getInTouch'));
 		expect(headline).toBeInTheDocument();
 	});
-	it('should render discord link', async () => {
+	it('should render discord link', () => {
 		render(<GetInTouch />);
 		const link = screen.getByText(t('joinOurDiscord'));
 		expect(link).toBeInTheDocument();
