@@ -315,7 +315,7 @@ func TestProjectsAPI(t *testing.T) {
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			projectUUID, _ := db.StringToUUID(projectID)
-			promptReqAnalytics, _ := repositories.GetProjectAnalyticsByDateRange(
+			promptReqAnalytics := repositories.GetProjectAnalyticsByDateRange(
 				context.TODO(),
 				*projectUUID,
 				fromDate,

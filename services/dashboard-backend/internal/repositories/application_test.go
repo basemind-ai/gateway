@@ -7,6 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
+	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -14,16 +15,24 @@ import (
 
 func TestApplicationRepository(t *testing.T) {
 	project, _ := factories.CreateProject(context.TODO())
+
 	redisDB, redisMock := testutils.CreateMockRedisClient(t)
 
+	application, _ := factories.CreateApplication(context.TODO(), project.ID)
+	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+	_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
+	fromDate := time.Now().AddDate(0, 0, -1)
+	toDate := fromDate.AddDate(0, 0, 2)
+	totalTokensUsed := int64(20)
+
 	t.Run("deletes an application and all of its prompt configs", func(t *testing.T) {
-		application, _ := factories.CreateApplication(context.TODO(), project.ID)
+		applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-		value, err := db.GetQueries().RetrieveApplication(context.TODO(), application.ID)
+		value, err := db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
 		assert.NoError(t, err)
-		assert.Equal(t, application.ID, value.ID)
+		assert.Equal(t, applicationToDelete.ID, value.ID)
 
-		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), applicationToDelete.ID)
 		promptConfigValue, err := db.
 			GetQueries().
 			RetrievePromptConfig(context.TODO(), promptConfig.ID)
@@ -31,10 +40,10 @@ func TestApplicationRepository(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, promptConfig.ID, promptConfigValue.ID)
 
-		err = repositories.DeleteApplication(context.TODO(), application.ID)
+		err = repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
 		assert.NoError(t, err)
 
-		_, err = db.GetQueries().RetrieveApplication(context.TODO(), application.ID)
+		_, err = db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
 		assert.Error(t, err)
 
 		_, err = db.GetQueries().RetrievePromptConfig(context.TODO(), promptConfig.ID)
@@ -42,28 +51,31 @@ func TestApplicationRepository(t *testing.T) {
 	})
 
 	t.Run("deletes an application that has no prompt configs", func(t *testing.T) {
-		application, _ := factories.CreateApplication(context.TODO(), project.ID)
+		applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-		value, err := db.GetQueries().RetrieveApplication(context.TODO(), application.ID)
+		value, err := db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
 		assert.NoError(t, err)
-		assert.Equal(t, application.ID, value.ID)
+		assert.Equal(t, applicationToDelete.ID, value.ID)
 
-		err = repositories.DeleteApplication(context.TODO(), application.ID)
+		err = repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
 		assert.NoError(t, err)
 
-		_, err = db.GetQueries().RetrieveApplication(context.TODO(), application.ID)
+		_, err = db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
 		assert.Error(t, err)
 	})
 
 	t.Run("invalidates application caches", func(t *testing.T) {
-		application, _ := factories.CreateApplication(context.TODO(), project.ID)
-		defaultPromptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+		applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
+		defaultPromptConfig, _ := factories.CreatePromptConfig(
+			context.TODO(),
+			applicationToDelete.ID,
+		)
 
-		applicationID := db.UUIDToString(&application.ID)
+		applicationToDeleteID := db.UUIDToString(&applicationToDelete.ID)
 
 		cacheKeys := []string{
-			fmt.Sprintf("%s:%s", applicationID, db.UUIDToString(&defaultPromptConfig.ID)),
-			applicationID,
+			fmt.Sprintf("%s:%s", applicationToDeleteID, db.UUIDToString(&defaultPromptConfig.ID)),
+			applicationToDeleteID,
 		}
 
 		for _, cacheKey := range cacheKeys {
@@ -71,11 +83,52 @@ func TestApplicationRepository(t *testing.T) {
 			redisMock.ExpectDel(cacheKey).SetVal(1)
 		}
 
-		err := repositories.DeleteApplication(context.TODO(), application.ID)
+		err := repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
 		assert.NoError(t, err)
 
 		time.Sleep(testutils.GetSleepTimeout())
 
 		assert.NoError(t, redisMock.ExpectationsWereMet())
+	})
+
+	t.Run("GetApplicationAPIRequestCountByDateRange", func(t *testing.T) {
+		t.Run("get total prompt requests by date range", func(t *testing.T) {
+			totalRequests := repositories.GetApplicationAPIRequestCountByDateRange(
+				context.TODO(),
+				application.ID,
+				fromDate,
+				toDate,
+			)
+			assert.Equal(t, int64(1), totalRequests)
+		})
+	})
+
+	t.Run("GetApplicationTokensCountPerModelTypeByDateRange", func(t *testing.T) {
+		t.Run("get token usage for each model types by date range", func(t *testing.T) {
+			modelTokenCntMap := repositories.GetApplicationTokensCountPerModelTypeByDateRange(
+				context.TODO(),
+				application.ID,
+				fromDate,
+				toDate,
+			)
+			assert.Equal(t, int64(20), modelTokenCntMap[db.ModelTypeGpt35Turbo])
+		})
+	})
+
+	t.Run("GetApplicationAnalyticsByDateRange", func(t *testing.T) {
+		t.Run("get token usage for each model types by date range", func(t *testing.T) {
+			applicationAnalytics := repositories.GetApplicationAnalyticsByDateRange(
+				context.TODO(),
+				application.ID,
+				fromDate,
+				toDate,
+			)
+			assert.Equal(t, int64(1), applicationAnalytics.TotalRequests)
+			assert.Equal(
+				t,
+				tokenutils.GetCostByModelType(totalTokensUsed, db.ModelTypeGpt35Turbo),
+				applicationAnalytics.ProjectedCost,
+			)
+		})
 	})
 }

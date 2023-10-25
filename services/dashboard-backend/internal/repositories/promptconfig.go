@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"strings"
 	"time"
 
@@ -29,14 +30,9 @@ func CreatePromptConfig(
 		return nil, fmt.Errorf("failed to parse prompt messages - %w", parsePromptMessagesErr)
 	}
 
-	defaultExists, retrievalErr := db.
+	defaultExists := exc.MustResult(db.
 		GetQueries().
-		CheckDefaultPromptConfigExists(ctx, applicationID)
-
-	if retrievalErr != nil {
-		log.Error().Err(retrievalErr).Msg("failed to retrieve default prompt config")
-		return nil, fmt.Errorf("failed to retrieve default prompt config - %w", retrievalErr)
-	}
+		CheckDefaultPromptConfigExists(ctx, applicationID))
 
 	// we automatically set the first created prompt config as the default.
 	// we know this is the first prompt config for the application, because there must always be a default config.
@@ -95,10 +91,7 @@ func UpdateApplicationDefaultPromptConfig(
 		return fmt.Errorf("prompt config with id %v is already the default", promptConfigID)
 	}
 
-	tx, txErr := db.GetTransaction(ctx)
-	if txErr != nil {
-		return fmt.Errorf("failed to create transaction - %w", txErr)
-	}
+	tx := exc.MustResult(db.GetTransaction(ctx))
 	defer func() {
 		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
 			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
@@ -196,6 +189,7 @@ func UpdatePromptConfig(
 
 	updatedPromptConfig, updateErr := db.GetQueries().UpdatePromptConfig(ctx, updateParams)
 	if updateErr != nil {
+		log.Error().Err(updateErr).Msg("failed to update prompt config")
 		return nil, fmt.Errorf("failed to update prompt config - %w", updateErr)
 	}
 
@@ -233,11 +227,8 @@ func DeletePromptConfig(ctx context.Context,
 	applicationID pgtype.UUID,
 	promptConfigID pgtype.UUID,
 ) error {
-	tx, err := db.GetOrCreateTx(ctx)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to create transaction")
-		return fmt.Errorf("failed to get transaction: %w", err)
-	}
+	tx := exc.MustResult(db.GetOrCreateTx(ctx))
+
 	if db.ShouldCommit(ctx) {
 		defer func() {
 			if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
@@ -269,68 +260,54 @@ func DeletePromptConfig(ctx context.Context,
 	return nil
 }
 
-func GetTotalPromptRequestCountByDateRange(
+func GetPromptConfigAPIRequestCountByDateRange(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
 	fromDate, toDate time.Time,
-) (int64, error) {
-	totalRequests, dbErr := db.GetQueries().
+) int64 {
+	return exc.MustResult(db.GetQueries().
 		RetrievePromptConfigAPIRequestCount(ctx, db.RetrievePromptConfigAPIRequestCountParams{
 			ID:          promptConfigID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
-		})
-	if dbErr != nil {
-		return -1, fmt.Errorf("failed to retrieve total prompt requests: %w", dbErr)
-	}
-
-	return totalRequests, nil
+		}))
 }
 
-func GetTotalTokensConsumedByDateRange(
+func GetPromptConfigTokensCountByDateRange(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
 	fromDate, toDate time.Time,
-) (map[db.ModelType]int64, error) {
-	promptRequests, dbErr := db.GetQueries().RetrievePromptConfigTokensCount(
+) map[db.ModelType]int64 {
+	promptRequests := exc.MustResult(db.GetQueries().RetrievePromptConfigTokensCount(
 		ctx,
 		db.RetrievePromptConfigTokensCountParams{
 			ID:          promptConfigID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
 		},
-	)
-	if dbErr != nil {
-		return nil, fmt.Errorf("failed to retrieve total tokens consumed: %w", dbErr)
-	}
+	))
 
 	tokenCntMap := make(map[db.ModelType]int64)
 	for _, record := range promptRequests {
 		tokenCntMap[record.ModelType] += record.TotalTokens
 	}
 
-	return tokenCntMap, nil
+	return tokenCntMap
 }
 
 func GetPromptConfigAnalyticsByDateRange(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
 	fromDate, toDate time.Time,
-) (dto.PromptConfigAnalyticsDTO, error) {
-	totalRequests, dbErr := GetTotalPromptRequestCountByDateRange(
+) dto.PromptConfigAnalyticsDTO {
+	totalRequests := GetPromptConfigAPIRequestCountByDateRange(
 		ctx,
 		promptConfigID,
 		fromDate,
 		toDate,
 	)
-	if dbErr != nil {
-		return dto.PromptConfigAnalyticsDTO{}, dbErr
-	}
 
-	tokenCntMap, dbErr := GetTotalTokensConsumedByDateRange(ctx, promptConfigID, fromDate, toDate)
-	if dbErr != nil {
-		return dto.PromptConfigAnalyticsDTO{}, dbErr
-	}
+	tokenCntMap := GetPromptConfigTokensCountByDateRange(ctx, promptConfigID, fromDate, toDate)
 
 	var modelCost float64
 	for model, tokenCnt := range tokenCntMap {
@@ -340,5 +317,5 @@ func GetPromptConfigAnalyticsByDateRange(
 	return dto.PromptConfigAnalyticsDTO{
 		TotalPromptRequests: totalRequests,
 		ModelsCost:          modelCost,
-	}, nil
+	}
 }

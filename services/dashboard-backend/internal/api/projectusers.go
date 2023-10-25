@@ -5,6 +5,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
@@ -15,12 +16,9 @@ import (
 func handleRetrieveProjectUserAccounts(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	userProjects, err := db.GetQueries().RetrieveProjectUserAccounts(r.Context(), projectID)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to retrieve project user accounts")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	userProjects := exc.MustResult(
+		db.GetQueries().RetrieveProjectUserAccounts(r.Context(), projectID),
+	)
 
 	ret := make([]dto.ProjectUserAccountDTO, len(userProjects))
 	for i, userProject := range userProjects {
@@ -79,35 +77,23 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userAlreadyInProject, checkErr := db.GetQueries().
+	userAlreadyInProject := exc.MustResult(db.GetQueries().
 		CheckUserProjectExists(r.Context(), db.CheckUserProjectExistsParams{
 			ProjectID: projectID,
 			UserID:    userAccount.ID,
-		})
-
-	if checkErr != nil {
-		log.Error().Err(checkErr).Msg("failed to check if user is already in project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+		}))
 
 	if userAlreadyInProject {
 		apierror.BadRequest("user is already in project").Render(w, r)
 		return
 	}
 
-	userProject, userProjectCreateErr := db.GetQueries().
+	userProject := exc.MustResult(db.GetQueries().
 		CreateUserProject(r.Context(), db.CreateUserProjectParams{
 			ProjectID:  projectID,
 			UserID:     userAccount.ID,
 			Permission: data.Permission,
-		})
-
-	if userProjectCreateErr != nil {
-		log.Error().Err(userProjectCreateErr).Msg("failed to create user project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+		}))
 
 	serialization.RenderJSONResponse(w, http.StatusCreated, dto.ProjectUserAccountDTO{
 		ID:          data.UserID,
@@ -149,17 +135,11 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userInProject, checkErr := db.GetQueries().
+	userInProject := exc.MustResult(db.GetQueries().
 		CheckUserProjectExists(r.Context(), db.CheckUserProjectExistsParams{
 			ProjectID: projectID,
 			UserID:    *userID,
-		})
-
-	if checkErr != nil {
-		log.Error().Err(checkErr).Msg("failed to check if user is already in project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+		}))
 
 	if !userInProject {
 		apierror.BadRequest("user is not in project").Render(w, r)
@@ -174,18 +154,12 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userProject, userProjectUpdateErr := db.GetQueries().
+	userProject := exc.MustResult(db.GetQueries().
 		UpdateUserProjectPermission(r.Context(), db.UpdateUserProjectPermissionParams{
 			ProjectID:  projectID,
 			UserID:     *userID,
 			Permission: data.Permission,
-		})
-
-	if userProjectUpdateErr != nil {
-		log.Error().Err(userProjectUpdateErr).Msg("failed to update user project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+		}))
 
 	serialization.RenderJSONResponse(w, http.StatusOK, dto.ProjectUserAccountDTO{
 		ID:          data.UserID,
@@ -209,44 +183,29 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userInProject, checkErr := db.GetQueries().
+	userInProject := exc.MustResult(db.GetQueries().
 		CheckUserProjectExists(r.Context(), db.CheckUserProjectExistsParams{
 			ProjectID: projectID,
 			UserID:    userID,
-		})
-
-	if checkErr != nil {
-		log.Error().Err(checkErr).Msg("failed to check if user is already in project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+		}))
 
 	if !userInProject {
 		apierror.BadRequest("user is not in project").Render(w, r)
 		return
 	}
 
-	userAccountExists, checkErr := db.GetQueries().
-		CheckUserAccountExists(r.Context(), requestUserAccount.FirebaseID)
-
-	if checkErr != nil {
-		log.Error().Err(checkErr).Msg("failed to check if user account exists")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	userAccountExists := exc.MustResult(db.GetQueries().
+		CheckUserAccountExists(r.Context(), requestUserAccount.FirebaseID))
 
 	if !userAccountExists {
 		apierror.BadRequest("user account does not exist").Render(w, r)
 		return
 	}
 
-	if deleteErr := db.GetQueries().DeleteUserProject(r.Context(), db.DeleteUserProjectParams{
+	exc.Must(db.GetQueries().DeleteUserProject(r.Context(), db.DeleteUserProjectParams{
 		ProjectID: projectID,
 		UserID:    userID,
-	}); deleteErr != nil {
-		log.Error().Err(deleteErr).Msg("failed to delete user project")
-		apierror.InternalServerError().Render(w, r)
-	}
+	}))
 
 	w.WriteHeader(http.StatusNoContent)
 }

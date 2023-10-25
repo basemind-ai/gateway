@@ -1488,7 +1488,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			promptConfigUUID, _ := db.StringToUUID(promptConfigID)
-			promptReqAnalytics, _ := repositories.GetPromptConfigAnalyticsByDateRange(
+			promptReqAnalytics := repositories.GetPromptConfigAnalyticsByDateRange(
 				context.TODO(),
 				*promptConfigUUID,
 				fromDate,

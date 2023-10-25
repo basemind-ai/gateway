@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"time"
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
@@ -14,21 +15,11 @@ import (
 
 func CreateProject(
 	ctx context.Context,
-	firebaseID string,
+	userAccount *db.UserAccount,
 	name string,
 	description string,
 ) (*dto.ProjectDTO, error) {
-	userAccount, retrievalErr := db.GetQueries().RetrieveUserAccountByFirebaseID(ctx, firebaseID)
-	if retrievalErr != nil {
-		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
-		return nil, fmt.Errorf("failed to retrieve user account: %w", retrievalErr)
-	}
-
-	tx, txErr := db.GetOrCreateTx(ctx)
-	if txErr != nil {
-		log.Error().Err(txErr).Msg("failed to create transaction")
-		return nil, fmt.Errorf("failed to create transaction: %w", txErr)
-	}
+	tx := exc.MustResult(db.GetOrCreateTx(ctx))
 
 	queries := db.GetQueries().WithTx(tx)
 
@@ -74,19 +65,11 @@ func CreateProject(
 }
 
 func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
-	applications, applicationsRetrievalErr := db.GetQueries().
-		RetrieveApplications(ctx, projectID)
+	applications := exc.MustResult(db.GetQueries().
+		RetrieveApplications(ctx, projectID))
 
-	if applicationsRetrievalErr != nil {
-		log.Error().Err(applicationsRetrievalErr).Msg("failed to retrieve applications")
-		return fmt.Errorf("failed to retrieve applications: %w", applicationsRetrievalErr)
-	}
+	tx := exc.MustResult(db.GetTransaction(ctx))
 
-	tx, txErr := db.GetTransaction(ctx)
-	if txErr != nil {
-		log.Error().Err(txErr).Msg("failed to create transaction")
-		return fmt.Errorf("failed to create transaction: %w", txErr)
-	}
 	defer func() {
 		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
 			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
@@ -118,66 +101,54 @@ func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
 	return nil
 }
 
-func GetTotalAPICountByDateRange(
+func GetProjectAPIRequestByDateRange(
 	ctx context.Context,
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
-) (int64, error) {
-	totalAPICalls, dbErr := db.GetQueries().
+) int64 {
+	totalAPICalls := exc.MustResult(db.GetQueries().
 		RetrieveProjectAPIRequestCount(ctx, db.RetrieveProjectAPIRequestCountParams{
 			ID:          projectID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
-		})
-	if dbErr != nil {
-		return -1, fmt.Errorf("failed to retrieve total prompt api calls: %w", dbErr)
-	}
+		}))
 
-	return totalAPICalls, nil
+	return totalAPICalls
 }
 
-func GetTokenConsumedByProjectByDateRange(
+func GetProjectTokenCountByProjectByDateRange(
 	ctx context.Context,
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
-) (map[db.ModelType]int64, error) {
-	tokensConsumed, dbErr := db.GetQueries().
+) map[db.ModelType]int64 {
+	tokensConsumed := exc.MustResult(db.GetQueries().
 		RetrieveProjectTokensCount(ctx, db.RetrieveProjectTokensCountParams{
 			ID:          projectID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
-		})
-	if dbErr != nil {
-		return nil, fmt.Errorf("failed to retrieve total tokens consumed: %w", dbErr)
-	}
+		}))
 
 	projectTokenCntMap := make(map[db.ModelType]int64)
 	for _, record := range tokensConsumed {
 		projectTokenCntMap[record.ModelType] += record.TotalTokens
 	}
 
-	return projectTokenCntMap, nil
+	return projectTokenCntMap
 }
 
 func GetProjectAnalyticsByDateRange(
 	ctx context.Context,
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
-) (dto.ProjectAnalyticsDTO, error) {
-	totalAPICalls, dbErr := GetTotalAPICountByDateRange(ctx, projectID, fromDate, toDate)
-	if dbErr != nil {
-		return dto.ProjectAnalyticsDTO{}, dbErr
-	}
+) dto.ProjectAnalyticsDTO {
+	totalAPICalls := GetProjectAPIRequestByDateRange(ctx, projectID, fromDate, toDate)
 
-	projectTokenCntMap, dbErr := GetTokenConsumedByProjectByDateRange(
+	projectTokenCntMap := GetProjectTokenCountByProjectByDateRange(
 		ctx,
 		projectID,
 		fromDate,
 		toDate,
 	)
-	if dbErr != nil {
-		return dto.ProjectAnalyticsDTO{}, dbErr
-	}
 
 	var modelCost float64
 	for model, tokenCnt := range projectTokenCntMap {
@@ -187,5 +158,5 @@ func GetProjectAnalyticsByDateRange(
 	return dto.ProjectAnalyticsDTO{
 		TotalAPICalls: totalAPICalls,
 		ModelsCost:    modelCost,
-	}, nil
+	}
 }
