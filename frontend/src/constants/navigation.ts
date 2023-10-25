@@ -10,4 +10,5 @@ export enum Navigation {
 	Billing = '/projects/:projectId/billing',
 	Support = '/support',
 	Applications = '/projects/:projectId/applications/:applicationId',
+	Discord = 'https://discord.gg/Urxchkcq',
 }

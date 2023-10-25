@@ -76,13 +76,12 @@
 	},
 	"navrail": {
 		"abTesting": "A/B Testing",
-		"api": "API",
-		"application": "Application",
-		"bannerBody": "Our customer success team is \nhere for you",
+		"application": "Applications",
+		"bannerBody": "Our customer success team \n is here for you",
 		"bannerCTA": "Get Support",
 		"bannerTitle": "Need Help?",
 		"middleware": "Middleware",
-		"newApplication": "New Application",
+		"newApplication": "+ New",
 		"overview": "Overview",
 		"persistence": "Persistence",
 		"testing": "Testing"
@@ -132,6 +131,26 @@
 		"bannerHeading": "Feature 1",
 		"bannerSubtitle": "Try all paid functions for free, just register and create your first widget, its simple and fast",
 		"bannerTitle": "This feature is good for AI"
+	},
+	"support": {
+		"api": "API",
+		"billing": "Billing",
+		"chatWithUs": "Chat with us",
+		"contactUs": "Contact Us",
+		"emailUs": "Email us at",
+		"getInTouch": "Get in touch",
+		"headline": "Support",
+		"joinOurDiscord": "Join our Discord",
+		"optional": "Optional",
+		"other": "Other",
+		"request": "Requests",
+		"sdk": "SDK",
+		"select": "Select",
+		"submit": "Submit",
+		"supportEmail": "support@basemind.ai",
+		"tellUsMore": "Tell us more about your issue",
+		"webApp": "Web App",
+		"whatTopic": "What topic can we help you with?"
 	},
 	"userSettings": {
 		"deleteYourAccount": "Delete your account",
