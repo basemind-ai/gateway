@@ -33,19 +33,19 @@ export default function LinkMenu({
 		<>
 			<Wrapper>
 				<div
-					className={`flex items-center py-2 px-3.5 ${
+					className={`flex items-center  py-2  ${
 						isDisabled && 'opacity-60'
 					}`}
 				>
 					<div
 						className={`flex items-center text-base-content transition ${
-							isCurrent ? 'text-primary' : 'hover:text-primary'
+							isCurrent
+								? 'text-primary'
+								: !isDisabled && 'hover:text-primary'
 						}`}
 					>
 						{icon && <div className="mr-2">{icon}</div>}
-						{text && (
-							<span className="text-sm font-medium">{text}</span>
-						)}
+						{text && <span className="text-xs ">{text}</span>}
 					</div>
 					{badge && <span className="ml-2">{badge}</span>}
 				</div>
