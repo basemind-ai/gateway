@@ -11,6 +11,7 @@ import io.grpc.StatusException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
@@ -185,25 +186,28 @@ class BaseMindClient private constructor(
      * @throws APIGatewayException if the API gateway returns an error.
      */
     fun requestStream(templateVariables: Map<String, String>): Flow<StreamingPromptResponse> {
-        try {
-            if (options.debug) {
-                options.debugLogger(LOGGING_TAG, "requesting streaming prompt")
-            }
-
-            return grpcStub.requestStreamingPrompt(createPromptRequest(templateVariables), createMetadata())
-        } catch (e: StatusException) {
-            if (options.debug) {
-                options.debugLogger(LOGGING_TAG, "exception requesting streaming prompt: $e")
-            }
-
-            when (e.status.code) {
-                io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(
-                    e.message ?: "Missing prompt variable",
-                    e,
-                )
-
-                else -> throw APIGatewayException(e.message ?: "API Gateway error", e)
-            }
+        if (options.debug) {
+            options.debugLogger(LOGGING_TAG, "requesting streaming prompt")
         }
+
+        val response = grpcStub.requestStreamingPrompt(createPromptRequest(templateVariables), createMetadata())
+            .catch { e ->
+                if (options.debug) {
+                    options.debugLogger(LOGGING_TAG, "exception requesting streaming prompt: $e")
+                }
+                if (e !is StatusException) {
+                    throw e
+                }
+
+                when (e.status.code) {
+                    io.grpc.Status.Code.INVALID_ARGUMENT -> throw MissingPromptVariableException(
+                        e.message ?: "Missing prompt variable",
+                        e,
+                    )
+
+                    else -> throw APIGatewayException(e.message ?: "API Gateway error", e)
+                }
+            }
+        return response
     }
 }
