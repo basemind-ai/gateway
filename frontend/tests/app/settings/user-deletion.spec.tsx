@@ -9,7 +9,7 @@ import {
 import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
-import { AccountDeletion } from '@/app/settings/page';
+import { AccountDeletion } from '@/components/settings/account-deletion';
 import { Navigation } from '@/constants';
 import { useSetUser, useUser } from '@/stores/api-store';
 

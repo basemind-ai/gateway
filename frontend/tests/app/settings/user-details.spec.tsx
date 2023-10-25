@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { render, renderHook } from 'tests/test-utils';
 
-import { UserDetails } from '@/app/settings/page';
+import { UserDetails } from '@/components/settings/user-details';
 
 describe('user details card tests', () => {
 	const { result } = renderHook(() => useTranslations('userSettings'));
