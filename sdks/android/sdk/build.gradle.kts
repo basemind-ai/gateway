@@ -62,14 +62,14 @@ dependencies {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.24.3"
+        artifact = "com.google.protobuf:protoc:3.24.4"
     }
     plugins {
         create("java") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
         }
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
         }
         create("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"

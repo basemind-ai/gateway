@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -157,7 +158,7 @@ fun ChatBox(
                 .padding(4.dp),
             shape = RoundedCornerShape(24.dp),
             colors =
-            TextFieldDefaults.textFieldColors(
+            TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
@@ -180,7 +181,7 @@ fun ChatBox(
                 .align(Alignment.CenterVertically),
         ) {
             Icon(
-                imageVector = Icons.Filled.Send,
+                imageVector = Icons.AutoMirrored.Filled.Send,
                 contentDescription = "Send",
                 modifier = Modifier.fillMaxSize().padding(8.dp),
             )

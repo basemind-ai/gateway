@@ -33,7 +33,7 @@ type ProviderConnector interface {
 	)
 }
 
-func Init(ctx context.Context, opts ...grpc.DialOption) {
+func Init(ctx context.Context, opts ...grpc.DialOption) error {
 	var err error
 
 	once.Do(func() {

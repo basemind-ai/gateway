@@ -41,7 +41,7 @@ fun createTestClient(
     promptConfigId: String? = null,
     options: Options = Options(),
 ): BaseMindClient {
-    val client = BaseMindClient.getInstance(apiToken = apiToken,promptConfigId = promptConfigId, options = options)
+    val client = BaseMindClient.getInstance(apiToken = apiToken, promptConfigId = promptConfigId, options = options)
     client.grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
     return client
 }
@@ -102,7 +102,7 @@ class BaseMindClientTest {
     private fun createTestClientForServer(
         mockServer: MockAPIGatewayServer,
         isDebug: Boolean = false,
-        promptConfigId: String? = null
+        promptConfigId: String? = null,
     ): BaseMindClient {
         // we create a server name to register, this is basically a UUID
         val serverName: String = InProcessServerBuilder.generateName()
@@ -412,7 +412,7 @@ class BaseMindClientTest {
     fun TestClientClose() {
         val mock = MockAPIGatewayServer()
         val testClient = createTestClientForServer(mock)
-        assertDoesNotThrow{testClient.close()}
+        assertDoesNotThrow { testClient.close() }
     }
 }
 
