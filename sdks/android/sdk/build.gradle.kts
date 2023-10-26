@@ -11,6 +11,14 @@ kotlin {
     jvmToolchain(17)
 }
 
+koverReport {
+    filters {
+        includes {
+            packages("ai.basemind.client")
+        }
+    }
+}
+
 android {
     namespace = "com.basemind.client"
     compileSdk = 34
