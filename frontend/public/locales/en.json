@@ -126,12 +126,9 @@
 		"savedPromptConfig": "Saved Templates"
 	},
 	"signin": {
-		"authHeader": "Welcome to BaseMind",
-		"authSubtitle": "Get started - it's free.",
-		"authSubtitleLarger": "No credit card required.",
-		"bannerHeading": "Feature 1",
-		"bannerSubtitle": "Try all paid functions for free, just register and create your first widget, its simple and fast",
-		"bannerTitle": "This feature is good for AI"
+		"authHeader": "Welcome to ",
+		"authSubtitle": "Integrate in minutes, scale to millions",
+		"basemind": "BaseMind"
 	},
 	"userSettings": {
 		"deleteYourAccount": "Delete your account",

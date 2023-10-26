@@ -1,10 +1,8 @@
-import {
-	EmailAuthProvider,
-	GithubAuthProvider,
-	GoogleAuthProvider,
-} from '@firebase/auth';
+import { GithubAuthProvider, GoogleAuthProvider } from '@firebase/auth';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { Auth, browserLocalPersistence, getAuth } from 'firebase/auth';
+
+import { Navigation } from '@/constants';
 
 const instanceRef: { app: FirebaseApp | null; auth: Auth | null } = {
 	app: null,
@@ -54,10 +52,9 @@ export async function getFirebaseAuth(): Promise<Auth> {
 export const firebaseUIConfig = {
 	signInFlow: 'popup',
 	popupMode: true,
-	siteName: 'Devlingo',
-	tosUrl: 'terms-of-service',
-	// Privacy policy url.
-	privacyPolicyUrl: 'privacy-policy',
+	siteName: 'BaseMind',
+	tosUrl: Navigation.TOS,
+	privacyPolicyUrl: Navigation.PP,
 	signInOptions: [
 		GithubAuthProvider.PROVIDER_ID,
 		GoogleAuthProvider.PROVIDER_ID,
@@ -72,6 +69,5 @@ export const firebaseUIConfig = {
 				tenant: process.env.NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID,
 			},
 		},
-		EmailAuthProvider.PROVIDER_ID,
 	],
 };

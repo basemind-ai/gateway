@@ -10,4 +10,6 @@ export enum Navigation {
 	Billing = '/projects/:projectId/billing',
 	Support = '/support',
 	Applications = '/projects/:projectId/applications/:applicationId',
+	TOS = '/terms-of-service',
+	PP = '/privacy-policy',
 }

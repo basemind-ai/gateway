@@ -64,7 +64,7 @@ export function FirebaseLogin() {
 			const tosMessage = document.querySelector('.firebaseui-tos');
 
 			if (footer) {
-				footer.classList.add('mb-16');
+				footer.classList.add('m-8');
 			}
 			if (tosMessage) {
 				tosMessage.classList.add('text-base-content');
@@ -77,25 +77,27 @@ export function FirebaseLogin() {
 	return (
 		<main
 			data-testid="firebase-login-container"
-			className="bg-base-200 flex items-center h-full w-full"
+			className="flex items-center h-full w-full justify-center"
 		>
-			<div className="mx-auto p-16 bg-base-200 border-1 rounded-box shadow transition-all duration-700 ease-in-out h-full">
+			<div className="  shadow transition-all duration-700 ease-in-out h-full items-center self-center">
 				{loading && <Loader />}
 				{!isSignedIn && (
-					<div id="firebaseui-auth-container" className="w-112 h-102">
-						<div
-							data-testid="firebase-login-greeting-container"
-							className={`m-10 ${uiRendered ? '' : 'hidden'}`}
-						>
-							<h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold text-center text-base-content mb-2">
-								{t('authHeader')}
-							</h1>
-							<p className="text-center text-base-content mt-3">
-								<span>{t('authSubtitle')} </span>
-								<span className="hidden md:inline">
-									{t('authSubtitleLarger')}
-								</span>
-							</p>
+					<div className="flex items-center h-full">
+						<div id="firebaseui-auth-container">
+							<div
+								data-testid="firebase-login-greeting-container"
+								className={`m-8 ${uiRendered ? '' : 'hidden'}`}
+							>
+								<h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold text-center text-base-content mb-2.5">
+									{t('authHeader')}
+									<span className="text-primary">
+										{t('basemind')}
+									</span>
+								</h1>
+								<p className="text-center text-base-content md:text-lg font-medium mt-3">
+									<span>{t('authSubtitle')} </span>
+								</p>
+							</div>
 						</div>
 					</div>
 				)}
