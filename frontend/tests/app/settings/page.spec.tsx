@@ -3,7 +3,6 @@ import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { getAuthMock, routerReplaceMock } from 'tests/mocks';
 import { render, renderHook, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import UserSettings from '@/app/settings/page';
 import { Navigation } from '@/constants';

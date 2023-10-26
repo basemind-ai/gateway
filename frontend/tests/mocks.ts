@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { beforeEach } from 'vitest';
 
 export const mockFetch = vi.fn().mockResolvedValue({
 	ok: true,

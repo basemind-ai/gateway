@@ -21,6 +21,18 @@ describe('handleChange tests', () => {
 		eventHandler(event as any);
 		expect(event.preventDefault).toHaveBeenCalled();
 	});
+	it('stops propagation of event if specified.', () => {
+		const mockCallback = vi.fn();
+		const event = {
+			stopPropagation: vi.fn(),
+			preventDefault: vi.fn(),
+			target: { value: 'test' },
+		};
+		const eventHandler = handleChange(mockCallback, true);
+		eventHandler(event as any);
+		expect(event.stopPropagation).toHaveBeenCalled();
+		expect(event.preventDefault).toHaveBeenCalled();
+	});
 });
 
 describe('copyToClipboard tests', () => {

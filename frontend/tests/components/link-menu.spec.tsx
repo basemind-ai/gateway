@@ -1,5 +1,4 @@
 import { render, screen } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import LinkMenu, { LinkMenuProps } from '@/components/link-menu';
 

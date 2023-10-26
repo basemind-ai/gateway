@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
@@ -12,6 +11,10 @@ describe('ProjectAnalytics', () => {
 		ProjectAPI,
 		'handleProjectAnalytics',
 	);
+
+	beforeEach(() => {
+		vi.resetAllMocks();
+	});
 
 	it('renders project analytics', async () => {
 		const {

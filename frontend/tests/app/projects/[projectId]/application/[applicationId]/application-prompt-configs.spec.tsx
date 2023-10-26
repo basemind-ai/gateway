@@ -1,7 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import { PromptConfigFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { ApplicationPromptConfigs } from '@/app/projects/[projectId]/applications/[applicationId]/page';

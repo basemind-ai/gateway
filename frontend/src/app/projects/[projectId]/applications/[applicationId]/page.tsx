@@ -32,7 +32,7 @@ import { DataCard } from '@/components/dashboard/data-card';
 import { DatePicker } from '@/components/dashboard/date-picker';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
-import { Navigation } from '@/constants';
+import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import {
@@ -53,7 +53,6 @@ enum TAB_NAMES {
 	SETTINGS,
 	TOKENS,
 }
-const MIN_NAME_LEN = 3;
 
 export default function Application({
 	params: { projectId, applicationId },
@@ -183,7 +182,7 @@ export function ApplicationAnalytics({
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="mt-3.5 rounded-3xl w-full flex items-center justify-between bg-base-200 py-8 px-32">
+			<div className="flex items-center justify-between custom-card">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}
@@ -232,7 +231,7 @@ export function ApplicationPromptConfigs({
 			<h2 className="font-semibold text-white text-xl	">
 				{t('promptConfiguration')}
 			</h2>
-			<div className="mt-3.5 rounded-3xl w-full bg-base-200 py-8 px-16">
+			<div className="custom-card">
 				<table className="custom-table">
 					<thead>
 						<tr>
@@ -317,8 +316,8 @@ export function ApplicationGeneralSettings({
 	const isValid =
 		name &&
 		description &&
-		name.trim().length >= MIN_NAME_LEN &&
-		description.trim().length >= MIN_NAME_LEN;
+		name.trim().length >= MIN_NAME_LENGTH &&
+		description.trim().length >= MIN_NAME_LENGTH;
 
 	async function fetchPromptConfig() {
 		const promptConfigRes = await handleRetrievePromptConfigs({
@@ -374,7 +373,7 @@ export function ApplicationGeneralSettings({
 	return (
 		<div data-testid="application-general-settings-container">
 			<h2 className="font-semibold text-white text-xl">{t('general')}</h2>
-			<div className="mt-3.5 rounded-3xl w-full bg-base-200 py-8 px-32 flex flex-col">
+			<div className="custom-card flex flex-col">
 				<div>
 					<label
 						htmlFor="app-name"
@@ -460,15 +459,11 @@ export function ApplicationDeletion({
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
 	function openDeleteConfirmationPopup() {
-		if (dialogRef.current?.showModal) {
-			dialogRef.current.showModal();
-		}
+		dialogRef.current?.showModal();
 	}
 
 	function closeDeleteConfirmationPopup() {
-		if (dialogRef.current?.close) {
-			dialogRef.current.close();
-		}
+		dialogRef.current?.close();
 	}
 
 	async function deleteApplication() {
@@ -487,7 +482,7 @@ export function ApplicationDeletion({
 			<h2 className="font-semibold text-white text-xl">
 				{t('applicationDeletion')}
 			</h2>
-			<div className="mt-3.5 rounded-3xl w-full bg-base-200 py-8 px-32 flex items-center justify-between text-neutral-content">
+			<div className="custom-card flex items-center justify-between text-neutral-content">
 				<div>
 					<h6 className="font-medium ">
 						{t('deleteYourApplication')}
@@ -515,7 +510,7 @@ export function ApplicationDeletion({
 						/>
 					</div>
 					<form method="dialog" className="modal-backdrop">
-						<button>close</button>
+						<button />
 					</form>
 				</dialog>
 			</div>
@@ -545,28 +540,20 @@ export function ApiKeys({
 
 	function openDeleteConfirmationPopup(tokenId: string, tokenName: string) {
 		setDeletionToken({ id: tokenId, name: tokenName });
-		if (deletionDialogRef.current?.showModal) {
-			deletionDialogRef.current.showModal();
-		}
+		deletionDialogRef.current?.showModal();
 	}
 
 	function closeDeleteConfirmationPopup() {
 		setDeletionToken(null);
-		if (deletionDialogRef.current?.close) {
-			deletionDialogRef.current.close();
-		}
+		deletionDialogRef.current?.close();
 	}
 
 	function openCreationPopup() {
-		if (creationDialogRef.current?.showModal) {
-			creationDialogRef.current.showModal();
-		}
+		creationDialogRef.current?.showModal();
 	}
 
 	function closeCreationPopup() {
-		if (creationDialogRef.current?.close) {
-			creationDialogRef.current.close();
-		}
+		creationDialogRef.current?.close();
 	}
 
 	async function getTokens() {
@@ -593,8 +580,7 @@ export function ApiKeys({
 			>
 				{t('apiKeys')}
 			</h2>
-			{creationDialogRef.current?.open}
-			<div className="mt-3.5 rounded-3xl w-full bg-base-200 py-8 px-16">
+			<div className="custom-card">
 				<table className="custom-table">
 					<thead>
 						<tr>
@@ -649,7 +635,7 @@ export function ApiKeys({
 						)}
 					</div>
 					<form method="dialog" className="modal-backdrop">
-						<button>close</button>
+						<button />
 					</form>
 				</dialog>
 				<dialog ref={creationDialogRef} className="modal">
@@ -682,7 +668,7 @@ export function CreateApiKey({
 	const [tokenName, setTokenName] = useState('');
 	const [tokenHash, setTokenHash] = useState('');
 
-	const tokenNameValid = tokenName.trim().length >= MIN_NAME_LEN;
+	const tokenNameValid = tokenName.trim().length >= MIN_NAME_LENGTH;
 
 	async function createToken() {
 		const token = await handleCreateToken({

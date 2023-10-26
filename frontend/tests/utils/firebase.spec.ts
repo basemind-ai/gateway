@@ -1,5 +1,3 @@
-import { beforeEach } from 'vitest';
-
 import {
 	getFirebaseApp,
 	getFirebaseAuth,

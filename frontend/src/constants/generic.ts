@@ -26,3 +26,5 @@ export enum DateFormat {
 	AMERICAN = 'MM/DD/YYYY',
 	CHINESE = 'YYYY/MM/DD',
 }
+
+export const MIN_NAME_LENGTH = 3;

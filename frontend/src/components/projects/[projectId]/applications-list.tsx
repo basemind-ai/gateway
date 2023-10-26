@@ -46,7 +46,7 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 			<h2 className="font-semibold text-white text-xl	">
 				{t('applications')}
 			</h2>
-			<div className="mt-3.5 rounded-3xl w-full bg-base-200 py-8 px-16">
+			<div className="custom-card">
 				<table className="custom-table">
 					<thead>
 						<tr>

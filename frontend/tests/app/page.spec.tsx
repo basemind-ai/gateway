@@ -1,5 +1,5 @@
 import { render, routerReplaceMock, screen, waitFor } from 'tests/test-utils';
-import { Mock, vi } from 'vitest';
+import { Mock } from 'vitest';
 
 import Home from '@/app/page';
 import { Navigation } from '@/constants';

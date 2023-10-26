@@ -6,10 +6,11 @@ import { handleChange } from '@/utils/helpers';
 export interface ResourceDeletionBannerProps {
 	title: string;
 	description: string;
-	resourceName: string;
+	resourceName?: string;
 	placeholder?: string;
 	onCancel: () => void;
 	onConfirm: () => void;
+	confirmCTA?: string;
 }
 
 export function ResourceDeletionBanner({
@@ -19,14 +20,19 @@ export function ResourceDeletionBanner({
 	placeholder = '',
 	onCancel,
 	onConfirm,
+	confirmCTA,
 }: ResourceDeletionBannerProps) {
 	const t = useTranslations('deletionBanner');
 	const [confirmText, setConfirmText] = useState('');
 
-	const disabled = confirmText !== resourceName;
+	const disabled = resourceName ? confirmText !== resourceName : false;
 	return (
 		<div className="bg-base-300">
-			<div className="p-10 flex flex-col items-center border-b border-neutral">
+			<div
+				className={`p-10 flex flex-col items-center ${
+					resourceName && 'border-b border-neutral'
+				}`}
+			>
 				<h1
 					data-testid="resource-deletion-title"
 					className="text-error font-bold text-xl"
@@ -39,29 +45,31 @@ export function ResourceDeletionBanner({
 				>
 					{description}
 				</p>
-				<div className="mt-8 self-start">
-					<label
-						htmlFor="deletion-input"
-						className="text-xl text-neutral-content"
-					>
-						{t('continueMessage')}
-						<span
-							data-testid="resource-deletion-resource-name"
-							className="text-info"
+				{resourceName && (
+					<div className="mt-8 self-start">
+						<label
+							htmlFor="deletion-input"
+							className="text-xl text-neutral-content"
 						>
-							"{resourceName}"
-						</span>
-					</label>
-					<input
-						type="text"
-						id="deletion-input"
-						data-testid="resource-deletion-input"
-						className="input mt-2.5 bg-neutral w-full text-neutral-content font-medium"
-						placeholder={placeholder}
-						value={confirmText}
-						onChange={handleChange(setConfirmText)}
-					/>
-				</div>
+							{t('continueMessage')}
+							<span
+								data-testid="resource-deletion-resource-name"
+								className="text-info"
+							>
+								"{resourceName}"
+							</span>
+						</label>
+						<input
+							type="text"
+							id="deletion-input"
+							data-testid="resource-deletion-input"
+							className="input mt-2.5 bg-neutral w-full text-neutral-content font-medium"
+							placeholder={placeholder}
+							value={confirmText}
+							onChange={handleChange(setConfirmText)}
+						/>
+					</div>
+				)}
 			</div>
 			<div className="flex items-center justify-end py-8 px-5 gap-4">
 				<button
@@ -79,7 +87,7 @@ export function ResourceDeletionBanner({
 						disabled ? 'opacity-60' : ''
 					}`}
 				>
-					{t('delete')}
+					{confirmCTA ?? t('delete')}
 				</button>
 			</div>
 		</div>

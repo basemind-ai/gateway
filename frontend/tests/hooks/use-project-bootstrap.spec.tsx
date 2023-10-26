@@ -2,7 +2,6 @@
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { routerReplaceMock } from 'tests/mocks';
 import { act, renderHook } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
 
 import * as applicationAPI from '@/api/applications-api';
 import * as projectAPI from '@/api/projects-api';

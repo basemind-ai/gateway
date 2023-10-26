@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { handleCreateProject } from '@/api';
 import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
+import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useAddProject, useProjects } from '@/stores/project-store';
 import { handleChange } from '@/utils/helpers';
 
@@ -167,6 +168,7 @@ function Form({
 }
 
 export default function CreateProjectPage() {
+	useAuthenticatedUser();
 	const t = useTranslations('createProject');
 	const router = useRouter();
 
