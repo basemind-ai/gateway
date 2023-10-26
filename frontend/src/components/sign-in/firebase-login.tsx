@@ -89,7 +89,7 @@ export function FirebaseLogin() {
 								className={`m-8 ${uiRendered ? '' : 'hidden'}`}
 							>
 								<h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold text-center text-base-content mb-2.5">
-									{t('authHeader')}
+									{t('authHeader')}{' '}
 									<span className="text-primary">
 										{t('basemind')}
 									</span>
