@@ -16,7 +16,7 @@ provider "google" {
 }
 
 resource "google_cloud_run_v2_service" "default" {
-  name     = "cloudrun-service"
+  name     = var.service_name
   location = var.gcp_region
   ingress  = "INGRESS_TRAFFIC_ALL"
 

@@ -61,3 +61,7 @@ repos:
           - id: terraform_fmt
           - id: terraform_validate
           - id: terraform_tflint
+    - repo: https://github.com/aquasecurity/tfsec
+      rev: v1.28.4
+      hooks:
+          - id: tfsec
