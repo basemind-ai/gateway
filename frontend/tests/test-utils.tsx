@@ -8,6 +8,7 @@ import {
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
 import { NextIntlClientProvider } from 'next-intl';
 import locales from 'public/locales/en.json';
+import { SWRConfig } from 'swr';
 import { nextRouterMock } from 'tests/mocks';
 
 const customRender = (
@@ -19,7 +20,9 @@ const customRender = (
 			return (
 				<RouterContext.Provider value={nextRouterMock}>
 					<NextIntlClientProvider locale="en" messages={locales}>
-						{children}
+						<SWRConfig value={{ provider: () => new Map() }}>
+							{children}
+						</SWRConfig>
 					</NextIntlClientProvider>
 				</RouterContext.Provider>
 			);

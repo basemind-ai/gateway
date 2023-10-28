@@ -7,6 +7,7 @@ export interface DataCardProps {
 	totalValue: string | number;
 	currentValue?: string;
 	percentage?: string;
+	loading?: boolean;
 }
 
 export function DataCard({
@@ -15,6 +16,7 @@ export function DataCard({
 	totalValue,
 	currentValue,
 	percentage,
+	loading,
 }: DataCardProps) {
 	return (
 		<div className="flex items-center gap-4">
@@ -24,7 +26,13 @@ export function DataCard({
 					data-testid={`data-card-total-value-${metric}`}
 					className="text-3xl font-semibold text-neutral-content"
 				>
-					{totalValue}
+					{!loading && totalValue}
+					{loading && (
+						<span
+							data-testid="data-card-loader"
+							className="loading loading-spinner text-primary"
+						/>
+					)}
 				</h1>
 				{currentValue && percentage && (
 					<p className="text-neutral-content text-xs font-light flex gap-1.5 items-center">
