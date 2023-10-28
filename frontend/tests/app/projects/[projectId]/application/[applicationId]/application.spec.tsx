@@ -6,7 +6,6 @@ import {
 	TokenFactory,
 } from 'tests/factories';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import * as TokensAPI from '@/api/tokens-api';
@@ -22,6 +21,11 @@ describe('ApplicationPage', () => {
 		'handleRetrievePromptConfigs',
 	);
 	const handleRetrieveTokensSpy = vi.spyOn(TokensAPI, 'handleRetrieveTokens');
+
+	beforeAll(() => {
+		HTMLDialogElement.prototype.showModal = vi.fn();
+		HTMLDialogElement.prototype.close = vi.fn();
+	});
 
 	it('renders all 3 screens in tab navigation', async () => {
 		const {

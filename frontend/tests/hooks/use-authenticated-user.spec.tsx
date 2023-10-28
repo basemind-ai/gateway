@@ -2,7 +2,6 @@
 import { UserFactory } from 'tests/factories';
 import { routerReplaceMock } from 'tests/mocks';
 import { act, renderHook } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
 
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';

@@ -2,7 +2,6 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import { ApplicationDeletion } from '@/app/projects/[projectId]/applications/[applicationId]/page';
@@ -29,6 +28,11 @@ describe('ApplicationDeletion tests', async () => {
 		result: { current: setProjectApplications },
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(projects[0].id, applications);
+
+	beforeAll(() => {
+		HTMLDialogElement.prototype.showModal = vi.fn();
+		HTMLDialogElement.prototype.close = vi.fn();
+	});
 
 	it('renders application deletion component', () => {
 		render(

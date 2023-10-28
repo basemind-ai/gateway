@@ -3,7 +3,6 @@ import { faker } from '@faker-js/faker';
 import { Server } from 'mock-socket';
 import { wait } from 'shared/time';
 import { mockFetch } from 'tests/mocks';
-import { afterEach, beforeEach } from 'vitest';
 
 import {
 	createWebsocket,

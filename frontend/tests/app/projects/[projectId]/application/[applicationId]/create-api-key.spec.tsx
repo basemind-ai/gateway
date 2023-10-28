@@ -2,7 +2,6 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { TokenFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
-import { beforeEach, describe, expect } from 'vitest';
 
 import * as TokenAPI from '@/api/tokens-api';
 import { CreateApiKey } from '@/app/projects/[projectId]/applications/[applicationId]/page';

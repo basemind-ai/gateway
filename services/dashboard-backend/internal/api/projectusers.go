@@ -96,7 +96,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 		}))
 
 	serialization.RenderJSONResponse(w, http.StatusCreated, dto.ProjectUserAccountDTO{
-		ID:          data.UserID,
+		ID:          db.UUIDToString(&userAccount.ID),
 		DisplayName: userAccount.DisplayName,
 		Email:       userAccount.Email,
 		PhoneNumber: userAccount.PhoneNumber,

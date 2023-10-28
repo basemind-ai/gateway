@@ -48,7 +48,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="mt-3.5 rounded-3xl w-full flex items-center justify-between bg-base-200 py-8 px-32">
+			<div className="flex items-center justify-between custom-card">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}

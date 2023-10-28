@@ -6,7 +6,6 @@ import {
 	routerReplaceMock,
 	screen,
 } from 'tests/test-utils';
-import { describe } from 'vitest';
 
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/projects/create/page';

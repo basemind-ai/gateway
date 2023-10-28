@@ -6,7 +6,6 @@ import {
 	renderHook,
 	routerReplaceMock,
 } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as UsersAPI from '@/api/users-api';
 import { AccountDeletion } from '@/app/settings/page';
@@ -29,6 +28,12 @@ describe('user account deletion tests', () => {
 		email: 'Skywalker@gmail.com',
 		photoURL: 'https://picsum.photos/200',
 	};
+
+	beforeAll(() => {
+		HTMLDialogElement.prototype.showModal = vi.fn();
+		HTMLDialogElement.prototype.close = vi.fn();
+	});
+
 	it('should render headline', () => {
 		render(<AccountDeletion user={mockUser} />);
 		const headline = screen.getByText(t('headlineDeleteCard'));

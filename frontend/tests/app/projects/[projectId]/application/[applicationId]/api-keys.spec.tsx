@@ -2,7 +2,6 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { TokenFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as TokenAPI from '@/api/tokens-api';
 import { ApiKeys } from '@/app/projects/[projectId]/applications/[applicationId]/page';
@@ -12,6 +11,11 @@ describe('ApiKeys tests', () => {
 	const handleCreateTokenSpy = vi.spyOn(TokenAPI, 'handleCreateToken');
 	const projectId = '1';
 	const applicationId = '1';
+
+	beforeAll(() => {
+		HTMLDialogElement.prototype.showModal = vi.fn();
+		HTMLDialogElement.prototype.close = vi.fn();
+	});
 
 	it('renders api keys component', async () => {
 		const tokens = await TokenFactory.batch(2);

@@ -81,15 +81,11 @@ export function AccountDeletion({ user }: { user: UserInfo | null }) {
 	const setUser = useSetUser();
 
 	function openDeleteConfirmationPopup() {
-		if (dialogRef.current?.showModal) {
-			dialogRef.current.showModal();
-		}
+		dialogRef.current?.showModal();
 	}
 
 	function closeDeleteConfirmationPopup() {
-		if (dialogRef.current?.close) {
-			dialogRef.current.close();
-		}
+		dialogRef.current?.close();
 	}
 
 	async function deleteUserAccount() {
@@ -135,7 +131,7 @@ export function AccountDeletion({ user }: { user: UserInfo | null }) {
 					/>
 				</div>
 				<form method="dialog" className="modal-backdrop">
-					<button>close</button>
+					<button />
 				</form>
 			</dialog>
 		</DashboardCard>

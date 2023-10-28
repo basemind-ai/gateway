@@ -1,7 +1,13 @@
 import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
-import { Application, Project, PromptConfig, Token } from '@/types';
+import {
+	Application,
+	Project,
+	ProjectUserAccount,
+	PromptConfig,
+	Token,
+} from '@/types';
 
 export interface ProjectStore {
 	projects: Project[];
@@ -9,9 +15,10 @@ export interface ProjectStore {
 	promptConfigs: Record<string, PromptConfig[] | undefined>;
 	tokens: Record<string, Token[] | undefined>;
 	currentProjectId: string | null;
+	projectUsers: Record<string, ProjectUserAccount[] | undefined>;
 	setProjects: (projects: Project[]) => void;
 	addProject: (project: Project) => void;
-	setCurrentProject: (currentProjectId: string) => void;
+	setCurrentProject: (currentProjectId: string | null) => void;
 	setProjectApplications: (
 		projectId: string,
 		applications: Application[],
@@ -27,6 +34,21 @@ export interface ProjectStore {
 		promptConfig: PromptConfig[],
 	) => void;
 	setTokens: (applicationId: string, tokens: Token[]) => void;
+	setProjectUsers: (
+		projectId: string,
+		projectUsers: ProjectUserAccount[],
+	) => void;
+	addProjectUser: (
+		projectId: string,
+		projectUser: ProjectUserAccount,
+	) => void;
+	updateProjectUser: (
+		projectId: string,
+		projectUser: ProjectUserAccount,
+	) => void;
+	removeProjectUser: (projectId: string, projectUserId: string) => void;
+	updateProject: (projectId: string, updatedProject: Project) => void;
+	deleteProject: (projectId: string) => void;
 }
 
 export const projectStoreStateCreator: StateCreator<ProjectStore> = (
@@ -38,13 +60,14 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 	promptConfigs: {},
 	tokens: {},
 	currentProjectId: null,
+	projectUsers: {},
 	setProjects: (projects: Project[]) => {
 		set({ projects });
 	},
 	addProject: (project: Project) => {
 		set((state) => ({ projects: [...state.projects, project] }));
 	},
-	setCurrentProject: (currentProjectId: string) => {
+	setCurrentProject: (currentProjectId: string | null) => {
 		set(() => ({ currentProjectId }));
 	},
 	setProjectApplications: (
@@ -112,6 +135,78 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 			},
 		}));
 	},
+	setProjectUsers: (
+		projectId: string,
+		projectUsers: ProjectUserAccount[],
+	) => {
+		set((state) => ({
+			projectUsers: {
+				...state.projectUsers,
+				[projectId]: projectUsers,
+			},
+		}));
+	},
+	addProjectUser: (projectId: string, projectUser: ProjectUserAccount) => {
+		const existingUsers = get().projectUsers[projectId] ?? [];
+		const alreadyExists = existingUsers.some(
+			(existingUser) => existingUser.id === projectUser.id,
+		);
+		if (alreadyExists) {
+			return;
+		}
+		set((state) => ({
+			projectUsers: {
+				...state.projectUsers,
+				[projectId]: [projectUser, ...existingUsers],
+			},
+		}));
+	},
+	updateProjectUser: (projectId: string, projectUser: ProjectUserAccount) => {
+		const existingUsers = get().projectUsers[projectId];
+		if (!existingUsers) {
+			return;
+		}
+
+		const updatedUsers = existingUsers.map((existingUser) =>
+			existingUser.id === projectUser.id ? projectUser : existingUser,
+		);
+		set((state) => ({
+			projectUsers: {
+				...state.projectUsers,
+				[projectId]: updatedUsers,
+			},
+		}));
+	},
+	removeProjectUser: (projectId: string, projectUserId: string) => {
+		const existingUsers = get().projectUsers[projectId];
+		if (!existingUsers) {
+			return;
+		}
+
+		const updatedUsers = existingUsers.filter(
+			(existingUser) => existingUser.id !== projectUserId,
+		);
+		set((state) => ({
+			projectUsers: {
+				...state.projectUsers,
+				[projectId]: updatedUsers,
+			},
+		}));
+	},
+	updateProject: (projectId: string, updatedProject: Project) => {
+		set((state) => ({
+			projects: state.projects.map((project) =>
+				project.id === projectId ? updatedProject : project,
+			),
+		}));
+	},
+	deleteProject: (projectId: string) => {
+		set((state) => ({
+			projects: state.projects.filter(
+				(project) => project.id !== projectId,
+			),
+		}));
+	},
 });
 
 export const useProjectStore = create(projectStoreStateCreator);
@@ -156,3 +251,14 @@ export const useSetPromptConfig = () =>
 export const useTokens = (applicationId: string) =>
 	useProjectStore((s) => s.tokens[applicationId]);
 export const useSetTokens = () => useProjectStore((s) => s.setTokens);
+export const useProjectUsers = (projectId: string) =>
+	useProjectStore((s) => s.projectUsers[projectId]);
+export const useSetProjectUsers = () =>
+	useProjectStore((s) => s.setProjectUsers);
+export const useAddProjectUser = () => useProjectStore((s) => s.addProjectUser);
+export const useUpdateProjectUser = () =>
+	useProjectStore((s) => s.updateProjectUser);
+export const useRemoveProjectUser = () =>
+	useProjectStore((s) => s.removeProjectUser);
+export const useUpdateProject = () => useProjectStore((s) => s.updateProject);
+export const useDeleteProject = () => useProjectStore((s) => s.deleteProject);

@@ -74,6 +74,23 @@
 		"title": "Warning",
 		"type": "Type"
 	},
+	"members": {
+		"admin": "Admin",
+		"emailAddress": "Email Address",
+		"emailPlaceholder": "you@site.com",
+		"invitationSent": "Invitation Sent",
+		"invite": "Invite",
+		"member": "Member",
+		"members": "Members",
+		"name": "Name",
+		"ok": "Ok",
+		"removeMember": "Remove Member",
+		"role": "Role",
+		"roles": "Roles",
+		"sendInvite": "Send Invite",
+		"warning": "Warning",
+		"warningMessage": "You're about to remove a user access from this project"
+	},
 	"navrail": {
 		"abTesting": "A/B Testing",
 		"api": "API",
@@ -118,6 +135,21 @@
 		"sendInvite": "Send Invite",
 		"settings": "Settings",
 		"status": "Status"
+	},
+	"projectSettings": {
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"deleteProject": "Delete your project",
+		"deleteProjectMessage": "This act is irreversible, it will delete your project.",
+		"deletionPlaceholder": "Write project name",
+		"general": "General",
+		"projectDeletion": "Project Deletion",
+		"projectDescription": "Project Description",
+		"projectName": "Project Name",
+		"save": "Save",
+		"warning": "Warning",
+		"warningLabel": "To continue, write: ",
+		"warningMessageProject": "This act is irreversible, it will delete your project. All application and prompt configuration related to this project will not work"
 	},
 	"prompt": {
 		"newPrompt": "+ New",
