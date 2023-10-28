@@ -3,9 +3,12 @@ package services
 import (
 	"context"
 	"fmt"
+
+	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -13,7 +16,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func retrievePromptConfig(
+func RetrievePromptConfig(
 	ctx context.Context,
 	applicationID pgtype.UUID,
 	promptConfigID *string,
@@ -48,6 +51,7 @@ func retrievePromptConfig(
 	promptConfig, retrieveDefaultErr := db.
 		GetQueries().
 		RetrieveDefaultPromptConfig(ctx, applicationID)
+
 	if retrieveDefaultErr != nil {
 		return nil, fmt.Errorf(
 			"failed to retrieve default prompt config - %w",
@@ -72,42 +76,25 @@ func RetrieveProviderModelPricing(
 	ctx context.Context,
 	modelType db.ModelType,
 	modelVendor db.ModelVendor,
-) (*datatypes.ProviderModelPricingDTO, error) {
-	providerModelPricing, queryErr := db.GetQueries().
+) datatypes.ProviderModelPricingDTO {
+	providerModelPricing := exc.MustResult(db.GetQueries().
 		RetrieveActiveProviderModelPricing(ctx, db.RetrieveActiveProviderModelPricingParams{
 			ModelType:   modelType,
 			ModelVendor: modelVendor,
-		})
-	if queryErr != nil {
-		return nil, fmt.Errorf("failed to retrieve provider model pricing - %w", queryErr)
-	}
+		}))
 
-	inputDecimalValue, inputDecimalErr := db.NumericToDecimal(providerModelPricing.InputTokenPrice)
-	if inputDecimalErr != nil {
-		return nil, fmt.Errorf(
-			"failed to convert input token price to decimal - %w",
-			inputDecimalErr,
-		)
-	}
-	outputDecimalValue, outputDecimalErr := db.NumericToDecimal(
-		providerModelPricing.OutputTokenPrice,
-	)
-	if outputDecimalErr != nil {
-		return nil, fmt.Errorf(
-			"failed to convert output token price to decimal - %w",
-			outputDecimalErr,
-		)
-	}
+	inputDecimalValue := exc.MustResult(db.NumericToDecimal(providerModelPricing.InputTokenPrice))
+	outputDecimalValue := exc.MustResult(db.NumericToDecimal(providerModelPricing.OutputTokenPrice))
 
-	return &datatypes.ProviderModelPricingDTO{
+	return datatypes.ProviderModelPricingDTO{
 		InputTokenPrice:  *inputDecimalValue,
 		OutputTokenPrice: *outputDecimalValue,
 		TokenUnitSize:    providerModelPricing.TokenUnitSize,
 		ActiveFromDate:   providerModelPricing.ActiveFromDate.Time,
-	}, nil
+	}
 }
 
-func retrieveRequestConfiguration(
+func RetrieveRequestConfiguration(
 	ctx context.Context,
 	applicationID pgtype.UUID,
 	promptConfigID *string,
@@ -122,7 +109,7 @@ func retrieveRequestConfiguration(
 			)
 		}
 
-		promptConfig, retrievalError := retrievePromptConfig(
+		promptConfig, retrievalError := RetrievePromptConfig(
 			ctx,
 			applicationID,
 			promptConfigID,
@@ -135,43 +122,29 @@ func retrieveRequestConfiguration(
 			)
 		}
 
-		promptConfigUUID, _ := db.StringToUUID(promptConfig.ID)
-
-		providerModelPricing, pricingErr := RetrieveProviderModelPricing(
-			ctx, promptConfig.ModelType, promptConfig.ModelVendor,
-		)
-
-		if pricingErr != nil {
-			return nil, status.Errorf(
-				codes.NotFound,
-				"the application does not have an active prompt configuration: %v",
-				pricingErr,
-			)
-		}
+		promptConfigUUID := exc.MustResult(db.StringToUUID(promptConfig.ID))
 
 		return &dto.RequestConfigurationDTO{
-			ApplicationID:        application.ID,
-			PromptConfigID:       *promptConfigUUID,
-			PromptConfigData:     *promptConfig,
-			ProviderModelPricing: *providerModelPricing,
+			ApplicationID:    application.ID,
+			PromptConfigID:   *promptConfigUUID,
+			PromptConfigData: *promptConfig,
+			ProviderModelPricing: RetrieveProviderModelPricing(
+				ctx, promptConfig.ModelType, promptConfig.ModelVendor,
+			),
 		}, nil
 	}
 }
 
-func validateExpectedVariables(
+func ValidateExpectedVariables(
 	templateVariables map[string]string,
 	expectedVariables []string,
 ) error {
-	missingVariables := make([]string, 0)
+	var missingVariables []string
 
-	if templateVariables != nil {
-		for _, expectedVariable := range expectedVariables {
-			if _, ok := templateVariables[expectedVariable]; !ok {
-				missingVariables = append(missingVariables, expectedVariable)
-			}
+	for _, expectedVariable := range expectedVariables {
+		if _, ok := templateVariables[expectedVariable]; !ok {
+			missingVariables = append(missingVariables, expectedVariable)
 		}
-	} else if len(expectedVariables) > 0 {
-		missingVariables = append(missingVariables, expectedVariables...)
 	}
 
 	if len(missingVariables) > 0 {
@@ -185,28 +158,64 @@ func validateExpectedVariables(
 	return nil
 }
 
-func streamFromChannel[T any](
+func StreamFromChannel[T any](
+	ctx context.Context,
 	channel chan dto.PromptResultDTO,
 	streamServer grpc.ServerStream,
 	messageFactory func(dto.PromptResultDTO) (T, bool),
 ) error {
-	for result := range channel {
-		msg, isFinished := messageFactory(result)
+	for {
+		select {
+		case result, isOpen := <-channel:
+			msg, isFinished := messageFactory(result)
 
-		if sendErr := streamServer.SendMsg(msg); sendErr != nil {
-			log.Error().Err(sendErr).Msg("failed to send message")
-			return status.Error(codes.Internal, "failed to send message")
-		}
+			if sendErr := streamServer.SendMsg(msg); sendErr != nil {
+				log.Error().Err(sendErr).Msg("failed to send message")
+				return status.Error(codes.Internal, "failed to send message")
+			}
 
-		if result.Error != nil {
-			log.Error().Err(result.Error).Msg("error in prompt request")
-			return status.Error(codes.Internal, "error communicating with AI provider")
-		}
+			if result.Error != nil {
+				log.Error().Err(result.Error).Msg("error in prompt request")
+				return status.Error(codes.Internal, "error communicating with AI provider")
+			}
 
-		if isFinished {
-			break
+			if isFinished || !isOpen {
+				return nil
+			}
+		case <-ctx.Done():
+			return ctx.Err()
 		}
 	}
+}
 
-	return nil
+func CreateAPIGatewayStreamMessage(
+	result dto.PromptResultDTO,
+) (*gateway.StreamingPromptResponse, bool) {
+	msg := &gateway.StreamingPromptResponse{}
+	if result.Error != nil {
+		reason := "error"
+		msg.FinishReason = &reason
+	}
+	if result.RequestRecord != nil {
+		if msg.FinishReason == nil {
+			reason := "done"
+			msg.FinishReason = &reason
+		}
+		requestTokens := uint32(result.RequestRecord.RequestTokens)
+		responseTokens := uint32(result.RequestRecord.ResponseTokens)
+		streamDuration := uint32(
+			result.RequestRecord.FinishTime.Time.
+				Sub(result.RequestRecord.StartTime.Time).
+				Milliseconds(),
+		)
+		msg.RequestTokens = &requestTokens
+		msg.ResponseTokens = &responseTokens
+		msg.StreamDuration = &streamDuration
+	}
+
+	if result.Content != nil {
+		contentCopy := *result.Content
+		msg.Content = contentCopy
+	}
+	return msg, msg.FinishReason != nil
 }

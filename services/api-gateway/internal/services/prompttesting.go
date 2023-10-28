@@ -50,7 +50,12 @@ func (PromptTestingServer) TestPrompt(
 			channel,
 		)
 
-	return streamFromChannel(channel, streamServer, createPromptTestingStreamMessage)
+	return StreamFromChannel(
+		streamServer.Context(),
+		channel,
+		streamServer,
+		createPromptTestingStreamMessage,
+	)
 }
 
 func createPromptTestingStreamMessage(

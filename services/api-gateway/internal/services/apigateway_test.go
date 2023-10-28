@@ -28,7 +28,7 @@ func createRequestConfigurationDTO(
 		application.ID,
 	)
 
-	pricingModel, _ := services.RetrieveProviderModelPricing(
+	pricingModel := services.RetrieveProviderModelPricing(
 		context.TODO(), promptConfig.ModelType, promptConfig.ModelVendor)
 
 	return dto.RequestConfigurationDTO{
@@ -46,7 +46,7 @@ func createRequestConfigurationDTO(
 			CreatedAt:                 promptConfig.CreatedAt.Time,
 			UpdatedAt:                 promptConfig.UpdatedAt.Time,
 		},
-		ProviderModelPricing: *pricingModel,
+		ProviderModelPricing: pricingModel,
 	}
 }
 
@@ -54,6 +54,7 @@ type mockGatewayServerStream struct {
 	grpc.ServerStream
 	Ctx      context.Context
 	Response *gateway.StreamingPromptResponse
+	Msg      any
 	Error    error
 }
 
@@ -66,6 +67,11 @@ func (m mockGatewayServerStream) Context() context.Context {
 
 func (m mockGatewayServerStream) Send(response *gateway.StreamingPromptResponse) error {
 	m.Response = response //nolint: all
+	return m.Error
+}
+
+func (m mockGatewayServerStream) SendMsg(msg any) error {
+	m.Msg = msg //nolint: all
 	return m.Error
 }
 
