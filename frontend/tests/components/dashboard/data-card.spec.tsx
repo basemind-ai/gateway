@@ -63,4 +63,19 @@ describe('Data Card tests', () => {
 		const totalValue = screen.getByText('32k');
 		expect(totalValue).toBeInTheDocument();
 	});
+	it('renders loading state', () => {
+		render(
+			<DataCard
+				imageSrc={<Activity />}
+				metric={'Models Cost'}
+				totalValue={'32k'}
+				currentValue={'16000'}
+				percentage={'100%'}
+				loading={true}
+			/>,
+		);
+
+		const loader = screen.getByTestId('data-card-loader');
+		expect(loader).toBeInTheDocument();
+	});
 });

@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/react';
 import { ApplicationFactory, PromptConfigFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
+import { beforeEach } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
@@ -20,6 +21,10 @@ describe('ApplicationsList', () => {
 		ApplicationAPI,
 		'handleRetrieveApplications',
 	);
+
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
 
 	it('renders application list', async () => {
 		const applications = ApplicationFactory.batchSync(2);

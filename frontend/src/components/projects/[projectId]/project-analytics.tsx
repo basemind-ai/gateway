@@ -1,18 +1,20 @@
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Activity, Cash } from 'react-bootstrap-icons';
 import { DateValueType } from 'react-tailwindcss-datepicker';
+import useSWR from 'swr';
 
 import { handleProjectAnalytics } from '@/api';
 import { DataCard } from '@/components/dashboard/data-card';
 import { DatePicker } from '@/components/dashboard/date-picker';
+import { ApiError } from '@/errors';
+import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
-import { ProjectAnalytics } from '@/types';
 
 export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	const t = useTranslations('projectOverview');
 	const dateFormat = useDateFormat();
-
+	const invokeErrorToast = useShowError();
 	const oneWeekAgo = new Date();
 	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
@@ -20,19 +22,19 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 		startDate: oneWeekAgo,
 		endDate: new Date(),
 	});
-
-	const [analytics, setAnalytics] = useState<ProjectAnalytics | null>(null);
-
-	useEffect(() => {
-		(async () => {
-			const applicationAnalytics = await handleProjectAnalytics({
-				projectId,
-				fromDate: dateRange?.startDate,
-				toDate: dateRange?.endDate,
-			});
-			setAnalytics(applicationAnalytics);
-		})();
-	}, [dateRange]);
+	const { data: analytics, isLoading } = useSWR(
+		{
+			projectId,
+			fromDate: dateRange?.startDate,
+			toDate: dateRange?.endDate,
+		},
+		handleProjectAnalytics,
+		{
+			onError({ message }: ApiError) {
+				invokeErrorToast(message);
+			},
+		},
+	);
 
 	return (
 		<div data-testid="project-analytics-container">
@@ -55,6 +57,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					totalValue={analytics?.totalAPICalls ?? ''}
 					percentage={'100'}
 					currentValue={'324'}
+					loading={isLoading}
 				/>
 				<div className="w-px h-12 bg-gray-200 mx-4" />
 				<DataCard
@@ -63,6 +66,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					totalValue={`${analytics?.modelsCost ?? ''}$`}
 					percentage={'103'}
 					currentValue={'3.3'}
+					loading={isLoading}
 				/>
 			</div>
 		</div>
