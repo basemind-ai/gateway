@@ -48,7 +48,7 @@ func (APIGatewayServer) RequestPrompt(
 	if retrievalErr != nil {
 		return nil, status.Error(
 			codes.NotFound,
-			"the application does not have an active prompt configuration",
+			retrievalErr.Error(),
 		)
 	}
 
@@ -105,7 +105,7 @@ func (APIGatewayServer) RequestStreamingPrompt(
 	if retrievalErr != nil {
 		return status.Error(
 			codes.NotFound,
-			"the application does not have an active prompt configuration",
+			retrievalErr.Error(),
 		)
 	}
 

@@ -7,8 +7,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-// GetOrCreateApplicationInternalTokenID - gets or creates an internal token for the given application.
-func GetOrCreateApplicationInternalTokenID(
+// GetOrCreateApplicationInternalAPIKeyID - gets or creates an internal token for the given application.
+func GetOrCreateApplicationInternalAPIKeyID(
 	ctx context.Context,
 	applicationID string,
 ) (*pgtype.UUID, error) {
@@ -17,11 +17,11 @@ func GetOrCreateApplicationInternalTokenID(
 		return nil, fmt.Errorf("failed to parse application id: %w", parseErr)
 	}
 
-	if tokenID, retrievalErr := db.GetQueries().RetrieveApplicationInternalTokenID(ctx, *applicationUUID); retrievalErr == nil {
-		return &tokenID, nil
+	if apiKeyID, retrievalErr := db.GetQueries().RetrieveApplicationInternalAPIKeyID(ctx, *applicationUUID); retrievalErr == nil {
+		return &apiKeyID, nil
 	}
 
-	createdToken, createErr := db.GetQueries().CreateToken(ctx, db.CreateTokenParams{
+	createdToken, createErr := db.GetQueries().CreateAPIKey(ctx, db.CreateAPIKeyParams{
 		ApplicationID: *applicationUUID,
 		Name:          "_internal token",
 		IsInternal:    true,

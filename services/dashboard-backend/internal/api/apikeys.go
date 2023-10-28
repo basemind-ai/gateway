@@ -14,11 +14,11 @@ import (
 	"net/http"
 )
 
-// handleCreateApplicationToken - creates a new application token.
-func handleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
+// handleCreateApplicationAPIKey - creates a new application apiKey.
+func handleCreateApplicationAPIKey(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	data := &dto.ApplicationTokenDTO{}
+	data := &dto.ApplicationAPIKeyDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
 		return
@@ -39,20 +39,20 @@ func handleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 
 	queries := db.GetQueries()
 
-	token, createTokenErr := queries.CreateToken(r.Context(), db.CreateTokenParams{
+	apiKey, createAPIKeyErr := queries.CreateAPIKey(r.Context(), db.CreateAPIKeyParams{
 		ApplicationID: applicationID,
 		Name:          data.Name,
 	})
-	if createTokenErr != nil {
-		log.Error().Err(createTokenErr).Msg("failed to create application token")
+	if createAPIKeyErr != nil {
+		log.Error().Err(createAPIKeyErr).Msg("failed to create application apiKey")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
 
-	tokenID := db.UUIDToString(&token.ID)
+	apiKeyID := db.UUIDToString(&apiKey.ID)
 	cfg := config.Get(r.Context())
 
-	jwt, jwtErr := jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), tokenID)
+	jwt, jwtErr := jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), apiKeyID)
 	if jwtErr != nil {
 		log.Error().Err(jwtErr).Msg("failed to create jwt")
 		apierror.InternalServerError().Render(w, r)
@@ -65,38 +65,38 @@ func handleCreateApplicationToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serialization.RenderJSONResponse(w, http.StatusCreated, &dto.ApplicationTokenDTO{
-		ID:        tokenID,
-		CreatedAt: token.CreatedAt.Time,
-		Name:      token.Name,
+	serialization.RenderJSONResponse(w, http.StatusCreated, &dto.ApplicationAPIKeyDTO{
+		ID:        apiKeyID,
+		CreatedAt: apiKey.CreatedAt.Time,
+		Name:      apiKey.Name,
 		Hash:      &jwt,
 	})
 }
 
-// handleRetrieveApplicationTokens - retrieves a list of all applications tokens.
-func handleRetrieveApplicationTokens(w http.ResponseWriter, r *http.Request) {
+// handleRetrieveApplicationAPIKeys - retrieves a list of all applications apiKeys.
+func handleRetrieveApplicationAPIKeys(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	tokens := exc.MustResult(db.GetQueries().RetrieveTokens(r.Context(), applicationID))
+	apiKeys := exc.MustResult(db.GetQueries().RetrieveAPIKeys(r.Context(), applicationID))
 
-	ret := make([]*dto.ApplicationTokenDTO, 0)
-	for _, token := range tokens {
-		tokenID := token.ID
-		ret = append(ret, &dto.ApplicationTokenDTO{
-			ID:        db.UUIDToString(&tokenID),
-			CreatedAt: token.CreatedAt.Time,
-			Name:      token.Name,
+	ret := make([]*dto.ApplicationAPIKeyDTO, 0)
+	for _, apiKey := range apiKeys {
+		apiKeyID := apiKey.ID
+		ret = append(ret, &dto.ApplicationAPIKeyDTO{
+			ID:        db.UUIDToString(&apiKeyID),
+			CreatedAt: apiKey.CreatedAt.Time,
+			Name:      apiKey.Name,
 		})
 	}
 
 	serialization.RenderJSONResponse(w, http.StatusOK, ret)
 }
 
-// handleDeleteApplicationToken - deletes an application token.
-func handleDeleteApplicationToken(w http.ResponseWriter, r *http.Request) {
-	tokenID := r.Context().Value(middleware.TokenIDContextKey).(pgtype.UUID)
+// handleDeleteApplicationAPIKey - deletes an application apiKey.
+func handleDeleteApplicationAPIKey(w http.ResponseWriter, r *http.Request) {
+	apiKeyID := r.Context().Value(middleware.APIKeyIDContextKey).(pgtype.UUID)
 
-	exc.Must(db.GetQueries().DeleteToken(r.Context(), tokenID))
+	exc.Must(db.GetQueries().DeleteAPIKey(r.Context(), apiKeyID))
 
 	w.WriteHeader(http.StatusNoContent)
 }

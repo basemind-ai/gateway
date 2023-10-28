@@ -42,7 +42,7 @@ type PromptConfigUpdateDTO struct {
 	ProviderPromptMessages *json.RawMessage `json:"promptMessages,omitempty"  validate:"omitempty,required"`
 }
 
-type ApplicationTokenDTO struct {
+type ApplicationAPIKeyDTO struct {
 	ID        string    `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	Name      string    `json:"name"           validate:"required"`

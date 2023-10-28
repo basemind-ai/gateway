@@ -68,6 +68,45 @@ func retrievePromptConfig(
 	}, nil
 }
 
+func RetrieveProviderModelPricing(
+	ctx context.Context,
+	modelType db.ModelType,
+	modelVendor db.ModelVendor,
+) (*datatypes.ProviderModelPricingDTO, error) {
+	providerModelPricing, queryErr := db.GetQueries().
+		RetrieveActiveProviderModelPricing(ctx, db.RetrieveActiveProviderModelPricingParams{
+			ModelType:   modelType,
+			ModelVendor: modelVendor,
+		})
+	if queryErr != nil {
+		return nil, fmt.Errorf("failed to retrieve provider model pricing - %w", queryErr)
+	}
+
+	inputDecimalValue, inputDecimalErr := db.NumericToDecimal(providerModelPricing.InputTokenPrice)
+	if inputDecimalErr != nil {
+		return nil, fmt.Errorf(
+			"failed to convert input token price to decimal - %w",
+			inputDecimalErr,
+		)
+	}
+	outputDecimalValue, outputDecimalErr := db.NumericToDecimal(
+		providerModelPricing.OutputTokenPrice,
+	)
+	if outputDecimalErr != nil {
+		return nil, fmt.Errorf(
+			"failed to convert output token price to decimal - %w",
+			outputDecimalErr,
+		)
+	}
+
+	return &datatypes.ProviderModelPricingDTO{
+		InputTokenPrice:  *inputDecimalValue,
+		OutputTokenPrice: *outputDecimalValue,
+		TokenUnitSize:    providerModelPricing.TokenUnitSize,
+		ActiveFromDate:   providerModelPricing.ActiveFromDate.Time,
+	}, nil
+}
+
 func retrieveRequestConfiguration(
 	ctx context.Context,
 	applicationID pgtype.UUID,
@@ -98,10 +137,23 @@ func retrieveRequestConfiguration(
 
 		promptConfigUUID, _ := db.StringToUUID(promptConfig.ID)
 
+		providerModelPricing, pricingErr := RetrieveProviderModelPricing(
+			ctx, promptConfig.ModelType, promptConfig.ModelVendor,
+		)
+
+		if pricingErr != nil {
+			return nil, status.Errorf(
+				codes.NotFound,
+				"the application does not have an active prompt configuration: %v",
+				pricingErr,
+			)
+		}
+
 		return &dto.RequestConfigurationDTO{
-			ApplicationID:    application.ID,
-			PromptConfigID:   *promptConfigUUID,
-			PromptConfigData: *promptConfig,
+			ApplicationID:        application.ID,
+			PromptConfigID:       *promptConfigUUID,
+			PromptConfigData:     *promptConfig,
+			ProviderModelPricing: *providerModelPricing,
 		}, nil
 	}
 }

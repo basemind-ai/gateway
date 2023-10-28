@@ -3,6 +3,7 @@ package datatypes
 import (
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/shopspring/decimal"
 	"time"
 )
 
@@ -25,4 +26,12 @@ type PromptConfigDTO struct {
 	IsDefault                 bool            `json:"isDefault,omitempty"`
 	CreatedAt                 time.Time       `json:"createdAt,omitempty"`
 	UpdatedAt                 time.Time       `json:"updatedAt,omitempty"`
+}
+
+// ProviderModelPricingDTO is a data type used to encapsulate the pricing information for a model / type.
+type ProviderModelPricingDTO struct {
+	InputTokenPrice  decimal.Decimal `json:"inputTokenPrice"`
+	OutputTokenPrice decimal.Decimal `json:"outputTokenPrice"`
+	TokenUnitSize    int32           `json:"tokenUnitSize"`
+	ActiveFromDate   time.Time       `json:"activeFromDate"`
 }

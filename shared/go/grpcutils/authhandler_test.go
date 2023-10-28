@@ -17,14 +17,14 @@ import (
 func TestAuthHandler(t *testing.T) {
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	token, _ := factories.CreateApplicationInternalToken(context.TODO(), application.ID)
-	tokenID := db.UUIDToString(&token.ID)
+	apiKey, _ := factories.CreateApplicationInternalAPIKey(context.TODO(), application.ID)
+	apiKeyID := db.UUIDToString(&apiKey.ID)
 	secret := "valid_secret"
 
 	t.Run("HandleAuth", func(t *testing.T) {
-		t.Run("sets applicationID in context for a valid auth token", func(t *testing.T) {
-			encodedToken, tokenErr := jwtutils.CreateJWT(5*time.Minute, []byte(secret), tokenID)
-			assert.NoError(t, tokenErr)
+		t.Run("sets applicationID in context for a valid auth apiKey", func(t *testing.T) {
+			encodedToken, apiKeyErr := jwtutils.CreateJWT(5*time.Minute, []byte(secret), apiKeyID)
+			assert.NoError(t, apiKeyErr)
 
 			handler := grpcutils.NewAuthHandler(secret)
 			ctx := metadata.NewIncomingContext(
@@ -46,7 +46,7 @@ func TestAuthHandler(t *testing.T) {
 			assert.Contains(t, err.Error(), "rpc error: code = Unauthenticated")
 		})
 
-		t.Run("returns unauthenticated status for empty bearer token", func(t *testing.T) {
+		t.Run("returns unauthenticated status for empty bearer apiKey", func(t *testing.T) {
 			handler := grpcutils.NewAuthHandler(secret)
 			ctx := metadata.NewIncomingContext(
 				context.TODO(),
@@ -57,20 +57,20 @@ func TestAuthHandler(t *testing.T) {
 			assert.Contains(t, err.Error(), "rpc error: code = Unauthenticated")
 		})
 
-		t.Run("returns unauthenticated status for invalid bearer token", func(t *testing.T) {
+		t.Run("returns unauthenticated status for invalid bearer apiKey", func(t *testing.T) {
 			handler := grpcutils.NewAuthHandler(secret)
 			ctx := metadata.NewIncomingContext(
 				context.TODO(),
-				metadata.Pairs("authorization", "bearer invalid_token"),
+				metadata.Pairs("authorization", "bearer invalid_apiKey"),
 			)
 			_, err := handler.HandleAuth(ctx)
 			assert.Error(t, err)
 			assert.Contains(t, err.Error(), "rpc error: code = Unauthenticated")
 		})
 
-		t.Run("returns unauthenticated status for token without a sub", func(t *testing.T) {
-			encodedToken, tokenErr := jwtutils.CreateJWT(5*time.Minute, []byte(secret), "")
-			assert.NoError(t, tokenErr)
+		t.Run("returns unauthenticated status for apiKey without a sub", func(t *testing.T) {
+			encodedToken, apiKeyErr := jwtutils.CreateJWT(5*time.Minute, []byte(secret), "")
+			assert.NoError(t, apiKeyErr)
 
 			handler := grpcutils.NewAuthHandler(secret)
 			ctx := metadata.NewIncomingContext(
@@ -82,13 +82,13 @@ func TestAuthHandler(t *testing.T) {
 			assert.Contains(t, err.Error(), "rpc error: code = Unauthenticated")
 		})
 
-		t.Run("returns unauthenticated status for invalid token ID", func(t *testing.T) {
-			encodedToken, tokenErr := jwtutils.CreateJWT(
+		t.Run("returns unauthenticated status for invalid apiKey ID", func(t *testing.T) {
+			encodedToken, apiKeyErr := jwtutils.CreateJWT(
 				5*time.Minute,
 				[]byte(secret),
 				"869664fd-3dac-424a-9867-c87884190b5d",
 			)
-			assert.NoError(t, tokenErr)
+			assert.NoError(t, apiKeyErr)
 
 			handler := grpcutils.NewAuthHandler(secret)
 			ctx := metadata.NewIncomingContext(
@@ -101,10 +101,10 @@ func TestAuthHandler(t *testing.T) {
 		})
 
 		t.Run(
-			"returns unauthenticated status for a token with a deleted application",
+			"returns unauthenticated status for a apiKey with a deleted application",
 			func(t *testing.T) {
 				newApplication, _ := factories.CreateApplication(context.TODO(), project.ID)
-				newToken, _ := factories.CreateApplicationInternalToken(
+				newToken, _ := factories.CreateApplicationInternalAPIKey(
 					context.TODO(),
 					newApplication.ID,
 				)
@@ -112,12 +112,12 @@ func TestAuthHandler(t *testing.T) {
 				delErr := db.GetQueries().DeleteApplication(context.TODO(), newApplication.ID)
 				assert.NoError(t, delErr)
 
-				encodedToken, tokenErr := jwtutils.CreateJWT(
+				encodedToken, apiKeyErr := jwtutils.CreateJWT(
 					5*time.Minute,
 					[]byte(secret),
 					db.UUIDToString(&newToken.ID),
 				)
-				assert.NoError(t, tokenErr)
+				assert.NoError(t, apiKeyErr)
 
 				handler := grpcutils.NewAuthHandler(secret)
 				ctx := metadata.NewIncomingContext(

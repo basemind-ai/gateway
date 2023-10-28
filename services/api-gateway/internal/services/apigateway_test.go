@@ -28,6 +28,9 @@ func createRequestConfigurationDTO(
 		application.ID,
 	)
 
+	pricingModel, _ := services.RetrieveProviderModelPricing(
+		context.TODO(), promptConfig.ModelType, promptConfig.ModelVendor)
+
 	return dto.RequestConfigurationDTO{
 		ApplicationID:  application.ID,
 		PromptConfigID: promptConfig.ID,
@@ -43,6 +46,7 @@ func createRequestConfigurationDTO(
 			CreatedAt:                 promptConfig.CreatedAt.Time,
 			UpdatedAt:                 promptConfig.UpdatedAt.Time,
 		},
+		ProviderModelPricing: *pricingModel,
 	}
 }
 
@@ -89,6 +93,7 @@ func createGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 func TestAPIGatewayService(t *testing.T) {
 	srv := services.APIGatewayServer{}
 	project, _ := factories.CreateProject(context.TODO())
+	_ = factories.CreateProviderPricingModels(context.TODO())
 	configuration := createRequestConfigurationDTO(t, project.ID)
 
 	_, _ = createTestCache(

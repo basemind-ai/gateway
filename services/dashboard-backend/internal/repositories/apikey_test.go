@@ -12,40 +12,40 @@ import (
 func TestTokensRepository(t *testing.T) {
 	project, _ := factories.CreateProject(context.TODO())
 	t.Run("GetOrCreateToken", func(t *testing.T) {
-		t.Run("creates a new token", func(t *testing.T) {
+		t.Run("creates a new apiKey", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			tokenID, err := repositories.GetOrCreateApplicationInternalTokenID(
+			apiKeyID, err := repositories.GetOrCreateApplicationInternalAPIKeyID(
 				context.TODO(),
 				db.UUIDToString(&application.ID),
 			)
 			assert.NoError(t, err)
-			assert.NotNil(t, tokenID)
+			assert.NotNil(t, apiKeyID)
 		})
-		t.Run("returns existing tokenID", func(t *testing.T) {
+		t.Run("returns existing apiKeyID", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			token, _ := factories.CreateApplicationInternalToken(context.TODO(), application.ID)
-			tokenID, err := repositories.GetOrCreateApplicationInternalTokenID(
+			apiKey, _ := factories.CreateApplicationInternalAPIKey(context.TODO(), application.ID)
+			apiKeyID, err := repositories.GetOrCreateApplicationInternalAPIKeyID(
 				context.TODO(),
 				db.UUIDToString(&application.ID),
 			)
 			assert.NoError(t, err)
-			assert.Equal(t, db.UUIDToString(&token.ID), db.UUIDToString(tokenID))
+			assert.Equal(t, db.UUIDToString(&apiKey.ID), db.UUIDToString(apiKeyID))
 		})
 		t.Run("returns error if applicationID is invalid", func(t *testing.T) {
-			tokenID, err := repositories.GetOrCreateApplicationInternalTokenID(
+			apiKeyID, err := repositories.GetOrCreateApplicationInternalAPIKeyID(
 				context.TODO(),
 				"invalid-application-id",
 			)
 			assert.Error(t, err)
-			assert.Nil(t, tokenID)
+			assert.Nil(t, apiKeyID)
 		})
 		t.Run("returns error if applicationID is not a real FK relation", func(t *testing.T) {
-			tokenID, err := repositories.GetOrCreateApplicationInternalTokenID(
+			apiKeyID, err := repositories.GetOrCreateApplicationInternalAPIKeyID(
 				context.TODO(),
 				"00000000-0000-0000-0000-000000000000",
 			)
 			assert.Error(t, err)
-			assert.Nil(t, tokenID)
+			assert.Nil(t, apiKeyID)
 		})
 	})
 }
