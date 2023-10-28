@@ -1,45 +1,45 @@
 import {
+	APIKeyFactory,
 	ApplicationFactory,
 	ProjectFactory,
-	TokenFactory,
 } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 
 import {
-	handleCreateToken,
-	handleDeleteToken,
-	handleRetrieveTokens,
+	handleCreateAPIKey,
+	handleDeleteAPIKey,
+	handleRetrieveAPIKeys,
 } from '@/api';
 import { HttpMethod } from '@/constants';
 
-describe('tokens API tests', () => {
+describe('API Keys API tests', () => {
 	const bearerToken = 'Bearer test_token';
 
-	describe('handleCreateToken', () => {
-		it('returns a token', async () => {
+	describe('handleCreateAPIKey', () => {
+		it('returns an API Key', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const token = await TokenFactory.build();
+			const apiKey = await APIKeyFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
-				json: () => Promise.resolve(token),
+				json: () => Promise.resolve(apiKey),
 			});
 
 			const body = {
-				name: token.name,
+				name: apiKey.name,
 			};
 
-			const data = await handleCreateToken({
+			const data = await handleCreateAPIKey({
 				projectId: project.id,
 				applicationId: application.id,
 				data: body,
 			});
 
-			expect(data).toEqual(token);
+			expect(data).toEqual(apiKey);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/tokens/`,
+					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/apikeys/`,
 				),
 				{
 					headers: {
@@ -53,26 +53,26 @@ describe('tokens API tests', () => {
 			);
 		});
 	});
-	describe('handleRetrieveTokens', () => {
-		it('returns a list of tokens', async () => {
+	describe('handleRetrieveAPIKeys', () => {
+		it('returns a list of api keys', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const tokens = await TokenFactory.batch(2);
+			const apiKeys = await APIKeyFactory.batch(2);
 
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
-				json: () => Promise.resolve(tokens),
+				json: () => Promise.resolve(apiKeys),
 			});
 
-			const data = await handleRetrieveTokens({
+			const data = await handleRetrieveAPIKeys({
 				projectId: project.id,
 				applicationId: application.id,
 			});
 
-			expect(data).toEqual(tokens);
+			expect(data).toEqual(apiKeys);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/tokens/`,
+					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/apikeys/`,
 				),
 				{
 					headers: {
@@ -85,11 +85,11 @@ describe('tokens API tests', () => {
 			);
 		});
 	});
-	describe('handleDeleteToken', () => {
-		it('returns undefined for delete token api', async () => {
+	describe('handleDeleteAPIKey', () => {
+		it('returns undefined for delete API key', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const token = await TokenFactory.build();
+			const apiKey = await APIKeyFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
@@ -97,16 +97,16 @@ describe('tokens API tests', () => {
 			});
 
 			// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-			const data = await handleDeleteToken({
+			const data = await handleDeleteAPIKey({
 				projectId: project.id,
 				applicationId: application.id,
-				tokenId: token.id,
+				apiKeyId: apiKey.id,
 			});
 
 			expect(data).toBeUndefined();
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/tokens/${token.id}/`,
+					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/apikeys/${apiKey.id}/`,
 				),
 				{
 					headers: {

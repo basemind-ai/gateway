@@ -1,14 +1,17 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
-import { TokenFactory } from 'tests/factories';
+import { APIKeyFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
-import * as TokenAPI from '@/api/tokens-api';
+import * as APIKeysAPI from '@/api/api-keys-api';
 import { ApiKeys } from '@/app/projects/[projectId]/applications/[applicationId]/page';
 
-describe('ApiKeys tests', () => {
-	const handleRetrieveTokensSpy = vi.spyOn(TokenAPI, 'handleRetrieveTokens');
-	const handleCreateTokenSpy = vi.spyOn(TokenAPI, 'handleCreateToken');
+describe('API Keys tests', () => {
+	const handleRetrieveAPIKeysSpy = vi.spyOn(
+		APIKeysAPI,
+		'handleRetrieveAPIKeys',
+	);
+	const handleCreateAPIKeySpy = vi.spyOn(APIKeysAPI, 'handleCreateAPIKey');
 	const projectId = '1';
 	const applicationId = '1';
 
@@ -18,84 +21,84 @@ describe('ApiKeys tests', () => {
 	});
 
 	it('renders api keys component', async () => {
-		const tokens = await TokenFactory.batch(2);
-		handleRetrieveTokensSpy.mockResolvedValueOnce(tokens);
+		const apiKeys = await APIKeyFactory.batch(2);
+		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
 		render(<ApiKeys projectId={projectId} applicationId={applicationId} />);
 
 		await waitFor(() => {
-			const tokenRows = screen.getAllByTestId('api-token-row');
-			expect(tokenRows).toHaveLength(2);
+			const apiKeyRows = screen.getAllByTestId('api-key-row');
+			expect(apiKeyRows).toHaveLength(2);
 		});
 
-		const tokenNameRows = screen.getAllByTestId('api-token-name');
-		expect(tokenNameRows[0].innerHTML).toBe(tokens[0].name);
+		const apiKeyNameRows = screen.getAllByTestId('api-key-name');
+		expect(apiKeyNameRows[0].innerHTML).toBe(apiKeys[0].name);
 	});
 
-	it('deletes a token', async () => {
-		const tokens = await TokenFactory.batch(2);
-		handleRetrieveTokensSpy.mockResolvedValueOnce(tokens);
+	it('deletes a apiKey', async () => {
+		const apiKeys = await APIKeyFactory.batch(2);
+		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
 		render(<ApiKeys projectId={projectId} applicationId={applicationId} />);
 
 		await waitFor(() => {
-			const tokenRows = screen.getAllByTestId('api-token-row');
-			expect(tokenRows).toHaveLength(2);
+			const apiKeyRows = screen.getAllByTestId('api-key-row');
+			expect(apiKeyRows).toHaveLength(2);
 		});
 
-		const [tokenDeleteBtn] = screen.getAllByTestId('api-token-delete-btn');
-		fireEvent.click(tokenDeleteBtn);
+		const [apiKeyDeleteBtn] = screen.getAllByTestId('api-key-delete-btn');
+		fireEvent.click(apiKeyDeleteBtn);
 
 		const deletionInput = screen.getByTestId('resource-deletion-input');
 		fireEvent.change(deletionInput, {
-			target: { value: tokens[0].name },
+			target: { value: apiKeys[0].name },
 		});
 		const deletionBannerDeleteBtn = screen.getByTestId(
 			'resource-deletion-delete-btn',
 		);
-		handleRetrieveTokensSpy.mockResolvedValueOnce([tokens[1]]);
+		handleRetrieveAPIKeysSpy.mockResolvedValueOnce([apiKeys[1]]);
 		fireEvent.click(deletionBannerDeleteBtn);
 
 		await waitFor(() => {
-			const tokenRows = screen.getAllByTestId('api-token-row');
-			expect(tokenRows).toHaveLength(1);
+			const apiKeyRows = screen.getAllByTestId('api-key-row');
+			expect(apiKeyRows).toHaveLength(1);
 		});
 	});
 
-	it('creates a token', async () => {
-		const tokens = await TokenFactory.batch(2);
-		handleRetrieveTokensSpy.mockResolvedValueOnce(tokens);
+	it('creates a apiKey', async () => {
+		const apiKeys = await APIKeyFactory.batch(2);
+		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
 		render(<ApiKeys projectId={projectId} applicationId={applicationId} />);
 
 		await waitFor(() => {
-			const tokenRows = screen.getAllByTestId('api-token-row');
-			expect(tokenRows).toHaveLength(2);
+			const apiKeyRows = screen.getAllByTestId('api-key-row');
+			expect(apiKeyRows).toHaveLength(2);
 		});
 
-		const tokenCreateBtn = screen.getByTestId('api-token-create-btn');
-		fireEvent.click(tokenCreateBtn);
+		const apiKeyCreateBtn = screen.getByTestId('api-key-create-btn');
+		fireEvent.click(apiKeyCreateBtn);
 
-		const tokenNameInput = screen.getByTestId('create-token-input');
-		fireEvent.change(tokenNameInput, {
-			target: { value: 'New token' },
+		const apiKeyNameInput = screen.getByTestId('create-api-key-input');
+		fireEvent.change(apiKeyNameInput, {
+			target: { value: 'New apiKey' },
 		});
 
-		const submitBtn = screen.getByTestId('create-token-submit-btn');
-		const token = { ...(await TokenFactory.build()), hash: 'randomHash' };
-		tokens.push(token);
-		handleCreateTokenSpy.mockResolvedValueOnce(token);
+		const submitBtn = screen.getByTestId('create-api-key-submit-btn');
+		const apiKey = { ...(await APIKeyFactory.build()), hash: 'randomHash' };
+		apiKeys.push(apiKey);
+		handleCreateAPIKeySpy.mockResolvedValueOnce(apiKey);
 		fireEvent.click(submitBtn);
 
 		await waitFor(() => {
-			const hashInput = screen.getByTestId('create-token-hash-input');
+			const hashInput = screen.getByTestId('create-api-key-hash-input');
 			expect(hashInput).toBeInTheDocument();
 		});
 
-		handleRetrieveTokensSpy.mockResolvedValueOnce([...tokens]);
-		const closeBtn = screen.getByTestId('create-token-close-btn');
+		handleRetrieveAPIKeysSpy.mockResolvedValueOnce([...apiKeys]);
+		const closeBtn = screen.getByTestId('create-api-key-close-btn');
 		fireEvent.click(closeBtn);
 
 		await waitFor(() => {
-			const newToken = screen.getByText(token.name);
-			expect(newToken).toBeInTheDocument();
+			const newAPIKey = screen.getByText(apiKey.name);
+			expect(newAPIKey).toBeInTheDocument();
 		});
 	});
 });

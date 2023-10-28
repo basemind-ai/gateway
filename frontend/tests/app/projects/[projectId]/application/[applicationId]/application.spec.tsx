@@ -1,14 +1,14 @@
 import { fireEvent } from '@testing-library/react';
 import {
+	APIKeyFactory,
 	ApplicationFactory,
 	ProjectFactory,
 	PromptConfigFactory,
-	TokenFactory,
 } from 'tests/factories';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 
+import * as APIKeysAPI from '@/api/api-keys-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import * as TokensAPI from '@/api/tokens-api';
 import ApplicationPage from '@/app/projects/[projectId]/applications/[applicationId]/page';
 import {
 	useSetProjectApplications,
@@ -20,7 +20,10 @@ describe('ApplicationPage', () => {
 		PromptConfigAPI,
 		'handleRetrievePromptConfigs',
 	);
-	const handleRetrieveTokensSpy = vi.spyOn(TokensAPI, 'handleRetrieveTokens');
+	const handleRetrieveAPIKeysSpy = vi.spyOn(
+		APIKeysAPI,
+		'handleRetrieveAPIKeys',
+	);
 
 	beforeAll(() => {
 		HTMLDialogElement.prototype.showModal = vi.fn();
@@ -65,7 +68,7 @@ describe('ApplicationPage', () => {
 		);
 		expect(promptConfig).toBeInTheDocument();
 
-		const [, settingsTab, tokensTab] =
+		const [, settingsTab, apiKeysTab] =
 			screen.getAllByTestId('tab-navigation-btn');
 
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
@@ -82,10 +85,10 @@ describe('ApplicationPage', () => {
 		);
 		expect(appDeletion).toBeInTheDocument();
 
-		handleRetrieveTokensSpy.mockResolvedValueOnce(
-			await TokenFactory.batch(2),
+		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(
+			await APIKeyFactory.batch(2),
 		);
-		fireEvent.click(tokensTab);
+		fireEvent.click(apiKeysTab);
 		await waitFor(() => {
 			const apiKeysTitle = screen.getByTestId('api-keys-title');
 			expect(apiKeysTitle).toBeInTheDocument();

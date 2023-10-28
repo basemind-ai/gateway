@@ -1,9 +1,9 @@
 import {
+	APIKeyFactory,
 	ApplicationFactory,
 	ProjectFactory,
 	ProjectUserAccountFactory,
 	PromptConfigFactory,
-	TokenFactory,
 } from 'tests/factories';
 import { renderHook } from 'tests/test-utils';
 
@@ -11,6 +11,7 @@ import {
 	projectStoreStateCreator,
 	useAddProject,
 	useAddProjectUser,
+	useAPIKeys,
 	useApplication,
 	useApplications,
 	useCurrentProject,
@@ -20,13 +21,12 @@ import {
 	useProjectUsers,
 	usePromptConfig,
 	useRemoveProjectUser,
+	useSetAPIKeys,
 	useSetCurrentProject,
 	useSetProjectApplications,
 	useSetProjects,
 	useSetProjectUsers,
 	useSetPromptConfig,
-	useSetTokens,
-	useTokens,
 	useUpdateApplication,
 	useUpdateProject,
 	useUpdateProjectUser,
@@ -329,21 +329,21 @@ describe('project-store tests', () => {
 		});
 	});
 
-	describe('getTokens and setTokens', () => {
-		it('sets and gets tokens', async () => {
+	describe('getAPIKeys and setAPIKeys', () => {
+		it('sets and gets API keys', async () => {
 			const {
-				result: { current: setTokens },
-			} = renderHook(useSetTokens);
-			const tokens = await TokenFactory.batch(2);
+				result: { current: setAPIKeys },
+			} = renderHook(useSetAPIKeys);
+			const apiKeys = await APIKeyFactory.batch(2);
 
 			const applicationId = '1';
-			setTokens(applicationId, tokens);
+			setAPIKeys(applicationId, apiKeys);
 
 			const {
-				result: { current: tokenRes },
-			} = renderHook(() => useTokens(applicationId));
+				result: { current: apiKeysRes },
+			} = renderHook(() => useAPIKeys(applicationId));
 
-			expect(tokenRes).toBe(tokens);
+			expect(apiKeysRes).toBe(apiKeys);
 		});
 	});
 

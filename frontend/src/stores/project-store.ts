@@ -2,18 +2,18 @@ import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
 import {
+	APIKey,
 	Application,
 	Project,
 	ProjectUserAccount,
 	PromptConfig,
-	Token,
 } from '@/types';
 
 export interface ProjectStore {
 	projects: Project[];
 	applications: Record<string, Application[] | undefined>;
 	promptConfigs: Record<string, PromptConfig[] | undefined>;
-	tokens: Record<string, Token[] | undefined>;
+	apiKeys: Record<string, APIKey[] | undefined>;
 	currentProjectId: string | null;
 	projectUsers: Record<string, ProjectUserAccount[] | undefined>;
 	setProjects: (projects: Project[]) => void;
@@ -33,7 +33,7 @@ export interface ProjectStore {
 		applicationId: string,
 		promptConfig: PromptConfig[],
 	) => void;
-	setTokens: (applicationId: string, tokens: Token[]) => void;
+	setAPIKeys: (applicationId: string, apiKeys: APIKey[]) => void;
 	setProjectUsers: (
 		projectId: string,
 		projectUsers: ProjectUserAccount[],
@@ -58,7 +58,7 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 	projects: [],
 	applications: {},
 	promptConfigs: {},
-	tokens: {},
+	apiKeys: {},
 	currentProjectId: null,
 	projectUsers: {},
 	setProjects: (projects: Project[]) => {
@@ -127,11 +127,11 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 			},
 		}));
 	},
-	setTokens: (applicationId: string, tokens: Token[]) => {
+	setAPIKeys: (applicationId: string, apiKeys: APIKey[]) => {
 		set((state) => ({
-			tokens: {
-				...state.tokens,
-				[applicationId]: tokens,
+			apiKeys: {
+				...state.apiKeys,
+				[applicationId]: apiKeys,
 			},
 		}));
 	},
@@ -248,9 +248,9 @@ export const useUpdateApplication = () =>
 export const usePromptConfig = () => useProjectStore((s) => s.promptConfigs);
 export const useSetPromptConfig = () =>
 	useProjectStore((s) => s.setPromptConfig);
-export const useTokens = (applicationId: string) =>
-	useProjectStore((s) => s.tokens[applicationId]);
-export const useSetTokens = () => useProjectStore((s) => s.setTokens);
+export const useAPIKeys = (applicationId: string) =>
+	useProjectStore((s) => s.apiKeys[applicationId]);
+export const useSetAPIKeys = () => useProjectStore((s) => s.setAPIKeys);
 export const useProjectUsers = (projectId: string) =>
 	useProjectStore((s) => s.projectUsers[projectId]);
 export const useSetProjectUsers = () =>

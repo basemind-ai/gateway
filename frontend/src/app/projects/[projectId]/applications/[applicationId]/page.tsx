@@ -20,11 +20,11 @@ import { DateValueType } from 'react-tailwindcss-datepicker';
 
 import {
 	handleApplicationAnalytics,
-	handleCreateToken,
+	handleCreateAPIKey,
+	handleDeleteAPIKey,
 	handleDeleteApplication,
-	handleDeleteToken,
+	handleRetrieveAPIKeys,
 	handleRetrievePromptConfigs,
-	handleRetrieveTokens,
 	handleSetDefaultPromptConfig,
 	handleUpdateApplication,
 } from '@/api';
@@ -36,22 +36,22 @@ import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import {
+	useAPIKeys,
 	useApplication,
 	useDeleteApplication,
 	usePromptConfig,
+	useSetAPIKeys,
 	useSetPromptConfig,
-	useSetTokens,
-	useTokens,
 	useUpdateApplication,
 } from '@/stores/project-store';
 import { useDateFormat } from '@/stores/user-config-store';
-import { ApplicationAnalytics, Token } from '@/types';
+import { APIKey, ApplicationAnalytics } from '@/types';
 import { copyToClipboard, handleChange } from '@/utils/helpers';
 
 enum TAB_NAMES {
 	OVERVIEW,
 	SETTINGS,
-	TOKENS,
+	APIKEYS,
 }
 
 export default function Application({
@@ -76,8 +76,8 @@ export default function Application({
 			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 		{
-			id: TAB_NAMES.TOKENS,
-			text: t('tokens'),
+			id: TAB_NAMES.APIKEYS,
+			text: t('apiKeys'),
 			icon: <KeyFill className="w-3.5 h-3.5" />,
 		},
 	];
@@ -127,7 +127,7 @@ export default function Application({
 					/>
 				</>
 			)}
-			{selectedTab === TAB_NAMES.TOKENS && (
+			{selectedTab === TAB_NAMES.APIKEYS && (
 				<ApiKeys applicationId={applicationId} projectId={projectId} />
 			)}
 		</div>
@@ -528,23 +528,23 @@ export function ApiKeys({
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
 
-	const tokens = useTokens(applicationId);
-	const setTokens = useSetTokens();
+	const apiKeys = useAPIKeys(applicationId);
+	const setAPIKeys = useSetAPIKeys();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);
 	const creationDialogRef = useRef<HTMLDialogElement>(null);
-	const [deletionToken, setDeletionToken] = useState<Pick<
-		Token,
+	const [deletionAPIKey, setDeletionAPIKey] = useState<Pick<
+		APIKey,
 		'name' | 'id'
 	> | null>(null);
 
-	function openDeleteConfirmationPopup(tokenId: string, tokenName: string) {
-		setDeletionToken({ id: tokenId, name: tokenName });
+	function openDeleteConfirmationPopup(apiKeyId: string, apiKeyName: string) {
+		setDeletionAPIKey({ id: apiKeyId, name: apiKeyName });
 		deletionDialogRef.current?.showModal();
 	}
 
 	function closeDeleteConfirmationPopup() {
-		setDeletionToken(null);
+		setDeletionAPIKey(null);
 		deletionDialogRef.current?.close();
 	}
 
@@ -556,20 +556,23 @@ export function ApiKeys({
 		creationDialogRef.current?.close();
 	}
 
-	async function getTokens() {
-		const tokens = await handleRetrieveTokens({ projectId, applicationId });
-		setTokens(applicationId, tokens);
+	async function getAPIKeys() {
+		const apiKeys = await handleRetrieveAPIKeys({
+			projectId,
+			applicationId,
+		});
+		setAPIKeys(applicationId, apiKeys);
 		closeCreationPopup();
 	}
 
-	async function deleteToken(tokenId: string) {
-		await handleDeleteToken({ projectId, applicationId, tokenId });
+	async function deleteAPIKey(apiKeyId: string) {
+		await handleDeleteAPIKey({ projectId, applicationId, apiKeyId });
 		closeDeleteConfirmationPopup();
-		await getTokens();
+		await getAPIKeys();
 	}
 
 	useEffect(() => {
-		void getTokens();
+		void getAPIKeys();
 	}, []);
 
 	return (
@@ -590,13 +593,13 @@ export function ApiKeys({
 						</tr>
 					</thead>
 					<tbody>
-						{tokens?.map(({ name, createdAt, id }) => (
-							<tr data-testid="api-token-row" key={id}>
-								<td data-testid="api-token-name">{name}</td>
+						{apiKeys?.map(({ name, createdAt, id }) => (
+							<tr data-testid="api-key-row" key={id}>
+								<td data-testid="api-key-name">{name}</td>
 								<td>{dayjs(createdAt).format(dateFormat)}</td>
 								<td>
 									<button
-										data-testid="api-token-delete-btn"
+										data-testid="api-key-delete-btn"
 										onClick={() => {
 											openDeleteConfirmationPopup(
 												id,
@@ -612,7 +615,7 @@ export function ApiKeys({
 					</tbody>
 				</table>
 				<button
-					data-testid="api-token-create-btn"
+					data-testid="api-key-create-btn"
 					onClick={openCreationPopup}
 					className="mt-16 flex gap-2 items-center text-secondary hover:brightness-90"
 				>
@@ -621,15 +624,15 @@ export function ApiKeys({
 				</button>
 				<dialog ref={deletionDialogRef} className="modal">
 					<div className="modal-box p-0 border border-neutral max-w-[43rem]">
-						{deletionToken && (
+						{deletionAPIKey && (
 							<ResourceDeletionBanner
 								title={t('warning')}
-								description={t('warningMessageToken')}
-								placeholder={t('deletePlaceholderToken')}
-								resourceName={deletionToken.name}
+								description={t('warningMessageAPIKey')}
+								placeholder={t('deletePlaceholderAPIKey')}
+								resourceName={deletionAPIKey.name}
 								onCancel={closeDeleteConfirmationPopup}
 								onConfirm={() =>
-									void deleteToken(deletionToken.id)
+									void deleteAPIKey(deletionAPIKey.id)
 								}
 							/>
 						)}
@@ -644,7 +647,7 @@ export function ApiKeys({
 							projectId={projectId}
 							applicationId={applicationId}
 							onCancel={closeCreationPopup}
-							onSubmit={() => void getTokens()}
+							onSubmit={() => void getAPIKeys()}
 						/>
 					</div>
 				</dialog>
@@ -665,35 +668,35 @@ export function CreateApiKey({
 	onCancel: () => void;
 }) {
 	const t = useTranslations('application');
-	const [tokenName, setTokenName] = useState('');
-	const [tokenHash, setTokenHash] = useState('');
+	const [apiKeyName, setAPIKeyName] = useState('');
+	const [apiKeyHash, setAPIKeyHash] = useState('');
 
-	const tokenNameValid = tokenName.trim().length >= MIN_NAME_LENGTH;
+	const apiKeyNameValid = apiKeyName.trim().length >= MIN_NAME_LENGTH;
 
-	async function createToken() {
-		const token = await handleCreateToken({
+	async function createAPIKey() {
+		const apiKey = await handleCreateAPIKey({
 			applicationId,
 			projectId,
-			data: { name: tokenName },
+			data: { name: apiKeyName },
 		});
-		setTokenHash(token.hash);
+		setAPIKeyHash(apiKey.hash);
 	}
 
 	function close() {
-		if (tokenHash) {
+		if (apiKeyHash) {
 			onSubmit();
 		} else {
 			onCancel();
 		}
-		setTokenName('');
-		setTokenHash('');
+		setAPIKeyName('');
+		setAPIKeyHash('');
 	}
 
 	return (
 		<div className="bg-base-300">
 			<div className="p-10 flex flex-col items-center border-b border-neutral">
 				<h1
-					data-testid="create-token-title"
+					data-testid="create-api-key-title"
 					className="text-base-content font-bold text-xl"
 				>
 					{t('createApiKey')}
@@ -701,29 +704,29 @@ export function CreateApiKey({
 				<p className="mt-2.5 font-medium ">
 					{t('createApiKeyDescription')}
 				</p>
-				{!tokenHash && (
+				{!apiKeyHash && (
 					<div className="mt-8 self-start w-full">
 						<label
-							htmlFor="create-token-input"
+							htmlFor="create-api-key-input"
 							className="text-sm font-semibold text-neutral-content"
 						>
 							{t('name')}
 						</label>
 						<input
 							type="text"
-							id="create-token-input"
-							data-testid="create-token-input"
+							id="create-api-key-input"
+							data-testid="create-api-key-input"
 							className="input mt-2.5 bg-neutral w-full text-neutral-content font-medium"
 							placeholder={t('createApiKeyPlaceholder')}
-							value={tokenName}
-							onChange={handleChange(setTokenName)}
+							value={apiKeyName}
+							onChange={handleChange(setAPIKeyName)}
 						/>
 					</div>
 				)}
-				{tokenHash && (
+				{apiKeyHash && (
 					<div className="mt-8 self-start w-full">
 						<label
-							htmlFor="create-token-input"
+							htmlFor="create-api-key-input"
 							className="text-sm font-semibold text-neutral-content"
 						>
 							{t('apiKey')}
@@ -731,17 +734,17 @@ export function CreateApiKey({
 						<div className="flex relative items-center gap-4 mt-2.5">
 							<KeyFill className="w-4 h-4 text-neutral-content" />
 							<input
-								data-testid="create-token-hash-input"
+								data-testid="create-api-key-hash-input"
 								className="font-medium text-success bg-transparent w-full focus:border-none"
-								value={tokenHash}
+								value={apiKeyHash}
 								onChange={() => {
 									return;
 								}}
 							/>
 							<button
-								data-testid="api-token-copy-btn"
+								data-testid="api-key-copy-btn"
 								onClick={() => {
-									copyToClipboard(tokenHash);
+									copyToClipboard(apiKeyHash);
 									// TODO: add a toast
 								}}
 							>
@@ -753,19 +756,19 @@ export function CreateApiKey({
 			</div>
 			<div className="flex items-center justify-end py-8 px-5 gap-4">
 				<button
-					data-testid="create-token-close-btn"
+					data-testid="create-api-key-close-btn"
 					onClick={close}
 					className="btn btn-neutral capitalize font-semibold text-neutral-content"
 				>
-					{tokenHash ? t('close') : t('cancel')}
+					{apiKeyHash ? t('close') : t('cancel')}
 				</button>
-				{!tokenHash && (
+				{!apiKeyHash && (
 					<button
-						data-testid="create-token-submit-btn"
-						onClick={() => void createToken()}
-						disabled={!tokenNameValid}
+						data-testid="create-api-key-submit-btn"
+						onClick={() => void createAPIKey()}
+						disabled={!apiKeyNameValid}
 						className={`btn btn-primary capitalize font-semibold ${
-							tokenNameValid ? '' : 'opacity-60'
+							apiKeyNameValid ? '' : 'opacity-60'
 						}`}
 					>
 						{t('create')}

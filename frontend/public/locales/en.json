@@ -3,6 +3,7 @@
 		"apiCalls": "API Calls",
 		"apiKey": "API Key",
 		"apiKeys": "API Keys",
+		"apiKeys": "API Keys",
 		"application": "Application",
 		"applicationDeletion": "Application Deletion",
 		"applicationDescription": "Application Description",
@@ -17,8 +18,8 @@
 		"defaultPromptConfig": "Default Prompt Configuration",
 		"defaultPromptConfigMessage": "The default configuration allows to you to call configuration without providing explicit ID",
 		"delete": "Delete",
+		"deletePlaceholderAPIKey": "Write API Key name",
 		"deletePlaceholderApplication": "Write application name",
-		"deletePlaceholderToken": "Write token name",
 		"deleteYourApplication": "Delete your application",
 		"deleteYourApplicationMessage": "This act is irreversible, it will delete your application.",
 		"edit": "Edit",
@@ -34,11 +35,10 @@
 		"settings": "Settings",
 		"status": "Status",
 		"test": "Test",
-		"tokens": "Tokens",
 		"type": "Type",
 		"warning": "Warning",
-		"warningMessageApplication": "This act is irreversible, it will delete your application. All server requests sent to this application will not work",
-		"warningMessageToken": "Once a API key is deleted, all server requests sent with that key will not work."
+		"warningMessageAPIKey": "Once a API key is deleted, all server requests sent with that key will not work.",
+		"warningMessageApplication": "This act is irreversible, it will delete your application. All server requests sent to this application will not work"
 	},
 	"common": {
 		"accept": "Accept",
