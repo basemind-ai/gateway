@@ -225,24 +225,44 @@ func TestAPIKeyAPI(t *testing.T) {
 			},
 		)
 
-		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
-			response, requestErr := testClient.Post(context.TODO(), fmt.Sprintf(
-				"/v1%s",
-				strings.ReplaceAll(
+		t.Run(
+			"responds with status 400 BAD REQUEST if the application id is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Post(context.TODO(), fmt.Sprintf(
+					"/v1%s",
 					strings.ReplaceAll(
-						api.ApplicationAPIKeysListEndpoint,
-						"{projectId}",
-						projectID,
+						strings.ReplaceAll(
+							api.ApplicationAPIKeysListEndpoint,
+							"{projectId}",
+							projectID,
+						),
+						"{applicationId}",
+						"invalid",
 					),
-					"{applicationId}",
-					"invalid",
-				),
-			), map[string]any{
-				"name": "test apiKey",
+				), map[string]any{
+					"name": "test apiKey",
+				})
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run("responds with status 400 BAD REQUEST if the name is missing", func(t *testing.T) {
+			response, requestErr := testClient.Post(context.TODO(), listURL, map[string]any{
+				"name": "",
 			})
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the body cannot be deserialized",
+			func(t *testing.T) {
+				response, requestErr := testClient.Post(context.TODO(), listURL, "invalid")
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("DELETE: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {

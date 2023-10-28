@@ -16,6 +16,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// RetrievePromptConfig retrieves the prompt config - either using the provided ID, or the application default.
 func RetrievePromptConfig(
 	ctx context.Context,
 	applicationID pgtype.UUID,
@@ -72,6 +73,7 @@ func RetrievePromptConfig(
 	}, nil
 }
 
+// RetrieveProviderModelPricing retrieves the pricing model for the given model type and vendor.
 func RetrieveProviderModelPricing(
 	ctx context.Context,
 	modelType db.ModelType,
@@ -94,6 +96,7 @@ func RetrieveProviderModelPricing(
 	}
 }
 
+// RetrieveRequestConfiguration retrieves the request configuration for the given application and prompt config ID.
 func RetrieveRequestConfiguration(
 	ctx context.Context,
 	applicationID pgtype.UUID,
@@ -135,6 +138,7 @@ func RetrieveRequestConfiguration(
 	}
 }
 
+// ValidateExpectedVariables validates that the expected template variables are present in the request.
 func ValidateExpectedVariables(
 	templateVariables map[string]string,
 	expectedVariables []string,
@@ -158,6 +162,7 @@ func ValidateExpectedVariables(
 	return nil
 }
 
+// StreamFromChannel streams the prompt results from the channel to the stream server.
 func StreamFromChannel[T any](
 	ctx context.Context,
 	channel chan dto.PromptResultDTO,
@@ -188,6 +193,7 @@ func StreamFromChannel[T any](
 	}
 }
 
+// CreateAPIGatewayStreamMessage creates a stream message for the API Gateway.
 func CreateAPIGatewayStreamMessage(
 	result dto.PromptResultDTO,
 ) (*gateway.StreamingPromptResponse, bool) {

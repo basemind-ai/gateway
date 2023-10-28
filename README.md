@@ -121,10 +121,10 @@ To test the project end-to-end do the following:
 3. The `e2e:seed` command will log into the terminal the `apiKeyID` for the application that has been created.
    Copy this value into you clipboard, and now execute `task e2e:create-jwt <apiKeyID>`, where <apiKeyID> is
    the value you copied to your clipboard.
-4. The `e2e:create-jwt` command will print an encoded JWT apiKey into the terminal, copy this value and save it.
+4. The `e2e:create-jwt` command will print an encoded JWT token into the terminal, copy this value and save it.
 5. Bring up the docker services with `docker compose up --build`.
 6. Once the docker services are up you can test using postman. Load the proto file for the `api-gateway` service in postman,
-   and set the metadata header for authorization in the following format - key `authorization`, value `bearer <jwt-apiKey>`.
+   and set the metadata header for authorization in the following format - key `authorization`, value `bearer <jwt-token>`.
 
 ## Storybook
 

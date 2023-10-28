@@ -10,7 +10,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -29,41 +28,15 @@ func handleCreateApplicationAPIKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx := exc.MustResult(db.GetTransaction(r.Context()))
-
-	defer func() {
-		if rollbackErr := tx.Rollback(r.Context()); rollbackErr != nil {
-			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
-		}
-	}()
-
-	queries := db.GetQueries()
-
-	apiKey, createAPIKeyErr := queries.CreateAPIKey(r.Context(), db.CreateAPIKeyParams{
+	apiKey := exc.MustResult(db.GetQueries().CreateAPIKey(r.Context(), db.CreateAPIKeyParams{
 		ApplicationID: applicationID,
 		Name:          data.Name,
-	})
-	if createAPIKeyErr != nil {
-		log.Error().Err(createAPIKeyErr).Msg("failed to create application apiKey")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	}))
 
 	apiKeyID := db.UUIDToString(&apiKey.ID)
 	cfg := config.Get(r.Context())
 
-	jwt, jwtErr := jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), apiKeyID)
-	if jwtErr != nil {
-		log.Error().Err(jwtErr).Msg("failed to create jwt")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
-
-	if commitErr := tx.Commit(r.Context()); commitErr != nil {
-		log.Error().Err(commitErr).Msg("failed to commit transaction")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	jwt := exc.MustResult(jwtutils.CreateJWT(-1, []byte(cfg.JWTSecret), apiKeyID))
 
 	serialization.RenderJSONResponse(w, http.StatusCreated, &dto.ApplicationAPIKeyDTO{
 		ID:        apiKeyID,
