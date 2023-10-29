@@ -24,9 +24,9 @@ export function InviteMember({ projectId }: { projectId: string }) {
 		if (loading) {
 			return;
 		}
-		setLoading(true);
 
 		try {
+			setLoading(true);
 			const projectUser = await handleAddUserToProject({
 				projectId,
 				data: {
@@ -40,9 +40,9 @@ export function InviteMember({ projectId }: { projectId: string }) {
 			showInfo(t('userAdded'));
 		} catch (e) {
 			showError((e as ApiError).message);
+		} finally {
+			setLoading(false);
 		}
-
-		setLoading(false);
 	}
 
 	const validEmail = isValidEmail(email);

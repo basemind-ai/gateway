@@ -27,9 +27,12 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 		description.trim().length >= MIN_NAME_LENGTH;
 
 	async function saveSettings() {
-		setLoading(true);
+		if (loading) {
+			return;
+		}
 
 		try {
+			setLoading(true);
 			const updatedProject = await handleUpdateProject({
 				projectId,
 				data: {
@@ -40,9 +43,9 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 			updateProject(projectId, updatedProject);
 		} catch (e) {
 			showError((e as ApiError).message);
+		} finally {
+			setLoading(false);
 		}
-
-		setLoading(false);
 	}
 
 	return (
@@ -86,7 +89,7 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 					data-testid="project-setting-save-btn"
 					disabled={!isChanged || !isValid}
 					className="btn btn-primary ml-auto mt-8 capitalize"
-					onClick={() => !loading && void saveSettings()}
+					onClick={() => void saveSettings()}
 				>
 					{loading ? (
 						<span className="loading loading-spinner loading-sm mx-2" />

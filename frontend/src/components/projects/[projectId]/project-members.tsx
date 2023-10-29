@@ -155,9 +155,9 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 		if (!removalUserId || removeUserLoading) {
 			return;
 		}
-		setRemoveUserLoading(true);
 
 		try {
+			setRemoveUserLoading(true);
 			await handleRemoveUserFromProject({
 				projectId,
 				userId: removalUserId,
@@ -166,11 +166,11 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 			showInfo(t('userRemoved'));
 		} catch (e) {
 			showError((e as ApiError).message);
+		} finally {
+			setRemovalUserId(null);
+			closeRemovalConfirmationPopup();
+			setRemoveUserLoading(false);
 		}
-
-		setRemovalUserId(null);
-		closeRemovalConfirmationPopup();
-		setRemoveUserLoading(false);
 	}
 
 	function renderProjectUsers() {

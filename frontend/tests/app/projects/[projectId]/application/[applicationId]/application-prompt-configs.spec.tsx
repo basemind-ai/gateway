@@ -3,7 +3,9 @@ import { PromptConfigFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { ApplicationPromptConfigs } from '@/app/projects/[projectId]/applications/[applicationId]/page';
+import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
+import { ApiError } from '@/errors';
+import { ToastType } from '@/stores/toast-store';
 
 describe('ApplicationPromptConfigs', () => {
 	// TODO: add more tests when adding new config, test and edit functionality
@@ -32,6 +34,27 @@ describe('ApplicationPromptConfigs', () => {
 			const nameElement = screen.getByText(promptConfig.name);
 			expect(nameElement).toBeInTheDocument();
 		}
+	});
+
+	it('shows error when unable to fetch prompt configs', async () => {
+		handleRetrievePromptConfigsSpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to fetch prompt configs', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+
+		await waitFor(() =>
+			render(
+				<ApplicationPromptConfigs
+					projectId={projectId}
+					applicationId={applicationId}
+				/>,
+			),
+		);
+
+		const errorToast = screen.getByText('unable to fetch prompt configs');
+		expect(errorToast.className).toContain(ToastType.ERROR);
 	});
 
 	it('copies application id to clipboard', async () => {
