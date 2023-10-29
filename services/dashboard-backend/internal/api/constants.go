@@ -22,4 +22,5 @@ const (
 
 const (
 	invalidRequestBodyError = "invalid request body"
+	invalidIDError          = "invalid id"
 )

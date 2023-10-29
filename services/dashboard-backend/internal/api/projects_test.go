@@ -50,13 +50,25 @@ func TestProjectsAPI(t *testing.T) {
 		t.Run(
 			"responds with status 400 BAD REQUEST if the request body is invalid",
 			func(t *testing.T) {
-				body := &dto.ProjectDTO{
-					Name: "",
-				}
+				data := &dto.ProjectDTO{}
+
 				response, requestErr := testClient.Post(
 					context.TODO(),
 					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
-					body,
+					data,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the request body fails validation",
+			func(t *testing.T) {
+				response, requestErr := testClient.Post(
+					context.TODO(),
+					fmt.Sprintf("/v1%s", api.ProjectsListEndpoint),
+					"invalid",
 				)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
@@ -146,6 +158,27 @@ func TestProjectsAPI(t *testing.T) {
 				response, requestErr := testClient.Patch(context.TODO(), url, body)
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusUnauthorized, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the request body is invalid",
+			func(t *testing.T) {
+				projectID := createProject(t)
+				createUserProject(
+					t,
+					userAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				url := fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(api.ProjectDetailEndpoint, "{projectId}", projectID),
+				)
+				response, requestErr := testClient.Patch(context.TODO(), url, "invalid")
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
 

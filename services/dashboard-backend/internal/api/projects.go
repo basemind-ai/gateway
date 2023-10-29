@@ -75,17 +75,12 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingProject, projectRetrivalErr := db.
+	existingProject := exc.MustResult(db.
 		GetQueries().
 		RetrieveProject(r.Context(), db.RetrieveProjectParams{
 			ID:         projectID,
 			FirebaseID: userAccount.FirebaseID,
-		})
-	if projectRetrivalErr != nil {
-		log.Error().Err(projectRetrivalErr).Msg("failed to retrieve project")
-		apierror.BadRequest("project does not exist").Render(w, r)
-		return
-	}
+		}))
 
 	updateParams := db.UpdateProjectParams{
 		ID:          projectID,

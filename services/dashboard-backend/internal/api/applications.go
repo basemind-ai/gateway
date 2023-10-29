@@ -77,8 +77,7 @@ func handleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 		RetrieveApplication(r.Context(), applicationID)
 
 	if applicationRetrieveErr != nil {
-		log.Error().Err(applicationRetrieveErr).Msg("failed to retrieve application")
-		apierror.InternalServerError().Render(w, r)
+		apierror.BadRequest(invalidIDError).Render(w, r)
 		return
 	}
 
@@ -128,11 +127,7 @@ func handleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 func handleDeleteApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	if applicationDeleteErr := repositories.DeleteApplication(r.Context(), applicationID); applicationDeleteErr != nil {
-		log.Error().Err(applicationDeleteErr).Msg("failed to delete application")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	exc.Must(repositories.DeleteApplication(r.Context(), applicationID))
 
 	w.WriteHeader(http.StatusNoContent)
 }
