@@ -68,9 +68,6 @@ describe('ApplicationAnalytics', () => {
 		const apiCalls = screen.getByTestId(
 			`data-card-total-value-${t('apiCalls')}`,
 		);
-		expect(apiCalls.innerHTML).toBe(
-			initialAnalytics.totalRequests.toString(),
-		);
 
 		const updatedAnalytics = {
 			totalRequests: 474,

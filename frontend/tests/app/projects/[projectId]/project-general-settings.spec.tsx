@@ -4,7 +4,9 @@ import { render, renderHook, screen } from 'tests/test-utils';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
+import { ApiError } from '@/errors';
 import { useSetProjects } from '@/stores/project-store';
+import { ToastType } from '@/stores/toast-store';
 
 describe('ProjectGeneralSettings', () => {
 	const handleUpdateProjectSpy = vi.spyOn(ProjectAPI, 'handleUpdateProject');
@@ -65,6 +67,36 @@ describe('ProjectGeneralSettings', () => {
 				description: 'new description',
 			},
 		});
+	});
+
+	it('shows error when unable to save settings', async () => {
+		const {
+			result: { current: setProjects },
+		} = renderHook(useSetProjects);
+		setProjects([project]);
+
+		render(<ProjectGeneralSettings projectId={projectId} />);
+
+		const descriptionInput = screen.getByTestId<HTMLInputElement>(
+			'project-description-input',
+		);
+		const saveButton = screen.getByTestId<HTMLButtonElement>(
+			'project-setting-save-btn',
+		);
+
+		handleUpdateProjectSpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to save project settings', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+		fireEvent.change(descriptionInput, {
+			target: { value: 'new description' },
+		});
+		fireEvent.click(saveButton);
+
+		const errorToast = screen.getByText('unable to save project settings');
+		expect(errorToast.className).toContain(ToastType.ERROR);
 	});
 
 	it('does not save when input is not pristine', async () => {

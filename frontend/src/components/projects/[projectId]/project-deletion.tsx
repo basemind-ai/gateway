@@ -1,18 +1,25 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { handleDeleteProject } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
+import { ApiError } from '@/errors';
 import { useDeleteProject, useProject } from '@/stores/project-store';
+import { useShowError, useShowInfo } from '@/stores/toast-store';
 
 export function ProjectDeletion({ projectId }: { projectId: string }) {
 	const router = useRouter();
 	const t = useTranslations('projectSettings');
 	const project = useProject(projectId);
 	const deleteProjectHook = useDeleteProject();
+
+	const showError = useShowError();
+	const showInfo = useShowInfo();
+
 	const dialogRef = useRef<HTMLDialogElement>(null);
+	const [loading, setLoading] = useState(false);
 
 	function openDeleteConfirmationPopup() {
 		dialogRef.current?.showModal();
@@ -23,11 +30,19 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 	}
 
 	async function deleteProject() {
-		await handleDeleteProject({ projectId });
-		deleteProjectHook(projectId);
+		setLoading(true);
+
+		try {
+			await handleDeleteProject({ projectId });
+			deleteProjectHook(projectId);
+			router.replace(Navigation.Projects);
+			showInfo(t('projectDeleted'));
+		} catch (e) {
+			showError((e as ApiError).message);
+		}
+
 		closeDeleteConfirmationPopup();
-		router.replace(Navigation.Projects);
-		// 	TODO: Toast to show successful deletion
+		setLoading(false);
 	}
 
 	if (!project) {
@@ -61,7 +76,12 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 							placeholder={t('deletionPlaceholder')}
 							resourceName={project.name}
 							onCancel={closeDeleteConfirmationPopup}
-							onConfirm={() => void deleteProject()}
+							onConfirm={() => !loading && void deleteProject()}
+							confirmCTA={
+								loading ? (
+									<span className="loading loading-spinner loading-xs mx-1.5" />
+								) : undefined
+							}
 						/>
 					</div>
 					<form method="dialog" className="modal-backdrop">
