@@ -77,7 +77,7 @@ func (c *Client) StreamPromptTest(
 	responseChannel chan<- *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan<- error,
 ) {
-	tokenID, getOrCreateErr := repositories.GetOrCreateApplicationInternalTokenID(
+	apiKeyID, getOrCreateErr := repositories.GetOrCreateApplicationInternalAPIKeyID(
 		ctx,
 		applicationID,
 	)
@@ -95,7 +95,7 @@ func (c *Client) StreamPromptTest(
 	jwt, jwtCreateErr := jwtutils.CreateJWT(
 		time.Minute,
 		[]byte(config.Get(ctx).JWTSecret),
-		db.UUIDToString(tokenID),
+		db.UUIDToString(apiKeyID),
 	)
 
 	if jwtCreateErr != nil {

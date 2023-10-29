@@ -47,13 +47,18 @@ var seedCommand = &cobra.Command{
 		}
 		log.Info().Interface("promptConfig", promptConfig).Msg("created prompt config")
 
-		token, tokenCreateErr := factories.CreateApplicationInternalToken(
+		providerPricingModelErr := factories.CreateProviderPricingModels(cmd.Context())
+		if providerPricingModelErr != nil {
+			log.Fatal().Err(providerPricingModelErr).Msg("failed to create provider pricing models")
+		}
+
+		apiKey, apiKeyCreateErr := factories.CreateApplicationInternalAPIKey(
 			cmd.Context(),
 			application.ID,
 		)
-		if tokenCreateErr != nil {
-			log.Fatal().Err(tokenCreateErr).Msg("failed to create application internal token")
+		if apiKeyCreateErr != nil {
+			log.Fatal().Err(apiKeyCreateErr).Msg("failed to create application internal apiKey")
 		}
-		log.Info().Interface("token", token).Msg("created token")
+		log.Info().Interface("apiKey", apiKey).Msg("created apiKey")
 	},
 }

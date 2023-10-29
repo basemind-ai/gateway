@@ -37,8 +37,8 @@ func TestPathParameterMiddleware(t *testing.T) {
 				ContextKey: middleware.UserIDContextKey,
 			},
 			{
-				Key:        "tokenId",
-				ContextKey: middleware.TokenIDContextKey,
+				Key:        "apiKeyId",
+				ContextKey: middleware.APIKeyIDContextKey,
 			},
 			{
 				Key:        "promptConfigId",

@@ -1,39 +1,39 @@
----- token
+---- api-key
 
--- name: CreateToken :one
-INSERT INTO token (application_id, name, is_internal)
+-- name: CreateAPIKey :one
+INSERT INTO api_key (application_id, name, is_internal)
 VALUES ($1, $2, $3)
 RETURNING *;
 
--- name: RetrieveTokens :many
+-- name: RetrieveAPIKeys :many
 SELECT
     t.id,
     t.name,
     t.created_at
-FROM token AS t
+FROM api_key AS t
 LEFT JOIN application AS app ON t.application_id = app.id
 WHERE
     app.id = $1
     AND t.deleted_at IS NULL AND app.deleted_at IS NULL AND t.is_internal = FALSE
 ORDER BY t.created_at;
 
--- name: DeleteToken :exec
-UPDATE token
+-- name: DeleteAPIKey :exec
+UPDATE api_key
 SET deleted_at = NOW()
 WHERE id = $1;
 
--- name: RetrieveApplicationIDForToken :one
+-- name: RetrieveApplicationIDForAPIKey :one
 SELECT app.id
-FROM token AS t
+FROM api_key AS t
 LEFT JOIN application AS app ON t.application_id = app.id
 WHERE
     t.id = $1
     AND t.deleted_at IS NULL
     AND app.deleted_at IS NULL;
 
--- name: RetrieveApplicationInternalTokenID :one
+-- name: RetrieveApplicationInternalAPIKeyID :one
 SELECT t.id
-FROM token AS t
+FROM api_key AS t
 LEFT JOIN application AS app ON t.application_id = app.id
 WHERE
     app.id = $1

@@ -15,18 +15,18 @@ import (
 	"testing"
 )
 
-func createToken(t *testing.T, applicationID, tokenName string) db.Token {
+func createAPIKey(t *testing.T, applicationID, apiKeyName string) db.ApiKey {
 	t.Helper()
 	appID, _ := db.StringToUUID(applicationID)
-	token, err := db.GetQueries().CreateToken(context.TODO(), db.CreateTokenParams{
+	apiKey, err := db.GetQueries().CreateAPIKey(context.TODO(), db.CreateAPIKeyParams{
 		ApplicationID: *appID,
-		Name:          tokenName,
+		Name:          apiKeyName,
 	})
 	assert.NoError(t, err)
-	return token
+	return apiKey
 }
 
-func TestTokensAPI(t *testing.T) {
+func TestAPIKeyAPI(t *testing.T) {
 	testutils.SetTestEnv(t)
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
@@ -38,31 +38,31 @@ func TestTokensAPI(t *testing.T) {
 	listURL := fmt.Sprintf(
 		"/v1%s",
 		strings.ReplaceAll(
-			strings.ReplaceAll(api.ApplicationTokensListEndpoint, "{projectId}", projectID),
+			strings.ReplaceAll(api.ApplicationAPIKeysListEndpoint, "{projectId}", projectID),
 			"{applicationId}",
 			applicationID,
 		),
 	)
 
-	t.Run(fmt.Sprintf("GET: %s", api.ApplicationTokensListEndpoint), func(t *testing.T) {
-		t.Run("returns a list of all application tokens", func(t *testing.T) {
-			token1 := createToken(t, applicationID, "token1")
-			token2 := createToken(t, applicationID, "token2")
+	t.Run(fmt.Sprintf("GET: %s", api.ApplicationAPIKeysListEndpoint), func(t *testing.T) {
+		t.Run("returns a list of all application apiKeys", func(t *testing.T) {
+			apiKey1 := createAPIKey(t, applicationID, "apiKey1")
+			apiKey2 := createAPIKey(t, applicationID, "apiKey2")
 
 			response, requestErr := testClient.Get(context.TODO(), listURL)
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			data := make([]*dto.ApplicationTokenDTO, 0)
+			data := make([]*dto.ApplicationAPIKeyDTO, 0)
 			deserializationErr := serialization.DeserializeJSON(response.Body, &data)
 			assert.NoError(t, deserializationErr)
 
 			assert.Len(t, data, 2)
-			assert.Equal(t, db.UUIDToString(&token1.ID), data[0].ID)
-			assert.Equal(t, token1.Name, data[0].Name)
+			assert.Equal(t, db.UUIDToString(&apiKey1.ID), data[0].ID)
+			assert.Equal(t, apiKey1.Name, data[0].Name)
 			assert.Nil(t, data[0].Hash)
-			assert.Equal(t, db.UUIDToString(&token2.ID), data[1].ID)
-			assert.Equal(t, token2.Name, data[1].Name)
+			assert.Equal(t, db.UUIDToString(&apiKey2.ID), data[1].ID)
+			assert.Equal(t, apiKey2.Name, data[1].Name)
 			assert.Nil(t, data[1].Hash)
 		})
 
@@ -86,7 +86,7 @@ func TestTokensAPI(t *testing.T) {
 						"/v1%s",
 						strings.ReplaceAll(
 							strings.ReplaceAll(
-								api.ApplicationTokensListEndpoint,
+								api.ApplicationAPIKeysListEndpoint,
 								"{projectId}",
 								newProjectID,
 							),
@@ -113,7 +113,7 @@ func TestTokensAPI(t *testing.T) {
 					"/v1%s",
 					strings.ReplaceAll(
 						strings.ReplaceAll(
-							api.ApplicationTokensListEndpoint,
+							api.ApplicationAPIKeysListEndpoint,
 							"{projectId}",
 							newProjectID,
 						),
@@ -130,7 +130,11 @@ func TestTokensAPI(t *testing.T) {
 			response, requestErr := testClient.Get(context.TODO(), fmt.Sprintf(
 				"/v1%s",
 				strings.ReplaceAll(
-					strings.ReplaceAll(api.ApplicationTokensListEndpoint, "{projectId}", projectID),
+					strings.ReplaceAll(
+						api.ApplicationAPIKeysListEndpoint,
+						"{projectId}",
+						projectID,
+					),
 					"{applicationId}",
 					"invalid",
 				),
@@ -140,19 +144,19 @@ func TestTokensAPI(t *testing.T) {
 		})
 	})
 
-	t.Run(fmt.Sprintf("POST: %s", api.ApplicationTokensListEndpoint), func(t *testing.T) {
-		t.Run("creates a new application token", func(t *testing.T) {
+	t.Run(fmt.Sprintf("POST: %s", api.ApplicationAPIKeysListEndpoint), func(t *testing.T) {
+		t.Run("creates a new application apiKey", func(t *testing.T) {
 			response, requestErr := testClient.Post(context.TODO(), listURL, map[string]any{
-				"name": "test token",
+				"name": "test apiKey",
 			})
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusCreated, response.StatusCode)
 
-			data := dto.ApplicationTokenDTO{}
+			data := dto.ApplicationAPIKeyDTO{}
 			deserializationErr := serialization.DeserializeJSON(response.Body, &data)
 			assert.NoError(t, deserializationErr)
 			assert.NotNil(t, data.ID)
-			assert.Equal(t, "test token", data.Name)
+			assert.Equal(t, "test apiKey", data.Name)
 			assert.NotNil(t, data.Hash)
 			assert.NotEmpty(t, *data.Hash)
 		})
@@ -177,7 +181,7 @@ func TestTokensAPI(t *testing.T) {
 						"/v1%s",
 						strings.ReplaceAll(
 							strings.ReplaceAll(
-								api.ApplicationTokensListEndpoint,
+								api.ApplicationAPIKeysListEndpoint,
 								"{projectId}",
 								newProjectID,
 							),
@@ -185,7 +189,7 @@ func TestTokensAPI(t *testing.T) {
 							newApplicationID,
 						),
 					), map[string]any{
-						"name": "test token",
+						"name": "test apiKey",
 					})
 					assert.NoError(t, requestErr)
 					assert.Equal(t, http.StatusCreated, response.StatusCode)
@@ -206,7 +210,7 @@ func TestTokensAPI(t *testing.T) {
 					"/v1%s",
 					strings.ReplaceAll(
 						strings.ReplaceAll(
-							api.ApplicationTokensListEndpoint,
+							api.ApplicationAPIKeysListEndpoint,
 							"{projectId}",
 							newProjectID,
 						),
@@ -214,56 +218,80 @@ func TestTokensAPI(t *testing.T) {
 						newApplicationID,
 					),
 				), map[string]any{
-					"name": "test token",
+					"name": "test apiKey",
 				})
 				assert.NoError(t, requestErr)
 				assert.Equal(t, http.StatusForbidden, response.StatusCode)
 			},
 		)
 
-		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
-			response, requestErr := testClient.Post(context.TODO(), fmt.Sprintf(
-				"/v1%s",
-				strings.ReplaceAll(
-					strings.ReplaceAll(api.ApplicationTokensListEndpoint, "{projectId}", projectID),
-					"{applicationId}",
-					"invalid",
-				),
-			), map[string]any{
-				"name": "test token",
+		t.Run(
+			"responds with status 400 BAD REQUEST if the application id is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Post(context.TODO(), fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						strings.ReplaceAll(
+							api.ApplicationAPIKeysListEndpoint,
+							"{projectId}",
+							projectID,
+						),
+						"{applicationId}",
+						"invalid",
+					),
+				), map[string]any{
+					"name": "test apiKey",
+				})
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run("responds with status 400 BAD REQUEST if the name is missing", func(t *testing.T) {
+			response, requestErr := testClient.Post(context.TODO(), listURL, map[string]any{
+				"name": "",
 			})
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the body cannot be deserialized",
+			func(t *testing.T) {
+				response, requestErr := testClient.Post(context.TODO(), listURL, "invalid")
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("DELETE: %s", api.ApplicationDetailEndpoint), func(t *testing.T) {
-		t.Run("deletes an application token", func(t *testing.T) {
-			token := createToken(t, applicationID, "test token")
-			tokenID := db.UUIDToString(&token.ID)
+		t.Run("deletes an application apiKey", func(t *testing.T) {
+			apiKey := createAPIKey(t, applicationID, "test apiKey")
+			apiKeyID := db.UUIDToString(&apiKey.ID)
 			url := fmt.Sprintf(
 				"/v1%s",
 				strings.ReplaceAll(
 					strings.ReplaceAll(
 						strings.ReplaceAll(
-							api.ApplicationTokenDetailEndpoint,
+							api.ApplicationAPIKeyDetailEndpoint,
 							"{projectId}",
 							projectID,
 						),
 						"{applicationId}",
 						applicationID,
 					),
-					"{tokenId}", tokenID),
+					"{apiKeyId}", apiKeyID),
 			)
 
 			response, requestErr := testClient.Delete(context.TODO(), url)
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
-			tokens, err := db.GetQueries().RetrieveTokens(context.TODO(), token.ID)
+			apiKeys, err := db.GetQueries().RetrieveAPIKeys(context.TODO(), apiKey.ID)
 			assert.NoError(t, err)
-			for _, dbToken := range tokens {
-				assert.NotEqual(t, token.ID, dbToken.ID)
+			for _, dbToken := range apiKeys {
+				assert.NotEqual(t, apiKey.ID, dbToken.ID)
 			}
 		})
 
@@ -282,21 +310,21 @@ func TestTokensAPI(t *testing.T) {
 
 				client := createTestClient(t, newUserAccount)
 
-				token := createToken(t, newApplicationID, "test token")
-				tokenID := db.UUIDToString(&token.ID)
+				apiKey := createAPIKey(t, newApplicationID, "test apiKey")
+				apiKeyID := db.UUIDToString(&apiKey.ID)
 				url := fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
 						strings.ReplaceAll(
 							strings.ReplaceAll(
-								api.ApplicationTokenDetailEndpoint,
+								api.ApplicationAPIKeyDetailEndpoint,
 								"{projectId}",
 								newProjectID,
 							),
 							"{applicationId}",
 							newApplicationID,
 						),
-						"{tokenId}", tokenID),
+						"{apiKeyId}", apiKeyID),
 				)
 
 				response, requestErr := client.Delete(context.TODO(), url)
@@ -313,21 +341,21 @@ func TestTokensAPI(t *testing.T) {
 
 				client := createTestClient(t, newUserAccount)
 
-				token := createToken(t, newApplicationID, "test token")
-				tokenID := db.UUIDToString(&token.ID)
+				apiKey := createAPIKey(t, newApplicationID, "test apiKey")
+				apiKeyID := db.UUIDToString(&apiKey.ID)
 				url := fmt.Sprintf(
 					"/v1%s",
 					strings.ReplaceAll(
 						strings.ReplaceAll(
 							strings.ReplaceAll(
-								api.ApplicationTokenDetailEndpoint,
+								api.ApplicationAPIKeyDetailEndpoint,
 								"{projectId}",
 								newProjectID,
 							),
 							"{applicationId}",
 							newApplicationID,
 						),
-						"{tokenId}", tokenID),
+						"{apiKeyId}", apiKeyID),
 				)
 
 				response, requestErr := client.Delete(context.TODO(), url)
@@ -342,14 +370,14 @@ func TestTokensAPI(t *testing.T) {
 				strings.ReplaceAll(
 					strings.ReplaceAll(
 						strings.ReplaceAll(
-							api.ApplicationTokenDetailEndpoint,
+							api.ApplicationAPIKeyDetailEndpoint,
 							"{projectId}",
 							projectID,
 						),
 						"{applicationId}",
 						"invalid",
 					),
-					"{tokenId}", "invalid"),
+					"{apiKeyId}", "invalid"),
 			))
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusBadRequest, response.StatusCode)

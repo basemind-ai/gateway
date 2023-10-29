@@ -248,7 +248,6 @@ describe('handlers tests', () => {
 					temperature: 0.8,
 					topP: 0.9,
 					maxTokens: 100,
-
 					presencePenalty: 0.5,
 					frequencyPenalty: 0.5,
 				},

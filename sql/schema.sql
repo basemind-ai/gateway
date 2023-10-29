@@ -3,7 +3,7 @@ CREATE TABLE user_account
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     display_name varchar(255) NOT NULL,
-    email varchar(255) NOT NULL,
+    email varchar(320) NOT NULL,
     firebase_id varchar(128) NOT NULL,
     phone_number varchar(255) NOT NULL,
     photo_url text NOT NULL,
@@ -98,6 +98,27 @@ CREATE INDEX idx_prompt_config_application_id ON prompt_config (application_id) 
 CREATE INDEX idx_prompt_config_is_default ON prompt_config (is_default) WHERE deleted_at IS NULL;
 CREATE INDEX idx_prompt_config_created_at ON prompt_config (created_at) WHERE deleted_at IS NULL;
 
+-- provider-model-pricing
+-- we intentionally keep this model denormalized because providers can and will change their prices over time.
+-- therefore, the pricing of model use are time specific.
+CREATE TABLE provider_model_pricing
+(
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    model_type model_type NOT NULL,
+    model_vendor model_vendor NOT NULL,
+    input_token_price numeric NOT NULL,
+    output_token_price numeric NOT NULL,
+    token_unit_size int NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    active_from_date date NOT NULL DEFAULT current_date,
+    active_to_date date NULL
+);
+
+CREATE INDEX idx_provider_model_pricing_active_from_date ON provider_model_pricing (active_from_date);
+CREATE INDEX idx_provider_model_pricing_active_to_date ON provider_model_pricing (active_to_date);
+CREATE INDEX idx_provider_model_pricing_model_type ON provider_model_pricing (model_type);
+CREATE INDEX idx_provider_model_pricing_model_vendor ON provider_model_pricing (model_vendor);
+
 -- prompt-request-record
 CREATE TABLE prompt_request_record
 (
@@ -112,11 +133,16 @@ CREATE TABLE prompt_request_record
     error_log text NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL,
+    provider_model_pricing_id uuid NULL,
+    FOREIGN KEY (provider_model_pricing_id) REFERENCES provider_model_pricing (id) ON DELETE CASCADE,
     FOREIGN KEY (prompt_config_id) REFERENCES prompt_config (id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_prompt_request_record_prompt_config_id ON prompt_request_record (
     prompt_config_id
+) WHERE deleted_at IS NULL;
+CREATE INDEX idx_prompt_request_record_pricing_id ON prompt_request_record (
+    provider_model_pricing_id
 ) WHERE deleted_at IS NULL;
 CREATE INDEX idx_prompt_request_record_start_time ON prompt_request_record (
     start_time
@@ -142,8 +168,8 @@ CREATE INDEX idx_prompt_test_record_prompt_request_record_id ON prompt_test_reco
 );
 CREATE INDEX idx_prompt_test_record_created_at ON prompt_test_record (created_at);
 
--- token
-CREATE TABLE token
+-- api-key
+CREATE TABLE api_key
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(255) NOT NULL,
@@ -153,4 +179,4 @@ CREATE TABLE token
     application_id uuid NOT NULL,
     FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE
 );
-CREATE INDEX idx_token_application_id ON token (application_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_api_key_application_id ON api_key (application_id) WHERE deleted_at IS NULL;

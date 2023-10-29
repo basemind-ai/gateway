@@ -12,19 +12,19 @@ import (
 type PathURLContextKeyType int
 
 const (
-	ProjectIDContextKey      PathURLContextKeyType = iota
+	APIKeyIDContextKey       PathURLContextKeyType = iota
 	ApplicationIDContextKey  PathURLContextKeyType = iota
-	UserIDContextKey         PathURLContextKeyType = iota
-	TokenIDContextKey        PathURLContextKeyType = iota
+	ProjectIDContextKey      PathURLContextKeyType = iota
 	PromptConfigIDContextKey PathURLContextKeyType = iota
+	UserIDContextKey         PathURLContextKeyType = iota
 )
 
 var pathParameterNameToContextKeyMap = map[string]PathURLContextKeyType{
-	"projectId":      ProjectIDContextKey,
+	"apiKeyId":       APIKeyIDContextKey,
 	"applicationId":  ApplicationIDContextKey,
-	"userId":         UserIDContextKey,
-	"tokenId":        TokenIDContextKey,
+	"projectId":      ProjectIDContextKey,
 	"promptConfigId": PromptConfigIDContextKey,
+	"userId":         UserIDContextKey,
 }
 
 // PathParameterMiddleware - middleware that parses path parameters and adds them to the request context.
