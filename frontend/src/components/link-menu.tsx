@@ -38,11 +38,9 @@ export default function LinkMenu({
 					}`}
 				>
 					<div
-						className={`flex items-center text-base-content transition ${
-							isCurrent
-								? 'text-primary'
-								: !isDisabled && 'hover:text-primary'
-						}`}
+						className={`flex items-center text-base-content transition
+						${isCurrent && 'text-primary'}
+						${!isDisabled && 'hover:text-primary'}`}
 					>
 						{icon && <div className="mr-2">{icon}</div>}
 						{text && <span className="text-xs ">{text}</span>}

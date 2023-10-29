@@ -5,7 +5,7 @@ import { render, renderHook, screen } from 'tests/test-utils';
 import { describe } from 'vitest';
 
 import { GetInTouch } from '@/components/support/get-in-touch';
-import { Navigation } from '@/constants';
+import { DISCORD_INVITE_LINK } from '@/constants';
 
 describe('get-in-touch tests', () => {
 	const {
@@ -22,6 +22,6 @@ describe('get-in-touch tests', () => {
 		const link = screen.getByText(t('joinOurDiscord'));
 		expect(link).toBeInTheDocument();
 		fireEvent.click(link);
-		expect(routerPushMock).toHaveBeenCalledWith(Navigation.Discord);
+		expect(routerPushMock).toHaveBeenCalledWith(DISCORD_INVITE_LINK);
 	});
 });

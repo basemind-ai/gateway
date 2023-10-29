@@ -6,7 +6,7 @@ import * as projectUsersAPI from '@/api/project-users-api';
 import { Contact } from '@/components/support/contact';
 import { SupportTopics } from '@/constants/forms';
 
-describe('ContactUs component', () => {
+describe('Contact component', () => {
 	const mockUser: UserInfo = {
 		phoneNumber: '',
 		providerId: '',
@@ -15,7 +15,10 @@ describe('ContactUs component', () => {
 		email: 'Skywalker@gmail.com',
 		photoURL: 'https://picsum.photos/200',
 	};
-
+	const handleSupportTicketSpy = vi.spyOn(
+		projectUsersAPI,
+		'handleSupportTicket',
+	);
 	it('renders the topics options', () => {
 		render(<Contact user={mockUser} />);
 		Object.values(SupportTopics).forEach((topic) => {
@@ -30,25 +33,21 @@ describe('ContactUs component', () => {
 	it('submit support button is enabled when topic is selected', () => {
 		render(<Contact user={mockUser} />);
 		const submitButton = screen.getByTestId('support-submit');
-		const input = screen.getByTestId('support-input-topic');
+		const input = screen.getByTestId('dropdown-input-select');
 		fireEvent.change(input, { target: { value: SupportTopics.API } });
 		expect(submitButton).toBeEnabled();
 	});
 	it('submit support is disabled when user is null', () => {
 		render(<Contact user={null} />);
 		const submitButton = screen.getByTestId('support-submit');
-		const input = screen.getByTestId('support-input-topic');
+		const input = screen.getByTestId('dropdown-input-select');
 		fireEvent.change(input, { target: { value: SupportTopics.API } });
 		expect(submitButton).toBeDisabled();
 	});
 	it('submit support runs handleSubmitTicket', async () => {
-		const handleSupportTicketSpy = vi.spyOn(
-			projectUsersAPI,
-			'handleSupportTicket',
-		);
 		render(<Contact user={mockUser} />);
 		const submitButton = screen.getByTestId('support-submit');
-		const input = screen.getByTestId('support-input-topic');
+		const input = screen.getByTestId('dropdown-input-select');
 		fireEvent.change(input, { target: { value: SupportTopics.API } });
 		expect(submitButton).toBeEnabled();
 		fireEvent.click(submitButton);
@@ -58,6 +57,19 @@ describe('ContactUs component', () => {
 				'',
 				mockUser,
 			);
+		});
+	});
+
+	it('reset values after successful submit', async () => {
+		handleSupportTicketSpy.mockResolvedValueOnce();
+		render(<Contact user={mockUser} />);
+		const submitButton = screen.getByTestId('support-submit');
+		const input = screen.getByTestId('dropdown-input-select');
+		fireEvent.change(input, { target: { value: SupportTopics.API } });
+		expect(submitButton).toBeEnabled();
+		fireEvent.click(submitButton);
+		await waitFor(() => {
+			expect(input).toHaveValue(SupportTopics.None);
 		});
 	});
 });

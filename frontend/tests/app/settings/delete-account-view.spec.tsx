@@ -9,15 +9,14 @@ import {
 import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
-import { AccountDeletion } from '@/components/settings/account-deletion';
+import { DeleteAccountView } from '@/components/settings/delete-account-view';
 import { Navigation } from '@/constants';
 import { useSetUser, useUser } from '@/stores/api-store';
 
 describe('user account deletion tests', () => {
-	const handleDeleteUserAccountSpy = vi.spyOn(
-		ApplicationAPI,
-		'handleDeleteUserAccount',
-	);
+	const handleDeleteUserAccountSpy = vi
+		.spyOn(ApplicationAPI, 'handleDeleteUserAccount')
+		.mockResolvedValue();
 	const {
 		result: { current: t },
 	} = renderHook(() => useTranslations('userSettings'));
@@ -29,24 +28,27 @@ describe('user account deletion tests', () => {
 		email: 'Skywalker@gmail.com',
 		photoURL: 'https://picsum.photos/200',
 	};
+	HTMLDialogElement.prototype.showModal = vi.fn();
+	HTMLDialogElement.prototype.close = vi.fn();
+
 	it('should render headline', () => {
-		render(<AccountDeletion user={mockUser} />);
+		render(<DeleteAccountView user={mockUser} />);
 		const headline = screen.getByText(t('headlineDeleteCard'));
 		expect(headline).toBeInTheDocument();
 	});
 	it('should render delete button', () => {
-		render(<AccountDeletion user={mockUser} />);
+		render(<DeleteAccountView user={mockUser} />);
 		const deleteButton = screen.getByTestId('account-delete-btn');
 		expect(deleteButton).toBeInTheDocument();
 	});
 	it('delete button is disabled when user in not authenticated', async () => {
-		render(<AccountDeletion user={null} />);
+		render(<DeleteAccountView user={null} />);
 		const deleteAccountButton =
 			await screen.findByTestId('account-delete-btn');
 		expect(deleteAccountButton).toBeDisabled();
 	});
 	it('clicking on delete account show open delete account modal', async () => {
-		render(<AccountDeletion user={mockUser} />);
+		render(<DeleteAccountView user={mockUser} />);
 		const deleteAccountButton =
 			await screen.findByTestId('account-delete-btn');
 		fireEvent.click(deleteAccountButton);
@@ -61,7 +63,7 @@ describe('user account deletion tests', () => {
 			ApplicationAPI,
 			'handleDeleteUserAccount',
 		);
-		render(<AccountDeletion user={mockUser} />);
+		render(<DeleteAccountView user={mockUser} />);
 		const deleteAccountButton =
 			await screen.findByTestId('account-delete-btn');
 		fireEvent.click(deleteAccountButton);
@@ -87,7 +89,7 @@ describe('user account deletion tests', () => {
 		const { result: userResult } = renderHook(() => useUser());
 		expect(userResult.current).toEqual(mockUser);
 
-		render(<AccountDeletion user={mockUser} />);
+		render(<DeleteAccountView user={mockUser} />);
 
 		const deleteAccountButton =
 			await screen.findByTestId('account-delete-btn');
@@ -101,7 +103,6 @@ describe('user account deletion tests', () => {
 		);
 		fireEvent.click(deletionBannerDeleteBtn);
 
-		// Wait for deleteUserAccount to resolve and rerender the hook
 		await waitFor(() => {
 			expect(userResult.current).toBeNull();
 		});
@@ -109,7 +110,7 @@ describe('user account deletion tests', () => {
 
 	it('deleting account should route to landing page', async () => {
 		handleDeleteUserAccountSpy.mockResolvedValueOnce();
-		render(<AccountDeletion user={mockUser} />);
+		render(<DeleteAccountView user={mockUser} />);
 		const deleteAccountButton =
 			await screen.findByTestId('account-delete-btn');
 		fireEvent.click(deleteAccountButton);
@@ -127,7 +128,7 @@ describe('user account deletion tests', () => {
 	});
 
 	it('clicking on delete button should open delete confirmation modal', async () => {
-		render(<AccountDeletion user={mockUser} />);
+		render(<DeleteAccountView user={mockUser} />);
 		const deleteAccountButton =
 			await screen.findByTestId('account-delete-btn');
 		fireEvent.click(deleteAccountButton);
@@ -135,5 +136,23 @@ describe('user account deletion tests', () => {
 			'delete-account-modal',
 		);
 		expect(deleteAccountModal).toBeInTheDocument();
+	});
+
+	it('clicking on delete confirmation modal close button should close the modal', async () => {
+		const dialogCloseSpy = vi.spyOn(HTMLDialogElement.prototype, 'close');
+		render(<DeleteAccountView user={mockUser} />);
+		const deleteAccountButton =
+			await screen.findByTestId('account-delete-btn');
+		fireEvent.click(deleteAccountButton);
+		// add input to enable delete button
+		const deletionInput = screen.getByTestId('resource-deletion-input');
+		fireEvent.change(deletionInput, { target: { value: mockUser.email } });
+		const deleteAccountModalCloseButton = screen.getByTestId(
+			'resource-deletion-delete-btn',
+		);
+		fireEvent.click(deleteAccountModalCloseButton);
+		await waitFor(() => {
+			expect(dialogCloseSpy).toHaveBeenCalled();
+		});
 	});
 });

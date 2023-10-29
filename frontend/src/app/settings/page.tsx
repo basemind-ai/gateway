@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-import { AccountDeletion } from '@/components/settings/account-deletion';
+import { DeleteAccountView } from '@/components/settings/delete-account-view';
 import { UserDetails } from '@/components/settings/user-details';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
@@ -18,7 +18,7 @@ export default function UserSettings() {
 			<div className="mb-10">
 				<UserDetails user={user} />
 			</div>
-			<AccountDeletion user={user} />
+			<DeleteAccountView user={user} />
 		</div>
 	);
 }

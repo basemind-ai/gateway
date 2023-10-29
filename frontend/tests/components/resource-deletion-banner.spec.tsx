@@ -77,4 +77,14 @@ describe('ResourceDeletionBanner tests', () => {
 
 		expect(props.onConfirm).toHaveBeenCalledOnce();
 	});
+
+	it('shows error message when error message is passed', () => {
+		const errorMessage = 'error message';
+		render(
+			<ResourceDeletionBanner {...props} errorMessage={errorMessage} />,
+		);
+
+		const error = screen.getByText(errorMessage);
+		expect(error).toBeInTheDocument();
+	});
 });

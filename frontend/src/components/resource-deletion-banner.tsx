@@ -10,6 +10,8 @@ export interface ResourceDeletionBannerProps {
 	placeholder?: string;
 	onCancel: () => void;
 	onConfirm: () => void;
+	isDisabled?: boolean;
+	errorMessage?: string;
 }
 
 export function ResourceDeletionBanner({
@@ -19,11 +21,14 @@ export function ResourceDeletionBanner({
 	placeholder = '',
 	onCancel,
 	onConfirm,
+	isDisabled,
+	errorMessage,
 }: ResourceDeletionBannerProps) {
 	const t = useTranslations('deletionBanner');
 	const [confirmText, setConfirmText] = useState('');
 
-	const disabled = confirmText !== resourceName;
+	const disabled = !isDisabled && confirmText !== resourceName;
+
 	return (
 		<div className="bg-base-300">
 			<div className="p-10 flex flex-col items-center border-b border-neutral">
@@ -63,24 +68,27 @@ export function ResourceDeletionBanner({
 					/>
 				</div>
 			</div>
-			<div className="flex items-center justify-end py-8 px-5 gap-4">
-				<button
-					data-testid="resource-deletion-cancel-btn"
-					onClick={onCancel}
-					className="btn btn-neutral capitalize font-semibold text-neutral-content"
-				>
-					{t('cancel')}
-				</button>
-				<button
-					data-testid="resource-deletion-delete-btn"
-					onClick={onConfirm}
-					disabled={disabled}
-					className={`btn bg-error text-accent-content capitalize font-semibold ${
-						disabled ? 'opacity-60' : ''
-					}`}
-				>
-					{t('delete')}
-				</button>
+			<div className="flex grow items-center justify-between py-8 px-5 gap-4">
+				<span className="text-error text-xs font-light">
+					{errorMessage}
+				</span>
+				<div className="flex gap-4">
+					<button
+						data-testid="resource-deletion-cancel-btn"
+						onClick={onCancel}
+						className="btn btn-neutral"
+					>
+						{t('cancel')}
+					</button>
+					<button
+						data-testid="resource-deletion-delete-btn"
+						onClick={onConfirm}
+						disabled={disabled}
+						className="btn btn-error"
+					>
+						{t('delete')}
+					</button>
+				</div>
 			</div>
 		</div>
 	);

@@ -140,6 +140,7 @@
 		"emailUs": "Email us at",
 		"getInTouch": "Get in touch",
 		"headline": "Support",
+		"helpTopic": "What can we help you with?",
 		"joinOurDiscord": "Join our Discord",
 		"optional": "Optional",
 		"other": "Other",
@@ -147,10 +148,8 @@
 		"sdk": "SDK",
 		"select": "Select",
 		"submit": "Submit",
-		"supportEmail": "support@basemind.ai",
 		"tellUsMore": "Tell us more about your issue",
-		"webApp": "Web App",
-		"whatTopic": "What topic can we help you with?"
+		"webApp": "Web App"
 	},
 	"userSettings": {
 		"deleteYourAccount": "Delete your account",

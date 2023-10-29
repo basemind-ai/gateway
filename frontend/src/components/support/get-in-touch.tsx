@@ -3,11 +3,12 @@ import { useTranslations } from 'next-intl';
 import { ChevronRight, Discord, Mailbox } from 'react-bootstrap-icons';
 
 import DashboardCard from '@/components/dashboard/dashboard-card';
-import { Navigation } from '@/constants';
+import { DISCORD_INVITE_LINK, SUPPORT_EMAIL } from '@/constants';
 
 export function GetInTouch() {
 	const t = useTranslations('support');
 	const router = useRouter();
+
 	return (
 		<DashboardCard title={t('getInTouch')}>
 			<div>
@@ -17,7 +18,7 @@ export function GetInTouch() {
 				<button
 					className="btn normal-case "
 					onClick={() => {
-						router.push(Navigation.Discord);
+						router.push(DISCORD_INVITE_LINK);
 					}}
 				>
 					<Discord className="icon w-4 h-4 text-discord" />
@@ -32,7 +33,7 @@ export function GetInTouch() {
 				</div>
 				<span className="flex gap-2 items-center px-4 h-12">
 					<Mailbox className="icon w-4 h-4 text-discord" />
-					{t('supportEmail')}
+					{SUPPORT_EMAIL}
 				</span>
 			</div>
 		</DashboardCard>

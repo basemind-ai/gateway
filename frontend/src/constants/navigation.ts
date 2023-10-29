@@ -1,14 +1,16 @@
 export enum Navigation {
 	Api = '/projects/:projectId/api',
+	Applications = '/projects/:projectId/applications/:applicationId',
 	Base = '/',
+	Billing = '/projects/:projectId/billing',
+	CreateProject = '/projects/create',
 	Overview = '/projects/:projectId',
 	Projects = '/projects',
-	CreateProject = '/projects/create',
 	Prompt = '/projects/:projectId/prompt',
+	Settings = '/settings',
 	SignIn = '/sign-in',
-	Settings = '/projects/:projectId/settings',
-	Billing = '/projects/:projectId/billing',
 	Support = '/support',
-	Applications = '/projects/:projectId/applications/:applicationId',
-	Discord = 'https://discord.gg/Urxchkcq',
 }
+export const DISCORD_INVITE_LINK = 'https://discord.gg/Urxchkcq';
+
+export const SUPPORT_EMAIL = 'support@basemind.ai';

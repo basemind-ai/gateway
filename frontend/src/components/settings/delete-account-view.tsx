@@ -1,7 +1,7 @@
 import { UserInfo } from '@firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { handleDeleteUserAccount } from '@/api';
 import DashboardCard from '@/components/dashboard/dashboard-card';
@@ -9,33 +9,34 @@ import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useSetUser } from '@/stores/api-store';
 
-export function AccountDeletion({ user }: { user: UserInfo | null }) {
+export function DeleteAccountView({ user }: { user: UserInfo | null }) {
 	const t = useTranslations('userSettings');
 	const router = useRouter();
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const setUser = useSetUser();
+	const [errorMessage, setErrorMessage] = useState<string>('');
 
 	function openDeleteConfirmationPopup() {
-		if (dialogRef.current?.showModal) {
-			dialogRef.current.showModal();
-		}
+		dialogRef.current?.showModal();
 	}
 
 	function closeDeleteConfirmationPopup() {
-		if (dialogRef.current?.close) {
-			dialogRef.current.close();
-		}
+		dialogRef.current?.close();
 	}
 
 	async function deleteUserAccount() {
-		if (user) {
-			await handleDeleteUserAccount(user);
+		try {
+			setErrorMessage('');
+			await handleDeleteUserAccount(user!);
 			closeDeleteConfirmationPopup();
 			setUser(null);
 			router.replace(Navigation.Base);
 			// 	TODO: Toast to show successful deletion
+		} catch (e: unknown) {
+			setErrorMessage((e as Error).message);
 		}
 	}
+
 	return (
 		<DashboardCard title={t('headlineDeleteCard')}>
 			<div className="my-auto">
@@ -67,6 +68,8 @@ export function AccountDeletion({ user }: { user: UserInfo | null }) {
 						resourceName={user?.email ?? ''}
 						onCancel={closeDeleteConfirmationPopup}
 						onConfirm={() => void deleteUserAccount()}
+						isDisabled={!user?.email}
+						errorMessage={errorMessage}
 					/>
 				</div>
 				<form method="dialog" className="modal-backdrop">

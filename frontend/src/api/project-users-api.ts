@@ -61,12 +61,11 @@ export async function handleRemoveUserFromProject({
 	});
 }
 
-// create a dummey function handleSupportTicket
 export async function handleSupportTicket(
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	selectedTopic: SupportTopics,
+	subject: SupportTopics,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	tellUsMore: string,
+	body: string,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	user: UserInfo,
 ): Promise<void> {
