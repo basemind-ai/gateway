@@ -21,7 +21,6 @@ func New(opts Options) chi.Router {
 	router := chi.NewRouter()
 
 	if opts.Environment != "test" {
-		router.Use(chimiddleware.RequestID)
 		router.Use(chimiddleware.RealIP)
 		router.Use(cors.Handler(cors.Options{
 			AllowedOrigins: []string{"*"},
@@ -31,7 +30,6 @@ func New(opts Options) chi.Router {
 			Debug:          opts.Environment == "development",
 		}))
 		router.Use(httplog.RequestLogger(log.With().Str("service", opts.ServiceName).Logger()))
-		router.Use(chimiddleware.Recoverer)
 		router.Use(chimiddleware.Heartbeat("/health-check"))
 	}
 

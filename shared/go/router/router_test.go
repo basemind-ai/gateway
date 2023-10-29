@@ -16,7 +16,7 @@ func TestNew(t *testing.T) {
 			RegisterHandlers: func(mux *chi.Mux) {},
 		})
 
-		assert.Equal(t, len(r.Middlewares()), 6)
+		assert.Equal(t, len(r.Middlewares()), 4)
 	})
 
 	t.Run("Does not set middleware when environment is 'test'", func(t *testing.T) {

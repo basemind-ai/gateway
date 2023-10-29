@@ -66,6 +66,22 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		PromptConfigID:         &promptConfigID,
 	}
 
+	t.Run("New", func(t *testing.T) {
+		t.Run("dials and returns client", func(t *testing.T) {
+			client, err := ptestingclient.New(
+				"localhost:50051",
+				grpc.WithTransportCredentials(insecure.NewCredentials()),
+			)
+			assert.NoError(t, err)
+			assert.NotNil(t, client)
+		})
+
+		t.Run("returns error if dial fails", func(t *testing.T) {
+			_, err := ptestingclient.New("")
+			assert.Error(t, err)
+		})
+	})
+
 	t.Run("Init", func(t *testing.T) {
 		t.Run("panics if the env is not set", func(t *testing.T) {
 			assert.Error(t,

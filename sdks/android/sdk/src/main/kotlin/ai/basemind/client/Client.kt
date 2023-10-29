@@ -20,7 +20,6 @@ internal const val DEFAULT_API_GATEWAY_HTTPS = false
 internal const val DEFAULT_API_GATEWAY_PORT = 4000
 internal const val DEFAULT_TERMINATION_DELAY_S = 5L
 internal const val ENV_API_GATEWAY_ADDRESS = "BASEMIND_API_GATEWAY_ADDRESS"
-internal const val ENV_API_GATEWAY_HTTPS = "BASEMIND_API_GATEWAY_HTTPS"
 internal const val ENV_API_GATEWAY_PORT = "BASEMIND_API_GATEWAY_PORT"
 internal const val LOGGING_TAG = "BaseMindClient"
 
@@ -70,7 +69,6 @@ class BaseMindClient private constructor(
         run {
             val serverAddress = System.getenv(ENV_API_GATEWAY_ADDRESS) ?: DEFAULT_API_GATEWAY_ADDRESS
             val serverPort = System.getenv(ENV_API_GATEWAY_PORT)?.toInt() ?: DEFAULT_API_GATEWAY_PORT
-            val useHttps = System.getenv(ENV_API_GATEWAY_HTTPS)?.toBoolean() ?: DEFAULT_API_GATEWAY_HTTPS
 
             if (options.debug) {
                 options.debugLogger(LOGGING_TAG, "Connecting to $serverAddress:$serverPort")
@@ -81,11 +79,10 @@ class BaseMindClient private constructor(
              */
             val builder = ManagedChannelBuilder.forAddress(serverAddress, serverPort)
 
-            if (useHttps) {
-                builder.useTransportSecurity()
-            } else {
-                builder.usePlaintext()
-            }
+            // TODO: switch to using HTTPS
+            // builder.useTransportSecurity()
+
+            builder.usePlaintext()
 
             builder.executor(Dispatchers.IO.asExecutor()).build()
         }

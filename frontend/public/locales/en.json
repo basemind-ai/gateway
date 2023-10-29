@@ -53,18 +53,14 @@
 	},
 	"createProject": {
 		"cancelButton": "Later",
-		"cancelButtonHelperText": "Close the create project view",
 		"errorComment": "There was an error creating your project",
 		"optional": "optional",
-		"projectDescriptionInputHelperText": "This is the description of the the project",
 		"projectDescriptionInputLabel": "Description",
 		"projectDescriptionInputPlaceholder": "Describe your project",
-		"projectInputHelperText": "This is the name of your project",
 		"projectInputLabel": "Project Name",
 		"projectInputPlaceholder": "Acme Corporation",
 		"subTitle": "Create your first project, you can always edit later",
 		"submitButton": "Create",
-		"submitButtonHelperText": "Create a new project and application with the given names",
 		"title": "Setup Project"
 	},
 	"deletionBanner": {

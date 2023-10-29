@@ -20,6 +20,7 @@ require (
 	github.com/redis/go-redis/v9 v9.2.1
 	github.com/rs/zerolog v1.31.0
 	github.com/sethvargo/go-envconfig v0.9.0
+	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.4
 	github.com/tiktoken-go/tokenizer v0.1.0
 	golang.org/x/sync v0.4.0
@@ -80,7 +81,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
-	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stretchr/objx v0.5.1 // indirect
 	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect

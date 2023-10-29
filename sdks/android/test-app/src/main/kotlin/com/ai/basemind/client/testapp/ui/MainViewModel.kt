@@ -50,7 +50,7 @@ class MainViewModel : ViewModel() {
                         """.trimIndent()
                     emitBotMessage(metaData)
                 }
-            } catch (e: Exception) {
+            } catch (e: Exception) { // skipcq: KT-W1009
                 val errorMessage = e.message.toString()
                 emitBotMessage(errorMessage)
             }

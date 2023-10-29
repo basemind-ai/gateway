@@ -171,7 +171,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			},
 		)
 
-		t.Run("returns bad request for validation errors", func(t *testing.T) {
+		t.Run("responds with 400 BAD REQUEST for validation errors", func(t *testing.T) {
 			failureTestCases := []struct {
 				Name string
 				Dto  dto.PromptConfigCreateDTO
@@ -788,7 +788,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 		)
 
 		t.Run(
-			"returns bad request when trying to set the default prompt config as default",
+			"responds with 400 BAD REQUEST when trying to set the default prompt config as default",
 			func(t *testing.T) {
 				applicationID := createApplication(t, projectID)
 				uuidID, _ := db.StringToUUID(applicationID)
@@ -995,7 +995,36 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 		)
 
 		t.Run(
-			"returns bad request when duplicating a prompt config's name",
+			"responds with 400 BAD REQUEST when the request body is invalid",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+				uuidID, _ := db.StringToUUID(applicationID)
+
+				promptConfig, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
+				assert.NoError(t, configCreateErr)
+
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmtDetailEndpoint(projectID, applicationID, db.UUIDToString(&promptConfig.ID)),
+					"invalid",
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with 400 BAD REQUEST when duplicating a prompt config's name",
 			func(t *testing.T) {
 				applicationID := createApplication(t, projectID)
 				uuidID, _ := db.StringToUUID(applicationID)
@@ -1076,7 +1105,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, newModel, dbPromptConfig.ModelType)
 		})
 
-		t.Run("returns bad request for invalid model type", func(t *testing.T) {
+		t.Run("responds with 400 BAD REQUEST for invalid model type", func(t *testing.T) {
 			applicationID := createApplication(t, projectID)
 			uuidID, _ := db.StringToUUID(applicationID)
 
@@ -1375,34 +1404,37 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			},
 		)
 
-		t.Run("returns bad request when deleting a default prompt config", func(t *testing.T) {
-			applicationID := createApplication(t, projectID)
-			uuidID, _ := db.StringToUUID(applicationID)
+		t.Run(
+			"responds with 400 BAD REQUEST when deleting a default prompt config",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+				uuidID, _ := db.StringToUUID(applicationID)
 
-			promptConfig, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
-					ApplicationID:             *uuidID,
-					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
-					ExpectedTemplateVariables: []string{""},
-					IsDefault:                 true,
-				})
-			assert.NoError(t, configCreateErr)
+				promptConfig, configCreateErr := db.GetQueries().
+					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+						ApplicationID:             *uuidID,
+						Name:                      factories.RandomString(10),
+						ModelVendor:               db.ModelVendorOPENAI,
+						ModelType:                 db.ModelTypeGpt4,
+						ModelParameters:           modelParameters,
+						ProviderPromptMessages:    promptMessages,
+						ExpectedTemplateVariables: []string{""},
+						IsDefault:                 true,
+					})
+				assert.NoError(t, configCreateErr)
 
-			response, requestErr := testClient.Delete(
-				context.TODO(),
-				fmtDetailEndpoint(projectID, applicationID, db.UUIDToString(&promptConfig.ID)),
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(projectID, applicationID, db.UUIDToString(&promptConfig.ID)),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 
-			_, retrivalErr := db.GetQueries().
-				RetrievePromptConfig(context.TODO(), promptConfig.ID)
-			assert.NoError(t, retrivalErr)
-		})
+				_, retrivalErr := db.GetQueries().
+					RetrievePromptConfig(context.TODO(), promptConfig.ID)
+				assert.NoError(t, retrivalErr)
+			},
+		)
 
 		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			applicationID := createApplication(t, projectID)

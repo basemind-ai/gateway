@@ -3,6 +3,7 @@ package grpcutils
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	loggingmiddleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -61,7 +62,7 @@ type Options struct {
 }
 
 func RecoveryHandler(p any) (err error) {
-	log.Error().Msgf("panic triggered: %v", p)
+	log.Error().Bytes("stack", debug.Stack()).Msgf("panic triggered: %v", p)
 	return status.Error(codes.Internal, "an internal error occurred")
 }
 

@@ -66,7 +66,7 @@ class HeaderServerInterceptor(private val server: MockAPIGatewayServer) : Server
 * Helper class to emulate the backend server
 */
 class MockAPIGatewayServer : APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineImplBase() {
-    var exc: StatusException? = null
+    var exc: Exception? = null
     var authHeader: String? = null
     var templateVariableValue: String? = null
     var promptConfigId: String? = null
@@ -408,20 +408,35 @@ class BaseMindClientTest {
             }
         }
 
+    @ParameterizedTest
+    @ValueSource(booleans = [true, false])
+    fun requestStreamingPromptMethodReThrowsNonStatusException(isDebug: Boolean) =
+        runTest {
+            val mock = MockAPIGatewayServer()
+            mock.exc = Exception("test exception")
+
+            val testClient = createTestClientForServer(mock, isDebug)
+            val results: MutableList<String> = mutableListOf()
+
+            try {
+                val response = testClient.requestStream(HashMap())
+                response.collect { chunk -> results.add(chunk.content) }
+            } catch (e: Exception) {
+                assertNotEquals(BaseMindException::class.java, e.javaClass)
+
+                val containsLogMessage = systemOutStream.toString().contains("exception requesting streaming prompt")
+                if (isDebug) {
+                    assertTrue(containsLogMessage)
+                } else {
+                    assertFalse(containsLogMessage)
+                }
+            }
+        }
+
     @Test
     fun TestClientClose() {
         val mock = MockAPIGatewayServer()
         val testClient = createTestClientForServer(mock)
         assertDoesNotThrow { testClient.close() }
     }
-}
-
-suspend fun getPrompt(userInput: String): String {
-    val client = BaseMindClient.getInstance(apiToken = "myToken")
-
-    val templateVariables = mutableMapOf<String, String>()
-    templateVariables["userInput"] = userInput
-
-    val result = client.requestPrompt(templateVariables)
-    return result.content
 }

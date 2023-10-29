@@ -55,8 +55,8 @@ func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 			apierror.BadRequest(msg).Render(w, r)
 			return
 		}
-		log.Error().Err(createErr).Msg("failed to create prompt config")
 
+		log.Error().Err(createErr).Msg("failed to create prompt config")
 		apierror.InternalServerError().Render(w, r)
 		return
 	}
