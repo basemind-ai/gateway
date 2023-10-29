@@ -2,44 +2,16 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
-import { Dimensions } from '@/constants';
-
-export function LoginBanner({
-	imageSrc,
-	iconSrc,
-}: {
-	imageSrc: string;
-	iconSrc: string;
-}) {
+export function LoginBanner({ imageSrc }: { imageSrc: string }) {
 	const t = useTranslations('signin');
 
 	return (
-		<div
-			data-testid="login-banner-container"
-			className="rounded-xl border border-b-base-300 p-6 bg-base-200 relative"
-		>
-			<div className="flex gap-4 items-center">
-				<Image
-					data-testid="login-banner-icon"
-					height={Dimensions.Eight}
-					width={Dimensions.Eight}
-					src={iconSrc}
-					alt={t('bannerHeading')}
-				/>
-				<h1 className="text-base-content text-xl">
-					{t('bannerHeading')}
-				</h1>
-			</div>
-
-			<h3 className="text-base-content mt-4 text-lg">
-				{t('bannerTitle')}
-			</h3>
-			<p className="text-neutral-content mt-5">{t('bannerSubtitle')}</p>
+		<div data-testid="login-banner-container" className=" flex px-16 ">
 			<Image
 				data-testid="login-banner-splash-image"
 				fill={true}
 				priority
-				className="w-4/5 mt-12 ml-auto mr-auto relative"
+				className="relative"
 				src={imageSrc}
 				alt={t('bannerTitle')}
 			/>

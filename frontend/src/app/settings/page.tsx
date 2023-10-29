@@ -6,6 +6,7 @@ import { useRef } from 'react';
 
 import { handleDeleteUserAccount } from '@/api';
 import DashboardCard from '@/components/dashboard/dashboard-card';
+import { LogoutButton } from '@/components/logout-button';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
@@ -17,9 +18,12 @@ export default function UserSettings() {
 
 	return (
 		<div data-testid="user-settings-page" className="mt-6 mx-32">
-			<h1 className="text-2xl font-semibold text-base-content mb-10">
-				{t('headline')}
-			</h1>
+			<div className="flex flex-row justify-between">
+				<h1 className="text-2xl font-semibold text-base-content mb-10">
+					{t('headline')}
+				</h1>
+				<LogoutButton />
+			</div>
 			<div className="mb-10">
 				<UserDetails user={user} />
 			</div>
@@ -97,6 +101,7 @@ export function AccountDeletion({ user }: { user: UserInfo | null }) {
 			// 	TODO: Toast to show successful deletion
 		}
 	}
+
 	return (
 		<DashboardCard title={t('headlineDeleteCard')}>
 			<div className="my-auto">
