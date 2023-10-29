@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -11,21 +12,46 @@ import (
 )
 
 func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
-	t.Run("Panic without address", func(t *testing.T) {
-		t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
+	t.Run("GetProviderConnector", func(t *testing.T) {
+		t.Run("panics when not initialized", func(t *testing.T) {
+			testutils.UnsetTestEnv(t)
 
-		assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
-	})
+			assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
+		})
 
-	t.Run("No panic with address", func(t *testing.T) {
-		t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
+		t.Run("panics when transport security is not set", func(t *testing.T) {
+			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
 
-		err := connectors.Init(
-			context.TODO(),
-			grpc.WithTransportCredentials(insecure.NewCredentials()),
-		)
-		assert.NoError(t, err)
+			err := connectors.Init(
+				context.TODO(),
+			)
+			assert.Error(t, err)
 
-		assert.NotPanics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
+			assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
+		})
+
+		t.Run("does not panic when initialized", func(t *testing.T) {
+			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
+
+			err := connectors.Init(
+				context.TODO(),
+				grpc.WithTransportCredentials(insecure.NewCredentials()),
+			)
+			assert.NoError(t, err)
+
+			assert.NotPanics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
+		})
+
+		t.Run("panics for unknown provider", func(t *testing.T) {
+			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
+
+			err := connectors.Init(
+				context.TODO(),
+				grpc.WithTransportCredentials(insecure.NewCredentials()),
+			)
+			assert.NoError(t, err)
+
+			assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendor("unknown")) })
+		})
 	})
 }

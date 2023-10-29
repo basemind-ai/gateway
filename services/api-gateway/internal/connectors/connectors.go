@@ -2,16 +2,15 @@ package connectors
 
 import (
 	"context"
+	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/sethvargo/go-envconfig"
 	"google.golang.org/grpc"
-	"sync"
 )
 
 var (
-	once                  sync.Once
 	openaiConnectorClient *openai.Client
 )
 
@@ -34,26 +33,19 @@ type ProviderConnector interface {
 }
 
 func Init(ctx context.Context, opts ...grpc.DialOption) error {
-	var err error
+	config := &connectorConfig{}
+	if envErr := envconfig.Process(ctx, config); envErr != nil {
+		return fmt.Errorf("failed to process environment variables: %w", envErr)
+	}
 
-	once.Do(func() {
-		config := &connectorConfig{}
-		if envErr := envconfig.Process(ctx, config); envErr != nil {
-			err = envErr
+	openaiClient, openaiClientErr := openai.New(config.OpenAIConnectorAddress, opts...)
+	if openaiClientErr != nil {
+		return fmt.Errorf("failed to create openai client: %w", openaiClientErr)
+	}
 
-			return
-		}
+	openaiConnectorClient = openaiClient
 
-		openaiClient, openaiClientErr := openai.New(config.OpenAIConnectorAddress, opts...)
-		if openaiClientErr != nil {
-			err = openaiClientErr
-
-			return
-		}
-		openaiConnectorClient = openaiClient
-	})
-
-	return err
+	return nil
 }
 
 func GetProviderConnector(provider db.ModelVendor) ProviderConnector {

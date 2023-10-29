@@ -3,7 +3,6 @@ package db_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
@@ -12,12 +11,6 @@ import (
 
 type MockTx struct {
 	pgx.Tx
-}
-
-func TestMain(m *testing.M) {
-	cleanup := testutils.CreateNamespaceTestDBModule("db-test")
-	defer cleanup()
-	m.Run()
 }
 
 func TestUtils(t *testing.T) {
