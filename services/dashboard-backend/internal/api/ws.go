@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
@@ -15,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lxzan/gws"
 	"github.com/rs/zerolog/log"
+	"k8s.io/utils/ptr"
 	"net/http"
 	"strings"
 	"time"
@@ -23,9 +23,15 @@ import (
 const (
 	applicationIDSessionKey    = "application"
 	socketDeadline             = time.Minute
-	statusWSServerError        = 1011
+	StatusWSServerError        = 1011
 	StatusWSUnsupportedPayload = 1007
 )
+
+// Socket - interface for the websocket connection.
+// we use this interface to allow testing.
+type Socket interface {
+	WriteMessage(opcode gws.Opcode, payload []byte) error
+}
 
 type logger struct{}
 
@@ -40,68 +46,37 @@ var upgrader = gws.NewUpgrader(&handler{}, &gws.ServerOption{
 	Recovery:         gws.Recovery,
 })
 
-func createPromptTestRecord(
-	ctx context.Context,
-	promptRequestRecordID string,
-	data *dto.PromptConfigTestDTO,
-	responseContent string,
-) (*string, error) {
-	promptRequestRecordUUID, parseErr := db.StringToUUID(promptRequestRecordID)
-	if parseErr != nil {
-		return nil, parseErr
-	}
-
-	templateVariable, marshalErr := json.Marshal(data.TemplateVariables)
-	if marshalErr != nil {
-		return nil, fmt.Errorf("failed to marshal template variables: %w", marshalErr)
-	}
-
-	promptTestRecord, err := db.GetQueries().
-		CreatePromptTestRecord(ctx, db.CreatePromptTestRecordParams{
-			Name:                  data.Name,
-			PromptRequestRecordID: *promptRequestRecordUUID,
-			Response:              responseContent,
-			VariableValues:        templateVariable,
-		})
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to create prompt test record: %w", err)
-	}
-	promptTestRecordID := db.UUIDToString(&promptTestRecord.ID)
-	return &promptTestRecordID, nil
-}
-
-func createPayloadFromMessage(
+func CreatePayloadFromMessage(
 	ctx context.Context,
 	data *dto.PromptConfigTestDTO,
 	msg *ptesting.PromptTestingStreamingPromptResponse,
 	builder *strings.Builder,
-) ([]byte, error) {
+) []byte {
 	payload := dto.PromptConfigTestResultDTO{
 		Content:      &msg.Content,
 		FinishReason: msg.FinishReason,
 	}
 
 	if msg.PromptRequestRecordId != nil {
-		promptTestRecordID, err := createPromptTestRecord(
-			ctx,
-			*msg.PromptRequestRecordId,
-			data,
-			builder.String(),
-		)
-		if err != nil {
-			return nil, err
-		}
-		payload.PromptTestRecordID = promptTestRecordID
+		requestRecordID := exc.MustResult(db.StringToUUID(*msg.PromptRequestRecordId))
+		promptTestRecord := exc.MustResult(db.GetQueries().
+			CreatePromptTestRecord(ctx, db.CreatePromptTestRecordParams{
+				Name:                  data.Name,
+				PromptRequestRecordID: *requestRecordID,
+				Response:              builder.String(),
+				VariableValues:        serialization.SerializeJSON(data.TemplateVariables),
+			}))
+
+		payload.PromptTestRecordID = ptr.To(db.UUIDToString(&promptTestRecord.ID))
 	}
 
-	return json.Marshal(payload)
+	return serialization.SerializeJSON(payload)
 }
 
 // StreamGRPCMessages - streams gRPC messages to the websocket.
 func StreamGRPCMessages(
 	ctx context.Context,
-	socket *gws.Conn,
+	socket Socket,
 	data *dto.PromptConfigTestDTO,
 	responseChannel chan *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan error,
@@ -113,15 +88,11 @@ func StreamGRPCMessages(
 		case err := <-errorChannel:
 			errorMessage := err.Error()
 			finishReason := "error"
-			data := dto.PromptConfigTestResultDTO{
+
+			payload := serialization.SerializeJSON(dto.PromptConfigTestResultDTO{
 				ErrorMessage: &errorMessage,
 				FinishReason: &finishReason,
-			}
-			payload, marshalErr := json.Marshal(data)
-			if marshalErr != nil {
-				log.Error().Err(marshalErr).Msg("failed to marshal error payload")
-				return fmt.Errorf("failed to marshal error payload: %w", marshalErr)
-			}
+			})
 
 			if writeErr := socket.WriteMessage(gws.OpcodeText, payload); writeErr != nil {
 				log.Error().Err(writeErr).Msg("failed to write message")
@@ -134,16 +105,11 @@ func StreamGRPCMessages(
 				return nil
 			}
 
-			if _, writeErr := builder.WriteString(msg.Content); writeErr != nil {
-				log.Error().Err(writeErr).Msg("failed to write prompt content to write")
-				return writeErr
-			}
+			// We are building the response string from the prompt request and response.
+			// WriteString always returns nil as an error, so we can safely ignore it.
+			_, _ = builder.WriteString(msg.Content)
 
-			payload, err := createPayloadFromMessage(ctx, data, msg, &builder)
-			if err != nil {
-				log.Error().Err(err).Msg("failed to create prompt test record")
-				return err
-			}
+			payload := CreatePayloadFromMessage(ctx, data, msg, &builder)
 
 			if writeErr := socket.WriteMessage(gws.OpcodeText, payload); writeErr != nil {
 				log.Error().Err(writeErr).Msg("failed to write message")
@@ -250,7 +216,7 @@ func (h handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 		)
 
 		if streamErr := StreamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
-			socket.WriteClose(statusWSServerError, []byte(streamErr.Error()))
+			socket.WriteClose(StatusWSServerError, []byte(streamErr.Error()))
 			return
 		}
 	}

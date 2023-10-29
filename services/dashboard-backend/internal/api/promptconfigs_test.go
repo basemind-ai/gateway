@@ -31,13 +31,13 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 	userMessage := "Please write a song about {subject}."
 	templateVariables := []string{"subject"}
 
-	promptMessages, _ := factories.CreateOpenAIPromptMessages(
+	promptMessages := factories.CreateOpenAIPromptMessages(
 		systemMessages,
 		userMessage,
 		&templateVariables,
 	)
 
-	modelParameters, _ := factories.CreateModelParameters()
+	modelParameters := factories.CreateModelParameters()
 
 	fmtListEndpoint := func(projectID string, applicationID string) string {
 		return fmt.Sprintf(
@@ -1156,14 +1156,13 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 			promptConfigToRenameID := db.UUIDToString(&promptConfigToRename.ID)
 
-			newModelParameters, marshalErr := json.Marshal(map[string]float32{
+			newModelParameters := serialization.SerializeJSON(map[string]float32{
 				"temperature":       2,
 				"top_p":             2,
 				"max_tokens":        2,
 				"presence_penalty":  2,
 				"frequency_penalty": 2,
 			})
-			assert.NoError(t, marshalErr)
 
 			jsonMessage := json.RawMessage(newModelParameters)
 

@@ -107,6 +107,7 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231016165738-49dd2c1f3d0b // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
 )
 
 replace github.com/basemind-ai/monorepo/e2e => ./e2e
