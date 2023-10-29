@@ -2,6 +2,7 @@ package serialization
 
 import (
 	"encoding/json"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 
 func ReadBody(body io.ReadCloser) ([]byte, error) {
 	defer func() {
-		_ = body.Close()
+		exc.LogIfErr(body.Close(), "error closing body")
 	}()
 
 	data, readErr := io.ReadAll(body)

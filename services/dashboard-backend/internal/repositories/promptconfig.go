@@ -93,9 +93,7 @@ func UpdateApplicationDefaultPromptConfig(
 
 	tx := exc.MustResult(db.GetTransaction(ctx))
 	defer func() {
-		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
-			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
-		}
+		exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
 	}()
 
 	queries := db.GetQueries().WithTx(tx)
@@ -231,9 +229,7 @@ func DeletePromptConfig(ctx context.Context,
 
 	if db.ShouldCommit(ctx) {
 		defer func() {
-			if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
-				log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
-			}
+			exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
 		}()
 	}
 

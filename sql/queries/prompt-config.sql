@@ -67,11 +67,12 @@ SELECT
     is_default,
     created_at,
     updated_at,
-    application_id
+    application_id,
+    is_test_config
 FROM prompt_config
 WHERE
     id = $1
-    AND deleted_at IS NULL AND is_test_config = FALSE;
+    AND deleted_at IS NULL;
 
 -- name: RetrievePromptConfigs :many
 SELECT

@@ -3,6 +3,7 @@ package httpclient_test
 import (
 	"context"
 	"encoding/json"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"io"
 	"net/http"
@@ -47,8 +48,7 @@ func TestClient(t *testing.T) {
 				assert.Equal(t, request.Method, testCase.Method)
 
 				defer func() {
-					_ =
-						request.Body.Close()
+					exc.LogIfErr(request.Body.Close(), "error closing request body")
 				}()
 
 				if testCase.Body != nil {

@@ -24,7 +24,7 @@ const (
 	applicationIDSessionKey    = "application"
 	socketDeadline             = time.Minute
 	statusWSServerError        = 1011
-	statusWSUnsupportedPayload = 1007
+	StatusWSUnsupportedPayload = 1007
 )
 
 type logger struct{}
@@ -98,7 +98,8 @@ func createPayloadFromMessage(
 	return json.Marshal(payload)
 }
 
-func streamGRPCMessages(
+// StreamGRPCMessages - streams gRPC messages to the websocket.
+func StreamGRPCMessages(
 	ctx context.Context,
 	socket *gws.Conn,
 	data *dto.PromptConfigTestDTO,
@@ -156,7 +157,8 @@ func streamGRPCMessages(
 	}
 }
 
-func parseMessageData(
+// ParseMessageData - parses the websocket message data into a dto.PromptConfigTestDTO.
+func ParseMessageData(
 	message *gws.Message,
 	applicationID pgtype.UUID,
 ) (*dto.PromptConfigTestDTO, error) {
@@ -200,40 +202,37 @@ type handler struct {
 // OnOpen - handles websocket connections. Called each time a new websocket connection is established.
 func (handler) OnOpen(socket *gws.Conn) {
 	// We set a deadline to ensure inactive sockets are closed.
-	_ = socket.SetDeadline(time.Now().Add(socketDeadline))
+	exc.Must(socket.SetDeadline(time.Now().Add(socketDeadline)))
 }
 
 // OnPing - handles websocket pings. Called each time the frontend sends a ping via the websocket.
 func (handler) OnPing(socket *gws.Conn, msg []byte) {
 	// We reset the deadline, since we got a ping.
 	log.Debug().Bytes("msg", msg).Msg("received ping")
-	_ = socket.SetDeadline(time.Now().Add(socketDeadline))
-	_ = socket.WritePong(nil)
+	exc.Must(socket.SetDeadline(time.Now().Add(socketDeadline)))
+	exc.Must(socket.WritePong(nil))
 }
 
 // OnMessage - handles websocket messages. Called each time the frontend sends a message via the websocket.
 // The message is parsed, and the data it holds is sent to the api-gateway service via GRPC. The response from
 // this service is in turn streamed via the websocket to the frontend.
-func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
-	defer func() {
-		if err := message.Close(); err != nil {
-			log.Error().Err(err).Msg("failed to close message")
-		}
-	}()
-	if message.Data != nil && message.Data.String() != "ping" {
-		// We are retrieving the request context we passed into the socket session.
-		value, exists := socket.Session().Load(applicationIDSessionKey)
-		if !exists {
-			log.Error().Msg("failed to load context from session")
-			socket.WriteClose(statusWSServerError, []byte("invalid context"))
+func (h handler) OnMessage(socket *gws.Conn, message *gws.Message) {
+	defer func() { exc.LogIfErr(message.Close(), "failed to close message") }()
+
+	if message.Data != nil {
+		if message.Data.String() == "ping" {
+			handler.OnPing(h, socket, message.Bytes())
 			return
 		}
+
+		// We are retrieving the applicationID from the session storage.
+		value, _ := socket.Session().Load(applicationIDSessionKey)
 		applicationID := value.(pgtype.UUID)
-		log.Debug().Interface("applicationID", applicationID).Msg("applicationID")
-		data, parseErr := parseMessageData(message, applicationID)
+
+		data, parseErr := ParseMessageData(message, applicationID)
 		if parseErr != nil {
 			log.Error().Err(parseErr).Msg("failed to parse message data")
-			socket.WriteClose(statusWSUnsupportedPayload, []byte("invalid context"))
+			socket.WriteClose(StatusWSUnsupportedPayload, []byte(parseErr.Error()))
 			return
 		}
 
@@ -250,7 +249,7 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 			errorChannel,
 		)
 
-		if streamErr := streamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
+		if streamErr := StreamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
 			socket.WriteClose(statusWSServerError, []byte(streamErr.Error()))
 			return
 		}

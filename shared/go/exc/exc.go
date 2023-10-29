@@ -21,3 +21,10 @@ func Must(err error, messages ...string) {
 		panic(err)
 	}
 }
+
+// LogIfErr - logs the error if it is not nil.
+func LogIfErr(err error, messages ...string) {
+	if err != nil {
+		log.Error().Err(err).Msg(strings.Join(messages, " "))
+	}
+}

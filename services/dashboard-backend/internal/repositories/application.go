@@ -11,7 +11,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/rs/zerolog/log"
 )
 
 // DeleteApplication deletes an application and all of its prompt configs by setting their deleted_at values.
@@ -24,9 +23,7 @@ func DeleteApplication(ctx context.Context, applicationID pgtype.UUID) error {
 
 	if db.ShouldCommit(ctx) {
 		defer func() {
-			if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
-				log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
-			}
+			exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
 		}()
 	}
 

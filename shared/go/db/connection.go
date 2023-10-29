@@ -19,6 +19,8 @@ var (
 	pool        *pgxpool.Pool
 )
 
+// CreateConnection - creates a connection to the database.
+// This function is idempotent and it has a retry mechanism, ensuring a connection is established.
 func CreateConnection(ctx context.Context, dbURL string) (*pgxpool.Pool, error) {
 	var err error
 
@@ -43,6 +45,8 @@ func CreateConnection(ctx context.Context, dbURL string) (*pgxpool.Pool, error) 
 	return pool, err
 }
 
+// GetQueries - returns the queries object.
+// Panics if the connection is not initialized.
 func GetQueries() *Queries {
 	queriesOnce.Do(func() {
 		if pool == nil {
@@ -54,6 +58,7 @@ func GetQueries() *Queries {
 	return queries
 }
 
+// GetTransaction creates a new transaction.
 func GetTransaction(ctx context.Context) (pgx.Tx, error) {
 	tx, err := pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {

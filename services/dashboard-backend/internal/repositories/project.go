@@ -71,9 +71,7 @@ func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
 	tx := exc.MustResult(db.GetTransaction(ctx))
 
 	defer func() {
-		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil {
-			log.Error().Err(rollbackErr).Msg("failed to rollback transaction")
-		}
+		exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
 	}()
 
 	// we pass in the transaction into the nested function call via context
