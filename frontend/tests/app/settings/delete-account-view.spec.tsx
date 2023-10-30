@@ -7,14 +7,14 @@ import {
 	routerReplaceMock,
 } from 'tests/test-utils';
 
-import * as ApplicationAPI from '@/api/applications-api';
+import * as UsersAPI from '@/api/users-api';
 import { DeleteAccountView } from '@/components/settings/delete-account-view';
 import { Navigation } from '@/constants';
 import { useSetUser, useUser } from '@/stores/api-store';
 
 describe('user account deletion tests', () => {
 	const handleDeleteUserAccountSpy = vi
-		.spyOn(ApplicationAPI, 'handleDeleteUserAccount')
+		.spyOn(UsersAPI, 'handleDeleteUserAccount')
 		.mockResolvedValue();
 	const {
 		result: { current: t },
@@ -59,7 +59,7 @@ describe('user account deletion tests', () => {
 
 	it('clicking on delete account modal delete button should call backend to delete the account', async () => {
 		const handleDeleteUserAccountSpy = vi.spyOn(
-			ApplicationAPI,
+			UsersAPI,
 			'handleDeleteUserAccount',
 		);
 		render(<DeleteAccountView user={mockUser} />);
