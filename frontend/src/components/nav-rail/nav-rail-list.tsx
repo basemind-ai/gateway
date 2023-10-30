@@ -5,7 +5,6 @@ import {
 	Boxes,
 	HddStack,
 	HouseDoor,
-	Lightning,
 	Search,
 	Speedometer2,
 } from 'react-bootstrap-icons';
@@ -26,10 +25,7 @@ export default function NavRailList() {
 	const projectApplications = useApplications(currentProject?.id);
 
 	return (
-		<div
-			className="mt-12 ml-2 gap-0.5 flex flex-col "
-			data-testid="nav-rail-list"
-		>
+		<div className="mt-10 ml-2 flex flex-col " data-testid="nav-rail-list">
 			<LinkMenu
 				href={navigation.Overview}
 				text={t('overview')}
@@ -61,6 +57,7 @@ export default function NavRailList() {
 						/>
 					);
 				})}
+				{/*TODO: Add new application link*/}
 				<LinkMenu
 					href={'TODO:newapp'}
 					text={t('newApplication')}
@@ -68,26 +65,8 @@ export default function NavRailList() {
 				/>
 			</LinkMenu>
 			<LinkMenu
-				href={navigation.Api}
-				text={t('api')}
-				icon={<Boxes className={ICON_CLASSES} />}
-				isCurrent={navigation.Api === pathname}
-			/>
-			<LinkMenu
 				text={t('persistence')}
 				icon={<HddStack className={ICON_CLASSES} />}
-				isDisabled={true}
-				badge={
-					<Badge
-						text="Soon"
-						fillColor="bg-secondary"
-						textColor="text-secondary-content"
-					/>
-				}
-			/>
-			<LinkMenu
-				text={t('middleware')}
-				icon={<Lightning className={ICON_CLASSES} />}
 				isDisabled={true}
 				badge={
 					<Badge

@@ -16,6 +16,7 @@ module.exports = {
 				gray: {
 					111: '#111111',
 				},
+				discord: '#7289DA',
 			},
 			spacing: {
 				102: '25.5rem',

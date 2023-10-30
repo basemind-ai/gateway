@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { render, renderHook } from 'tests/test-utils';
 
-import { UserDetails } from '@/app/settings/page';
+import { UserDetails } from '@/components/settings/user-details';
 
 describe('user details card tests', () => {
 	const { result } = renderHook(() => useTranslations('userSettings'));
@@ -30,14 +30,11 @@ describe('user details card tests', () => {
 		const userEmail = screen.getByText(mockUser.email);
 		expect(userEmail).toBeInTheDocument();
 	});
-	it('should render loading animate-pulse animation on user name when its null', () => {
+	it('should render loading animate-pulse animation on user name when its null', async () => {
 		render(<UserDetails user={null} />);
-		const loadingAnimation = screen.getByTestId('user-name');
-		expect(loadingAnimation).toHaveClass('animate-pulse');
-	});
-	it('should render loading animate-pulse animation on user email when its null', () => {
-		render(<UserDetails user={null} />);
-		const loadingAnimation = screen.getByTestId('user-email');
-		expect(loadingAnimation).toHaveClass('animate-pulse');
+		const loadingAnimation =
+			await screen.findAllByTestId('user-info-value');
+		expect(loadingAnimation[0]).toHaveClass('animate-pulse');
+		expect(loadingAnimation[1]).toHaveClass('animate-pulse');
 	});
 });

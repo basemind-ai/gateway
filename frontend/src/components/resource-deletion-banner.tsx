@@ -11,6 +11,8 @@ export interface ResourceDeletionBannerProps {
 	onCancel: () => void;
 	onConfirm: () => void;
 	confirmCTA?: string | React.ReactElement;
+	isDisabled?: boolean;
+	errorMessage?: string;
 }
 
 export function ResourceDeletionBanner({
@@ -21,11 +23,14 @@ export function ResourceDeletionBanner({
 	onCancel,
 	onConfirm,
 	confirmCTA,
+	isDisabled,
+	errorMessage,
 }: ResourceDeletionBannerProps) {
 	const t = useTranslations('deletionBanner');
 	const [confirmText, setConfirmText] = useState('');
 
-	const disabled = resourceName ? confirmText !== resourceName : false;
+	const disabled =
+		!isDisabled && resourceName ? confirmText !== resourceName : false;
 	return (
 		<div className="bg-base-300">
 			<div
@@ -56,7 +61,7 @@ export function ResourceDeletionBanner({
 								data-testid="resource-deletion-resource-name"
 								className="text-info"
 							>
-								"{resourceName}"
+								{resourceName}
 							</span>
 						</label>
 						<input
@@ -71,24 +76,27 @@ export function ResourceDeletionBanner({
 					</div>
 				)}
 			</div>
-			<div className="flex items-center justify-end py-8 px-5 gap-4">
-				<button
-					data-testid="resource-deletion-cancel-btn"
-					onClick={onCancel}
-					className="btn btn-neutral capitalize font-semibold text-neutral-content"
-				>
-					{t('cancel')}
-				</button>
-				<button
-					data-testid="resource-deletion-delete-btn"
-					onClick={onConfirm}
-					disabled={disabled}
-					className={`btn bg-error text-accent-content capitalize font-semibold ${
-						disabled ? 'opacity-60' : ''
-					}`}
-				>
-					{confirmCTA ?? t('delete')}
-				</button>
+			<div className="flex grow items-center justify-between py-8 px-5 gap-4">
+				<span className="text-error text-xs font-light">
+					{errorMessage}
+				</span>
+				<div className="flex gap-4">
+					<button
+						data-testid="resource-deletion-cancel-btn"
+						onClick={onCancel}
+						className="btn btn-neutral"
+					>
+						{t('cancel')}
+					</button>
+					<button
+						data-testid="resource-deletion-delete-btn"
+						onClick={onConfirm}
+						disabled={disabled}
+						className="btn btn-error"
+					>
+						{confirmCTA ?? t('delete')}
+					</button>
+				</div>
 			</div>
 		</div>
 	);

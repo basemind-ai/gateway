@@ -15,7 +15,7 @@ import {
 const navRailTranslation = locales.navrail;
 
 describe('NavRail tests', () => {
-	(usePathname as Mock).mockReturnValue(Navigation.Api);
+	(usePathname as Mock).mockReturnValue(Navigation.API);
 
 	it('should render Logo', () => {
 		render(<NavRail />);
@@ -47,14 +47,7 @@ describe('NavRail tests', () => {
 		render(<NavRail />);
 		const overviewItem = screen.getByText(navRailTranslation.overview);
 		const testingItem = screen.getByText(navRailTranslation.testing);
-		const apiItem = screen.getByText(navRailTranslation.api);
-		const bannerTitle = screen.getByText(navRailTranslation.bannerTitle);
-		const bannerCTA = screen.getByText(navRailTranslation.bannerCTA);
-
 		expect(overviewItem).toBeInTheDocument();
 		expect(testingItem).toBeInTheDocument();
-		expect(apiItem).toBeInTheDocument();
-		expect(bannerTitle).toBeInTheDocument();
-		expect(bannerCTA).toBeInTheDocument();
 	});
 });

@@ -68,6 +68,7 @@ Object.defineProperties(global.HTMLElement.prototype, {
 });
 
 export const routerReplaceMock = vi.fn();
+export const routerPushMock = vi.fn();
 export const useParamsMock = vi.fn();
 export const usePathnameMock = vi.fn(() => '');
 
@@ -80,7 +81,7 @@ export const nextRouterMock = {
 	back: vi.fn(),
 	beforePopState: vi.fn(),
 	prefetch: vi.fn(),
-	push: vi.fn(),
+	push: routerPushMock,
 	reload: vi.fn(),
 	forward: vi.fn(),
 	replace: routerReplaceMock,
