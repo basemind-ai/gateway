@@ -41,8 +41,6 @@ func SerializeJSON[T any](target T) []byte {
 
 // RenderJSONResponse - renders the target as a JSON type response.
 func RenderJSONResponse(w http.ResponseWriter, statusCode int, body any) {
-	w.WriteHeader(statusCode)
-	w.Header().Set("Content-Type", "application/json")
 	if renderErr := json.NewEncoder(w).Encode(body); renderErr != nil {
 		log.Error().Err(renderErr).Msg("failed to render json response")
 		http.Error(
@@ -50,5 +48,9 @@ func RenderJSONResponse(w http.ResponseWriter, statusCode int, body any) {
 			http.StatusText(http.StatusInternalServerError),
 			http.StatusInternalServerError,
 		)
+		return
 	}
+
+	w.WriteHeader(statusCode)
+	w.Header().Set("Content-Type", "application/json")
 }
