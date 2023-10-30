@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+// Config - the shared configuration object.
+//
 //goland:noinspection GoUnnecessarilyExportedIdentifiers
 type Config struct {
 	DatabaseURL string `env:"DATABASE_URL,required"`
@@ -20,6 +22,9 @@ var (
 	once   sync.Once
 )
 
+// Get - returns the config object.
+// Panics if the config is not initialized.
+// This function is idempotent.
 func Get(ctx context.Context) *Config {
 	once.Do(func() {
 		config = &Config{}

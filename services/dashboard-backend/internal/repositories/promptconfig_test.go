@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"testing"
 	"time"
 
@@ -18,7 +19,7 @@ import (
 )
 
 func TestPromptConfigRepository(t *testing.T) { //nolint: revive
-	params, _ := json.Marshal(map[string]any{"maxTokens": 100})
+	params := serialization.SerializeJSON(map[string]any{"maxTokens": 100})
 	newModelParameters := json.RawMessage(params)
 
 	newName := "new name"
@@ -28,7 +29,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 	newUserMessage := "Describe what it is to be a {role} in your experience"
 
 	templateVariables := []string{"role"}
-	msgs, _ := factories.CreateOpenAIPromptMessages(
+	msgs := factories.CreateOpenAIPromptMessages(
 		newSystemMessage, newUserMessage, nil,
 	)
 	newPromptMessages := json.RawMessage(msgs)

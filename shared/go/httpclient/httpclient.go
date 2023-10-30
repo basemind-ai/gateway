@@ -3,8 +3,8 @@ package httpclient
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"io"
 	"net/http"
 	"time"
@@ -40,7 +40,7 @@ func (client *Client) request(
 ) (*http.Response, error) {
 	var requestBody io.Reader
 	if body != nil {
-		data, _ := json.Marshal(body)
+		data := serialization.SerializeJSON(body)
 		requestBody = bytes.NewBuffer(data)
 	}
 

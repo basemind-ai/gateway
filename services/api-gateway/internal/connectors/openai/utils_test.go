@@ -2,10 +2,10 @@ package openai_test
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
@@ -152,9 +152,9 @@ func TestUtils(t *testing.T) {
 		applicationID := db.UUIDToString(&application.ID)
 		modelType := db.ModelTypeGpt35Turbo
 
-		modelParameters, _ := factories.CreateModelParameters()
+		modelParameters := factories.CreateModelParameters()
 
-		promptMessages, _ := factories.CreateOpenAIPromptMessages(
+		promptMessages := factories.CreateOpenAIPromptMessages(
 			systemMessage,
 			userMessage,
 			&expectedTemplateVariables,
@@ -196,7 +196,7 @@ func TestUtils(t *testing.T) {
 
 		t.Run("handles function message correctly", func(t *testing.T) {
 			functionName := "sum"
-			promptMessages, _ := json.Marshal([]*datatypes.OpenAIPromptMessageDTO{{
+			promptMessages := serialization.SerializeJSON([]*datatypes.OpenAIPromptMessageDTO{{
 				Role:              "function",
 				Name:              &functionName,
 				FunctionArguments: &[]string{"value1", "value2"},

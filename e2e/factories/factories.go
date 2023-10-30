@@ -3,8 +3,8 @@ package factories
 import (
 	"context"
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
@@ -22,7 +22,7 @@ func CreateOpenAIPromptMessages(
 	systemMessage string,
 	userMessage string,
 	templateVariables *[]string,
-) ([]byte, error) {
+) []byte {
 	msgs := []*datatypes.OpenAIPromptMessageDTO{{
 		Content: &systemMessage,
 		Role:    "system",
@@ -31,27 +31,19 @@ func CreateOpenAIPromptMessages(
 		Content:           &userMessage,
 		TemplateVariables: templateVariables,
 	}}
-	promptMessages, marshalErr := json.Marshal(msgs)
-	if marshalErr != nil {
-		return nil, marshalErr
-	}
-
-	return promptMessages, nil
+	return serialization.SerializeJSON(msgs)
 }
 
-func CreateModelParameters() ([]byte, error) {
-	modelParameters, marshalErr := json.Marshal(map[string]float32{
+func CreateModelParameters() []byte {
+	modelParameters := serialization.SerializeJSON(map[string]float32{
 		"temperature":       1,
 		"top_p":             1,
 		"max_tokens":        1,
 		"presence_penalty":  1,
 		"frequency_penalty": 1,
 	})
-	if marshalErr != nil {
-		return nil, marshalErr
-	}
 
-	return modelParameters, nil
+	return modelParameters
 }
 
 func CreateProject(ctx context.Context) (*db.Project, error) {
@@ -109,21 +101,13 @@ func CreatePromptConfig(
 	userMessage := "This is what the user asked for: {userInput}"
 	templateVariables := []string{"userInput"}
 
-	modelParams, modelParamsCreateErr := CreateModelParameters()
+	modelParams := CreateModelParameters()
 
-	if modelParamsCreateErr != nil {
-		return nil, modelParamsCreateErr
-	}
-
-	promptMessages, promptMessagesCreateErr := CreateOpenAIPromptMessages(
+	promptMessages := CreateOpenAIPromptMessages(
 		systemMessage,
 		userMessage,
 		&templateVariables,
 	)
-
-	if promptMessagesCreateErr != nil {
-		return nil, promptMessagesCreateErr
-	}
 
 	promptConfig, promptConfigCreateErr := db.GetQueries().
 		CreatePromptConfig(ctx, db.CreatePromptConfigParams{
