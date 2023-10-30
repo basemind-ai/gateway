@@ -4,15 +4,21 @@ import { Activity, Cash } from 'react-bootstrap-icons';
 import { DateValueType } from 'react-tailwindcss-datepicker';
 import useSWR from 'swr';
 
-import { handleProjectAnalytics } from '@/api';
+import { handleApplicationAnalytics } from '@/api';
 import { DataCard } from '@/components/dashboard/data-card';
 import { DatePicker } from '@/components/dashboard/date-picker';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
 
-export function ProjectAnalytics({ projectId }: { projectId: string }) {
-	const t = useTranslations('projectOverview');
+export function ApplicationAnalyticsPage({
+	projectId,
+	applicationId,
+}: {
+	projectId: string;
+	applicationId: string;
+}) {
+	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
 	const showError = useShowError();
 
@@ -26,10 +32,11 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	const { data: analytics, isLoading } = useSWR(
 		{
 			projectId,
+			applicationId,
 			fromDate: dateRange?.startDate,
 			toDate: dateRange?.endDate,
 		},
-		handleProjectAnalytics,
+		handleApplicationAnalytics,
 		{
 			onError({ message }: ApiError) {
 				showError(message);
@@ -38,7 +45,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	);
 
 	return (
-		<div data-testid="project-analytics-container">
+		<div data-testid="application-analytics-container">
 			<div className="flex justify-between items-center">
 				<h2 className="font-semibold text-white text-xl">
 					{t('status')}
@@ -55,7 +62,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}
-					totalValue={analytics?.totalAPICalls ?? ''}
+					totalValue={analytics?.totalRequests ?? ''}
 					percentage={'100'}
 					currentValue={'324'}
 					loading={isLoading}
@@ -64,7 +71,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 				<DataCard
 					imageSrc={<Cash className="text-secondary w-6 h-6" />}
 					metric={t('modelsCost')}
-					totalValue={`${analytics?.modelsCost ?? ''}$`}
+					totalValue={`${analytics?.projectedCost ?? ''}$`}
 					percentage={'103'}
 					currentValue={'3.3'}
 					loading={isLoading}

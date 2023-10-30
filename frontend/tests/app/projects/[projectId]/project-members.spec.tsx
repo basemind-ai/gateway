@@ -1,9 +1,11 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import { ProjectUserAccountFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
+import { expect } from 'vitest';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';
 import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
+import { ApiError } from '@/errors';
 import { useSetUser } from '@/stores/api-store';
 import { AccessPermission } from '@/types';
 
@@ -161,5 +163,35 @@ describe('ProjectMembers', () => {
 			projectId,
 			userId: memberUser.id,
 		});
+	});
+
+	it('shows error when unable to remove user', async () => {
+		const {
+			result: { current: setUser },
+		} = renderHook(useSetUser);
+		setUser(adminUser);
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
+
+		render(<ProjectMembers projectId={projectId} />);
+
+		await waitFor(() => {
+			const [removeMemberButton] =
+				screen.getAllByTestId('remove-member-btn');
+			fireEvent.click(removeMemberButton);
+		});
+
+		handleRemoveUserFromProjectSpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to remove user', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+		const confirmButton = screen.getByTestId(
+			'resource-deletion-delete-btn',
+		);
+		fireEvent.click(confirmButton);
+
+		const errorToast = screen.getByText('unable to remove user');
+		expect(errorToast).toBeInTheDocument();
 	});
 });

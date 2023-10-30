@@ -10,7 +10,7 @@ export interface ResourceDeletionBannerProps {
 	placeholder?: string;
 	onCancel: () => void;
 	onConfirm: () => void;
-	confirmCTA?: string;
+	confirmCTA?: string | React.ReactElement;
 }
 
 export function ResourceDeletionBanner({

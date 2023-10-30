@@ -26,6 +26,13 @@ module.exports = {
 			},
 		},
 	},
+	safelist: [
+		'alert-info',
+		'alert-success',
+		'alert-error',
+		'alert-error',
+		'alert-warning',
+	],
 	plugins: [
 		require('@tailwindcss/typography'),
 		require('tailwindcss-elevation'),

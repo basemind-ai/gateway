@@ -4,7 +4,9 @@ import { APIKeyFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
 import * as APIKeyAPI from '@/api/api-keys-api';
-import { CreateApiKey } from '@/app/projects/[projectId]/applications/[applicationId]/page';
+import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
+import { ApiError } from '@/errors';
+import { ToastType } from '@/stores/toast-store';
 
 describe('CreateApiKey tests', () => {
 	const handleCreateAPIKeySpy = vi.spyOn(APIKeyAPI, 'handleCreateAPIKey');
@@ -50,13 +52,12 @@ describe('CreateApiKey tests', () => {
 		expect(submitButton.disabled).toBe(true);
 
 		const apiKeyNameInput = screen.getByTestId('create-api-key-input');
-		// Invalid name
+
 		fireEvent.change(apiKeyNameInput, {
 			target: { value: 'i' },
 		});
 		expect(submitButton.disabled).toBe(true);
 
-		// valid name
 		fireEvent.change(apiKeyNameInput, {
 			target: { value: 'New APIKey' },
 		});
@@ -111,5 +112,35 @@ describe('CreateApiKey tests', () => {
 		const closeBtn = screen.getByTestId('create-api-key-close-btn');
 		fireEvent.click(closeBtn);
 		expect(onSubmit).toHaveBeenCalledOnce();
+	});
+
+	it('shows an error when unable to create API key', async () => {
+		render(
+			<CreateApiKey
+				projectId={projectId}
+				applicationId={applicationId}
+				onSubmit={onSubmit}
+				onCancel={onCancel}
+			/>,
+		);
+
+		const apiKeyNameInput = screen.getByTestId('create-api-key-input');
+		fireEvent.change(apiKeyNameInput, {
+			target: { value: 'New APIKey' },
+		});
+
+		handleCreateAPIKeySpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to create an API key', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+		const submitButton = screen.getByTestId<HTMLButtonElement>(
+			'create-api-key-submit-btn',
+		);
+		fireEvent.click(submitButton);
+
+		const errorToast = screen.getByText('unable to create an API key');
+		expect(errorToast.className).toContain(ToastType.ERROR);
 	});
 });

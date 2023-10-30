@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Eraser } from 'react-bootstrap-icons';
+import useSWR from 'swr';
 
 import {
 	handleRemoveUserFromProject,
@@ -10,6 +11,7 @@ import {
 } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Dimensions } from '@/constants';
+import { ApiError } from '@/errors';
 import { useUser } from '@/stores/api-store';
 import {
 	useProjectUsers,
@@ -17,6 +19,7 @@ import {
 	useSetProjectUsers,
 	useUpdateProjectUser,
 } from '@/stores/project-store';
+import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 import { handleChange } from '@/utils/helpers';
 
@@ -84,11 +87,29 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 	const removeProjectUser = useRemoveProjectUser();
 	const setProjectUsers = useSetProjectUsers();
 	const updateProjectUser = useUpdateProjectUser();
-
 	const user = useUser();
+
+	const showError = useShowError();
+	const showInfo = useShowInfo();
+
+	const { isLoading } = useSWR(
+		{
+			projectId,
+		},
+		handleRetrieveProjectUsers,
+		{
+			onSuccess(users) {
+				setProjectUsers(projectId, users);
+			},
+			onError(apiError: ApiError) {
+				showError(apiError.message);
+			},
+		},
+	);
 
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [removalUserId, setRemovalUserId] = useState<string | null>(null);
+	const [removeUserLoading, setRemoveUserLoading] = useState(false);
 
 	const currentUser = projectUsers?.find(
 		(projectUser) => projectUser.email === user?.email,
@@ -102,15 +123,6 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 	const canRemoveMember = (memberId: string) =>
 		isAdmin && currentUser.id !== memberId;
 
-	useEffect(() => {
-		(async () => {
-			const projectUsersRes = await handleRetrieveProjectUsers({
-				projectId,
-			});
-			setProjectUsers(projectId, projectUsersRes);
-		})();
-	}, []);
-
 	async function updatePermission(
 		userId: string,
 		permission: AccessPermission,
@@ -123,6 +135,7 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 			},
 		});
 		updateProjectUser(projectId, updatedProjectUser);
+		showInfo(t('roleUpdated'));
 	}
 
 	function openRemovalConfirmationPopup() {
@@ -139,13 +152,25 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 	}
 
 	async function removeUser() {
-		if (!removalUserId) {
+		if (!removalUserId || removeUserLoading) {
 			return;
 		}
-		await handleRemoveUserFromProject({ projectId, userId: removalUserId });
-		removeProjectUser(projectId, removalUserId);
-		setRemovalUserId(null);
-		closeRemovalConfirmationPopup();
+
+		try {
+			setRemoveUserLoading(true);
+			await handleRemoveUserFromProject({
+				projectId,
+				userId: removalUserId,
+			});
+			removeProjectUser(projectId, removalUserId);
+			showInfo(t('userRemoved'));
+		} catch (e) {
+			showError((e as ApiError).message);
+		} finally {
+			setRemovalUserId(null);
+			closeRemovalConfirmationPopup();
+			setRemoveUserLoading(false);
+		}
 	}
 
 	function renderProjectUsers() {
@@ -200,18 +225,25 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 		<div data-testid="project-members-container">
 			<h2 className="font-semibold text-white text-xl">{t('members')}</h2>
 			<div className="custom-card flex flex-col">
-				<table className="custom-table">
-					<thead>
-						<tr>
-							<th>{t('name')}</th>
-							<th>{t('roles')}</th>
-							{showRemoveMemberColumn && (
-								<th>{t('removeMember')}</th>
-							)}
-						</tr>
-					</thead>
-					<tbody>{renderProjectUsers()}</tbody>
-				</table>
+				{isLoading && (
+					<div className="w-full flex">
+						<span className="loading loading-bars mx-auto" />
+					</div>
+				)}
+				{!isLoading && (
+					<table className="custom-table">
+						<thead>
+							<tr>
+								<th>{t('name')}</th>
+								<th>{t('roles')}</th>
+								{showRemoveMemberColumn && (
+									<th>{t('removeMember')}</th>
+								)}
+							</tr>
+						</thead>
+						<tbody>{renderProjectUsers()}</tbody>
+					</table>
+				)}
 			</div>
 			<dialog ref={dialogRef} className="modal">
 				<div className="modal-box p-0 border border-neutral max-w-[43rem]">
@@ -220,7 +252,13 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 						description={t('warningMessage')}
 						onCancel={closeRemovalConfirmationPopup}
 						onConfirm={() => void removeUser()}
-						confirmCTA={t('ok')}
+						confirmCTA={
+							removeUserLoading ? (
+								<span className="loading loading-spinner loading-xs mx-1.5" />
+							) : (
+								t('ok')
+							)
+						}
 					/>
 				</div>
 				<form method="dialog" className="modal-backdrop">

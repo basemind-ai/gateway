@@ -9,7 +9,7 @@ const nextConfig = nextTranslate({
 	reactStrictMode: true,
 	distDir: 'dist',
 	images: {
-		domains: ['lh3.googleusercontent.com'],
+		remotePatterns: [{ hostname: 'lh3.googleusercontent.com' }],
 	},
 	// see: https://react-svgr.com/docs/next/
 	webpack(config) {
