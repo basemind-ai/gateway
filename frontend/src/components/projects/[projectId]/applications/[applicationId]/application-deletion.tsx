@@ -2,24 +2,30 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 
-import { handleDeleteProject } from '@/api';
+import { handleDeleteApplication } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { useDeleteProject, useProject } from '@/stores/project-store';
+import { useApplication, useDeleteApplication } from '@/stores/project-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 
-export function ProjectDeletion({ projectId }: { projectId: string }) {
+export function ApplicationDeletion({
+	projectId,
+	applicationId,
+}: {
+	projectId: string;
+	applicationId: string;
+}) {
+	const t = useTranslations('application');
 	const router = useRouter();
-	const t = useTranslations('projectSettings');
-	const project = useProject(projectId);
-	const deleteProjectHook = useDeleteProject();
+	const application = useApplication(projectId, applicationId);
+
+	const deleteApplicationHook = useDeleteApplication();
+	const dialogRef = useRef<HTMLDialogElement>(null);
+	const [loading, setLoading] = useState(false);
 
 	const showError = useShowError();
 	const showInfo = useShowInfo();
-
-	const dialogRef = useRef<HTMLDialogElement>(null);
-	const [loading, setLoading] = useState(false);
 
 	function openDeleteConfirmationPopup() {
 		dialogRef.current?.showModal();
@@ -29,17 +35,18 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 		dialogRef.current?.close();
 	}
 
-	async function deleteProject() {
+	async function deleteApplication() {
 		if (loading) {
 			return;
 		}
 
 		try {
 			setLoading(true);
-			await handleDeleteProject({ projectId });
-			deleteProjectHook(projectId);
+
+			await handleDeleteApplication({ projectId, applicationId });
+			deleteApplicationHook(projectId, applicationId);
 			router.replace(Navigation.Projects);
-			showInfo(t('projectDeleted'));
+			showInfo(t('applicationDeleted'));
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {
@@ -48,24 +55,26 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 		}
 	}
 
-	if (!project) {
+	if (!application) {
 		return null;
 	}
 
 	return (
-		<div data-testid="project-deletion-container" className="mt-8">
+		<div data-testid="application-deletion-container" className="mt-8">
 			<h2 className="font-semibold text-white text-xl">
-				{t('projectDeletion')}
+				{t('applicationDeletion')}
 			</h2>
 			<div className="custom-card flex items-center justify-between text-neutral-content">
 				<div>
-					<h6 className="font-medium ">{t('deleteProject')}</h6>
+					<h6 className="font-medium ">
+						{t('deleteYourApplication')}
+					</h6>
 					<p className="font-light text-xs mt-2.5">
-						{t('deleteProjectMessage')}
+						{t('deleteYourApplicationMessage')}
 					</p>
 				</div>
 				<button
-					data-testid="project-delete-btn"
+					data-testid="application-delete-btn"
 					className="btn bg-error text-accent-content py-2.5 px-4 rounded-3xl capitalize min-h-0 h-full leading-4"
 					onClick={openDeleteConfirmationPopup}
 				>
@@ -75,11 +84,11 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 					<div className="modal-box p-0 border border-neutral max-w-[43rem]">
 						<ResourceDeletionBanner
 							title={t('warning')}
-							description={t('warningMessageProject')}
-							placeholder={t('deletionPlaceholder')}
-							resourceName={project.name}
+							description={t('warningMessageApplication')}
+							placeholder={t('deletePlaceholderApplication')}
+							resourceName={application.name}
 							onCancel={closeDeleteConfirmationPopup}
-							onConfirm={() => void deleteProject()}
+							onConfirm={() => void deleteApplication()}
 							confirmCTA={
 								loading ? (
 									<span className="loading loading-spinner loading-xs mx-1.5" />

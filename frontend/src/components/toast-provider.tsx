@@ -22,7 +22,7 @@ function Toast() {
 					data-testid="toast-message"
 					className={`alert ${type}`}
 				>
-					<span>{message}</span>
+					{message}
 				</div>
 			))}
 		</div>

@@ -24,7 +24,7 @@ describe('ProjectOverview', () => {
 		const projects = ProjectFactory.batchSync(1);
 		setProjects(projects);
 
-		const { container } = render(
+		render(
 			<ProjectOverview
 				params={{
 					projectId: '4343',
@@ -32,7 +32,8 @@ describe('ProjectOverview', () => {
 			/>,
 		);
 
-		expect(container).toBeEmptyDOMElement();
+		const container = screen.queryByTestId('project-page');
+		expect(container).not.toBeInTheDocument();
 	});
 
 	it('renders all 4 screens in tab navigation', async () => {

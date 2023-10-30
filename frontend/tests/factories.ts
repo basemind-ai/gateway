@@ -55,7 +55,7 @@ export const PromptConfigFactory = new TypeFactory<PromptConfig>(() => ({
 	modelParameters: {},
 	modelVendor: ModelVendor.OpenAI,
 	modelType: TypeFactory.sample(Object.values(ModelVendor)),
-	providerPromptMessages: OpenAIPromptMessageFactory.batch(3),
+	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),
 	expectedTemplateVariables: [],
 	isDefault: false,
 	createdAt: faker.date.past().toISOString(),

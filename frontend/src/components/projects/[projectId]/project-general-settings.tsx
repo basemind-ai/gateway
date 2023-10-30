@@ -3,7 +3,9 @@ import { useState } from 'react';
 
 import { handleUpdateProject } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
+import { ApiError } from '@/errors';
 import { useProject, useUpdateProject } from '@/stores/project-store';
+import { useShowError } from '@/stores/toast-store';
 import { handleChange } from '@/utils/helpers';
 
 export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
@@ -13,6 +15,9 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 
 	const [name, setName] = useState(project.name);
 	const [description, setDescription] = useState(project.description ?? '');
+	const [loading, setLoading] = useState(false);
+
+	const showError = useShowError();
 
 	const isChanged =
 		name !== project.name || description !== project.description;
@@ -22,14 +27,25 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 		description.trim().length >= MIN_NAME_LENGTH;
 
 	async function saveSettings() {
-		const updatedProject = await handleUpdateProject({
-			projectId,
-			data: {
-				name,
-				description,
-			},
-		});
-		updateProject(projectId, updatedProject);
+		if (loading) {
+			return;
+		}
+
+		try {
+			setLoading(true);
+			const updatedProject = await handleUpdateProject({
+				projectId,
+				data: {
+					name: name.trim(),
+					description: description.trim(),
+				},
+			});
+			updateProject(projectId, updatedProject);
+		} catch (e) {
+			showError((e as ApiError).message);
+		} finally {
+			setLoading(false);
+		}
 	}
 
 	return (
@@ -75,7 +91,11 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 					className="btn btn-primary ml-auto mt-8 capitalize"
 					onClick={() => void saveSettings()}
 				>
-					{t('save')}
+					{loading ? (
+						<span className="loading loading-spinner loading-sm mx-2" />
+					) : (
+						t('save')
+					)}
 				</button>
 			</div>
 		</div>
