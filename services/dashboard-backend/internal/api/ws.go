@@ -33,6 +33,8 @@ type Socket interface {
 	WriteMessage(opcode gws.Opcode, payload []byte) error
 }
 
+// logger - logger for the websocket connection.
+// we have to create this struct to pass in zerolog.
 type logger struct{}
 
 func (logger) Error(v ...any) {
@@ -46,6 +48,8 @@ var upgrader = gws.NewUpgrader(&handler{}, &gws.ServerOption{
 	Recovery:         gws.Recovery,
 })
 
+// CreatePayloadFromMessage - creates the payload from the message.
+// If the message contains a prompt request record ID, we create a prompt test record.
 func CreatePayloadFromMessage(
 	ctx context.Context,
 	data *dto.PromptConfigTestDTO,
