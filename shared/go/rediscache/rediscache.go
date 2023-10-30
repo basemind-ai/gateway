@@ -2,9 +2,10 @@ package rediscache
 
 import (
 	"context"
+	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/go-redis/cache/v9"
 	"github.com/redis/go-redis/v9"
-	"github.com/rs/zerolog/log"
 	"sync"
 	"time"
 )
@@ -19,19 +20,15 @@ func SetClient(c *cache.Cache) {
 	client = c
 }
 
-func New(redisURL string) (*cache.Cache, error) {
+func New(redisURL string) *cache.Cache {
 	once.Do(func() {
-		opt, err := redis.ParseURL(redisURL)
-		if err != nil {
-			clientErr = err
-			return
-		}
+		opt := exc.MustResult(redis.ParseURL(redisURL))
 		SetClient(cache.New(&cache.Options{
 			Redis:      redis.NewClient(opt),
 			LocalCache: cache.NewTinyLFU(1000, time.Minute),
 		}))
 	})
-	return client, clientErr
+	return client
 }
 
 func GetClient() *cache.Cache {
@@ -70,8 +67,9 @@ func With[T any](
 
 func Invalidate(ctx context.Context, keys ...string) {
 	for _, key := range keys {
-		if deleteErr := client.Delete(ctx, key); deleteErr != nil {
-			log.Error().Err(deleteErr).Msgf("failed to delete key from cache: %s", key)
-		}
+		exc.LogIfErr(
+			client.Delete(ctx, key),
+			fmt.Sprintf("failed to delete key from cache: %s", key),
+		)
 	}
 }

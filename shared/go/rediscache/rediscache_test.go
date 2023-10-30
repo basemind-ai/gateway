@@ -27,14 +27,13 @@ func TestRedisClient(t *testing.T) {
 
 	t.Run("GetClient does not panic if client is initialized", func(t *testing.T) {
 		assert.NotPanics(t, func() {
-			_, _ = rediscache.New("redis://redis:6379")
+			rediscache.New("redis://redis:6379")
 			rediscache.GetClient()
 		})
 	})
 
 	t.Run("Caches values as expected", func(t *testing.T) {
-		_, err := rediscache.New("redis://redis:6379")
-		assert.Nil(t, err)
+		rediscache.New("redis://redis:6379")
 
 		_, mockRedis := testutils.CreateMockRedisClient(t)
 		client := rediscache.GetClient()

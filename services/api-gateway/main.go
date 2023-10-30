@@ -42,9 +42,7 @@ func main() {
 		log.Fatal().Err(connectorsInitErr).Msg("failed to initialize connectors")
 	}
 
-	if _, cacheClientErr := rediscache.New(cfg.RedisURL); cacheClientErr != nil {
-		log.Fatal().Err(cacheClientErr).Msg("failed to init redis")
-	}
+	rediscache.New(cfg.RedisURL)
 
 	conn, connErr := db.CreateConnection(ctx, cfg.DatabaseURL)
 	if connErr != nil {
