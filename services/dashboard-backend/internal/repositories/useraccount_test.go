@@ -18,11 +18,10 @@ func TestUserAccountRepository(t *testing.T) {
 		t.Run("should return a user account data if it exists", func(t *testing.T) {
 			userAccount, _ := factories.CreateUserAccount(context.TODO())
 
-			retrievedUserAccount, err := repositories.GetOrCreateUserAccount(
+			retrievedUserAccount := repositories.GetOrCreateUserAccount(
 				context.TODO(),
 				userAccount.FirebaseID,
 			)
-			assert.NoError(t, err)
 
 			assert.Equal(
 				t,
@@ -43,8 +42,7 @@ func TestUserAccountRepository(t *testing.T) {
 				},
 			}, nil)
 
-			userAccount, err := repositories.GetOrCreateUserAccount(context.TODO(), "firebase-id")
-			assert.NoError(t, err)
+			userAccount := repositories.GetOrCreateUserAccount(context.TODO(), "firebase-id")
 
 			assert.NotEmpty(t, userAccount.ID)
 			assert.Equal(t, "firebase-id", userAccount.FirebaseID)

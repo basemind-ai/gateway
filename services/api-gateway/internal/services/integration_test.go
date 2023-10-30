@@ -44,7 +44,7 @@ func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 
 	t.Setenv("OPENAI_CONNECTOR_ADDRESS", "")
 
-	initErr := connectors.Init(context.TODO(),
+	connectors.Init(context.TODO(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) {
@@ -52,7 +52,6 @@ func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 			},
 		),
 	)
-	assert.NoError(t, initErr)
 
 	return mockService
 }

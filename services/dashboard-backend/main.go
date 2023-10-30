@@ -41,9 +41,7 @@ func main() {
 	logging.Configure(cfg.Environment != "production")
 
 	// FIXME: this is a temporary work-around for testing
-	if grpcClientErr := ptestingclient.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials())); grpcClientErr != nil {
-		log.Fatal().Err(grpcClientErr).Msg("failed to initialize grpc client")
-	}
+	ptestingclient.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	rediscache.New(cfg.RedisURL)
 

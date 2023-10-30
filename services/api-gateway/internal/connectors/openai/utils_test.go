@@ -153,7 +153,6 @@ func TestUtils(t *testing.T) {
 		modelType := db.ModelTypeGpt35Turbo
 
 		modelParameters := factories.CreateModelParameters()
-
 		promptMessages := factories.CreateOpenAIPromptMessages(
 			systemMessage,
 			userMessage,
@@ -162,7 +161,6 @@ func TestUtils(t *testing.T) {
 
 		userInput := "Please write me a short poem about cheese."
 		templateVariables := map[string]string{"userInput": userInput}
-
 		content := fmt.Sprintf("This is what the user asked for: %s", userInput)
 
 		t.Run("creates a prompt request correctly", func(t *testing.T) {

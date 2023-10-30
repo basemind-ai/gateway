@@ -68,4 +68,18 @@ func TestExcUtils(t *testing.T) {
 			m.AssertNotCalled(t, "Write")
 		})
 	})
+
+	t.Run("ReturnNotNil", func(t *testing.T) {
+		t.Run("should panic if value is nil", func(t *testing.T) {
+			assert.Panics(t, func() {
+				exc.ReturnNotNil[any](nil)
+			})
+		})
+		t.Run("should not panic if value is not nil", func(t *testing.T) {
+			assert.NotPanics(t, func() {
+				v := "value"
+				assert.NotNil(t, exc.ReturnNotNil[string](&v))
+			})
+		})
+	})
 }

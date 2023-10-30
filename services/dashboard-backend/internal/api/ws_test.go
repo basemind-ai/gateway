@@ -88,7 +88,7 @@ func createMockGRPCServer(
 		ptesting.RegisterPromptTestingServiceServer,
 		mockService,
 	)
-	client, clientErr := ptestingclient.New(
+	client := ptestingclient.New(
 		"",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
@@ -97,8 +97,6 @@ func createMockGRPCServer(
 			},
 		),
 	)
-
-	assert.NoError(t, clientErr)
 
 	ptestingclient.SetClient(client)
 	return mockService

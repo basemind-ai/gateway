@@ -9,6 +9,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/rs/zerolog/log"
 	"github.com/sethvargo/go-envconfig"
@@ -43,30 +44,17 @@ type Client struct {
 }
 
 // New - creates a new PromptTesting gRPC client.
-func New(serverAddress string, opts ...grpc.DialOption) (*Client, error) {
-	conn, dialErr := grpc.Dial(serverAddress, opts...)
-	if dialErr != nil {
-		return nil, dialErr
-	}
-
-	client := ptesting.NewPromptTestingServiceClient(conn)
-	log.Info().Msg("initialized PromptTesting client")
-
-	return &Client{client: client}, nil
+func New(serverAddress string, opts ...grpc.DialOption) *Client {
+	conn := exc.MustResult(grpc.Dial(serverAddress, opts...))
+	log.Info().Msg("initialized PromptTesting connection")
+	return &Client{client: ptesting.NewPromptTestingServiceClient(conn)}
 }
 
 // Init - initializes the PromptTesting gRPC client. This function is called once.
-func Init(ctx context.Context, opts ...grpc.DialOption) error {
+func Init(ctx context.Context, opts ...grpc.DialOption) {
 	cfg := &clientConfig{}
-	if envErr := envconfig.Process(ctx, cfg); envErr != nil {
-		return fmt.Errorf("failed to parse env")
-	}
-	c, err := New(cfg.APIGatewayAddress, opts...)
-	if err != nil {
-		return fmt.Errorf("failed to create grpc client")
-	}
-	SetClient(c)
-	return nil
+	exc.Must(envconfig.Process(ctx, cfg), "failed to parse env")
+	SetClient(New(cfg.APIGatewayAddress, opts...))
 }
 
 // StreamPromptTest - streams a prompt test to the PromptTesting gRPC service.

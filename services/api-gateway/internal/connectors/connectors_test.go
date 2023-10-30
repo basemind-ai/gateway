@@ -22,34 +22,32 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 		t.Run("panics when transport security is not set", func(t *testing.T) {
 			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
 
-			err := connectors.Init(
-				context.TODO(),
-			)
-			assert.Error(t, err)
+			assert.Panics(t, func() {
+				connectors.Init(
+					context.TODO(),
+				)
 
-			assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
+				connectors.GetProviderConnector(db.ModelVendorOPENAI)
+			})
 		})
 
 		t.Run("does not panic when initialized", func(t *testing.T) {
 			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
 
-			err := connectors.Init(
+			connectors.Init(
 				context.TODO(),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
-			assert.NoError(t, err)
-
 			assert.NotPanics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
 		})
 
 		t.Run("panics for unknown provider", func(t *testing.T) {
 			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
 
-			err := connectors.Init(
+			connectors.Init(
 				context.TODO(),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
-			assert.NoError(t, err)
 
 			assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendor("unknown")) })
 		})

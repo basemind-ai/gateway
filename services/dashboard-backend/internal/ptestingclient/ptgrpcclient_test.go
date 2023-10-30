@@ -31,7 +31,7 @@ func CreateClientAndService(
 		ptesting.RegisterPromptTestingServiceServer,
 		mockService,
 	)
-	client, clientErr := ptestingclient.New(
+	client := ptestingclient.New(
 		"",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
@@ -41,7 +41,6 @@ func CreateClientAndService(
 		),
 	)
 
-	assert.NoError(t, clientErr)
 	return client, mockService
 }
 
@@ -68,36 +67,34 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 
 	t.Run("New", func(t *testing.T) {
 		t.Run("dials and returns client", func(t *testing.T) {
-			client, err := ptestingclient.New(
+			client := ptestingclient.New(
 				"localhost:50051",
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
-			assert.NoError(t, err)
 			assert.NotNil(t, client)
-		})
-
-		t.Run("returns error if dial fails", func(t *testing.T) {
-			_, err := ptestingclient.New("")
-			assert.Error(t, err)
 		})
 	})
 
 	t.Run("Init", func(t *testing.T) {
 		t.Run("panics if the env is not set", func(t *testing.T) {
-			assert.Error(t,
-				ptestingclient.Init(
-					context.Background(),
-					grpc.WithTransportCredentials(insecure.NewCredentials()),
-				),
+			assert.Panics(t,
+				func() {
+					ptestingclient.Init(
+						context.Background(),
+						grpc.WithTransportCredentials(insecure.NewCredentials()),
+					)
+				},
 			)
 		})
 		t.Run("does not panic if the env is set", func(t *testing.T) {
 			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
-			assert.NoError(t,
-				ptestingclient.Init(
-					context.Background(),
-					grpc.WithTransportCredentials(insecure.NewCredentials()),
-				),
+			assert.NotPanics(t,
+				func() {
+					ptestingclient.Init(
+						context.Background(),
+						grpc.WithTransportCredentials(insecure.NewCredentials()),
+					)
+				},
 			)
 		})
 	})
@@ -105,11 +102,10 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	t.Run("GetClient", func(t *testing.T) {
 		t.Run("does not panic if init is called", func(t *testing.T) {
 			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
-			err := ptestingclient.Init(
+			ptestingclient.Init(
 				context.Background(),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
-			assert.NoError(t, err)
 			assert.NotPanics(t, func() {
 				ptestingclient.GetClient()
 			})

@@ -9,19 +9,13 @@ import (
 )
 
 // GetOrCreateUserAccount - return an existing user account or create a new user account.
-func GetOrCreateUserAccount(ctx context.Context, firebaseID string) (*db.UserAccount, error) {
+func GetOrCreateUserAccount(ctx context.Context, firebaseID string) *db.UserAccount {
 	existingUser, queryErr := db.GetQueries().RetrieveUserAccountByFirebaseID(ctx, firebaseID)
-
 	if queryErr == nil {
-		return &existingUser, nil
+		return &existingUser
 	}
 
-	firebaseAuth := firebaseutils.GetFirebaseAuth(ctx)
-	userRecord, userRecordErr := firebaseAuth.GetUser(ctx, firebaseID)
-	if userRecordErr != nil {
-		return nil, fmt.Errorf("failed to retrieve user record: %w", userRecordErr)
-	}
-
+	userRecord := exc.MustResult(firebaseutils.GetFirebaseAuth(ctx).GetUser(ctx, firebaseID))
 	createdUser := exc.MustResult(db.GetQueries().CreateUserAccount(ctx, db.CreateUserAccountParams{
 		DisplayName: userRecord.DisplayName,
 		Email:       userRecord.Email,
@@ -30,7 +24,7 @@ func GetOrCreateUserAccount(ctx context.Context, firebaseID string) (*db.UserAcc
 		PhotoUrl:    userRecord.PhotoURL,
 	}))
 
-	return &createdUser, nil
+	return &createdUser
 }
 
 // DeleteUserAccount - hard deletes a user account and expunges it from firebase - conforming with GDPR.

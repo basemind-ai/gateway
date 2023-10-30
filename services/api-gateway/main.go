@@ -38,9 +38,7 @@ func main() {
 	logging.Configure(cfg.Environment != "production")
 
 	// FIXME: this is a temporary work-around for testing
-	if connectorsInitErr := connectors.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials())); connectorsInitErr != nil {
-		log.Fatal().Err(connectorsInitErr).Msg("failed to initialize connectors")
-	}
+	connectors.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	rediscache.New(cfg.RedisURL)
 

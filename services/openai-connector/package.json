@@ -11,10 +11,10 @@
 		"dev": "webpack --watch"
 	},
 	"dependencies": {
-		"@grpc/grpc-js": "^1.9.8",
+		"@grpc/grpc-js": "^1.9.9",
 		"@protobuf-ts/runtime": "^2.9.1",
 		"@protobuf-ts/runtime-rpc": "^2.9.1",
-		"openai": "^4.14.1",
+		"openai": "^4.14.2",
 		"pino": "^8.16.1"
 	}
 }

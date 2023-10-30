@@ -75,15 +75,10 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		userAccount, retrieveUserAccountErr := repositories.GetOrCreateUserAccount(
+		userAccount := repositories.GetOrCreateUserAccount(
 			r.Context(),
 			firebaseID,
 		)
-		if retrieveUserAccountErr != nil {
-			log.Error().Err(retrieveUserAccountErr).Msg("failed to retrieve user account")
-			apierror.InternalServerError("failed to get or create user account").Render(w)
-			return
-		}
 
 		ctx := context.WithValue(r.Context(), UserAccountContextKey, userAccount)
 		next.ServeHTTP(w, r.WithContext(ctx))

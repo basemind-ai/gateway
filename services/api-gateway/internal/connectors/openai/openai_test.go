@@ -5,7 +5,6 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
-	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"
@@ -26,7 +25,7 @@ func CreateClientAndService(t *testing.T) (*openai.Client, *testutils.MockOpenAI
 		openaiconnector.RegisterOpenAIServiceServer,
 		mockService,
 	)
-	client, clientErr := openai.New(
+	client := openai.New(
 		"",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
@@ -36,6 +35,5 @@ func CreateClientAndService(t *testing.T) (*openai.Client, *testutils.MockOpenAI
 		),
 	)
 
-	assert.NoError(t, clientErr)
 	return client, mockService
 }

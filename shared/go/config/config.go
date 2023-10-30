@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/sethvargo/go-envconfig"
 	"sync"
 )
@@ -28,10 +29,7 @@ var (
 func Get(ctx context.Context) *Config {
 	once.Do(func() {
 		config = &Config{}
-		if err := envconfig.Process(ctx, config); err != nil {
-			panic(err)
-		}
+		exc.Must(envconfig.Process(ctx, config))
 	})
-
 	return config
 }

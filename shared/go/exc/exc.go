@@ -1,6 +1,7 @@
 package exc
 
 import (
+	"errors"
 	"github.com/rs/zerolog/log"
 	"strings"
 )
@@ -27,4 +28,12 @@ func LogIfErr(err error, messages ...string) {
 	if err != nil {
 		log.Error().Err(err).Msg(strings.Join(messages, " "))
 	}
+}
+
+// ReturnNotNil - panics if the value is nil, otherwise returns the value.
+func ReturnNotNil[T any](value *T, messages ...string) *T {
+	if value == nil {
+		panic(errors.New(strings.Join(messages, " ")))
+	}
+	return value
 }

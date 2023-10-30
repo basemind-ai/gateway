@@ -2,10 +2,10 @@ package connectors
 
 import (
 	"context"
-	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/sethvargo/go-envconfig"
 	"google.golang.org/grpc"
 )
@@ -18,6 +18,7 @@ type connectorConfig struct {
 	OpenAIConnectorAddress string `env:"OPENAI_CONNECTOR_ADDRESS,required"`
 }
 
+// ProviderConnector - an interface that must be implemented by all connectors.
 type ProviderConnector interface {
 	RequestPrompt(
 		ctx context.Context,
@@ -32,29 +33,22 @@ type ProviderConnector interface {
 	)
 }
 
-func Init(ctx context.Context, opts ...grpc.DialOption) error {
+// Init - initializes the connectors. This function is called once.
+func Init(ctx context.Context, opts ...grpc.DialOption) {
 	config := &connectorConfig{}
-	if envErr := envconfig.Process(ctx, config); envErr != nil {
-		return fmt.Errorf("failed to process environment variables: %w", envErr)
-	}
-
-	openaiClient, openaiClientErr := openai.New(config.OpenAIConnectorAddress, opts...)
-	if openaiClientErr != nil {
-		return fmt.Errorf("failed to create openai client: %w", openaiClientErr)
-	}
-
-	openaiConnectorClient = openaiClient
-
-	return nil
+	exc.Must(envconfig.Process(ctx, config), "failed to process environment variables")
+	openaiConnectorClient = openai.New(config.OpenAIConnectorAddress, opts...)
 }
 
+// GetProviderConnector - returns the connector for the given provider.
+// Panics if the provider is not supported.
 func GetProviderConnector(provider db.ModelVendor) ProviderConnector {
 	switch provider {
 	case db.ModelVendorOPENAI:
-		if openaiConnectorClient == nil {
-			panic("OpenAI Connector Client was not initialized")
-		}
-		return openaiConnectorClient
+		return exc.ReturnNotNil(
+			openaiConnectorClient,
+			"OpenAI Connector Client was not initialized",
+		)
 	default:
 		panic("Unknown provider")
 	}
