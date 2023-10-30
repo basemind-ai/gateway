@@ -6,7 +6,6 @@ import {
 	renderHook,
 	routerReplaceMock,
 } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import { DeleteAccountView } from '@/components/settings/delete-account-view';

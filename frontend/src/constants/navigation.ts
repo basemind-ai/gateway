@@ -1,11 +1,11 @@
 export enum Navigation {
-	Api = '/projects/:projectId/api',
+	API = '/projects/:projectId/api',
 	Applications = '/projects/:projectId/applications/:applicationId',
 	Base = '/',
 	Billing = '/projects/:projectId/billing',
 	CreateProject = '/projects/create',
 	Overview = '/projects/:projectId',
-	PP = '/privacy-policy',
+	PrivacyPolicy = '/privacy-policy',
 	Projects = '/projects',
 	Prompt = '/projects/:projectId/prompt',
 	Settings = '/projects/:projectId/settings',
@@ -14,5 +14,4 @@ export enum Navigation {
 	TOS = '/terms-of-service',
 }
 export const DISCORD_INVITE_LINK = 'https://discord.gg/Urxchkcq';
-
 export const SUPPORT_EMAIL = 'support@basemind.ai';

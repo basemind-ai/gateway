@@ -54,7 +54,7 @@ export const firebaseUIConfig = {
 	popupMode: true,
 	siteName: 'BaseMind',
 	tosUrl: Navigation.TOS,
-	privacyPolicyUrl: Navigation.PP,
+	privacyPolicyUrl: Navigation.PrivacyPolicy,
 	signInOptions: [
 		GithubAuthProvider.PROVIDER_ID,
 		GoogleAuthProvider.PROVIDER_ID,

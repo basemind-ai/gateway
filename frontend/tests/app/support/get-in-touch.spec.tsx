@@ -2,7 +2,6 @@ import { fireEvent } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { routerPushMock } from 'tests/mocks';
 import { render, renderHook, screen } from 'tests/test-utils';
-import { describe } from 'vitest';
 
 import { GetInTouch } from '@/components/support/get-in-touch';
 import { DISCORD_INVITE_LINK } from '@/constants';

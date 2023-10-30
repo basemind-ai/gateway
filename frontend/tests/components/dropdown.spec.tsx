@@ -1,6 +1,5 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
-import { describe } from 'vitest';
 
 import { Dropdown } from '@/components/dropdown';
 

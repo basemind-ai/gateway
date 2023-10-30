@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { render, renderHook } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { UserDetails } from '@/components/settings/user-details';
 

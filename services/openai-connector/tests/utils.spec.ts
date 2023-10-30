@@ -3,7 +3,6 @@ import {
 	OpenAIModel,
 	OpenAIPromptRequest,
 } from 'gen/openai/v1/openai';
-import { expect } from 'vitest';
 
 import {
 	createOpenAIRequest,
