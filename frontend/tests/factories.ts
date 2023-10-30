@@ -4,13 +4,13 @@ import { TypeFactory } from 'interface-forge';
 
 import {
 	AccessPermission,
+	APIKey,
 	Application,
 	ModelVendor,
 	OpenAIPromptMessage,
 	Project,
 	ProjectUserAccount,
 	PromptConfig,
-	Token,
 } from '@/types';
 
 export const UserFactory = new TypeFactory<UserInfo>(() => ({
@@ -55,14 +55,14 @@ export const PromptConfigFactory = new TypeFactory<PromptConfig>(() => ({
 	modelParameters: {},
 	modelVendor: ModelVendor.OpenAI,
 	modelType: TypeFactory.sample(Object.values(ModelVendor)),
-	providerPromptMessages: OpenAIPromptMessageFactory.batch(3),
+	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),
 	expectedTemplateVariables: [],
 	isDefault: false,
 	createdAt: faker.date.past().toISOString(),
 	updatedAt: faker.date.past().toISOString(),
 }));
 
-export const TokenFactory = new TypeFactory<Token>(() => ({
+export const APIKeyFactory = new TypeFactory<APIKey>(() => ({
 	id: faker.string.uuid(),
 	hash: faker.string.uuid(),
 	name: faker.lorem.words(),

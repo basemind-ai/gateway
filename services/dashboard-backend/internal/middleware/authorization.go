@@ -43,12 +43,12 @@ func AuthorizationMiddleware(
 					})
 
 				if retrievalErr != nil {
-					apierror.Forbidden("user does not have access to this project").Render(w, r)
+					apierror.Forbidden("user does not have access to this project").Render(w)
 					return
 				}
 
 				if !slices.Contains(permissions, userProject.Permission) {
-					apierror.Unauthorized("insufficient permissions").Render(w, r)
+					apierror.Unauthorized("insufficient permissions").Render(w)
 				}
 
 				ctx = context.WithValue(r.Context(), UserProjectContextKey, userProject)

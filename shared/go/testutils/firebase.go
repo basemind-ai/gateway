@@ -28,6 +28,15 @@ func (m *FirebaseAuthMock) GetUser(
 	return args.Get(0).(*auth.UserRecord), args.Error(1)
 }
 
+func (m *FirebaseAuthMock) DeleteUser(
+	ctx context.Context,
+	firebaseID string,
+) error {
+	args := m.Called(ctx, firebaseID)
+
+	return args.Error(0)
+}
+
 func MockFirebaseAuth(t *testing.T) *FirebaseAuthMock {
 	t.Helper()
 

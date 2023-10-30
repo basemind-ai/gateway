@@ -1,14 +1,15 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
-import { TokenFactory } from 'tests/factories';
+import { APIKeyFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
-import { beforeEach, describe, expect } from 'vitest';
 
-import * as TokenAPI from '@/api/tokens-api';
-import { CreateApiKey } from '@/app/projects/[projectId]/applications/[applicationId]/page';
+import * as APIKeyAPI from '@/api/api-keys-api';
+import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
+import { ApiError } from '@/errors';
+import { ToastType } from '@/stores/toast-store';
 
 describe('CreateApiKey tests', () => {
-	const handleCreateTokenSpy = vi.spyOn(TokenAPI, 'handleCreateToken');
+	const handleCreateAPIKeySpy = vi.spyOn(APIKeyAPI, 'handleCreateAPIKey');
 	const projectId = '1';
 	const applicationId = '1';
 	const onSubmit = vi.fn();
@@ -28,14 +29,14 @@ describe('CreateApiKey tests', () => {
 			/>,
 		);
 
-		const title = screen.getByTestId('create-token-title');
+		const title = screen.getByTestId('create-api-key-title');
 		expect(title).toBeInTheDocument();
 
-		const nameInput = screen.getByTestId('create-token-input');
+		const nameInput = screen.getByTestId('create-api-key-input');
 		expect(nameInput).toBeInTheDocument();
 	});
 
-	it('enabled submit only on valid token name', () => {
+	it('enabled submit only on valid API key name', () => {
 		render(
 			<CreateApiKey
 				projectId={projectId}
@@ -46,20 +47,19 @@ describe('CreateApiKey tests', () => {
 		);
 
 		const submitButton = screen.getByTestId<HTMLButtonElement>(
-			'create-token-submit-btn',
+			'create-api-key-submit-btn',
 		);
 		expect(submitButton.disabled).toBe(true);
 
-		const tokenNameInput = screen.getByTestId('create-token-input');
-		// Invalid name
-		fireEvent.change(tokenNameInput, {
+		const apiKeyNameInput = screen.getByTestId('create-api-key-input');
+
+		fireEvent.change(apiKeyNameInput, {
 			target: { value: 'i' },
 		});
 		expect(submitButton.disabled).toBe(true);
 
-		// valid name
-		fireEvent.change(tokenNameInput, {
-			target: { value: 'New Token' },
+		fireEvent.change(apiKeyNameInput, {
+			target: { value: 'New APIKey' },
 		});
 		expect(submitButton.disabled).toBe(false);
 	});
@@ -75,13 +75,13 @@ describe('CreateApiKey tests', () => {
 		);
 
 		const closeButton = screen.getByTestId<HTMLButtonElement>(
-			'create-token-close-btn',
+			'create-api-key-close-btn',
 		);
 		fireEvent.click(closeButton);
 		expect(onCancel).toHaveBeenCalledOnce();
 	});
 
-	it('creates a token and calls on submit call when closed', async () => {
+	it('creates a apiKey and calls on submit call when closed', async () => {
 		render(
 			<CreateApiKey
 				projectId={projectId}
@@ -91,26 +91,56 @@ describe('CreateApiKey tests', () => {
 			/>,
 		);
 
-		const tokenNameInput = screen.getByTestId('create-token-input');
-		fireEvent.change(tokenNameInput, {
-			target: { value: 'New Token' },
+		const apiKeyNameInput = screen.getByTestId('create-api-key-input');
+		fireEvent.change(apiKeyNameInput, {
+			target: { value: 'New APIKey' },
 		});
 
-		const token = { ...(await TokenFactory.build()), hash: 'randomHash' };
-		handleCreateTokenSpy.mockResolvedValueOnce(token);
+		const apiKey = { ...(await APIKeyFactory.build()), hash: 'randomHash' };
+		handleCreateAPIKeySpy.mockResolvedValueOnce(apiKey);
 
 		const submitButton = screen.getByTestId<HTMLButtonElement>(
-			'create-token-submit-btn',
+			'create-api-key-submit-btn',
 		);
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
-			const hashInput = screen.getByTestId('create-token-hash-input');
+			const hashInput = screen.getByTestId('create-api-key-hash-input');
 			expect(hashInput).toBeInTheDocument();
 		});
 
-		const closeBtn = screen.getByTestId('create-token-close-btn');
+		const closeBtn = screen.getByTestId('create-api-key-close-btn');
 		fireEvent.click(closeBtn);
 		expect(onSubmit).toHaveBeenCalledOnce();
+	});
+
+	it('shows an error when unable to create API key', async () => {
+		render(
+			<CreateApiKey
+				projectId={projectId}
+				applicationId={applicationId}
+				onSubmit={onSubmit}
+				onCancel={onCancel}
+			/>,
+		);
+
+		const apiKeyNameInput = screen.getByTestId('create-api-key-input');
+		fireEvent.change(apiKeyNameInput, {
+			target: { value: 'New APIKey' },
+		});
+
+		handleCreateAPIKeySpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to create an API key', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+		const submitButton = screen.getByTestId<HTMLButtonElement>(
+			'create-api-key-submit-btn',
+		);
+		fireEvent.click(submitButton);
+
+		const errorToast = screen.getByText('unable to create an API key');
+		expect(errorToast.className).toContain(ToastType.ERROR);
 	});
 });

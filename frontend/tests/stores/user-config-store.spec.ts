@@ -1,5 +1,4 @@
 import { act, renderHook } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { DateFormat } from '@/constants';
 import { useDateFormat, useSetDateFormat } from '@/stores/user-config-store';

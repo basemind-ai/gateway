@@ -1,20 +1,20 @@
-import { ProjectFactory } from 'tests/factories';
+import { fireEvent } from '@testing-library/react';
+import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
-import * as ProjectAPI from '@/api/projects-api';
+import * as ProjectUsersAPI from '@/api/project-users-api';
 import ProjectOverview from '@/app/projects/[projectId]/page';
 import { useSetProjects } from '@/stores/project-store';
 
 describe('ProjectOverview', () => {
-	const handleProjectAnalyticsSpy = vi.spyOn(
-		ProjectAPI,
-		'handleProjectAnalytics',
-	);
 	const handleRetrieveApplicationsSpy = vi.spyOn(
 		ApplicationAPI,
 		'handleRetrieveApplications',
+	);
+	const handleRetrieveProjectUsersSpy = vi.spyOn(
+		ProjectUsersAPI,
+		'handleRetrieveProjectUsers',
 	);
 
 	it('renders null when project is not present', () => {
@@ -24,7 +24,7 @@ describe('ProjectOverview', () => {
 		const projects = ProjectFactory.batchSync(1);
 		setProjects(projects);
 
-		const { container } = render(
+		render(
 			<ProjectOverview
 				params={{
 					projectId: '4343',
@@ -32,7 +32,8 @@ describe('ProjectOverview', () => {
 			/>,
 		);
 
-		expect(container).toBeEmptyDOMElement();
+		const container = screen.queryByTestId('project-page');
+		expect(container).not.toBeInTheDocument();
 	});
 
 	it('renders all 4 screens in tab navigation', async () => {
@@ -41,11 +42,6 @@ describe('ProjectOverview', () => {
 		} = renderHook(useSetProjects);
 		const projects = await ProjectFactory.batch(1);
 		setProjects(projects);
-
-		handleProjectAnalyticsSpy.mockResolvedValueOnce({
-			totalAPICalls: 2,
-			modelsCost: 2,
-		});
 		handleRetrieveApplicationsSpy.mockReturnValueOnce(Promise.resolve([]));
 
 		render(
@@ -69,8 +65,31 @@ describe('ProjectOverview', () => {
 		);
 		expect(applicationList).toBeInTheDocument();
 
-		// const [, membersTab, billingTab, settingsTab] =
-		// 	screen.getAllByTestId('tab-navigation-btn');
-		// 	TODO: Handle other screens as they are made
+		const [, membersTab, billingTab, settingsTab] =
+			screen.getAllByTestId('tab-navigation-btn');
+
+		// 	Renders members
+		const projectUsers = ProjectUserAccountFactory.batchSync(1);
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
+		fireEvent.click(membersTab);
+		const inviteMember = screen.getByTestId('project-invite-member');
+		expect(inviteMember).toBeInTheDocument();
+		const projectMembers = screen.getByTestId('project-members-container');
+		expect(projectMembers).toBeInTheDocument();
+
+		// 	Renders billing
+		// TODO: Update this after billing screen is made
+		fireEvent.click(billingTab);
+
+		// 	Renders Settings
+		fireEvent.click(settingsTab);
+		const generalSettings = screen.getByTestId(
+			'project-general-settings-container',
+		);
+		expect(generalSettings).toBeInTheDocument();
+		const projectDeletion = screen.getByTestId(
+			'project-deletion-container',
+		);
+		expect(projectDeletion).toBeInTheDocument();
 	});
 });

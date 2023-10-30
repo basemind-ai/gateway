@@ -135,7 +135,7 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Get("/", handleRetrieveApplicationAnalytics)
 		})
 
-		router.Route(ApplicationTokensListEndpoint, func(subRouter chi.Router) {
+		router.Route(ApplicationAPIKeysListEndpoint, func(subRouter chi.Router) {
 			subRouter.Use(
 				middleware.PathParameterMiddleware("projectId", "applicationId"),
 			)
@@ -147,13 +147,13 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Get("/", handleRetrieveApplicationTokens)
-			subRouter.Post("/", handleCreateApplicationToken)
+			subRouter.Get("/", handleRetrieveApplicationAPIKeys)
+			subRouter.Post("/", handleCreateApplicationAPIKey)
 		})
 
-		router.Route(ApplicationTokenDetailEndpoint, func(subRouter chi.Router) {
+		router.Route(ApplicationAPIKeyDetailEndpoint, func(subRouter chi.Router) {
 			subRouter.Use(
-				middleware.PathParameterMiddleware("projectId", "applicationId", "tokenId"),
+				middleware.PathParameterMiddleware("projectId", "applicationId", "apiKeyId"),
 			)
 			subRouter.Use(
 				middleware.AuthorizationMiddleware(
@@ -162,7 +162,7 @@ func RegisterHandlers(mux *chi.Mux) {
 					},
 				),
 			)
-			subRouter.Delete("/", handleDeleteApplicationToken)
+			subRouter.Delete("/", handleDeleteApplicationAPIKey)
 		})
 
 		router.Route(PromptConfigListEndpoint, func(subRouter chi.Router) {
@@ -236,6 +236,9 @@ func RegisterHandlers(mux *chi.Mux) {
 
 			// we are mounting the websocket here instead of using a regular route because we need chi to pass control.
 			subRouter.Mount("/", http.HandlerFunc(promptTestingWebsocketHandler))
+		})
+		router.Route(UserAccountDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Delete("/", handleDeleteUserAccount)
 		})
 	})
 }

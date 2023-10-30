@@ -41,12 +41,12 @@ func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, er
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", subErr)
 	}
 
-	tokenID, parseErr := db.StringToUUID(sub)
+	apiKeyID, parseErr := db.StringToUUID(sub)
 	if parseErr != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "failed to parse token id: %v", parseErr)
 	}
 
-	applicationID, retrieveErr := db.GetQueries().RetrieveApplicationIDForToken(ctx, *tokenID)
+	applicationID, retrieveErr := db.GetQueries().RetrieveApplicationIDForAPIKey(ctx, *apiKeyID)
 	if retrieveErr != nil {
 		return nil, status.Errorf(
 			codes.Unauthenticated,

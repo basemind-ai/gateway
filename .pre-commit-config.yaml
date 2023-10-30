@@ -36,7 +36,7 @@ repos:
             args: [--fix]
             exclude: 'gen/ts'
     - repo: https://github.com/golangci/golangci-lint
-      rev: 'v1.55.0'
+      rev: 'v1.55.1'
       hooks:
           - id: golangci-lint
             args: ['--timeout', '3m0s']
@@ -46,12 +46,16 @@ repos:
       hooks:
           - id: golines
     - repo: https://github.com/bufbuild/buf
-      rev: v1.27.1
+      rev: v1.27.2
       hooks:
           - id: buf-format
           - id: buf-lint
     - repo: https://github.com/sqlfluff/sqlfluff
-      rev: 2.3.4
+      rev: 2.3.5
       hooks:
           - id: sqlfluff-fix
             exclude: 'sql/migrations'
+    - repo: https://github.com/aquasecurity/tfsec
+      rev: v1.28.4
+      hooks:
+          - id: tfsec

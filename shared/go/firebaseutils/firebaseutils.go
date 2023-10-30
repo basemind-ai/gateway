@@ -13,6 +13,7 @@ import (
 type FirebaseAuth interface {
 	VerifyIDToken(ctx context.Context, idToken string) (*auth.Token, error)
 	GetUser(ctx context.Context, uid string) (*auth.UserRecord, error)
+	DeleteUser(ctx context.Context, uid string) error
 }
 
 var (
@@ -23,14 +24,14 @@ var (
 func GetFirebaseAuth(ctx context.Context) FirebaseAuth {
 	once.Do(func() {
 		app, appInitErr := firebase.NewApp(ctx, nil)
-		if appInitErr != nil {
+		if appInitErr != nil { // skipcq: TCV-001
 			log.Fatal().
 				Err(fmt.Errorf("error initializing firebase app: %w", appInitErr)).
 				Msg("error initializing firebase app")
 		}
 
 		authInstance, authInitErr := app.Auth(ctx)
-		if authInitErr != nil {
+		if authInitErr != nil { // skipcq: TCV-001
 			log.Fatal().
 				Err(fmt.Errorf("error initializing firebase auth: %w", authInitErr)).
 				Msg("error initializing firebase auth")

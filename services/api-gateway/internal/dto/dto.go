@@ -20,4 +20,6 @@ type RequestConfigurationDTO struct {
 	PromptConfigID pgtype.UUID `json:"promptConfigId,omitempty"`
 	// PromptConfigData the prompt config DB record
 	PromptConfigData datatypes.PromptConfigDTO `json:"promptConfigDTO"`
+	// ProviderModelPricing is the pricing information for the model vendor
+	ProviderModelPricing datatypes.ProviderModelPricingDTO `json:"providerModelPricing"`
 }

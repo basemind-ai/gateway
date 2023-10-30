@@ -82,16 +82,16 @@ export type PromptConfigCreateBody<P = any, M = any> = Pick<
 
 export type PromptConfigUpdateBody = Partial<PromptConfigCreateBody>;
 
-// Token
+// APIKey
 
-export interface Token {
+export interface APIKey {
 	id: string;
 	hash?: string;
 	name: string;
 	createdAt: string;
 }
 
-export type TokenCreateBody = Pick<Token, 'name'>;
+export type APIKeyCreateBody = Pick<APIKey, 'name'>;
 
 // Provider Message Types
 

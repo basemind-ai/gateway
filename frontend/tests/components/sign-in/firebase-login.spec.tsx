@@ -79,13 +79,9 @@ describe('FirebaseLogin tests', () => {
 
 		const authHeader = screen.getByText(signinLocales.authHeader);
 		const authSubtitle = screen.getByText(signinLocales.authSubtitle);
-		const authSubtitleLarger = screen.getByText(
-			signinLocales.authSubtitleLarger,
-		);
 
 		expect(authHeader).toBeInTheDocument();
 		expect(authSubtitle).toBeInTheDocument();
-		expect(authSubtitleLarger).toBeInTheDocument();
 	});
 
 	it('redirects to projects after user is logged in', async () => {
@@ -125,5 +121,41 @@ describe('FirebaseLogin tests', () => {
 		expect(loader).toBeInTheDocument();
 
 		expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);
+	});
+
+	it('should add m-8 class', async () => {
+		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
+			return {
+				currentUser: null,
+			};
+		});
+
+		const authGetInstanceMock = vi.fn(
+			(element: string | Element, config: firebaseui.auth.Config) => {
+				expect(element).toBe('#firebaseui-auth-container');
+
+				if (config.callbacks?.uiShown) {
+					config.callbacks.uiShown();
+				}
+			},
+		);
+		vi.doMock('firebaseui', () => ({
+			auth: {
+				AuthUI: {
+					getInstance: () => ({ start: authGetInstanceMock }),
+				},
+			},
+		}));
+
+		const addClassMock = vi.fn();
+		const mockElement = { classList: { add: addClassMock } };
+
+		vi.spyOn(document, 'querySelector').mockReturnValue(mockElement as any);
+
+		render(<FirebaseLogin />);
+
+		await waitFor(() => {
+			expect(addClassMock).toHaveBeenCalledWith('m-8');
+		});
 	});
 });

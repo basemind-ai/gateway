@@ -1,38 +1,41 @@
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Activity, Cash } from 'react-bootstrap-icons';
 import { DateValueType } from 'react-tailwindcss-datepicker';
+import useSWR from 'swr';
 
 import { handleProjectAnalytics } from '@/api';
 import { DataCard } from '@/components/dashboard/data-card';
 import { DatePicker } from '@/components/dashboard/date-picker';
+import { ApiError } from '@/errors';
+import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
-import { ProjectAnalytics } from '@/types';
 
 export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	const t = useTranslations('projectOverview');
 	const dateFormat = useDateFormat();
+	const showError = useShowError();
 
 	const oneWeekAgo = new Date();
 	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
 	const [dateRange, setDateRange] = useState<DateValueType>({
 		startDate: oneWeekAgo,
 		endDate: new Date(),
 	});
 
-	const [analytics, setAnalytics] = useState<ProjectAnalytics | null>(null);
-
-	useEffect(() => {
-		(async () => {
-			const applicationAnalytics = await handleProjectAnalytics({
-				projectId,
-				fromDate: dateRange?.startDate,
-				toDate: dateRange?.endDate,
-			});
-			setAnalytics(applicationAnalytics);
-		})();
-	}, [dateRange]);
+	const { data: analytics, isLoading } = useSWR(
+		{
+			projectId,
+			fromDate: dateRange?.startDate,
+			toDate: dateRange?.endDate,
+		},
+		handleProjectAnalytics,
+		{
+			onError({ message }: ApiError) {
+				showError(message);
+			},
+		},
+	);
 
 	return (
 		<div data-testid="project-analytics-container">
@@ -48,13 +51,14 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="mt-3.5 rounded-3xl w-full flex items-center justify-between bg-base-200 py-8 px-32">
+			<div className="flex items-center justify-between custom-card">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}
 					totalValue={analytics?.totalAPICalls ?? ''}
 					percentage={'100'}
 					currentValue={'324'}
+					loading={isLoading}
 				/>
 				<div className="w-px h-12 bg-gray-200 mx-4" />
 				<DataCard
@@ -63,6 +67,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					totalValue={`${analytics?.modelsCost ?? ''}$`}
 					percentage={'103'}
 					currentValue={'3.3'}
+					loading={isLoading}
 				/>
 			</div>
 		</div>

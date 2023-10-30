@@ -1,6 +1,5 @@
 import { fireEvent } from '@testing-library/react';
 import { render, screen } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
 
 import {
 	ResourceDeletionBanner,

@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"net/http"
 	"strings"
 	"time"
@@ -25,13 +26,13 @@ func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	createPromptConfigDTO := dto.PromptConfigCreateDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &createPromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validateErr := validate.Struct(&createPromptConfigDTO); validateErr != nil {
 		log.Error().Err(validateErr).Msg("invalid request")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
@@ -51,12 +52,12 @@ func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 				"prompt config with the name '%s' already exists for the given application",
 				createPromptConfigDTO.Name,
 			)
-			apierror.BadRequest(msg).Render(w, r)
+			apierror.BadRequest(msg).Render(w)
 			return
 		}
-		log.Error().Err(createErr).Msg("failed to create prompt config")
 
-		apierror.InternalServerError().Render(w, r)
+		log.Error().Err(createErr).Msg("failed to create prompt config")
+		apierror.InternalServerError().Render(w)
 		return
 	}
 
@@ -67,15 +68,9 @@ func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 func handleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	promptConfigs, retrivalErr := db.
+	promptConfigs := exc.MustResult(db.
 		GetQueries().
-		RetrievePromptConfigs(r.Context(), applicationID)
-
-	if retrivalErr != nil {
-		log.Error().Err(retrivalErr).Msg("failed to retrieve prompt configs")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+		RetrievePromptConfigs(r.Context(), applicationID))
 
 	serialization.RenderJSONResponse(w, http.StatusOK, promptConfigs)
 }
@@ -85,13 +80,13 @@ func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	updatePromptConfigDTO := &dto.PromptConfigUpdateDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, updatePromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validateErr := validate.Struct(updatePromptConfigDTO); validateErr != nil {
 		log.Error().Err(validateErr).Msg("invalid request")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
@@ -109,11 +104,11 @@ func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 				"prompt config with the name '%s' already exists for the given application",
 				*updatePromptConfigDTO.Name,
 			)
-			apierror.BadRequest(msg).Render(w, r)
+			apierror.BadRequest(msg).Render(w)
 			return
 		}
 
-		apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w)
 		return
 	}
 
@@ -137,12 +132,12 @@ func handleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Requ
 			"is already the default",
 		) {
 			log.Debug().Err(updateErr).Msg("already default")
-			apierror.BadRequest(updateErr.Error()).Render(w, r)
+			apierror.BadRequest(updateErr.Error()).Render(w)
 			return
 		}
 		log.Error().Err(updateErr).Msg("failed to create prompt config")
 
-		apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w)
 		return
 	}
 
@@ -160,20 +155,16 @@ func handleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 
 	if retrievePromptConfigErr != nil {
 		log.Error().Err(retrievePromptConfigErr).Msg("failed to retrieve prompt config")
-		apierror.BadRequest("prompt config with the given ID does not exist").Render(w, r)
+		apierror.BadRequest("prompt config with the given ID does not exist").Render(w)
 		return
 	}
 
 	if promptConfig.IsDefault {
-		apierror.BadRequest("cannot delete the default prompt config").Render(w, r)
+		apierror.BadRequest("cannot delete the default prompt config").Render(w)
 		return
 	}
 
-	if deleteErr := repositories.DeletePromptConfig(r.Context(), applicationID, promptConfigID); deleteErr != nil {
-		log.Error().Err(deleteErr).Msg("failed to delete prompt config")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	exc.Must(repositories.DeletePromptConfig(r.Context(), applicationID, promptConfigID))
 
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -185,17 +176,12 @@ func handlePromptConfigAnalytics(w http.ResponseWriter, r *http.Request) {
 	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())
 	fromDate := timeutils.ParseDate(r.URL.Query().Get("fromDate"), timeutils.GetFirstDayOfMonth())
 
-	promptConfigAnalytics, repositoryErr := repositories.GetPromptConfigAnalyticsByDateRange(
+	promptConfigAnalytics := repositories.GetPromptConfigAnalyticsByDateRange(
 		r.Context(),
 		promptConfigID,
 		fromDate,
 		toDate,
 	)
-	if repositoryErr != nil {
-		log.Error().Err(repositoryErr).Msg("failed to retrieve prompt config analytics")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
 
 	w.WriteHeader(http.StatusOK)
 	serialization.RenderJSONResponse(w, http.StatusOK, promptConfigAnalytics)

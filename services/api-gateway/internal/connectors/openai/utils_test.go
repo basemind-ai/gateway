@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
@@ -133,37 +135,37 @@ func TestUtils(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
+		floatValue := float32(1)
+		uintValue := uint32(1)
+
+		expectedModelParameters := &openaiconnector.OpenAIModelParameters{
+			Temperature:      &floatValue,
+			TopP:             &floatValue,
+			MaxTokens:        &uintValue,
+			PresencePenalty:  &floatValue,
+			FrequencyPenalty: &floatValue,
+		}
+
+		systemMessage := "You are a helpful chat bot."
+		userMessage := "This is what the user asked for: {userInput}"
+		expectedTemplateVariables := []string{"userInput"}
+		applicationID := db.UUIDToString(&application.ID)
+		modelType := db.ModelTypeGpt35Turbo
+
+		modelParameters := factories.CreateModelParameters()
+
+		promptMessages := factories.CreateOpenAIPromptMessages(
+			systemMessage,
+			userMessage,
+			&expectedTemplateVariables,
+		)
+
+		userInput := "Please write me a short poem about cheese."
+		templateVariables := map[string]string{"userInput": userInput}
+
+		content := fmt.Sprintf("This is what the user asked for: %s", userInput)
+
 		t.Run("creates a prompt request correctly", func(t *testing.T) {
-			floatValue := float32(1)
-			uintValue := uint32(1)
-
-			expectedModelParameters := &openaiconnector.OpenAIModelParameters{
-				Temperature:      &floatValue,
-				TopP:             &floatValue,
-				MaxTokens:        &uintValue,
-				PresencePenalty:  &floatValue,
-				FrequencyPenalty: &floatValue,
-			}
-
-			systemMessage := "You are a helpful chat bot."
-			userMessage := "This is what the user asked for: {userInput}"
-			expectedTemplateVariables := []string{"userInput"}
-			applicationID := db.UUIDToString(&application.ID)
-			modelType := db.ModelTypeGpt35Turbo
-
-			modelParameters, _ := factories.CreateModelParameters()
-
-			promptMessages, _ := factories.CreateOpenAIPromptMessages(
-				systemMessage,
-				userMessage,
-				&expectedTemplateVariables,
-			)
-
-			userInput := "Please write me a short poem about cheese."
-			templateVariables := map[string]string{"userInput": userInput}
-
-			content := fmt.Sprintf("This is what the user asked for: %s", userInput)
-
 			expectedPromptRequest := &openaiconnector.OpenAIPromptRequest{
 				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				ApplicationId: &applicationID,
@@ -191,6 +193,45 @@ func TestUtils(t *testing.T) {
 
 			assert.Equal(t, expectedPromptRequest, promptRequest)
 		})
+
+		t.Run("handles function message correctly", func(t *testing.T) {
+			functionName := "sum"
+			promptMessages := serialization.SerializeJSON([]*datatypes.OpenAIPromptMessageDTO{{
+				Role:              "function",
+				Name:              &functionName,
+				FunctionArguments: &[]string{"value1", "value2"},
+			}})
+
+			functionCall := openaiconnector.OpenAIFunctionCall{
+				Arguments: "value1,value2",
+				Name:      functionName,
+			}
+
+			expectedPromptRequest := &openaiconnector.OpenAIPromptRequest{
+				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				ApplicationId: &applicationID,
+				Parameters:    expectedModelParameters,
+				Messages: []*openaiconnector.OpenAIMessage{
+					{
+						Role:         openaiconnector.OpenAIMessageRole_OPEN_AI_MESSAGE_ROLE_FUNCTION,
+						Name:         &functionName,
+						FunctionCall: &functionCall,
+					},
+				},
+			}
+
+			promptRequest, err := openai.CreatePromptRequest(
+				application.ID,
+				modelType,
+				modelParameters,
+				promptMessages,
+				templateVariables,
+			)
+			assert.NoError(t, err)
+
+			assert.Equal(t, expectedPromptRequest, promptRequest)
+		})
+
 		t.Run("returns error for unknown model type", func(t *testing.T) {
 			modelType := "unknown"
 			modelParameters := []byte(`{}`)
@@ -209,6 +250,23 @@ func TestUtils(t *testing.T) {
 			expectedError := "unknown model type {unknown}"
 			assert.Equal(t, expectedError, err.Error())
 		})
+
+		t.Run("returns error for unknown message role", func(t *testing.T) {
+			modelType := db.ModelTypeGpt35Turbo
+			modelParameters := []byte(`{}`)
+			promptMessages := []byte(`[{"role": "unknown"}]`)
+			templateVariables := map[string]string{}
+
+			_, err := openai.CreatePromptRequest(
+				application.ID,
+				modelType,
+				modelParameters,
+				promptMessages,
+				templateVariables,
+			)
+			assert.Error(t, err)
+		})
+
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {
 			modelType := db.ModelTypeGpt35Turbo
 			modelParameters := []byte(`invalid_json`)

@@ -1,6 +1,5 @@
 import { UserFactory } from 'tests/factories';
 import { renderHook } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
 
 import { apiStoreStateCreator, useSetUser, useUser } from '@/stores/api-store';
 

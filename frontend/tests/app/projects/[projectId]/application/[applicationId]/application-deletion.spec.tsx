@@ -2,17 +2,17 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
-import { ApplicationDeletion } from '@/app/projects/[projectId]/applications/[applicationId]/page';
+import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
+import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,
 	useSetProjects,
 } from '@/stores/project-store';
+import { ToastType } from '@/stores/toast-store';
 
-// eslint-disable-next-line vitest/valid-describe-callback
-describe('ApplicationDeletion tests', async () => {
+describe('ApplicationDeletion tests', () => {
 	const handleDeleteApplicationSpy = vi.spyOn(
 		ApplicationAPI,
 		'handleDeleteApplication',
@@ -21,14 +21,19 @@ describe('ApplicationDeletion tests', async () => {
 	const {
 		result: { current: setProjects },
 	} = renderHook(useSetProjects);
-	const projects = await ProjectFactory.batch(1);
+	const projects = ProjectFactory.batchSync(1);
 	setProjects(projects);
 
-	const applications = await ApplicationFactory.batch(1);
+	const applications = ApplicationFactory.batchSync(2);
 	const {
 		result: { current: setProjectApplications },
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(projects[0].id, applications);
+
+	beforeAll(() => {
+		HTMLDialogElement.prototype.showModal = vi.fn();
+		HTMLDialogElement.prototype.close = vi.fn();
+	});
 
 	it('renders application deletion component', () => {
 		render(
@@ -72,5 +77,42 @@ describe('ApplicationDeletion tests', async () => {
 		await waitFor(() => {
 			expect(handleDeleteApplicationSpy).toHaveBeenCalledOnce();
 		});
+	});
+
+	it('shows error when unable to delete application', async () => {
+		render(
+			<ApplicationDeletion
+				projectId={projects[0].id}
+				applicationId={applications[1].id}
+			/>,
+		);
+
+		const deleteBtn = screen.getByTestId('application-delete-btn');
+		fireEvent.click(deleteBtn);
+
+		const deletionBannerTitle = screen.getByTestId(
+			'resource-deletion-title',
+		);
+		expect(deletionBannerTitle).toBeInTheDocument();
+
+		const deletionInput = screen.getByTestId('resource-deletion-input');
+		fireEvent.change(deletionInput, {
+			target: { value: applications[1].name },
+		});
+
+		handleDeleteApplicationSpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to delete application', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+
+		const deletionBannerDeleteBtn = screen.getByTestId(
+			'resource-deletion-delete-btn',
+		);
+		fireEvent.click(deletionBannerDeleteBtn);
+
+		const errorToast = screen.getByText('unable to delete application');
+		expect(errorToast.className).toContain(ToastType.ERROR);
 	});
 });

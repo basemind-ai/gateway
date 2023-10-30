@@ -3,20 +3,14 @@ package db_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 type MockTx struct {
 	pgx.Tx
-}
-
-func TestMain(m *testing.M) {
-	cleanup := testutils.CreateNamespaceTestDBModule("db-test")
-	defer cleanup()
-	m.Run()
 }
 
 func TestUtils(t *testing.T) {
@@ -60,6 +54,32 @@ func TestUtils(t *testing.T) {
 			ctx := db.CreateShouldCommitContext(context.TODO(), false)
 			shouldCommit := db.ShouldCommit(ctx)
 			assert.False(t, shouldCommit)
+		})
+	})
+	t.Run("NumericToDecimal", func(t *testing.T) {
+		t.Run("returns decimal.Decimal from pgtype.Numeric", func(t *testing.T) {
+			numeric, err := db.StringToNumeric("1.234")
+			assert.NoError(t, err)
+			decimal, err := db.NumericToDecimal(*numeric)
+			assert.NoError(t, err)
+			assert.Equal(t, decimal.String(), "1.234")
+		})
+		t.Run("returns error when pgtype.Numeric is invalid", func(t *testing.T) {
+			numeric := pgtype.Numeric{Valid: false}
+			_, err := db.NumericToDecimal(numeric)
+			assert.Error(t, err)
+		})
+	})
+	t.Run("StringToNumeric", func(t *testing.T) {
+		t.Run("returns pgtype.Numeric from string", func(t *testing.T) {
+			numeric, err := db.StringToNumeric("1.234")
+			assert.NoError(t, err)
+			value, _ := numeric.MarshalJSON()
+			assert.Equal(t, string(value), "1.234")
+		})
+		t.Run("returns error when string is invalid", func(t *testing.T) {
+			_, err := db.StringToNumeric("invalid")
+			assert.Error(t, err)
 		})
 	})
 }

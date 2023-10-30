@@ -2,19 +2,19 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
-	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/lxzan/gws"
 	"github.com/rs/zerolog/log"
+	"k8s.io/utils/ptr"
 	"net/http"
 	"strings"
 	"time"
@@ -23,13 +23,21 @@ import (
 const (
 	applicationIDSessionKey    = "application"
 	socketDeadline             = time.Minute
-	statusWSServerError        = 1011
-	statusWSUnsupportedPayload = 1007
+	StatusWSServerError        = 1011
+	StatusWSUnsupportedPayload = 1007
 )
 
+// Socket - interface for the websocket connection.
+// we use this interface to allow testing.
+type Socket interface {
+	WriteMessage(opcode gws.Opcode, payload []byte) error
+}
+
+// logger - logger for the websocket connection.
+// we have to create this struct to pass in zerolog.
 type logger struct{}
 
-func (logger) Error(v ...any) {
+func (logger) Error(v ...any) { // skipcq: TCV-001
 	log.Error().Msg(fmt.Sprint(v...))
 }
 
@@ -40,67 +48,39 @@ var upgrader = gws.NewUpgrader(&handler{}, &gws.ServerOption{
 	Recovery:         gws.Recovery,
 })
 
-func createPromptTestRecord(
-	ctx context.Context,
-	promptRequestRecordID string,
-	data *dto.PromptConfigTestDTO,
-	responseContent string,
-) (*string, error) {
-	promptRequestRecordUUID, parseErr := db.StringToUUID(promptRequestRecordID)
-	if parseErr != nil {
-		return nil, parseErr
-	}
-
-	templateVariable, marshalErr := json.Marshal(data.TemplateVariables)
-	if marshalErr != nil {
-		return nil, fmt.Errorf("failed to marshal template variables: %w", marshalErr)
-	}
-
-	promptTestRecord, err := db.GetQueries().
-		CreatePromptTestRecord(ctx, db.CreatePromptTestRecordParams{
-			Name:                  data.Name,
-			PromptRequestRecordID: *promptRequestRecordUUID,
-			Response:              responseContent,
-			VariableValues:        templateVariable,
-		})
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to create prompt test record: %w", err)
-	}
-	promptTestRecordID := db.UUIDToString(&promptTestRecord.ID)
-	return &promptTestRecordID, nil
-}
-
-func createPayloadFromMessage(
+// CreatePayloadFromMessage - creates the payload from the message.
+// If the message contains a prompt request record ID, we create a prompt test record.
+func CreatePayloadFromMessage(
 	ctx context.Context,
 	data *dto.PromptConfigTestDTO,
 	msg *ptesting.PromptTestingStreamingPromptResponse,
 	builder *strings.Builder,
-) ([]byte, error) {
+) []byte {
 	payload := dto.PromptConfigTestResultDTO{
 		Content:      &msg.Content,
 		FinishReason: msg.FinishReason,
 	}
 
 	if msg.PromptRequestRecordId != nil {
-		promptTestRecordID, err := createPromptTestRecord(
-			ctx,
-			*msg.PromptRequestRecordId,
-			data,
-			builder.String(),
-		)
-		if err != nil {
-			return nil, err
-		}
-		payload.PromptTestRecordID = promptTestRecordID
+		requestRecordID := exc.MustResult(db.StringToUUID(*msg.PromptRequestRecordId))
+		promptTestRecord := exc.MustResult(db.GetQueries().
+			CreatePromptTestRecord(ctx, db.CreatePromptTestRecordParams{
+				Name:                  data.Name,
+				PromptRequestRecordID: *requestRecordID,
+				Response:              builder.String(),
+				VariableValues:        serialization.SerializeJSON(data.TemplateVariables),
+			}))
+
+		payload.PromptTestRecordID = ptr.To(db.UUIDToString(&promptTestRecord.ID))
 	}
 
-	return json.Marshal(payload)
+	return serialization.SerializeJSON(payload)
 }
 
-func streamGRPCMessages(
+// StreamGRPCMessages - streams gRPC messages to the websocket.
+func StreamGRPCMessages(
 	ctx context.Context,
-	socket *gws.Conn,
+	socket Socket,
 	data *dto.PromptConfigTestDTO,
 	responseChannel chan *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan error,
@@ -112,15 +92,11 @@ func streamGRPCMessages(
 		case err := <-errorChannel:
 			errorMessage := err.Error()
 			finishReason := "error"
-			data := dto.PromptConfigTestResultDTO{
+
+			payload := serialization.SerializeJSON(dto.PromptConfigTestResultDTO{
 				ErrorMessage: &errorMessage,
 				FinishReason: &finishReason,
-			}
-			payload, marshalErr := json.Marshal(data)
-			if marshalErr != nil {
-				log.Error().Err(marshalErr).Msg("failed to marshal error payload")
-				return fmt.Errorf("failed to marshal error payload: %w", marshalErr)
-			}
+			})
 
 			if writeErr := socket.WriteMessage(gws.OpcodeText, payload); writeErr != nil {
 				log.Error().Err(writeErr).Msg("failed to write message")
@@ -133,16 +109,11 @@ func streamGRPCMessages(
 				return nil
 			}
 
-			if _, writeErr := builder.WriteString(msg.Content); writeErr != nil {
-				log.Error().Err(writeErr).Msg("failed to write prompt content to write")
-				return writeErr
-			}
+			// We are building the response string from the prompt request and response.
+			// WriteString always returns nil as an error, so we can safely ignore it.
+			_, _ = builder.WriteString(msg.Content)
 
-			payload, err := createPayloadFromMessage(ctx, data, msg, &builder)
-			if err != nil {
-				log.Error().Err(err).Msg("failed to create prompt test record")
-				return err
-			}
+			payload := CreatePayloadFromMessage(ctx, data, msg, &builder)
 
 			if writeErr := socket.WriteMessage(gws.OpcodeText, payload); writeErr != nil {
 				log.Error().Err(writeErr).Msg("failed to write message")
@@ -156,7 +127,8 @@ func streamGRPCMessages(
 	}
 }
 
-func parseMessageData(
+// ParseMessageData - parses the websocket message data into a dto.PromptConfigTestDTO.
+func ParseMessageData(
 	message *gws.Message,
 	applicationID pgtype.UUID,
 ) (*dto.PromptConfigTestDTO, error) {
@@ -200,40 +172,37 @@ type handler struct {
 // OnOpen - handles websocket connections. Called each time a new websocket connection is established.
 func (handler) OnOpen(socket *gws.Conn) {
 	// We set a deadline to ensure inactive sockets are closed.
-	_ = socket.SetDeadline(time.Now().Add(socketDeadline))
+	exc.Must(socket.SetDeadline(time.Now().Add(socketDeadline)))
 }
 
 // OnPing - handles websocket pings. Called each time the frontend sends a ping via the websocket.
 func (handler) OnPing(socket *gws.Conn, msg []byte) {
 	// We reset the deadline, since we got a ping.
 	log.Debug().Bytes("msg", msg).Msg("received ping")
-	_ = socket.SetDeadline(time.Now().Add(socketDeadline))
-	_ = socket.WritePong(nil)
+	exc.Must(socket.SetDeadline(time.Now().Add(socketDeadline)))
+	exc.Must(socket.WritePong(nil))
 }
 
 // OnMessage - handles websocket messages. Called each time the frontend sends a message via the websocket.
 // The message is parsed, and the data it holds is sent to the api-gateway service via GRPC. The response from
 // this service is in turn streamed via the websocket to the frontend.
-func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
-	defer func() {
-		if err := message.Close(); err != nil {
-			log.Error().Err(err).Msg("failed to close message")
-		}
-	}()
-	if message.Data != nil && message.Data.String() != "ping" {
-		// We are retrieving the request context we passed into the socket session.
-		value, exists := socket.Session().Load(applicationIDSessionKey)
-		if !exists {
-			log.Error().Msg("failed to load context from session")
-			socket.WriteClose(statusWSServerError, []byte("invalid context"))
+func (h handler) OnMessage(socket *gws.Conn, message *gws.Message) {
+	defer func() { exc.LogIfErr(message.Close(), "failed to close message") }()
+
+	if message.Data != nil {
+		if message.Data.String() == "ping" {
+			handler.OnPing(h, socket, message.Bytes())
 			return
 		}
+
+		// We are retrieving the applicationID from the session storage.
+		value, _ := socket.Session().Load(applicationIDSessionKey)
 		applicationID := value.(pgtype.UUID)
-		log.Debug().Interface("applicationID", applicationID).Msg("applicationID")
-		data, parseErr := parseMessageData(message, applicationID)
+
+		data, parseErr := ParseMessageData(message, applicationID)
 		if parseErr != nil {
 			log.Error().Err(parseErr).Msg("failed to parse message data")
-			socket.WriteClose(statusWSUnsupportedPayload, []byte("invalid context"))
+			socket.WriteClose(StatusWSUnsupportedPayload, []byte(parseErr.Error()))
 			return
 		}
 
@@ -250,8 +219,8 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 			errorChannel,
 		)
 
-		if streamErr := streamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
-			socket.WriteClose(statusWSServerError, []byte(streamErr.Error()))
+		if streamErr := StreamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
+			socket.WriteClose(StatusWSServerError, []byte(streamErr.Error()))
 			return
 		}
 	}
@@ -262,12 +231,7 @@ func (handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 // The socket then runs in a separate go routine that prevents GC.
 // See the OnMessage receive of the handler above for the actual handling of websocket messages.
 func promptTestingWebsocketHandler(w http.ResponseWriter, r *http.Request) {
-	socket, err := upgrader.Upgrade(w, r)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to upgrade connection")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	socket := exc.MustResult(upgrader.Upgrade(w, r))
 	// we have to pass the request applicationID via the socket session storage, because the GWS library
 	// does not expose another API for this purpose.
 	// The GWS session storage is concurrency safe, and is unique per socket - so we can be certain

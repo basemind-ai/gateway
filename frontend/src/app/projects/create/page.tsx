@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { handleCreateProject } from '@/api';
 import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
+import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useAddProject, useProjects } from '@/stores/project-store';
 import { handleChange } from '@/utils/helpers';
 
@@ -89,7 +90,6 @@ function FormActions({
 			<div>
 				{showCancel && (
 					<button
-						aria-description={t('cancelButtonHelperText')}
 						className="btn-sm rounded-btn btn-neutral h-9 mr-6"
 						onClick={HandleCancel}
 						data-testid="create-project-cancel-button"
@@ -98,7 +98,6 @@ function FormActions({
 					</button>
 				)}
 				<button
-					aria-description={t('submitButtonHelperText')}
 					className="btn-sm rounded-btn btn-primary h-9"
 					disabled={!allowSubmit}
 					onClick={handleSubmit}
@@ -140,7 +139,6 @@ function Form({
 				data-testid="create-project-name-input"
 				placeholder={t('projectInputPlaceholder')}
 				className="input input-bordered w-[60%]"
-				aria-description={t('projectInputHelperText')}
 				value={name}
 				onChange={handleChange(setName)}
 			/>
@@ -157,7 +155,6 @@ function Form({
 					type="text"
 					placeholder={t('projectDescriptionInputPlaceholder')}
 					className="input input-bordered w-full"
-					aria-description={t('projectDescriptionInputHelperText')}
 					value={description}
 					onChange={handleChange(setDescription)}
 				/>
@@ -167,6 +164,7 @@ function Form({
 }
 
 export default function CreateProjectPage() {
+	useAuthenticatedUser();
 	const t = useTranslations('createProject');
 	const router = useRouter();
 

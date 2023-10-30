@@ -71,7 +71,7 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		if apiError != nil {
-			apiError.Render(w, r)
+			apiError.Render(w)
 			return
 		}
 
@@ -81,7 +81,7 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 		)
 		if retrieveUserAccountErr != nil {
 			log.Error().Err(retrieveUserAccountErr).Msg("failed to retrieve user account")
-			apierror.InternalServerError("failed to get or create user account").Render(w, r)
+			apierror.InternalServerError("failed to get or create user account").Render(w)
 			return
 		}
 

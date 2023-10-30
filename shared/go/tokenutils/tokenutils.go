@@ -2,7 +2,7 @@ package tokenutils
 
 import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/rs/zerolog/log"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/tiktoken-go/tokenizer"
 )
 
@@ -22,13 +22,8 @@ var modelPriceMap = map[db.ModelType]float64{
 
 func GetPromptTokenCount(prompt string, modelType db.ModelType) int32 {
 	encoding := modelEncodingMap[modelType]
-	enc, err := tokenizer.Get(encoding)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to get prompt token count")
-	}
-
+	enc := exc.MustResult(tokenizer.Get(encoding))
 	ids, _, _ := enc.Encode(prompt)
-
 	return int32(len(ids))
 }
 

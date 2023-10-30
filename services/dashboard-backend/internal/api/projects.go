@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"net/http"
 	"time"
 
@@ -21,27 +22,21 @@ func handleCreateProject(w http.ResponseWriter, r *http.Request) {
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validationErr := validate.Struct(body); validationErr != nil {
-		apierror.BadRequest(validationErr.Error()).Render(w, r)
+		apierror.BadRequest(validationErr.Error()).Render(w)
 		return
 	}
 
-	projectDto, createErr := repositories.CreateProject(
+	projectDto := exc.MustResult(repositories.CreateProject(
 		r.Context(),
-		userAccount.FirebaseID,
+		userAccount,
 		body.Name,
 		body.Description,
-	)
-
-	if createErr != nil {
-		log.Error().Err(createErr).Msg("failed to create project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	))
 
 	serialization.RenderJSONResponse(w, http.StatusCreated, projectDto)
 }
@@ -49,13 +44,9 @@ func handleCreateProject(w http.ResponseWriter, r *http.Request) {
 // handleRetrieveProjects - retrieves all projects for the user.
 func handleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
-
-	projects, err := db.GetQueries().RetrieveProjects(r.Context(), userAccount.FirebaseID)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to retrieve projects")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	projects := exc.MustResult(
+		db.GetQueries().RetrieveProjects(r.Context(), userAccount.FirebaseID),
+	)
 
 	data := make([]dto.ProjectDTO, len(projects))
 	for i, project := range projects {
@@ -80,21 +71,16 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
-	existingProject, projectRetrivalErr := db.
+	existingProject := exc.MustResult(db.
 		GetQueries().
 		RetrieveProject(r.Context(), db.RetrieveProjectParams{
 			ID:         projectID,
 			FirebaseID: userAccount.FirebaseID,
-		})
-	if projectRetrivalErr != nil {
-		log.Error().Err(projectRetrivalErr).Msg("failed to retrieve project")
-		apierror.BadRequest("project does not exist").Render(w, r)
-		return
-	}
+		}))
 
 	updateParams := db.UpdateProjectParams{
 		ID:          projectID,
@@ -110,12 +96,7 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 		updateParams.Description = body.Description
 	}
 
-	updatedProject, updateErr := db.GetQueries().UpdateProject(r.Context(), updateParams)
-	if updateErr != nil {
-		log.Error().Err(updateErr).Msg("failed to update project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
+	updatedProject := exc.MustResult(db.GetQueries().UpdateProject(r.Context(), updateParams))
 
 	data := &dto.ProjectDTO{
 		ID:          db.UUIDToString(&updatedProject.ID),
@@ -139,16 +120,11 @@ func handleDeleteProject(w http.ResponseWriter, r *http.Request) {
 		FirebaseID: userAccount.FirebaseID,
 	}); retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
-		apierror.BadRequest("project does not exist").Render(w, r)
+		apierror.BadRequest("project does not exist").Render(w)
 		return
 	}
 
-	if deleteErr := repositories.DeleteProject(r.Context(), projectID); deleteErr != nil {
-		log.Error().Err(deleteErr).Msg("failed to delete project")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
-
+	exc.Must(repositories.DeleteProject(r.Context(), projectID))
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -160,17 +136,12 @@ func handleRetrieveProjectAnalytics(w http.ResponseWriter, r *http.Request) {
 	toDate := timeutils.ParseDate(r.URL.Query().Get("toDate"), time.Now())
 	fromDate := timeutils.ParseDate(r.URL.Query().Get("fromDate"), timeutils.GetFirstDayOfMonth())
 
-	projectAnalytics, err := repositories.GetProjectAnalyticsByDateRange(
+	projectAnalytics := repositories.GetProjectAnalyticsByDateRange(
 		r.Context(),
 		projectID,
 		fromDate,
 		toDate,
 	)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to retrieve project analytics")
-		apierror.InternalServerError().Render(w, r)
-		return
-	}
 
 	w.WriteHeader(http.StatusOK)
 	serialization.RenderJSONResponse(w, http.StatusOK, projectAnalytics)

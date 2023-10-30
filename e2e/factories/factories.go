@@ -3,8 +3,8 @@ package factories
 import (
 	"context"
 	"crypto/rand"
-	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
@@ -22,7 +22,7 @@ func CreateOpenAIPromptMessages(
 	systemMessage string,
 	userMessage string,
 	templateVariables *[]string,
-) ([]byte, error) {
+) []byte {
 	msgs := []*datatypes.OpenAIPromptMessageDTO{{
 		Content: &systemMessage,
 		Role:    "system",
@@ -31,27 +31,19 @@ func CreateOpenAIPromptMessages(
 		Content:           &userMessage,
 		TemplateVariables: templateVariables,
 	}}
-	promptMessages, marshalErr := json.Marshal(msgs)
-	if marshalErr != nil {
-		return nil, marshalErr
-	}
-
-	return promptMessages, nil
+	return serialization.SerializeJSON(msgs)
 }
 
-func CreateModelParameters() ([]byte, error) {
-	modelParameters, marshalErr := json.Marshal(map[string]float32{
+func CreateModelParameters() []byte {
+	modelParameters := serialization.SerializeJSON(map[string]float32{
 		"temperature":       1,
 		"top_p":             1,
 		"max_tokens":        1,
 		"presence_penalty":  1,
 		"frequency_penalty": 1,
 	})
-	if marshalErr != nil {
-		return nil, marshalErr
-	}
 
-	return modelParameters, nil
+	return modelParameters
 }
 
 func CreateProject(ctx context.Context) (*db.Project, error) {
@@ -109,21 +101,13 @@ func CreatePromptConfig(
 	userMessage := "This is what the user asked for: {userInput}"
 	templateVariables := []string{"userInput"}
 
-	modelParams, modelParamsCreateErr := CreateModelParameters()
+	modelParams := CreateModelParameters()
 
-	if modelParamsCreateErr != nil {
-		return nil, modelParamsCreateErr
-	}
-
-	promptMessages, promptMessagesCreateErr := CreateOpenAIPromptMessages(
+	promptMessages := CreateOpenAIPromptMessages(
 		systemMessage,
 		userMessage,
 		&templateVariables,
 	)
-
-	if promptMessagesCreateErr != nil {
-		return nil, promptMessagesCreateErr
-	}
 
 	promptConfig, promptConfigCreateErr := db.GetQueries().
 		CreatePromptConfig(ctx, db.CreatePromptConfigParams{
@@ -146,15 +130,15 @@ func CreatePromptRequestRecord(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
 ) (*db.PromptRequestRecord, error) {
-	tokenCnt := int32(10)
+	tokenCount := int32(10)
 	promptStartTime := time.Now()
 	promptFinishTime := promptStartTime.Add(10 * time.Second)
 
 	promptRequestRecord, promptRequestRecordCreateErr := db.GetQueries().
 		CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
 			IsStreamResponse:      true,
-			RequestTokens:         tokenCnt,
-			ResponseTokens:        tokenCnt,
+			RequestTokens:         tokenCount,
+			ResponseTokens:        tokenCount,
 			StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
 			FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
 			StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
@@ -167,13 +151,13 @@ func CreatePromptRequestRecord(
 	return &promptRequestRecord, nil
 }
 
-func CreateApplicationInternalToken(
+func CreateApplicationInternalAPIKey(
 	ctx context.Context,
 	applicationID pgtype.UUID,
-) (*db.Token, error) {
-	token, err := db.GetQueries().CreateToken(ctx, db.CreateTokenParams{
+) (*db.ApiKey, error) {
+	apiKey, err := db.GetQueries().CreateAPIKey(ctx, db.CreateAPIKeyParams{
 		ApplicationID: applicationID,
-		Name:          "_internal token",
+		Name:          "_internal apiKey",
 		IsInternal:    true,
 	})
 
@@ -181,5 +165,55 @@ func CreateApplicationInternalToken(
 		return nil, err
 	}
 
-	return &token, nil
+	return &apiKey, nil
+}
+
+func CreateProviderPricingModels(
+	ctx context.Context,
+) error {
+	for _, modelType := range []struct {
+		ModelType        db.ModelType
+		InputTokenPrice  string
+		OutputTokenPrice string
+	}{
+		{
+			ModelType:        db.ModelTypeGpt35Turbo,
+			InputTokenPrice:  "0.0015",
+			OutputTokenPrice: "0.002",
+		},
+		{
+			ModelType:        db.ModelTypeGpt35Turbo16k,
+			InputTokenPrice:  "0.003",
+			OutputTokenPrice: "0.004",
+		},
+		{
+			ModelType:        db.ModelTypeGpt4,
+			InputTokenPrice:  "0.03",
+			OutputTokenPrice: "0.006",
+		},
+		{
+			ModelType:        db.ModelTypeGpt432k,
+			InputTokenPrice:  "0.06",
+			OutputTokenPrice: "0.012",
+		},
+	} {
+		input, _ := db.StringToNumeric(modelType.InputTokenPrice)
+		output, _ := db.StringToNumeric(modelType.OutputTokenPrice)
+
+		_, err := db.GetQueries().
+			CreateProviderModelPricing(ctx, db.CreateProviderModelPricingParams{
+				ModelType:        modelType.ModelType,
+				ModelVendor:      db.ModelVendorOPENAI,
+				InputTokenPrice:  *input,
+				OutputTokenPrice: *output,
+				ActiveFromDate:   pgtype.Date{Time: time.Now(), Valid: true},
+				TokenUnitSize:    1000,
+			})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

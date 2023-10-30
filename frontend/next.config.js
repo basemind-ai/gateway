@@ -8,6 +8,9 @@ const nextConfig = nextTranslate({
 	},
 	reactStrictMode: true,
 	distDir: 'dist',
+	images: {
+		remotePatterns: [{ hostname: 'lh3.googleusercontent.com' }],
+	},
 	// see: https://react-svgr.com/docs/next/
 	webpack(config) {
 		const fileLoaderRule = config.module.rules.find((rule) =>

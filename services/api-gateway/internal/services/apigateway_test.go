@@ -28,6 +28,9 @@ func createRequestConfigurationDTO(
 		application.ID,
 	)
 
+	pricingModel := services.RetrieveProviderModelPricing(
+		context.TODO(), promptConfig.ModelType, promptConfig.ModelVendor)
+
 	return dto.RequestConfigurationDTO{
 		ApplicationID:  application.ID,
 		PromptConfigID: promptConfig.ID,
@@ -43,6 +46,7 @@ func createRequestConfigurationDTO(
 			CreatedAt:                 promptConfig.CreatedAt.Time,
 			UpdatedAt:                 promptConfig.UpdatedAt.Time,
 		},
+		ProviderModelPricing: pricingModel,
 	}
 }
 
@@ -50,6 +54,7 @@ type mockGatewayServerStream struct {
 	grpc.ServerStream
 	Ctx      context.Context
 	Response *gateway.StreamingPromptResponse
+	Msg      any
 	Error    error
 }
 
@@ -62,6 +67,11 @@ func (m mockGatewayServerStream) Context() context.Context {
 
 func (m mockGatewayServerStream) Send(response *gateway.StreamingPromptResponse) error {
 	m.Response = response //nolint: all
+	return m.Error
+}
+
+func (m mockGatewayServerStream) SendMsg(msg any) error {
+	m.Msg = msg //nolint: all
 	return m.Error
 }
 
@@ -89,6 +99,7 @@ func createGatewayServiceClient(t *testing.T) gateway.APIGatewayServiceClient {
 func TestAPIGatewayService(t *testing.T) {
 	srv := services.APIGatewayServer{}
 	project, _ := factories.CreateProject(context.TODO())
+	_ = factories.CreateProviderPricingModels(context.TODO())
 	configuration := createRequestConfigurationDTO(t, project.ID)
 
 	_, _ = createTestCache(

@@ -52,6 +52,21 @@ tasks:
                 fi
         status:
             - command -v buf &> /dev/null || exit 1
+    install-terraform:
+        cmds:
+            - |
+                if command -v brew &> /dev/null; then
+                    brew tap hashicorp/tap
+                    brew install hashicorp/tap/terraform
+                    brew install tflint
+                else
+                    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+                    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+                    sudo apt-get update && sudo apt-get install terraform
+                    curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+                fi
+        status:
+            - command -v terraform &> /dev/null || exit 1
     update-brew:
         cmds:
             - |
@@ -69,6 +84,7 @@ tasks:
             - task: install-sqlc
             - task: install-atlas
             - task: install-buf
+            - task: install-terraform
             - pre-commit install && pre-commit install --hook-type commit-msg
             - pnpm install -r
             - go mod download

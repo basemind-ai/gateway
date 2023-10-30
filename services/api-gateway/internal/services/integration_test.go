@@ -80,12 +80,12 @@ func createTestCache(
 func TestIntegration(t *testing.T) { //nolint: revive
 	project, _ := factories.CreateProject(context.Background())
 
-	modelParameters, _ := factories.CreateModelParameters()
-	promptMessages, _ := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
-
+	modelParameters := factories.CreateModelParameters()
+	promptMessages := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
+	_ = factories.CreateProviderPricingModels(context.Background())
 	openaiService := createOpenAIService(t)
 	requestConfigurationDTO := createRequestConfigurationDTO(t, project.ID)
-	token, _ := factories.CreateApplicationInternalToken(
+	token, _ := factories.CreateApplicationInternalAPIKey(
 		context.TODO(),
 		requestConfigurationDTO.ApplicationID,
 	)

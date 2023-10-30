@@ -8,18 +8,18 @@
 		"test": "vitest"
 	},
 	"devDependencies": {
-		"@bufbuild/buf": "^1.27.1",
-		"@commitlint/cli": "^18.0.0",
-		"@commitlint/config-conventional": "^18.0.0",
+		"@bufbuild/buf": "^1.27.2",
+		"@commitlint/cli": "^18.2.0",
+		"@commitlint/config-conventional": "^18.1.0",
 		"@faker-js/faker": "^8.2.0",
-		"@grpc/grpc-js": "^1.9.7",
-		"@next/eslint-plugin-next": "^13.5.6",
-		"@prettier/plugin-xml": "^3.2.1",
+		"@grpc/grpc-js": "^1.9.8",
+		"@next/eslint-plugin-next": "^14.0.0",
+		"@prettier/plugin-xml": "^3.2.2",
 		"@protobuf-ts/plugin": "^2.9.1",
 		"@protobuf-ts/runtime": "^2.9.1",
 		"@protobuf-ts/runtime-rpc": "^2.9.1",
 		"@tool-belt/eslint-config": "^3.2.0",
-		"@types/node": "20.8.8",
+		"@types/node": "20.8.9",
 		"@types/webpack": "^5.28.4",
 		"@types/webpack-node-externals": "^3.0.3",
 		"@typescript-eslint/eslint-plugin": "^6.9.0",
@@ -28,7 +28,7 @@
 		"eslint": "^8.52.0",
 		"eslint-import-resolver-typescript": "^3.6.1",
 		"eslint-plugin-vitest": "^0.3.8",
-		"fork-ts-checker-webpack-plugin": "^9.0.0",
+		"fork-ts-checker-webpack-plugin": "^9.0.2",
 		"interface-forge": "^1.6.1",
 		"nodemon-webpack-plugin": "^4.8.2",
 		"pino": "^8.16.1",
@@ -54,6 +54,6 @@
 		"yarn": "please-use-pnpm",
 		"npm": "please-use-pnpm",
 		"pnpm": ">=8.0.0",
-		"node": ">=20.0.0"
+		"node": ">=21.0.0"
 	}
 }

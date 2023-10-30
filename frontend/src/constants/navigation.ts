@@ -5,11 +5,13 @@ export enum Navigation {
 	Billing = '/projects/:projectId/billing',
 	CreateProject = '/projects/create',
 	Overview = '/projects/:projectId',
+	PP = '/privacy-policy',
 	Projects = '/projects',
 	Prompt = '/projects/:projectId/prompt',
-	Settings = '/settings',
+	Settings = '/projects/:projectId/settings',
 	SignIn = '/sign-in',
 	Support = '/support',
+	TOS = '/terms-of-service',
 }
 export const DISCORD_INVITE_LINK = 'https://discord.gg/Urxchkcq';
 

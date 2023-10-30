@@ -2,13 +2,16 @@
 	"application": {
 		"apiCalls": "API Calls",
 		"apiKey": "API Key",
+		"apiKeyCopied": "API Key Copied",
 		"apiKeys": "API Keys",
 		"application": "Application",
+		"applicationDeleted": "Application Deleted",
 		"applicationDeletion": "Application Deletion",
 		"applicationDescription": "Application Description",
 		"applicationName": "Application Name",
 		"cancel": "Cancel",
 		"close": "Close",
+		"copiedToClipboard": "Copied to clipboard",
 		"create": "Create",
 		"createApiKey": "Create API Key",
 		"createApiKeyDescription": "Keep the API key private and use it only with our SDK. You can view it once, It's not stored on our end for security.",
@@ -17,8 +20,8 @@
 		"defaultPromptConfig": "Default Prompt Configuration",
 		"defaultPromptConfigMessage": "The default configuration allows to you to call configuration without providing explicit ID",
 		"delete": "Delete",
+		"deletePlaceholderAPIKey": "Write API Key name",
 		"deletePlaceholderApplication": "Write application name",
-		"deletePlaceholderToken": "Write token name",
 		"deleteYourApplication": "Delete your application",
 		"deleteYourApplicationMessage": "This act is irreversible, it will delete your application.",
 		"edit": "Edit",
@@ -34,11 +37,10 @@
 		"settings": "Settings",
 		"status": "Status",
 		"test": "Test",
-		"tokens": "Tokens",
 		"type": "Type",
 		"warning": "Warning",
-		"warningMessageApplication": "This act is irreversible, it will delete your application. All server requests sent to this application will not work",
-		"warningMessageToken": "Once a API key is deleted, all server requests sent with that key will not work."
+		"warningMessageAPIKey": "Once a API key is deleted, all server requests sent with that key will not work.",
+		"warningMessageApplication": "This act is irreversible, it will delete your application. All server requests sent to this application will not work"
 	},
 	"common": {
 		"accept": "Accept",
@@ -53,18 +55,14 @@
 	},
 	"createProject": {
 		"cancelButton": "Later",
-		"cancelButtonHelperText": "Close the create project view",
 		"errorComment": "There was an error creating your project",
 		"optional": "optional",
-		"projectDescriptionInputHelperText": "This is the description of the the project",
 		"projectDescriptionInputLabel": "Description",
 		"projectDescriptionInputPlaceholder": "Describe your project",
-		"projectInputHelperText": "This is the name of your project",
 		"projectInputLabel": "Project Name",
 		"projectInputPlaceholder": "Acme Corporation",
 		"subTitle": "Create your first project, you can always edit later",
 		"submitButton": "Create",
-		"submitButtonHelperText": "Create a new project and application with the given names",
 		"title": "Setup Project"
 	},
 	"deletionBanner": {
@@ -73,6 +71,26 @@
 		"delete": "Delete",
 		"title": "Warning",
 		"type": "Type"
+	},
+	"members": {
+		"admin": "Admin",
+		"emailAddress": "Email Address",
+		"emailPlaceholder": "you@site.com",
+		"invitationSent": "Invitation Sent",
+		"invite": "Invite",
+		"member": "Member",
+		"members": "Members",
+		"name": "Name",
+		"ok": "Ok",
+		"removeMember": "Remove Member",
+		"role": "Role",
+		"roleUpdated": "Role Updated",
+		"roles": "Roles",
+		"sendInvite": "Send Invite",
+		"userAdded": "User Added",
+		"userRemoved": "User Removed",
+		"warning": "Warning",
+		"warningMessage": "You're about to remove a user access from this project"
 	},
 	"navrail": {
 		"abTesting": "A/B Testing",
@@ -118,6 +136,22 @@
 		"settings": "Settings",
 		"status": "Status"
 	},
+	"projectSettings": {
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"deleteProject": "Delete your project",
+		"deleteProjectMessage": "This act is irreversible, it will delete your project.",
+		"deletionPlaceholder": "Write project name",
+		"general": "General",
+		"projectDeleted": "Project Deleted",
+		"projectDeletion": "Project Deletion",
+		"projectDescription": "Project Description",
+		"projectName": "Project Name",
+		"save": "Save",
+		"warning": "Warning",
+		"warningLabel": "To continue, write: ",
+		"warningMessageProject": "This act is irreversible, it will delete your project. All application and prompt configuration related to this project will not work"
+	},
 	"prompt": {
 		"newPrompt": "+ New",
 		"promptGenerativeText": "Generative Text",
@@ -125,12 +159,9 @@
 		"savedPromptConfig": "Saved Templates"
 	},
 	"signin": {
-		"authHeader": "Welcome to BaseMind",
-		"authSubtitle": "Get started - it's free.",
-		"authSubtitleLarger": "No credit card required.",
-		"bannerHeading": "Feature 1",
-		"bannerSubtitle": "Try all paid functions for free, just register and create your first widget, its simple and fast",
-		"bannerTitle": "This feature is good for AI"
+		"authHeader": "Welcome to",
+		"authSubtitle": "Integrate in minutes, scale to millions",
+		"basemind": "BaseMind"
 	},
 	"support": {
 		"api": "API",

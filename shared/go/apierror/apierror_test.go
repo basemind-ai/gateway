@@ -73,7 +73,7 @@ func TestAPIError(t *testing.T) {
 		client := testutils.CreateTestHTTPClient(
 			t,
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				testCase.APIErrType.Render(w, r)
+				testCase.APIErrType.Render(w)
 			}),
 		)
 		res, err := client.Get(context.TODO(), "/")

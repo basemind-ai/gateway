@@ -5,7 +5,11 @@ import { useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
+import { InviteMember } from '@/components/projects/[projectId]/invite-member';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
+import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
+import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
+import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
@@ -78,7 +82,22 @@ export default function ProjectOverview({
 					<ApplicationsList projectId={projectId} />
 				</>
 			)}
-			{selectedTab === TAB_NAMES.SETTINGS && <>sdsd</>}
+			{selectedTab === TAB_NAMES.MEMBERS && (
+				<>
+					<InviteMember projectId={projectId} />
+					<div className="mt-10">
+						<ProjectMembers projectId={projectId} />
+					</div>
+				</>
+			)}
+			{selectedTab === TAB_NAMES.SETTINGS && (
+				<>
+					<ProjectGeneralSettings projectId={projectId} />
+					<div className="mt-10">
+						<ProjectDeletion projectId={projectId} />
+					</div>
+				</>
+			)}
 		</div>
 	);
 }

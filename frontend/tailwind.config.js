@@ -27,19 +27,36 @@ module.exports = {
 			},
 		},
 	},
+	safelist: [
+		'alert-info',
+		'alert-success',
+		'alert-error',
+		'alert-error',
+		'alert-warning',
+	],
 	plugins: [
 		require('@tailwindcss/typography'),
 		require('tailwindcss-elevation'),
 		require('daisyui'),
 	],
 	daisyui: {
-		themes: ['dracula'],
-		darkTheme: 'dracula',
 		base: true,
-		styled: true,
-		utils: true,
-		rtl: false,
-		prefix: '',
+		darkTheme: 'dracula',
 		logs: true,
+		prefix: '',
+		rtl: false,
+		styled: true,
+		themes: [
+			{
+				dracula: {
+					...require('daisyui/src/theming/themes')[
+						'[data-theme=dracula]'
+					],
+					primary: '#bd93f9',
+					secondary: '#976FD2',
+				},
+			},
+		],
+		utils: true,
 	},
 };

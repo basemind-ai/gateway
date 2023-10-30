@@ -2,7 +2,6 @@ package openai
 
 import (
 	"context"
-	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
@@ -53,25 +52,18 @@ func (c *Client) RequestPrompt(
 		recordParams.ErrorLog = pgtype.Text{String: requestErr.Error(), Valid: true}
 	}
 
-	if requestRecord, createRequestRecordErr := db.
+	requestRecord, createRequestRecordErr := db.
 		GetQueries().
 		CreatePromptRequestRecord(
 			ctx,
 			recordParams,
-		); createRequestRecordErr != nil {
-		log.Error().Err(createRequestRecordErr).Msg("failed to create prompt request record")
-		if promptResult.Error == nil {
-			promptResult.Error = createRequestRecordErr
-		} else {
-			promptResult.Error = fmt.Errorf(
-				"failed to save prompt record: %w...%w",
-				promptResult.Error,
-				createRequestRecordErr,
-			)
-		}
-	} else {
-		promptResult.RequestRecord = &requestRecord
+		)
+
+	if promptResult.Error == nil {
+		promptResult.Error = createRequestRecordErr
 	}
+
+	promptResult.RequestRecord = &requestRecord
 
 	return promptResult
 }

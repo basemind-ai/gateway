@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/go-playground/validator/v10"
 	"regexp"
 )
@@ -49,10 +50,7 @@ func parseOpenAIMessages( //nolint: revive
 		}
 	}
 
-	marshalledMessages, marshalErr := json.Marshal(openAIPromptMessages)
-	if marshalErr != nil {
-		return nil, nil, fmt.Errorf("failed to marshal prompt messages - %w", marshalErr)
-	}
+	marshalledMessages := serialization.SerializeJSON(openAIPromptMessages)
 
 	return expectedVariables, marshalledMessages, nil
 }

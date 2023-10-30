@@ -42,7 +42,7 @@ type PromptConfigUpdateDTO struct {
 	ProviderPromptMessages *json.RawMessage `json:"promptMessages,omitempty"  validate:"omitempty,required"`
 }
 
-type ApplicationTokenDTO struct {
+type ApplicationAPIKeyDTO struct {
 	ID        string    `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	Name      string    `json:"name"           validate:"required"`
@@ -87,13 +87,13 @@ type PromptConfigAnalyticsDTO struct {
 }
 
 type PromptConfigTestDTO struct {
-	Name                   string            `json:"name"                     validate:"required"`
-	ModelParameters        json.RawMessage   `json:"modelParameters"          validate:"required"`
-	ModelType              db.ModelType      `json:"modelType"                validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
-	ModelVendor            db.ModelVendor    `json:"modelVendor"              validate:"oneof=OPEN_AI"`
-	ProviderPromptMessages json.RawMessage   `json:"promptMessages"           validate:"required"`
-	TemplateVariables      map[string]string `json:"templateVariables"        validate:"required"`
-	PromptConfigID         *string           `json:"promptConfigId,omitempty"`
+	Name                   string            `json:"name"                        validate:"required"`
+	ModelParameters        json.RawMessage   `json:"modelParameters,omitempty"   validate:"omitempty,required"`
+	ModelType              db.ModelType      `json:"modelType"                   validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelVendor            db.ModelVendor    `json:"modelVendor"                 validate:"oneof=OPEN_AI"`
+	ProviderPromptMessages json.RawMessage   `json:"promptMessages,omitempty"    validate:"omitempty,required"`
+	TemplateVariables      map[string]string `json:"templateVariables,omitempty"`
+	PromptConfigID         *string           `json:"promptConfigId,omitempty"    validate:"omitempty,required,uuid4"`
 }
 
 type PromptConfigTestResultDTO struct {
