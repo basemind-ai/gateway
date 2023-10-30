@@ -19,12 +19,12 @@ func handleCreateApplicationAPIKey(w http.ResponseWriter, r *http.Request) {
 
 	data := &dto.ApplicationAPIKeyDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validationErr := validate.Struct(data); validationErr != nil {
-		apierror.BadRequest(validationErr.Error()).Render(w, r)
+		apierror.BadRequest(validationErr.Error()).Render(w)
 		return
 	}
 

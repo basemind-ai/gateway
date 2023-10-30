@@ -13,7 +13,7 @@ func handleDeleteUserAccount(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 
 	if err := repositories.DeleteUserAccount(r.Context(), *userAccount); err != nil {
-		apierror.BadRequest(err.Error()).Render(w, r)
+		apierror.BadRequest(err.Error()).Render(w)
 		return
 	}
 

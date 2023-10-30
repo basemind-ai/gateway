@@ -22,12 +22,12 @@ func handleCreateProject(w http.ResponseWriter, r *http.Request) {
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validationErr := validate.Struct(body); validationErr != nil {
-		apierror.BadRequest(validationErr.Error()).Render(w, r)
+		apierror.BadRequest(validationErr.Error()).Render(w)
 		return
 	}
 
@@ -71,7 +71,7 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
@@ -120,7 +120,7 @@ func handleDeleteProject(w http.ResponseWriter, r *http.Request) {
 		FirebaseID: userAccount.FirebaseID,
 	}); retrivalErr != nil {
 		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
-		apierror.BadRequest("project does not exist").Render(w, r)
+		apierror.BadRequest("project does not exist").Render(w)
 		return
 	}
 

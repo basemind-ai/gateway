@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
-	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
 )
@@ -41,16 +40,7 @@ func SerializeJSON[T any](target T) []byte {
 
 // RenderJSONResponse - renders the target as a JSON type response.
 func RenderJSONResponse(w http.ResponseWriter, statusCode int, body any) {
-	if renderErr := json.NewEncoder(w).Encode(body); renderErr != nil {
-		log.Error().Err(renderErr).Msg("failed to render json response")
-		http.Error(
-			w,
-			http.StatusText(http.StatusInternalServerError),
-			http.StatusInternalServerError,
-		)
-		return
-	}
-
 	w.WriteHeader(statusCode)
 	w.Header().Set("Content-Type", "application/json")
+	exc.Must(json.NewEncoder(w).Encode(body))
 }

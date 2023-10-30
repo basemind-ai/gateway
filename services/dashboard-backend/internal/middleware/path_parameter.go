@@ -41,13 +41,13 @@ func PathParameterMiddleware(parameterNames ...string) func(next http.Handler) h
 
 				param := chi.URLParam(r, parameterName)
 				if param == "" {
-					apierror.BadRequest("missing required parameter: "+parameterName).Render(w, r)
+					apierror.BadRequest("missing required parameter: " + parameterName).Render(w)
 					return
 				}
 
 				uuidValue, parseErr := db.StringToUUID(param)
 				if parseErr != nil {
-					apierror.BadRequest("invalid path parameter: "+parameterName).Render(w, r)
+					apierror.BadRequest("invalid path parameter: " + parameterName).Render(w)
 					return
 				}
 

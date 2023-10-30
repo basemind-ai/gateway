@@ -98,17 +98,5 @@ func TestSerializationUtils(t *testing.T) {
 			assert.Equal(t, w.Header().Get("Content-Type"), "application/json")
 			assert.Equal(t, w.Body.String(), `{"Message":"Hello World"}`+"\n")
 		})
-
-		t.Run("handlers render error", func(t *testing.T) {
-			statusCode := http.StatusOK
-			body := func() {}
-			w := httptest.NewRecorder()
-
-			serialization.RenderJSONResponse(w, statusCode, body)
-
-			assert.Equal(t, w.Code, http.StatusInternalServerError)
-			assert.Equal(t, w.Header().Get("Content-Type"), "text/plain; charset=utf-8")
-			assert.Equal(t, w.Body.String(), http.StatusText(http.StatusInternalServerError)+"\n")
-		})
 	})
 }

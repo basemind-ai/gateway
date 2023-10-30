@@ -26,12 +26,12 @@ func handleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if data.Name == "" {
-		apierror.BadRequest("application name is either missing or empty").Render(w, r)
+		apierror.BadRequest("application name is either missing or empty").Render(w)
 		return
 	}
 
@@ -77,7 +77,7 @@ func handleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 		RetrieveApplication(r.Context(), applicationID)
 
 	if applicationRetrieveErr != nil {
-		apierror.BadRequest(invalidIDError).Render(w, r)
+		apierror.BadRequest(invalidIDError).Render(w)
 		return
 	}
 
@@ -99,12 +99,12 @@ func handleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 	}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if data.Name == "" {
-		apierror.BadRequest("application name is either missing or empty").Render(w, r)
+		apierror.BadRequest("application name is either missing or empty").Render(w)
 		return
 	}
 

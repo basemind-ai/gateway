@@ -44,13 +44,13 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	data := dto.AddUserAccountToProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validationErr := validate.Struct(data); validationErr != nil {
 		log.Error().Err(validationErr).Msg("failed to validate request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
@@ -65,7 +65,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	} else {
 		userID, err := db.StringToUUID(data.UserID)
 		if err != nil {
-			apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+			apierror.BadRequest(invalidRequestBodyError).Render(w)
 			return
 		}
 		userAccount, retrievalErr = db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
@@ -73,7 +73,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
-		apierror.BadRequest("user does not exist").Render(w, r)
+		apierror.BadRequest("user does not exist").Render(w)
 		return
 	}
 
@@ -84,7 +84,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 		}))
 
 	if userAlreadyInProject {
-		apierror.BadRequest("user is already in project").Render(w, r)
+		apierror.BadRequest("user is already in project").Render(w)
 		return
 	}
 
@@ -114,24 +114,24 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 	data := dto.UpdateUserAccountProjectPermissionDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validationErr := validate.Struct(data); validationErr != nil {
 		log.Error().Err(validationErr).Msg("failed to validate request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if db.UUIDToString(&requestUserAccount.ID) == data.UserID {
-		apierror.BadRequest("cannot change your own permission").Render(w, r)
+		apierror.BadRequest("cannot change your own permission").Render(w)
 		return
 	}
 
 	userID, err := db.StringToUUID(data.UserID)
 	if err != nil {
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
@@ -142,7 +142,7 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 		}))
 
 	if !userInProject {
-		apierror.BadRequest("user is not in project").Render(w, r)
+		apierror.BadRequest("user is not in project").Render(w)
 		return
 	}
 
@@ -150,7 +150,7 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 
 	if retrievalErr != nil {
 		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
-		apierror.BadRequest("user does not exist").Render(w, r)
+		apierror.BadRequest("user does not exist").Render(w)
 		return
 	}
 
@@ -179,7 +179,7 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	if db.UUIDToString(&userID) == db.UUIDToString(&requestUserAccount.ID) {
-		apierror.BadRequest("cannot remove yourself from project").Render(w, r)
+		apierror.BadRequest("cannot remove yourself from project").Render(w)
 		return
 	}
 
@@ -190,7 +190,7 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 		}))
 
 	if !userInProject {
-		apierror.BadRequest("user is not in project").Render(w, r)
+		apierror.BadRequest("user is not in project").Render(w)
 		return
 	}
 
@@ -198,7 +198,7 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 		CheckUserAccountExists(r.Context(), requestUserAccount.FirebaseID))
 
 	if !userAccountExists {
-		apierror.BadRequest("user account does not exist").Render(w, r)
+		apierror.BadRequest("user account does not exist").Render(w)
 		return
 	}
 

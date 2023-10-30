@@ -26,13 +26,13 @@ func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	createPromptConfigDTO := dto.PromptConfigCreateDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &createPromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validateErr := validate.Struct(&createPromptConfigDTO); validateErr != nil {
 		log.Error().Err(validateErr).Msg("invalid request")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
@@ -52,12 +52,12 @@ func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 				"prompt config with the name '%s' already exists for the given application",
 				createPromptConfigDTO.Name,
 			)
-			apierror.BadRequest(msg).Render(w, r)
+			apierror.BadRequest(msg).Render(w)
 			return
 		}
 
 		log.Error().Err(createErr).Msg("failed to create prompt config")
-		apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w)
 		return
 	}
 
@@ -80,13 +80,13 @@ func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	updatePromptConfigDTO := &dto.PromptConfigUpdateDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, updatePromptConfigDTO); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
 	if validateErr := validate.Struct(updatePromptConfigDTO); validateErr != nil {
 		log.Error().Err(validateErr).Msg("invalid request")
-		apierror.BadRequest(invalidRequestBodyError).Render(w, r)
+		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
@@ -104,11 +104,11 @@ func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 				"prompt config with the name '%s' already exists for the given application",
 				*updatePromptConfigDTO.Name,
 			)
-			apierror.BadRequest(msg).Render(w, r)
+			apierror.BadRequest(msg).Render(w)
 			return
 		}
 
-		apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w)
 		return
 	}
 
@@ -132,12 +132,12 @@ func handleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Requ
 			"is already the default",
 		) {
 			log.Debug().Err(updateErr).Msg("already default")
-			apierror.BadRequest(updateErr.Error()).Render(w, r)
+			apierror.BadRequest(updateErr.Error()).Render(w)
 			return
 		}
 		log.Error().Err(updateErr).Msg("failed to create prompt config")
 
-		apierror.InternalServerError().Render(w, r)
+		apierror.InternalServerError().Render(w)
 		return
 	}
 
@@ -155,12 +155,12 @@ func handleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 
 	if retrievePromptConfigErr != nil {
 		log.Error().Err(retrievePromptConfigErr).Msg("failed to retrieve prompt config")
-		apierror.BadRequest("prompt config with the given ID does not exist").Render(w, r)
+		apierror.BadRequest("prompt config with the given ID does not exist").Render(w)
 		return
 	}
 
 	if promptConfig.IsDefault {
-		apierror.BadRequest("cannot delete the default prompt config").Render(w, r)
+		apierror.BadRequest("cannot delete the default prompt config").Render(w)
 		return
 	}
 
