@@ -49,7 +49,7 @@ func CreateConnection(ctx context.Context, dbURL string) (*pgxpool.Pool, error) 
 // Panics if the connection is not initialized.
 func GetQueries() *Queries {
 	queriesOnce.Do(func() {
-		if pool == nil {
+		if pool == nil { // skipcq: TCV-001
 			log.Fatal().Msg("Connection not initialized")
 		}
 		queries = New(pool)

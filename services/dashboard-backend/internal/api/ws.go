@@ -37,7 +37,7 @@ type Socket interface {
 // we have to create this struct to pass in zerolog.
 type logger struct{}
 
-func (logger) Error(v ...any) {
+func (logger) Error(v ...any) { // skipcq: TCV-001
 	log.Error().Msg(fmt.Sprint(v...))
 }
 
