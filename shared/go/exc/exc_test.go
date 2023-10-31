@@ -82,4 +82,14 @@ func TestExcUtils(t *testing.T) {
 			})
 		})
 	})
+
+	t.Run("ReturnAnyErr", func(t *testing.T) {
+		t.Run("should return the first error in the list of values", func(t *testing.T) {
+			assert.Equal(t, assert.AnError, exc.ReturnAnyErr("hello", 123, assert.AnError))
+		})
+
+		t.Run("should return nil if there are no errors in the list of values", func(t *testing.T) {
+			assert.Nil(t, exc.ReturnAnyErr("hello", 123))
+		})
+	})
 }

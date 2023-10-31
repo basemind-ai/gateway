@@ -21,6 +21,10 @@ var (
 	firebaseAuth FirebaseAuth
 )
 
+// GetFirebaseAuth - returns the firebase auth instance.
+// If the instance is not initialized, it will initialize it.
+// If the initialization fails, it will log the error and exit.
+// This function is thread-safe.
 func GetFirebaseAuth(ctx context.Context) FirebaseAuth {
 	once.Do(func() {
 		app, appInitErr := firebase.NewApp(ctx, nil)
@@ -41,6 +45,7 @@ func GetFirebaseAuth(ctx context.Context) FirebaseAuth {
 	return firebaseAuth
 }
 
+// SetFirebaseAuth - sets the firebase auth instance.
 func SetFirebaseAuth(a FirebaseAuth) {
 	firebaseAuth = a
 }

@@ -6,6 +6,7 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
@@ -42,9 +43,7 @@ func streamFromClient(
 			recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
 		}
 
-		if _, writeErr := builder.WriteString(msg.Content); writeErr != nil {
-			log.Error().Err(writeErr).Msg("failed to write prompt content to write")
-		}
+		exc.LogIfErr(exc.ReturnAnyErr(builder.WriteString(msg.Content)))
 		channel <- dto.PromptResultDTO{Content: &msg.Content}
 	}
 

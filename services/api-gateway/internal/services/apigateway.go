@@ -69,11 +69,6 @@ func (APIGatewayServer) RequestPrompt(
 		return nil, status.Error(codes.Internal, "error communicating with AI provider")
 	}
 
-	if promptResult.Content == nil {
-		log.Error().Msg("prompt response content is nil")
-		return nil, status.Errorf(codes.Internal, "prompt response content is nil")
-	}
-
 	return &gateway.PromptResponse{
 		Content:        *promptResult.Content,
 		RequestTokens:  uint32(promptResult.RequestRecord.RequestTokens),

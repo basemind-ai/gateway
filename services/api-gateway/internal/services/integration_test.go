@@ -82,7 +82,6 @@ func TestIntegration(t *testing.T) { //nolint: revive
 	modelParameters := factories.CreateModelParameters()
 	promptMessages := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
 	_ = factories.CreateProviderPricingModels(context.Background())
-	openaiService := createOpenAIService(t)
 	requestConfigurationDTO := createRequestConfigurationDTO(t, project.ID)
 	token, _ := factories.CreateApplicationInternalAPIKey(
 		context.TODO(),
@@ -104,6 +103,8 @@ func TestIntegration(t *testing.T) { //nolint: revive
 	t.Run("APIGatewayService", func(t *testing.T) {
 		t.Run("RequestPrompt", func(t *testing.T) {
 			t.Run("returns response correctly", func(t *testing.T) {
+				openaiService := createOpenAIService(t)
+
 				client := createGatewayServiceClient(t)
 				cacheClient, mockRedis := createTestCache(
 					t,
@@ -151,10 +152,44 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				assert.NoError(t, secondResponseErr)
 				assert.Equal(t, expectedResponseContent, secondResponse.Content)
 			})
+
+			t.Run("returns error when PromptResult.Error is not nil", func(t *testing.T) {
+				openaiService := createOpenAIService(t)
+				client := createGatewayServiceClient(t)
+				cacheClient, mockRedis := createTestCache(
+					t,
+					db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+				)
+
+				openaiService.Error = assert.AnError
+
+				expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
+				assert.NoError(t, marshalErr)
+
+				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+					RedisNil()
+				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+					SetVal("OK")
+
+				outgoingContext := metadata.AppendToOutgoingContext(
+					context.TODO(),
+					"authorization",
+					fmt.Sprintf("bearer %s", jwtToken),
+				)
+
+				_, err := client.RequestPrompt(
+					outgoingContext,
+					&gateway.PromptRequest{
+						TemplateVariables: map[string]string{"userInput": "abc"},
+					},
+				)
+				assert.Error(t, err)
+			})
 		})
 
 		t.Run("RequestStreamingPrompt", func(t *testing.T) {
 			t.Run("streams response correctly", func(t *testing.T) {
+				openaiService := createOpenAIService(t)
 				client := createGatewayServiceClient(t)
 				cacheClient, mockRedis := createTestCache(
 					t,
@@ -219,6 +254,8 @@ func TestIntegration(t *testing.T) { //nolint: revive
 	t.Run("PromptTestingService", func(t *testing.T) {
 		t.Run("TestPrompt", func(t *testing.T) {
 			t.Run("streams response correctly", func(t *testing.T) {
+				openaiService := createOpenAIService(t)
+
 				client := createPromptTestingServiceClient(t)
 
 				finishReason := "done"

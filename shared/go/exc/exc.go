@@ -37,3 +37,13 @@ func ReturnNotNil[T any](value *T, messages ...string) *T {
 	}
 	return value
 }
+
+// ReturnAnyErr - returns the first error in the list of values, if any.
+func ReturnAnyErr(values ...any) error {
+	for _, value := range values {
+		if err, ok := value.(error); ok && err != nil {
+			return err
+		}
+	}
+	return nil
+}
