@@ -370,6 +370,33 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the request body is invalid",
+			func(t *testing.T) {
+				project, _ := factories.CreateProject(context.TODO())
+				projectID := db.UUIDToString(&project.ID)
+
+				requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+				createUserProject(
+					t,
+					requestUserAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				testClient := createTestClient(t, requestUserAccount)
+
+				response, requestErr := testClient.Post(
+					context.TODO(),
+					fmtListEndpoint(projectID),
+					"invalid",
+				)
+
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("PATCH: %s", api.ProjectUserListEndpoint), func(t *testing.T) {
@@ -414,6 +441,29 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				})
 			assert.NoError(t, retrievalErr)
 			assert.Equal(t, db.AccessPermissionTypeADMIN, retrievedUserProject.Permission)
+		})
+
+		t.Run("responds with status 400 BAD REQUEST for invalid request body", func(t *testing.T) {
+			project, _ := factories.CreateProject(context.TODO())
+			projectID := db.UUIDToString(&project.ID)
+
+			requestUserAccount, _ := factories.CreateUserAccount(context.TODO())
+			createUserProject(
+				t,
+				requestUserAccount.FirebaseID,
+				projectID,
+				db.AccessPermissionTypeADMIN,
+			)
+			testClient := createTestClient(t, requestUserAccount)
+
+			response, requestErr := testClient.Patch(
+				context.TODO(),
+				fmtListEndpoint(projectID),
+				"invalid",
+			)
+
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 
 		t.Run(

@@ -29,7 +29,6 @@ func handleCreateApplication(w http.ResponseWriter, r *http.Request) {
 		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
-
 	if data.Name == "" {
 		apierror.BadRequest("application name is either missing or empty").Render(w)
 		return

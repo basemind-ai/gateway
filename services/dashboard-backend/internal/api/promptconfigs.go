@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"net/http"
 	"strings"
@@ -43,21 +42,14 @@ func handleCreatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if createErr != nil {
-		if strings.Contains(
-			createErr.Error(),
-			"duplicate key value violates unique constraint",
-		) {
-			log.Debug().Err(createErr).Msg("duplicate name")
-			msg := fmt.Sprintf(
-				"prompt config with the name '%s' already exists for the given application",
-				createPromptConfigDTO.Name,
-			)
-			apierror.BadRequest(msg).Render(w)
-			return
+		apiErr := apierror.InternalServerError()
+
+		if strings.Contains(createErr.Error(), "duplicate key value violates unique constraint") {
+			apiErr = apierror.BadRequest(createErr.Error())
 		}
 
 		log.Error().Err(createErr).Msg("failed to create prompt config")
-		apierror.InternalServerError().Render(w)
+		apiErr.Render(w)
 		return
 	}
 
@@ -95,20 +87,15 @@ func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if updatePromptConfigErr != nil {
-		log.Error().Err(updatePromptConfigErr).Msg("failed to update prompt config")
+		apiErr := apierror.InternalServerError()
 		if strings.Contains(
 			updatePromptConfigErr.Error(),
 			"duplicate key value violates unique constraint",
 		) {
-			msg := fmt.Sprintf(
-				"prompt config with the name '%s' already exists for the given application",
-				*updatePromptConfigDTO.Name,
-			)
-			apierror.BadRequest(msg).Render(w)
-			return
+			apiErr = apierror.BadRequest(updatePromptConfigErr.Error())
 		}
-
-		apierror.InternalServerError().Render(w)
+		log.Error().Err(updatePromptConfigErr).Msg("failed to update prompt config")
+		apiErr.Render(w)
 		return
 	}
 
@@ -127,17 +114,12 @@ func handleSetApplicationDefaultPromptConfig(w http.ResponseWriter, r *http.Requ
 		promptConfigID,
 	)
 	if updateErr != nil {
-		if strings.Contains(
-			updateErr.Error(),
-			"is already the default",
-		) {
-			log.Debug().Err(updateErr).Msg("already default")
-			apierror.BadRequest(updateErr.Error()).Render(w)
-			return
+		apiErr := apierror.InternalServerError()
+		if strings.Contains(updateErr.Error(), "is already the default") {
+			apiErr = apierror.BadRequest(updateErr.Error())
 		}
 		log.Error().Err(updateErr).Msg("failed to create prompt config")
-
-		apierror.InternalServerError().Render(w)
+		apiErr.Render(w)
 		return
 	}
 

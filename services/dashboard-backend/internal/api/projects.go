@@ -13,7 +13,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/basemind-ai/monorepo/shared/go/timeutils"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/rs/zerolog/log"
 )
 
 // handleCreateProject - creates a new project and sets the user as an ADMIN.
@@ -115,14 +114,10 @@ func handleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	if _, retrivalErr := db.GetQueries().RetrieveProject(r.Context(), db.RetrieveProjectParams{
+	_ = exc.MustResult(db.GetQueries().RetrieveProject(r.Context(), db.RetrieveProjectParams{
 		ID:         projectID,
 		FirebaseID: userAccount.FirebaseID,
-	}); retrivalErr != nil {
-		log.Error().Err(retrivalErr).Msg("failed to retrieve project")
-		apierror.BadRequest("project does not exist").Render(w)
-		return
-	}
+	}))
 
 	exc.Must(repositories.DeleteProject(r.Context(), projectID))
 	w.WriteHeader(http.StatusNoContent)

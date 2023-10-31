@@ -318,6 +318,31 @@ func TestProjectsAPI(t *testing.T) {
 				assert.Equal(t, http.StatusForbidden, response.StatusCode)
 			},
 		)
+
+		t.Run(
+			"responds with status 403 FORBIDDEN if the project does not exist",
+			func(t *testing.T) {
+				projectID := createProject(t)
+				createUserProject(
+					t,
+					userAccount.FirebaseID,
+					projectID,
+					db.AccessPermissionTypeADMIN,
+				)
+
+				url := fmt.Sprintf(
+					"/v1%s",
+					strings.ReplaceAll(
+						api.ProjectDetailEndpoint,
+						"{projectId}",
+						"00000000-0000-0000-0000-000000000000",
+					),
+				)
+				response, requestErr := testClient.Delete(context.TODO(), url)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusForbidden, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.ProjectAnalyticsEndpoint), func(t *testing.T) {

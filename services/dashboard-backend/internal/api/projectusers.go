@@ -146,13 +146,7 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userAccount, retrievalErr := db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
-
-	if retrievalErr != nil {
-		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
-		apierror.BadRequest("user does not exist").Render(w)
-		return
-	}
+	userAccount := exc.MustResult(db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID))
 
 	userProject := exc.MustResult(db.GetQueries().
 		UpdateUserProjectPermission(r.Context(), db.UpdateUserProjectPermissionParams{
@@ -191,14 +185,6 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 
 	if !userInProject {
 		apierror.BadRequest("user is not in project").Render(w)
-		return
-	}
-
-	userAccountExists := exc.MustResult(db.GetQueries().
-		CheckUserAccountExists(r.Context(), requestUserAccount.FirebaseID))
-
-	if !userAccountExists {
-		apierror.BadRequest("user account does not exist").Render(w)
 		return
 	}
 

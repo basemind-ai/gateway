@@ -1481,6 +1481,24 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
 			},
 		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if prompt config does not exist",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmtDetailEndpoint(
+						projectID,
+						applicationID,
+						"00000000-0000-0000-0000-000000000000",
+					),
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.PromptConfigAnalyticsEndpoint), func(t *testing.T) {

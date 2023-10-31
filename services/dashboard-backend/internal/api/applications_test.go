@@ -112,21 +112,24 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			},
 		)
 
-		t.Run("returns an error if the project id is invalid", func(t *testing.T) {
-			response, requestErr := testClient.Post(
-				context.TODO(),
-				fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid"),
-				),
-				map[string]any{
-					"name":        "test app",
-					"description": "test app description",
-				},
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
+		t.Run(
+			"responds with status 400 BAD REQUEST if the project id is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Post(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(api.ApplicationsListEndpoint, "{projectId}", "invalid"),
+					),
+					map[string]any{
+						"name":        "test app",
+						"description": "test app description",
+					},
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 
 		t.Run(
 			"responds with status 400 BAD REQUEST if the request body is invalid",
@@ -475,43 +478,57 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
 
-		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
-			response, requestErr := testClient.Patch(
-				context.TODO(),
-				fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
-						"{applicationId}",
-						"invalid",
+		t.Run(
+			"responds with status 400 BAD REQUEST if the application id is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								projectID,
+							),
+							"{applicationId}",
+							"invalid",
+						),
 					),
-				),
-				map[string]any{
-					"name":        "updated app",
-					"description": "updated app description",
-				},
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
+					map[string]any{
+						"name":        "updated app",
+						"description": "updated app description",
+					},
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 
-		t.Run("returns an error if the request body is invalid", func(t *testing.T) {
-			applicationID := createApplication(t, projectID)
-			response, requestErr := testClient.Patch(
-				context.TODO(),
-				fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
-						"{applicationId}",
-						applicationID,
+		t.Run(
+			"responds with status 400 BAD REQUEST if the request body is invalid",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								projectID,
+							),
+							"{applicationId}",
+							applicationID,
+						),
 					),
-				),
-				"invalid",
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
+					"invalid",
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 
 		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Patch(
@@ -552,6 +569,34 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 					),
 					map[string]any{
 						"name":        "updated app",
+						"description": "updated app description",
+					},
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
+
+		t.Run(
+			"responds with status 400 BAD REQUEST if the application name is empty",
+			func(t *testing.T) {
+				applicationID := createApplication(t, projectID)
+				response, requestErr := testClient.Patch(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								projectID,
+							),
+							"{applicationId}",
+							applicationID,
+						),
+					),
+					map[string]string{
+						"name":        "",
 						"description": "updated app description",
 					},
 				)
@@ -621,21 +666,28 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, redisMock.ExpectationsWereMet())
 		})
 
-		t.Run("returns an error if the application id is invalid", func(t *testing.T) {
-			response, requestErr := testClient.Delete(
-				context.TODO(),
-				fmt.Sprintf(
-					"/v1%s",
-					strings.ReplaceAll(
-						strings.ReplaceAll(api.ApplicationDetailEndpoint, "{projectId}", projectID),
-						"{applicationId}",
-						"invalid",
+		t.Run(
+			"responds with status 400 BAD REQUEST if the application id is invalid",
+			func(t *testing.T) {
+				response, requestErr := testClient.Delete(
+					context.TODO(),
+					fmt.Sprintf(
+						"/v1%s",
+						strings.ReplaceAll(
+							strings.ReplaceAll(
+								api.ApplicationDetailEndpoint,
+								"{projectId}",
+								projectID,
+							),
+							"{applicationId}",
+							"invalid",
+						),
 					),
-				),
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 
 		t.Run("responds with status 400 BAD REQUEST if projectID is invalid", func(t *testing.T) {
 			response, requestErr := testClient.Delete(
