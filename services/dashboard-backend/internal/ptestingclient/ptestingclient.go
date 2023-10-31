@@ -28,10 +28,7 @@ func SetClient(c *Client) {
 
 // GetClient - gets the PromptTesting gRPC client.
 func GetClient() *Client {
-	if client == nil {
-		panic("client not initialized")
-	}
-	return client
+	return exc.ReturnNotNil(client, "client not initialized")
 }
 
 type clientConfig struct {
@@ -40,14 +37,14 @@ type clientConfig struct {
 
 // Client - a handler client for the PromptTesting gRPC service.
 type Client struct {
-	client ptesting.PromptTestingServiceClient
+	GRPCServiceClient ptesting.PromptTestingServiceClient
 }
 
 // New - creates a new PromptTesting gRPC client.
 func New(serverAddress string, opts ...grpc.DialOption) *Client {
 	conn := exc.MustResult(grpc.Dial(serverAddress, opts...))
 	log.Info().Msg("initialized PromptTesting connection")
-	return &Client{client: ptesting.NewPromptTestingServiceClient(conn)}
+	return &Client{GRPCServiceClient: ptesting.NewPromptTestingServiceClient(conn)}
 }
 
 // Init - initializes the PromptTesting gRPC client. This function is called once.
@@ -65,36 +62,16 @@ func (c *Client) StreamPromptTest(
 	responseChannel chan<- *ptesting.PromptTestingStreamingPromptResponse,
 	errorChannel chan<- error,
 ) {
-	apiKeyID, getOrCreateErr := repositories.GetOrCreateApplicationInternalAPIKeyID(
+	apiKeyID := exc.MustResult(repositories.GetOrCreateApplicationInternalAPIKeyID(
 		ctx,
 		applicationID,
-	)
+	))
 
-	if getOrCreateErr != nil {
-		log.Error().Err(getOrCreateErr).Msg("failed to get or create internal token")
-		errorChannel <- fmt.Errorf("failed to get or create internal token: %w", getOrCreateErr)
-
-		close(responseChannel)
-		close(errorChannel)
-
-		return
-	}
-
-	jwt, jwtCreateErr := jwtutils.CreateJWT(
+	jwt := exc.MustResult(jwtutils.CreateJWT(
 		time.Minute,
 		[]byte(config.Get(ctx).JWTSecret),
 		db.UUIDToString(apiKeyID),
-	)
-
-	if jwtCreateErr != nil {
-		log.Error().Err(jwtCreateErr).Msg("failed to create jwt")
-		errorChannel <- fmt.Errorf("failed to create jwt: %w", jwtCreateErr)
-
-		close(responseChannel)
-		close(errorChannel)
-
-		return
-	}
+	))
 
 	contextWithMetadata := metadata.AppendToOutgoingContext(
 		ctx,
@@ -102,19 +79,22 @@ func (c *Client) StreamPromptTest(
 		fmt.Sprintf("bearer %s", jwt),
 	)
 
-	stream, streamErr := c.client.TestPrompt(contextWithMetadata, &ptesting.PromptTestRequest{
-		ApplicationId:          applicationID,
-		PromptConfigId:         *data.PromptConfigID,
-		ModelVendor:            string(data.ModelVendor),
-		ModelType:              string(data.ModelType),
-		ModelParameters:        data.ModelParameters,
-		ProviderPromptMessages: data.ProviderPromptMessages,
-		TemplateVariables:      data.TemplateVariables,
-	})
+	stream, connectionErr := c.GRPCServiceClient.TestPrompt(
+		contextWithMetadata,
+		&ptesting.PromptTestRequest{
+			ApplicationId:          applicationID,
+			PromptConfigId:         *data.PromptConfigID,
+			ModelVendor:            string(data.ModelVendor),
+			ModelType:              string(data.ModelType),
+			ModelParameters:        data.ModelParameters,
+			ProviderPromptMessages: data.ProviderPromptMessages,
+			TemplateVariables:      data.TemplateVariables,
+		},
+	)
 
-	if streamErr != nil {
-		log.Error().Err(streamErr).Msg("failed to create stream")
-		errorChannel <- fmt.Errorf("failed to create stream: %w", streamErr)
+	if connectionErr != nil {
+		log.Error().Err(connectionErr).Msg("failed to create stream")
+		errorChannel <- fmt.Errorf("failed to create stream: %w", connectionErr)
 
 		close(responseChannel)
 		close(errorChannel)
@@ -128,7 +108,7 @@ func (c *Client) StreamPromptTest(
 		if receiveErr != nil {
 			if !errors.Is(receiveErr, io.EOF) {
 				log.Debug().Err(receiveErr).Msg("received stream error")
-				errorChannel <- fmt.Errorf("received stream error: %w", streamErr)
+				errorChannel <- fmt.Errorf("received stream error: %w", connectionErr)
 			}
 
 			close(responseChannel)

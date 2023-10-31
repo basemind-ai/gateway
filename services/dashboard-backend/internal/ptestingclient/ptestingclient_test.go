@@ -9,6 +9,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"
@@ -21,7 +22,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func CreateClientAndService(
+func createClientAndService(
 	t *testing.T,
 ) (*ptestingclient.Client, *testutils.MockPromptTestingService) {
 	t.Helper()
@@ -42,6 +43,25 @@ func CreateClientAndService(
 	)
 
 	return client, mockService
+}
+
+type mockGRPCServiceClient struct {
+	ptesting.PromptTestingServiceClient
+	mock.Mock
+}
+
+func (m *mockGRPCServiceClient) TestPrompt(
+	ctx context.Context,
+	in *ptesting.PromptTestRequest,
+	opts ...grpc.CallOption,
+) (ptesting.PromptTestingService_TestPromptClient, error) {
+	args := m.Called(ctx, in, opts)
+	return args.Get(0).(ptesting.PromptTestingService_TestPromptClient), args.Error(1)
+}
+
+type mockStream struct {
+	ptesting.PromptTestingService_TestPromptClient
+	mock.Mock
 }
 
 func TestPromptTestingGRPCClient(t *testing.T) {
@@ -118,73 +138,113 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		})
 	})
 
-	t.Run("handles a stream response", func(t *testing.T) {
-		client, mockService := CreateClientAndService(t)
-		responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
-		errorChannel := make(chan error)
+	t.Run("Client", func(t *testing.T) {
+		t.Run("StreamPromptTest", func(t *testing.T) {
+			t.Run("handles a stream response", func(t *testing.T) {
+				client, mockService := createClientAndService(t)
+				responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
+				errorChannel := make(chan error)
 
-		finishReason := "done"
+				finishReason := "done"
 
-		mockService.Stream = []*ptesting.PromptTestingStreamingPromptResponse{
-			{Content: "1"},
-			{Content: "2"},
-			{
-				Content:               "3",
-				FinishReason:          &finishReason,
-				PromptRequestRecordId: &promptRequestRecordID,
-			},
-		}
+				mockService.Stream = []*ptesting.PromptTestingStreamingPromptResponse{
+					{Content: "1"},
+					{Content: "2"},
+					{
+						Content:               "3",
+						FinishReason:          &finishReason,
+						PromptRequestRecordId: &promptRequestRecordID,
+					},
+				}
 
-		go client.StreamPromptTest(
-			context.TODO(),
-			applicationID,
-			&data,
-			responseChannel,
-			errorChannel,
-		)
+				go client.StreamPromptTest(
+					context.TODO(),
+					applicationID,
+					&data,
+					responseChannel,
+					errorChannel,
+				)
 
-		chunks := make([]*ptesting.PromptTestingStreamingPromptResponse, 0)
+				chunks := make([]*ptesting.PromptTestingStreamingPromptResponse, 0)
 
-		for chunk := range responseChannel {
-			chunks = append(chunks, chunk)
-		}
+				for chunk := range responseChannel {
+					chunks = append(chunks, chunk)
+				}
 
-		assert.Len(t, chunks, 3)
-		assert.Equal(t, "1", chunks[0].Content)
-		assert.Nil(t, chunks[0].FinishReason)
-		assert.Nil(t, chunks[0].PromptRequestRecordId)
-		assert.Equal(t, "2", chunks[1].Content)
-		assert.Nil(t, chunks[1].FinishReason)
-		assert.Nil(t, chunks[1].PromptRequestRecordId)
-		assert.Equal(t, "3", chunks[2].Content)
-		assert.Equal(t, finishReason, *chunks[2].FinishReason)
-		assert.Equal(t, promptRequestRecordID, *chunks[2].PromptRequestRecordId)
-	})
-	t.Run("sends error using the error channel on stream error", func(t *testing.T) {
-		client, mockService := CreateClientAndService(t)
-		responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
-		errorChannel := make(chan error)
+				assert.Len(t, chunks, 3)
+				assert.Equal(t, "1", chunks[0].Content)
+				assert.Nil(t, chunks[0].FinishReason)
+				assert.Nil(t, chunks[0].PromptRequestRecordId)
+				assert.Equal(t, "2", chunks[1].Content)
+				assert.Nil(t, chunks[1].FinishReason)
+				assert.Nil(t, chunks[1].PromptRequestRecordId)
+				assert.Equal(t, "3", chunks[2].Content)
+				assert.Equal(t, finishReason, *chunks[2].FinishReason)
+				assert.Equal(t, promptRequestRecordID, *chunks[2].PromptRequestRecordId)
+			})
+			t.Run("sends error using the error channel on receive error", func(t *testing.T) {
+				client, mockService := createClientAndService(t)
+				responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
+				errorChannel := make(chan error)
 
-		mockService.Error = assert.AnError
+				mockService.Error = assert.AnError
 
-		go client.StreamPromptTest(
-			context.TODO(),
-			applicationID,
-			&data,
-			responseChannel,
-			errorChannel,
-		)
+				go client.StreamPromptTest(
+					context.TODO(),
+					applicationID,
+					&data,
+					responseChannel,
+					errorChannel,
+				)
 
-	loop:
-		for {
-			select {
-			case err := <-errorChannel:
-				assert.Error(t, err)
-				break loop
+			loop:
+				for {
+					select {
+					case err := <-errorChannel:
+						assert.Error(t, err)
+						break loop
 
-			case <-responseChannel:
-				t.Fatal("should not have received data")
-			}
-		}
+					case <-responseChannel:
+						t.Fatal("should not have received data")
+					}
+				}
+			})
+
+			t.Run("sends error using the error channel on connection error", func(t *testing.T) {
+				mockGRPC := &mockGRPCServiceClient{}
+
+				client := &ptestingclient.Client{
+					GRPCServiceClient: mockGRPC,
+				}
+
+				ptestingclient.SetClient(client)
+
+				responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
+				errorChannel := make(chan error)
+
+				mockGRPC.On("TestPrompt", mock.Anything, mock.Anything, mock.Anything).
+					Return(mockStream{}, assert.AnError)
+
+				go client.StreamPromptTest(
+					context.TODO(),
+					applicationID,
+					&data,
+					responseChannel,
+					errorChannel,
+				)
+
+			loop:
+				for {
+					select {
+					case err := <-errorChannel:
+						assert.Error(t, err)
+						break loop
+
+					case <-responseChannel:
+						t.Fatal("should not have received data")
+					}
+				}
+			})
+		})
 	})
 }
