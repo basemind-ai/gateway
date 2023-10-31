@@ -56,6 +56,28 @@ func TestUtils(t *testing.T) {
 			assert.False(t, shouldCommit)
 		})
 	})
+	t.Run("StringToUUID", func(t *testing.T) {
+		t.Run("returns pgtype.UUID from string", func(t *testing.T) {
+			uuidString := "d55028b9-3502-43db-be3e-0a758afa44a7"
+			uuid, err := db.StringToUUID(uuidString)
+			assert.NoError(t, err)
+			assert.True(t, uuid.Valid)
+		})
+
+		t.Run("returns error for invalid string", func(t *testing.T) {
+			uuid, err := db.StringToUUID("invalid")
+			assert.Error(t, err)
+			assert.Nil(t, uuid)
+		})
+	})
+	t.Run("UUIDToString", func(t *testing.T) {
+		t.Run("returns string from pgtype.UUID", func(t *testing.T) {
+			uuidString := "d55028b9-3502-43db-be3e-0a758afa44a7"
+			uuid, _ := db.StringToUUID(uuidString)
+			assert.Equal(t, db.UUIDToString(uuid), uuidString)
+		})
+	})
+
 	t.Run("NumericToDecimal", func(t *testing.T) {
 		t.Run("returns decimal.Decimal from pgtype.Numeric", func(t *testing.T) {
 			numeric, err := db.StringToNumeric("1.234")

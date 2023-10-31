@@ -2,7 +2,9 @@ version = 1
 
 exclude_patterns = [
     "**/*.js",
-    "**/*.sql.go",
+    "shared/go/db/*.sql.go",
+    "shared/go/db/models.go",
+    "shared/go/db/db.go",
     "**/node_modules/**",
     "build/**",
     "dist/**",

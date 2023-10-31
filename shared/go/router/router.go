@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// Options is a struct that contains options for creating a router.
 type Options struct {
 	Environment      string
 	ServiceName      string
@@ -17,6 +18,7 @@ type Options struct {
 	Middlewares      []func(next http.Handler) http.Handler
 }
 
+// New creates a new chi Router.
 func New(opts Options) chi.Router {
 	router := chi.NewRouter()
 

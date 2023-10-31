@@ -33,31 +33,40 @@ func TestGrpcUtils(t *testing.T) {
 		assert.NotNil(t, server)
 	})
 
-	t.Run("CreateInterceptorLogger returns the expected values", func(t *testing.T) {
-		loggerFunc, opts := grpcutils.CreateInterceptorLogger(true)
-		assert.NotNil(t, loggerFunc)
-		assert.NotNil(t, opts)
-	})
+	t.Run("CreateInterceptorLogger", func(t *testing.T) {
+		t.Run("returns the expected values", func(t *testing.T) {
+			loggerFunc, opts := grpcutils.CreateInterceptorLogger(true)
+			assert.NotNil(t, loggerFunc)
+			assert.NotNil(t, opts)
+		})
 
-	t.Run(
-		"CreateInterceptorLogger handler functions logs at all levels correctly",
-		func(t *testing.T) {
+		t.Run(
+			"handler functions logs at all levels correctly",
+			func(t *testing.T) {
+				loggerFunc, _ := grpcutils.CreateInterceptorLogger(true)
+
+				var buf bytes.Buffer
+				log.Logger = log.Output(&buf)
+
+				loggerFunc.Log(context.TODO(), loggingmiddleware.LevelDebug, "debug message")
+				loggerFunc.Log(context.TODO(), loggingmiddleware.LevelInfo, "info message")
+				loggerFunc.Log(context.TODO(), loggingmiddleware.LevelWarn, "warn message")
+				loggerFunc.Log(context.TODO(), loggingmiddleware.LevelError, "error message")
+
+				assert.Contains(t, buf.String(), "debug message")
+				assert.Contains(t, buf.String(), "info message")
+				assert.Contains(t, buf.String(), "warn message")
+				assert.Contains(t, buf.String(), "error message")
+			},
+		)
+
+		t.Run("panics if an unknown level is passed", func(t *testing.T) {
 			loggerFunc, _ := grpcutils.CreateInterceptorLogger(true)
-
-			var buf bytes.Buffer
-			log.Logger = log.Output(&buf)
-
-			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelDebug, "debug message")
-			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelInfo, "info message")
-			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelWarn, "warn message")
-			loggerFunc.Log(context.TODO(), loggingmiddleware.LevelError, "error message")
-
-			assert.Contains(t, buf.String(), "debug message")
-			assert.Contains(t, buf.String(), "info message")
-			assert.Contains(t, buf.String(), "warn message")
-			assert.Contains(t, buf.String(), "error message")
-		},
-	)
+			assert.Panics(t, func() {
+				loggerFunc.Log(context.TODO(), 100, "unknown level")
+			})
+		})
+	})
 
 	t.Run(
 		"RecoveryHandler logs panic message and formats the error as expected",

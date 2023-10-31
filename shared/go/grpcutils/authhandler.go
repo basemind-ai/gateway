@@ -3,6 +3,7 @@ package grpcutils
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"google.golang.org/grpc/codes"
@@ -15,20 +16,19 @@ type AuthHandler struct {
 	jwtSecret string
 }
 
+// NewAuthHandler creates a new AuthHandler instance without requiring its underlying attributes be exposed.
 func NewAuthHandler(jwtSecret string) *AuthHandler {
 	return &AuthHandler{
 		jwtSecret: jwtSecret,
 	}
 }
 
+// HandleAuth handles authentication for a request.
+// It expects the request to have a bearer token in the metadata.
 func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, error) {
 	token, metadataErr := auth.AuthFromMD(ctx, "bearer")
 	if metadataErr != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "failed to get metadata: %v", metadataErr)
-	}
-
-	if token == "" {
-		return nil, status.Errorf(codes.Unauthenticated, "empty auth token")
 	}
 
 	claims, tokenErr := jwtutils.ParseJWT(token, []byte(handler.jwtSecret))
@@ -41,10 +41,7 @@ func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, er
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", subErr)
 	}
 
-	apiKeyID, parseErr := db.StringToUUID(sub)
-	if parseErr != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "failed to parse token id: %v", parseErr)
-	}
+	apiKeyID := exc.MustResult(db.StringToUUID(sub))
 
 	applicationID, retrieveErr := db.GetQueries().RetrieveApplicationIDForAPIKey(ctx, *apiKeyID)
 	if retrieveErr != nil {

@@ -39,10 +39,7 @@ func UUIDToString(value *pgtype.UUID) string {
 
 // NumericToDecimal converts a pgtype.Numeric to a decimal.Decimal.
 func NumericToDecimal(value pgtype.Numeric) (*decimal.Decimal, error) {
-	b, err := value.MarshalJSON()
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal numeric value to json - %w", err)
-	}
+	b, _ := value.MarshalJSON()
 	decimalValue, decimalErr := decimal.NewFromString(string(b))
 	if decimalErr != nil {
 		return nil, fmt.Errorf("failed to convert numeric value to decimal - %w", decimalErr)

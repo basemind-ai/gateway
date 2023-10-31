@@ -25,6 +25,7 @@ sql:
               sql_package: 'pgx/v5'
               emit_json_tags: true
               json_tags_case_style: camel
+              output_files_suffix: '.gen'
 rules:
     - name: postgresql-query-too-costly
       message: 'Query cost estimate is too high'
