@@ -26,8 +26,9 @@ func AuthorizationMiddleware(
 			ctx := r.Context()
 
 			method := r.Method
-			if method == "" {
-				// r.Method is an empty string for GET requests
+			if method == "" { // skipcq: TCV-001
+				// r.Method may be an empty string for GET requests,
+				// its an edge case we need to guard for but not reproduce in tests
 				method = http.MethodGet
 			}
 

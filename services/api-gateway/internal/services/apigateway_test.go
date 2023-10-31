@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"testing"
+	"time"
 )
 
 func createRequestConfigurationDTO(
@@ -100,21 +101,26 @@ func TestAPIGatewayService(t *testing.T) {
 	srv := services.APIGatewayServer{}
 	project, _ := factories.CreateProject(context.TODO())
 	_ = factories.CreateProviderPricingModels(context.TODO())
-	configuration := createRequestConfigurationDTO(t, project.ID)
 
-	_, _ = createTestCache(
-		t,
-		db.UUIDToString(&configuration.ApplicationID),
-	)
+	requestConfigurationDTO := createRequestConfigurationDTO(t, project.ID)
+
+	nonExistentPromptConfigID := "4503ec04-979c-42fe-a24f-15addd5c0509"
 
 	t.Run("RequestPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			_, err := srv.RequestPrompt(context.TODO(), nil)
-			assert.Errorf(t, err, services.ErrorApplicationIDNotInContext)
+			assert.ErrorContains(t, err, services.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when a default prompt config is not found", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
+			_, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&application.ID),
+			)
+
+			mockRedis.ExpectGet(db.UUIDToString(&application.ID)).RedisNil()
+
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
@@ -122,7 +128,11 @@ func TestAPIGatewayService(t *testing.T) {
 			)
 			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{})
 
-			assert.Errorf(t, err, "the application does not have an active prompt configuration")
+			assert.ErrorContains(
+				t,
+				err,
+				"the application does not have an active prompt configuration",
+			)
 		})
 
 		t.Run(
@@ -137,12 +147,20 @@ func TestAPIGatewayService(t *testing.T) {
 					grpcutils.ApplicationIDContextKey,
 					application.ID,
 				)
-				_, err := srv.RequestPrompt(
-					applicationIDContext,
-					&gateway.PromptRequest{PromptConfigId: &configuration.PromptConfigData.ID},
+
+				_, mockRedis := createTestCache(
+					t,
+					db.UUIDToString(&application.ID),
 				)
 
-				assert.Errorf(
+				mockRedis.ExpectGet(db.UUIDToString(&application.ID)).RedisNil()
+
+				_, err := srv.RequestPrompt(
+					applicationIDContext,
+					&gateway.PromptRequest{PromptConfigId: &nonExistentPromptConfigID},
+				)
+
+				assert.ErrorContains(
 					t,
 					err,
 					"the application does not have an active prompt configuration",
@@ -151,23 +169,35 @@ func TestAPIGatewayService(t *testing.T) {
 		)
 
 		t.Run("returns error when template variables are not valid", func(t *testing.T) {
+			cacheClient, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+			)
+			expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
+			assert.NoError(t, marshalErr)
+
+			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
-				configuration.ApplicationID,
+				requestConfigurationDTO.ApplicationID,
 			)
 			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},
 			})
 
-			assert.Errorf(t, err, "missing template variable {userInput}")
+			assert.ErrorContains(t, err, "missing template variable")
 		})
 	})
 
 	t.Run("RequestStreamingPrompt", func(t *testing.T) {
 		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
 			err := srv.RequestStreamingPrompt(nil, mockGatewayServerStream{})
-			assert.Errorf(t, err, services.ErrorApplicationIDNotInContext)
+			assert.ErrorContains(t, err, services.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when prompt config is not found", func(t *testing.T) {
@@ -181,27 +211,36 @@ func TestAPIGatewayService(t *testing.T) {
 				&gateway.PromptRequest{},
 				mockGatewayServerStream{Ctx: applicationIDContext},
 			)
-			assert.Errorf(t, err, "the application does not have an active prompt configuration")
+			assert.ErrorContains(
+				t,
+				err,
+				"the application does not have an active prompt configuration",
+			)
 		})
 
 		t.Run(
 			"returns error when a prompt config with a provided ID is not found",
 			func(t *testing.T) {
-				application, _ := factories.CreateApplication(
-					context.TODO(),
-					project.ID,
+				_, mockRedis := createTestCache(
+					t,
+					db.UUIDToString(&requestConfigurationDTO.ApplicationID),
 				)
+
+				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+					RedisNil()
+
 				applicationIDContext := context.WithValue(
 					context.TODO(),
 					grpcutils.ApplicationIDContextKey,
-					application.ID,
+					requestConfigurationDTO.ApplicationID,
 				)
+
 				err := srv.RequestStreamingPrompt(
-					&gateway.PromptRequest{PromptConfigId: &configuration.PromptConfigData.ID},
+					&gateway.PromptRequest{PromptConfigId: &nonExistentPromptConfigID},
 					mockGatewayServerStream{Ctx: applicationIDContext},
 				)
 
-				assert.Errorf(
+				assert.ErrorContains(
 					t,
 					err,
 					"the application does not have an active prompt configuration",
@@ -210,16 +249,28 @@ func TestAPIGatewayService(t *testing.T) {
 		)
 
 		t.Run("returns error when template variables are not valid", func(t *testing.T) {
+			cacheClient, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+			)
+			expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
+			assert.NoError(t, marshalErr)
+
+			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
 			applicationIDContext := context.WithValue(
 				context.TODO(),
 				grpcutils.ApplicationIDContextKey,
-				configuration.ApplicationID,
+				requestConfigurationDTO.ApplicationID,
 			)
 			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},
 			}, mockGatewayServerStream{Ctx: applicationIDContext})
 
-			assert.Errorf(t, err, "missing template variable {userInput}")
+			assert.ErrorContains(t, err, "missing template variables")
 		})
 	})
 }

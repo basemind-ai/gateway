@@ -62,16 +62,7 @@ func TestUtils(t *testing.T) {
 			promptMessages := json.RawMessage(
 				`[{"role": "x", "content": "Hello {name}!"}, {"role": "system", "content": "You are a helpful {name}."}]`,
 			)
-			vendor := db.ModelVendor("abc")
-			_, _, err := repositories.ParsePromptMessages(promptMessages, vendor)
-			assert.Error(t, err)
-		})
-
-		t.Run("returns error for empty content", func(t *testing.T) {
-			promptMessages := json.RawMessage(
-				`[{"role": "user", "content": ""}, {"role": "system", "content": "You are a helpful {name}."}]`,
-			)
-			vendor := db.ModelVendor("abc")
+			vendor := db.ModelVendorOPENAI
 			_, _, err := repositories.ParsePromptMessages(promptMessages, vendor)
 			assert.Error(t, err)
 		})

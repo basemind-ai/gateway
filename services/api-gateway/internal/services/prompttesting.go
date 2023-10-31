@@ -54,11 +54,11 @@ func (PromptTestingServer) TestPrompt(
 		streamServer.Context(),
 		channel,
 		streamServer,
-		createPromptTestingStreamMessage,
+		CreatePromptTestingStreamMessage,
 	)
 }
 
-func createPromptTestingStreamMessage(
+func CreatePromptTestingStreamMessage(
 	result dto.PromptResultDTO,
 ) (*ptesting.PromptTestingStreamingPromptResponse, bool) {
 	msg := &ptesting.PromptTestingStreamingPromptResponse{}

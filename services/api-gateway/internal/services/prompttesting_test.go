@@ -4,8 +4,10 @@ import (
 	"context"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
@@ -93,6 +95,55 @@ func TestPromptTestingService(t *testing.T) {
 				ModelType:              string(db.ModelTypeGpt432k),
 			}, mock)
 			assert.Error(t, err)
+		})
+	})
+
+	t.Run("CreatePromptTestingStreamMessage", func(t *testing.T) {
+		t.Run("should set finishReason to error of result.Error is not nil", func(t *testing.T) {
+			result := dto.PromptResultDTO{Error: assert.AnError}
+			msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+
+			assert.True(t, isFinished)
+			assert.Equal(t, *msg.FinishReason, "error")
+		})
+
+		t.Run(
+			"should set finishReason to done if result.RequestRecord is not nil",
+			func(t *testing.T) {
+				id := exc.MustResult(db.StringToUUID("00d7ba5c-533e-4a53-8e94-cbf35315f6e9"))
+				result := dto.PromptResultDTO{RequestRecord: &db.PromptRequestRecord{
+					ID: *id,
+				}}
+				msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+
+				assert.True(t, isFinished)
+				assert.Equal(t, *msg.FinishReason, "done")
+				assert.Equal(t, *msg.PromptRequestRecordId, "00d7ba5c-533e-4a53-8e94-cbf35315f6e9")
+			},
+		)
+
+		t.Run(
+			"should not set finishReason to done if finishReason is already set to error",
+			func(t *testing.T) {
+				id := exc.MustResult(db.StringToUUID("00d7ba5c-533e-4a53-8e94-cbf35315f6e9"))
+				result := dto.PromptResultDTO{RequestRecord: &db.PromptRequestRecord{
+					ID: *id,
+				}, Error: assert.AnError}
+				msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+
+				assert.True(t, isFinished)
+				assert.Equal(t, *msg.FinishReason, "error")
+				assert.Equal(t, *msg.PromptRequestRecordId, "00d7ba5c-533e-4a53-8e94-cbf35315f6e9")
+			},
+		)
+
+		t.Run("should set content if result.Content is not nil", func(t *testing.T) {
+			content := "content"
+			result := dto.PromptResultDTO{Content: &content}
+			msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+
+			assert.False(t, isFinished)
+			assert.Equal(t, msg.Content, "content")
 		})
 	})
 }
