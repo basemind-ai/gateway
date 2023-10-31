@@ -7,7 +7,9 @@ import (
 	"time"
 )
 
-type OpenAIPromptMessageDTO struct {
+// OpenAIPromptMessageDTO - DTO for serializing and storing an OpenAI prompt message.
+// Note- this struct represents what we store in the DB as part of a JSON array.
+type OpenAIPromptMessageDTO struct { // skipcq: TCV-001
 	Role              string    `json:"role"                        validate:"oneof=system user function assistant"`
 	Content           *string   `json:"content,omitempty"           validate:"omitempty,required"`
 	Name              *string   `json:"name,omitempty"`
@@ -15,7 +17,8 @@ type OpenAIPromptMessageDTO struct {
 	TemplateVariables *[]string `json:"templateVariables,omitempty"`
 }
 
-type PromptConfigDTO struct {
+// PromptConfigDTO - DTO for serializing a prompt config.
+type PromptConfigDTO struct { // skipcq: TCV-001
 	ID                        string          `json:"id"`
 	Name                      string          `json:"name"                      validate:"required"`
 	ModelParameters           json.RawMessage `json:"modelParameters"           validate:"required"`
@@ -29,7 +32,7 @@ type PromptConfigDTO struct {
 }
 
 // ProviderModelPricingDTO is a data type used to encapsulate the pricing information for a model / type.
-type ProviderModelPricingDTO struct {
+type ProviderModelPricingDTO struct { // skipcq: TCV-001
 	InputTokenPrice  decimal.Decimal `json:"inputTokenPrice"`
 	OutputTokenPrice decimal.Decimal `json:"outputTokenPrice"`
 	TokenUnitSize    int32           `json:"tokenUnitSize"`

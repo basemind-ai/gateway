@@ -6,14 +6,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type PromptResultDTO struct {
+// PromptResultDTO is a data type used to encapsulate the result of a prompt request.
+type PromptResultDTO struct { // skipcq: TCV-001
 	Content       *string
 	RequestRecord *db.PromptRequestRecord
 	Error         error
 }
 
 // RequestConfigurationDTO is a data type used encapsulate the current application prompt configuration.
-type RequestConfigurationDTO struct {
+type RequestConfigurationDTO struct { // skipcq: TCV-001
 	// ApplicationID is the application DB ID
 	ApplicationID pgtype.UUID `json:"applicationUUID"`
 	// PromptConfigID is the promptConfig DB ID
