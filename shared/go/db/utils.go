@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/shopspring/decimal"
@@ -91,4 +92,22 @@ func ShouldCommit(ctx context.Context) bool {
 	}
 
 	return true
+}
+
+// CommitIfShouldCommit commits a transaction if ShouldCommit returns true.
+// Panics if the transaction fails to commit.
+func CommitIfShouldCommit(ctx context.Context, tx pgx.Tx) {
+	if ShouldCommit(ctx) {
+		exc.Must(tx.Commit(ctx), "failed to commit transaction")
+	}
+}
+
+// HandleRollback rolls back a transaction if a panic is recovered.
+// This function must be used as a defer function.
+func HandleRollback(ctx context.Context, tx pgx.Tx) {
+	if r := recover(); r != nil { //nolint: revive
+		exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
+		panic(r)
+	}
+	exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
 }

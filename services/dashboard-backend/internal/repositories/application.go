@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
@@ -22,9 +21,7 @@ func DeleteApplication(ctx context.Context, applicationID pgtype.UUID) error {
 	tx := exc.MustResult(db.GetOrCreateTx(ctx))
 
 	if db.ShouldCommit(ctx) {
-		defer func() {
-			exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
-		}()
+		defer db.HandleRollback(ctx, tx)
 	}
 
 	queries := db.GetQueries().WithTx(tx)
@@ -35,20 +32,12 @@ func DeleteApplication(ctx context.Context, applicationID pgtype.UUID) error {
 	shouldCommitCtx := db.CreateShouldCommitContext(transactionCtx, false)
 
 	for _, promptConfig := range promptConfigs {
-		if deleteErr := DeletePromptConfig(shouldCommitCtx, applicationID, promptConfig.ID); deleteErr != nil {
-			return fmt.Errorf("failed to delete prompt config: %w", deleteErr)
-		}
+		exc.Must(DeletePromptConfig(shouldCommitCtx, applicationID, promptConfig.ID))
 	}
 
-	if deleteErr := queries.DeleteApplication(ctx, applicationID); deleteErr != nil {
-		return fmt.Errorf("failed to delete application: %w", deleteErr)
-	}
+	exc.Must(queries.DeleteApplication(ctx, applicationID))
 
-	if db.ShouldCommit(ctx) {
-		if commitErr := tx.Commit(ctx); commitErr != nil {
-			return fmt.Errorf("failed to commit transaction: %w", commitErr)
-		}
-	}
+	db.CommitIfShouldCommit(ctx, tx)
 
 	go func() {
 		rediscache.Invalidate(ctx, db.UUIDToString(&applicationID))

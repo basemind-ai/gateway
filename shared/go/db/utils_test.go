@@ -56,6 +56,24 @@ func TestUtils(t *testing.T) {
 			assert.False(t, shouldCommit)
 		})
 	})
+	t.Run("CommitIfShouldCommit", func(t *testing.T) {
+		t.Run("commits transaction when should commit is true", func(t *testing.T) {
+			tx, _ := db.GetTransaction(context.TODO())
+			ctx := db.CreateShouldCommitContext(context.TODO(), true)
+			assert.NotPanics(t, func() {
+				db.CommitIfShouldCommit(ctx, tx)
+			})
+			assert.Error(t, tx.Commit(context.TODO()))
+		})
+		t.Run("does not commit transaction when should commit is false", func(t *testing.T) {
+			tx, _ := db.GetTransaction(context.TODO())
+			ctx := db.CreateShouldCommitContext(context.TODO(), false)
+			assert.NotPanics(t, func() {
+				db.CommitIfShouldCommit(ctx, tx)
+			})
+			assert.NoError(t, tx.Commit(context.TODO()))
+		})
+	})
 	t.Run("StringToUUID", func(t *testing.T) {
 		t.Run("returns pgtype.UUID from string", func(t *testing.T) {
 			uuidString := "d55028b9-3502-43db-be3e-0a758afa44a7"
@@ -102,6 +120,32 @@ func TestUtils(t *testing.T) {
 		t.Run("returns error when string is invalid", func(t *testing.T) {
 			_, err := db.StringToNumeric("invalid")
 			assert.Error(t, err)
+		})
+	})
+
+	t.Run("HandleRollback", func(t *testing.T) {
+		t.Run("rolls back transaction when panic is recovered", func(t *testing.T) {
+			tx, _ := db.GetTransaction(context.Background())
+			assert.Panics(t, func() {
+				defer db.HandleRollback(context.Background(), tx)
+				panic("panic")
+			})
+			assert.Error(t, tx.Commit(context.Background()))
+		})
+		t.Run("rolls back transaction when no panic is recovered", func(t *testing.T) {
+			tx, _ := db.GetTransaction(context.Background())
+			assert.NotPanics(t, func() {
+				defer db.HandleRollback(context.Background(), tx)
+			})
+			assert.Error(t, tx.Commit(context.Background()))
+		})
+
+		t.Run("does not panic if transaction is closed", func(t *testing.T) {
+			tx, _ := db.GetTransaction(context.Background())
+			assert.NoError(t, tx.Commit(context.Background()))
+			assert.NotPanics(t, func() {
+				defer db.HandleRollback(context.Background(), tx)
+			})
 		})
 	})
 }

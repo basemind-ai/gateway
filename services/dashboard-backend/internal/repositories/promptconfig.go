@@ -92,32 +92,21 @@ func UpdateApplicationDefaultPromptConfig(
 	}
 
 	tx := exc.MustResult(db.GetTransaction(ctx))
-	defer func() {
-		exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
-	}()
+	defer db.HandleRollback(ctx, tx)
 
 	queries := db.GetQueries().WithTx(tx)
 
-	if updateErr := queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
+	exc.Must(queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
 		ID:        defaultPromptConfig.ID,
 		IsDefault: false,
-	}); updateErr != nil {
-		return fmt.Errorf(
-			"failed to set the existing default config as non-default - %w",
-			updateErr,
-		)
-	}
+	}))
 
-	if updateErr := queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
+	exc.Must(queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
 		ID:        promptConfigID,
 		IsDefault: true,
-	}); updateErr != nil {
-		return fmt.Errorf("failed to set the new prompt config as default - %w", updateErr)
-	}
+	}))
 
-	if commitErr := tx.Commit(ctx); commitErr != nil {
-		return fmt.Errorf("failed to commit transaction - %w", commitErr)
-	}
+	exc.LogIfErr(tx.Commit(ctx))
 
 	go func() {
 		cacheKeys := []string{
@@ -163,9 +152,10 @@ func UpdatePromptConfig(
 	if updatePromptConfigDTO.Name != nil {
 		updateParams.Name = strings.TrimSpace(*updatePromptConfigDTO.Name)
 	}
-	if updatePromptConfigDTO.ModelVendor != nil {
-		updateParams.ModelVendor = *updatePromptConfigDTO.ModelVendor
-	}
+	// TODO: enable this when we add more vendors
+	// if updatePromptConfigDTO.ModelVendor != nil {
+	//	updateParams.ModelVendor = *updatePromptConfigDTO.ModelVendor
+	//}
 	if updatePromptConfigDTO.ModelType != nil {
 		updateParams.ModelType = *updatePromptConfigDTO.ModelType
 	}
@@ -228,23 +218,14 @@ func DeletePromptConfig(ctx context.Context,
 	tx := exc.MustResult(db.GetOrCreateTx(ctx))
 
 	if db.ShouldCommit(ctx) {
-		defer func() {
-			exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
-		}()
+		defer db.HandleRollback(ctx, tx)
 	}
 
 	queries := db.GetQueries().WithTx(tx)
 
-	if deleteErr := queries.DeletePromptConfig(ctx, promptConfigID); deleteErr != nil {
-		log.Error().Err(deleteErr).Msg("failed to delete prompt config")
-		return fmt.Errorf("failed to delete prompt config: %w", deleteErr)
-	}
+	exc.Must(queries.DeletePromptConfig(ctx, promptConfigID))
 
-	if db.ShouldCommit(ctx) {
-		if commitErr := tx.Commit(ctx); commitErr != nil {
-			return fmt.Errorf("failed to commit transaction: %w", commitErr)
-		}
-	}
+	db.CommitIfShouldCommit(ctx, tx)
 
 	go func() {
 		rediscache.Invalidate(

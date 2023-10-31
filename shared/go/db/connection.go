@@ -29,7 +29,7 @@ func CreateConnection(ctx context.Context, dbURL string) (*pgxpool.Pool, error) 
 		exponentialBackoff.MaxInterval = time.Second * 5
 		exponentialBackoff.MaxElapsedTime = 20 * time.Second
 
-		if connErr := backoff.Retry(func() error {
+		if connErr := backoff.Retry(func() error { // skipcq: TCV-001
 			conn, pgxErr := pgxpool.New(ctx, dbURL)
 			if pgxErr != nil {
 				return pgxErr

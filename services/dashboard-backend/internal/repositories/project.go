@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"time"
 
@@ -10,7 +9,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/rs/zerolog/log"
 )
 
 func CreateProject(
@@ -23,31 +21,18 @@ func CreateProject(
 
 	queries := db.GetQueries().WithTx(tx)
 
-	project, projectCreateErr := queries.CreateProject(ctx, db.CreateProjectParams{
+	project := exc.MustResult(queries.CreateProject(ctx, db.CreateProjectParams{
 		Name:        name,
 		Description: description,
-	})
+	}))
 
-	if projectCreateErr != nil {
-		log.Error().Err(projectCreateErr).Msg("failed to create project")
-		return nil, fmt.Errorf("failed to create project: %w", projectCreateErr)
-	}
-
-	userProject, userProjectCreateErr := queries.CreateUserProject(ctx, db.CreateUserProjectParams{
+	userProject := exc.MustResult(queries.CreateUserProject(ctx, db.CreateUserProjectParams{
 		UserID:     userAccount.ID,
 		ProjectID:  project.ID,
 		Permission: db.AccessPermissionTypeADMIN,
-	})
+	}))
 
-	if userProjectCreateErr != nil {
-		log.Error().Err(userProjectCreateErr).Msg("failed to create user project")
-		return nil, fmt.Errorf("failed to create user project: %w", userProjectCreateErr)
-	}
-
-	if commitErr := tx.Commit(ctx); commitErr != nil {
-		log.Error().Err(commitErr).Msg("failed to commit transaction")
-		return nil, fmt.Errorf("failed to commit transaction: %w", commitErr)
-	}
+	db.CommitIfShouldCommit(ctx, tx)
 
 	projectID := db.UUIDToString(&project.ID)
 
@@ -70,9 +55,7 @@ func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
 
 	tx := exc.MustResult(db.GetTransaction(ctx))
 
-	defer func() {
-		exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
-	}()
+	defer db.HandleRollback(ctx, tx)
 
 	// we pass in the transaction into the nested function call via context
 	transactionCtx := db.CreateTransactionContext(ctx, tx)
@@ -80,21 +63,12 @@ func DeleteProject(ctx context.Context, projectID pgtype.UUID) error {
 	shouldCommitCtx := db.CreateShouldCommitContext(transactionCtx, false)
 
 	for _, application := range applications {
-		if deleteErr := DeleteApplication(shouldCommitCtx, application.ID); deleteErr != nil {
-			log.Error().Err(deleteErr).Msg("failed to delete application")
-			return fmt.Errorf("failed to delete application: %w", deleteErr)
-		}
+		exc.Must(DeleteApplication(shouldCommitCtx, application.ID))
 	}
 
-	if deleteErr := db.GetQueries().WithTx(tx).DeleteProject(ctx, projectID); deleteErr != nil {
-		log.Error().Err(deleteErr).Msg("failed to delete project")
-		return fmt.Errorf("failed to delete project: %w", deleteErr)
-	}
+	exc.Must(db.GetQueries().WithTx(tx).DeleteProject(ctx, projectID))
 
-	if commitErr := tx.Commit(ctx); commitErr != nil {
-		log.Error().Err(commitErr).Msg("failed to commit transaction")
-		return fmt.Errorf("failed to commit transaction: %w", commitErr)
-	}
+	db.CommitIfShouldCommit(ctx, tx)
 
 	return nil
 }
