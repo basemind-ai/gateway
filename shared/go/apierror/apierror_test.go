@@ -14,6 +14,60 @@ import (
 func TestAPIError(t *testing.T) {
 	t.Parallel()
 
+	t.Run("APIError", func(t *testing.T) {
+		t.Run("Render renders as expected", func(t *testing.T) {
+			client := testutils.CreateTestHTTPClient(
+				t,
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					apierror.New(http.StatusNotFound, "err").Render(w)
+				}),
+			)
+			res, err := client.Get(context.TODO(), "/")
+			assert.Nil(t, err)
+			assert.Equal(t, http.StatusNotFound, res.StatusCode)
+
+			body := apierror.APIError{}
+			_ = serialization.DeserializeJSON[*apierror.APIError](res.Body, &body)
+			assert.Equal(t, "err", body.Message)
+			assert.Equal(t, http.StatusText(http.StatusNotFound), body.StatusText)
+			assert.Equal(t, http.StatusNotFound, body.StatusCode)
+		})
+
+		t.Run("render with extra renders as expected", func(t *testing.T) {
+			client := testutils.CreateTestHTTPClient(
+				t,
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					apierror.New(http.StatusNotFound, "err").RenderWithExtra(
+						context.WithValue(r.Context(),
+							apierror.ExtraContextKey,
+							"extra",
+						),
+						w,
+					)
+				}),
+			)
+
+			res, err := client.Get(context.TODO(), "/")
+			assert.Nil(t, err)
+			assert.Equal(t, http.StatusNotFound, res.StatusCode)
+
+			body := apierror.APIError{}
+			_ = serialization.DeserializeJSON[*apierror.APIError](res.Body, &body)
+			assert.Equal(t, "err", body.Message)
+			assert.Equal(t, http.StatusText(http.StatusNotFound), body.StatusText)
+			assert.Equal(t, http.StatusNotFound, body.StatusCode)
+			assert.Equal(t, "extra", body.Extra)
+		})
+
+		t.Run("Error returns the error message", func(t *testing.T) {
+			assert.Equal(
+				t,
+				"status: 404, message: err",
+				apierror.New(http.StatusNotFound, "err").Error(),
+			)
+		})
+	})
+
 	for _, testCase := range []struct {
 		APIErrType      *apierror.APIError
 		ExpectedStatus  int
@@ -70,18 +124,21 @@ func TestAPIError(t *testing.T) {
 			ExpectedMessage: http.StatusText(http.StatusInternalServerError),
 		},
 	} {
-		client := testutils.CreateTestHTTPClient(
-			t,
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				testCase.APIErrType.Render(w)
-			}),
-		)
-		res, err := client.Get(context.TODO(), "/")
-		assert.Nil(t, err)
-		assert.Equal(t, testCase.ExpectedStatus, res.StatusCode)
+		t.Run(http.StatusText(testCase.ExpectedStatus), func(t *testing.T) {
+			client := testutils.CreateTestHTTPClient(
+				t,
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					testCase.APIErrType.Render(w)
+				}),
+			)
+			res, err := client.Get(context.TODO(), "/")
+			assert.Nil(t, err)
+			assert.Equal(t, testCase.ExpectedStatus, res.StatusCode)
 
-		var body apierror.APIError
-		_ = serialization.DeserializeJSON(res.Body, &body)
-		assert.Equal(t, testCase.ExpectedMessage, body.Message)
+			var body apierror.APIError
+			_ = serialization.DeserializeJSON(res.Body, &body)
+			assert.Equal(t, testCase.ExpectedMessage, body.Message)
+		},
+		)
 	}
 }

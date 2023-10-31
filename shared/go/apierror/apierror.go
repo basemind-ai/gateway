@@ -1,11 +1,17 @@
 package apierror
 
 import (
+	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"net/http"
-	"reflect"
+	"strings"
 )
+
+type extraContextKey int
+
+// ExtraContextKey - the key used to store extra information in the context.
+const ExtraContextKey extraContextKey = iota
 
 // APIError - represents an API error.
 // Its a type that can render itself into an HTTP response.
@@ -21,6 +27,14 @@ func (e *APIError) Render(w http.ResponseWriter) {
 	serialization.RenderJSONResponse(w, e.StatusCode, e)
 }
 
+// RenderWithExtra - renders the APIError into an HTTP response,
+// serializing any value set for the ExtraContextKey in the context as part of the JSON response.
+// This is useful for returning additional information about an error from nested operations.
+func (e *APIError) RenderWithExtra(ctx context.Context, w http.ResponseWriter) {
+	e.Extra = ctx.Value(ExtraContextKey)
+	serialization.RenderJSONResponse(w, e.StatusCode, e)
+}
+
 // Error - returns the error message.
 // This receiver ensures that APIError fulfills the Error interface.
 func (e *APIError) Error() string {
@@ -28,10 +42,10 @@ func (e *APIError) Error() string {
 }
 
 // New - creates a new APIError.
-func New(statusCode int, args ...any) *APIError {
+func New(statusCode int, messages ...string) *APIError {
 	var message string
-	if l := len(args); l == 1 && reflect.TypeOf(args[0]).Kind() == reflect.String {
-		message = args[0].(string)
+	if len(messages) > 0 {
+		message = strings.Join(messages, ", ")
 	} else {
 		message = http.StatusText(statusCode)
 	}
@@ -44,31 +58,31 @@ func New(statusCode int, args ...any) *APIError {
 }
 
 // NotFound - creates a new APIError with status code 404.
-func NotFound(message ...any) *APIError {
-	return New(http.StatusNotFound, message...)
+func NotFound(messages ...string) *APIError {
+	return New(http.StatusNotFound, messages...)
 }
 
 // BadRequest - creates a new APIError with status code 400.
-func BadRequest(message ...any) *APIError {
-	return New(http.StatusBadRequest, message...)
+func BadRequest(messages ...string) *APIError {
+	return New(http.StatusBadRequest, messages...)
 }
 
 // Unauthorized - creates a new APIError with status code 401.
-func Unauthorized(message ...any) *APIError {
-	return New(http.StatusUnauthorized, message...)
+func Unauthorized(messages ...string) *APIError {
+	return New(http.StatusUnauthorized, messages...)
 }
 
 // Forbidden - creates a new APIError with status code 403.
-func Forbidden(message ...any) *APIError {
-	return New(http.StatusForbidden, message...)
+func Forbidden(messages ...string) *APIError {
+	return New(http.StatusForbidden, messages...)
 }
 
 // UnprocessableContent - creates a new APIError with status code 422.
-func UnprocessableContent(message ...any) *APIError {
-	return New(http.StatusUnprocessableEntity, message...)
+func UnprocessableContent(messages ...string) *APIError {
+	return New(http.StatusUnprocessableEntity, messages...)
 }
 
 // InternalServerError - creates a new APIError with status code 500.
-func InternalServerError(message ...any) *APIError {
-	return New(http.StatusInternalServerError, message...)
+func InternalServerError(messages ...string) *APIError {
+	return New(http.StatusInternalServerError, messages...)
 }

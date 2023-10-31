@@ -11,15 +11,17 @@ import (
 )
 
 var (
-	once      sync.Once
-	client    *cache.Cache
-	clientErr error
+	once   sync.Once
+	client *cache.Cache
 )
 
+// SetClient is a helper function that allows you to set the redis client. This is useful for testing.
 func SetClient(c *cache.Cache) {
 	client = c
 }
 
+// New is a helper function that will initialize the redis client.
+// It will only initialize the client once, and subsequent calls will return the same client.
 func New(redisURL string) *cache.Cache {
 	once.Do(func() {
 		opt := exc.MustResult(redis.ParseURL(redisURL))
@@ -32,10 +34,7 @@ func New(redisURL string) *cache.Cache {
 }
 
 func GetClient() *cache.Cache {
-	if client == nil {
-		panic("redis client is not initialized")
-	}
-	return client
+	return exc.ReturnNotNil(client, "redis client is not initialized")
 }
 
 // With is a helper function that will check if a key exists in redis, and if it does, it will return the value. If it
@@ -50,10 +49,12 @@ func With[T any](
 	if getErr := client.Get(ctx, key, target); getErr == nil {
 		return target, nil
 	}
+
 	retrieved, retrieveErr := fallback()
 	if retrieveErr != nil {
 		return nil, retrieveErr
 	}
+
 	if setErr := client.Set(&cache.Item{
 		Ctx:   ctx,
 		Key:   key,
@@ -62,9 +63,11 @@ func With[T any](
 	}); setErr != nil {
 		return nil, setErr
 	}
+
 	return retrieved, nil
 }
 
+// Invalidate - deletes all the passed in keys from cache.
 func Invalidate(ctx context.Context, keys ...string) {
 	for _, key := range keys {
 		exc.LogIfErr(

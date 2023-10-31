@@ -32,18 +32,6 @@ func TestRedisClient(t *testing.T) {
 		})
 	})
 
-	t.Run("Caches values as expected", func(t *testing.T) {
-		rediscache.New("redis://redis:6379")
-
-		_, mockRedis := testutils.CreateMockRedisClient(t)
-		client := rediscache.GetClient()
-
-		expected, _ := client.Marshal("doe")
-
-		mockRedis.ExpectSet(key, expected, time.Minute).SetVal("OK")
-		setErr := client.Set(val)
-		assert.NoError(t, setErr)
-	})
 	t.Run("With", func(t *testing.T) {
 		fallback := func() (*string, error) {
 			v := "zuchmir"
@@ -67,6 +55,7 @@ func TestRedisClient(t *testing.T) {
 			assert.NoError(t, retrieveErr)
 			assert.Equal(t, "doe", *retrieved)
 		})
+
 		t.Run(
 			"calls fallback function and sets cache if value does not exist in cache",
 			func(t *testing.T) {
@@ -94,6 +83,7 @@ func TestRedisClient(t *testing.T) {
 				assert.Equal(t, "zuchmir", *retrieved)
 			},
 		)
+
 		t.Run("returns error if fallback function returns error", func(t *testing.T) {
 			db, mockRedis := redismock.NewClientMock()
 			rediscache.SetClient(cache.New(&cache.Options{
@@ -105,6 +95,33 @@ func TestRedisClient(t *testing.T) {
 			fallback := func() (*string, error) {
 				return nil, assert.AnError
 			}
+
+			var target string
+			retrieved, retrieveErr := rediscache.With(
+				context.TODO(),
+				key,
+				&target,
+				time.Minute,
+				fallback,
+			)
+			assert.Error(t, retrieveErr)
+			assert.Nil(t, retrieved)
+		})
+
+		t.Run("returns error if cache set fails", func(t *testing.T) {
+			db, mockRedis := redismock.NewClientMock()
+			rediscache.SetClient(cache.New(&cache.Options{
+				Redis: db,
+			}))
+
+			mockRedis.ExpectGet(key).RedisNil()
+
+			fallback := func() (*string, error) {
+				v := "zuchmir"
+				return &v, nil
+			}
+
+			mockRedis.ExpectSet(key, "zuchmir", time.Minute).SetErr(assert.AnError)
 
 			var target string
 			retrieved, retrieveErr := rediscache.With(
