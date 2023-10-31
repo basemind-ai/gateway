@@ -214,7 +214,7 @@ func UpdatePromptConfig(
 func DeletePromptConfig(ctx context.Context,
 	applicationID pgtype.UUID,
 	promptConfigID pgtype.UUID,
-) error {
+) {
 	tx := exc.MustResult(db.GetOrCreateTx(ctx))
 
 	if db.ShouldCommit(ctx) {
@@ -233,8 +233,6 @@ func DeletePromptConfig(ctx context.Context,
 			fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), db.UUIDToString(&promptConfigID)),
 		)
 	}()
-
-	return nil
 }
 
 func GetPromptConfigAPIRequestCountByDateRange(

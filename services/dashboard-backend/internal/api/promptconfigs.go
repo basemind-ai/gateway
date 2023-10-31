@@ -146,7 +146,7 @@ func handleDeletePromptConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exc.Must(repositories.DeletePromptConfig(r.Context(), applicationID, promptConfigID))
+	repositories.DeletePromptConfig(r.Context(), applicationID, promptConfigID)
 
 	w.WriteHeader(http.StatusNoContent)
 }

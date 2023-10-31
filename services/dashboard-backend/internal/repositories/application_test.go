@@ -25,70 +25,78 @@ func TestApplicationRepository(t *testing.T) {
 	toDate := fromDate.AddDate(0, 0, 2)
 	totalTokensUsed := int64(20)
 
-	t.Run("deletes an application and all of its prompt configs", func(t *testing.T) {
-		applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
+	t.Run("DeleteApplication", func(t *testing.T) {
+		t.Run("deletes an application and all of its prompt configs", func(t *testing.T) {
+			applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-		value, err := db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
-		assert.NoError(t, err)
-		assert.Equal(t, applicationToDelete.ID, value.ID)
+			value, err := db.GetQueries().
+				RetrieveApplication(context.TODO(), applicationToDelete.ID)
+			assert.NoError(t, err)
+			assert.Equal(t, applicationToDelete.ID, value.ID)
 
-		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), applicationToDelete.ID)
-		promptConfigValue, err := db.
-			GetQueries().
-			RetrievePromptConfig(context.TODO(), promptConfig.ID)
+			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), applicationToDelete.ID)
+			promptConfigValue, err := db.
+				GetQueries().
+				RetrievePromptConfig(context.TODO(), promptConfig.ID)
 
-		assert.NoError(t, err)
-		assert.Equal(t, promptConfig.ID, promptConfigValue.ID)
+			assert.NoError(t, err)
+			assert.Equal(t, promptConfig.ID, promptConfigValue.ID)
 
-		err = repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
-		assert.NoError(t, err)
+			err = repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
+			assert.NoError(t, err)
 
-		_, err = db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
-		assert.Error(t, err)
+			_, err = db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
+			assert.Error(t, err)
 
-		_, err = db.GetQueries().RetrievePromptConfig(context.TODO(), promptConfig.ID)
-		assert.Error(t, err)
-	})
+			_, err = db.GetQueries().RetrievePromptConfig(context.TODO(), promptConfig.ID)
+			assert.Error(t, err)
+		})
 
-	t.Run("deletes an application that has no prompt configs", func(t *testing.T) {
-		applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
+		t.Run("deletes an application that has no prompt configs", func(t *testing.T) {
+			applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-		value, err := db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
-		assert.NoError(t, err)
-		assert.Equal(t, applicationToDelete.ID, value.ID)
+			value, err := db.GetQueries().
+				RetrieveApplication(context.TODO(), applicationToDelete.ID)
+			assert.NoError(t, err)
+			assert.Equal(t, applicationToDelete.ID, value.ID)
 
-		err = repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
-		assert.NoError(t, err)
+			err = repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
+			assert.NoError(t, err)
 
-		_, err = db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
-		assert.Error(t, err)
-	})
+			_, err = db.GetQueries().RetrieveApplication(context.TODO(), applicationToDelete.ID)
+			assert.Error(t, err)
+		})
 
-	t.Run("invalidates application caches", func(t *testing.T) {
-		applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
-		defaultPromptConfig, _ := factories.CreatePromptConfig(
-			context.TODO(),
-			applicationToDelete.ID,
-		)
+		t.Run("invalidates application caches", func(t *testing.T) {
+			applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
+			defaultPromptConfig, _ := factories.CreatePromptConfig(
+				context.TODO(),
+				applicationToDelete.ID,
+			)
 
-		applicationToDeleteID := db.UUIDToString(&applicationToDelete.ID)
+			applicationToDeleteID := db.UUIDToString(&applicationToDelete.ID)
 
-		cacheKeys := []string{
-			fmt.Sprintf("%s:%s", applicationToDeleteID, db.UUIDToString(&defaultPromptConfig.ID)),
-			applicationToDeleteID,
-		}
+			cacheKeys := []string{
+				fmt.Sprintf(
+					"%s:%s",
+					applicationToDeleteID,
+					db.UUIDToString(&defaultPromptConfig.ID),
+				),
+				applicationToDeleteID,
+			}
 
-		for _, cacheKey := range cacheKeys {
-			redisDB.Set(context.TODO(), cacheKey, "test", 0)
-			redisMock.ExpectDel(cacheKey).SetVal(1)
-		}
+			for _, cacheKey := range cacheKeys {
+				redisDB.Set(context.TODO(), cacheKey, "test", 0)
+				redisMock.ExpectDel(cacheKey).SetVal(1)
+			}
 
-		err := repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
-		assert.NoError(t, err)
+			err := repositories.DeleteApplication(context.TODO(), applicationToDelete.ID)
+			assert.NoError(t, err)
 
-		time.Sleep(testutils.GetSleepTimeout())
+			time.Sleep(testutils.GetSleepTimeout())
 
-		assert.NoError(t, redisMock.ExpectationsWereMet())
+			assert.NoError(t, redisMock.ExpectationsWereMet())
+		})
 	})
 
 	t.Run("GetApplicationAPIRequestCountByDateRange", func(t *testing.T) {

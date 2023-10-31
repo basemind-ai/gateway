@@ -32,7 +32,7 @@ func DeleteApplication(ctx context.Context, applicationID pgtype.UUID) error {
 	shouldCommitCtx := db.CreateShouldCommitContext(transactionCtx, false)
 
 	for _, promptConfig := range promptConfigs {
-		exc.Must(DeletePromptConfig(shouldCommitCtx, applicationID, promptConfig.ID))
+		DeletePromptConfig(shouldCommitCtx, applicationID, promptConfig.ID)
 	}
 
 	exc.Must(queries.DeleteApplication(ctx, applicationID))

@@ -20,6 +20,7 @@ var modelPriceMap = map[db.ModelType]float64{
 	db.ModelTypeGpt432k:       0.000012,
 }
 
+// GetPromptTokenCount returns the number of tokens in a prompt.
 func GetPromptTokenCount(prompt string, modelType db.ModelType) int32 {
 	encoding := modelEncodingMap[modelType]
 	enc := exc.MustResult(tokenizer.Get(encoding))
@@ -27,6 +28,7 @@ func GetPromptTokenCount(prompt string, modelType db.ModelType) int32 {
 	return int32(len(ids))
 }
 
+// GetCostByModelType returns the cost of a prompt based on the model type.
 func GetCostByModelType(totalToken int64, modelType db.ModelType) float64 {
 	return modelPriceMap[modelType] * float64(totalToken)
 }

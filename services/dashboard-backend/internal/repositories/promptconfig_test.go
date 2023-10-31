@@ -105,6 +105,26 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			assert.Error(t, err)
 			assert.Nil(t, promptConfig)
 		})
+
+		t.Run("returns error if prompt config name collides", func(t *testing.T) {
+			application, _ := factories.CreateApplication(context.TODO(), project.ID)
+			existingPromptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+
+			createPromptConfigDTO := dto.PromptConfigCreateDTO{
+				Name:                   existingPromptConfig.Name,
+				ModelVendor:            db.ModelVendorOPENAI,
+				ModelType:              db.ModelTypeGpt432k,
+				ModelParameters:        newModelParameters,
+				ProviderPromptMessages: newPromptMessages,
+			}
+			promptConfig, err := repositories.CreatePromptConfig(
+				context.TODO(),
+				application.ID,
+				createPromptConfigDTO,
+			)
+			assert.Error(t, err)
+			assert.Nil(t, promptConfig)
+		})
 	})
 
 	t.Run("UpdateApplicationDefaultPromptConfig", func(t *testing.T) {
@@ -361,6 +381,43 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 				promptConfig.ID,
 				dto.PromptConfigUpdateDTO{ProviderPromptMessages: &badMessage},
 			)
+			assert.Error(t, err)
+		})
+
+		t.Run("returns error when prompt config name collides", func(t *testing.T) {
+			application, _ := factories.CreateApplication(context.TODO(), project.ID)
+			existingPromptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+
+			promptConfig, _ := db.GetQueries().
+				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					ApplicationID:             application.ID,
+					Name:                      factories.RandomString(10),
+					ModelVendor:               db.ModelVendorOPENAI,
+					ModelType:                 db.ModelTypeGpt4,
+					ModelParameters:           existingPromptConfig.ModelParameters,
+					ProviderPromptMessages:    existingPromptConfig.ProviderPromptMessages,
+					ExpectedTemplateVariables: []string{""},
+					IsDefault:                 false,
+				})
+
+			_, err := repositories.UpdatePromptConfig(
+				context.TODO(),
+				promptConfig.ID,
+				dto.PromptConfigUpdateDTO{Name: &existingPromptConfig.Name},
+			)
+			assert.Error(t, err)
+		})
+	})
+
+	t.Run("DeletePromptConfig", func(t *testing.T) {
+		t.Run("deletes a prompt config", func(t *testing.T) {
+			project, _ := factories.CreateProject(context.TODO())
+			application, _ := factories.CreateApplication(context.TODO(), project.ID)
+			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+
+			repositories.DeletePromptConfig(context.TODO(), application.ID, promptConfig.ID)
+
+			_, err := db.GetQueries().RetrievePromptConfig(context.TODO(), promptConfig.ID)
 			assert.Error(t, err)
 		})
 	})
