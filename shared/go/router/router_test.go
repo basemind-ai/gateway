@@ -33,7 +33,7 @@ func TestNew(t *testing.T) {
 
 	t.Run("allows setting middlewares", func(t *testing.T) {
 		r := router.New(router.Options{
-			Environment:      "development",
+			Environment:      "test",
 			ServiceName:      "test-service",
 			RegisterHandlers: func(mux *chi.Mux) {},
 			Middlewares: []func(next http.Handler) http.Handler{

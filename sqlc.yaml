@@ -25,7 +25,9 @@ sql:
               sql_package: 'pgx/v5'
               emit_json_tags: true
               json_tags_case_style: camel
-              output_files_suffix: '.gen'
+              output_db_file_name: db.gen.go
+              output_models_file_name: models.gen.go
+              output_querier_file_name: querier.gen.go
 rules:
     - name: postgresql-query-too-costly
       message: 'Query cost estimate is too high'
