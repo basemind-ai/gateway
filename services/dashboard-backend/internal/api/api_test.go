@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"net/http"
 	"testing"
 
@@ -32,7 +33,7 @@ func createUserProject(
 	t *testing.T,
 	firebaseID string,
 	projectID string,
-	permission db.AccessPermissionType,
+	permission models.AccessPermissionType,
 ) {
 	t.Helper()
 
@@ -45,7 +46,7 @@ func createUserProject(
 	projectIDUUID, err := db.StringToUUID(projectID)
 	assert.NoError(t, err)
 
-	_, err = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+	_, err = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 		UserID:     userAccount.ID,
 		ProjectID:  *projectIDUUID,
 		Permission: permission,
@@ -61,7 +62,7 @@ func createApplication(t *testing.T, projectID string) string {
 	return applicationID
 }
 
-func createTestClient(t *testing.T, userAccount *db.UserAccount) httpclient.Client {
+func createTestClient(t *testing.T, userAccount *models.UserAccount) httpclient.Client {
 	t.Helper()
 	r := router.New(router.Options{
 		Environment:      "test",

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"net/http"
 	"strings"
 	"testing"
@@ -23,7 +24,7 @@ import (
 func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
-	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+	createUserProject(t, userAccount.FirebaseID, projectID, models.AccessPermissionTypeADMIN)
 
 	testClient := createTestClient(t, userAccount)
 
@@ -78,8 +79,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			createDto := dto.PromptConfigCreateDTO{
 				Name:                   "test prompt config",
 				ModelParameters:        modelParameters,
-				ModelType:              db.ModelTypeGpt4,
-				ModelVendor:            db.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
 				ProviderPromptMessages: promptMessages,
 			}
 			response, requestErr := testClient.Post(
@@ -106,8 +107,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -122,7 +123,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						t,
 						newUserAccount.FirebaseID,
 						newProjectID,
-						db.AccessPermissionTypeADMIN,
+						models.AccessPermissionTypeADMIN,
 					)
 
 					client := createTestClient(t, newUserAccount)
@@ -130,8 +131,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					createDto := dto.PromptConfigCreateDTO{
 						Name:                   "test prompt config",
 						ModelParameters:        modelParameters,
-						ModelType:              db.ModelTypeGpt4,
-						ModelVendor:            db.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt4,
+						ModelVendor:            models.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					}
 					response, requestErr := client.Post(
@@ -157,8 +158,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				createDto := dto.PromptConfigCreateDTO{
 					Name:                   "test prompt config",
 					ModelParameters:        modelParameters,
-					ModelType:              db.ModelTypeGpt4,
-					ModelVendor:            db.ModelVendorOPENAI,
+					ModelType:              models.ModelTypeGpt4,
+					ModelVendor:            models.ModelVendorOPENAI,
 					ProviderPromptMessages: promptMessages,
 				}
 				response, requestErr := client.Post(
@@ -180,8 +181,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name: "fails validation for missing name",
 					Dto: dto.PromptConfigCreateDTO{
 						ModelParameters:        modelParameters,
-						ModelType:              db.ModelTypeGpt4,
-						ModelVendor:            db.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt4,
+						ModelVendor:            models.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					},
 				},
@@ -189,8 +190,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name: "fails validation for missing model parameters",
 					Dto: dto.PromptConfigCreateDTO{
 						Name:                   "test prompt config",
-						ModelType:              db.ModelTypeGpt4,
-						ModelVendor:            db.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt4,
+						ModelVendor:            models.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					},
 				},
@@ -199,7 +200,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Dto: dto.PromptConfigCreateDTO{
 						Name:                   "test prompt config",
 						ModelParameters:        modelParameters,
-						ModelVendor:            db.ModelVendorOPENAI,
+						ModelVendor:            models.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					},
 				},
@@ -207,7 +208,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name: "fails validation for missing model vendor",
 					Dto: dto.PromptConfigCreateDTO{
 						Name:                   "test prompt config",
-						ModelType:              db.ModelTypeGpt4,
+						ModelType:              models.ModelTypeGpt4,
 						ModelParameters:        modelParameters,
 						ProviderPromptMessages: promptMessages,
 					},
@@ -217,8 +218,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Dto: dto.PromptConfigCreateDTO{
 						Name:            "test prompt config",
 						ModelParameters: modelParameters,
-						ModelType:       db.ModelTypeGpt4,
-						ModelVendor:     db.ModelVendorOPENAI,
+						ModelType:       models.ModelTypeGpt4,
+						ModelVendor:     models.ModelVendorOPENAI,
 					},
 				},
 				{
@@ -227,7 +228,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                   "test prompt config",
 						ModelParameters:        modelParameters,
 						ModelType:              "abc",
-						ModelVendor:            db.ModelVendorOPENAI,
+						ModelVendor:            models.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					},
 				},
@@ -236,7 +237,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Dto: dto.PromptConfigCreateDTO{
 						Name:                   "test prompt config",
 						ModelParameters:        modelParameters,
-						ModelType:              db.ModelTypeGpt432k,
+						ModelType:              models.ModelTypeGpt432k,
 						ModelVendor:            "abc",
 						ProviderPromptMessages: promptMessages,
 					},
@@ -256,7 +257,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			}
 		})
 
-		for i, modelType := range []db.ModelType{db.ModelTypeGpt35Turbo, db.ModelTypeGpt35Turbo16k, db.ModelTypeGpt4, db.ModelTypeGpt432k} {
+		for i, modelType := range []models.ModelType{models.ModelTypeGpt35Turbo, models.ModelTypeGpt35Turbo16k, models.ModelTypeGpt4, models.ModelTypeGpt432k} {
 			t.Run(
 				fmt.Sprintf("validates successfully model type %s", modelType),
 				func(t *testing.T) {
@@ -264,7 +265,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                   fmt.Sprintf("test prompt config: %d", i),
 						ModelParameters:        modelParameters,
 						ModelType:              modelType,
-						ModelVendor:            db.ModelVendorOPENAI,
+						ModelVendor:            models.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					}
 					response, requestErr := testClient.Post(
@@ -282,11 +283,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			"returns an error if the name of the prompt config is already used",
 			func(t *testing.T) {
 				_, promptConfigCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      "unique name",
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{"userInput"},
@@ -297,8 +298,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				createDto := dto.PromptConfigCreateDTO{
 					Name:                   "unique name",
 					ModelParameters:        modelParameters,
-					ModelType:              db.ModelTypeGpt4,
-					ModelVendor:            db.ModelVendorOPENAI,
+					ModelType:              models.ModelTypeGpt4,
+					ModelVendor:            models.ModelVendorOPENAI,
 					ProviderPromptMessages: promptMessages,
 				}
 				response, requestErr := testClient.Post(
@@ -313,11 +314,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 		t.Run("rolls back transaction when failing to update record", func(t *testing.T) {
 			defaultPromptConfig, promptConfigCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      "default prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{"userInput"},
@@ -328,8 +329,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			createDto := dto.PromptConfigCreateDTO{
 				Name:                   "default prompt config",
 				ModelParameters:        modelParameters,
-				ModelType:              db.ModelTypeGpt4,
-				ModelVendor:            db.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
 				ProviderPromptMessages: promptMessages,
 			}
 			response, requestErr := testClient.Post(
@@ -363,8 +364,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				dto.PromptConfigCreateDTO{
 					Name:                   "test prompt config",
 					ModelParameters:        modelParameters,
-					ModelType:              db.ModelTypeGpt4,
-					ModelVendor:            db.ModelVendorOPENAI,
+					ModelType:              models.ModelTypeGpt4,
+					ModelVendor:            models.ModelVendorOPENAI,
 					ProviderPromptMessages: promptMessages,
 				},
 			)
@@ -389,8 +390,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				dto.PromptConfigCreateDTO{
 					Name:                   "test prompt config",
 					ModelParameters:        modelParameters,
-					ModelType:              db.ModelTypeGpt4,
-					ModelVendor:            db.ModelVendorOPENAI,
+					ModelType:              models.ModelTypeGpt4,
+					ModelVendor:            models.ModelVendorOPENAI,
 					ProviderPromptMessages: promptMessages,
 				},
 			)
@@ -406,8 +407,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					dto.PromptConfigCreateDTO{
 						Name:                   "test prompt config",
 						ModelParameters:        modelParameters,
-						ModelType:              db.ModelTypeGpt4,
-						ModelVendor:            db.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt4,
+						ModelVendor:            models.ModelVendorOPENAI,
 						ProviderPromptMessages: promptMessages,
 					},
 				)
@@ -423,11 +424,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 		t.Run("retrieves prompt configs for an application", func(t *testing.T) {
 			firstPromptConfig, firstPromptConfigCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      "a",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{"name"},
@@ -435,11 +436,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				})
 			assert.NoError(t, firstPromptConfigCreateErr)
 			secondPromptConfig, secondPromptConfigCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      "b",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{"values"},
@@ -454,7 +455,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, responseErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			promptConfigs := make([]db.PromptConfig, 0)
+			promptConfigs := make([]models.PromptConfig, 0)
 			deserializationErr := serialization.DeserializeJSON(response.Body, &promptConfigs)
 			assert.NoError(t, deserializationErr)
 
@@ -473,15 +474,15 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, responseErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			promptConfigs := make([]db.PromptConfig, 0)
+			promptConfigs := make([]models.PromptConfig, 0)
 			deserializationErr := serialization.DeserializeJSON(response.Body, &promptConfigs)
 			assert.NoError(t, deserializationErr)
 
 			assert.Len(t, promptConfigs, 0)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -496,7 +497,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						t,
 						newUserAccount.FirebaseID,
 						newProjectID,
-						db.AccessPermissionTypeADMIN,
+						models.AccessPermissionTypeADMIN,
 					)
 
 					client := createTestClient(t, newUserAccount)
@@ -572,11 +573,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -585,11 +586,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, defaultPromptConfigCreateErr)
 
 			nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -627,11 +628,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -640,11 +641,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, defaultPromptConfigCreateErr)
 
 			nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -685,11 +686,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				_, defaultPromptConfigCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -698,11 +699,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				assert.NoError(t, defaultPromptConfigCreateErr)
 
 				nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -717,7 +718,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					t,
 					newUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				client := createTestClient(t, newUserAccount)
@@ -740,11 +741,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				_, defaultPromptConfigCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -753,11 +754,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				assert.NoError(t, defaultPromptConfigCreateErr)
 
 				nonDefaultPromptConfig, nonDefaultPromptConfigCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -772,7 +773,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					t,
 					newUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				client := createTestClient(t, newUserAccount)
@@ -794,11 +795,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				defaultPromptConfig, defaultPromptConfigCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      "default prompt config",
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -883,11 +884,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			promptConfigToRename, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      "abc prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -921,11 +922,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				promptConfigToRename, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      "abc prompt config",
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -942,7 +943,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					t,
 					newUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				client := createTestClient(t, newUserAccount)
@@ -966,11 +967,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				promptConfigToRename, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      "abc prompt config",
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -1001,11 +1002,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				promptConfig, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -1030,11 +1031,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				firstPromptConfig, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -1043,11 +1044,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				assert.NoError(t, configCreateErr)
 
 				newPromptConfig, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -1074,11 +1075,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			promptConfigToRename, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      "abc prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -1089,7 +1090,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 			promptConfigToRenameID := db.UUIDToString(&promptConfigToRename.ID)
 
-			newModel := db.ModelTypeGpt35Turbo
+			newModel := models.ModelTypeGpt35Turbo
 			response, requestErr := testClient.Patch(
 				context.TODO(),
 				fmtDetailEndpoint(projectID, applicationID, promptConfigToRenameID),
@@ -1110,11 +1111,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			promptConfigToRename, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      "abc prompt config",
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -1125,7 +1126,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 			promptConfigToRenameID := db.UUIDToString(&promptConfigToRename.ID)
 
-			newModel := db.ModelType("nope")
+			newModel := models.ModelType("nope")
 			response, requestErr := testClient.Patch(
 				context.TODO(),
 				fmtDetailEndpoint(projectID, applicationID, promptConfigToRenameID),
@@ -1141,11 +1142,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			promptConfigToRename, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -1186,11 +1187,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			promptConfig, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -1277,11 +1278,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			promptConfig, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -1306,11 +1307,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			uuidID, _ := db.StringToUUID(applicationID)
 
 			promptConfig, configCreateErr := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             *uuidID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           modelParameters,
 					ProviderPromptMessages:    promptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -1341,11 +1342,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				promptConfig, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -1374,11 +1375,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				promptConfig, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -1410,11 +1411,11 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				uuidID, _ := db.StringToUUID(applicationID)
 
 				promptConfig, configCreateErr := db.GetQueries().
-					CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+					CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 						ApplicationID:             *uuidID,
 						Name:                      factories.RandomString(10),
-						ModelVendor:               db.ModelVendorOPENAI,
-						ModelType:                 db.ModelTypeGpt4,
+						ModelVendor:               models.ModelVendorOPENAI,
+						ModelType:                 models.ModelTypeGpt4,
 						ModelParameters:           modelParameters,
 						ProviderPromptMessages:    promptMessages,
 						ExpectedTemplateVariables: []string{""},
@@ -1504,7 +1505,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 	t.Run(fmt.Sprintf("GET: %s", api.PromptConfigAnalyticsEndpoint), func(t *testing.T) {
 		invalidUUID := "invalid"
 		projectID := createProject(t)
-		createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+		createUserProject(t, userAccount.FirebaseID, projectID, models.AccessPermissionTypeADMIN)
 
 		applicationID := createApplication(t, projectID)
 		promptConfigID := createPromptConfig(t, applicationID)
@@ -1559,8 +1560,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, promptReqAnalytics.ModelsCost, responseAnalytics.ModelsCost)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,14 +15,14 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 )
 
-var ModelTypeMap = map[db.ModelType]openaiconnector.OpenAIModel{
-	db.ModelTypeGpt35Turbo:    openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
-	db.ModelTypeGpt35Turbo16k: openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_16K,
-	db.ModelTypeGpt4:          openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT4_8K,
-	db.ModelTypeGpt432k:       openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT4_32K,
+var ModelTypeMap = map[models.ModelType]openaiconnector.OpenAIModel{
+	models.ModelTypeGpt35Turbo:    openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+	models.ModelTypeGpt35Turbo16k: openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_16K,
+	models.ModelTypeGpt4:          openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT4_8K,
+	models.ModelTypeGpt432k:       openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT4_32K,
 }
 
-func GetModelType(modelType db.ModelType) (*openaiconnector.OpenAIModel, error) {
+func GetModelType(modelType models.ModelType) (*openaiconnector.OpenAIModel, error) {
 	value, ok := ModelTypeMap[modelType]
 	if !ok {
 		return nil, fmt.Errorf("unknown model type {%s}", modelType)
@@ -69,7 +70,7 @@ func ParseTemplateVariables(
 
 func CreatePromptRequest(
 	applicationID pgtype.UUID,
-	modelType db.ModelType,
+	modelType models.ModelType,
 	modelParameters []byte,
 	promptMessages []byte,
 	templateVariables map[string]string,

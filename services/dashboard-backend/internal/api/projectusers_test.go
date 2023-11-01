@@ -7,6 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -43,16 +44,16 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 		t.Run("returns a list of project users", func(t *testing.T) {
 			project, _ := factories.CreateProject(context.TODO())
 			requestingUserAccount, _ := factories.CreateUserAccount(context.TODO())
-			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 				ProjectID:  project.ID,
 				UserID:     requestingUserAccount.ID,
-				Permission: db.AccessPermissionTypeADMIN,
+				Permission: models.AccessPermissionTypeADMIN,
 			})
 			otherUserAccount, _ := factories.CreateUserAccount(context.TODO())
-			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 				ProjectID:  project.ID,
 				UserID:     otherUserAccount.ID,
-				Permission: db.AccessPermissionTypeMEMBER,
+				Permission: models.AccessPermissionTypeMEMBER,
 			})
 
 			testClient := createTestClient(t, requestingUserAccount)
@@ -64,7 +65,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			data := make([]db.UserAccount, 2)
+			data := make([]models.UserAccount, 2)
 			serializationErr := serialization.DeserializeJSON(response.Body, &data)
 			assert.NoError(t, serializationErr)
 
@@ -77,8 +78,8 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, db.UUIDToString(&otherUserAccount.ID), db.UUIDToString(&data[1].ID))
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -89,7 +90,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					project, _ := factories.CreateProject(context.TODO())
 					requestingUserAccount, _ := factories.CreateUserAccount(context.TODO())
 					_, _ = db.GetQueries().
-						CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+						CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 							ProjectID:  project.ID,
 							UserID:     requestingUserAccount.ID,
 							Permission: permission,
@@ -135,7 +136,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				t,
 				requestUserAccount.FirebaseID,
 				projectID,
-				db.AccessPermissionTypeADMIN,
+				models.AccessPermissionTypeADMIN,
 			)
 
 			testClient := createTestClient(t, requestUserAccount)
@@ -147,7 +148,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				fmtListEndpoint(projectID),
 				dto.AddUserAccountToProjectDTO{
 					UserID:     db.UUIDToString(&addedUserAccount.ID),
-					Permission: db.AccessPermissionTypeMEMBER,
+					Permission: models.AccessPermissionTypeMEMBER,
 				},
 			)
 
@@ -155,12 +156,12 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusCreated, response.StatusCode)
 
 			retrievedUserProject, retrievalErr := db.GetQueries().
-				RetrieveUserProject(context.TODO(), db.RetrieveUserProjectParams{
+				RetrieveUserProject(context.TODO(), models.RetrieveUserProjectParams{
 					ProjectID:  project.ID,
 					FirebaseID: addedUserAccount.FirebaseID,
 				})
 			assert.NoError(t, retrievalErr)
-			assert.Equal(t, db.AccessPermissionTypeMEMBER, retrievedUserProject.Permission)
+			assert.Equal(t, models.AccessPermissionTypeMEMBER, retrievedUserProject.Permission)
 		})
 
 		t.Run("adds a user to the project using email", func(t *testing.T) {
@@ -172,7 +173,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				t,
 				requestUserAccount.FirebaseID,
 				projectID,
-				db.AccessPermissionTypeADMIN,
+				models.AccessPermissionTypeADMIN,
 			)
 
 			testClient := createTestClient(t, requestUserAccount)
@@ -184,7 +185,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				fmtListEndpoint(projectID),
 				dto.AddUserAccountToProjectDTO{
 					Email:      addedUserAccount.Email,
-					Permission: db.AccessPermissionTypeMEMBER,
+					Permission: models.AccessPermissionTypeMEMBER,
 				},
 			)
 
@@ -192,12 +193,12 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusCreated, response.StatusCode)
 
 			retrievedUserProject, retrievalErr := db.GetQueries().
-				RetrieveUserProject(context.TODO(), db.RetrieveUserProjectParams{
+				RetrieveUserProject(context.TODO(), models.RetrieveUserProjectParams{
 					ProjectID:  project.ID,
 					FirebaseID: addedUserAccount.FirebaseID,
 				})
 			assert.NoError(t, retrievalErr)
-			assert.Equal(t, db.AccessPermissionTypeMEMBER, retrievedUserProject.Permission)
+			assert.Equal(t, models.AccessPermissionTypeMEMBER, retrievedUserProject.Permission)
 		})
 
 		t.Run(
@@ -211,7 +212,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -223,7 +224,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.AddUserAccountToProjectDTO{
 						UserID:     db.UUIDToString(&addedUserAccount.ID),
-						Permission: db.AccessPermissionTypeMEMBER,
+						Permission: models.AccessPermissionTypeMEMBER,
 					},
 				)
 
@@ -249,7 +250,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.AddUserAccountToProjectDTO{
 						UserID:     db.UUIDToString(&addedUserAccount.ID),
-						Permission: db.AccessPermissionTypeMEMBER,
+						Permission: models.AccessPermissionTypeMEMBER,
 					},
 				)
 
@@ -266,7 +267,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				Name: "responds with status 400 BAD REQUEST if the user does not exist",
 				RequestBody: dto.AddUserAccountToProjectDTO{
 					UserID:     "non-existent-user-id",
-					Permission: db.AccessPermissionTypeMEMBER,
+					Permission: models.AccessPermissionTypeMEMBER,
 				},
 			},
 			{
@@ -288,7 +289,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -314,7 +315,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				addedUserAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -322,7 +323,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					addedUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -332,7 +333,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.AddUserAccountToProjectDTO{
 						UserID:     db.UUIDToString(&addedUserAccount.ID),
-						Permission: db.AccessPermissionTypeMEMBER,
+						Permission: models.AccessPermissionTypeMEMBER,
 					},
 				)
 
@@ -352,7 +353,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -362,7 +363,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.AddUserAccountToProjectDTO{
 						UserID:     "9768fc28-cf97-4847-becc-07fc9fcdd230",
-						Permission: db.AccessPermissionTypeMEMBER,
+						Permission: models.AccessPermissionTypeMEMBER,
 					},
 				)
 
@@ -382,7 +383,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -409,7 +410,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				t,
 				requestUserAccount.FirebaseID,
 				projectID,
-				db.AccessPermissionTypeADMIN,
+				models.AccessPermissionTypeADMIN,
 			)
 
 			updatedUserAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -417,7 +418,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				t,
 				updatedUserAccount.FirebaseID,
 				projectID,
-				db.AccessPermissionTypeMEMBER,
+				models.AccessPermissionTypeMEMBER,
 			)
 
 			testClient := createTestClient(t, requestUserAccount)
@@ -427,7 +428,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				fmtListEndpoint(projectID),
 				dto.UpdateUserAccountProjectPermissionDTO{
 					UserID:     db.UUIDToString(&updatedUserAccount.ID),
-					Permission: db.AccessPermissionTypeADMIN,
+					Permission: models.AccessPermissionTypeADMIN,
 				},
 			)
 
@@ -435,12 +436,12 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
 			retrievedUserProject, retrievalErr := db.GetQueries().
-				RetrieveUserProject(context.TODO(), db.RetrieveUserProjectParams{
+				RetrieveUserProject(context.TODO(), models.RetrieveUserProjectParams{
 					ProjectID:  project.ID,
 					FirebaseID: updatedUserAccount.FirebaseID,
 				})
 			assert.NoError(t, retrievalErr)
-			assert.Equal(t, db.AccessPermissionTypeADMIN, retrievedUserProject.Permission)
+			assert.Equal(t, models.AccessPermissionTypeADMIN, retrievedUserProject.Permission)
 		})
 
 		t.Run("responds with status 400 BAD REQUEST for invalid request body", func(t *testing.T) {
@@ -452,7 +453,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				t,
 				requestUserAccount.FirebaseID,
 				projectID,
-				db.AccessPermissionTypeADMIN,
+				models.AccessPermissionTypeADMIN,
 			)
 			testClient := createTestClient(t, requestUserAccount)
 
@@ -477,7 +478,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				updatedUserAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -485,7 +486,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					updatedUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -495,7 +496,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&updatedUserAccount.ID),
-						Permission: db.AccessPermissionTypeADMIN,
+						Permission: models.AccessPermissionTypeADMIN,
 					},
 				)
 
@@ -517,7 +518,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					updatedUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -527,7 +528,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&updatedUserAccount.ID),
-						Permission: db.AccessPermissionTypeADMIN,
+						Permission: models.AccessPermissionTypeADMIN,
 					},
 				)
 
@@ -544,7 +545,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				Name: "responds with status 400 BAD REQUEST if the user does not exist",
 				RequestBody: dto.UpdateUserAccountProjectPermissionDTO{
 					UserID:     "non-existent-user-id",
-					Permission: db.AccessPermissionTypeMEMBER,
+					Permission: models.AccessPermissionTypeMEMBER,
 				},
 			},
 			{
@@ -566,7 +567,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -592,7 +593,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				updatedUserAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -604,7 +605,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&updatedUserAccount.ID),
-						Permission: db.AccessPermissionTypeADMIN,
+						Permission: models.AccessPermissionTypeADMIN,
 					},
 				)
 
@@ -623,7 +624,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -633,7 +634,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     "9768fc28-cf97-4847-becc-07fc9fcdd230",
-						Permission: db.AccessPermissionTypeMEMBER,
+						Permission: models.AccessPermissionTypeMEMBER,
 					},
 				)
 
@@ -653,7 +654,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -663,7 +664,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					fmtListEndpoint(projectID),
 					dto.UpdateUserAccountProjectPermissionDTO{
 						UserID:     db.UUIDToString(&requestUserAccount.ID),
-						Permission: db.AccessPermissionTypeMEMBER,
+						Permission: models.AccessPermissionTypeMEMBER,
 					},
 				)
 
@@ -683,7 +684,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				t,
 				requestUserAccount.FirebaseID,
 				projectID,
-				db.AccessPermissionTypeADMIN,
+				models.AccessPermissionTypeADMIN,
 			)
 
 			removedUserAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -691,7 +692,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 				t,
 				removedUserAccount.FirebaseID,
 				projectID,
-				db.AccessPermissionTypeMEMBER,
+				models.AccessPermissionTypeMEMBER,
 			)
 
 			testClient := createTestClient(t, requestUserAccount)
@@ -705,7 +706,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
 			_, retrievalErr := db.GetQueries().
-				RetrieveUserProject(context.TODO(), db.RetrieveUserProjectParams{
+				RetrieveUserProject(context.TODO(), models.RetrieveUserProjectParams{
 					ProjectID:  project.ID,
 					FirebaseID: removedUserAccount.FirebaseID,
 				})
@@ -723,7 +724,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				removedUserAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -731,7 +732,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					removedUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -759,7 +760,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					removedUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -785,7 +786,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				removedUserAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -812,7 +813,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)
@@ -837,7 +838,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 					t,
 					requestUserAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				testClient := createTestClient(t, requestUserAccount)

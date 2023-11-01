@@ -9,6 +9,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -116,13 +117,13 @@ func TestUtils(t *testing.T) { //nolint:revive
 	})
 
 	t.Run("RetrieveProviderModelPricing", func(t *testing.T) {
-		for _, modelType := range []db.ModelType{
-			db.ModelTypeGpt432k, db.ModelTypeGpt4, db.ModelTypeGpt35Turbo, db.ModelTypeGpt35Turbo16k,
+		for _, modelType := range []models.ModelType{
+			models.ModelTypeGpt432k, models.ModelTypeGpt4, models.ModelTypeGpt35Turbo, models.ModelTypeGpt35Turbo16k,
 		} {
 			assert.NotPanics(t, func() {
 				services.RetrieveProviderModelPricing(context.TODO(),
 					modelType,
-					db.ModelVendorOPENAI,
+					models.ModelVendorOPENAI,
 				)
 			})
 		}
@@ -130,8 +131,8 @@ func TestUtils(t *testing.T) { //nolint:revive
 		t.Run("panic if model type is not supported", func(t *testing.T) {
 			assert.Panics(t, func() {
 				services.RetrieveProviderModelPricing(context.TODO(),
-					db.ModelType("unsupported-model-type"),
-					db.ModelVendor("openai"),
+					models.ModelType("unsupported-model-type"),
+					models.ModelVendor("openai"),
 				)
 			})
 		})
@@ -139,8 +140,8 @@ func TestUtils(t *testing.T) { //nolint:revive
 		t.Run("panic if model vendor is not supported", func(t *testing.T) {
 			assert.Panics(t, func() {
 				services.RetrieveProviderModelPricing(context.TODO(),
-					db.ModelType("davinci"),
-					db.ModelVendor("unsupported-model-vendor"),
+					models.ModelType("davinci"),
+					models.ModelVendor("unsupported-model-vendor"),
 				)
 			})
 		})
@@ -538,7 +539,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 
 		t.Run("set finish reason to done", func(t *testing.T) {
 			result := dto.PromptResultDTO{
-				RequestRecord: &db.PromptRequestRecord{},
+				RequestRecord: &models.PromptRequestRecord{},
 			}
 			msg, _ := services.CreateAPIGatewayStreamMessage(result)
 

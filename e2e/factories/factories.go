@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"time"
 
@@ -46,8 +47,8 @@ func CreateModelParameters() []byte {
 	return modelParameters
 }
 
-func CreateProject(ctx context.Context) (*db.Project, error) {
-	project, projectCreateErr := db.GetQueries().CreateProject(ctx, db.CreateProjectParams{
+func CreateProject(ctx context.Context) (*models.Project, error) {
+	project, projectCreateErr := db.GetQueries().CreateProject(ctx, models.CreateProjectParams{
 		Name:        RandomString(10),
 		Description: RandomString(30),
 	})
@@ -59,10 +60,10 @@ func CreateProject(ctx context.Context) (*db.Project, error) {
 	return &project, nil
 }
 
-func CreateUserAccount(ctx context.Context) (*db.UserAccount, error) {
+func CreateUserAccount(ctx context.Context) (*models.UserAccount, error) {
 	user, userCreateErr := db.GetQueries().CreateUserAccount(
 		ctx,
-		db.CreateUserAccountParams{
+		models.CreateUserAccountParams{
 			DisplayName: "Moishe Zuchmir",
 			Email:       fmt.Sprintf("%s@zuchmir.com", RandomString(10)),
 			PhotoUrl:    "https://moishe.zuchmir.com",
@@ -78,9 +79,9 @@ func CreateUserAccount(ctx context.Context) (*db.UserAccount, error) {
 	return &user, nil
 }
 
-func CreateApplication(ctx context.Context, projectID pgtype.UUID) (*db.Application, error) {
+func CreateApplication(ctx context.Context, projectID pgtype.UUID) (*models.Application, error) {
 	application, applicationCreateErr := db.GetQueries().
-		CreateApplication(ctx, db.CreateApplicationParams{
+		CreateApplication(ctx, models.CreateApplicationParams{
 			ProjectID:   projectID,
 			Name:        RandomString(10),
 			Description: RandomString(30),
@@ -96,7 +97,7 @@ func CreateApplication(ctx context.Context, projectID pgtype.UUID) (*db.Applicat
 func CreatePromptConfig(
 	ctx context.Context,
 	applicationID pgtype.UUID,
-) (*db.PromptConfig, error) {
+) (*models.PromptConfig, error) {
 	systemMessage := "You are a helpful chat bot."
 	userMessage := "This is what the user asked for: {userInput}"
 	templateVariables := []string{"userInput"}
@@ -110,9 +111,9 @@ func CreatePromptConfig(
 	)
 
 	promptConfig, promptConfigCreateErr := db.GetQueries().
-		CreatePromptConfig(ctx, db.CreatePromptConfigParams{
-			ModelType:                 db.ModelTypeGpt35Turbo,
-			ModelVendor:               db.ModelVendorOPENAI,
+		CreatePromptConfig(ctx, models.CreatePromptConfigParams{
+			ModelType:                 models.ModelTypeGpt35Turbo,
+			ModelVendor:               models.ModelVendorOPENAI,
 			ModelParameters:           modelParams,
 			ProviderPromptMessages:    promptMessages,
 			ExpectedTemplateVariables: []string{"userInput"},
@@ -129,13 +130,13 @@ func CreatePromptConfig(
 func CreatePromptRequestRecord(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
-) (*db.PromptRequestRecord, error) {
+) (*models.PromptRequestRecord, error) {
 	tokenCount := int32(10)
 	promptStartTime := time.Now()
 	promptFinishTime := promptStartTime.Add(10 * time.Second)
 
 	promptRequestRecord, promptRequestRecordCreateErr := db.GetQueries().
-		CreatePromptRequestRecord(ctx, db.CreatePromptRequestRecordParams{
+		CreatePromptRequestRecord(ctx, models.CreatePromptRequestRecordParams{
 			IsStreamResponse:      true,
 			RequestTokens:         tokenCount,
 			ResponseTokens:        tokenCount,
@@ -154,8 +155,8 @@ func CreatePromptRequestRecord(
 func CreateApplicationInternalAPIKey(
 	ctx context.Context,
 	applicationID pgtype.UUID,
-) (*db.ApiKey, error) {
-	apiKey, err := db.GetQueries().CreateAPIKey(ctx, db.CreateAPIKeyParams{
+) (*models.ApiKey, error) {
+	apiKey, err := db.GetQueries().CreateAPIKey(ctx, models.CreateAPIKeyParams{
 		ApplicationID: applicationID,
 		Name:          "_internal apiKey",
 		IsInternal:    true,
@@ -172,27 +173,27 @@ func CreateProviderPricingModels(
 	ctx context.Context,
 ) error {
 	for _, modelType := range []struct {
-		ModelType        db.ModelType
+		ModelType        models.ModelType
 		InputTokenPrice  string
 		OutputTokenPrice string
 	}{
 		{
-			ModelType:        db.ModelTypeGpt35Turbo,
+			ModelType:        models.ModelTypeGpt35Turbo,
 			InputTokenPrice:  "0.0015",
 			OutputTokenPrice: "0.002",
 		},
 		{
-			ModelType:        db.ModelTypeGpt35Turbo16k,
+			ModelType:        models.ModelTypeGpt35Turbo16k,
 			InputTokenPrice:  "0.003",
 			OutputTokenPrice: "0.004",
 		},
 		{
-			ModelType:        db.ModelTypeGpt4,
+			ModelType:        models.ModelTypeGpt4,
 			InputTokenPrice:  "0.03",
 			OutputTokenPrice: "0.006",
 		},
 		{
-			ModelType:        db.ModelTypeGpt432k,
+			ModelType:        models.ModelTypeGpt432k,
 			InputTokenPrice:  "0.06",
 			OutputTokenPrice: "0.012",
 		},
@@ -201,9 +202,9 @@ func CreateProviderPricingModels(
 		output, _ := db.StringToNumeric(modelType.OutputTokenPrice)
 
 		_, err := db.GetQueries().
-			CreateProviderModelPricing(ctx, db.CreateProviderModelPricingParams{
+			CreateProviderModelPricing(ctx, models.CreateProviderModelPricingParams{
 				ModelType:        modelType.ModelType,
-				ModelVendor:      db.ModelVendorOPENAI,
+				ModelVendor:      models.ModelVendorOPENAI,
 				InputTokenPrice:  *input,
 				OutputTokenPrice: *output,
 				ActiveFromDate:   pgtype.Date{Time: time.Now(), Valid: true},

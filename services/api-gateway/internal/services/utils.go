@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
@@ -76,11 +77,11 @@ func RetrievePromptConfig(
 // RetrieveProviderModelPricing retrieves the pricing model for the given model type and vendor.
 func RetrieveProviderModelPricing(
 	ctx context.Context,
-	modelType db.ModelType,
-	modelVendor db.ModelVendor,
+	modelType models.ModelType,
+	modelVendor models.ModelVendor,
 ) datatypes.ProviderModelPricingDTO {
 	providerModelPricing := exc.MustResult(db.GetQueries().
-		RetrieveActiveProviderModelPricing(ctx, db.RetrieveActiveProviderModelPricingParams{
+		RetrieveActiveProviderModelPricing(ctx, models.RetrieveActiveProviderModelPricingParams{
 			ModelType:   modelType,
 			ModelVendor: modelVendor,
 		}))

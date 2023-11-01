@@ -137,6 +137,7 @@ tasks:
     slqc:generate:
         desc: Generate the database code from the sqlc.yaml file
         cmds:
+            - rm -rf shared/go/db/models
             - sqlc generate
     slqc:vet:
         desc: Lint the database schema

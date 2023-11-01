@@ -2,15 +2,13 @@ version = 1
 
 exclude_patterns = [
     "**/*.js",
-    "**/*.sql.go",
-    "**/*.gen.*",
     "**/node_modules/**",
     "build/**",
     "dist/**",
     "e2e/**",
     "gen/**",
     "node_modules/**",
-    "shared/go/testutils/*.go",
+    "shared/go/db/models/**",
 ]
 
 test_patterns = [
@@ -20,6 +18,7 @@ test_patterns = [
     "**/mocks.*",
     "**/mocks/**",
     "**/tests/**",
+    "**/testutils/*.go",
     "**/vitest.*",
     "vitest.*",
 ]

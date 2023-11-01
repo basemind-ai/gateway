@@ -3,7 +3,7 @@
 //   sqlc v1.23.0
 // source: project.sql
 
-package db
+package models
 
 import (
 	"context"

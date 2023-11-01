@@ -3,7 +3,7 @@
 //   sqlc v1.23.0
 // source: api-key.sql
 
-package db
+package models
 
 import (
 	"context"

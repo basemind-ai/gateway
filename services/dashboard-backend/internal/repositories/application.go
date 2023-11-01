@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"time"
@@ -78,7 +79,7 @@ func GetApplicationAPIRequestCountByDateRange(
 ) int64 {
 	return exc.MustResult(db.GetQueries().RetrieveApplicationAPIRequestCount(
 		ctx,
-		db.RetrieveApplicationAPIRequestCountParams{
+		models.RetrieveApplicationAPIRequestCountParams{
 			ID:          applicationID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
@@ -90,17 +91,17 @@ func GetApplicationTokensCountPerModelTypeByDateRange(
 	ctx context.Context,
 	applicationID pgtype.UUID,
 	fromDate, toDate time.Time,
-) map[db.ModelType]int64 {
+) map[models.ModelType]int64 {
 	recordPerPromptConfig := exc.MustResult(db.GetQueries().RetrieveApplicationTokensCount(
 		ctx,
-		db.RetrieveApplicationTokensCountParams{
+		models.RetrieveApplicationTokensCountParams{
 			ID:          applicationID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
 		},
 	))
 
-	tokenCntMap := make(map[db.ModelType]int64)
+	tokenCntMap := make(map[models.ModelType]int64)
 	for _, record := range recordPerPromptConfig {
 		tokenCntMap[record.ModelType] += record.TotalTokens
 	}

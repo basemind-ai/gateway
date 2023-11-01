@@ -7,6 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
@@ -15,10 +16,10 @@ import (
 	"testing"
 )
 
-func createAPIKey(t *testing.T, applicationID, apiKeyName string) db.ApiKey {
+func createAPIKey(t *testing.T, applicationID, apiKeyName string) models.ApiKey {
 	t.Helper()
 	appID, _ := db.StringToUUID(applicationID)
-	apiKey, err := db.GetQueries().CreateAPIKey(context.TODO(), db.CreateAPIKeyParams{
+	apiKey, err := db.GetQueries().CreateAPIKey(context.TODO(), models.CreateAPIKeyParams{
 		ApplicationID: *appID,
 		Name:          apiKeyName,
 	})
@@ -31,7 +32,7 @@ func TestAPIKeyAPI(t *testing.T) {
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
 	applicationID := createApplication(t, projectID)
-	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+	createUserProject(t, userAccount.FirebaseID, projectID, models.AccessPermissionTypeADMIN)
 
 	testClient := createTestClient(t, userAccount)
 
@@ -66,8 +67,8 @@ func TestAPIKeyAPI(t *testing.T) {
 			assert.Nil(t, data[1].Hash)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -161,8 +162,8 @@ func TestAPIKeyAPI(t *testing.T) {
 			assert.NotEmpty(t, *data.Hash)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -305,7 +306,7 @@ func TestAPIKeyAPI(t *testing.T) {
 					t,
 					newUserAccount.FirebaseID,
 					newProjectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				client := createTestClient(t, newUserAccount)

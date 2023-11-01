@@ -2,14 +2,14 @@ package dto
 
 import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // PromptResultDTO is a data type used to encapsulate the result of a prompt request.
 type PromptResultDTO struct { // skipcq: TCV-001
 	Content       *string
-	RequestRecord *db.PromptRequestRecord
+	RequestRecord *models.PromptRequestRecord
 	Error         error
 }
 

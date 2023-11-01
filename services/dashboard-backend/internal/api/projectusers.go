@@ -5,6 +5,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -55,7 +56,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		userAccount  db.UserAccount
+		userAccount  models.UserAccount
 		retrievalErr error
 	)
 
@@ -78,7 +79,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userAlreadyInProject := exc.MustResult(db.GetQueries().
-		CheckUserProjectExists(r.Context(), db.CheckUserProjectExistsParams{
+		CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
 			ProjectID: projectID,
 			UserID:    userAccount.ID,
 		}))
@@ -89,7 +90,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userProject := exc.MustResult(db.GetQueries().
-		CreateUserProject(r.Context(), db.CreateUserProjectParams{
+		CreateUserProject(r.Context(), models.CreateUserProjectParams{
 			ProjectID:  projectID,
 			UserID:     userAccount.ID,
 			Permission: data.Permission,
@@ -108,7 +109,7 @@ func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
 
 // handleChangeUserProjectPermission - changes the user's permission to the one specified.
 func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
-	requestUserAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+	requestUserAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	data := dto.UpdateUserAccountProjectPermissionDTO{}
@@ -136,7 +137,7 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userInProject := exc.MustResult(db.GetQueries().
-		CheckUserProjectExists(r.Context(), db.CheckUserProjectExistsParams{
+		CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
 			ProjectID: projectID,
 			UserID:    *userID,
 		}))
@@ -149,7 +150,7 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 	userAccount := exc.MustResult(db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID))
 
 	userProject := exc.MustResult(db.GetQueries().
-		UpdateUserProjectPermission(r.Context(), db.UpdateUserProjectPermissionParams{
+		UpdateUserProjectPermission(r.Context(), models.UpdateUserProjectPermissionParams{
 			ProjectID:  projectID,
 			UserID:     *userID,
 			Permission: data.Permission,
@@ -169,7 +170,7 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 // handleRemoveUserFromProject - removes a user from a project.
 func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(middleware.UserIDContextKey).(pgtype.UUID)
-	requestUserAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+	requestUserAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
 	if db.UUIDToString(&userID) == db.UUIDToString(&requestUserAccount.ID) {
@@ -178,7 +179,7 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userInProject := exc.MustResult(db.GetQueries().
-		CheckUserProjectExists(r.Context(), db.CheckUserProjectExistsParams{
+		CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
 			ProjectID: projectID,
 			UserID:    userID,
 		}))
@@ -188,7 +189,7 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exc.Must(db.GetQueries().DeleteUserProject(r.Context(), db.DeleteUserProjectParams{
+	exc.Must(db.GetQueries().DeleteUserProject(r.Context(), models.DeleteUserProjectParams{
 		ProjectID: projectID,
 		UserID:    userID,
 	}))

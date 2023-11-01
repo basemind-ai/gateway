@@ -6,6 +6,7 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -18,7 +19,7 @@ import (
 func streamFromClient(
 	channel chan<- dto.PromptResultDTO,
 	promptResult *dto.PromptResultDTO,
-	recordParams *db.CreatePromptRequestRecordParams,
+	recordParams *models.CreatePromptRequestRecordParams,
 	startTime time.Time,
 	stream openaiconnector.OpenAIService_OpenAIStreamClient,
 ) string {
@@ -73,7 +74,7 @@ func (c *Client) RequestStream(
 
 	startTime := time.Now()
 
-	recordParams := &db.CreatePromptRequestRecordParams{
+	recordParams := &models.CreatePromptRequestRecordParams{
 		PromptConfigID:   requestConfiguration.PromptConfigID,
 		IsStreamResponse: true,
 		StartTime:        pgtype.Timestamptz{Time: startTime, Valid: true},

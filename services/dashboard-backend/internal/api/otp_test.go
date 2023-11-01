@@ -8,6 +8,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
@@ -23,7 +24,7 @@ func TestOTPAPI(t *testing.T) {
 
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
-	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+	createUserProject(t, userAccount.FirebaseID, projectID, models.AccessPermissionTypeADMIN)
 
 	testClient := createTestClient(t, userAccount)
 

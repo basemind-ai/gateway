@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
 	"slices"
@@ -15,7 +16,7 @@ const (
 	UserProjectContextKey authorizationContextKeyType = iota
 )
 
-type MethodPermissionMap map[string][]db.AccessPermissionType
+type MethodPermissionMap map[string][]models.AccessPermissionType
 
 // AuthorizationMiddleware - middleware that checks if the user has the required permissions to access an endpoint.
 func AuthorizationMiddleware(
@@ -33,12 +34,12 @@ func AuthorizationMiddleware(
 			}
 
 			if permissions, ok := methodPermissionMap[method]; ok {
-				userAccount := r.Context().Value(UserAccountContextKey).(*db.UserAccount)
+				userAccount := r.Context().Value(UserAccountContextKey).(*models.UserAccount)
 				projectID := r.Context().Value(ProjectIDContextKey).(pgtype.UUID)
 
 				userProject, retrievalErr := db.
 					GetQueries().
-					RetrieveUserProject(r.Context(), db.RetrieveUserProjectParams{
+					RetrieveUserProject(r.Context(), models.RetrieveUserProjectParams{
 						ProjectID:  projectID,
 						FirebaseID: userAccount.FirebaseID,
 					})

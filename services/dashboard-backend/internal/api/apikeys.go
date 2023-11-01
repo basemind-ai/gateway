@@ -6,6 +6,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -28,7 +29,7 @@ func handleCreateApplicationAPIKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	apiKey := exc.MustResult(db.GetQueries().CreateAPIKey(r.Context(), db.CreateAPIKeyParams{
+	apiKey := exc.MustResult(db.GetQueries().CreateAPIKey(r.Context(), models.CreateAPIKeyParams{
 		ApplicationID: applicationID,
 		Name:          data.Name,
 	}))

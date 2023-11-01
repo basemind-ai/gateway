@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/go-playground/validator/v10"
 	"regexp"
@@ -12,8 +12,8 @@ import (
 
 var (
 	curlyBracesRegex = regexp.MustCompile(`\{([^}]+)\}`)
-	vendorParsers    = map[db.ModelVendor]func(json.RawMessage) ([]string, []byte, error){
-		db.ModelVendorOPENAI: parseOpenAIMessages,
+	vendorParsers    = map[models.ModelVendor]func(json.RawMessage) ([]string, []byte, error){
+		models.ModelVendorOPENAI: parseOpenAIMessages,
 	}
 	validate = validator.New(validator.WithRequiredStructEnabled())
 )
@@ -57,7 +57,7 @@ func parseOpenAIMessages( //nolint: revive
 
 func ParsePromptMessages( //nolint: revive
 	promptMessages json.RawMessage,
-	vendor db.ModelVendor,
+	vendor models.ModelVendor,
 ) ([]string, []byte, error) {
 	parser, exists := vendorParsers[vendor]
 	if !exists {

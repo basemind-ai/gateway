@@ -1,21 +1,21 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"net/http"
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
-	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 )
 
 var (
 	validate       = validator.New(validator.WithRequiredStructEnabled())
-	allPermissions = []db.AccessPermissionType{
-		db.AccessPermissionTypeMEMBER,
-		db.AccessPermissionTypeADMIN,
+	allPermissions = []models.AccessPermissionType{
+		models.AccessPermissionTypeMEMBER,
+		models.AccessPermissionTypeADMIN,
 	}
-	adminOnly = []db.AccessPermissionType{db.AccessPermissionTypeADMIN}
+	adminOnly = []models.AccessPermissionType{models.AccessPermissionTypeADMIN}
 )
 
 func RegisterHandlers(mux *chi.Mux) {

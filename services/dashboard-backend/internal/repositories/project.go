@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"time"
 
@@ -13,7 +14,7 @@ import (
 
 func CreateProject(
 	ctx context.Context,
-	userAccount *db.UserAccount,
+	userAccount *models.UserAccount,
 	name string,
 	description string,
 ) (*dto.ProjectDTO, error) {
@@ -21,15 +22,15 @@ func CreateProject(
 
 	queries := db.GetQueries().WithTx(tx)
 
-	project := exc.MustResult(queries.CreateProject(ctx, db.CreateProjectParams{
+	project := exc.MustResult(queries.CreateProject(ctx, models.CreateProjectParams{
 		Name:        name,
 		Description: description,
 	}))
 
-	userProject := exc.MustResult(queries.CreateUserProject(ctx, db.CreateUserProjectParams{
+	userProject := exc.MustResult(queries.CreateUserProject(ctx, models.CreateUserProjectParams{
 		UserID:     userAccount.ID,
 		ProjectID:  project.ID,
-		Permission: db.AccessPermissionTypeADMIN,
+		Permission: models.AccessPermissionTypeADMIN,
 	}))
 
 	db.CommitIfShouldCommit(ctx, tx)
@@ -79,7 +80,7 @@ func GetProjectAPIRequestByDateRange(
 	fromDate, toDate time.Time,
 ) int64 {
 	totalAPICalls := exc.MustResult(db.GetQueries().
-		RetrieveProjectAPIRequestCount(ctx, db.RetrieveProjectAPIRequestCountParams{
+		RetrieveProjectAPIRequestCount(ctx, models.RetrieveProjectAPIRequestCountParams{
 			ID:          projectID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
@@ -92,15 +93,15 @@ func GetProjectTokenCountByProjectByDateRange(
 	ctx context.Context,
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
-) map[db.ModelType]int64 {
+) map[models.ModelType]int64 {
 	tokensConsumed := exc.MustResult(db.GetQueries().
-		RetrieveProjectTokensCount(ctx, db.RetrieveProjectTokensCountParams{
+		RetrieveProjectTokensCount(ctx, models.RetrieveProjectTokensCountParams{
 			ID:          projectID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
 		}))
 
-	projectTokenCntMap := make(map[db.ModelType]int64)
+	projectTokenCntMap := make(map[models.ModelType]int64)
 	for _, record := range tokensConsumed {
 		projectTokenCntMap[record.ModelType] += record.TotalTokens
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
@@ -26,7 +27,7 @@ func (c *Client) RequestPrompt(
 		return dto.PromptResultDTO{Error: createPromptRequestErr}
 	}
 
-	recordParams := db.CreatePromptRequestRecordParams{
+	recordParams := models.CreatePromptRequestRecordParams{
 		PromptConfigID:   requestConfiguration.PromptConfigID,
 		IsStreamResponse: false,
 		StartTime:        pgtype.Timestamptz{Time: time.Now(), Valid: true},

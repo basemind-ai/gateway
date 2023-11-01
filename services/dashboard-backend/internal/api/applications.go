@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"net/http"
 	"time"
@@ -21,7 +22,7 @@ import (
 func handleCreateApplication(w http.ResponseWriter, r *http.Request) {
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	data := &db.CreateApplicationParams{
+	data := &models.CreateApplicationParams{
 		ProjectID: projectID,
 	}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {
@@ -93,7 +94,7 @@ func handleRetrieveApplication(w http.ResponseWriter, r *http.Request) {
 func handleUpdateApplication(w http.ResponseWriter, r *http.Request) {
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
 
-	data := &db.UpdateApplicationParams{
+	data := &models.UpdateApplicationParams{
 		ID: applicationID,
 	}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, data); deserializationErr != nil {

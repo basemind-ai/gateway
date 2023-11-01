@@ -2,6 +2,7 @@ package repositories_test
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"testing"
 	"time"
 
@@ -37,7 +38,7 @@ func TestProjectRepository(t *testing.T) {
 
 			retrievedProject, err := db.
 				GetQueries().
-				RetrieveProject(context.TODO(), db.RetrieveProjectParams{
+				RetrieveProject(context.TODO(), models.RetrieveProjectParams{
 					ID:         *uuidID,
 					FirebaseID: userAccount.FirebaseID,
 				})
@@ -53,16 +54,16 @@ func TestProjectRepository(t *testing.T) {
 		t.Run("deletes a project and all of its applications", func(t *testing.T) {
 			project, _ := factories.CreateProject(context.TODO())
 			userAccount, _ := factories.CreateUserAccount(context.TODO())
-			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 				ProjectID:  project.ID,
 				UserID:     userAccount.ID,
-				Permission: db.AccessPermissionTypeADMIN,
+				Permission: models.AccessPermissionTypeADMIN,
 			})
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
 			retrievedProject, _ := db.
 				GetQueries().
-				RetrieveProject(context.TODO(), db.RetrieveProjectParams{
+				RetrieveProject(context.TODO(), models.RetrieveProjectParams{
 					ID:         project.ID,
 					FirebaseID: userAccount.FirebaseID,
 				})
@@ -77,7 +78,7 @@ func TestProjectRepository(t *testing.T) {
 			err = repositories.DeleteProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().RetrieveProject(context.TODO(), db.RetrieveProjectParams{
+			_, err = db.GetQueries().RetrieveProject(context.TODO(), models.RetrieveProjectParams{
 				ID:         project.ID,
 				FirebaseID: userAccount.FirebaseID,
 			})
@@ -90,14 +91,14 @@ func TestProjectRepository(t *testing.T) {
 		t.Run("deletes a project that has no applications", func(t *testing.T) {
 			project, _ := factories.CreateProject(context.TODO())
 			userAccount, _ := factories.CreateUserAccount(context.TODO())
-			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 				ProjectID:  project.ID,
 				UserID:     userAccount.ID,
-				Permission: db.AccessPermissionTypeADMIN,
+				Permission: models.AccessPermissionTypeADMIN,
 			})
 			retrievedProject, err := db.
 				GetQueries().
-				RetrieveProject(context.TODO(), db.RetrieveProjectParams{
+				RetrieveProject(context.TODO(), models.RetrieveProjectParams{
 					ID:         project.ID,
 					FirebaseID: userAccount.FirebaseID,
 				})
@@ -107,7 +108,7 @@ func TestProjectRepository(t *testing.T) {
 			err = repositories.DeleteProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().RetrieveProject(context.TODO(), db.RetrieveProjectParams{
+			_, err = db.GetQueries().RetrieveProject(context.TODO(), models.RetrieveProjectParams{
 				ID:         project.ID,
 				FirebaseID: userAccount.FirebaseID,
 			})
@@ -145,7 +146,7 @@ func TestProjectRepository(t *testing.T) {
 					time.Now().AddDate(0, 0, -1),
 					time.Now().AddDate(0, 0, 1),
 				)
-				assert.Equal(t, int64(20), projectTokenCntMap[db.ModelTypeGpt35Turbo])
+				assert.Equal(t, int64(20), projectTokenCntMap[models.ModelTypeGpt35Turbo])
 			})
 		})
 
@@ -160,7 +161,7 @@ func TestProjectRepository(t *testing.T) {
 				assert.Equal(t, int64(1), projectAnalytics.TotalAPICalls)
 				assert.Equal(
 					t,
-					tokenutils.GetCostByModelType(totalTokensUsed, db.ModelTypeGpt35Turbo),
+					tokenutils.GetCostByModelType(totalTokensUsed, models.ModelTypeGpt35Turbo),
 					projectAnalytics.ModelsCost,
 				)
 			})

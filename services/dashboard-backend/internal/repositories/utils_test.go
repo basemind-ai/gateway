@@ -3,7 +3,7 @@ package repositories_test
 import (
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
-	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -14,7 +14,7 @@ func TestUtils(t *testing.T) {
 			promptMessages := json.RawMessage(
 				`[{"role": "user", "content": "Hello {name}!"}, {"role": "system", "content": "You are a helpful chatbot."}]`,
 			)
-			vendor := db.ModelVendorOPENAI
+			vendor := models.ModelVendorOPENAI
 
 			expectedVariables, parsedMessages, err := repositories.ParsePromptMessages(
 				promptMessages,
@@ -30,7 +30,7 @@ func TestUtils(t *testing.T) {
 			promptMessages := json.RawMessage(
 				`[{"role": "user", "content": "Hello {name}!"}, {"role": "system", "content": "You are a helpful {name}."}]`,
 			)
-			vendor := db.ModelVendorOPENAI
+			vendor := models.ModelVendorOPENAI
 
 			expectedVariables, parsedMessages, err := repositories.ParsePromptMessages(
 				promptMessages,
@@ -45,7 +45,7 @@ func TestUtils(t *testing.T) {
 		t.Run("returns error for invalid JSON prompt message", func(t *testing.T) {
 			promptMessages := json.RawMessage(`invalid`)
 
-			_, _, err := repositories.ParsePromptMessages(promptMessages, db.ModelVendorOPENAI)
+			_, _, err := repositories.ParsePromptMessages(promptMessages, models.ModelVendorOPENAI)
 			assert.Error(t, err)
 		})
 
@@ -53,7 +53,7 @@ func TestUtils(t *testing.T) {
 			promptMessages := json.RawMessage(
 				`[{"role": "user", "content": "Hello {name}!"}, {"role": "system", "content": "You are a helpful {name}."}]`,
 			)
-			vendor := db.ModelVendor("abc")
+			vendor := models.ModelVendor("abc")
 			_, _, err := repositories.ParsePromptMessages(promptMessages, vendor)
 			assert.Error(t, err)
 		})
@@ -62,7 +62,7 @@ func TestUtils(t *testing.T) {
 			promptMessages := json.RawMessage(
 				`[{"role": "x", "content": "Hello {name}!"}, {"role": "system", "content": "You are a helpful {name}."}]`,
 			)
-			vendor := db.ModelVendorOPENAI
+			vendor := models.ModelVendorOPENAI
 			_, _, err := repositories.ParsePromptMessages(promptMessages, vendor)
 			assert.Error(t, err)
 		})

@@ -3,7 +3,7 @@ package connectors_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
-	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
@@ -16,7 +16,7 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 		t.Run("panics when not initialized", func(t *testing.T) {
 			testutils.UnsetTestEnv(t)
 
-			assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
+			assert.Panics(t, func() { connectors.GetProviderConnector(models.ModelVendorOPENAI) })
 		})
 
 		t.Run("panics when transport security is not set", func(t *testing.T) {
@@ -27,7 +27,7 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 					context.TODO(),
 				)
 
-				connectors.GetProviderConnector(db.ModelVendorOPENAI)
+				connectors.GetProviderConnector(models.ModelVendorOPENAI)
 			})
 		})
 
@@ -38,7 +38,10 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 				context.TODO(),
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
-			assert.NotPanics(t, func() { connectors.GetProviderConnector(db.ModelVendorOPENAI) })
+			assert.NotPanics(
+				t,
+				func() { connectors.GetProviderConnector(models.ModelVendorOPENAI) },
+			)
 		})
 
 		t.Run("panics for unknown provider", func(t *testing.T) {
@@ -49,7 +52,10 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
 
-			assert.Panics(t, func() { connectors.GetProviderConnector(db.ModelVendor("unknown")) })
+			assert.Panics(
+				t,
+				func() { connectors.GetProviderConnector(models.ModelVendor("unknown")) },
+			)
 		})
 	})
 }

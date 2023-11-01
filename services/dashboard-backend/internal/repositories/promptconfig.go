@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ func CreatePromptConfig(
 	// we know this is the first prompt config for the application, because there must always be a default config.
 	promptConfig, createErr := db.
 		GetQueries().
-		CreatePromptConfig(ctx, db.CreatePromptConfigParams{
+		CreatePromptConfig(ctx, models.CreatePromptConfigParams{
 			ApplicationID:             applicationID,
 			Name:                      strings.TrimSpace(createPromptConfigDTO.Name),
 			ModelParameters:           createPromptConfigDTO.ModelParameters,
@@ -96,12 +97,12 @@ func UpdateApplicationDefaultPromptConfig(
 
 	queries := db.GetQueries().WithTx(tx)
 
-	exc.Must(queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
+	exc.Must(queries.UpdateDefaultPromptConfig(ctx, models.UpdateDefaultPromptConfigParams{
 		ID:        defaultPromptConfig.ID,
 		IsDefault: false,
 	}))
 
-	exc.Must(queries.UpdateDefaultPromptConfig(ctx, db.UpdateDefaultPromptConfigParams{
+	exc.Must(queries.UpdateDefaultPromptConfig(ctx, models.UpdateDefaultPromptConfigParams{
 		ID:        promptConfigID,
 		IsDefault: true,
 	}))
@@ -139,7 +140,7 @@ func UpdatePromptConfig(
 		return nil, fmt.Errorf("failed to retrieve prompt config - %w", retrievePromptConfigErr)
 	}
 
-	updateParams := db.UpdatePromptConfigParams{
+	updateParams := models.UpdatePromptConfigParams{
 		ID:                        promptConfigID,
 		Name:                      existingPromptConfig.Name,
 		ModelParameters:           existingPromptConfig.ModelParameters,
@@ -241,7 +242,7 @@ func GetPromptConfigAPIRequestCountByDateRange(
 	fromDate, toDate time.Time,
 ) int64 {
 	return exc.MustResult(db.GetQueries().
-		RetrievePromptConfigAPIRequestCount(ctx, db.RetrievePromptConfigAPIRequestCountParams{
+		RetrievePromptConfigAPIRequestCount(ctx, models.RetrievePromptConfigAPIRequestCountParams{
 			ID:          promptConfigID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
@@ -252,17 +253,17 @@ func GetPromptConfigTokensCountByDateRange(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
 	fromDate, toDate time.Time,
-) map[db.ModelType]int64 {
+) map[models.ModelType]int64 {
 	promptRequests := exc.MustResult(db.GetQueries().RetrievePromptConfigTokensCount(
 		ctx,
-		db.RetrievePromptConfigTokensCountParams{
+		models.RetrievePromptConfigTokensCountParams{
 			ID:          promptConfigID,
 			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
 		},
 	))
 
-	tokenCntMap := make(map[db.ModelType]int64)
+	tokenCntMap := make(map[models.ModelType]int64)
 	for _, record := range promptRequests {
 		tokenCntMap[record.ModelType] += record.TotalTokens
 	}

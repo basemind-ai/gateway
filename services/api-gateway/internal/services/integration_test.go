@@ -10,6 +10,7 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
@@ -277,8 +278,8 @@ func TestIntegration(t *testing.T) { //nolint: revive
 					ExpectedTemplateVariables: expectedTemplateVariables,
 					ApplicationId:             applicationID,
 					ModelParameters:           modelParameters,
-					ModelVendor:               string(db.ModelVendorOPENAI),
-					ModelType:                 string(db.ModelTypeGpt432k),
+					ModelVendor:               string(models.ModelVendorOPENAI),
+					ModelType:                 string(models.ModelTypeGpt432k),
 					ProviderPromptMessages:    promptMessages,
 					PromptConfigId:            promptConfigID,
 				})

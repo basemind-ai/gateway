@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"sync"
 	"time"
@@ -13,7 +14,7 @@ import (
 )
 
 var (
-	queries     *Queries
+	queries     *models.Queries
 	poolOnce    sync.Once
 	queriesOnce sync.Once
 	pool        *pgxpool.Pool
@@ -47,12 +48,12 @@ func CreateConnection(ctx context.Context, dbURL string) (*pgxpool.Pool, error) 
 
 // GetQueries - returns the queries object.
 // Panics if the connection is not initialized.
-func GetQueries() *Queries {
+func GetQueries() *models.Queries {
 	queriesOnce.Do(func() {
 		if pool == nil { // skipcq: TCV-001
 			log.Fatal().Msg("Connection not initialized")
 		}
-		queries = New(pool)
+		queries = models.New(pool)
 	})
 
 	return queries

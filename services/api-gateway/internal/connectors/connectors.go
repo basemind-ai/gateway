@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
-	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/sethvargo/go-envconfig"
 	"google.golang.org/grpc"
@@ -42,9 +42,9 @@ func Init(ctx context.Context, opts ...grpc.DialOption) {
 
 // GetProviderConnector - returns the connector for the given provider.
 // Panics if the provider is not supported.
-func GetProviderConnector(provider db.ModelVendor) ProviderConnector {
+func GetProviderConnector(provider models.ModelVendor) ProviderConnector {
 	switch provider {
-	case db.ModelVendorOPENAI:
+	case models.ModelVendorOPENAI:
 		return exc.ReturnNotNil(
 			openaiConnectorClient,
 			"OpenAI Connector Client was not initialized",

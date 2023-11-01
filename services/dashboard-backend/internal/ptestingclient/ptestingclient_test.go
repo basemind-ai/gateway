@@ -7,6 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -78,8 +79,8 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	data := dto.PromptConfigTestDTO{
 		Name:                   "TEST",
 		ModelParameters:        promptConfig.ModelParameters,
-		ModelType:              db.ModelTypeGpt432k,
-		ModelVendor:            db.ModelVendorOPENAI,
+		ModelType:              models.ModelTypeGpt432k,
+		ModelVendor:            models.ModelVendorOPENAI,
 		ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 		TemplateVariables:      map[string]string{},
 		PromptConfigID:         &promptConfigID,

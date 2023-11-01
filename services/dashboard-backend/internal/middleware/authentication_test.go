@@ -10,6 +10,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/router"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -89,7 +90,7 @@ func TestAuthenticationMiddleware(t *testing.T) {
 			assert.Equal(t, 1, len(mockNext.Calls))
 
 			newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
-			_, ok := newRequest.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+			_, ok := newRequest.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 			assert.True(t, ok)
 		})
 	})
@@ -97,10 +98,10 @@ func TestAuthenticationMiddleware(t *testing.T) {
 	t.Run("parseOTP", func(t *testing.T) {
 		userAccount, _ := factories.CreateUserAccount(context.TODO())
 		project, _ := factories.CreateProject(context.TODO())
-		_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+		_, _ = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 			UserID:     userAccount.ID,
 			ProjectID:  project.ID,
-			Permission: db.AccessPermissionTypeADMIN,
+			Permission: models.AccessPermissionTypeADMIN,
 		})
 
 		r := router.New(router.Options{
@@ -158,7 +159,7 @@ func TestAuthenticationMiddleware(t *testing.T) {
 			assert.Equal(t, http.StatusOK, testRecorder.Code)
 
 			newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
-			_, ok := newRequest.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+			_, ok := newRequest.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 			assert.True(t, ok)
 		})
 	})

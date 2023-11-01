@@ -6,6 +6,7 @@ import (
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"net/http"
@@ -32,8 +33,8 @@ func TestAuthorizationMiddleware(t *testing.T) {
 		assert.Equal(t, http.StatusOK, testRecorder.Code)
 	})
 
-	for _, permission := range []db.AccessPermissionType{
-		db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+	for _, permission := range []models.AccessPermissionType{
+		models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 	} {
 		t.Run(
 			fmt.Sprintf(
@@ -42,11 +43,12 @@ func TestAuthorizationMiddleware(t *testing.T) {
 			),
 			func(t *testing.T) {
 				userAccount, _ := factories.CreateUserAccount(context.TODO())
-				_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
-					UserID:     userAccount.ID,
-					ProjectID:  project.ID,
-					Permission: permission,
-				})
+				_, _ = db.GetQueries().
+					CreateUserProject(context.TODO(), models.CreateUserProjectParams{
+						UserID:     userAccount.ID,
+						ProjectID:  project.ID,
+						Permission: permission,
+					})
 
 				mockNext := &nextMock{}
 				mockNext.On("ServeHTTP", mock.Anything, mock.Anything).Return()
@@ -96,7 +98,10 @@ func TestAuthorizationMiddleware(t *testing.T) {
 			testRecorder := httptest.NewRecorder()
 			authorizationMiddleware := middleware.AuthorizationMiddleware(
 				middleware.MethodPermissionMap{
-					http.MethodGet: {db.AccessPermissionTypeADMIN, db.AccessPermissionTypeMEMBER},
+					http.MethodGet: {
+						models.AccessPermissionTypeADMIN,
+						models.AccessPermissionTypeMEMBER,
+					},
 				},
 			)
 			authorizationMiddleware(mockNext).ServeHTTP(testRecorder, request)
@@ -108,10 +113,10 @@ func TestAuthorizationMiddleware(t *testing.T) {
 		"responds with status 401 UNAUTHORIZED if the user does not have the required permission",
 		func(t *testing.T) {
 			userAccount, _ := factories.CreateUserAccount(context.TODO())
-			_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+			_, _ = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 				UserID:     userAccount.ID,
 				ProjectID:  project.ID,
-				Permission: db.AccessPermissionTypeMEMBER,
+				Permission: models.AccessPermissionTypeMEMBER,
 			})
 
 			mockNext := &nextMock{}
@@ -132,7 +137,7 @@ func TestAuthorizationMiddleware(t *testing.T) {
 			testRecorder := httptest.NewRecorder()
 			authorizationMiddleware := middleware.AuthorizationMiddleware(
 				middleware.MethodPermissionMap{
-					http.MethodGet: {db.AccessPermissionTypeADMIN},
+					http.MethodGet: {models.AccessPermissionTypeADMIN},
 				},
 			)
 			authorizationMiddleware(mockNext).ServeHTTP(testRecorder, request)

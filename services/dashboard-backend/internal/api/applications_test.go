@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"net/http"
 	"strings"
 	"testing"
@@ -22,7 +23,7 @@ import (
 func TestApplicationsAPI(t *testing.T) { //nolint: revive
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	projectID := createProject(t)
-	createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+	createUserProject(t, userAccount.FirebaseID, projectID, models.AccessPermissionTypeADMIN)
 
 	testClient := createTestClient(t, userAccount)
 
@@ -44,7 +45,7 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusCreated, response.StatusCode)
 
-			application := db.Application{}
+			application := models.Application{}
 			deserializationErr := serialization.DeserializeJSON(response.Body, &application)
 			assert.NoError(t, deserializationErr)
 			assert.NotNil(t, application.ID)
@@ -52,8 +53,8 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, "test app description", application.Description)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -184,8 +185,8 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 	})
 
 	t.Run(fmt.Sprintf("GET: %s", api.ApplicationsListEndpoint), func(t *testing.T) {
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -267,7 +268,7 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 
 			application, _ := db.GetQueries().RetrieveApplication(context.TODO(), *uuidID)
 
-			responseApplication := db.Application{}
+			responseApplication := models.Application{}
 			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseApplication,
@@ -278,8 +279,8 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, application.Description, responseApplication.Description)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(
@@ -426,7 +427,7 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			responseApplication := db.Application{}
+			responseApplication := models.Application{}
 			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseApplication,
@@ -775,8 +776,8 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 			assert.Equal(t, promptReqAnalytics.ProjectedCost, responseAnalytics.ProjectedCost)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(

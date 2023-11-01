@@ -6,6 +6,7 @@ import (
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/stretchr/testify/assert"
@@ -119,7 +120,7 @@ func TestApplicationRepository(t *testing.T) {
 				fromDate,
 				toDate,
 			)
-			assert.Equal(t, int64(20), modelTokenCntMap[db.ModelTypeGpt35Turbo])
+			assert.Equal(t, int64(20), modelTokenCntMap[models.ModelTypeGpt35Turbo])
 		})
 	})
 
@@ -134,7 +135,7 @@ func TestApplicationRepository(t *testing.T) {
 			assert.Equal(t, int64(1), applicationAnalytics.TotalRequests)
 			assert.Equal(
 				t,
-				tokenutils.GetCostByModelType(totalTokensUsed, db.ModelTypeGpt35Turbo),
+				tokenutils.GetCostByModelType(totalTokensUsed, models.ModelTypeGpt35Turbo),
 				applicationAnalytics.ProjectedCost,
 			)
 		})

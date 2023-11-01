@@ -768,6 +768,8 @@ google.golang.org/genproto/googleapis/bytestream v0.0.0-20231009173412-8bfb1ae86
 google.golang.org/genproto/googleapis/bytestream v0.0.0-20231009173412-8bfb1ae86b6c/go.mod h1:itlFWGBbEyD32PUeJsTG8h8Wz7iJXfVK4gt1EJ+pAG0=
 google.golang.org/genproto/googleapis/bytestream v0.0.0-20231012201019-e917dd12ba7a h1:ptblGJZY+SBRhJRVneg4DiHYKwjgeHedTzrgk8CH7m4=
 google.golang.org/genproto/googleapis/bytestream v0.0.0-20231012201019-e917dd12ba7a/go.mod h1:+34luvCflYKiKylNwGJfn9cFBbcL/WrkciMmDmsTQ/A=
+google.golang.org/genproto/googleapis/bytestream v0.0.0-20231030173426-d783a09b4405 h1:o4S3HvTUEXgRsNSUQsALDVog0O9F/U1JJlHmmUN8Uas=
+google.golang.org/genproto/googleapis/bytestream v0.0.0-20231030173426-d783a09b4405/go.mod h1:GRUCuLdzVqZte8+Dl/D4N25yLzcGqqWaYkeVOwulFqw=
 gopkg.in/errgo.v2 v2.1.0 h1:0vLT13EuvQ0hNvakwLuFZ/jYrLp5F3kcWHXdRggjCE8=
 gopkg.in/fsnotify.v1 v1.4.7 h1:xOHLXZwVvI9hhs+cLKq5+I5onOuwQLhQwiu63xxlHs4=
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc h1:/hemPrYIhOhy8zYrNj+069zDB68us2sMGsfkFJO0iZs=

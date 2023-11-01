@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"testing"
 
@@ -150,7 +151,7 @@ func TestUtils(t *testing.T) {
 		userMessage := "This is what the user asked for: {userInput}"
 		expectedTemplateVariables := []string{"userInput"}
 		applicationID := db.UUIDToString(&application.ID)
-		modelType := db.ModelTypeGpt35Turbo
+		modelType := models.ModelTypeGpt35Turbo
 
 		modelParameters := factories.CreateModelParameters()
 		promptMessages := factories.CreateOpenAIPromptMessages(
@@ -238,7 +239,7 @@ func TestUtils(t *testing.T) {
 
 			_, err := openai.CreatePromptRequest(
 				application.ID,
-				db.ModelType(modelType),
+				models.ModelType(modelType),
 				modelParameters,
 				promptMessages,
 				templateVariables,
@@ -250,7 +251,7 @@ func TestUtils(t *testing.T) {
 		})
 
 		t.Run("returns error for unknown message role", func(t *testing.T) {
-			modelType := db.ModelTypeGpt35Turbo
+			modelType := models.ModelTypeGpt35Turbo
 			modelParameters := []byte(`{}`)
 			promptMessages := []byte(`[{"role": "unknown"}]`)
 			templateVariables := map[string]string{}
@@ -266,7 +267,7 @@ func TestUtils(t *testing.T) {
 		})
 
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {
-			modelType := db.ModelTypeGpt35Turbo
+			modelType := models.ModelTypeGpt35Turbo
 			modelParameters := []byte(`invalid_json`)
 			promptMessages := []byte(`[]`)
 			templateVariables := make(map[string]string)
@@ -282,7 +283,7 @@ func TestUtils(t *testing.T) {
 		})
 
 		t.Run("returns error if prompt messages is invalid json", func(t *testing.T) {
-			modelType := db.ModelTypeGpt35Turbo
+			modelType := models.ModelTypeGpt35Turbo
 			modelParameters := []byte(`{"temperature": 0.8}`)
 			promptMessages := []byte(`invalid_json`)
 			templateVariables := map[string]string{

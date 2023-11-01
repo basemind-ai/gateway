@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"net/http"
 	"time"
@@ -17,7 +18,7 @@ import (
 
 // handleCreateProject - creates a new project and sets the user as an ADMIN.
 func handleCreateProject(w http.ResponseWriter, r *http.Request) {
-	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
@@ -42,7 +43,7 @@ func handleCreateProject(w http.ResponseWriter, r *http.Request) {
 
 // handleRetrieveProjects - retrieves all projects for the user.
 func handleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
-	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 	projects := exc.MustResult(
 		db.GetQueries().RetrieveProjects(r.Context(), userAccount.FirebaseID),
 	)
@@ -64,9 +65,9 @@ func handleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 
 // handleUpdateProject - allows updating the name and description of a project.
 func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
-	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
-	userProject := r.Context().Value(middleware.UserProjectContextKey).(db.UserProject)
+	userProject := r.Context().Value(middleware.UserProjectContextKey).(models.UserProject)
 
 	body := &dto.ProjectDTO{}
 	if deserializationErr := serialization.DeserializeJSON(r.Body, body); deserializationErr != nil {
@@ -76,12 +77,12 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 
 	existingProject := exc.MustResult(db.
 		GetQueries().
-		RetrieveProject(r.Context(), db.RetrieveProjectParams{
+		RetrieveProject(r.Context(), models.RetrieveProjectParams{
 			ID:         projectID,
 			FirebaseID: userAccount.FirebaseID,
 		}))
 
-	updateParams := db.UpdateProjectParams{
+	updateParams := models.UpdateProjectParams{
 		ID:          projectID,
 		Name:        existingProject.Name,
 		Description: existingProject.Description,
@@ -111,10 +112,10 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 
 // handleDeleteProject - deletes a project and all associated applications by setting the deleted_at timestamp on these.
 func handleDeleteProject(w http.ResponseWriter, r *http.Request) {
-	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*db.UserAccount)
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	_ = exc.MustResult(db.GetQueries().RetrieveProject(r.Context(), db.RetrieveProjectParams{
+	_ = exc.MustResult(db.GetQueries().RetrieveProject(r.Context(), models.RetrieveProjectParams{
 		ID:         projectID,
 		FirebaseID: userAccount.FirebaseID,
 	}))

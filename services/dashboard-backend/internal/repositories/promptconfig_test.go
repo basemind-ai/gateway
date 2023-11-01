@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"testing"
 	"time"
@@ -23,7 +24,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 	newModelParameters := json.RawMessage(params)
 
 	newName := "new name"
-	newModelType := db.ModelTypeGpt4
+	newModelType := models.ModelTypeGpt4
 
 	newSystemMessage := "Your role is {role}"
 	newUserMessage := "Describe what it is to be a {role} in your experience"
@@ -44,8 +45,8 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt432k,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
 				ProviderPromptMessages: newPromptMessages,
 			}
@@ -73,8 +74,8 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt432k,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
 				ProviderPromptMessages: newPromptMessages,
 			}
@@ -92,8 +93,8 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt432k,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
 				ProviderPromptMessages: json.RawMessage("invalid"),
 			}
@@ -112,8 +113,8 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   existingPromptConfig.Name,
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt432k,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
 				ProviderPromptMessages: newPromptMessages,
 			}
@@ -134,8 +135,8 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt432k,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
 				ProviderPromptMessages: newPromptMessages,
 			}
@@ -168,8 +169,8 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt432k,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
 				ProviderPromptMessages: newPromptMessages,
 			}
@@ -389,11 +390,11 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			existingPromptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
 
 			promptConfig, _ := db.GetQueries().
-				CreatePromptConfig(context.TODO(), db.CreatePromptConfigParams{
+				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
 					ApplicationID:             application.ID,
 					Name:                      factories.RandomString(10),
-					ModelVendor:               db.ModelVendorOPENAI,
-					ModelType:                 db.ModelTypeGpt4,
+					ModelVendor:               models.ModelVendorOPENAI,
+					ModelType:                 models.ModelTypeGpt4,
 					ModelParameters:           existingPromptConfig.ModelParameters,
 					ProviderPromptMessages:    existingPromptConfig.ProviderPromptMessages,
 					ExpectedTemplateVariables: []string{""},
@@ -452,7 +453,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 					fromDate,
 					toDate,
 				)
-				assert.Equal(t, int64(20), modelTokenCntMap[db.ModelTypeGpt35Turbo])
+				assert.Equal(t, int64(20), modelTokenCntMap[models.ModelTypeGpt35Turbo])
 			})
 		})
 
@@ -467,7 +468,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 				assert.Equal(t, int64(1), promptConfigAnalytics.TotalPromptRequests)
 				assert.Equal(
 					t,
-					tokenutils.GetCostByModelType(totalTokensUsed, db.ModelTypeGpt35Turbo),
+					tokenutils.GetCostByModelType(totalTokensUsed, models.ModelTypeGpt35Turbo),
 					promptConfigAnalytics.ModelsCost,
 				)
 			})

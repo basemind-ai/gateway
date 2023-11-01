@@ -13,6 +13,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/router"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
@@ -102,7 +103,7 @@ func createMockGRPCServer(
 	return mockService
 }
 
-func createOTP(t *testing.T, userAccount *db.UserAccount, projectID string) string {
+func createOTP(t *testing.T, userAccount *models.UserAccount, projectID string) string {
 	t.Helper()
 	testClient := createTestClient(t, userAccount)
 
@@ -126,10 +127,10 @@ func TestPromptTestingAPI(t *testing.T) {
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	_, _ = db.GetQueries().CreateUserProject(context.TODO(), db.CreateUserProjectParams{
+	_, _ = db.GetQueries().CreateUserProject(context.TODO(), models.CreateUserProjectParams{
 		UserID:     userAccount.ID,
 		ProjectID:  project.ID,
-		Permission: db.AccessPermissionTypeADMIN,
+		Permission: models.AccessPermissionTypeADMIN,
 	})
 	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
 	promptRequestRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
@@ -385,8 +386,8 @@ func TestPromptTestingAPI(t *testing.T) {
 			func(t *testing.T) {
 				data := &dto.PromptConfigTestDTO{
 					Name:                   "test",
-					ModelVendor:            db.ModelVendorOPENAI,
-					ModelType:              db.ModelTypeGpt4,
+					ModelVendor:            models.ModelVendorOPENAI,
+					ModelType:              models.ModelTypeGpt4,
 					ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 					ModelParameters:        promptConfig.ModelParameters,
 					TemplateVariables:      templateVariables,
@@ -418,8 +419,8 @@ func TestPromptTestingAPI(t *testing.T) {
 				)
 				data := &dto.PromptConfigTestDTO{
 					Name:                   "test",
-					ModelVendor:            db.ModelVendorOPENAI,
-					ModelType:              db.ModelTypeGpt4,
+					ModelVendor:            models.ModelVendorOPENAI,
+					ModelType:              models.ModelTypeGpt4,
 					ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 					ModelParameters:        promptConfig.ModelParameters,
 					TemplateVariables:      templateVariables,
@@ -463,8 +464,8 @@ func TestPromptTestingAPI(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
 				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 				ModelParameters:        promptConfig.ModelParameters,
 				TemplateVariables:      templateVariables,
@@ -510,8 +511,8 @@ func TestPromptTestingAPI(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
 				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 				ModelParameters:        promptConfig.ModelParameters,
 				TemplateVariables:      templateVariables,
@@ -556,8 +557,8 @@ func TestPromptTestingAPI(t *testing.T) {
 
 			data := &dto.PromptConfigTestDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
 				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 				ModelParameters:        promptConfig.ModelParameters,
 				TemplateVariables:      templateVariables,
@@ -607,8 +608,8 @@ func TestPromptTestingAPI(t *testing.T) {
 
 			data := &dto.PromptConfigTestDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
 				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 				ModelParameters:        promptConfig.ModelParameters,
 				TemplateVariables:      templateVariables,
@@ -642,8 +643,8 @@ func TestPromptTestingAPI(t *testing.T) {
 
 			data := &dto.PromptConfigTestDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
 				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 				ModelParameters:        promptConfig.ModelParameters,
 				TemplateVariables:      templateVariables,
@@ -681,8 +682,8 @@ func TestPromptTestingAPI(t *testing.T) {
 
 			data := &dto.PromptConfigTestDTO{
 				Name:                   "test",
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt4,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt4,
 				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 				ModelParameters:        promptConfig.ModelParameters,
 				TemplateVariables:      templateVariables,
@@ -735,8 +736,8 @@ func TestPromptTestingAPI(t *testing.T) {
 					Name: "should return error when name is empty",
 					Data: dto.PromptConfigTestDTO{
 						Name:                   "",
-						ModelVendor:            db.ModelVendorOPENAI,
-						ModelType:              db.ModelTypeGpt4,
+						ModelVendor:            models.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt4,
 						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 						ModelParameters:        promptConfig.ModelParameters,
 						TemplateVariables:      templateVariables,
@@ -746,8 +747,8 @@ func TestPromptTestingAPI(t *testing.T) {
 					Name: "should return error when model vendor is invalid",
 					Data: dto.PromptConfigTestDTO{
 						Name:                   "test",
-						ModelVendor:            db.ModelVendor("invalid"),
-						ModelType:              db.ModelTypeGpt4,
+						ModelVendor:            models.ModelVendor("invalid"),
+						ModelType:              models.ModelTypeGpt4,
 						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 						ModelParameters:        promptConfig.ModelParameters,
 						TemplateVariables:      templateVariables,
@@ -757,8 +758,8 @@ func TestPromptTestingAPI(t *testing.T) {
 					Name: "should return error when model type is invalid",
 					Data: dto.PromptConfigTestDTO{
 						Name:                   "test",
-						ModelVendor:            db.ModelVendorOPENAI,
-						ModelType:              db.ModelType("invalid"),
+						ModelVendor:            models.ModelVendorOPENAI,
+						ModelType:              models.ModelType("invalid"),
 						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 						ModelParameters:        promptConfig.ModelParameters,
 						TemplateVariables:      templateVariables,
@@ -768,8 +769,8 @@ func TestPromptTestingAPI(t *testing.T) {
 					Name: "should return error when provider prompt messages are empty",
 					Data: dto.PromptConfigTestDTO{
 						Name:                   "test",
-						ModelVendor:            db.ModelVendorOPENAI,
-						ModelType:              db.ModelTypeGpt432k,
+						ModelVendor:            models.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt432k,
 						ProviderPromptMessages: nil,
 						ModelParameters:        promptConfig.ModelParameters,
 						TemplateVariables:      templateVariables,
@@ -779,8 +780,8 @@ func TestPromptTestingAPI(t *testing.T) {
 					Name: "should return error when model Parametersare empty",
 					Data: dto.PromptConfigTestDTO{
 						Name:                   "test",
-						ModelVendor:            db.ModelVendorOPENAI,
-						ModelType:              db.ModelTypeGpt432k,
+						ModelVendor:            models.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt432k,
 						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 						ModelParameters:        nil,
 						TemplateVariables:      templateVariables,
@@ -790,8 +791,8 @@ func TestPromptTestingAPI(t *testing.T) {
 					Name: "should return error when promptConfigID is not a uuid4",
 					Data: dto.PromptConfigTestDTO{
 						Name:                   "test",
-						ModelVendor:            db.ModelVendorOPENAI,
-						ModelType:              db.ModelTypeGpt432k,
+						ModelVendor:            models.ModelVendorOPENAI,
+						ModelType:              models.ModelTypeGpt432k,
 						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 						ModelParameters:        promptConfig.ModelParameters,
 						TemplateVariables:      templateVariables,
@@ -813,8 +814,8 @@ func TestPromptTestingAPI(t *testing.T) {
 		t.Run("should create a new prompt config when prompt config id is nil", func(t *testing.T) {
 			d := dto.PromptConfigTestDTO{
 				Name:                   factories.RandomString(10),
-				ModelVendor:            db.ModelVendorOPENAI,
-				ModelType:              db.ModelTypeGpt432k,
+				ModelVendor:            models.ModelVendorOPENAI,
+				ModelType:              models.ModelTypeGpt432k,
 				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
 				ModelParameters:        promptConfig.ModelParameters,
 				TemplateVariables:      templateVariables,

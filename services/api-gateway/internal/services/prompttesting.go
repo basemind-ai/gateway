@@ -7,6 +7,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 )
 
 type PromptTestingServer struct {
@@ -35,14 +36,14 @@ func (PromptTestingServer) TestPrompt(
 		PromptConfigData: datatypes.PromptConfigDTO{
 			ID:                        request.PromptConfigId,
 			ModelParameters:           request.ModelParameters,
-			ModelType:                 db.ModelType(request.ModelType),
-			ModelVendor:               db.ModelVendor(request.ModelVendor),
+			ModelType:                 models.ModelType(request.ModelType),
+			ModelVendor:               models.ModelVendor(request.ModelVendor),
 			ProviderPromptMessages:    request.ProviderPromptMessages,
 			ExpectedTemplateVariables: request.ExpectedTemplateVariables,
 		},
 	}
 
-	go connectors.GetProviderConnector(db.ModelVendor(request.ModelVendor)).
+	go connectors.GetProviderConnector(models.ModelVendor(request.ModelVendor)).
 		RequestStream(
 			streamServer.Context(),
 			requestConfigurationDTO,

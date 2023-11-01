@@ -17,7 +17,7 @@ require (
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/lxzan/gws v1.6.13
 	github.com/ory/dockertest/v3 v3.10.0
-	github.com/redis/go-redis/v9 v9.2.1
+	github.com/redis/go-redis/v9 v9.3.0
 	github.com/rs/zerolog v1.31.0
 	github.com/sethvargo/go-envconfig v0.9.0
 	github.com/shopspring/decimal v1.3.1
@@ -31,13 +31,13 @@ require (
 )
 
 require (
-	cloud.google.com/go v0.110.9 // indirect
+	cloud.google.com/go v0.110.10 // indirect
 	cloud.google.com/go/compute v1.23.2 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/firestore v1.14.0 // indirect
 	cloud.google.com/go/iam v1.1.4 // indirect
 	cloud.google.com/go/longrunning v0.5.3 // indirect
-	cloud.google.com/go/storage v1.33.0 // indirect
+	cloud.google.com/go/storage v1.34.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
@@ -100,7 +100,7 @@ require (
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.14.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
-	google.golang.org/api v0.148.0 // indirect
+	google.golang.org/api v0.149.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/appengine/v2 v2.0.5 // indirect
 	google.golang.org/genproto v0.0.0-20231030173426-d783a09b4405 // indirect

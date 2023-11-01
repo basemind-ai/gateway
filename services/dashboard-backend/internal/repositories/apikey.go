@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -21,7 +22,7 @@ func GetOrCreateApplicationInternalAPIKeyID(
 		return &apiKeyID, nil
 	}
 
-	createdToken, createErr := db.GetQueries().CreateAPIKey(ctx, db.CreateAPIKeyParams{
+	createdToken, createErr := db.GetQueries().CreateAPIKey(ctx, models.CreateAPIKeyParams{
 		ApplicationID: *applicationUUID,
 		Name:          "_internal token",
 		IsInternal:    true,

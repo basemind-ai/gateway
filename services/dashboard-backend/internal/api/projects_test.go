@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"net/http"
 	"strings"
@@ -84,13 +85,13 @@ func TestProjectsAPI(t *testing.T) {
 				t,
 				newUserAccount.FirebaseID,
 				project1ID,
-				db.AccessPermissionTypeADMIN,
+				models.AccessPermissionTypeADMIN,
 			)
 			createUserProject(
 				t,
 				newUserAccount.FirebaseID,
 				project2ID,
-				db.AccessPermissionTypeMEMBER,
+				models.AccessPermissionTypeMEMBER,
 			)
 
 			client := createTestClient(t, newUserAccount)
@@ -113,7 +114,12 @@ func TestProjectsAPI(t *testing.T) {
 	t.Run(fmt.Sprintf("PATCH: %s", api.ProjectDetailEndpoint), func(t *testing.T) {
 		t.Run("allows updating the name and description of a project", func(t *testing.T) {
 			projectID := createProject(t)
-			createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+			createUserProject(
+				t,
+				userAccount.FirebaseID,
+				projectID,
+				models.AccessPermissionTypeADMIN,
+			)
 
 			body := &dto.ProjectDTO{
 				Name:        "New Name",
@@ -144,7 +150,7 @@ func TestProjectsAPI(t *testing.T) {
 					t,
 					userAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				body := &dto.ProjectDTO{
@@ -169,7 +175,7 @@ func TestProjectsAPI(t *testing.T) {
 					t,
 					userAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				url := fmt.Sprintf(
@@ -207,7 +213,7 @@ func TestProjectsAPI(t *testing.T) {
 					t,
 					userAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				uuidID, _ := db.StringToUUID(projectID)
@@ -237,7 +243,7 @@ func TestProjectsAPI(t *testing.T) {
 					t,
 					userAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 				applicationID := createApplication(t, projectID)
 
@@ -250,10 +256,11 @@ func TestProjectsAPI(t *testing.T) {
 				assert.Equal(t, http.StatusNoContent, response.StatusCode)
 
 				projectUUID, _ := db.StringToUUID(projectID)
-				_, err := db.GetQueries().RetrieveProject(context.TODO(), db.RetrieveProjectParams{
-					ID:         *projectUUID,
-					FirebaseID: userAccount.FirebaseID,
-				})
+				_, err := db.GetQueries().
+					RetrieveProject(context.TODO(), models.RetrieveProjectParams{
+						ID:         *projectUUID,
+						FirebaseID: userAccount.FirebaseID,
+					})
 				assert.Error(t, err)
 
 				applicationUUID, _ := db.StringToUUID(applicationID)
@@ -270,7 +277,7 @@ func TestProjectsAPI(t *testing.T) {
 					t,
 					userAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeMEMBER,
+					models.AccessPermissionTypeMEMBER,
 				)
 
 				url := fmt.Sprintf(
@@ -303,7 +310,7 @@ func TestProjectsAPI(t *testing.T) {
 					t,
 					userAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				uuidID, _ := db.StringToUUID(projectID)
@@ -327,7 +334,7 @@ func TestProjectsAPI(t *testing.T) {
 					t,
 					userAccount.FirebaseID,
 					projectID,
-					db.AccessPermissionTypeADMIN,
+					models.AccessPermissionTypeADMIN,
 				)
 
 				url := fmt.Sprintf(
@@ -348,7 +355,7 @@ func TestProjectsAPI(t *testing.T) {
 	t.Run(fmt.Sprintf("GET: %s", api.ProjectAnalyticsEndpoint), func(t *testing.T) {
 		invalidUUID := "invalid"
 		projectID := createProject(t)
-		createUserProject(t, userAccount.FirebaseID, projectID, db.AccessPermissionTypeADMIN)
+		createUserProject(t, userAccount.FirebaseID, projectID, models.AccessPermissionTypeADMIN)
 
 		applicationID := createApplication(t, projectID)
 		promptConfigID := createPromptConfig(t, applicationID)
@@ -391,8 +398,8 @@ func TestProjectsAPI(t *testing.T) {
 			assert.Equal(t, promptReqAnalytics.ModelsCost, responseAnalytics.ModelsCost)
 		})
 
-		for _, permission := range []db.AccessPermissionType{
-			db.AccessPermissionTypeMEMBER, db.AccessPermissionTypeADMIN,
+		for _, permission := range []models.AccessPermissionType{
+			models.AccessPermissionTypeMEMBER, models.AccessPermissionTypeADMIN,
 		} {
 			t.Run(
 				fmt.Sprintf(

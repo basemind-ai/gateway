@@ -30,7 +30,7 @@
 		"react-intl": "^6.5.1",
 		"react-tailwindcss-datepicker": "^1.6.6",
 		"swr": "^2.2.4",
-		"zustand": "^4.4.4"
+		"zustand": "^4.4.5"
 	},
 	"devDependencies": {
 		"@storybook/addon-essentials": "^7.5.2",

@@ -3,7 +3,7 @@
 //   sqlc v1.23.0
 // source: prompt-request-record.sql
 
-package db
+package models
 
 import (
 	"context"

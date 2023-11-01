@@ -9,6 +9,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -64,7 +65,7 @@ func CreatePayloadFromMessage(
 	if msg.PromptRequestRecordId != nil {
 		requestRecordID := exc.MustResult(db.StringToUUID(*msg.PromptRequestRecordId))
 		promptTestRecord := exc.MustResult(db.GetQueries().
-			CreatePromptTestRecord(ctx, db.CreatePromptTestRecordParams{
+			CreatePromptTestRecord(ctx, models.CreatePromptTestRecordParams{
 				Name:                  data.Name,
 				PromptRequestRecordID: *requestRecordID,
 				Response:              builder.String(),

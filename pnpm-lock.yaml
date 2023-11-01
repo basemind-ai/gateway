@@ -179,8 +179,8 @@ importers:
                 specifier: ^2.2.4
                 version: 2.2.4(react@18.2.0)
             zustand:
-                specifier: ^4.4.4
-                version: 4.4.4(@types/react@18.2.33)(react@18.2.0)
+                specifier: ^4.4.5
+                version: 4.4.5(@types/react@18.2.33)(react@18.2.0)
         devDependencies:
             '@storybook/addon-essentials':
                 specifier: ^7.5.2
@@ -8760,7 +8760,7 @@ packages:
         hasBin: true
         dependencies:
             caniuse-lite: 1.0.30001559
-            electron-to-chromium: 1.4.571
+            electron-to-chromium: 1.4.572
             node-releases: 2.0.13
             update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -10302,10 +10302,10 @@ packages:
             entities: 4.5.0
         dev: true
 
-    /domain-browser@4.22.0:
+    /domain-browser@4.23.0:
         resolution:
             {
-                integrity: sha512-IGBwjF7tNk3cwypFNH/7bfzBcgSCbaMOD3GsaY1AU/JRrnHnYgEM0+9kQt52iZxjNsjBtJYtao146V+f8jFZNw==,
+                integrity: sha512-ArzcM/II1wCCujdCNyQjXrAFwS4mrLh4C7DZWlaI8mdh7h3BfKdNd3bKXITfl2PT9FtfQqaGvhi1vPRQPimjGA==,
             }
         engines: { node: '>=10' }
         dev: true
@@ -10442,10 +10442,10 @@ packages:
             jake: 10.8.7
         dev: true
 
-    /electron-to-chromium@1.4.571:
+    /electron-to-chromium@1.4.572:
         resolution:
             {
-                integrity: sha512-Sc+VtKwKCDj3f/kLBjdyjMpNzoZsU6WuL/wFb6EH8USmHEcebxRXcRrVpOpayxd52tuey4RUDpUsw5OS5LhJqg==,
+                integrity: sha512-RlFobl4D3ieetbnR+2EpxdzFl9h0RAJkPK3pfiwMug2nhBin2ZCsGIAJWdpNniLz43sgXam/CgipOmvTA+rUiA==,
             }
 
     /elliptic@6.5.4:
@@ -12630,7 +12630,7 @@ packages:
             he: 1.2.0
             param-case: 3.0.4
             relateurl: 0.2.7
-            terser: 5.23.0
+            terser: 5.24.0
         dev: true
 
     /html-tags@3.3.1:
@@ -15014,7 +15014,7 @@ packages:
             console-browserify: 1.2.0
             constants-browserify: 1.0.0
             crypto-browserify: 3.12.0
-            domain-browser: 4.22.0
+            domain-browser: 4.23.0
             events: 3.3.0
             filter-obj: 2.0.2
             https-browserify: 1.0.0
@@ -18433,7 +18433,7 @@ packages:
             jest-worker: 27.5.1
             schema-utils: 3.3.0
             serialize-javascript: 6.0.1
-            terser: 5.23.0
+            terser: 5.24.0
             webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.18.20)(webpack-cli@5.1.4)
         dev: true
 
@@ -18460,14 +18460,14 @@ packages:
             jest-worker: 27.5.1
             schema-utils: 3.3.0
             serialize-javascript: 6.0.1
-            terser: 5.23.0
+            terser: 5.24.0
             webpack: 5.89.0(webpack-cli@5.1.4)
         dev: true
 
-    /terser@5.23.0:
+    /terser@5.24.0:
         resolution:
             {
-                integrity: sha512-Iyy83LN0uX9ZZLCX4Qbu5JiHiWjOCTwrmM9InWOzVeM++KNWEsqV4YgN9U9E8AlohQ6Gs42ztczlWOG/lwDAMA==,
+                integrity: sha512-ZpGR4Hy3+wBEzVEnHvstMvqpD/nABNelQn/z2r0fjVWGQsN3bpOLzQlqDxmb4CDZnXq5lpjnQ+mHQLAOpfM5iw==,
             }
         engines: { node: '>=10' }
         hasBin: true
@@ -20255,10 +20255,10 @@ packages:
         engines: { node: '>=12.20' }
         dev: true
 
-    /zustand@4.4.4(@types/react@18.2.33)(react@18.2.0):
+    /zustand@4.4.5(@types/react@18.2.33)(react@18.2.0):
         resolution:
             {
-                integrity: sha512-5UTUIAiHMNf5+mFp7/AnzJXS7+XxktULFN0+D1sCiZWyX7ZG+AQpqs2qpYrynRij4QvoDdCD+U+bmg/cG3Ucxw==,
+                integrity: sha512-jgIrBBLKncQW74PA2Lclct3gwD4aPughwGE4FqlXrv3rDqQox7JCn8rwUiFK6ygJcbBAvfTf8fF+ICg7HLD2FQ==,
             }
         engines: { node: '>=12.7.0' }
         peerDependencies:
