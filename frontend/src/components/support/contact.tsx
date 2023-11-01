@@ -2,28 +2,28 @@ import { UserInfo } from '@firebase/auth';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { handleSupportTicket } from '@/api';
+import { handleCreateSupportTicket } from '@/api';
 import DashboardCard from '@/components/dashboard/dashboard-card';
 import { Dropdown } from '@/components/dropdown';
-import { SupportTopics } from '@/constants/forms';
+import { SupportTopic } from '@/constants/forms';
 import { handleChange } from '@/utils/helpers';
 
 export function Contact({ user }: { user: UserInfo | null }) {
 	const t = useTranslations('support');
-	const [selectedTopic, setSelectedTopic] = useState<SupportTopics>(
-		SupportTopics.None,
+	const [selectedTopic, setSelectedTopic] = useState<SupportTopic>(
+		SupportTopic.None,
 	);
 	const [tellUsMore, setTellUsMore] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const topics = Object.values(SupportTopics);
+	const topics = Object.values(SupportTopic);
 
 	const handleSubmitTicket = async () => {
 		setIsSubmitting(true);
 		try {
-			await handleSupportTicket(selectedTopic, tellUsMore, user!);
+			await handleCreateSupportTicket(selectedTopic, tellUsMore, user!);
 			//TODO: implement success toast
-			setSelectedTopic(SupportTopics.None);
+			setSelectedTopic(SupportTopic.None);
 			setTellUsMore('');
 		} catch {
 			//TODO: implement error toast
@@ -63,7 +63,7 @@ export function Contact({ user }: { user: UserInfo | null }) {
 				<button
 					className="btn btn-primary self-end"
 					data-testid="support-submit"
-					disabled={selectedTopic === SupportTopics.None || !user}
+					disabled={selectedTopic === SupportTopic.None || !user}
 					onClick={handleButtonClick}
 				>
 					{isSubmitting ? (

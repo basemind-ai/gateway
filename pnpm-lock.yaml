@@ -38,8 +38,8 @@ importers:
                 specifier: ^2.9.1
                 version: 2.9.1
             '@tool-belt/eslint-config':
-                specifier: ^3.2.0
-                version: 3.2.0(@typescript-eslint/eslint-plugin@6.9.1)(@typescript-eslint/parser@6.9.1)(eslint-import-resolver-typescript@3.6.1)(eslint@8.52.0)(prettier@3.0.3)(typescript@5.2.2)
+                specifier: ^3.2.1
+                version: 3.2.1(@typescript-eslint/eslint-plugin@6.9.1)(@typescript-eslint/parser@6.9.1)(eslint-import-resolver-typescript@3.6.1)(eslint@8.52.0)(prettier@3.0.3)(typescript@5.2.2)
             '@types/node':
                 specifier: 20.8.10
                 version: 20.8.10
@@ -5274,7 +5274,7 @@ packages:
             react-colorful: 5.6.1(react-dom@18.2.0)(react@18.2.0)
             react-dom: 18.2.0(react@18.2.0)
             telejson: 7.2.0
-            tocbot: 4.21.3
+            tocbot: 4.21.6
             ts-dedent: 2.2.0
             util-deprecate: 1.0.2
         transitivePeerDependencies:
@@ -5408,7 +5408,7 @@ packages:
             commander: 6.2.1
             cross-spawn: 7.0.3
             detect-indent: 6.1.0
-            envinfo: 7.10.0
+            envinfo: 7.11.0
             execa: 5.1.1
             express: 4.18.2
             find-up: 5.0.0
@@ -6545,10 +6545,10 @@ packages:
             '@testing-library/dom': 9.3.3
         dev: true
 
-    /@tool-belt/eslint-config@3.2.0(@typescript-eslint/eslint-plugin@6.9.1)(@typescript-eslint/parser@6.9.1)(eslint-import-resolver-typescript@3.6.1)(eslint@8.52.0)(prettier@3.0.3)(typescript@5.2.2):
+    /@tool-belt/eslint-config@3.2.1(@typescript-eslint/eslint-plugin@6.9.1)(@typescript-eslint/parser@6.9.1)(eslint-import-resolver-typescript@3.6.1)(eslint@8.52.0)(prettier@3.0.3)(typescript@5.2.2):
         resolution:
             {
-                integrity: sha512-+VlmZDItq9x9Z87oQwvM6noOO+I6ubWFXaJ4Gg+1CC74JtfNMG1hQNe7fJTVy64BLFolHtxvsDCuQ/4d1soXzw==,
+                integrity: sha512-AswogPsueJr9O0iJr29ZKJ8fUa1BxqsOmTEat88+abrrwG0Duy03iIG0UTR3iTpIsDR8SukN/x+3eQjdP39OiQ==,
             }
         peerDependencies:
             '@typescript-eslint/eslint-plugin': '>=6.0.0'
@@ -6575,7 +6575,7 @@ packages:
             eslint-plugin-simple-import-sort: 10.0.0(eslint@8.52.0)
             eslint-plugin-sonarjs: 0.21.0(eslint@8.52.0)
             eslint-plugin-testing-library: 6.1.0(eslint@8.52.0)(typescript@5.2.2)
-            eslint-plugin-unicorn: 48.0.1(eslint@8.52.0)
+            eslint-plugin-unicorn: 49.0.0(eslint@8.52.0)
             eslint-plugin-unused-imports: 3.0.0(@typescript-eslint/eslint-plugin@6.9.1)(eslint@8.52.0)
             prettier: 3.0.3
             typescript: 5.2.2
@@ -10546,10 +10546,10 @@ packages:
         engines: { node: '>=0.12' }
         dev: true
 
-    /envinfo@7.10.0:
+    /envinfo@7.11.0:
         resolution:
             {
-                integrity: sha512-ZtUjZO6l5mwTHvc1L9+1q5p/R3wTopcfqMW8r5t8SJSKqeVI/LtajORwRFEKpEFuekjD0VBjwu1HMxL4UalIRw==,
+                integrity: sha512-G9/6xF1FPbIw0TtalAMaVPpiq2aDEuKLXM314jPVAO9r2fo2a4BLqMNkmRS7O/xPPZ+COAhGIz3ETvHEV3eUcg==,
             }
         engines: { node: '>=4' }
         hasBin: true
@@ -11134,14 +11134,14 @@ packages:
             - typescript
         dev: true
 
-    /eslint-plugin-unicorn@48.0.1(eslint@8.52.0):
+    /eslint-plugin-unicorn@49.0.0(eslint@8.52.0):
         resolution:
             {
-                integrity: sha512-FW+4r20myG/DqFcCSzoumaddKBicIPeFnTrifon2mWIzlfyvzwyqZjqVP7m4Cqr/ZYisS2aiLghkUWaPg6vtCw==,
+                integrity: sha512-0fHEa/8Pih5cmzFW5L7xMEfUTvI9WKeQtjmKpTUmY+BiFCDxkxrTdnURJOHKykhtwIeyYsxnecbGvDCml++z4Q==,
             }
         engines: { node: '>=16' }
         peerDependencies:
-            eslint: '>=8.44.0'
+            eslint: '>=8.52.0'
         dependencies:
             '@babel/helper-validator-identifier': 7.22.20
             '@eslint-community/eslint-utils': 4.4.0(eslint@8.52.0)
@@ -11152,7 +11152,6 @@ packages:
             indent-string: 4.0.0
             is-builtin-module: 3.2.1
             jsesc: 3.0.2
-            lodash: 4.17.21
             pluralize: 8.0.0
             read-pkg-up: 7.0.1
             regexp-tree: 0.1.27
@@ -18629,10 +18628,10 @@ packages:
         dependencies:
             is-number: 7.0.0
 
-    /tocbot@4.21.3:
+    /tocbot@4.21.6:
         resolution:
             {
-                integrity: sha512-UKFkjz0nRB4s5WAeVnQJ3iIKmaKBbWDxzHYlRzJPZO7Doyp6v12nkJMN6T3HiMoQFHldvO1MZLAKRJqDMzkv2A==,
+                integrity: sha512-bAnyV6SU2n1AvuBvEgi8t7KiIn5rRiEmwFp4+elx/1ueuncAUyubITfXDMwOqStgUwh8pDzLdWgDKLicsJPikw==,
             }
         dev: true
 
@@ -19693,7 +19692,7 @@ packages:
             colorette: 2.0.20
             commander: 10.0.1
             cross-spawn: 7.0.3
-            envinfo: 7.10.0
+            envinfo: 7.11.0
             fastest-levenshtein: 1.0.16
             import-local: 3.1.0
             interpret: 3.1.1

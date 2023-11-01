@@ -4,4 +4,6 @@ export * from './fetcher';
 export * from './project-users-api';
 export * from './projects-api';
 export * from './prompt-config-api';
+export * from './support-api';
 export * from './users-api';
+export * from './ws';

@@ -11,7 +11,12 @@ import {
 	PING_INTERVAL,
 } from '@/api/ws';
 import { HttpMethod } from '@/constants';
-import { ModelType, ModelVendor, PromptConfigTest } from '@/types';
+import {
+	ModelType,
+	ModelVendor,
+	PromptConfigTest,
+	PromptConfigTestResultChunk,
+} from '@/types';
 
 describe('prompt testing websocket', () => {
 	const baseURL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
@@ -155,6 +160,45 @@ describe('prompt testing websocket', () => {
 			}
 
 			expect(message).toEqual(JSON.stringify(wsData));
+
+			mockServer.stop();
+		});
+
+		it('receives the expected data', async () => {
+			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
+
+			const mockServerURL = createWebsocketURL({
+				otp: otp,
+				applicationId,
+				projectId,
+			});
+			const mockServer = new Server(mockServerURL);
+
+			let message: any;
+
+			mockServer.on('connection', (socket) => {
+				socket.send(JSON.stringify(wsData));
+			});
+
+			const handleMessage = (
+				event: MessageEvent<PromptConfigTestResultChunk>,
+			) => {
+				message = event;
+			};
+
+			await createWebsocket({
+				applicationId,
+				projectId,
+				handleClose: () => {},
+				handleError: () => {},
+				handleMessage,
+			});
+
+			while (!message) {
+				await wait(100);
+			}
+
+			expect(message.data).toEqual(wsData);
 
 			mockServer.stop();
 		});

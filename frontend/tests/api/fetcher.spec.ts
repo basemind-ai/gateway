@@ -95,6 +95,32 @@ describe('fetcher tests', () => {
 		);
 	});
 
+	it('handles a non-200 range status code that does not include message', async () => {
+		const mockResponse = {};
+		mockFetch.mockResolvedValueOnce({
+			ok: false,
+			status: 500,
+			statusText: 'Internal Server Error',
+			json: () => Promise.resolve(mockResponse),
+		});
+
+		await expect(
+			fetcher({ url: 'test', method: HttpMethod.Get }),
+		).rejects.toThrow(ApiError);
+
+		expect(mockFetch).toHaveBeenCalledWith(
+			new URL('http://www.example.com/v1/test'),
+			{
+				method: HttpMethod.Get,
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer test_token',
+					'X-Request-Id': expect.any(String),
+				},
+			},
+		);
+	});
+
 	it('handles custom headers', async () => {
 		mockFetch.mockResolvedValueOnce({
 			ok: true,

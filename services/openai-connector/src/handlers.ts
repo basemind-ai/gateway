@@ -69,6 +69,7 @@ export async function openAIStream(
 			'OpenAI streaming request completed',
 		);
 	} catch (error: unknown) {
+		/* c8 ignore next */
 		logger.error(error, 'error communicating with OpenAI');
 	} finally {
 		call.end();

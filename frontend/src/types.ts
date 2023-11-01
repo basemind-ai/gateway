@@ -1,3 +1,5 @@
+import { SupportTopic } from '@/constants/forms';
+
 export enum ModelVendor {
 	OpenAI = 'OPEN_AI',
 }
@@ -166,4 +168,10 @@ export interface PromptConfigTestResultChunk {
 	finishReason?: string;
 	promptConfigId?: string;
 	promptTestRecordId?: string;
+}
+
+export interface SupportTicketCreateBody {
+	type: SupportTopic;
+	subject?: string;
+	body: string;
 }

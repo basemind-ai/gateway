@@ -7,6 +7,15 @@ import {
 import { Status } from '@grpc/grpc-js/build/src/constants';
 import { Metadata } from '@grpc/grpc-js/build/src/metadata';
 
+/**
+ * The createServer function creates a gRPC server that implements the given service.
+ *
+ * @param service Define the service definition
+ * @param implementation Define the type of service and implementation that is being passed into the createserver function
+ *
+ * @return A server, which has a bind method that returns
+ *
+ */
 export function createServer<
 	T extends ServiceDefinition,
 	I extends UntypedServiceImplementation,

@@ -9,6 +9,7 @@ export function UserDetails({ user }: { user: UserInfo | null }) {
 	return (
 		<DashboardCard title={t('headlineDetailsCard')}>
 			{user?.photoURL ? (
+				// eslint-disable-next-line @next/next/no-img-element
 				<img
 					src={user.photoURL}
 					alt={t('profilePicture')}

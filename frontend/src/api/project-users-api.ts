@@ -1,8 +1,5 @@
-import { UserInfo } from '@firebase/auth';
-
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
-import { SupportTopics } from '@/constants/forms';
 import {
 	AddUserToProjectBody,
 	ProjectUserAccount,
@@ -59,16 +56,4 @@ export async function handleRemoveUserFromProject({
 		url: `projects/${projectId}/users/${userId}/`,
 		method: HttpMethod.Delete,
 	});
-}
-
-export async function handleSupportTicket(
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	subject: SupportTopics,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	body: string,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	user: UserInfo,
-): Promise<void> {
-	await new Promise((resolve) => setTimeout(resolve, 1000));
-	// TODO: Naaman Implement this please
 }
