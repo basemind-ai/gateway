@@ -33,10 +33,10 @@ export default function NavRailList() {
 				isCurrent={navigation.Overview === pathname}
 			/>
 			<LinkMenu
-				href={navigation.Prompt}
+				href={navigation.Testing}
 				text={t('testing')}
 				icon={<Search className={ICON_CLASSES} />}
-				isCurrent={navigation.Prompt === pathname}
+				isCurrent={navigation.Testing === pathname}
 			/>
 			<LinkMenu
 				isDisabled={true}

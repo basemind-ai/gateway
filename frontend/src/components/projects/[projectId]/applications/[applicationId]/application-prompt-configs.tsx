@@ -97,7 +97,7 @@ export function ApplicationPromptConfigs({
 
 	return (
 		<div data-testid="application-prompt-config-container" className="mt-9">
-			<h2 className="font-semibold text-white text-xl	">
+			<h2 className="font-semibold text-base-content text-xl	">
 				{t('promptConfiguration')}
 			</h2>
 			<div className="custom-card">

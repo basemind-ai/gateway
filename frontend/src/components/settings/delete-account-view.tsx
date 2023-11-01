@@ -27,7 +27,7 @@ export function DeleteAccountView({ user }: { user: UserInfo | null }) {
 	async function deleteUserAccount() {
 		try {
 			setErrorMessage('');
-			await handleDeleteUserAccount(user!);
+			await handleDeleteUserAccount();
 			closeDeleteConfirmationPopup();
 			setUser(null);
 			router.replace(Navigation.Base);

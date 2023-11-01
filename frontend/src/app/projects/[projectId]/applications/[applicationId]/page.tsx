@@ -61,7 +61,7 @@ export default function Application({
 			>
 				{t('application')} / {application.name}
 			</h1>
-			<div className="mt-3.5 w-full mb-9">
+			<div className="mt-3.5 w-full mb-8">
 				<TabNavigation<TAB_NAMES>
 					tabs={tabs}
 					selectedTab={selectedTab}
