@@ -193,7 +193,7 @@ class BaseMindClient private constructor(
                     options.debugLogger(LOGGING_TAG, "exception requesting streaming prompt: $e")
                 }
                 if (e !is StatusException) {
-                    throw e
+                    throw e  // skipcq: TCV-001
                 }
 
                 when (e.status.code) {

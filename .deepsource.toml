@@ -10,6 +10,7 @@ exclude_patterns = [
     "e2e/**",
     "gen/**",
     "node_modules/**",
+    "shared/go/testutils/*.go",
 ]
 
 test_patterns = [
@@ -18,9 +19,7 @@ test_patterns = [
     "**/main.go",
     "**/mocks.*",
     "**/mocks/**",
-    "**/test*/**",
     "**/tests/**",
-    "**/testutils/**",
     "**/vitest.*",
     "vitest.*",
 ]

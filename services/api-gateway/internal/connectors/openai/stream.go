@@ -84,7 +84,10 @@ func (c *Client) RequestStream(
 	}
 	finalResult := &dto.PromptResultDTO{}
 
-	if stream, streamErr := c.client.OpenAIStream(ctx, promptRequest); streamErr == nil {
+	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
+	finalResult.Error = streamErr
+
+	if streamErr == nil {
 		promptContent := streamFromClient(
 			channel,
 			finalResult,
@@ -96,8 +99,6 @@ func (c *Client) RequestStream(
 			promptContent,
 			requestConfiguration.PromptConfigData.ModelType,
 		)
-	} else {
-		finalResult.Error = streamErr
 	}
 
 	if finalResult.Error != nil {
