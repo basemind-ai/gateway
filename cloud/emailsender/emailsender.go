@@ -1,11 +1,11 @@
-package main
+package emailsender
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
-	"github.com/basemind-ai/monorepo/cloud/pubsub"
+	"github.com/basemind-ai/monorepo/cloud/shared"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
@@ -21,29 +21,22 @@ import (
 // EventName is the name of the event that this function will process.
 const EventName = "SendgridEmailPubSub"
 
-// Config - is an env configuration object.
-type Config struct {
+// SendgridConfig - is an env configuration object.
+type SendgridConfig struct {
 	SendgridAPIKey   string `env:"SENDGRID_API_KEY,required"`
 	SendgridHost     string `env:"SENDGRID_HOST,default=https://api.sendgrid.com"`
 	SendgridEndpoint string `env:"SENDGRID_ENDPOINT,default=/v3/mail/send"`
-	Environment      string `env:"ENVIRONMENT,default=test"`
 }
 
-var (
-	cfg *Config
-)
-
 func init() {
-	exc.Must(envconfig.Process(context.Background(), cfg))
-	logging.Configure(cfg.Environment == "test")
+	logging.Configure(false)
 
 	functions.CloudEvent(EventName, SendgridPubSubHandler)
-	log.Info().Msg("sendgrid email sender initialized")
 }
 
 // CreateSendgridEmail creates a sendgrid email object using the sendgrid mail library.
 // See: https://github.com/sendgrid/sendgrid-go/blob/main/examples/helpers/mail/example.go
-func CreateSendgridEmail(emailRequest *datatypes.SendEmailRequestDTO) []byte {
+func CreateSendgridEmail(emailRequest *datatypes.SendEmailRequestDTO) *mail.SGMailV3 {
 	mailer := mail.NewV3Mail()
 	mailer.SetFrom(mail.NewEmail(emailRequest.FromName, emailRequest.FromAddress))
 	mailer.SetTemplateID(emailRequest.TemplateID)
@@ -56,27 +49,29 @@ func CreateSendgridEmail(emailRequest *datatypes.SendEmailRequestDTO) []byte {
 	}
 
 	mailer.AddPersonalizations(personalization)
-	return mail.GetRequestBody(mailer)
+	return mailer
 }
 
 // CreateSendgridRequest creates a sendgrid HTTP request object.
-// See: https://github.com/sendgrid/sendgrid-go/tree/main
+// See: https://github.com/sendgrid/sendgrid-go/blob/main/use-cases/README.md
 func CreateSendgridRequest(emailRequest *datatypes.SendEmailRequestDTO) rest.Request {
+	cfg := &SendgridConfig{}
+	exc.Must(envconfig.Process(context.Background(), cfg))
+
 	request := sendgrid.GetRequest(
 		cfg.SendgridAPIKey,
 		cfg.SendgridEndpoint,
 		cfg.SendgridHost,
 	)
 	request.Method = http.MethodPost
-	request.Body = CreateSendgridEmail(emailRequest)
+	request.Body = mail.GetRequestBody(CreateSendgridEmail(emailRequest))
 
-	log.Debug().Bytes("body", request.Body).Msg("created sendgrid request")
 	return request
 }
 
 // ParseEmailRequestDTO parses a CloudEvent message and returns a SendEmailRequestDTO.
 func ParseEmailRequestDTO(e event.Event) (*datatypes.SendEmailRequestDTO, error) {
-	msg, parseMsgErr := pubsub.MessageFromEvent(e)
+	msg, parseMsgErr := shared.MessageFromEvent(e)
 	if parseMsgErr != nil {
 		return nil, parseMsgErr
 	}
