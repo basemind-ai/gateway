@@ -102,12 +102,7 @@ func SendgridPubSubHandler(ctx context.Context, e event.Event) error {
 	request := CreateSendgridRequest(emailRequest)
 
 	log.Info().Str("templateId", emailRequest.TemplateID).Msg("sending request to sendgrid")
-	response, requestErr := sendgrid.MakeRequestRetryWithContext(ctx, request)
-
-	if requestErr != nil {
-		log.Error().Err(requestErr).Msg("error sending email via sendgrid")
-		return requestErr
-	}
+	response := exc.MustResult(sendgrid.MakeRequestRetryWithContext(ctx, request))
 
 	if response.StatusCode >= http.StatusBadRequest {
 		log.Error().Interface("response", response).Msg("received failure status from sendgrid")

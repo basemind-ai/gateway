@@ -1,12 +1,16 @@
 package emailsender_test
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/cloud/emailsender"
 	"github.com/basemind-ai/monorepo/cloud/shared"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"testing"
 )
 
@@ -136,5 +140,102 @@ func TestEmailSender(t *testing.T) {
 			_, err := emailsender.ParseEmailRequestDTO(cloudEvent)
 			assert.Error(t, err)
 		})
+	})
+
+	t.Run("SendgridPubSubHandler", func(t *testing.T) {
+		t.Run("it sends an email via the sendgrid API", func(t *testing.T) {
+			var (
+				method string
+				body   []byte
+				url    string
+			)
+
+			testClient := testutils.CreateTestHTTPClient(
+				t,
+				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					body, _ = serialization.ReadBody(r.Body)
+					url = r.URL.String()
+					method = r.Method
+					serialization.RenderJSONResponse(w, http.StatusOK, map[string]string{})
+				}),
+			)
+
+			t.Setenv("SENDGRID_HOST", testClient.BaseURL)
+
+			data, _ := json.Marshal(emailRequest)
+
+			pubsubMessage := shared.PubSubMessage{
+				Data: data,
+			}
+
+			cloudEvent := event.New()
+			cloudEventCreateErr := cloudEvent.SetData(
+				"application/json",
+				shared.MessagePublishedData{
+					Message: pubsubMessage,
+				},
+			)
+			assert.NoError(t, cloudEventCreateErr)
+
+			err := emailsender.SendgridPubSubHandler(context.TODO(), cloudEvent)
+			assert.NoError(t, err)
+
+			assert.Equal(t, http.MethodPost, method)
+
+			assert.Equal(t, "/v3/mail/send", url)
+			assert.NotNil(t, body)
+		})
+
+		t.Run("it handles a parse error", func(t *testing.T) {
+			cloudEvent := event.New()
+			cloudEventCreateErr := cloudEvent.SetData(
+				"application/json",
+				shared.MessagePublishedData{
+					Message: shared.PubSubMessage{
+						Data: []byte("invalid json"),
+					},
+				},
+			)
+			assert.NoError(t, cloudEventCreateErr)
+
+			err := emailsender.SendgridPubSubHandler(context.Background(), cloudEvent)
+			assert.Error(t, err)
+		})
+
+		t.Run(
+			"it returns an error if the sendgrid API returns an error response",
+			func(t *testing.T) {
+				testClient := testutils.CreateTestHTTPClient(
+					t,
+					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+						serialization.RenderJSONResponse(
+							w,
+							http.StatusBadRequest,
+							map[string]string{},
+						)
+					}),
+				)
+
+				t.Setenv("SENDGRID_HOST", testClient.BaseURL)
+
+				data, _ := json.Marshal(emailRequest)
+
+				pubsubMessage := shared.PubSubMessage{
+					Data: data,
+				}
+
+				cloudEvent := event.New()
+				cloudEventCreateErr := cloudEvent.SetData(
+					"application/json",
+					shared.MessagePublishedData{
+						Message: pubsubMessage,
+					},
+				)
+				assert.NoError(t, cloudEventCreateErr)
+
+				err := emailsender.SendgridPubSubHandler(context.TODO(), cloudEvent)
+				assert.Error(t, err)
+			},
+		)
 	})
 }
