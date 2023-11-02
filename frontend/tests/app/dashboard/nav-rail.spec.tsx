@@ -15,7 +15,7 @@ import {
 const navRailTranslation = locales.navrail;
 
 describe('NavRail tests', () => {
-	(usePathname as Mock).mockReturnValue(Navigation.API);
+	(usePathname as Mock).mockReturnValue(Navigation.Overview);
 
 	it('should render Logo', () => {
 		render(<NavRail />);

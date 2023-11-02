@@ -39,7 +39,6 @@ export const ApplicationFactory = new TypeFactory<Application>(() => ({
 	createdAt: faker.date.past().toISOString(),
 	updatedAt: faker.date.past().toISOString(),
 }));
-
 export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
 	() => ({
 		templateVariables: [],

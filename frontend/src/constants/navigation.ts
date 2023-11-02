@@ -1,5 +1,4 @@
 export enum Navigation {
-	API = '/projects/:projectId/api',
 	Applications = '/projects/:projectId/applications/:applicationId',
 	Base = '/',
 	Billing = '/projects/:projectId/billing',
@@ -7,8 +6,10 @@ export enum Navigation {
 	Overview = '/projects/:projectId',
 	PrivacyPolicy = '/privacy-policy',
 	Projects = '/projects',
-	Prompt = '/projects/:projectId/prompt',
-	Settings = '/projects/:projectId/settings',
+	Testing = '/projects/:projectId/testing',
+	TestingNewConfig = '/projects/:projectId/testing/new-config',
+	TestingConfig = '/projects/:projectId/applications/:applicationId/:configId/testing',
+	Settings = '/settings',
 	SignIn = '/sign-in',
 	Support = '/support',
 	TOS = '/terms-of-service',

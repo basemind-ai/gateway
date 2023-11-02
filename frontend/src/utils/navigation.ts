@@ -14,10 +14,31 @@ export function contextNavigation(
 	) as Record<keyof typeof Navigation, string>;
 }
 
+export function populateLink(
+	enumUrl: string,
+	projectId?: string,
+	applicationId?: string,
+	configId?: string,
+) {
+	let url = JSON.stringify(enumUrl);
+	if (projectId) {
+		url = populateProjectId(enumUrl, projectId);
+	}
+	if (applicationId) {
+		url = populateApplicationId(url, applicationId);
+	}
+	if (configId) {
+		url = populateConfigId(url, configId);
+	}
+	return url;
+}
 export function populateProjectId(search: string, projectId: string) {
 	return search.replaceAll(':projectId', projectId);
 }
 
 export function populateApplicationId(search: string, applicationId: string) {
 	return search.replaceAll(':applicationId', applicationId);
+}
+export function populateConfigId(search: string, configId: string) {
+	return search.replaceAll(':configId', configId);
 }
