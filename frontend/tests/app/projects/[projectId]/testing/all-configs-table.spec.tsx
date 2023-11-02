@@ -27,6 +27,7 @@ describe('AllConfigsTable component tests', async () => {
 	);
 	const mockApplications = await ApplicationFactory.batch(1);
 	const mockConfigs = await PromptConfigFactory.batch(2);
+
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});

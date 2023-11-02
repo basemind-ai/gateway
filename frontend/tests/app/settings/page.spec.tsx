@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
-import { getAuthMock, mockUser, routerReplaceMock } from 'tests/mocks';
+import { UserFactory } from 'tests/factories';
+import { getAuthMock, routerReplaceMock } from 'tests/mocks';
 import { render, renderHook, waitFor } from 'tests/test-utils';
 
 import UserSettings from '@/app/settings/page';
@@ -14,7 +15,7 @@ describe('user settings page tests', () => {
 	beforeEach(() => {
 		getAuthMock.mockImplementation(() => ({
 			setPersistence: vi.fn(),
-			currentUser: mockUser,
+			currentUser: UserFactory.build(),
 		}));
 	});
 

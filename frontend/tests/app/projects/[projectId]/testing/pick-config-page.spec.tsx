@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
-import { getAuthMock, mockUser, routerPushMock } from 'tests/mocks';
+import { UserFactory } from 'tests/factories';
+import { getAuthMock, routerPushMock } from 'tests/mocks';
 import {
 	render,
 	renderHook,
@@ -31,7 +32,7 @@ describe('pick config page tests', () => {
 	beforeEach(() => {
 		getAuthMock.mockImplementation(() => ({
 			setPersistence: vi.fn(),
-			currentUser: mockUser,
+			currentUser: UserFactory.build(),
 		}));
 	});
 

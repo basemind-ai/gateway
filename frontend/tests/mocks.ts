@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { UserInfo } from '@firebase/auth';
 
 export const mockFetch = vi.fn().mockResolvedValue({
 	ok: true,
@@ -114,12 +113,3 @@ vi.mock(
 beforeEach(() => {
 	routerReplaceMock.mockReset();
 });
-
-export const mockUser: UserInfo = {
-	phoneNumber: '',
-	providerId: '',
-	uid: '',
-	displayName: 'Skywalker',
-	email: 'Skywalker@gmail.com',
-	photoURL: 'https://picsum.photos/200',
-};

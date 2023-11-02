@@ -14,6 +14,7 @@ import {
 	useSetPromptConfig,
 } from '@/stores/project-store';
 import { useShowError } from '@/stores/toast-store';
+import { Application, PromptConfig } from '@/types';
 import { populateLink } from '@/utils/navigation';
 
 export function AllConfigsTable({ projectId }: { projectId: string }) {
@@ -27,27 +28,28 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 
 	const showError = useShowError();
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	const { isValidating: isApplicationLoading, error: isAppsError } = useSWR(
-		projectId,
-		handleRetrieveApplications,
-		{
-			onSuccess(data) {
-				if (data.length === 0) {
-					router.push(
-						populateLink(Navigation.TestingNewConfig, projectId),
-					);
-				}
-				setProjectApplications(projectId, data);
-			},
-			onError({ message }: ApiError) {
-				showError(message);
-			},
+	const { isValidating: isApplicationLoading, error: isAppsError } = useSWR<
+		Application[],
+		ApiError
+	>(projectId, handleRetrieveApplications, {
+		onSuccess(data) {
+			if (data.length === 0) {
+				router.push(
+					populateLink(Navigation.TestingNewConfig, projectId),
+				);
+			}
+			setProjectApplications(projectId, data);
 		},
-	);
+		onError({ message }: ApiError) {
+			showError(message);
+		},
+	});
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	const { isValidating: isConfigLoading, error: isConfigError } = useSWR(
+	const { isValidating: isConfigLoading, error: isConfigError } = useSWR<
+		PromptConfig[][],
+		ApiError,
+		() => Application[] | undefined
+	>(
 		() => applications,
 		(applications) =>
 			Promise.all(
@@ -85,6 +87,8 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 			</div>
 		);
 	}
+
+	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	if (isAppsError || isConfigError) {
 		return (
 			<div className="w-full flex  mb-8">
@@ -94,6 +98,53 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 			</div>
 		);
 	}
+
+	function RenderConfigs() {
+		return Object.keys(promptConfigs).flatMap(
+			(appId) =>
+				promptConfigs[appId]?.map((config) => (
+					<tr key={config.id}>
+						<td>
+							<Link
+								href={populateLink(
+									Navigation.TestingConfig,
+									projectId,
+									appId,
+									config.id,
+								)}
+							>
+								{config.name}
+							</Link>
+						</td>
+						<td>
+							<Link
+								href={populateLink(
+									Navigation.TestingConfig,
+									projectId,
+									appId,
+									config.id,
+								)}
+								className="text-secondary"
+								data-testid={`${config.id}test-config-button`}
+							>
+								<Search className="w-3.5 h-3.5 mr-2" />
+								{t('test')}
+							</Link>
+						</td>
+						<td>{config.modelVendor}</td>
+						<td>{config.modelType}</td>
+						<td>{config.expectedTemplateVariables.length}</td>
+						<td>
+							{
+								applications?.find((app) => app.id === appId)
+									?.name
+							}
+						</td>
+					</tr>
+				)),
+		);
+	}
+
 	return (
 		<table className="custom-table mb-16" data-testid="all-configs-table">
 			<thead>
@@ -106,54 +157,7 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 					<th>{t('partOfApplication')}</th>
 				</tr>
 			</thead>
-			<tbody>
-				{Object.keys(promptConfigs).flatMap(
-					(appId) =>
-						promptConfigs[appId]?.map((config) => (
-							<tr key={config.id}>
-								<td>
-									<Link
-										href={populateLink(
-											Navigation.TestingConfig,
-											projectId,
-											appId,
-											config.id,
-										)}
-									>
-										{config.name}
-									</Link>
-								</td>
-								<td>
-									<Link
-										href={populateLink(
-											Navigation.TestingConfig,
-											projectId,
-											appId,
-											config.id,
-										)}
-										className="text-secondary"
-										data-testid={`${config.id}test-config-button`}
-									>
-										<Search className="w-3.5 h-3.5 mr-2" />
-										{t('test')}
-									</Link>
-								</td>
-								<td>{config.modelVendor}</td>
-								<td>{config.modelType}</td>
-								<td>
-									{config.expectedTemplateVariables.length}
-								</td>
-								<td>
-									{
-										applications?.find(
-											(app) => app.id === appId,
-										)?.name
-									}
-								</td>
-							</tr>
-						)),
-				)}
-			</tbody>
+			<tbody>{RenderConfigs()}</tbody>
 		</table>
 	);
 }
