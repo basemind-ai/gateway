@@ -1,17 +1,17 @@
-import { waitFor } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
 import { ApplicationFactory, PromptConfigFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
-import { beforeEach } from 'vitest';
+import { beforeEach, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
 import { Navigation } from '@/constants';
+import { ApiError } from '@/errors';
+import { ToastType } from '@/stores/toast-store';
 import { populateApplicationId, populateProjectId } from '@/utils/navigation';
 
 describe('ApplicationsList', () => {
-	// TODO: add more tests when adding new application screen
-	// This component is incomplete as of now
 	const projectId = '1';
 	const handleRetrievePromptConfigsSpy = vi.spyOn(
 		PromptConfigAPI,
@@ -22,8 +22,16 @@ describe('ApplicationsList', () => {
 		'handleRetrieveApplications',
 	);
 
+	const showModal = vi.fn();
+	const closeModal = vi.fn();
+
 	beforeEach(() => {
 		vi.clearAllMocks();
+	});
+
+	beforeAll(() => {
+		HTMLDialogElement.prototype.showModal = showModal;
+		HTMLDialogElement.prototype.close = closeModal;
 	});
 
 	it('renders application list', async () => {
@@ -75,5 +83,37 @@ describe('ApplicationsList', () => {
 		const [applicationEditElement] =
 			screen.getAllByTestId<HTMLAnchorElement>('application-edit-anchor');
 		expect(applicationEditElement.href).toContain(applicationUrl);
+	});
+
+	it('opens and closes the app creation dialog', async () => {
+		handleRetrieveApplicationsSpy.mockResolvedValueOnce([]);
+
+		render(<ApplicationsList projectId={projectId} />);
+
+		const newAppButton = screen.getByTestId('new-application-btn');
+		fireEvent.click(newAppButton);
+
+		expect(showModal).toHaveBeenCalledOnce();
+
+		const cancelButton = screen.getByTestId<HTMLButtonElement>(
+			'create-application-cancel-btn',
+		);
+		fireEvent.click(cancelButton);
+
+		expect(closeModal).toHaveBeenCalledOnce();
+	});
+
+	it('shows error when unable to get applications', async () => {
+		handleRetrieveApplicationsSpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to get applications', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+
+		render(<ApplicationsList projectId={projectId} />);
+
+		const errorToast = screen.getByText('unable to get applications');
+		expect(errorToast.className).toContain(ToastType.ERROR);
 	});
 });

@@ -64,4 +64,8 @@ div#__next > div {
 	.custom-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-32;
 	}
+
+	.dialog-box {
+		@apply modal-box p-0 border border-neutral max-w-[43rem];
+	}
 }

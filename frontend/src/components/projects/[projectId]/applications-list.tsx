@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useRef } from 'react';
 import { PencilFill, Plus } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrieveApplications, handleRetrievePromptConfigs } from '@/api';
+import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import {
@@ -22,6 +24,8 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 
 	const promptConfigs = usePromptConfig();
 	const setPromptConfig = useSetPromptConfig();
+
+	const dialogRef = useRef<HTMLDialogElement>(null);
 
 	const showError = useShowError();
 
@@ -53,6 +57,14 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 			},
 		},
 	);
+
+	function openAppCreateFlow() {
+		dialogRef.current?.showModal();
+	}
+
+	function closeAppCreateFlow() {
+		dialogRef.current?.close();
+	}
 
 	function renderTable() {
 		if (isLoading && !applications?.length) {
@@ -121,11 +133,26 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 			</h2>
 			<div className="custom-card flex flex-col">
 				{renderTable()}
-				<button className="flex gap-2 items-center text-secondary hover:brightness-90">
+				<button
+					data-testid="new-application-btn"
+					onClick={openAppCreateFlow}
+					className="flex gap-2 items-center text-secondary hover:brightness-90"
+				>
 					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
 					<span>{t('newApplication')}</span>
 				</button>
 			</div>
+			<dialog ref={dialogRef} className="modal">
+				<div className="dialog-box border-0 rounded-none">
+					<CreateApplication
+						onClose={closeAppCreateFlow}
+						projectId={projectId}
+					/>
+				</div>
+				<form method="dialog" className="modal-backdrop">
+					<button />
+				</form>
+			</dialog>
 		</div>
 	);
 }

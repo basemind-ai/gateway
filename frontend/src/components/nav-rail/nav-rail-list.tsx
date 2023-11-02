@@ -1,6 +1,7 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useRef } from 'react';
 import {
 	Boxes,
 	HddStack,
@@ -11,10 +12,43 @@ import {
 
 import Badge from '@/components/badge';
 import LinkMenu from '@/components/link-menu';
+import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { useApplications, useCurrentProject } from '@/stores/project-store';
 import { contextNavigation, populateApplicationId } from '@/utils/navigation';
 
 const ICON_CLASSES = 'w-3.5 h-3.5';
+
+function NewApplication({ projectId }: { projectId?: string }) {
+	const t = useTranslations('navrail');
+	const dialogRef = useRef<HTMLDialogElement>(null);
+
+	if (!projectId) {
+		return null;
+	}
+
+	return (
+		<>
+			<button
+				data-testid="nav-rail-create-application-btn"
+				onClick={() => dialogRef.current?.showModal()}
+				className="text-xs text-base-content py-2 hover:text-primary text-start"
+			>
+				{t('newApplication')}
+			</button>
+			<dialog ref={dialogRef} className="modal">
+				<div className="dialog-box border-0 rounded-none">
+					<CreateApplication
+						projectId={projectId}
+						onClose={() => dialogRef.current?.close()}
+					/>
+				</div>
+				<form method="dialog" className="modal-backdrop">
+					<button />
+				</form>
+			</dialog>
+		</>
+	);
+}
 
 export default function NavRailList() {
 	const t = useTranslations('navrail');
@@ -57,12 +91,7 @@ export default function NavRailList() {
 						/>
 					);
 				})}
-				{/*TODO: Add new application link*/}
-				<LinkMenu
-					href={'TODO:newapp'}
-					text={t('newApplication')}
-					isCurrent={'TODO:newapp' === pathname}
-				/>
+				<NewApplication projectId={currentProject?.id} />
 			</LinkMenu>
 			<LinkMenu
 				text={t('persistence')}

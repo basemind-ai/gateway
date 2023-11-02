@@ -53,6 +53,19 @@
 		"signIn": "Sign-In",
 		"submit": "Submit"
 	},
+	"createApplication": {
+		"applicationCreated": "Application Created",
+		"applicationDescription": "Application Description",
+		"applicationDescriptionPlaceholder": "Describe the project for team mates to easily understand",
+		"applicationName": "Application Name",
+		"applicationNamePlaceholder": "For example: BaseMind or Devlingo",
+		"cancel": "Cancel",
+		"create": "CREATE",
+		"createApiKey": "Create API Key",
+		"createApiKeyPlaceholder": "Provide a name for your new API key",
+		"createApplication": "Create Application",
+		"optional": "optional"
+	},
 	"createProject": {
 		"cancelButton": "Later",
 		"errorComment": "There was an error creating your project",

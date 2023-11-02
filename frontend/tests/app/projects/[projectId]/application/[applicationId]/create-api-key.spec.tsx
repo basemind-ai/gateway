@@ -2,6 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { APIKeyFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
+import { expect } from 'vitest';
 
 import * as APIKeyAPI from '@/api/api-keys-api';
 import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
@@ -103,6 +104,7 @@ describe('CreateApiKey tests', () => {
 			'create-api-key-submit-btn',
 		);
 		fireEvent.click(submitButton);
+		fireEvent.click(submitButton);
 
 		await waitFor(() => {
 			const hashInput = screen.getByTestId('create-api-key-hash-input');
@@ -142,5 +144,54 @@ describe('CreateApiKey tests', () => {
 
 		const errorToast = screen.getByText('unable to create an API key');
 		expect(errorToast.className).toContain(ToastType.ERROR);
+	});
+
+	it('shows api key created dialog if provided api key as an initializer', async () => {
+		const hash = 'random_hash';
+		render(
+			<CreateApiKey
+				projectId={projectId}
+				applicationId={applicationId}
+				onSubmit={onSubmit}
+				onCancel={onCancel}
+				initialAPIKeyHash={hash}
+			/>,
+		);
+
+		const hashInput = screen.getByTestId<HTMLInputElement>(
+			'create-api-key-hash-input',
+		);
+		expect(hashInput).toBeInTheDocument();
+		expect(hashInput.value).toBe(hash);
+
+		fireEvent.change(hashInput, {
+			target: { value: '' },
+		});
+
+		expect(hashInput.value).toBe(hash);
+	});
+
+	it('copies API key to clipboard', async () => {
+		const hash = 'random_hash';
+		render(
+			<CreateApiKey
+				projectId={projectId}
+				applicationId={applicationId}
+				onSubmit={onSubmit}
+				onCancel={onCancel}
+				initialAPIKeyHash={hash}
+			/>,
+		);
+
+		const writeText = vi.fn();
+		Object.assign(navigator, {
+			clipboard: {
+				writeText,
+			},
+		});
+
+		const copyButton = screen.getByTestId('api-key-copy-btn');
+		fireEvent.click(copyButton);
+		expect(navigator.clipboard.writeText).toHaveBeenCalledWith(hash);
 	});
 });

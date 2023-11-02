@@ -9,6 +9,7 @@ import { renderHook } from 'tests/test-utils';
 
 import {
 	projectStoreStateCreator,
+	useAddApplication,
 	useAddProject,
 	useAddProjectUser,
 	useAPIKeys,
@@ -159,7 +160,7 @@ describe('project-store tests', () => {
 		});
 	});
 
-	describe('setProjectApplications, getApplications, getApplication, deleteApplication and updateApplication', () => {
+	describe('setProjectApplications, getApplications, getApplication, deleteApplication, addApplication and updateApplication', () => {
 		it('sets and gets project applications', async () => {
 			const {
 				result: { current: setProjects },
@@ -273,6 +274,25 @@ describe('project-store tests', () => {
 				useApplication(projects[0].id, applications[0].id),
 			);
 			expect(application).toStrictEqual(modifiedApplication);
+		});
+
+		it('adds an application to project', async () => {
+			const {
+				result: { current: setProjects },
+			} = renderHook(useSetProjects);
+			const projects = await ProjectFactory.batch(1);
+			setProjects(projects);
+
+			const {
+				result: { current: addApplication },
+			} = renderHook(useAddApplication);
+			const application = ApplicationFactory.buildSync();
+			addApplication(projects[0].id, application);
+
+			const {
+				result: { current: applications },
+			} = renderHook(() => useApplications(projects[0].id));
+			expect(applications).toStrictEqual([application]);
 		});
 
 		it('updates non existing project application', async () => {

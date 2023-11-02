@@ -33,7 +33,7 @@ export default function LinkMenu({
 		<>
 			<Wrapper>
 				<div
-					className={`flex items-center  py-2  ${
+					className={`flex items-center py-2 ${
 						isDisabled && 'opacity-60'
 					}`}
 				>

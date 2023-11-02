@@ -122,10 +122,7 @@ export function AccountDeletion({ user }: { user: UserInfo | null }) {
 				{t('deleteYourAccountButton')}
 			</button>
 			<dialog ref={dialogRef} className="modal">
-				<div
-					className="modal-box p-0 border border-neutral max-w-[43rem]"
-					data-testid="delete-account-modal"
-				>
+				<div className="dialog-box" data-testid="delete-account-modal">
 					<ResourceDeletionBanner
 						title={t('warning')}
 						description={t('deleteYourAccountDetails')}

@@ -81,7 +81,7 @@ export function ApplicationDeletion({
 					{t('delete')}
 				</button>
 				<dialog ref={dialogRef} className="modal">
-					<div className="modal-box p-0 border border-neutral max-w-[43rem]">
+					<div className="dialog-box">
 						<ResourceDeletionBanner
 							title={t('warning')}
 							description={t('warningMessageApplication')}
