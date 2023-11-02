@@ -7,38 +7,43 @@ import (
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/basemind-ai/monorepo/cloud/pubsub"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/rs/zerolog/log"
+	"github.com/sendgrid/rest"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"github.com/sethvargo/go-envconfig"
 	"net/http"
-	"os"
 )
 
+// EventName is the name of the event that this function will process.
 const EventName = "SendgridEmailPubSub"
 
-func init() {
-	functions.CloudEvent(EventName, SendgridPubSubHandler)
-
-	logging.Configure(false)
+// Config - is an env configuration object.
+type Config struct {
+	SendgridAPIKey   string `env:"SENDGRID_API_KEY,required"`
+	SendgridHost     string `env:"SENDGRID_HOST,default=https://api.sendgrid.com"`
+	SendgridEndpoint string `env:"SENDGRID_ENDPOINT,default=/v3/mail/send"`
+	Environment      string `env:"ENVIRONMENT,default=test"`
 }
 
-// SendgridPubSubHandler consumes a CloudEvent message and sends an email via the sendgrid API.
-func SendgridPubSubHandler(ctx context.Context, e event.Event) error {
-	msg, parseMsgErr := pubsub.MessageFromEvent(e)
-	if parseMsgErr != nil {
-		return parseMsgErr
-	}
+var (
+	cfg *Config
+)
 
-	emailRequest := datatypes.SendEmailRequestDTO{}
-	unmarshalErr := json.Unmarshal(msg.Message.Data, &emailRequest)
-	if unmarshalErr != nil {
-		return unmarshalErr
-	}
+func init() {
+	exc.Must(envconfig.Process(context.Background(), cfg))
+	logging.Configure(cfg.Environment == "test")
 
-	log.Info().Str("templateId", emailRequest.TemplateID).Msg("sending email request to sendgrid")
+	functions.CloudEvent(EventName, SendgridPubSubHandler)
+	log.Info().Msg("sendgrid email sender initialized")
+}
 
+// CreateSendgridEmail creates a sendgrid email object using the sendgrid mail library.
+// See: https://github.com/sendgrid/sendgrid-go/blob/main/examples/helpers/mail/example.go
+func CreateSendgridEmail(emailRequest *datatypes.SendEmailRequestDTO) []byte {
 	mailer := mail.NewV3Mail()
 	mailer.SetFrom(mail.NewEmail(emailRequest.FromName, emailRequest.FromAddress))
 	mailer.SetTemplateID(emailRequest.TemplateID)
@@ -51,14 +56,57 @@ func SendgridPubSubHandler(ctx context.Context, e event.Event) error {
 	}
 
 	mailer.AddPersonalizations(personalization)
+	return mail.GetRequestBody(mailer)
+}
 
+// CreateSendgridRequest creates a sendgrid HTTP request object.
+// See: https://github.com/sendgrid/sendgrid-go/tree/main
+func CreateSendgridRequest(emailRequest *datatypes.SendEmailRequestDTO) rest.Request {
 	request := sendgrid.GetRequest(
-		os.Getenv("SENDGRID_API_KEY"),
-		"/v3/mail/send",
-		"https://api.sendgrid.com",
+		cfg.SendgridAPIKey,
+		cfg.SendgridEndpoint,
+		cfg.SendgridHost,
 	)
 	request.Method = http.MethodPost
-	request.Body = mail.GetRequestBody(mailer)
+	request.Body = CreateSendgridEmail(emailRequest)
+
+	log.Debug().Bytes("body", request.Body).Msg("created sendgrid request")
+	return request
+}
+
+// ParseEmailRequestDTO parses a CloudEvent message and returns a SendEmailRequestDTO.
+func ParseEmailRequestDTO(e event.Event) (*datatypes.SendEmailRequestDTO, error) {
+	msg, parseMsgErr := pubsub.MessageFromEvent(e)
+	if parseMsgErr != nil {
+		return nil, parseMsgErr
+	}
+
+	emailRequest := datatypes.SendEmailRequestDTO{}
+	unmarshalErr := json.Unmarshal(msg.Message.Data, &emailRequest)
+	if unmarshalErr != nil {
+		return nil, unmarshalErr
+	}
+
+	return &emailRequest, nil
+}
+
+// SendgridPubSubHandler consumes a CloudEvent message and sends an email via the sendgrid API.
+// If an error is returned by the handler, pubsub will retry the message.
+// If nil is returned, pubsub will regard this as an "ack" and remove the message from the queue.
+// This function intentionally processes a single 'to' email at a time. While this is less efficient
+// it makes working with sendgrid templates easier.
+// Note: We might decide to create a separate handler for marketing emails in the future - since these can be processed
+// in bulk.
+func SendgridPubSubHandler(ctx context.Context, e event.Event) error {
+	emailRequest, parseErr := ParseEmailRequestDTO(e)
+	if parseErr != nil {
+		log.Error().Err(parseErr).Msg("error parsing email request")
+		return parseErr
+	}
+
+	request := CreateSendgridRequest(emailRequest)
+
+	log.Info().Str("templateId", emailRequest.TemplateID).Msg("sending request to sendgrid")
 	response, requestErr := sendgrid.MakeRequestRetryWithContext(ctx, request)
 
 	if requestErr != nil {
@@ -71,6 +119,6 @@ func SendgridPubSubHandler(ctx context.Context, e event.Event) error {
 		return fmt.Errorf("received failure status from sendgrid: %v", response.StatusCode)
 	}
 
-	log.Info().Msg("email sending successful")
+	log.Info().Int("statusCode", response.StatusCode).Msg("email sending successful")
 	return nil
 }
