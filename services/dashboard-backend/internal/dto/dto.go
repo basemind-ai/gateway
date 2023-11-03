@@ -120,3 +120,11 @@ type PromptConfigTestResultDTO struct { // skipcq: TCV-001
 type OtpDTO struct { // skipcq: TCV-001
 	OTP string `json:"otp"`
 }
+
+// SupportRequestDTO - DTO for a support request email.
+type SupportRequestDTO struct { // skipcq: TCV-001
+	RequestTopic string `json:"topic"     validate:"required"`
+	EmailSubject string `json:"subject"   validate:"required"`
+	EmailBody    string `json:"body"      validate:"required"`
+	ProjectID    string `json:"projectId" validate:"required"`
+}

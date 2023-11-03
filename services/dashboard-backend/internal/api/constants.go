@@ -1,10 +1,10 @@
 package api
 
 const (
-	ApplicationAnalyticsEndpoint    = "/projects/{projectId}/applications/{applicationId}/analytics"
-	ApplicationDetailEndpoint       = "/projects/{projectId}/applications/{applicationId}"
 	ApplicationAPIKeyDetailEndpoint = "/projects/{projectId}/applications/{applicationId}/apikeys/{apiKeyId}" //nolint: gosec
 	ApplicationAPIKeysListEndpoint  = "/projects/{projectId}/applications/{applicationId}/apikeys"            //nolint: gosec
+	ApplicationAnalyticsEndpoint    = "/projects/{projectId}/applications/{applicationId}/analytics"
+	ApplicationDetailEndpoint       = "/projects/{projectId}/applications/{applicationId}"
 	ApplicationsListEndpoint        = "/projects/{projectId}/applications"
 	ProjectAnalyticsEndpoint        = "/projects/{projectId}/analytics"
 	ProjectDetailEndpoint           = "/projects/{projectId}"
@@ -17,6 +17,7 @@ const (
 	PromptConfigListEndpoint        = "/projects/{projectId}/applications/{applicationId}/prompt-configs"
 	PromptConfigSetDefaultEndpoint  = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}/set-default"
 	PromptConfigTestingEndpoint     = "/projects/{projectId}/applications/{applicationId}/prompt-configs/test"
+	SupportRequestEndpoint          = "/support"
 	UserAccountDetailEndpoint       = "/users"
 )
 

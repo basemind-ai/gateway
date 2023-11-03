@@ -103,7 +103,7 @@ as [yopass](https://yopass.se/).
 You will need to add the following files:
 
 -   `.env.frontend` - this is an ENV file for the frontend application.
--   `serviceAccountKey.json` - this is a GCP / firebase configuration file for backend applications.
+-   `firebaseServiceAccountKey.json` - this is a GCP / firebase configuration file for backend applications.
 
 ### Proto Files
 

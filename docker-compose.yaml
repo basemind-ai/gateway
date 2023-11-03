@@ -43,7 +43,7 @@ services:
             BASE_URL: http://localhost:4000
             REDIS_CONNECTION_STRING: redis://redis:6379
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
-            GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
+            GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/firebaseServiceAccountKey.json
             OPENAI_CONNECTOR_ADDRESS: openai-connector:8000
             JWT_SECRET: 'jeronimo'
         command:
@@ -74,7 +74,7 @@ services:
             ENVIRONMENT: development
             REDIS_CONNECTION_STRING: redis://redis:6379
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
-            GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
+            GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/firebaseServiceAccountKey.json
             API_GATEWAY_ADDRESS: api-gateway:4000
             JWT_SECRET: 'jeronimo'
         command:
