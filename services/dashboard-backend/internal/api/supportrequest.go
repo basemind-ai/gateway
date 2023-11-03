@@ -2,6 +2,7 @@ package api
 
 import (
 	"cloud.google.com/go/pubsub"
+	"context"
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
@@ -13,6 +14,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/pubsubutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"net/http"
+	"time"
 )
 
 const (
@@ -51,6 +53,22 @@ func handleSupportEmailRequest(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
-	topic := exc.MustResult(pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID))
-	go pubsubutils.PublishWithRetry(r.Context(), topic, &pubsub.Message{Data: pubsubMessageData})
+	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
+
+	publishContext, cancel := context.WithDeadline(
+		context.Background(),
+		time.Now().Add(1*time.Minute),
+	)
+
+	defer cancel()
+
+	exc.Must(
+		pubsubutils.PublishWithRetry(
+			publishContext,
+			topic,
+			&pubsub.Message{Data: pubsubMessageData},
+		),
+	)
+
+	serialization.RenderJSONResponse(w, http.StatusCreated, nil)
 }
