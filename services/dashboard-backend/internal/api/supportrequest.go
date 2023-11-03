@@ -18,7 +18,6 @@ import (
 const (
 	SupportEmailAddress    = "support@basemind.ai"
 	SupportEmailTemplateID = "d-67b1f348e3f44518803d5cb03a8c1438"
-	PubSubTopicID          = "send-email"
 )
 
 func handleSupportEmailRequest(w http.ResponseWriter, r *http.Request) {
@@ -52,6 +51,6 @@ func handleSupportEmailRequest(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
-	topic := exc.MustResult(pubsubutils.GetTopic(r.Context(), PubSubTopicID))
+	topic := exc.MustResult(pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID))
 	go pubsubutils.PublishWithRetry(r.Context(), topic, &pubsub.Message{Data: pubsubMessageData})
 }

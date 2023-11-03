@@ -65,8 +65,8 @@ importers:
                 specifier: ^3.6.1
                 version: 3.6.1(@typescript-eslint/parser@6.9.1)(eslint-plugin-import@2.29.0)(eslint@8.52.0)
             eslint-plugin-vitest:
-                specifier: ^0.3.8
-                version: 0.3.8(@typescript-eslint/eslint-plugin@6.9.1)(eslint@8.52.0)(typescript@5.2.2)(vitest@0.34.6)
+                specifier: ^0.3.9
+                version: 0.3.9(@typescript-eslint/eslint-plugin@6.9.1)(eslint@8.52.0)(typescript@5.2.2)(vitest@0.34.6)
             fork-ts-checker-webpack-plugin:
                 specifier: ^9.0.2
                 version: 9.0.2(typescript@5.2.2)(webpack@5.89.0)
@@ -152,8 +152,8 @@ importers:
                 specifier: 14.0.1
                 version: 14.0.1(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
             next-intl:
-                specifier: ^2.21.0
-                version: 2.21.0(next@14.0.1)(react@18.2.0)
+                specifier: ^2.22.1
+                version: 2.22.1(next@14.0.1)(react@18.2.0)
             preline:
                 specifier: ^1.9.0
                 version: 1.9.0
@@ -179,8 +179,8 @@ importers:
                 specifier: ^2.2.4
                 version: 2.2.4(react@18.2.0)
             zustand:
-                specifier: ^4.4.5
-                version: 4.4.5(@types/react@18.2.34)(react@18.2.0)
+                specifier: ^4.4.6
+                version: 4.4.6(@types/react@18.2.34)(react@18.2.0)
         devDependencies:
             '@storybook/addon-essentials':
                 specifier: ^7.5.2
@@ -234,8 +234,8 @@ importers:
                 specifier: ^6.0.0
                 version: 6.0.0(vitest@0.34.6)
             '@vitejs/plugin-react':
-                specifier: ^4.1.0
-                version: 4.1.0(vite@4.5.0)
+                specifier: ^4.1.1
+                version: 4.1.1(vite@4.5.0)
             autoprefixer:
                 specifier: 10.4.16
                 version: 10.4.16(postcss@8.4.31)
@@ -7386,10 +7386,10 @@ packages:
             }
         dev: true
 
-    /@vitejs/plugin-react@4.1.0(vite@4.5.0):
+    /@vitejs/plugin-react@4.1.1(vite@4.5.0):
         resolution:
             {
-                integrity: sha512-rM0SqazU9iqPUraQ2JlIvReeaxOoRj6n+PzB1C0cBzIbd8qP336nC39/R9yPi3wVcah7E7j/kdU1uCUqMEU4OQ==,
+                integrity: sha512-Jie2HERK+uh27e+ORXXwEP5h0Y2lS9T2PRGbfebiHGlwzDO0dEnd2aNtOR/qjBlPb1YgxwAONeblL1xqLikLag==,
             }
         engines: { node: ^14.18.0 || >=16.0.0 }
         peerDependencies:
@@ -8760,7 +8760,7 @@ packages:
         hasBin: true
         dependencies:
             caniuse-lite: 1.0.30001559
-            electron-to-chromium: 1.4.574
+            electron-to-chromium: 1.4.575
             node-releases: 2.0.13
             update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -10442,10 +10442,10 @@ packages:
             jake: 10.8.7
         dev: true
 
-    /electron-to-chromium@1.4.574:
+    /electron-to-chromium@1.4.575:
         resolution:
             {
-                integrity: sha512-bg1m8L0n02xRzx4LsTTMbBPiUd9yIR+74iPtS/Ao65CuXvhVZHP0ym1kSdDG3yHFDXqHQQBKujlN1AQ8qZnyFg==,
+                integrity: sha512-kY2BGyvgAHiX899oF6xLXSIf99bAvvdPhDoJwG77nxCSyWYuRH6e9a9a3gpXBvCs6lj4dQZJkfnW2hdKWHEISg==,
             }
 
     /elliptic@6.5.4:
@@ -10894,10 +10894,10 @@ packages:
             - supports-color
         dev: true
 
-    /eslint-plugin-es-x@7.2.0(eslint@8.52.0):
+    /eslint-plugin-es-x@7.3.0(eslint@8.52.0):
         resolution:
             {
-                integrity: sha512-9dvv5CcvNjSJPqnS5uZkqb3xmbeqRLnvXKK7iI5+oK/yTusyc46zbBZKENGsOfojm/mKfszyZb+wNqNPAPeGXA==,
+                integrity: sha512-W9zIs+k00I/I13+Bdkl/zG1MEO07G97XjUSQuH117w620SJ6bHtLUmoMvkGA2oYnI/gNdr+G7BONLyYnFaLLEQ==,
             }
         engines: { node: ^14.18.0 || >=16.0.0 }
         peerDependencies:
@@ -11000,7 +11000,7 @@ packages:
             '@eslint-community/eslint-utils': 4.4.0(eslint@8.52.0)
             builtins: 5.0.1
             eslint: 8.52.0
-            eslint-plugin-es-x: 7.2.0(eslint@8.52.0)
+            eslint-plugin-es-x: 7.3.0(eslint@8.52.0)
             get-tsconfig: 4.7.2
             ignore: 5.2.4
             is-core-module: 2.13.1
@@ -11178,10 +11178,10 @@ packages:
             eslint-rule-composer: 0.3.0
         dev: true
 
-    /eslint-plugin-vitest@0.3.8(@typescript-eslint/eslint-plugin@6.9.1)(eslint@8.52.0)(typescript@5.2.2)(vitest@0.34.6):
+    /eslint-plugin-vitest@0.3.9(@typescript-eslint/eslint-plugin@6.9.1)(eslint@8.52.0)(typescript@5.2.2)(vitest@0.34.6):
         resolution:
             {
-                integrity: sha512-MYQJzg3i+nLkaIQgjnOhtqHYIt0W6nErqAOKI3LTSQ2aOgcNHGYTwOhpnwGC1IXTvGWjKgAwb7rHwLpcHWHSAQ==,
+                integrity: sha512-ZGrz8dWFlotM5dwrsMLP4VcY5MizwKNV4JTnY0VKdnuCZ+qeEUMHf1qd8kRGQA3tqLvXcV929wt2ANkduq2Pgw==,
             }
         engines: { node: 14.x || >= 16 }
         peerDependencies:
@@ -11190,6 +11190,8 @@ packages:
             vitest: '*'
         peerDependenciesMeta:
             '@typescript-eslint/eslint-plugin':
+                optional: true
+            vitest:
                 optional: true
         dependencies:
             '@typescript-eslint/eslint-plugin': 6.9.1(@typescript-eslint/parser@6.9.1)(eslint@8.52.0)(typescript@5.2.2)
@@ -14824,21 +14826,21 @@ packages:
             }
         dev: true
 
-    /next-intl@2.21.0(next@14.0.1)(react@18.2.0):
+    /next-intl@2.22.1(next@14.0.1)(react@18.2.0):
         resolution:
             {
-                integrity: sha512-rxyKLsBGGji9gLuNGbbMBe+7jwGYNJZhIXxsDY2esiJ/cpeTfpAq1rLjgeAs663zQE4qHbinUazULdv2QzRngA==,
+                integrity: sha512-mg3CXfQRtG0lTS2zyRyTsYIl6ujQi2mAN0Xdmprce9ecUVKNOmHaMMsXOIPgFv1l+O80CavWo7m9rUfj7Zbr8w==,
             }
         engines: { node: '>=10' }
         peerDependencies:
-            next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0
+            next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
             react: ^16.8.0 || ^17.0.0 || ^18.0.0
         dependencies:
             '@formatjs/intl-localematcher': 0.2.32
             negotiator: 0.6.3
             next: 14.0.1(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
             react: 18.2.0
-            use-intl: 2.21.0(react@18.2.0)
+            use-intl: 2.22.1(react@18.2.0)
         dev: false
 
     /next-translate-plugin@2.6.1(next-translate@2.6.1):
@@ -15963,7 +15965,7 @@ packages:
             lilconfig: 2.1.0
             postcss: 8.4.31
             ts-node: 10.9.1(@types/node@20.8.10)(typescript@5.2.2)
-            yaml: 2.3.3
+            yaml: 2.3.4
         dev: true
 
     /postcss-loader@7.3.3(postcss@8.4.31)(typescript@5.2.2)(webpack@5.89.0):
@@ -19264,10 +19266,10 @@ packages:
             tslib: 2.6.2
         dev: true
 
-    /use-intl@2.21.0(react@18.2.0):
+    /use-intl@2.22.1(react@18.2.0):
         resolution:
             {
-                integrity: sha512-m0gAKo/2OHw1tJtGQV226NIIpUy4Ualf+FKa/whk7hM1W7MXQ2v8c/N54UPrSy+PvJLCrIe7aOQ5xYEmUjnztQ==,
+                integrity: sha512-vTMJZrqVjErn421Ry4mxS2GuVUTWkY5zyIwu+3XvrAXH3PsPDAfWBMvVhip3kx914/IRs/4QnZ2ZaOehiZSXng==,
             }
         engines: { node: '>=10' }
         peerDependencies:
@@ -20158,10 +20160,10 @@ packages:
         engines: { node: '>= 6' }
         dev: true
 
-    /yaml@2.3.3:
+    /yaml@2.3.4:
         resolution:
             {
-                integrity: sha512-zw0VAJxgeZ6+++/su5AFoqBbZbrEakwu+X0M5HmcwUiBL7AzcuPKjj5we4xfQLp78LkEMpD0cOnUhmgOVy3KdQ==,
+                integrity: sha512-8aAvwVUSHpfEqTQ4w/KMlf3HcRdt50E5ODIQJBw1fQ5RL34xabzxtUlzTXVqc4rkZsPbvrXKWnABCD7kWSmocA==,
             }
         engines: { node: '>= 14' }
         dev: true
@@ -20247,10 +20249,10 @@ packages:
         engines: { node: '>=12.20' }
         dev: true
 
-    /zustand@4.4.5(@types/react@18.2.34)(react@18.2.0):
+    /zustand@4.4.6(@types/react@18.2.34)(react@18.2.0):
         resolution:
             {
-                integrity: sha512-jgIrBBLKncQW74PA2Lclct3gwD4aPughwGE4FqlXrv3rDqQox7JCn8rwUiFK6ygJcbBAvfTf8fF+ICg7HLD2FQ==,
+                integrity: sha512-Rb16eW55gqL4W2XZpJh0fnrATxYEG3Apl2gfHTyDSE965x/zxslTikpNch0JgNjJA9zK6gEFW8Fl6d1rTZaqgg==,
             }
         engines: { node: '>=12.7.0' }
         peerDependencies:
