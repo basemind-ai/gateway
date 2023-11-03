@@ -151,7 +151,7 @@ export function ApiKeys({
 					<span>{t('newApiKey')}</span>
 				</button>
 				<dialog ref={deletionDialogRef} className="modal">
-					<div className="modal-box p-0 border border-neutral max-w-[43rem]">
+					<div className="dialog-box">
 						{deletionAPIKey && (
 							<ResourceDeletionBanner
 								title={t('warning')}
@@ -175,7 +175,7 @@ export function ApiKeys({
 					</form>
 				</dialog>
 				<dialog ref={creationDialogRef} className="modal">
-					<div className="modal-box p-0 border border-neutral max-w-[43rem]">
+					<div className="dialog-box">
 						<CreateApiKey
 							projectId={projectId}
 							applicationId={applicationId}

@@ -13,18 +13,20 @@ export function CreateApiKey({
 	applicationId,
 	onSubmit,
 	onCancel,
+	initialAPIKeyHash = '',
 }: {
 	projectId: string;
 	applicationId: string;
 	onSubmit: () => void;
 	onCancel: () => void;
+	initialAPIKeyHash?: string;
 }) {
 	const t = useTranslations('application');
 	const showError = useShowError();
 	const showSuccess = useShowSuccess();
 
 	const [apiKeyName, setAPIKeyName] = useState('');
-	const [apiKeyHash, setAPIKeyHash] = useState('');
+	const [apiKeyHash, setAPIKeyHash] = useState(initialAPIKeyHash);
 	const [loading, setLoading] = useState(false);
 
 	const apiKeyNameValid = apiKeyName.trim().length >= MIN_NAME_LENGTH;

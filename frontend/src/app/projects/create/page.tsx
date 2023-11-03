@@ -142,7 +142,7 @@ function Form({
 				value={name}
 				onChange={handleChange(setName)}
 			/>
-			<div className=" pt-2 pb-10">
+			<div className="pt-2 pb-10">
 				<label className="label text-left font-bold">
 					<span className="label-text">
 						{t('projectDescriptionInputLabel')}

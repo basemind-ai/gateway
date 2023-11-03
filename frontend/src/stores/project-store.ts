@@ -24,6 +24,7 @@ export interface ProjectStore {
 		applications: Application[],
 	) => void;
 	deleteApplication: (projectId: string, applicationId: string) => void;
+	addApplication: (projectId: string, application: Application) => void;
 	updateApplication: (
 		projectId: string,
 		applicationId: string,
@@ -95,6 +96,16 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 			applications: {
 				...state.applications,
 				[projectId]: applications,
+			},
+		}));
+	},
+	addApplication: (projectId: string, application: Application) => {
+		const projectApplications = get().applications[projectId] ?? [];
+
+		set((state) => ({
+			applications: {
+				...state.applications,
+				[projectId]: [...projectApplications, application],
 			},
 		}));
 	},
@@ -243,6 +254,7 @@ export const useApplication = (projectId: string, applicationId: string) =>
 	});
 export const useDeleteApplication = () =>
 	useProjectStore((s) => s.deleteApplication);
+export const useAddApplication = () => useProjectStore((s) => s.addApplication);
 export const useUpdateApplication = () =>
 	useProjectStore((s) => s.updateApplication);
 export const usePromptConfig = () => useProjectStore((s) => s.promptConfigs);
