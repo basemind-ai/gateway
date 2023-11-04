@@ -55,7 +55,7 @@
 		"daisyui": "^3.9.4",
 		"jsdom": "^22.1.0",
 		"mock-socket": "^9.3.1",
-		"next-translate-plugin": "^2.6.1",
+		"next-translate-plugin": "^2.6.2",
 		"postcss": "8.4.31",
 		"sass": "^1.69.5",
 		"storybook": "^7.5.2",
