@@ -30,6 +30,7 @@ export function useProjectBootstrap(redirectToDashboard = true) {
 			const [{ id: projectId }] = retrievedProjects;
 			setProjects(retrievedProjects);
 			setCurrentProject(projectId);
+
 			if (redirectToDashboard) {
 				router.replace(`${Navigation.Projects}/${projectId}`);
 			}
