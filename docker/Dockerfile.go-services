@@ -2,8 +2,7 @@ FROM golang:1.21 AS install
 WORKDIR /go/src/app
 COPY e2e/go.mod e2e/go.mod
 COPY e2e/go.sum e2e/go.sum
-COPY cloud-functions/emailsender/go.mod cloud-functions/emailsender/go.mod
-COPY cloud-functions/emailsender/go.sum cloud-functions/emailsender/go.sum
+COPY cloud-functions cloud-functions
 COPY go.* .
 RUN go mod download \
   && go install github.com/mitranim/gow@latest

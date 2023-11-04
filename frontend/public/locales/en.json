@@ -181,6 +181,10 @@
 		"billing": "Billing",
 		"chatWithUs": "Chat with us",
 		"contactUs": "Contact Us",
+		"emailBody": "Body",
+		"emailBodyPlaceholder": "Write the body of your support request",
+		"emailSubject": "Subject",
+		"emailSubjectPlaceholder": "Write the subject of your support request",
 		"emailUs": "Email us at",
 		"getInTouch": "Get in touch",
 		"headline": "Support",
@@ -191,6 +195,7 @@
 		"request": "Requests",
 		"sdk": "SDK",
 		"select": "Select",
+		"selectProject": "Select Project",
 		"submit": "Submit",
 		"tellUsMore": "Tell us more about your issue",
 		"webApp": "Web App"

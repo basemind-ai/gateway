@@ -17,6 +17,7 @@ export function Contact() {
 	const [selectedProjectId, setSelectedProjectId] = useState('null');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	// fixme - projects are not populated. We need to fetch them using useSWR.
 	const projects = useProjects();
 	const topics = Object.values(SupportTopic);
 
@@ -54,6 +55,11 @@ export function Contact() {
 					setSelected={setSelectedTopic}
 					options={topics}
 				/>
+				<label className="label">
+					<span className="label-text text-">
+						{t('selectProject')}
+					</span>
+				</label>
 				<select
 					value={selectedProjectId}
 					onChange={handleChange(setSelectedProjectId)}
@@ -67,6 +73,7 @@ export function Contact() {
 						</option>
 					))}
 				</select>
+
 				<div className="form-control">
 					<label className="label">
 						<span className="label-text text-">
@@ -75,7 +82,7 @@ export function Contact() {
 						<span className="label-text-alt">{t('optional')}</span>
 					</label>
 					<input
-						placeholder={t('emailBody')}
+						placeholder={t('emailSubjectPlaceholder')}
 						className="input input-bordered input-lg w-full bg-neutral text-neutral-content"
 						value={emailSubject}
 						onChange={handleChange(setEmailSubject)}
@@ -86,7 +93,7 @@ export function Contact() {
 						</span>
 					</label>
 					<textarea
-						placeholder={t('emailBody')}
+						placeholder={t('emailBodyPlaceholder')}
 						className="textarea textarea-bordered textarea-lg w-full bg-neutral text-neutral-content"
 						value={emailBody}
 						onChange={handleChange(setEmailBody)}
