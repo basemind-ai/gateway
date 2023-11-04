@@ -174,3 +174,16 @@ tasks:
         desc: Create a JWT from the given applicationId arg
         cmds:
             - go run e2e/main.go create-jwt {{.CLI_ARGS}}
+    # gcp commands
+    gcp:deploy-emailsender:
+        desc: Deploys the email sender cloud function to GCP
+        dir: cloud-functions/emailsender
+        cmds:
+            - |
+                gcloud functions deploy email-sender \
+                    --gen2 \
+                    --runtime=go121 \
+                    --region=europe-west3    \
+                    --source=. \
+                    --entry-point=SendgridEmailPubSub \
+                    --trigger-topic=send-email

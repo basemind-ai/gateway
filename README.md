@@ -11,6 +11,7 @@ root                        # repository root, holding all tooling configuration
 ├─── .idea                  # IDE configurations that are shared
 ├─── .secrets               # secret values that are gitignored
 ├─── assets                 # images used for branding
+├─── cloud-functions        # GCP cloud functions
 ├─── docker                 # docker files
 ├─── frontend               # frontend web-app
 ├─── gen                    # code generated from the protobuf schemas under `proto`
@@ -103,7 +104,7 @@ as [yopass](https://yopass.se/).
 You will need to add the following files:
 
 -   `.env.frontend` - this is an ENV file for the frontend application.
--   `firebaseServiceAccountKey.json` - this is a GCP / firebase configuration file for backend applications.
+-   `serviceAccountKey.json` - this is a GCP / firebase configuration file for backend applications.
 
 ### Proto Files
 

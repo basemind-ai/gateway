@@ -1,10 +1,20 @@
-package shared
+package emailsender
 
 import (
 	"fmt"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"time"
 )
+
+// SendEmailRequestDTO is a data type used to send an email via sendgrid.
+type SendEmailRequestDTO struct { // skipcq: TCV-001
+	FromName          string            `json:"fromName"`
+	FromAddress       string            `json:"fromAddress"`
+	ToName            string            `json:"toName"`
+	ToAddress         string            `json:"toAddress"`
+	TemplateID        string            `json:"templateId"`
+	TemplateVariables map[string]string `json:"templateVariables"`
+}
 
 // MessagePublishedData contains the full Pub/Sub message
 // See the documentation for more details:

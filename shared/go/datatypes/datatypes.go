@@ -38,13 +38,3 @@ type ProviderModelPricingDTO struct { // skipcq: TCV-001
 	TokenUnitSize    int32           `json:"tokenUnitSize"`
 	ActiveFromDate   time.Time       `json:"activeFromDate"`
 }
-
-// SendEmailRequestDTO is a data type used to send an email via sendgrid.
-type SendEmailRequestDTO struct { // skipcq: TCV-001
-	FromName          string            `json:"fromName"`
-	FromAddress       string            `json:"fromAddress"`
-	ToName            string            `json:"toName"`
-	ToAddress         string            `json:"toAddress"`
-	TemplateID        string            `json:"templateId"`
-	TemplateVariables map[string]string `json:"templateVariables"`
-}

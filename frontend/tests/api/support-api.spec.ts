@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { mockFetch } from 'tests/mocks';
 
 import { handleCreateSupportTicket } from '@/api';
@@ -12,9 +13,10 @@ describe('support API tests', () => {
 				json: () => Promise.resolve(),
 			});
 			await handleCreateSupportTicket({
-				type: SupportTopic.API,
+				topic: SupportTopic.API,
 				subject: 'not working',
 				body: 'help please',
+				projectId: faker.string.uuid(),
 			});
 
 			expect(mockFetch).toHaveBeenCalledWith(
