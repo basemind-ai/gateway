@@ -78,7 +78,7 @@ func RegisterHandlers(mux *chi.Mux) {
 			)
 			subRouter.Get("/", handleRetrieveProjectUserAccounts)
 			subRouter.Patch("/", handleChangeUserProjectPermission)
-			subRouter.Post("/", handleAddUserToProject)
+			subRouter.Post("/", handleInviteUsersToProject)
 		})
 
 		router.Route(ProjectUserDetailEndpoint, func(subRouter chi.Router) {

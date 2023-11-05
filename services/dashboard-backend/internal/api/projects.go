@@ -77,7 +77,7 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 
 	existingProject := exc.MustResult(db.
 		GetQueries().
-		RetrieveProject(r.Context(), models.RetrieveProjectParams{
+		RetrieveProjectForUser(r.Context(), models.RetrieveProjectForUserParams{
 			ID:         projectID,
 			FirebaseID: userAccount.FirebaseID,
 		}))
@@ -115,10 +115,12 @@ func handleDeleteProject(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	_ = exc.MustResult(db.GetQueries().RetrieveProject(r.Context(), models.RetrieveProjectParams{
-		ID:         projectID,
-		FirebaseID: userAccount.FirebaseID,
-	}))
+	_ = exc.MustResult(
+		db.GetQueries().RetrieveProjectForUser(r.Context(), models.RetrieveProjectForUserParams{
+			ID:         projectID,
+			FirebaseID: userAccount.FirebaseID,
+		}),
+	)
 
 	exc.Must(repositories.DeleteProject(r.Context(), projectID))
 	w.WriteHeader(http.StatusNoContent)

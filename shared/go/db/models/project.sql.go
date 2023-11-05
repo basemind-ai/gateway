@@ -54,37 +54,27 @@ SELECT
     p.id,
     p.description,
     p.name,
-    up.permission,
     p.created_at,
     p.updated_at
 FROM project AS p
-LEFT JOIN user_project AS up ON p.id = up.project_id
-LEFT JOIN user_account AS ua ON up.user_id = ua.id
-WHERE p.id = $1 AND ua.firebase_id = $2 AND p.deleted_at IS NULL
+WHERE p.id = $1 AND p.deleted_at IS NULL
 `
 
-type RetrieveProjectParams struct {
-	ID         pgtype.UUID `json:"id"`
-	FirebaseID string      `json:"firebaseId"`
-}
-
 type RetrieveProjectRow struct {
-	ID          pgtype.UUID              `json:"id"`
-	Description string                   `json:"description"`
-	Name        string                   `json:"name"`
-	Permission  NullAccessPermissionType `json:"permission"`
-	CreatedAt   pgtype.Timestamptz       `json:"createdAt"`
-	UpdatedAt   pgtype.Timestamptz       `json:"updatedAt"`
+	ID          pgtype.UUID        `json:"id"`
+	Description string             `json:"description"`
+	Name        string             `json:"name"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz `json:"updatedAt"`
 }
 
-func (q *Queries) RetrieveProject(ctx context.Context, arg RetrieveProjectParams) (RetrieveProjectRow, error) {
-	row := q.db.QueryRow(ctx, retrieveProject, arg.ID, arg.FirebaseID)
+func (q *Queries) RetrieveProject(ctx context.Context, id pgtype.UUID) (RetrieveProjectRow, error) {
+	row := q.db.QueryRow(ctx, retrieveProject, id)
 	var i RetrieveProjectRow
 	err := row.Scan(
 		&i.ID,
 		&i.Description,
 		&i.Name,
-		&i.Permission,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -113,6 +103,48 @@ func (q *Queries) RetrieveProjectAPIRequestCount(ctx context.Context, arg Retrie
 	var total_requests int64
 	err := row.Scan(&total_requests)
 	return total_requests, err
+}
+
+const retrieveProjectForUser = `-- name: RetrieveProjectForUser :one
+SELECT
+    p.id,
+    p.description,
+    p.name,
+    up.permission,
+    p.created_at,
+    p.updated_at
+FROM project AS p
+LEFT JOIN user_project AS up ON p.id = up.project_id
+LEFT JOIN user_account AS ua ON up.user_id = ua.id
+WHERE p.id = $1 AND ua.firebase_id = $2 AND p.deleted_at IS NULL
+`
+
+type RetrieveProjectForUserParams struct {
+	ID         pgtype.UUID `json:"id"`
+	FirebaseID string      `json:"firebaseId"`
+}
+
+type RetrieveProjectForUserRow struct {
+	ID          pgtype.UUID              `json:"id"`
+	Description string                   `json:"description"`
+	Name        string                   `json:"name"`
+	Permission  NullAccessPermissionType `json:"permission"`
+	CreatedAt   pgtype.Timestamptz       `json:"createdAt"`
+	UpdatedAt   pgtype.Timestamptz       `json:"updatedAt"`
+}
+
+func (q *Queries) RetrieveProjectForUser(ctx context.Context, arg RetrieveProjectForUserParams) (RetrieveProjectForUserRow, error) {
+	row := q.db.QueryRow(ctx, retrieveProjectForUser, arg.ID, arg.FirebaseID)
+	var i RetrieveProjectForUserRow
+	err := row.Scan(
+		&i.ID,
+		&i.Description,
+		&i.Name,
+		&i.Permission,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const retrieveProjectTokensCount = `-- name: RetrieveProjectTokensCount :many

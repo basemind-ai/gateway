@@ -1,16 +1,26 @@
 package api
 
 import (
+	"cloud.google.com/go/pubsub"
+	"context"
+	"encoding/json"
+	"fmt"
+	"github.com/basemind-ai/monorepo/cloud-functions/emailsender"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
+	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/pubsubutils"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"github.com/basemind-ai/monorepo/shared/go/urlutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"sync"
+	"time"
 )
 
 // handleRetrieveProjectUserAccounts - retrieves all users for a project.
@@ -38,73 +48,95 @@ func handleRetrieveProjectUserAccounts(w http.ResponseWriter, r *http.Request) {
 	serialization.RenderJSONResponse(w, http.StatusOK, ret)
 }
 
-// handleAddUserToProject - adds a user to a project with the specified permission level.
-func handleAddUserToProject(w http.ResponseWriter, r *http.Request) {
+// handleInviteUsersToProject - adds a user to a project with the specified permission level.
+func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
+	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 
-	data := dto.AddUserAccountToProjectDTO{}
+	data := make([]dto.AddUserAccountToProjectDTO, 0)
 	if deserializationErr := serialization.DeserializeJSON(r.Body, &data); deserializationErr != nil {
 		log.Error().Err(deserializationErr).Msg("failed to deserialize request body")
 		apierror.BadRequest(invalidRequestBodyError).Render(w)
 		return
 	}
 
-	if validationErr := validate.Struct(data); validationErr != nil {
-		log.Error().Err(validationErr).Msg("failed to validate request body")
-		apierror.BadRequest(invalidRequestBodyError).Render(w)
-		return
-	}
+	cfg := config.Get(r.Context())
+	project := exc.MustResult(db.GetQueries().RetrieveProject(r.Context(), projectID))
 
-	var (
-		userAccount  models.UserAccount
-		retrievalErr error
+	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
+
+	baseURL := fmt.Sprintf(
+		"https://%s:%d/v1/web-hooks/invites?projectId=%s",
+		cfg.Host,
+		cfg.Port,
+		db.UUIDToString(&projectID),
 	)
 
-	if data.Email != "" {
-		userAccount, retrievalErr = db.GetQueries().
-			RetrieveUserAccountByEmail(r.Context(), data.Email)
-	} else {
-		userID, err := db.StringToUUID(data.UserID)
-		if err != nil {
+	var wg sync.WaitGroup
+
+	publishContext, cancel := context.WithDeadline(
+		context.Background(),
+		time.Now().Add(1*time.Minute),
+	)
+
+	defer cancel()
+
+	for _, datum := range data {
+		if validationErr := validate.Struct(datum); validationErr != nil {
+			log.Error().Err(validationErr).Msg("failed to validate request body")
 			apierror.BadRequest(invalidRequestBodyError).Render(w)
 			return
 		}
-		userAccount, retrievalErr = db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
-	}
+		if userAlreadyInProject := exc.MustResult(db.GetQueries().
+			CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
+				ProjectID: projectID,
+				Email:     datum.Email,
+			})); userAlreadyInProject {
+			apierror.BadRequest(fmt.Sprintf("user account with email %s is already in the project", datum.Email)).
+				Render(w)
+			return
+		}
 
-	if retrievalErr != nil {
-		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
-		apierror.BadRequest("user does not exist").Render(w)
-		return
-	}
+		signedURL, err := urlutils.SignURL(
+			r.Context(),
+			fmt.Sprintf("%s&permission=%s", baseURL, datum.Permission),
+		)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to sign url")
+			apierror.InternalServerError().Render(w)
+			return
+		}
 
-	userAlreadyInProject := exc.MustResult(db.GetQueries().
-		CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
-			ProjectID: projectID,
-			UserID:    userAccount.ID,
+		pubsubMessageData := exc.MustResult(json.Marshal(emailsender.SendEmailRequestDTO{
+			FromName:    "BaseMind.AI",
+			FromAddress: SupportEmailAddress,
+			ToName:      "",
+			ToAddress:   datum.Email,
+			TemplateID:  UserInvitationEmailTemplateID,
+			TemplateVariables: map[string]string{
+				"invitingUserFullName": userAccount.DisplayName,
+				"projectName":          project.Name,
+				"invitationUrl":        signedURL,
+			},
 		}))
 
-	if userAlreadyInProject {
-		apierror.BadRequest("user is already in project").Render(w)
-		return
+		wg.Add(1)
+
+		go func(ctx context.Context) {
+			defer wg.Done()
+			exc.Must(
+				pubsubutils.PublishWithRetry(
+					ctx,
+					topic,
+					&pubsub.Message{Data: pubsubMessageData},
+				),
+			)
+		}(publishContext)
 	}
 
-	userProject := exc.MustResult(db.GetQueries().
-		CreateUserProject(r.Context(), models.CreateUserProjectParams{
-			ProjectID:  projectID,
-			UserID:     userAccount.ID,
-			Permission: data.Permission,
-		}))
+	wg.Wait()
 
-	serialization.RenderJSONResponse(w, http.StatusCreated, dto.ProjectUserAccountDTO{
-		ID:          db.UUIDToString(&userAccount.ID),
-		DisplayName: userAccount.DisplayName,
-		Email:       userAccount.Email,
-		PhoneNumber: userAccount.PhoneNumber,
-		PhotoURL:    userAccount.PhotoUrl,
-		CreatedAt:   userAccount.CreatedAt.Time,
-		Permission:  string(userProject.Permission),
-	})
+	serialization.RenderJSONResponse(w, http.StatusCreated, nil)
 }
 
 // handleChangeUserProjectPermission - changes the user's permission to the one specified.
@@ -136,10 +168,17 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, retrievalErr := db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
+	if retrievalErr != nil {
+		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
+		apierror.BadRequest("user does not exist").Render(w)
+		return
+	}
+
 	userInProject := exc.MustResult(db.GetQueries().
 		CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
 			ProjectID: projectID,
-			UserID:    *userID,
+			Email:     user.Email,
 		}))
 
 	if !userInProject {
@@ -147,7 +186,12 @@ func handleChangeUserProjectPermission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userAccount := exc.MustResult(db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID))
+	userAccount, retrievalErr := db.GetQueries().RetrieveUserAccountByID(r.Context(), *userID)
+	if retrievalErr != nil {
+		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
+		apierror.BadRequest("user does not exist").Render(w)
+		return
+	}
 
 	userProject := exc.MustResult(db.GetQueries().
 		UpdateUserProjectPermission(r.Context(), models.UpdateUserProjectPermissionParams{
@@ -178,10 +222,17 @@ func handleRemoveUserFromProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, retrievalErr := db.GetQueries().RetrieveUserAccountByID(r.Context(), userID)
+	if retrievalErr != nil {
+		log.Error().Err(retrievalErr).Msg("failed to retrieve user account")
+		apierror.BadRequest("user does not exist").Render(w)
+		return
+	}
+
 	userInProject := exc.MustResult(db.GetQueries().
 		CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
 			ProjectID: projectID,
-			UserID:    userID,
+			Email:     user.Email,
 		}))
 
 	if !userInProject {

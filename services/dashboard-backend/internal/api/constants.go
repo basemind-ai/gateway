@@ -25,3 +25,12 @@ const (
 	invalidRequestBodyError = "invalid request body"
 	invalidIDError          = "invalid id"
 )
+
+const (
+	UserInvitationEmailTemplateID = "d-a53e6310aa094a7abb18334949bba0f2"
+	SupportEmailTemplateID        = "d-67b1f348e3f44518803d5cb03a8c1438"
+)
+
+const (
+	SupportEmailAddress = "support@basemind.ai"
+)

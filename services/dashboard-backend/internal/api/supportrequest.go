@@ -17,11 +17,6 @@ import (
 	"time"
 )
 
-const (
-	supportEmailAddress    = "support@basemind.ai"
-	supportEmailTemplateID = "d-67b1f348e3f44518803d5cb03a8c1438"
-)
-
 func handleSupportEmailRequest(w http.ResponseWriter, r *http.Request) {
 	userAccount := r.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 
@@ -36,12 +31,12 @@ func handleSupportEmailRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pubsubMessageData, _ := json.Marshal(emailsender.SendEmailRequestDTO{
+	pubsubMessageData := exc.MustResult(json.Marshal(emailsender.SendEmailRequestDTO{
 		FromName:    userAccount.DisplayName,
 		FromAddress: userAccount.Email,
 		ToName:      "Basemind Support",
-		ToAddress:   supportEmailAddress,
-		TemplateID:  supportEmailTemplateID,
+		ToAddress:   SupportEmailAddress,
+		TemplateID:  SupportEmailTemplateID,
 		TemplateVariables: map[string]string{
 			"body":      data.EmailBody,
 			"email":     userAccount.Email,
@@ -51,7 +46,7 @@ func handleSupportEmailRequest(w http.ResponseWriter, r *http.Request) {
 			"topic":     data.RequestTopic,
 			"userId":    db.UUIDToString(&userAccount.ID),
 		},
-	})
+	}))
 
 	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
 

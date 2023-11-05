@@ -26,6 +26,16 @@ SELECT
     p.id,
     p.description,
     p.name,
+    p.created_at,
+    p.updated_at
+FROM project AS p
+WHERE p.id = $1 AND p.deleted_at IS NULL;
+
+-- name: RetrieveProjectForUser :one
+SELECT
+    p.id,
+    p.description,
+    p.name,
     up.permission,
     p.created_at,
     p.updated_at

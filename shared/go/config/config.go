@@ -14,9 +14,10 @@ type Config struct {
 	DatabaseURL      string `env:"DATABASE_URL,required"`
 	Environment      string `env:"ENVIRONMENT,default=test"`
 	GcpProjectID     string `env:"GCP_PROJECT_ID,required"`
+	Host             string `env:"HOST,required"`
+	JWTSecret        string `env:"JWT_SECRET,required"`
 	Port             int    `env:"PORT,required"`
 	RedisURL         string `env:"REDIS_CONNECTION_STRING,required"`
-	JWTSecret        string `env:"JWT_SECRET,required"`
 	URLSigningSecret string `env:"URL_SIGNING_SECRET,required"`
 }
 

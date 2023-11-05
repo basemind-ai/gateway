@@ -55,9 +55,8 @@ type ApplicationAPIKeyDTO struct { // skipcq: TCV-001
 
 // AddUserAccountToProjectDTO - DTO for add user to project request body.
 type AddUserAccountToProjectDTO struct { // skipcq: TCV-001
-	UserID     string                      `json:"userId,omitempty" validate:"omitempty,required"`
-	Email      string                      `json:"email,omitempty"  validate:"omitempty,required"`
-	Permission models.AccessPermissionType `json:"permission"       validate:"required,oneof=ADMIN MEMBER"`
+	Email      string                      `json:"email,omitempty" validate:"omitempty,required"`
+	Permission models.AccessPermissionType `json:"permission"      validate:"required,oneof=ADMIN MEMBER"`
 }
 
 // UpdateUserAccountProjectPermissionDTO - DTO for update user account project permission request body.
@@ -66,7 +65,7 @@ type UpdateUserAccountProjectPermissionDTO struct { // skipcq: TCV-001
 	Permission models.AccessPermissionType `json:"permission" validate:"required,oneof=ADMIN MEMBER"`
 }
 
-// UpdateUserAccountProjectPermissionDTO - DTO for serializing user account project + permission data.
+// ProjectUserAccountDTO - DTO for serializing user account project + permission data.
 type ProjectUserAccountDTO struct { // skipcq: TCV-001
 	ID          string    `json:"id"`
 	DisplayName string    `json:"displayName"`

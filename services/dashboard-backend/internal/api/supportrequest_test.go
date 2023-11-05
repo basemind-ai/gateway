@@ -3,7 +3,9 @@ package api_test
 import (
 	"cloud.google.com/go/pubsub"
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/cloud-functions/emailsender"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
@@ -77,6 +79,38 @@ func TestSupportAPI(t *testing.T) {
 
 			msg := <-msgChannel
 			assert.NotNil(t, msg)
+
+			emailSenderData := emailsender.SendEmailRequestDTO{}
+			_ = json.Unmarshal(msg.Data, &emailSenderData)
+
+			assert.Equal(t, emailSenderData.FromName, userAccount.DisplayName)
+			assert.Equal(t, emailSenderData.FromAddress, userAccount.Email)
+			assert.Equal(t, emailSenderData.ToName, "Basemind Support")
+			assert.Equal(t, emailSenderData.ToAddress, api.SupportEmailAddress)
+			assert.Equal(t, emailSenderData.TemplateID, api.SupportEmailTemplateID)
+			assert.Equal(t, emailSenderData.TemplateVariables["body"], supportRequestBody.EmailBody)
+			assert.Equal(t, emailSenderData.TemplateVariables["email"], userAccount.Email)
+			assert.Equal(t, emailSenderData.TemplateVariables["fullName"], userAccount.DisplayName)
+			assert.Equal(
+				t,
+				emailSenderData.TemplateVariables["projectId"],
+				supportRequestBody.ProjectID,
+			)
+			assert.Equal(
+				t,
+				emailSenderData.TemplateVariables["subject"],
+				supportRequestBody.EmailSubject,
+			)
+			assert.Equal(
+				t,
+				emailSenderData.TemplateVariables["topic"],
+				supportRequestBody.RequestTopic,
+			)
+			assert.Equal(
+				t,
+				emailSenderData.TemplateVariables["userId"],
+				db.UUIDToString(&userAccount.ID),
+			)
 		})
 
 		t.Run("responds with 400 BAD REQUEST if request body is invalid", func(t *testing.T) {
