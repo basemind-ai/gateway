@@ -165,6 +165,10 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Delete("/", handleDeleteApplicationAPIKey)
 		})
 
+		router.Route(InviteUserWebhookEndpoint, func(subRouter chi.Router) {
+			subRouter.Get("/", handleUserInvitationWebhook)
+		})
+
 		router.Route(PromptConfigListEndpoint, func(subRouter chi.Router) {
 			subRouter.Use(middleware.PathParameterMiddleware("projectId", "applicationId"))
 			subRouter.Use(

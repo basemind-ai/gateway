@@ -38,12 +38,12 @@ services:
             - ./go.mod:/go/src/app/go.mod:cached
             - ./go.sum:/go/src/app/go.sum:cached
         environment:
-            BASE_URL: http://localhost:4000
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
             ENVIRONMENT: development
+            FRONTEND_BASE_URL: http://localhost:3000
             GCP_PROJECT_ID: basemind-ai-development
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
-            HOST: http://localhost
+            HOST: localhost
             JWT_SECRET: 'jeronimo'
             OPENAI_CONNECTOR_ADDRESS: openai-connector:8000
             PORT: 4000
@@ -75,9 +75,10 @@ services:
             API_GATEWAY_ADDRESS: api-gateway:4000
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
             ENVIRONMENT: development
+            FRONTEND_BASE_URL: http://localhost:3000
             GCP_PROJECT_ID: basemind-ai-development
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
-            HOST: http://localhost
+            HOST: localhost
             JWT_SECRET: 'jeronimo'
             PORT: 4100
             REDIS_CONNECTION_STRING: redis://redis:6379

@@ -66,9 +66,10 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
 
 	baseURL := fmt.Sprintf(
-		"https://%s:%d/v1/web-hooks/invites?projectId=%s",
+		"https://%s:%d/v1%s?projectId=%s",
 		cfg.Host,
 		cfg.Port,
+		InviteUserWebhookEndpoint,
 		db.UUIDToString(&projectID),
 	)
 
@@ -99,7 +100,7 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 
 		signedURL, err := urlutils.SignURL(
 			r.Context(),
-			fmt.Sprintf("%s&permission=%s", baseURL, datum.Permission),
+			fmt.Sprintf("%s&permission=%s&email=%s", baseURL, datum.Permission, datum.Email),
 		)
 		if err != nil {
 			log.Error().Err(err).Msg("failed to sign url")

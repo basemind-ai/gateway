@@ -5,6 +5,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/basemind-ai/monorepo/shared/go/urlutils"
 	"github.com/stretchr/testify/assert"
+	"strings"
 	"testing"
 )
 
@@ -39,12 +40,19 @@ func TestURUtils(t *testing.T) {
 			assert.Error(t, err)
 			assert.Empty(t, signed)
 		})
+	})
 
-		t.Run("returns a verification error for root url", func(t *testing.T) {
-			url := "https://example.com"
-			signed, err := urlutils.SignURL(context.TODO(), url)
-			assert.Error(t, err)
-			assert.Empty(t, signed)
-		})
+	t.Run("VerifyURL", func(t *testing.T) {
+		validURL := "https://example.com/a/b/c?foo=bar"
+		signed, err := urlutils.SignURL(context.TODO(), validURL)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, signed)
+
+		for _, variant := range []string{signed, strings.ReplaceAll(signed, "https://", ""), strings.ReplaceAll(signed, "http://", "")} {
+			t.Run("returns nil if the url is valid", func(t *testing.T) {
+				err = urlutils.VerifyURL(context.TODO(), variant)
+				assert.NoError(t, err)
+			})
+		}
 	})
 }

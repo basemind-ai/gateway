@@ -13,6 +13,7 @@ import (
 type Config struct {
 	DatabaseURL      string `env:"DATABASE_URL,required"`
 	Environment      string `env:"ENVIRONMENT,default=test"`
+	FrontendBaseURL  string `env:"FRONTEND_BASE_URL,required"`
 	GcpProjectID     string `env:"GCP_PROJECT_ID,required"`
 	Host             string `env:"HOST,required"`
 	JWTSecret        string `env:"JWT_SECRET,required"`

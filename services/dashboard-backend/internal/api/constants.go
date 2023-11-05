@@ -6,6 +6,7 @@ const (
 	ApplicationAnalyticsEndpoint    = "/projects/{projectId}/applications/{applicationId}/analytics"
 	ApplicationDetailEndpoint       = "/projects/{projectId}/applications/{applicationId}"
 	ApplicationsListEndpoint        = "/projects/{projectId}/applications"
+	InviteUserWebhookEndpoint       = "/webhooks/invite-user"
 	ProjectAnalyticsEndpoint        = "/projects/{projectId}/analytics"
 	ProjectDetailEndpoint           = "/projects/{projectId}"
 	ProjectOTPEndpoint              = "/projects/{projectId}/otp"
