@@ -68,7 +68,7 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tx := exc.MustResult(db.GetOrCreateTx(r.Context()))
-	// defer db.HandleRollback(r.Context(), tx)
+	defer db.HandleRollback(r.Context(), tx)
 
 	queries := db.GetQueries().WithTx(tx)
 
