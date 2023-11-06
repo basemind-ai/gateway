@@ -44,10 +44,11 @@ services:
             GCP_PROJECT_ID: basemind-ai-development
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
             HOST: localhost
-            JWT_SECRET: 'jeronimo'
+            JWT_SECRET: jeronimo
             OPENAI_CONNECTOR_ADDRESS: openai-connector:8000
             PORT: 4000
             REDIS_CONNECTION_STRING: redis://redis:6379
+            URL_SIGNING_SECRET: jeronimo
         command:
             [
                 'gow',
@@ -79,9 +80,10 @@ services:
             GCP_PROJECT_ID: basemind-ai-development
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
             HOST: localhost
-            JWT_SECRET: 'jeronimo'
+            JWT_SECRET: jeronimo
             PORT: 4100
             REDIS_CONNECTION_STRING: redis://redis:6379
+            URL_SIGNING_SECRET: jeronimo
         command:
             [
                 'gow',
