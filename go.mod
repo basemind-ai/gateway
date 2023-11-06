@@ -8,8 +8,6 @@ require (
 	github.com/basemind-ai/monorepo/cloud-functions/emailsender v0.0.0-00010101000000-000000000000
 	github.com/basemind-ai/monorepo/e2e v0.0.0-00010101000000-000000000000
 	github.com/cenkalti/backoff/v4 v4.2.1
-	github.com/docker/docker v24.0.7+incompatible
-	github.com/docker/go-connections v0.4.0
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/httplog v0.3.2
@@ -63,6 +61,8 @@ require (
 	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/docker/cli v24.0.7+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
+	github.com/docker/docker v24.0.7+incompatible // indirect
+	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
@@ -80,7 +80,7 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
-	github.com/itchyny/base58-go v0.2.0 // indirect
+	github.com/itchyny/base58-go v0.2.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect

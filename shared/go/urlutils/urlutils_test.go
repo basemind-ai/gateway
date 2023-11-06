@@ -40,6 +40,20 @@ func TestURUtils(t *testing.T) {
 			assert.Error(t, err)
 			assert.Empty(t, signed)
 		})
+
+		t.Run("returns an error if the url is empty", func(t *testing.T) {
+			url := ""
+			signed, err := urlutils.SignURL(context.TODO(), url)
+			assert.Error(t, err)
+			assert.Empty(t, signed)
+		})
+
+		t.Run("returns verification error if url is missing schema", func(t *testing.T) {
+			url := "example.com/a/b/c?foo=bar"
+			signed, err := urlutils.SignURL(context.TODO(), url)
+			assert.Error(t, err)
+			assert.Empty(t, signed)
+		})
 	})
 
 	t.Run("VerifyURL", func(t *testing.T) {
@@ -54,5 +68,20 @@ func TestURUtils(t *testing.T) {
 				assert.NoError(t, err)
 			})
 		}
+
+		t.Run("returns an error if the url is invalid", func(t *testing.T) {
+			err = urlutils.VerifyURL(context.TODO(), "invalid")
+			assert.Error(t, err)
+		})
+
+		t.Run("returns an error if the url is empty", func(t *testing.T) {
+			err = urlutils.VerifyURL(context.TODO(), "")
+			assert.Error(t, err)
+		})
+
+		t.Run("returns an error if the url is missing schema", func(t *testing.T) {
+			err = urlutils.VerifyURL(context.TODO(), "example.com/a/b/c?foo=bar")
+			assert.Error(t, err)
+		})
 	})
 }

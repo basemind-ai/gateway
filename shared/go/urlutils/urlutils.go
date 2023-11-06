@@ -32,7 +32,7 @@ func SignURL(ctx context.Context, url string) (string, error) {
 		return "", fmt.Errorf("failed to sign url: %w", signingErr)
 	}
 
-	if verificationErr := GetSigner(ctx).Verify(signed); verificationErr != nil {
+	if verificationErr := GetSigner(ctx).Verify(signed); verificationErr != nil { // skipcq: TCV-001
 		return "", fmt.Errorf("failed to verify url: %w", verificationErr)
 	}
 

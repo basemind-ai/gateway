@@ -44,6 +44,32 @@ func TestPubSubUtils(t *testing.T) {
 		})
 	})
 
+	t.Run("GetSubscription", func(t *testing.T) {
+		t.Run("returns subscription if it exists", func(t *testing.T) {
+			topic := pubsubutils.GetTopic(context.TODO(), "topic")
+			firstSubscription := pubsubutils.GetSubscription(
+				context.TODO(),
+				"subscription",
+				topic,
+			)
+			secondSubscription := pubsubutils.GetSubscription(
+				context.TODO(),
+				"subscription",
+				topic,
+			)
+			assert.Equal(t, firstSubscription, secondSubscription)
+		})
+		t.Run("creates and returns subscription if it does not exist", func(t *testing.T) {
+			topic := pubsubutils.GetTopic(context.TODO(), "topic")
+			subscription := pubsubutils.GetSubscription(
+				context.TODO(),
+				"does-not-exist",
+				topic,
+			)
+			assert.NotNil(t, subscription)
+		})
+	})
+
 	t.Run("PublishWithRetry", func(t *testing.T) {
 		t.Run("publishes message to topic", func(t *testing.T) {
 			topic := pubsubutils.GetTopic(context.TODO(), pubsubutils.EmailSenderPubSubTopicID)
