@@ -9,7 +9,7 @@ export default function Projects() {
 
 	return (
 		<div
-			className="bg-base-100 flex h-full w-full animate-pulse"
+			className="bg-base-100 flex h-full w-full }"
 			data-testid="projects-view-loading"
 		/>
 	);

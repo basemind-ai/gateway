@@ -12,11 +12,12 @@ describe('support API tests', () => {
 				ok: true,
 				json: () => Promise.resolve(),
 			});
+			const uuid = faker.string.uuid();
 			await handleCreateSupportTicket({
 				topic: SupportTopic.API,
 				subject: 'not working',
 				body: 'help please',
-				projectId: faker.string.uuid(),
+				projectId: uuid,
 			});
 
 			expect(mockFetch).toHaveBeenCalledWith(
@@ -29,7 +30,36 @@ describe('support API tests', () => {
 					},
 					method: HttpMethod.Post,
 					body: JSON.stringify({
-						type: SupportTopic.API,
+						topic: SupportTopic.API,
+						subject: 'not working',
+						body: 'help please',
+						projectId: uuid,
+					}),
+				},
+			);
+		});
+		it('sends an API POST request without projectID', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(),
+			});
+			await handleCreateSupportTicket({
+				topic: SupportTopic.API,
+				subject: 'not working',
+				body: 'help please',
+			});
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				new URL(`http://www.example.com/v1/support/`),
+				{
+					headers: {
+						'Authorization': 'Bearer test_token',
+						'Content-Type': 'application/json',
+						'X-Request-Id': expect.any(String),
+					},
+					method: HttpMethod.Post,
+					body: JSON.stringify({
+						topic: SupportTopic.API,
 						subject: 'not working',
 						body: 'help please',
 					}),

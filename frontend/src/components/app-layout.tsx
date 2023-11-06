@@ -3,13 +3,13 @@ import NavRail from '@/components/nav-rail/nav-rail';
 export function AppLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div
-			className="bg-base-100 h-full w-full flex"
+			className="bg-base-100 h-full min-h-screen w-full grid grid-cols-[min-content,1fr]"
 			data-testid="app-layout-container"
 		>
-			<div className="min-w-min max-w-fit">
+			<div className="sticky top-0 h-screen">
 				<NavRail />
 			</div>
-			<div className="w-full">{children}</div>
+			<div className="overflow-auto">{children}</div>
 		</div>
 	);
 }

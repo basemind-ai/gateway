@@ -4,42 +4,53 @@ import { render } from 'tests/test-utils';
 import { Dropdown } from '@/components/dropdown';
 
 describe('Dropdown component', () => {
+	const testHeadline = 'test headline';
 	function renderDropDown() {
 		render(
 			<Dropdown
-				headline="headline"
-				selected={options[0]}
+				headline={testHeadline}
+				selected={''}
 				setSelected={setSelectedMock}
 				options={options}
 			/>,
 		);
 	}
-	const options = ['option none', 'option1', 'option2', 'option3'];
+
+	const options = [
+		{ value: '01', text: '1' },
+		{ value: '02', text: '2' },
+		{ value: '03', text: '3' },
+		{ value: '04', text: '4' },
+	];
+
 	const setSelectedMock = vi.fn();
 
-	it('should render headline', () => {
+	it('should render headline twice', () => {
 		renderDropDown();
-		expect(screen.getByText('headline')).toBeInTheDocument();
+		const headlines = screen.getAllByText(testHeadline);
+		headlines.forEach((headline) => {
+			expect(headline).toBeInTheDocument();
+		});
 	});
 
 	it('should render all options', () => {
 		renderDropDown();
-		expect(screen.getByTestId(options[0])).toBeInTheDocument();
-		expect(screen.getByTestId(options[1])).toBeInTheDocument();
-		expect(screen.getByTestId(options[2])).toBeInTheDocument();
-		expect(screen.getByTestId(options[3])).toBeInTheDocument();
+		expect(screen.getByTestId(options[0].value)).toBeInTheDocument();
+		expect(screen.getByText(options[0].text)).toBeInTheDocument();
+		expect(screen.getByTestId(options[1].value)).toBeInTheDocument();
+		expect(screen.getByText(options[1].text)).toBeInTheDocument();
+		expect(screen.getByTestId(options[2].value)).toBeInTheDocument();
+		expect(screen.getByText(options[2].text)).toBeInTheDocument();
+		expect(screen.getByTestId(options[3].value)).toBeInTheDocument();
+		expect(screen.getByText(options[3].text)).toBeInTheDocument();
 	});
 
 	it('should call setSelectedMock when option is selected', () => {
 		renderDropDown();
-		const select = screen.getByTestId('dropdown-input-select');
-		fireEvent.change(select, { target: { value: options[1] } });
-		expect(setSelectedMock).toHaveBeenCalledWith(options[1]);
-	});
-
-	it('cant select first option', () => {
-		renderDropDown();
-		fireEvent.click(screen.getByTestId('dropdown-input-select'));
-		expect(screen.getByTestId(options[0])).toBeDisabled();
+		const select = screen.getByTestId(
+			`dropdown-input-select-${testHeadline}`,
+		);
+		fireEvent.change(select, { target: { value: options[1].value } });
+		expect(setSelectedMock).toHaveBeenCalledWith(options[1].value);
 	});
 });
