@@ -2,7 +2,6 @@ import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 
 import {
-	handleAddUsersToProject,
 	handleRemoveUserFromProject,
 	handleRetrieveProjectUsers,
 	handleUpdateUserToPermission,
@@ -42,43 +41,7 @@ describe('project users API tests', () => {
 			);
 		});
 	});
-	describe('handleAddUserToProject', () => {
-		it('returns a project user', async () => {
-			const project = await ProjectFactory.build();
-			const userAccount = await ProjectUserAccountFactory.build();
 
-			mockFetch.mockResolvedValueOnce({
-				ok: true,
-				json: () => Promise.resolve(userAccount),
-			});
-
-			const body = {
-				email: userAccount.email,
-				permission: userAccount.permission,
-			};
-
-			const data = await handleAddUsersToProject({
-				projectId: project.id,
-				data: [body],
-			});
-
-			expect(data).toEqual(userAccount);
-			expect(mockFetch).toHaveBeenCalledWith(
-				new URL(
-					`http://www.example.com/v1/projects/${project.id}/users/`,
-				),
-				{
-					headers: {
-						'Authorization': bearerToken,
-						'Content-Type': 'application/json',
-						'X-Request-Id': expect.any(String),
-					},
-					method: HttpMethod.Post,
-					body: JSON.stringify(body),
-				},
-			);
-		});
-	});
 	describe('handleUpdateUserToPermission', () => {
 		it('returns a project user', async () => {
 			const project = await ProjectFactory.build();
