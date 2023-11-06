@@ -20,32 +20,32 @@ describe('Contact component', () => {
 		'handleCreateSupportTicket',
 	);
 	it('renders the topics options', () => {
-		render(<Contact user={mockUser} />);
+		render(<Contact />);
 		Object.values(SupportTopic).forEach((topic) => {
 			expect(screen.getByTestId(topic)).toBeInTheDocument();
 		});
 	});
 	it('submit support button is disabled by default', () => {
-		render(<Contact user={mockUser} />);
+		render(<Contact />);
 		const submitButton = screen.getByTestId('support-submit');
 		expect(submitButton).toBeDisabled();
 	});
 	it('submit support button is enabled when topic is selected', () => {
-		render(<Contact user={mockUser} />);
+		render(<Contact />);
 		const submitButton = screen.getByTestId('support-submit');
 		const input = screen.getByTestId('dropdown-input-select');
 		fireEvent.change(input, { target: { value: SupportTopic.API } });
 		expect(submitButton).toBeEnabled();
 	});
 	it('submit support is disabled when user is null', () => {
-		render(<Contact user={null} />);
+		render(<Contact />);
 		const submitButton = screen.getByTestId('support-submit');
 		const input = screen.getByTestId('dropdown-input-select');
 		fireEvent.change(input, { target: { value: SupportTopic.API } });
 		expect(submitButton).toBeDisabled();
 	});
 	it('submit support runs handleSubmitTicket', async () => {
-		render(<Contact user={mockUser} />);
+		render(<Contact />);
 		const submitButton = screen.getByTestId('support-submit');
 		const input = screen.getByTestId('dropdown-input-select');
 		fireEvent.change(input, { target: { value: SupportTopic.API } });
@@ -62,7 +62,7 @@ describe('Contact component', () => {
 
 	it('reset values after successful submit', async () => {
 		handleSupportTicketSpy.mockResolvedValueOnce();
-		render(<Contact user={mockUser} />);
+		render(<Contact />);
 		const submitButton = screen.getByTestId('support-submit');
 		const input = screen.getByTestId('dropdown-input-select');
 		fireEvent.change(input, { target: { value: SupportTopic.API } });

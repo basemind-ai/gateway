@@ -13,6 +13,7 @@ func SetTestEnv(t *testing.T) {
 	t.Setenv("JWT_SECRET", "ABC123")
 	t.Setenv("PORT", "3000")
 	t.Setenv("REDIS_CONNECTION_STRING", "ABC123")
+	t.Setenv("GCP_PROJECT_ID", "basemind-ai-development")
 }
 
 func UnsetTestEnv(t *testing.T) {
@@ -22,6 +23,7 @@ func UnsetTestEnv(t *testing.T) {
 	_ = os.Unsetenv("JWT_SECRET")
 	_ = os.Unsetenv("PORT")
 	_ = os.Unsetenv("REDIS_CONNECTION_STRING")
+	_ = os.Unsetenv("GCP_PROJECT_ID")
 }
 
 func GetSleepTimeout() time.Duration {

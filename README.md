@@ -11,6 +11,7 @@ root                        # repository root, holding all tooling configuration
 ├─── .idea                  # IDE configurations that are shared
 ├─── .secrets               # secret values that are gitignored
 ├─── assets                 # images used for branding
+├─── cloud-functions        # GCP cloud functions
 ├─── docker                 # docker files
 ├─── frontend               # frontend web-app
 ├─── gen                    # code generated from the protobuf schemas under `proto`

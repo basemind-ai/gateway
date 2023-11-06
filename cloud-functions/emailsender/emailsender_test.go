@@ -3,21 +3,50 @@ package emailsender_test
 import (
 	"context"
 	"encoding/json"
-	"github.com/basemind-ai/monorepo/cloud/emailsender"
-	"github.com/basemind-ai/monorepo/cloud/shared"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"github.com/basemind-ai/monorepo/shared/go/testutils"
+	"fmt"
+	"github.com/basemind-ai/monorepo/cloud-functions/emailsender"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
+
+func ReadBody(body io.ReadCloser) ([]byte, error) {
+	defer func() {
+		_, _ = body.Close(), "error closing body"
+	}()
+
+	data, readErr := io.ReadAll(body)
+	if readErr != nil {
+		return nil, fmt.Errorf("failed to read body: %w", readErr)
+	}
+
+	return data, nil
+}
+
+func RenderJSONResponse(w http.ResponseWriter, statusCode int, body any) {
+	w.WriteHeader(statusCode)
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(body)
+}
+
+func createTestServer(t *testing.T, handler http.Handler) string {
+	t.Helper()
+	server := httptest.NewServer(handler)
+
+	t.Cleanup(func() {
+		server.Close()
+	})
+
+	return server.URL
+}
 
 func TestEmailSender(t *testing.T) {
 	t.Setenv("SENDGRID_API_KEY", "SG.1234567890")
 
-	emailRequest := datatypes.SendEmailRequestDTO{
+	emailRequest := emailsender.SendEmailRequestDTO{
 		FromName:    "Moishe Zuchmir",
 		FromAddress: "zuchmir@basemind.ai",
 		ToName:      "Claude Unknown",
@@ -55,38 +84,38 @@ func TestEmailSender(t *testing.T) {
 			assert.Equal(t, "https://api.sendgrid.com/v3/mail/send", request.BaseURL)
 			assert.Equal(t, "POST", string(request.Method))
 
-			body := make(map[string]interface{})
+			body := make(map[string]any)
 			err := json.Unmarshal(request.Body, &body)
 			assert.NoError(t, err)
 
-			assert.Equal(t, emailRequest.FromName, body["from"].(map[string]interface{})["name"])
+			assert.Equal(t, emailRequest.FromName, body["from"].(map[string]any)["name"])
 			assert.Equal(
 				t,
 				emailRequest.FromAddress,
-				body["from"].(map[string]interface{})["email"],
+				body["from"].(map[string]any)["email"],
 			)
 			assert.Equal(t, emailRequest.TemplateID, body["template_id"])
 
-			personalizations := body["personalizations"].([]interface{})
+			personalizations := body["personalizations"].([]any)
 			assert.Equal(
 				t,
 				emailRequest.ToName,
-				personalizations[0].(map[string]interface{})["to"].([]interface{})[0].(map[string]interface{})["name"],
+				personalizations[0].(map[string]any)["to"].([]any)[0].(map[string]any)["name"],
 			)
 			assert.Equal(
 				t,
 				emailRequest.ToAddress,
-				personalizations[0].(map[string]interface{})["to"].([]interface{})[0].(map[string]interface{})["email"],
+				personalizations[0].(map[string]any)["to"].([]any)[0].(map[string]any)["email"],
 			)
 			assert.Equal(
 				t,
 				emailRequest.TemplateVariables["firstName"],
-				personalizations[0].(map[string]interface{})["dynamic_template_data"].(map[string]interface{})["firstName"],
+				personalizations[0].(map[string]any)["dynamic_template_data"].(map[string]any)["firstName"],
 			)
 			assert.Equal(
 				t,
 				emailRequest.TemplateVariables["lastName"],
-				personalizations[0].(map[string]interface{})["dynamic_template_data"].(map[string]interface{})["lastName"],
+				personalizations[0].(map[string]any)["dynamic_template_data"].(map[string]any)["lastName"],
 			)
 		})
 	})
@@ -95,12 +124,12 @@ func TestEmailSender(t *testing.T) {
 		t.Run("should return a sendgrid email object", func(t *testing.T) {
 			data, _ := json.Marshal(emailRequest)
 
-			pubsubMessage := shared.PubSubMessage{
+			pubsubMessage := emailsender.PubSubMessage{
 				Data: data,
 			}
 
 			cloudEvent := event.New()
-			err := cloudEvent.SetData("application/json", shared.MessagePublishedData{
+			err := cloudEvent.SetData("application/json", emailsender.MessagePublishedData{
 				Message: pubsubMessage,
 			})
 			assert.NoError(t, err)
@@ -131,8 +160,8 @@ func TestEmailSender(t *testing.T) {
 
 		t.Run("should return an error if the event data is invalid json", func(t *testing.T) {
 			cloudEvent := event.New()
-			eventErr := cloudEvent.SetData("application/json", shared.MessagePublishedData{
-				Message: shared.PubSubMessage{
+			eventErr := cloudEvent.SetData("application/json", emailsender.MessagePublishedData{
+				Message: emailsender.PubSubMessage{
 					Data: []byte("invalid json"),
 				},
 			})
@@ -150,28 +179,28 @@ func TestEmailSender(t *testing.T) {
 				url    string
 			)
 
-			testClient := testutils.CreateTestHTTPClient(
+			baseURL := createTestServer(
 				t,
 				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					body, _ = serialization.ReadBody(r.Body)
+					body, _ = ReadBody(r.Body)
 					url = r.URL.String()
 					method = r.Method
-					serialization.RenderJSONResponse(w, http.StatusOK, map[string]string{})
+					RenderJSONResponse(w, http.StatusOK, map[string]string{})
 				}),
 			)
 
-			t.Setenv("SENDGRID_HOST", testClient.BaseURL)
+			t.Setenv("SENDGRID_HOST", baseURL)
 
 			data, _ := json.Marshal(emailRequest)
 
-			pubsubMessage := shared.PubSubMessage{
+			pubsubMessage := emailsender.PubSubMessage{
 				Data: data,
 			}
 
 			cloudEvent := event.New()
 			cloudEventCreateErr := cloudEvent.SetData(
 				"application/json",
-				shared.MessagePublishedData{
+				emailsender.MessagePublishedData{
 					Message: pubsubMessage,
 				},
 			)
@@ -190,8 +219,8 @@ func TestEmailSender(t *testing.T) {
 			cloudEvent := event.New()
 			cloudEventCreateErr := cloudEvent.SetData(
 				"application/json",
-				shared.MessagePublishedData{
-					Message: shared.PubSubMessage{
+				emailsender.MessagePublishedData{
+					Message: emailsender.PubSubMessage{
 						Data: []byte("invalid json"),
 					},
 				},
@@ -205,10 +234,10 @@ func TestEmailSender(t *testing.T) {
 		t.Run(
 			"it returns an error if the sendgrid API returns an error response",
 			func(t *testing.T) {
-				testClient := testutils.CreateTestHTTPClient(
+				baseURL := createTestServer(
 					t,
 					http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-						serialization.RenderJSONResponse(
+						RenderJSONResponse(
 							w,
 							http.StatusBadRequest,
 							map[string]string{},
@@ -216,18 +245,18 @@ func TestEmailSender(t *testing.T) {
 					}),
 				)
 
-				t.Setenv("SENDGRID_HOST", testClient.BaseURL)
+				t.Setenv("SENDGRID_HOST", baseURL)
 
 				data, _ := json.Marshal(emailRequest)
 
-				pubsubMessage := shared.PubSubMessage{
+				pubsubMessage := emailsender.PubSubMessage{
 					Data: data,
 				}
 
 				cloudEvent := event.New()
 				cloudEventCreateErr := cloudEvent.SetData(
 					"application/json",
-					shared.MessagePublishedData{
+					emailsender.MessagePublishedData{
 						Message: pubsubMessage,
 					},
 				)

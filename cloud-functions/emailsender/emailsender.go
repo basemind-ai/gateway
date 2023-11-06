@@ -5,38 +5,38 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
-	"github.com/basemind-ai/monorepo/cloud/shared"
-	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/exc"
-	"github.com/basemind-ai/monorepo/shared/go/logging"
 	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/sendgrid/rest"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"github.com/sethvargo/go-envconfig"
 	"net/http"
+	"os"
 )
 
-// EventName is the name of the event that this function will process.
-const EventName = "SendgridEmailPubSub"
+// eventName is the name of the event that this function will process.
+const eventName = "SendgridEmailPubSub"
 
-// SendgridConfig - is an env configuration object.
-type SendgridConfig struct {
+// sendgridConfig - is an env configuration object.
+type sendgridConfig struct {
 	SendgridAPIKey   string `env:"SENDGRID_API_KEY,required"`
 	SendgridHost     string `env:"SENDGRID_HOST,default=https://api.sendgrid.com"`
 	SendgridEndpoint string `env:"SENDGRID_ENDPOINT,default=/v3/mail/send"`
 }
 
 func init() {
-	logging.Configure(false)
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
 
-	functions.CloudEvent(EventName, SendgridPubSubHandler)
+	functions.CloudEvent(eventName, SendgridPubSubHandler)
 }
 
 // CreateSendgridEmail creates a sendgrid email object using the sendgrid mail library.
 // See: https://github.com/sendgrid/sendgrid-go/blob/main/examples/helpers/mail/example.go
-func CreateSendgridEmail(emailRequest *datatypes.SendEmailRequestDTO) *mail.SGMailV3 {
+func CreateSendgridEmail(emailRequest *SendEmailRequestDTO) *mail.SGMailV3 {
 	mailer := mail.NewV3Mail()
 	mailer.SetFrom(mail.NewEmail(emailRequest.FromName, emailRequest.FromAddress))
 	mailer.SetTemplateID(emailRequest.TemplateID)
@@ -54,9 +54,12 @@ func CreateSendgridEmail(emailRequest *datatypes.SendEmailRequestDTO) *mail.SGMa
 
 // CreateSendgridRequest creates a sendgrid HTTP request object.
 // See: https://github.com/sendgrid/sendgrid-go/blob/main/use-cases/README.md
-func CreateSendgridRequest(emailRequest *datatypes.SendEmailRequestDTO) rest.Request {
-	cfg := &SendgridConfig{}
-	exc.Must(envconfig.Process(context.Background(), cfg))
+func CreateSendgridRequest(emailRequest *SendEmailRequestDTO) rest.Request {
+	cfg := &sendgridConfig{}
+	err := envconfig.Process(context.Background(), cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	request := sendgrid.GetRequest(
 		cfg.SendgridAPIKey,
@@ -70,13 +73,13 @@ func CreateSendgridRequest(emailRequest *datatypes.SendEmailRequestDTO) rest.Req
 }
 
 // ParseEmailRequestDTO parses a CloudEvent message and returns a SendEmailRequestDTO.
-func ParseEmailRequestDTO(e event.Event) (*datatypes.SendEmailRequestDTO, error) {
-	msg, parseMsgErr := shared.MessageFromEvent(e)
+func ParseEmailRequestDTO(e event.Event) (*SendEmailRequestDTO, error) {
+	msg, parseMsgErr := MessageFromEvent(e)
 	if parseMsgErr != nil {
 		return nil, parseMsgErr
 	}
 
-	emailRequest := datatypes.SendEmailRequestDTO{}
+	emailRequest := SendEmailRequestDTO{}
 	unmarshalErr := json.Unmarshal(msg.Message.Data, &emailRequest)
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
@@ -102,7 +105,11 @@ func SendgridPubSubHandler(ctx context.Context, e event.Event) error {
 	request := CreateSendgridRequest(emailRequest)
 
 	log.Info().Str("templateId", emailRequest.TemplateID).Msg("sending request to sendgrid")
-	response := exc.MustResult(sendgrid.MakeRequestRetryWithContext(ctx, request))
+	response, requestErr := sendgrid.MakeRequestRetryWithContext(ctx, request)
+	if requestErr != nil {
+		log.Error().Err(requestErr).Msg("error sending request to sendgrid")
+		return requestErr
+	}
 
 	if response.StatusCode >= http.StatusBadRequest {
 		log.Error().Interface("response", response).Msg("received failure status from sendgrid")

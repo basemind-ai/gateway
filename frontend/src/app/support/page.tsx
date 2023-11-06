@@ -6,7 +6,7 @@ import { GetInTouch } from '@/components/support/get-in-touch';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
 export default function Support() {
-	const user = useAuthenticatedUser();
+	useAuthenticatedUser();
 	const t = useTranslations('support');
 
 	return (
@@ -17,7 +17,7 @@ export default function Support() {
 			<div className="mb-10">
 				<GetInTouch />
 			</div>
-			<Contact user={user} />
+			<Contact />
 		</div>
 	);
 }

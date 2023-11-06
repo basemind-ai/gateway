@@ -171,7 +171,8 @@ export interface PromptConfigTestResultChunk {
 }
 
 export interface SupportTicketCreateBody {
-	type: SupportTopic;
+	topic: SupportTopic;
 	subject?: string;
 	body: string;
+	projectId?: string;
 }

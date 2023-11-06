@@ -46,6 +46,7 @@ services:
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
             OPENAI_CONNECTOR_ADDRESS: openai-connector:8000
             JWT_SECRET: 'jeronimo'
+            GCP_PROJECT_ID: basemind-ai-development
         command:
             [
                 'gow',
@@ -77,6 +78,7 @@ services:
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
             API_GATEWAY_ADDRESS: api-gateway:4000
             JWT_SECRET: 'jeronimo'
+            GCP_PROJECT_ID: basemind-ai-development
         command:
             [
                 'gow',

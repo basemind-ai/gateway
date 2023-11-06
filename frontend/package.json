@@ -21,7 +21,7 @@
 		"firebase": "^10.5.2",
 		"firebaseui": "^6.1.0",
 		"next": "14.0.1",
-		"next-intl": "^2.21.0",
+		"next-intl": "^2.22.1",
 		"preline": "^1.9.0",
 		"react": "18.2.0",
 		"react-bootstrap-icons": "^1.10.3",
@@ -30,7 +30,7 @@
 		"react-intl": "^6.5.1",
 		"react-tailwindcss-datepicker": "^1.6.6",
 		"swr": "^2.2.4",
-		"zustand": "^4.4.5"
+		"zustand": "^4.4.6"
 	},
 	"devDependencies": {
 		"@storybook/addon-essentials": "^7.5.2",
@@ -50,12 +50,12 @@
 		"@types/react": "18.2.34",
 		"@types/react-dom": "18.2.14",
 		"@types/testing-library__jest-dom": "^6.0.0",
-		"@vitejs/plugin-react": "^4.1.0",
+		"@vitejs/plugin-react": "^4.1.1",
 		"autoprefixer": "10.4.16",
 		"daisyui": "^3.9.4",
 		"jsdom": "^22.1.0",
 		"mock-socket": "^9.3.1",
-		"next-translate-plugin": "^2.6.1",
+		"next-translate-plugin": "^2.6.2",
 		"postcss": "8.4.31",
 		"sass": "^1.69.5",
 		"storybook": "^7.5.2",

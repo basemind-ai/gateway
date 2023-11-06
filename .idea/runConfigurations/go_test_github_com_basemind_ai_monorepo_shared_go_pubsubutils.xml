@@ -1,14 +1,14 @@
 <component name="ProjectRunConfigurationManager">
   <configuration
 		default="false"
-		name="go test github.com/basemind-ai/monorepo/cloud/emailsender"
+		name="go test github.com/basemind-ai/monorepo/shared/go/pubsubutils"
 		type="GoTestRunConfiguration"
 		factoryName="Go Test"
 	>
     <module name="BaseMind.AI" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />
-    <package value="github.com/basemind-ai/monorepo/cloud/emailsender" />
+    <package value="github.com/basemind-ai/monorepo/shared/go/pubsubutils" />
     <directory value="$PROJECT_DIR$" />
     <filePath value="$PROJECT_DIR$" />
     <framework value="gotest" />
