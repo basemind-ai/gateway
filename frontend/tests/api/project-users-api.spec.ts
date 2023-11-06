@@ -2,7 +2,7 @@ import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 
 import {
-	handleAddUserToProject,
+	handleAddUsersToProject,
 	handleRemoveUserFromProject,
 	handleRetrieveProjectUsers,
 	handleUpdateUserToPermission,
@@ -57,9 +57,9 @@ describe('project users API tests', () => {
 				permission: userAccount.permission,
 			};
 
-			const data = await handleAddUserToProject({
+			const data = await handleAddUsersToProject({
 				projectId: project.id,
-				data: body,
+				data: [body],
 			});
 
 			expect(data).toEqual(userAccount);

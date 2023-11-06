@@ -17,12 +17,12 @@ export async function handleRetrieveProjectUsers({
 	});
 }
 
-export async function handleAddUserToProject({
+export async function handleAddUsersToProject({
 	projectId,
 	data,
 }: {
 	projectId: string;
-	data: AddUserToProjectBody;
+	data: AddUserToProjectBody[];
 }): Promise<ProjectUserAccount> {
 	return await fetcher<ProjectUserAccount>({
 		url: `projects/${projectId}/users/`,
