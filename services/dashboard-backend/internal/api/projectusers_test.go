@@ -9,7 +9,6 @@ import (
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
-	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/pubsubutils"
@@ -137,21 +136,8 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 
 	t.Run(fmt.Sprintf("POST: %s", api.ProjectUserListEndpoint), func(t *testing.T) {
 		t.Run("sends invite emails to users", func(t *testing.T) {
-			cfg := config.Get(context.TODO())
-			testutils.CreatePubsubTestContainer(t, map[string]string{
-				"PUBSUB_PROJECT1": fmt.Sprintf(
-					"%s,%s:test-subscription",
-					cfg.GcpProjectID,
-					pubsubutils.EmailSenderPubSubTopicID,
-				),
-			})
-
-			pubSubClient := pubsubutils.GetClient(context.TODO())
-			subscription := pubSubClient.Subscription("test-subscription")
-			assert.NotNil(t, subscription)
-
-			// we have to wait because the subscription takes time to be created.
-			time.Sleep(3 * time.Second)
+			topic := pubsubutils.GetTopic(context.TODO(), pubsubutils.EmailSenderPubSubTopicID)
+			subscription := pubsubutils.GetSubscription(context.TODO(), "test-subscription", topic)
 
 			project, _ := factories.CreateProject(context.TODO())
 			projectID := db.UUIDToString(&project.ID)
@@ -169,7 +155,7 @@ func TestProjectUsersAPI(t *testing.T) { //nolint: revive
 			msgChannel := make(chan *pubsub.Message, 2)
 
 			go func() {
-				ctx, cancel := context.WithTimeout(context.TODO(), 20*time.Second)
+				ctx, cancel := context.WithTimeout(context.TODO(), 1*time.Minute)
 				defer cancel()
 
 				subErr := subscription.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {

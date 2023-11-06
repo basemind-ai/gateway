@@ -50,9 +50,9 @@ func handleSupportEmailRequest(w http.ResponseWriter, r *http.Request) {
 
 	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
 
-	publishContext, cancel := context.WithDeadline(
+	publishContext, cancel := context.WithTimeout(
 		context.Background(),
-		time.Now().Add(1*time.Minute),
+		1*time.Minute,
 	)
 
 	defer cancel()

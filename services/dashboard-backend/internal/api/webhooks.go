@@ -68,7 +68,7 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tx := exc.MustResult(db.GetOrCreateTx(r.Context()))
-	defer db.HandleRollback(r.Context(), tx)
+	// defer db.HandleRollback(r.Context(), tx)
 
 	queries := db.GetQueries().WithTx(tx)
 
@@ -88,7 +88,7 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 		Permission: permission,
 	}))
 
-	exc.LogIfErr(tx.Commit(r.Context()))
+	exc.Must(tx.Commit(r.Context()))
 
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 }

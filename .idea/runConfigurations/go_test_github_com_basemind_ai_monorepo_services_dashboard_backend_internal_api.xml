@@ -8,7 +8,6 @@
 	>
     <module name="BaseMind.AI" />
     <working_directory value="$PROJECT_DIR$" />
-    <go_parameters value="-count=1" />
     <kind value="PACKAGE" />
     <package
 			value="github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"

@@ -75,9 +75,9 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 
 	var wg sync.WaitGroup
 
-	publishContext, cancel := context.WithDeadline(
+	publishContext, cancel := context.WithTimeout(
 		context.Background(),
-		time.Now().Add(1*time.Minute),
+		1*time.Minute,
 	)
 
 	defer cancel()

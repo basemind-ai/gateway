@@ -18,8 +18,12 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	cleanup := testutils.CreateNamespaceTestDBModule("api-test")
-	defer cleanup()
+	cleanupDB := testutils.CreateNamespaceTestDBModule("api-test")
+	defer cleanupDB()
+
+	cleanupPubSub := testutils.CreatePubsubTestContainer()
+	defer cleanupPubSub()
+
 	m.Run()
 }
 

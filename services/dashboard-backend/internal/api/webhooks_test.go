@@ -6,6 +6,7 @@ import (
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
+	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -39,6 +40,7 @@ func TestWebhooksAPI(t *testing.T) {
 		}))
 
 	t.Setenv("FRONTEND_BASE_URL", frontendServer.BaseURL)
+	config.Get(context.Background()).FrontendBaseURL = frontendServer.BaseURL
 
 	createSignedURL := func(permission models.AccessPermissionType, email string, projectId string) string {
 		url := fmt.Sprintf(
