@@ -28,7 +28,7 @@ repos:
           - id: prettier
             exclude: 'go.mod|gen/ts|.idea/modules'
     - repo: https://github.com/pre-commit/mirrors-eslint
-      rev: 'v8.52.0'
+      rev: 'v8.53.0'
       hooks:
           - id: eslint
             files: \.tsx?$
@@ -36,7 +36,7 @@ repos:
             args: [--fix]
             exclude: 'gen/ts'
     - repo: https://github.com/golangci/golangci-lint
-      rev: 'v1.55.1'
+      rev: 'v1.55.2'
       hooks:
           - id: golangci-lint
             args: ['--timeout', '3m0s']

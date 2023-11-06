@@ -38,7 +38,7 @@ func TestProjectRepository(t *testing.T) {
 
 			retrievedProject, err := db.
 				GetQueries().
-				RetrieveProject(context.TODO(), models.RetrieveProjectParams{
+				RetrieveProjectForUser(context.TODO(), models.RetrieveProjectForUserParams{
 					ID:         *uuidID,
 					FirebaseID: userAccount.FirebaseID,
 				})
@@ -63,7 +63,7 @@ func TestProjectRepository(t *testing.T) {
 
 			retrievedProject, _ := db.
 				GetQueries().
-				RetrieveProject(context.TODO(), models.RetrieveProjectParams{
+				RetrieveProjectForUser(context.TODO(), models.RetrieveProjectForUserParams{
 					ID:         project.ID,
 					FirebaseID: userAccount.FirebaseID,
 				})
@@ -78,10 +78,11 @@ func TestProjectRepository(t *testing.T) {
 			err = repositories.DeleteProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().RetrieveProject(context.TODO(), models.RetrieveProjectParams{
-				ID:         project.ID,
-				FirebaseID: userAccount.FirebaseID,
-			})
+			_, err = db.GetQueries().
+				RetrieveProjectForUser(context.TODO(), models.RetrieveProjectForUserParams{
+					ID:         project.ID,
+					FirebaseID: userAccount.FirebaseID,
+				})
 			assert.Error(t, err)
 
 			_, err = db.GetQueries().RetrieveApplication(context.TODO(), application.ID)
@@ -98,7 +99,7 @@ func TestProjectRepository(t *testing.T) {
 			})
 			retrievedProject, err := db.
 				GetQueries().
-				RetrieveProject(context.TODO(), models.RetrieveProjectParams{
+				RetrieveProjectForUser(context.TODO(), models.RetrieveProjectForUserParams{
 					ID:         project.ID,
 					FirebaseID: userAccount.FirebaseID,
 				})
@@ -108,10 +109,11 @@ func TestProjectRepository(t *testing.T) {
 			err = repositories.DeleteProject(context.TODO(), project.ID)
 			assert.NoError(t, err)
 
-			_, err = db.GetQueries().RetrieveProject(context.TODO(), models.RetrieveProjectParams{
-				ID:         project.ID,
-				FirebaseID: userAccount.FirebaseID,
-			})
+			_, err = db.GetQueries().
+				RetrieveProjectForUser(context.TODO(), models.RetrieveProjectForUserParams{
+					ID:         project.ID,
+					FirebaseID: userAccount.FirebaseID,
+				})
 			assert.Error(t, err)
 		})
 	})

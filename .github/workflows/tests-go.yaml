@@ -59,6 +59,6 @@ jobs:
                   workload_identity_provider: projects/${{env.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{env.GCP_WORKLOAD_IDENTITY_POOL}}/providers/${{env.GCP_OIDC_PROVIDER_NAME}}
                   service_account: ${{env.GCP_SERVICE_ACCOUNT_NAME}}@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
             - name: Test
-              run: go test ./... -coverprofile=cover.out
+              run: go test ./... -v -p 1 -coverprofile=cover.out
             - name: Upload Coverage Report
               run: ./bin/deepsource report --analyzer test-coverage --key go --value-file ./cover.out

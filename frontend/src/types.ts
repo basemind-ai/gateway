@@ -124,9 +124,10 @@ export interface OpenAIModelParameters {
 
 // UserAccount
 
-export type AddUserToProjectBody = {
+export interface AddUserToProjectBody {
 	permission: AccessPermission;
-} & ({ userId: string } | { email: string });
+	email: string;
+}
 
 export interface UserProjectPermissionUpdateBody {
 	userId: string;

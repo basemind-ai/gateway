@@ -9,9 +9,15 @@ import (
 	"testing"
 )
 
+func TestMain(m *testing.M) {
+	cleanup := testutils.CreatePubsubTestContainer()
+	defer cleanup()
+
+	m.Run()
+}
+
 func TestPubSubUtils(t *testing.T) {
 	testutils.SetTestEnv(t)
-	testutils.CreatePubsubTestContainer(t)
 
 	t.Run("GetClient", func(t *testing.T) {
 		t.Run("creates and returns client", func(t *testing.T) {
@@ -22,21 +28,45 @@ func TestPubSubUtils(t *testing.T) {
 
 	t.Run("GetTopic", func(t *testing.T) {
 		t.Run("returns topic if it exists", func(t *testing.T) {
-			createdTopic, err := pubsubutils.GetClient(context.TODO()).
-				CreateTopic(context.TODO(), pubsubutils.EmailSenderPubSubTopicID)
-			assert.NoError(t, err)
-
-			retrievedTopic := pubsubutils.GetTopic(
+			fistTopic := pubsubutils.GetTopic(
 				context.TODO(),
-				pubsubutils.EmailSenderPubSubTopicID,
+				"topic",
 			)
-			assert.NotNil(t, retrievedTopic)
-
-			assert.Equal(t, createdTopic.ID(), retrievedTopic.ID())
+			secondTopic := pubsubutils.GetTopic(
+				context.TODO(),
+				"topic",
+			)
+			assert.Equal(t, fistTopic, secondTopic)
 		})
 		t.Run("creates and returns topic if it does not exist", func(t *testing.T) {
 			topic := pubsubutils.GetTopic(context.TODO(), "does-not-exist")
 			assert.NotNil(t, topic)
+		})
+	})
+
+	t.Run("GetSubscription", func(t *testing.T) {
+		t.Run("returns subscription if it exists", func(t *testing.T) {
+			topic := pubsubutils.GetTopic(context.TODO(), "topic")
+			firstSubscription := pubsubutils.GetSubscription(
+				context.TODO(),
+				"subscription",
+				topic,
+			)
+			secondSubscription := pubsubutils.GetSubscription(
+				context.TODO(),
+				"subscription",
+				topic,
+			)
+			assert.Equal(t, firstSubscription, secondSubscription)
+		})
+		t.Run("creates and returns subscription if it does not exist", func(t *testing.T) {
+			topic := pubsubutils.GetTopic(context.TODO(), "topic")
+			subscription := pubsubutils.GetSubscription(
+				context.TODO(),
+				"does-not-exist",
+				topic,
+			)
+			assert.NotNil(t, subscription)
 		})
 	})
 

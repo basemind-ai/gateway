@@ -57,6 +57,11 @@ func parseFirebaseToken(r *http.Request, authHeader string) (string, *apierror.A
 // FirebaseAuthMiddleware - middleware that verifies the firebase auth token and adds the user account to the context.
 func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// webhooks do not have a firebase token in place
+		if strings.Contains(r.URL.String(), "webhooks") {
+			next.ServeHTTP(w, r)
+		}
+
 		var (
 			firebaseID string
 			apiError   *apierror.APIError

@@ -14,7 +14,7 @@ describe('InviteMember', () => {
 	const projectId = '1';
 	const handleAddUserToProjectSpy = vi.spyOn(
 		ProjectUsersAPI,
-		'handleAddUserToProject',
+		'handleAddUsersToProject',
 	);
 
 	beforeEach(() => {
@@ -93,10 +93,12 @@ describe('InviteMember', () => {
 
 		expect(handleAddUserToProjectSpy).toHaveBeenCalledWith({
 			projectId,
-			data: {
-				email: validEmail,
-				permission: AccessPermission.MEMBER,
-			},
+			data: [
+				{
+					email: validEmail,
+					permission: AccessPermission.MEMBER,
+				},
+			],
 		});
 		await waitFor(() => {
 			expect(emailInput.value).toBe('');

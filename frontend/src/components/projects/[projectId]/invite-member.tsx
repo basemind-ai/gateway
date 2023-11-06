@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Envelope } from 'react-bootstrap-icons';
 
-import { handleAddUserToProject } from '@/api';
+import { handleAddUsersToProject } from '@/api';
 import { ApiError } from '@/errors';
 import { useAddProjectUser } from '@/stores/project-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
@@ -27,12 +27,14 @@ export function InviteMember({ projectId }: { projectId: string }) {
 
 		try {
 			setLoading(true);
-			const projectUser = await handleAddUserToProject({
+			const projectUser = await handleAddUsersToProject({
 				projectId,
-				data: {
-					email,
-					permission,
-				},
+				data: [
+					{
+						email,
+						permission,
+					},
+				],
 			});
 			setEmail('');
 			setPermission(AccessPermission.MEMBER);

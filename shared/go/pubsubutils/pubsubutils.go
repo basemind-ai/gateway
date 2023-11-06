@@ -46,6 +46,30 @@ func GetTopic(ctx context.Context, topicID string) *pubsub.Topic {
 	return topic
 }
 
+// GetSubscription - returns a GCP PubSub Subscription object.
+// If the subscription does not exist on the GCP server, it creates the subscription.
+// It panics for communication failures.
+func GetSubscription(
+	ctx context.Context,
+	subscriptionID string,
+	topic *pubsub.Topic,
+) *pubsub.Subscription {
+	subscription := GetClient(ctx).Subscription(subscriptionID)
+
+	exists := exc.MustResult(subscription.Exists(ctx))
+
+	if !exists {
+		return exc.MustResult(
+			GetClient(ctx).CreateSubscription(ctx, subscriptionID, pubsub.SubscriptionConfig{
+				Topic:       topic,
+				AckDeadline: 1 * time.Minute,
+			}),
+		)
+	}
+
+	return subscription
+}
+
 // PublishWithRetry - publishes a message to a GCP PubSub Topic with backoff retry.
 func PublishWithRetry(ctx context.Context, topic *pubsub.Topic, message *pubsub.Message) error {
 	publishResult := topic.Publish(ctx, message)

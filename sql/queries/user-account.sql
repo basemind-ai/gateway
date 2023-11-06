@@ -50,6 +50,17 @@ INSERT INTO user_account (
 VALUES ($1, $2, $3, $4, $5)
 RETURNING *;
 
+-- name: UpdateUserAccount :one
+UPDATE user_account
+SET
+    email = $2,
+    display_name = $3,
+    firebase_id = $4,
+    phone_number = $5,
+    photo_url = $6
+WHERE id = $1
+RETURNING *;
+
 -- name: DeleteUserAccount :exec
 DELETE FROM user_account WHERE id = $1;
 

@@ -17,21 +17,22 @@ SELECT EXISTS(
     SELECT 1
     FROM user_project AS up
     LEFT JOIN project AS p ON up.project_id = p.id
+    LEFT JOIN user_account AS ua ON up.user_id = ua.id
     WHERE
-        up.user_id = $1
+        ua.email = $1
         AND up.project_id = $2
         AND p.deleted_at IS NULL
 )
 `
 
 type CheckUserProjectExistsParams struct {
-	UserID    pgtype.UUID `json:"userId"`
+	Email     string      `json:"email"`
 	ProjectID pgtype.UUID `json:"projectId"`
 }
 
 // -- user_project
 func (q *Queries) CheckUserProjectExists(ctx context.Context, arg CheckUserProjectExistsParams) (bool, error) {
-	row := q.db.QueryRow(ctx, checkUserProjectExists, arg.UserID, arg.ProjectID)
+	row := q.db.QueryRow(ctx, checkUserProjectExists, arg.Email, arg.ProjectID)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err

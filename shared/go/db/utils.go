@@ -106,8 +106,8 @@ func CommitIfShouldCommit(ctx context.Context, tx pgx.Tx) {
 // This function must be used as a defer function.
 func HandleRollback(ctx context.Context, tx pgx.Tx) {
 	if r := recover(); r != nil { //nolint: revive
-		exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
+		_ = tx.Rollback(ctx)
 		panic(r)
 	}
-	exc.LogIfErr(tx.Rollback(ctx), "failed to rollback transaction")
+	_ = tx.Rollback(ctx)
 }

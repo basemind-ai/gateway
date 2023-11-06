@@ -17,6 +17,26 @@ func GetOrCreateUserAccount(ctx context.Context, firebaseID string) *models.User
 	}
 
 	userRecord := exc.MustResult(firebaseutils.GetFirebaseAuth(ctx).GetUser(ctx, firebaseID))
+
+	// we created a user account in advance based on an invitation, but the user does not have all the firebase data set.
+	preCreatedUser, retrievalErr := db.GetQueries().
+		RetrieveUserAccountByEmail(ctx, userRecord.Email)
+	if retrievalErr == nil {
+		updatedUser := exc.MustResult(
+			db.GetQueries().UpdateUserAccount(ctx, models.UpdateUserAccountParams{
+				DisplayName: userRecord.DisplayName,
+				Email:       userRecord.Email,
+				FirebaseID:  userRecord.UID,
+				ID:          preCreatedUser.ID,
+				PhoneNumber: userRecord.PhoneNumber,
+				PhotoUrl:    userRecord.PhotoURL,
+			}),
+		)
+
+		return &updatedUser
+	}
+
+	// no pre-created user account, hence we create a new user account from the firebase user record.
 	createdUser := exc.MustResult(
 		db.GetQueries().CreateUserAccount(ctx, models.CreateUserAccountParams{
 			DisplayName: userRecord.DisplayName,
@@ -26,7 +46,6 @@ func GetOrCreateUserAccount(ctx context.Context, firebaseID string) *models.User
 			PhotoUrl:    userRecord.PhotoURL,
 		}),
 	)
-
 	return &createdUser
 }
 

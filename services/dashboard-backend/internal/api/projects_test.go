@@ -257,7 +257,7 @@ func TestProjectsAPI(t *testing.T) {
 
 				projectUUID, _ := db.StringToUUID(projectID)
 				_, err := db.GetQueries().
-					RetrieveProject(context.TODO(), models.RetrieveProjectParams{
+					RetrieveProjectForUser(context.TODO(), models.RetrieveProjectForUserParams{
 						ID:         *projectUUID,
 						FirebaseID: userAccount.FirebaseID,
 					})

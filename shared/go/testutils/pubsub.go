@@ -6,31 +6,35 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"testing"
+	"os"
+	"runtime"
+	"time"
 )
 
 // CreatePubsubTestContainer - creates a test container for the gcloud pubsub emulator.
 // The pubsub SDK checks for the PUBSUB_EMULATOR_HOST environment variable and uses it if it exists.
 // So all that is required to execute pubsub in tests is to run this function.
-func CreatePubsubTestContainer(t *testing.T, env ...map[string]string) {
-	t.Helper()
+func CreatePubsubTestContainer() func() {
 	environment := map[string]string{}
-	if len(env) > 0 {
-		environment = env[0]
+
+	if runtime.GOOS == "darwin" {
+		environment["TESTCONTAINERS_HOST_OVERRIDE"] = "host.docker.internal"
 	}
 
-	environment["TESTCONTAINERS_HOST_OVERRIDE"] = "host.docker.internal"
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 
 	container, err := testcontainers.GenericContainer(
-		context.TODO(),
+		ctx,
 		testcontainers.GenericContainerRequest{
 			ContainerRequest: testcontainers.ContainerRequest{
 				// see: https://hub.docker.com/r/thekevjames/gcloud-pubsub-emulator
+				Name:         "gcloud-pubsub-emulator",
 				Image:        "thekevjames/gcloud-pubsub-emulator:406.0.0",
 				ExposedPorts: []string{"8681/tcp"},
 				WaitingFor:   wait.ForListeningPort("8681/tcp"),
 				Env:          environment,
 			},
+			Reuse:   true,
 			Started: true,
 		},
 	)
@@ -39,10 +43,13 @@ func CreatePubsubTestContainer(t *testing.T, env ...map[string]string) {
 		log.Fatal().Err(err).Msg("Failed to create pubsub test container")
 	}
 
-	endpoint := exc.MustResult(container.Endpoint(context.TODO(), ""))
-	t.Setenv("PUBSUB_EMULATOR_HOST", endpoint)
+	exc.LogIfErr(
+		os.Setenv("PUBSUB_EMULATOR_HOST", exc.MustResult(container.Endpoint(context.TODO(), ""))),
+	)
 
-	t.Cleanup(func() {
+	return func() {
+		cancel()
+		exc.LogIfErr(os.Unsetenv("PUBSUB_EMULATOR_HOST"))
 		exc.LogIfErr(container.Terminate(context.TODO()))
-	})
+	}
 }

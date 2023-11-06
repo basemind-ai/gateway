@@ -236,3 +236,46 @@ func (q *Queries) RetrieveUserAccountByID(ctx context.Context, id pgtype.UUID) (
 	)
 	return i, err
 }
+
+const updateUserAccount = `-- name: UpdateUserAccount :one
+UPDATE user_account
+SET
+    email = $2,
+    display_name = $3,
+    firebase_id = $4,
+    phone_number = $5,
+    photo_url = $6
+WHERE id = $1
+RETURNING id, display_name, email, firebase_id, phone_number, photo_url, created_at
+`
+
+type UpdateUserAccountParams struct {
+	ID          pgtype.UUID `json:"id"`
+	Email       string      `json:"email"`
+	DisplayName string      `json:"displayName"`
+	FirebaseID  string      `json:"firebaseId"`
+	PhoneNumber string      `json:"phoneNumber"`
+	PhotoUrl    string      `json:"photoUrl"`
+}
+
+func (q *Queries) UpdateUserAccount(ctx context.Context, arg UpdateUserAccountParams) (UserAccount, error) {
+	row := q.db.QueryRow(ctx, updateUserAccount,
+		arg.ID,
+		arg.Email,
+		arg.DisplayName,
+		arg.FirebaseID,
+		arg.PhoneNumber,
+		arg.PhotoUrl,
+	)
+	var i UserAccount
+	err := row.Scan(
+		&i.ID,
+		&i.DisplayName,
+		&i.Email,
+		&i.FirebaseID,
+		&i.PhoneNumber,
+		&i.PhotoUrl,
+		&i.CreatedAt,
+	)
+	return i, err
+}
