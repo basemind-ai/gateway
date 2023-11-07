@@ -68,7 +68,7 @@ func main() {
 	g, gCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		address := fmt.Sprintf("0.0.0.0:%d", cfg.Port)
+		address := fmt.Sprintf("0.0.0.0:%d", cfg.ServerPort)
 
 		listen, listenErr := net.Listen("tcp", address)
 		if listenErr != nil {

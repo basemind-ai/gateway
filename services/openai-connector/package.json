@@ -14,7 +14,7 @@
 		"@grpc/grpc-js": "^1.9.9",
 		"@protobuf-ts/runtime": "^2.9.1",
 		"@protobuf-ts/runtime-rpc": "^2.9.1",
-		"openai": "^4.15.4",
+		"openai": "^4.16.1",
 		"pino": "^8.16.1"
 	}
 }

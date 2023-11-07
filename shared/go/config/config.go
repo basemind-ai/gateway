@@ -15,10 +15,10 @@ type Config struct {
 	Environment      string `env:"ENVIRONMENT,default=test"`
 	FrontendBaseURL  string `env:"FRONTEND_BASE_URL,required"`
 	GcpProjectID     string `env:"GCP_PROJECT_ID,required"`
-	Host             string `env:"HOST,required"`
 	JWTSecret        string `env:"JWT_SECRET,required"`
-	Port             int    `env:"PORT,required"`
 	RedisURL         string `env:"REDIS_CONNECTION_STRING,required"`
+	ServerHost       string `env:"SERVER_HOST,required"`
+	ServerPort       int    `env:"SERVER_PORT,required"`
 	URLSigningSecret string `env:"URL_SIGNING_SECRET,required"`
 }
 

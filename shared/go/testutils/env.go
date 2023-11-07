@@ -12,10 +12,10 @@ func SetTestEnv(t *testing.T) {
 	t.Setenv("ENVIRONMENT", "development")
 	t.Setenv("FRONTEND_BASE_URL", "http://localhost:3000")
 	t.Setenv("GCP_PROJECT_ID", "basemind-ai-development")
-	t.Setenv("HOST", "localhost")
 	t.Setenv("JWT_SECRET", "ABC123")
-	t.Setenv("PORT", "3000")
 	t.Setenv("REDIS_CONNECTION_STRING", "ABC123")
+	t.Setenv("SERVER_HOST", "localhost")
+	t.Setenv("SERVER_PORT", "3000")
 	t.Setenv("URL_SIGNING_SECRET", "ABC123")
 }
 
@@ -26,8 +26,9 @@ func UnsetTestEnv(t *testing.T) {
 	_ = os.Unsetenv("FRONTEND_BASE_URL")
 	_ = os.Unsetenv("GCP_PROJECT_ID")
 	_ = os.Unsetenv("JWT_SECRET")
-	_ = os.Unsetenv("PORT")
 	_ = os.Unsetenv("REDIS_CONNECTION_STRING")
+	_ = os.Unsetenv("SERVER_HOST")
+	_ = os.Unsetenv("SERVER_PORT")
 	_ = os.Unsetenv("URL_SIGNING_SECRET")
 }
 

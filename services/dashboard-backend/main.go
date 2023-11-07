@@ -63,14 +63,14 @@ func main() {
 		ReadHeaderTimeout: 2 * time.Second,
 		ReadTimeout:       3 * time.Second,
 		WriteTimeout:      3 * time.Second,
-		Addr:              fmt.Sprintf(":%d", cfg.Port),
+		Addr:              fmt.Sprintf(":%d", cfg.ServerPort),
 		Handler:           mux,
 	}
 
 	g, gCtx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		log.Info().Msgf("server starting, listening on port %d", cfg.Port)
+		log.Info().Msgf("server starting, listening on port %d", cfg.ServerPort)
 		return srv.ListenAndServe()
 	})
 

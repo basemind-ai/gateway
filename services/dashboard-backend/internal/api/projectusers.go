@@ -67,8 +67,8 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 
 	baseURL := fmt.Sprintf(
 		"https://%s:%d/v1%s?projectId=%s",
-		cfg.Host,
-		cfg.Port,
+		cfg.ServerHost,
+		cfg.ServerPort,
 		InviteUserWebhookEndpoint,
 		db.UUIDToString(&projectID),
 	)

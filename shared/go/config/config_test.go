@@ -25,7 +25,7 @@ func TestConfig(t *testing.T) {
 		assert.Equal(t, cfg.DatabaseURL, "postgresql://basemind:basemind@db:5432/basemind")
 		assert.Equal(t, cfg.Environment, "development")
 		assert.Equal(t, cfg.JWTSecret, "ABC123")
-		assert.Equal(t, cfg.Port, 3000)
+		assert.Equal(t, cfg.ServerPort, 3000)
 		assert.Equal(t, cfg.RedisURL, "ABC123")
 	})
 }
