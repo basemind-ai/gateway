@@ -98,7 +98,6 @@ services:
             target: install
             args:
                 BUILD_TARGET: openai-connector
-                PORT: 8000
         ports:
             - '8000:8000'
         volumes:
@@ -109,7 +108,7 @@ services:
             NODE_ENV: development
             GRPC_VERBOSITY: debug
             GRPC_TRACE: channel,subchannel,call_stream
-            PORT: 8000
+            SERVER_PORT: 8000
         working_dir: /app/services/openai-connector
         command: ['pnpm', 'run', 'dev']
         env_file: '.secrets/.env.openai-connector'

@@ -18,10 +18,8 @@ RUN pnpm run build
 
 FROM base AS app
 ARG BUILD_TARGET
-ARG PORT=4000
 WORKDIR /app/
 ENV NODE_ENV=production
-ENV PORT=${PORT}
 
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 app

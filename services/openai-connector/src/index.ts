@@ -8,7 +8,7 @@ import logger from 'shared/logger';
 
 import { openAIPrompt, openAIStream } from '@/handlers';
 
-const port = process.env.PORT ?? 50_051;
+const port = process.env.SERVER_PORT ?? 50_051;
 
 const implementation = {
 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
