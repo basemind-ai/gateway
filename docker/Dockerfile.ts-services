@@ -32,4 +32,4 @@ RUN pnpm install -r --prod
 
 WORKDIR /app/services/${BUILD_TARGET}/dist
 USER app
-CMD ["index.js"]
+CMD ["node", "main.js"]

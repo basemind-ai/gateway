@@ -3,10 +3,15 @@ import {
 	IOpenAIService,
 	openAIServiceDefinition,
 } from 'gen/openai/v1/openai.grpc-server';
+import { HealthImplementation } from 'grpc-health-check';
 import { createServer } from 'shared/grpc';
 import logger from 'shared/logger';
 
 import { openAIPrompt, openAIStream } from '@/handlers';
+
+const healthImpl = new HealthImplementation({
+	'': 'SERVING',
+});
 
 const port = process.env.SERVER_PORT ?? 50_051;
 
@@ -21,6 +26,8 @@ const server = createServer({
 	service: openAIServiceDefinition,
 	implementation,
 });
+
+healthImpl.addToServer(server);
 
 server.bindAsync(
 	`0.0.0.0:${port}`,

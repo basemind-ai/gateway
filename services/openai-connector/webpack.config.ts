@@ -22,7 +22,7 @@ const config: Configuration = {
 				exclude: [
 					(issue: Issue) => {
 						return !!issue.file?.includes(
-							'/app/node_modules/.pnpm/openai',
+							'/node_modules/.pnpm/openai',
 						);
 					},
 				],

@@ -284,6 +284,9 @@ importers:
             '@protobuf-ts/runtime-rpc':
                 specifier: ^2.9.1
                 version: 2.9.1
+            grpc-health-check:
+                specifier: ^2.0.0
+                version: 2.0.0
             openai:
                 specifier: ^4.16.1
                 version: 4.16.1
@@ -6966,10 +6969,10 @@ packages:
         dependencies:
             undici-types: 5.26.5
 
-    /@types/nodemon@1.19.4:
+    /@types/nodemon@1.19.5:
         resolution:
             {
-                integrity: sha512-xWfDFY0hH9TRprHD1N0/Lp0dkze/vahRxLMN3cgW+PGnmtSzMXaNlTeWmSmlvefXFv5L0spheNZ0XEFB/O9ttQ==,
+                integrity: sha512-jUKYdrnwLp4jMztMdQEJnF4lBhthCfqE7P6cYCIy0txMJrSFtKqs2HjmyEsyQueLjZjve0IjJ1S+20DtgJpUjA==,
             }
         dependencies:
             '@types/node': 20.8.10
@@ -12395,6 +12398,16 @@ packages:
             }
         dev: true
 
+    /grpc-health-check@2.0.0:
+        resolution:
+            {
+                integrity: sha512-VzfzZzFg03qG5nJGeZaCjm9r6Fj3Lgosnlk8bSRg6diMXNVQ7K778mIQVnfax1VVO+NFth1mjQWLV2iJHMpf5A==,
+            }
+        dependencies:
+            '@grpc/proto-loader': 0.7.10
+            typescript: 5.2.2
+        dev: false
+
     /gunzip-maybe@1.4.2:
         resolution:
             {
@@ -13643,7 +13656,7 @@ packages:
             }
         engines: { node: '>= 10.13.0' }
         dependencies:
-            '@types/node': 18.18.8
+            '@types/node': 20.8.10
             merge-stream: 2.0.0
             supports-color: 8.1.1
         dev: true
@@ -15045,7 +15058,7 @@ packages:
         peerDependencies:
             webpack: 4 || 5
         dependencies:
-            '@types/nodemon': 1.19.4
+            '@types/nodemon': 1.19.5
             nodemon: 3.0.1
             webpack: 5.89.0(webpack-cli@5.1.4)
         dev: true

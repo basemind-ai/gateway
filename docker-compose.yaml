@@ -95,7 +95,7 @@ services:
         build:
             dockerfile: docker/Dockerfile.ts-services
             context: .
-            target: install
+            # target: install
             args:
                 BUILD_TARGET: openai-connector
         ports:
@@ -110,7 +110,7 @@ services:
             GRPC_TRACE: channel,subchannel,call_stream
             SERVER_PORT: 8000
         working_dir: /app/services/openai-connector
-        command: ['pnpm', 'run', 'dev']
+        command: ['node', 'run', 'dev']
         env_file: '.secrets/.env.openai-connector'
     frontend:
         build:
