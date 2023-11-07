@@ -86,7 +86,7 @@ export function createOpenAIRequest(
 				content: content ?? null,
 				role: getOpenAIMessageRole(role),
 				...rest,
-			} satisfies ChatCompletionMessageParam;
+			} as ChatCompletionMessageParam;
 		}),
 	};
 }
