@@ -55,7 +55,7 @@ jobs:
             - name: Build and push
               uses: docker/build-push-action@v5
               with:
-                  push: ${{github.event_name == 'push' && startsWith(github.ref, 'refs/tags')}}
+                  push: true
                   context: .
                   file: ${{matrix.file_path}}
                   build-args: |
