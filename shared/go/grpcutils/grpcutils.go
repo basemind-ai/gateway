@@ -3,6 +3,8 @@ package grpcutils
 import (
 	"context"
 	"fmt"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"runtime/debug"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
@@ -102,6 +104,9 @@ func CreateGRPCServer(opts Options, serverOpts ...grpc.ServerOption) *grpc.Serve
 	for _, registrar := range opts.ServiceRegistrars {
 		registrar(server)
 	}
+
+	// enable the health check protocol
+	grpc_health_v1.RegisterHealthServer(server, health.NewServer())
 
 	return server
 }

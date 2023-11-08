@@ -65,7 +65,7 @@ func TestSupportAPI(t *testing.T) {
 			// assert.Equal(t, emailSenderData.FromName, userAccount.DisplayName)
 			// assert.Equal(t, emailSenderData.FromAddress, userAccount.Email)
 			// assert.Equal(t, emailSenderData.ToName, "Basemind Support")
-			//assert.Equal(t, emailSenderData.ToAddress, api.SupportEmailAddress)
+			// assert.Equal(t, emailSenderData.ToAddress, api.SupportEmailAddress)
 			//assert.Equal(t, emailSenderData.TemplateID, api.SupportEmailTemplateID)
 			//assert.Equal(t, emailSenderData.TemplateVariables["body"], supportRequestBody.EmailBody)
 			//assert.Equal(t, emailSenderData.TemplateVariables["email"], userAccount.Email)
