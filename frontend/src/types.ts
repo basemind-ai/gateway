@@ -67,12 +67,8 @@ export interface PromptConfig<P = any, M = any> {
 
 export type PromptConfigCreateBody<P = any, M = any> = Pick<
 	PromptConfig<P, M>,
-	| 'name'
-	| 'modelParameters'
-	| 'modelType'
-	| 'modelVendor'
-	| 'providerPromptMessages'
->;
+	'name' | 'modelParameters' | 'modelType' | 'modelVendor'
+> & { promptMessages: M[] };
 
 export type PromptConfigUpdateBody = Partial<PromptConfigCreateBody>;
 

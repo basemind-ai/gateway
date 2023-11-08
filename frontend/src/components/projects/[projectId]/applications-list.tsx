@@ -10,9 +10,9 @@ import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import {
 	useApplications,
-	usePromptConfig,
+	usePromptConfigs,
 	useSetProjectApplications,
-	useSetPromptConfig,
+	useSetPromptConfigs,
 } from '@/stores/project-store';
 import { useShowError } from '@/stores/toast-store';
 import { populateApplicationId, populateProjectId } from '@/utils/navigation';
@@ -22,8 +22,8 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 	const applications = useApplications(projectId);
 	const setProjectApplications = useSetProjectApplications();
 
-	const promptConfigs = usePromptConfig();
-	const setPromptConfig = useSetPromptConfig();
+	const promptConfigs = usePromptConfigs();
+	const setPromptConfig = useSetPromptConfigs();
 
 	const dialogRef = useRef<HTMLDialogElement>(null);
 

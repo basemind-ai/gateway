@@ -30,6 +30,26 @@ describe('ApplicationPage', () => {
 		HTMLDialogElement.prototype.close = vi.fn();
 	});
 
+	it('returns null when application is not present', () => {
+		const {
+			result: { current: setProjects },
+		} = renderHook(useSetProjects);
+		const projects = ProjectFactory.batchSync(1);
+		setProjects(projects);
+
+		render(
+			<ApplicationPage
+				params={{
+					projectId: projects[0].id,
+					applicationId: '1',
+				}}
+			/>,
+		);
+
+		const pageContainer = screen.queryByTestId('application-page');
+		expect(pageContainer).not.toBeInTheDocument();
+	});
+
 	it('renders all 3 screens in tab navigation', async () => {
 		const {
 			result: { current: setProjects },

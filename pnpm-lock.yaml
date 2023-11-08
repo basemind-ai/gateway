@@ -184,6 +184,9 @@ importers:
             swr:
                 specifier: ^2.2.4
                 version: 2.2.4(react@18.2.0)
+            unique-names-generator:
+                specifier: ^4.7.1
+                version: 4.7.1
             zustand:
                 specifier: ^4.4.6
                 version: 4.4.6(@types/react@18.2.37)(react@18.2.0)
@@ -19225,6 +19228,14 @@ packages:
             }
         engines: { node: '>=4' }
         dev: true
+
+    /unique-names-generator@4.7.1:
+        resolution:
+            {
+                integrity: sha512-lMx9dX+KRmG8sq6gulYYpKWZc9RlGsgBR6aoO8Qsm3qvkSJ+3rAymr+TnV8EDMrIrwuFJ4kruzMWM/OpYzPoow==,
+            }
+        engines: { node: '>=8' }
+        dev: false
 
     /unique-string@2.0.0:
         resolution:

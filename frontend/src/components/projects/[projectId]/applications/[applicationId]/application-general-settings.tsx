@@ -11,8 +11,8 @@ import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
 import {
 	useApplication,
-	usePromptConfig,
-	useSetPromptConfig,
+	usePromptConfigs,
+	useSetPromptConfigs,
 	useUpdateApplication,
 } from '@/stores/project-store';
 import { useShowError } from '@/stores/toast-store';
@@ -41,8 +41,8 @@ export function ApplicationGeneralSettings({
 	const [defaultPromptConfig, setDefaultPromptConfig] = useState<
 		string | undefined
 	>();
-	const setPromptConfig = useSetPromptConfig();
-	const promptConfigs = usePromptConfig();
+	const setPromptConfig = useSetPromptConfigs();
+	const promptConfigs = usePromptConfigs();
 
 	const isChanged =
 		name !== application?.name ||

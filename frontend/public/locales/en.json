@@ -172,6 +172,21 @@
 		"promptHeader": "Prompt Testing",
 		"savedPromptConfig": "Saved Templates"
 	},
+	"promptConfig": {
+		"apiCalls": "API Calls",
+		"clone": "Clone",
+		"configCloned": "Successfully cloned",
+		"general": "General",
+		"id": "ID",
+		"modelConfiguration": "Model Configuration",
+		"modelsCost": "Models Cost",
+		"name": "Name",
+		"noOfVariables": "Number of variables",
+		"overview": "Overview",
+		"partOfApplication": "Part of application",
+		"status": "Status",
+		"test": "Test"
+	},
 	"signin": {
 		"authHeader": "Welcome to",
 		"authSubtitle": "Integrate in minutes, scale to millions",

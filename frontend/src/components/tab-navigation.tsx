@@ -20,7 +20,7 @@ export function TabNavigation<T = string>({
 	trailingLine,
 }: TabNavigationProps<T>) {
 	return (
-		<div className="tabs">
+		<nav className="tabs">
 			{tabs.map((tab) => (
 				<button
 					data-testid="tab-navigation-btn"
@@ -41,6 +41,6 @@ export function TabNavigation<T = string>({
 			{trailingLine && (
 				<div className="tab tab-bordered flex-1 cursor-default min-w-0 border-neutral"></div>
 			)}
-		</div>
+		</nav>
 	);
 }

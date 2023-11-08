@@ -1,12 +1,15 @@
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Front, PencilFill, Plus, Search } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
+import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { usePromptConfig, useSetPromptConfig } from '@/stores/project-store';
+import { usePromptConfigs, useSetPromptConfigs } from '@/stores/project-store';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { copyToClipboard } from '@/utils/helpers';
+import { populateLink } from '@/utils/navigation';
 
 export function ApplicationPromptConfigs({
 	projectId,
@@ -16,8 +19,10 @@ export function ApplicationPromptConfigs({
 	applicationId: string;
 }) {
 	const t = useTranslations('application');
-	const setPromptConfig = useSetPromptConfig();
-	const promptConfigs = usePromptConfig();
+	const router = useRouter();
+
+	const setPromptConfig = useSetPromptConfigs();
+	const promptConfigs = usePromptConfigs();
 
 	const showError = useShowError();
 	const showSuccess = useShowSuccess();
@@ -37,6 +42,17 @@ export function ApplicationPromptConfigs({
 			},
 		},
 	);
+
+	function editPrompt(promptId: string) {
+		router.push(
+			populateLink(
+				Navigation.Prompts,
+				projectId,
+				applicationId,
+				promptId,
+			),
+		);
+	}
 
 	function renderPromptConfigs() {
 		if (isLoading) {
@@ -83,7 +99,12 @@ export function ApplicationPromptConfigs({
 									</button>
 								</td>
 								<td>
-									<button>
+									<button
+										data-testid="application-edit-prompt-button"
+										onClick={() => {
+											editPrompt(id);
+										}}
+									>
 										<PencilFill className="w-3.5 h-3.5 text-secondary" />
 									</button>
 								</td>
