@@ -1555,7 +1555,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.Equal(
 				t,
 				promptReqAnalytics.TotalAPICalls,
-				responseAnalytics.TokenCost,
+				responseAnalytics.TotalAPICalls,
 			)
 			assert.Equal(t, promptReqAnalytics.TokenCost, responseAnalytics.TokenCost)
 		})

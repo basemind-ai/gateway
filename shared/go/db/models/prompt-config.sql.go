@@ -12,11 +12,14 @@ import (
 )
 
 const checkDefaultPromptConfigExists = `-- name: CheckDefaultPromptConfigExists :one
-SELECT EXISTS(SELECT 1
-              FROM prompt_config
-              WHERE application_id = $1
-                AND deleted_at IS NULL
-                AND is_default = TRUE)
+SELECT EXISTS(
+    SELECT 1
+    FROM prompt_config
+    WHERE
+        application_id = $1
+        AND deleted_at IS NULL
+        AND is_default = TRUE
+)
 `
 
 func (q *Queries) CheckDefaultPromptConfigExists(ctx context.Context, applicationID pgtype.UUID) (bool, error) {
@@ -28,15 +31,17 @@ func (q *Queries) CheckDefaultPromptConfigExists(ctx context.Context, applicatio
 
 const createPromptConfig = `-- name: CreatePromptConfig :one
 
-INSERT INTO prompt_config (name,
-                           model_parameters,
-                           model_type,
-                           model_vendor,
-                           provider_prompt_messages,
-                           expected_template_variables,
-                           is_default,
-                           application_id,
-                           is_test_config)
+INSERT INTO prompt_config (
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    provider_prompt_messages,
+    expected_template_variables,
+    is_default,
+    application_id,
+    is_test_config
+)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, is_test_config, created_at, updated_at, deleted_at, application_id
 `
@@ -97,22 +102,24 @@ func (q *Queries) DeletePromptConfig(ctx context.Context, id pgtype.UUID) error 
 }
 
 const retrieveDefaultPromptConfig = `-- name: RetrieveDefaultPromptConfig :one
-SELECT id,
-       name,
-       model_parameters,
-       model_type,
-       model_vendor,
-       provider_prompt_messages,
-       expected_template_variables,
-       is_default,
-       created_at,
-       updated_at,
-       application_id
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    provider_prompt_messages,
+    expected_template_variables,
+    is_default,
+    created_at,
+    updated_at,
+    application_id
 FROM prompt_config
-WHERE application_id = $1
-  AND deleted_at IS NULL
-  AND is_default = TRUE
-  AND is_test_config = FALSE
+WHERE
+    application_id = $1
+    AND deleted_at IS NULL
+    AND is_default = TRUE
+    AND is_test_config = FALSE
 `
 
 type RetrieveDefaultPromptConfigRow struct {
@@ -149,21 +156,23 @@ func (q *Queries) RetrieveDefaultPromptConfig(ctx context.Context, applicationID
 }
 
 const retrievePromptConfig = `-- name: RetrievePromptConfig :one
-SELECT id,
-       name,
-       model_parameters,
-       model_type,
-       model_vendor,
-       provider_prompt_messages,
-       expected_template_variables,
-       is_default,
-       created_at,
-       updated_at,
-       application_id,
-       is_test_config
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    provider_prompt_messages,
+    expected_template_variables,
+    is_default,
+    created_at,
+    updated_at,
+    application_id,
+    is_test_config
 FROM prompt_config
-WHERE id = $1
-  AND deleted_at IS NULL
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 `
 
 type RetrievePromptConfigRow struct {
@@ -204,9 +213,10 @@ func (q *Queries) RetrievePromptConfig(ctx context.Context, id pgtype.UUID) (Ret
 const retrievePromptConfigAPIRequestCount = `-- name: RetrievePromptConfigAPIRequestCount :one
 SELECT COUNT(prr.id) AS total_requests
 FROM prompt_config AS pc
-         LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
-WHERE pc.id = $1
-  AND prr.created_at BETWEEN $2 AND $3
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE
+    pc.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
 `
 
 type RetrievePromptConfigAPIRequestCountParams struct {
@@ -223,11 +233,12 @@ func (q *Queries) RetrievePromptConfigAPIRequestCount(ctx context.Context, arg R
 }
 
 const retrievePromptConfigTokensTotalCost = `-- name: RetrievePromptConfigTokensTotalCost :one
-SELECT (SUM(prr.request_tokens_cost + prr.response_tokens_cost))
+SELECT COALESCE(SUM(prr.request_tokens_cost + prr.response_tokens_cost), 0)
 FROM prompt_config AS pc
-         LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
-WHERE pc.id = $1
-  AND prr.created_at BETWEEN $2 AND $3
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE
+    pc.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
 `
 
 type RetrievePromptConfigTokensTotalCostParams struct {
@@ -238,27 +249,29 @@ type RetrievePromptConfigTokensTotalCostParams struct {
 
 func (q *Queries) RetrievePromptConfigTokensTotalCost(ctx context.Context, arg RetrievePromptConfigTokensTotalCostParams) (pgtype.Numeric, error) {
 	row := q.db.QueryRow(ctx, retrievePromptConfigTokensTotalCost, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
-	var sum pgtype.Numeric
-	err := row.Scan(&sum)
-	return sum, err
+	var coalesce pgtype.Numeric
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
 const retrievePromptConfigs = `-- name: RetrievePromptConfigs :many
-SELECT id,
-       name,
-       model_parameters,
-       model_type,
-       model_vendor,
-       provider_prompt_messages,
-       expected_template_variables,
-       is_default,
-       created_at,
-       updated_at,
-       application_id
+SELECT
+    id,
+    name,
+    model_parameters,
+    model_type,
+    model_vendor,
+    provider_prompt_messages,
+    expected_template_variables,
+    is_default,
+    created_at,
+    updated_at,
+    application_id
 FROM prompt_config
-WHERE application_id = $1
-  AND deleted_at IS NULL
-  AND is_test_config = FALSE
+WHERE
+    application_id = $1
+    AND deleted_at IS NULL
+    AND is_test_config = FALSE
 `
 
 type RetrievePromptConfigsRow struct {
@@ -309,11 +322,13 @@ func (q *Queries) RetrievePromptConfigs(ctx context.Context, applicationID pgtyp
 
 const updateDefaultPromptConfig = `-- name: UpdateDefaultPromptConfig :exec
 UPDATE prompt_config
-SET is_default = $2,
+SET
+    is_default = $2,
     updated_at = NOW()
-WHERE id = $1
-  AND deleted_at IS NULL
-  AND is_test_config = FALSE
+WHERE
+    id = $1
+    AND deleted_at IS NULL
+    AND is_test_config = FALSE
 `
 
 type UpdateDefaultPromptConfigParams struct {
@@ -328,16 +343,18 @@ func (q *Queries) UpdateDefaultPromptConfig(ctx context.Context, arg UpdateDefau
 
 const updatePromptConfig = `-- name: UpdatePromptConfig :one
 UPDATE prompt_config
-SET name                        = $2,
-    model_parameters            = $3,
-    model_type                  = $4,
-    model_vendor                = $5,
-    provider_prompt_messages    = $6,
+SET
+    name = $2,
+    model_parameters = $3,
+    model_type = $4,
+    model_vendor = $5,
+    provider_prompt_messages = $6,
     expected_template_variables = $7,
-    is_test_config              = $8,
-    updated_at                  = NOW()
-WHERE id = $1
-  AND deleted_at IS NULL
+    is_test_config = $8,
+    updated_at = NOW()
+WHERE
+    id = $1
+    AND deleted_at IS NULL
 RETURNING id, name, model_parameters, model_type, model_vendor, provider_prompt_messages, expected_template_variables, is_default, is_test_config, created_at, updated_at, deleted_at, application_id
 `
 

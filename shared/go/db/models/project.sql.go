@@ -148,13 +148,14 @@ func (q *Queries) RetrieveProjectForUser(ctx context.Context, arg RetrieveProjec
 }
 
 const retrieveProjectTokensTotalCost = `-- name: RetrieveProjectTokensTotalCost :one
-SELECT (SUM(prr.request_tokens_cost + prr.response_tokens_cost))
+SELECT COALESCE(SUM(prr.request_tokens_cost + prr.response_tokens_cost), 0)
 FROM project AS p
-         INNER JOIN application AS app ON p.id = app.project_id
-         LEFT JOIN prompt_config AS pc ON app.id = pc.application_id
-         LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
-WHERE p.id = $1
-  AND prr.created_at BETWEEN $2 AND $3
+INNER JOIN application AS app ON p.id = app.project_id
+LEFT JOIN prompt_config AS pc ON app.id = pc.application_id
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE
+    p.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
 `
 
 type RetrieveProjectTokensTotalCostParams struct {
@@ -165,9 +166,9 @@ type RetrieveProjectTokensTotalCostParams struct {
 
 func (q *Queries) RetrieveProjectTokensTotalCost(ctx context.Context, arg RetrieveProjectTokensTotalCostParams) (pgtype.Numeric, error) {
 	row := q.db.QueryRow(ctx, retrieveProjectTokensTotalCost, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
-	var sum pgtype.Numeric
-	err := row.Scan(&sum)
-	return sum, err
+	var coalesce pgtype.Numeric
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
 const retrieveProjects = `-- name: RetrieveProjects :many

@@ -30,6 +30,12 @@ func (PromptTestingServer) TestPrompt(
 		return fmt.Errorf("failed to parse prompt config ID: %w", promptConfigIDParseErr)
 	}
 
+	modelPricing := RetrieveProviderModelPricing(
+		streamServer.Context(),
+		models.ModelType(request.ModelType),
+		models.ModelVendor(request.ModelVendor),
+	)
+
 	requestConfigurationDTO := &dto.RequestConfigurationDTO{
 		ApplicationID:  *applicationID,
 		PromptConfigID: *promptConfigID,
@@ -41,6 +47,7 @@ func (PromptTestingServer) TestPrompt(
 			ProviderPromptMessages:    request.ProviderPromptMessages,
 			ExpectedTemplateVariables: request.ExpectedTemplateVariables,
 		},
+		ProviderModelPricing: modelPricing,
 	}
 
 	go connectors.GetProviderConnector(models.ModelVendor(request.ModelVendor)).

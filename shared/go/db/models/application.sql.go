@@ -116,12 +116,13 @@ func (q *Queries) RetrieveApplicationAPIRequestCount(ctx context.Context, arg Re
 }
 
 const retrieveApplicationTokensTotalCost = `-- name: RetrieveApplicationTokensTotalCost :one
-SELECT (SUM(prr.request_tokens_cost + prr.response_tokens_cost))
+SELECT COALESCE(SUM(prr.request_tokens_cost + prr.response_tokens_cost), 0)
 FROM application AS app
 LEFT JOIN prompt_config AS pc ON app.id = pc.application_id
 LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
-WHERE app.id = $1
-  AND prr.created_at BETWEEN $2 AND $3
+WHERE
+    app.id = $1
+    AND prr.created_at BETWEEN $2 AND $3
 `
 
 type RetrieveApplicationTokensTotalCostParams struct {
@@ -132,9 +133,9 @@ type RetrieveApplicationTokensTotalCostParams struct {
 
 func (q *Queries) RetrieveApplicationTokensTotalCost(ctx context.Context, arg RetrieveApplicationTokensTotalCostParams) (pgtype.Numeric, error) {
 	row := q.db.QueryRow(ctx, retrieveApplicationTokensTotalCost, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
-	var sum pgtype.Numeric
-	err := row.Scan(&sum)
-	return sum, err
+	var coalesce pgtype.Numeric
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
 const retrieveApplications = `-- name: RetrieveApplications :many

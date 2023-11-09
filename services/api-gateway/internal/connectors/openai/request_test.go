@@ -5,6 +5,7 @@ import (
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/stretchr/testify/assert"
@@ -12,6 +13,7 @@ import (
 )
 
 func TestRequestPrompt(t *testing.T) {
+	_ = factories.CreateProviderPricingModels(context.TODO())
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
@@ -21,6 +23,12 @@ func TestRequestPrompt(t *testing.T) {
 	)
 
 	applicationID := db.UUIDToString(&application.ID)
+
+	modelPricing := services.RetrieveProviderModelPricing(
+		context.TODO(),
+		promptConfig.ModelType,
+		promptConfig.ModelVendor,
+	)
 
 	requestConfigurationDTO := &dto.RequestConfigurationDTO{
 		ApplicationID:  application.ID,
@@ -37,6 +45,7 @@ func TestRequestPrompt(t *testing.T) {
 			CreatedAt:                 promptConfig.CreatedAt.Time,
 			UpdatedAt:                 promptConfig.UpdatedAt.Time,
 		},
+		ProviderModelPricing: modelPricing,
 	}
 
 	templateVariables := map[string]string{"userInput": "abc"}
