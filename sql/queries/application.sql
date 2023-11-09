@@ -60,14 +60,11 @@ WHERE
     a.id = $1
     AND prr.created_at BETWEEN $2 AND $3;
 
--- name: RetrieveApplicationTokensCount :many
-SELECT
-    pc.model_type,
-    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
-FROM application AS a
-INNER JOIN prompt_config AS pc ON a.id = pc.application_id
-INNER JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+-- name: RetrieveApplicationTokensTotalCost :one
+SELECT (SUM(prr.request_tokens_cost + prr.response_tokens_cost))
+FROM application AS app
+LEFT JOIN prompt_config AS pc ON app.id = pc.application_id
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
 WHERE
-    a.id = $1
-    AND prr.created_at BETWEEN $2 AND $3
-GROUP BY pc.model_type;
+    app.id = $1
+    AND prr.created_at BETWEEN $2 AND $3;

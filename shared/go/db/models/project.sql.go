@@ -147,49 +147,27 @@ func (q *Queries) RetrieveProjectForUser(ctx context.Context, arg RetrieveProjec
 	return i, err
 }
 
-const retrieveProjectTokensCount = `-- name: RetrieveProjectTokensCount :many
-SELECT
-    pc.model_type,
-    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
+const retrieveProjectTokensTotalCost = `-- name: RetrieveProjectTokensTotalCost :one
+SELECT (SUM(prr.request_tokens_cost + prr.response_tokens_cost))
 FROM project AS p
-INNER JOIN application AS a ON p.id = a.project_id
-INNER JOIN prompt_config AS pc ON a.id = pc.application_id
-INNER JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
-WHERE
-    p.id = $1
-    AND prr.created_at BETWEEN $2 AND $3
-GROUP BY pc.model_type
+         INNER JOIN application AS app ON p.id = app.project_id
+         LEFT JOIN prompt_config AS pc ON app.id = pc.application_id
+         LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+WHERE p.id = $1
+  AND prr.created_at BETWEEN $2 AND $3
 `
 
-type RetrieveProjectTokensCountParams struct {
+type RetrieveProjectTokensTotalCostParams struct {
 	ID          pgtype.UUID        `json:"id"`
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
 }
 
-type RetrieveProjectTokensCountRow struct {
-	ModelType   ModelType `json:"modelType"`
-	TotalTokens int64     `json:"totalTokens"`
-}
-
-func (q *Queries) RetrieveProjectTokensCount(ctx context.Context, arg RetrieveProjectTokensCountParams) ([]RetrieveProjectTokensCountRow, error) {
-	rows, err := q.db.Query(ctx, retrieveProjectTokensCount, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []RetrieveProjectTokensCountRow
-	for rows.Next() {
-		var i RetrieveProjectTokensCountRow
-		if err := rows.Scan(&i.ModelType, &i.TotalTokens); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) RetrieveProjectTokensTotalCost(ctx context.Context, arg RetrieveProjectTokensTotalCostParams) (pgtype.Numeric, error) {
+	row := q.db.QueryRow(ctx, retrieveProjectTokensTotalCost, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
+	var sum pgtype.Numeric
+	err := row.Scan(&sum)
+	return sum, err
 }
 
 const retrieveProjects = `-- name: RetrieveProjects :many
