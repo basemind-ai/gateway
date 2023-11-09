@@ -33,6 +33,7 @@ type PromptConfigDTO struct { // skipcq: TCV-001
 
 // ProviderModelPricingDTO is a data type used to encapsulate the pricing information for a model / type.
 type ProviderModelPricingDTO struct { // skipcq: TCV-001
+	ID               string          `json:"id"`
 	InputTokenPrice  decimal.Decimal `json:"inputTokenPrice"`
 	OutputTokenPrice decimal.Decimal `json:"outputTokenPrice"`
 	TokenUnitSize    int32           `json:"tokenUnitSize"`
