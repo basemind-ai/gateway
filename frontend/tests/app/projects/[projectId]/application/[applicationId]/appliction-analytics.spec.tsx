@@ -4,6 +4,7 @@ import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
 import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
+import { AnalyticsDTO } from '@/types';
 
 describe('ApplicationAnalytics', () => {
 	const projectId = '1';
@@ -23,8 +24,8 @@ describe('ApplicationAnalytics', () => {
 		} = renderHook(() => useTranslations('application'));
 		const analytics = {
 			totalRequests: 434,
-			projectedCost: 3,
-		};
+			tokensCost: 3,
+		} satisfies AnalyticsDTO;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(analytics);
 
 		await waitFor(() =>
@@ -43,7 +44,7 @@ describe('ApplicationAnalytics', () => {
 		);
 
 		expect(apiCalls.innerHTML).toBe(analytics.totalRequests.toString());
-		expect(modelsCost.innerHTML).toBe(`${analytics.projectedCost}$`);
+		expect(modelsCost.innerHTML).toBe(`${analytics.tokensCost}$`);
 	});
 
 	it('renders updated analytics on date change', async () => {
@@ -52,8 +53,8 @@ describe('ApplicationAnalytics', () => {
 		} = renderHook(() => useTranslations('application'));
 		const initialAnalytics = {
 			totalRequests: 434,
-			projectedCost: 3,
-		};
+			tokensCost: 3,
+		} satisfies AnalyticsDTO;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
 		await waitFor(() =>
@@ -71,8 +72,8 @@ describe('ApplicationAnalytics', () => {
 
 		const updatedAnalytics = {
 			totalRequests: 474,
-			projectedCost: 4,
-		};
+			tokensCost: 4,
+		} satisfies AnalyticsDTO;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(updatedAnalytics);
 
 		const datePicker = screen.getByTestId('datepicker');

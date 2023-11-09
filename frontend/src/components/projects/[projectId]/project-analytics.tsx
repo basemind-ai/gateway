@@ -55,7 +55,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}
-					totalValue={analytics?.totalAPICalls ?? ''}
+					totalValue={analytics?.totalRequests ?? ''}
 					percentage={'100'}
 					currentValue={'324'}
 					loading={isLoading}
@@ -64,7 +64,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 				<DataCard
 					imageSrc={<Cash className="text-secondary w-6 h-6" />}
 					metric={t('modelsCost')}
-					totalValue={`${analytics?.modelsCost ?? ''}$`}
+					totalValue={`${analytics?.tokensCost ?? ''}$`}
 					percentage={'103'}
 					currentValue={'3.3'}
 					loading={isLoading}

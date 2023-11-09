@@ -9,7 +9,7 @@ import {
 	handleUpdateProject,
 } from '@/api';
 import { HttpMethod } from '@/constants';
-import { ProjectAnalytics } from '@/types';
+import { AnalyticsDTO } from '@/types';
 
 describe('projects API tests', () => {
 	describe('handleCreateProject', () => {
@@ -130,9 +130,9 @@ describe('projects API tests', () => {
 		it('returns an application analytics', async () => {
 			const project = await ProjectFactory.build();
 			const projectAnalytics = {
-				modelsCost: 10,
-				totalAPICalls: 1000,
-			} satisfies ProjectAnalytics;
+				tokensCost: 10,
+				totalRequests: 1000,
+			} satisfies AnalyticsDTO;
 
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
@@ -160,9 +160,9 @@ describe('projects API tests', () => {
 		it('returns application analytics for a given date range', async () => {
 			const project = await ProjectFactory.build();
 			const projectAnalytics = {
-				modelsCost: 10,
-				totalAPICalls: 1000,
-			} satisfies ProjectAnalytics;
+				tokensCost: 10,
+				totalRequests: 1000,
+			} satisfies AnalyticsDTO;
 
 			const fromDate = '2023-09-30T15:34:09.136Z';
 			const toDate = '2023-10-02T15:34:09.136Z';

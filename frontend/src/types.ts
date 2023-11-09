@@ -16,6 +16,13 @@ export enum AccessPermission {
 	MEMBER = 'MEMBER',
 }
 
+// Analytics
+
+export interface AnalyticsDTO {
+	totalRequests: number;
+	tokensCost: number;
+}
+
 // Project
 
 export interface Project {
@@ -25,11 +32,6 @@ export interface Project {
 	createdAt: string;
 	updatedAt: string;
 	permission: AccessPermission;
-}
-
-export interface ProjectAnalytics {
-	totalAPICalls: number;
-	modelsCost: number;
 }
 
 export type ProjectCreateBody = Pick<Project, 'name' | 'description'>;
@@ -43,11 +45,6 @@ export interface Application {
 	description?: string;
 	createdAt: string;
 	updatedAt: string;
-}
-
-export interface ApplicationAnalytics {
-	totalRequests: number;
-	projectedCost: number;
 }
 
 export type ApplicationCreateBody = Pick<Application, 'name' | 'description'>;
@@ -66,11 +63,6 @@ export interface PromptConfig<P = any, M = any> {
 	isDefault: boolean;
 	createdAt: string;
 	updatedAt: string;
-}
-
-export interface PromptConfigAnalytics {
-	totalPromptRequests: number;
-	modelsCost: number;
 }
 
 export type PromptConfigCreateBody<P = any, M = any> = Pick<

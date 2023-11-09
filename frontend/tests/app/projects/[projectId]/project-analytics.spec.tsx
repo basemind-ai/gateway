@@ -4,6 +4,7 @@ import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
+import { AnalyticsDTO } from '@/types';
 
 describe('ProjectAnalytics', () => {
 	const projectId = '1';
@@ -21,9 +22,9 @@ describe('ProjectAnalytics', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('projectOverview'));
 		const analytics = {
-			totalAPICalls: 4374,
-			modelsCost: 35,
-		};
+			totalRequests: 4374,
+			tokensCost: 35,
+		} satisfies AnalyticsDTO;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(analytics);
 
 		await waitFor(() => render(<ProjectAnalytics projectId={projectId} />));
@@ -35,8 +36,8 @@ describe('ProjectAnalytics', () => {
 			`data-card-total-value-${t('modelsCost')}`,
 		);
 
-		expect(apiCalls.innerHTML).toBe(analytics.totalAPICalls.toString());
-		expect(modelsCost.innerHTML).toBe(`${analytics.modelsCost}$`);
+		expect(apiCalls.innerHTML).toBe(analytics.totalRequests.toString());
+		expect(modelsCost.innerHTML).toBe(`${analytics.tokensCost}$`);
 	});
 
 	it('renders updated analytics on date change', async () => {
@@ -44,9 +45,9 @@ describe('ProjectAnalytics', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('projectOverview'));
 		const initialAnalytics = {
-			totalAPICalls: 434,
-			modelsCost: 3,
-		};
+			totalRequests: 434,
+			tokensCost: 3,
+		} satisfies AnalyticsDTO;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
 		await waitFor(() => render(<ProjectAnalytics projectId={projectId} />));
@@ -55,13 +56,13 @@ describe('ProjectAnalytics', () => {
 			`data-card-total-value-${t('apiCalls')}`,
 		);
 		expect(apiCalls.innerHTML).toBe(
-			initialAnalytics.totalAPICalls.toString(),
+			initialAnalytics.totalRequests.toString(),
 		);
 
 		const updatedAnalytics = {
-			totalAPICalls: 474,
-			modelsCost: 5.2,
-		};
+			totalRequests: 474,
+			tokensCost: 5.2,
+		} satisfies AnalyticsDTO;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(updatedAnalytics);
 
 		const datePicker = screen.getByTestId('datepicker');
@@ -71,7 +72,7 @@ describe('ProjectAnalytics', () => {
 
 		await waitFor(() => {
 			expect(apiCalls.innerHTML).toBe(
-				updatedAnalytics.totalAPICalls.toString(),
+				updatedAnalytics.totalRequests.toString(),
 			);
 		});
 	});
