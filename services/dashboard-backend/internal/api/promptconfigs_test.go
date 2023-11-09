@@ -1545,7 +1545,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				toDate,
 			)
 
-			responseAnalytics := dto.PromptConfigAnalyticsDTO{}
+			responseAnalytics := dto.AnalyticsDTO{}
 			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseAnalytics,
@@ -1554,10 +1554,10 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, deserializationErr)
 			assert.Equal(
 				t,
-				promptReqAnalytics.TotalPromptRequests,
-				responseAnalytics.TotalPromptRequests,
+				promptReqAnalytics.TotalAPICalls,
+				responseAnalytics.TokenCost,
 			)
-			assert.Equal(t, promptReqAnalytics.ModelsCost, responseAnalytics.ModelsCost)
+			assert.Equal(t, promptReqAnalytics.TokenCost, responseAnalytics.TokenCost)
 		})
 
 		for _, permission := range []models.AccessPermissionType{

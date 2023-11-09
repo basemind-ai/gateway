@@ -3,13 +3,13 @@ package repositories_test
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/shopspring/decimal"
 	"testing"
 	"time"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -126,7 +126,6 @@ func TestProjectRepository(t *testing.T) {
 
 		fromDate := time.Now().AddDate(0, 0, -1)
 		toDate := fromDate.AddDate(0, 0, 2)
-		totalTokensUsed := int64(20)
 
 		t.Run("GetProjectAPIRequestByDateRange", func(t *testing.T) {
 			t.Run("get total api count by date range", func(t *testing.T) {
@@ -137,18 +136,6 @@ func TestProjectRepository(t *testing.T) {
 					time.Now().AddDate(0, 0, 1),
 				)
 				assert.Equal(t, int64(1), totalRequests)
-			})
-		})
-
-		t.Run("GetProjectTokenCountByProjectByDateRange", func(t *testing.T) {
-			t.Run("get total api count by date range", func(t *testing.T) {
-				projectTokenCntMap := repositories.GetProjectTokenCountByProjectByDateRange(
-					context.TODO(),
-					project.ID,
-					time.Now().AddDate(0, 0, -1),
-					time.Now().AddDate(0, 0, 1),
-				)
-				assert.Equal(t, int64(20), projectTokenCntMap[models.ModelTypeGpt35Turbo])
 			})
 		})
 
@@ -163,8 +150,8 @@ func TestProjectRepository(t *testing.T) {
 				assert.Equal(t, int64(1), projectAnalytics.TotalAPICalls)
 				assert.Equal(
 					t,
-					tokenutils.GetCostByModelType(totalTokensUsed, models.ModelTypeGpt35Turbo),
-					projectAnalytics.ModelsCost,
+					decimal.RequireFromString("0.0000465").String(),
+					projectAnalytics.TokenCost.String(),
 				)
 			})
 		})

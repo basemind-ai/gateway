@@ -765,15 +765,15 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 				toDate,
 			)
 
-			responseAnalytics := dto.ApplicationAnalyticsDTO{}
+			responseAnalytics := dto.AnalyticsDTO{}
 			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseAnalytics,
 			)
 
 			assert.NoError(t, deserializationErr)
-			assert.Equal(t, promptReqAnalytics.TotalRequests, responseAnalytics.TotalRequests)
-			assert.Equal(t, promptReqAnalytics.ProjectedCost, responseAnalytics.ProjectedCost)
+			assert.Equal(t, promptReqAnalytics.TotalAPICalls, responseAnalytics.TotalAPICalls)
+			assert.Equal(t, promptReqAnalytics.TokenCost, responseAnalytics.TokenCost)
 		})
 
 		for _, permission := range []models.AccessPermissionType{

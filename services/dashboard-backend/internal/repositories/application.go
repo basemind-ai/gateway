@@ -5,7 +5,6 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/db"
@@ -51,24 +50,23 @@ func GetApplicationAnalyticsByDateRange(
 	ctx context.Context,
 	applicationID pgtype.UUID,
 	fromDate, toDate time.Time,
-) dto.ApplicationAnalyticsDTO {
+) dto.AnalyticsDTO {
 	totalRequests := GetApplicationAPIRequestCountByDateRange(ctx, applicationID, fromDate, toDate)
 
-	tokenCntMap := GetApplicationTokensCountPerModelTypeByDateRange(
-		ctx,
-		applicationID,
-		fromDate,
-		toDate,
+	tokensCost := exc.MustResult(
+		db.NumericToDecimal(exc.MustResult(db.GetQueries().RetrieveApplicationTokensTotalCost(
+			ctx,
+			models.RetrieveApplicationTokensTotalCostParams{
+				ID:          applicationID,
+				CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
+				CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
+			},
+		))),
 	)
 
-	var totalCost float64
-	for model, tokenCnt := range tokenCntMap {
-		totalCost += tokenutils.GetCostByModelType(tokenCnt, model)
-	}
-
-	return dto.ApplicationAnalyticsDTO{
-		TotalRequests: totalRequests,
-		ProjectedCost: totalCost,
+	return dto.AnalyticsDTO{
+		TotalAPICalls: totalRequests,
+		TokenCost:     *tokensCost,
 	}
 }
 
@@ -85,26 +83,4 @@ func GetApplicationAPIRequestCountByDateRange(
 			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
 		},
 	))
-}
-
-func GetApplicationTokensCountPerModelTypeByDateRange(
-	ctx context.Context,
-	applicationID pgtype.UUID,
-	fromDate, toDate time.Time,
-) map[models.ModelType]int64 {
-	recordPerPromptConfig := exc.MustResult(db.GetQueries().RetrieveApplicationTokensCount(
-		ctx,
-		models.RetrieveApplicationTokensCountParams{
-			ID:          applicationID,
-			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
-			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
-		},
-	))
-
-	tokenCntMap := make(map[models.ModelType]int64)
-	for _, record := range recordPerPromptConfig {
-		tokenCntMap[record.ModelType] += record.TotalTokens
-	}
-
-	return tokenCntMap
 }
