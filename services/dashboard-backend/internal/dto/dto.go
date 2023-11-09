@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"encoding/json"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/shopspring/decimal"
 	"time"
@@ -30,20 +29,20 @@ type ProjectDTO struct { // skipcq: TCV-001
 // PromptConfigCreateDTO - DTO for prompt config CREATE request body.
 type PromptConfigCreateDTO struct { // skipcq: TCV-001
 	Name                   string             `json:"name"            validate:"required"`
-	ModelParameters        json.RawMessage    `json:"modelParameters" validate:"required"`
+	ModelParameters        []byte             `json:"modelParameters" validate:"required"`
 	ModelType              models.ModelType   `json:"modelType"       validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	ModelVendor            models.ModelVendor `json:"modelVendor"     validate:"oneof=OPEN_AI"`
-	ProviderPromptMessages json.RawMessage    `json:"promptMessages"  validate:"required"`
+	ProviderPromptMessages []byte             `json:"promptMessages"  validate:"required"`
 	IsTest                 bool               `json:"isTest"`
 }
 
 // PromptConfigUpdateDTO - DTO for prompt config UPDATE request body.
 type PromptConfigUpdateDTO struct { // skipcq: TCV-001
 	Name                   *string             `json:"name,omitempty"            validate:"omitempty,required"`
-	ModelParameters        *json.RawMessage    `json:"modelParameters,omitempty" validate:"omitempty,required"`
+	ModelParameters        *[]byte             `json:"modelParameters,omitempty" validate:"omitempty,required"`
 	ModelType              *models.ModelType   `json:"modelType,omitempty"       validate:"omitempty,oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	ModelVendor            *models.ModelVendor `json:"modelVendor,omitempty"     validate:"omitempty,oneof=OPEN_AI"`
-	ProviderPromptMessages *json.RawMessage    `json:"promptMessages,omitempty"  validate:"omitempty,required"`
+	ProviderPromptMessages *[]byte             `json:"promptMessages,omitempty"  validate:"omitempty,required"`
 }
 
 // ApplicationAPIKeyDTO - DTO for serializing application api key data.
@@ -84,13 +83,13 @@ type AnalyticsDTO struct { // skipcq: TCV-001
 	TokenCost     decimal.Decimal `json:"tokensCost"`
 }
 
-// PromptConfigDTO - DTO for requesting a prompt config test.
+// PromptConfigTestDTO - DTO for requesting a prompt config test.
 type PromptConfigTestDTO struct { // skipcq: TCV-001
 	Name                   string             `json:"name"                        validate:"required"`
-	ModelParameters        json.RawMessage    `json:"modelParameters,omitempty"   validate:"omitempty,required"`
+	ModelParameters        []byte             `json:"modelParameters,omitempty"   validate:"omitempty,required"`
 	ModelType              models.ModelType   `json:"modelType"                   validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	ModelVendor            models.ModelVendor `json:"modelVendor"                 validate:"oneof=OPEN_AI"`
-	ProviderPromptMessages json.RawMessage    `json:"promptMessages,omitempty"    validate:"omitempty,required"`
+	ProviderPromptMessages []byte             `json:"promptMessages,omitempty"    validate:"omitempty,required"`
 	TemplateVariables      map[string]string  `json:"templateVariables,omitempty"`
 	PromptConfigID         *string            `json:"promptConfigId,omitempty"    validate:"omitempty,required,uuid4"`
 }

@@ -3,7 +3,6 @@ package repositories_test
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -21,7 +20,7 @@ import (
 
 func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 	params := serialization.SerializeJSON(map[string]any{"maxTokens": 100})
-	newModelParameters := json.RawMessage(params)
+	newModelParameters := params
 
 	newName := "new name"
 	newModelType := models.ModelTypeGpt4
@@ -33,7 +32,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 	msgs := factories.CreateOpenAIPromptMessages(
 		newSystemMessage, newUserMessage, nil,
 	)
-	newPromptMessages := json.RawMessage(msgs)
+	newPromptMessages := msgs
 
 	project, _ := factories.CreateProject(context.TODO())
 
@@ -96,7 +95,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 				ModelVendor:            models.ModelVendorOPENAI,
 				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
-				ProviderPromptMessages: json.RawMessage("invalid"),
+				ProviderPromptMessages: []byte("invalid"),
 			}
 			promptConfig, err := repositories.CreatePromptConfig(
 				context.TODO(),
@@ -297,12 +296,12 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 					assert.Equal(
 						t,
 						updatedPromptConfig.ModelParameters,
-						json.RawMessage(retrievedPromptConfig.ModelParameters),
+						retrievedPromptConfig.ModelParameters,
 					)
 					assert.Equal(
 						t,
 						updatedPromptConfig.ProviderPromptMessages,
-						json.RawMessage(retrievedPromptConfig.ProviderPromptMessages),
+						retrievedPromptConfig.ProviderPromptMessages,
 					)
 					assert.Equal(
 						t,
@@ -376,7 +375,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
 
-			badMessage := json.RawMessage("invalid")
+			badMessage := []byte("invalid")
 			_, err := repositories.UpdatePromptConfig(
 				context.TODO(),
 				promptConfig.ID,

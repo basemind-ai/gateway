@@ -276,8 +276,8 @@ func TestPromptTestingAPI(t *testing.T) {
 			serializedTemplateVariables := serialization.SerializeJSON(templateVariables)
 			assert.Equal(
 				t,
-				json.RawMessage(promptTestRecord.VariableValues),
-				json.RawMessage(serializedTemplateVariables),
+				promptTestRecord.VariableValues,
+				serializedTemplateVariables,
 			)
 		})
 
@@ -777,7 +777,7 @@ func TestPromptTestingAPI(t *testing.T) {
 					},
 				},
 				{
-					Name: "should return error when model Parametersare empty",
+					Name: "should return error when model Parameters are empty",
 					Data: dto.PromptConfigTestDTO{
 						Name:                   "test",
 						ModelVendor:            models.ModelVendorOPENAI,
@@ -833,8 +833,8 @@ func TestPromptTestingAPI(t *testing.T) {
 			assert.Equal(t, pc.Name, fmt.Sprintf("prompt config for test: %s", d.Name))
 			assert.Equal(t, pc.ModelVendor, d.ModelVendor)
 			assert.Equal(t, pc.ModelType, d.ModelType)
-			assert.Equal(t, json.RawMessage(pc.ModelParameters), d.ModelParameters)
-			assert.Equal(t, json.RawMessage(pc.ProviderPromptMessages), d.ProviderPromptMessages)
+			assert.Equal(t, pc.ModelParameters, d.ModelParameters)
+			assert.Equal(t, pc.ProviderPromptMessages, d.ProviderPromptMessages)
 			assert.Equal(t, pc.IsTestConfig, true)
 		})
 	})

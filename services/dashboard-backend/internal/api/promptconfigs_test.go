@@ -2,7 +2,6 @@ package api_test
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
@@ -1165,7 +1164,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				"frequency_penalty": 2,
 			})
 
-			jsonMessage := json.RawMessage(newModelParameters)
+			jsonMessage := newModelParameters
 
 			response, requestErr := testClient.Patch(
 				context.TODO(),

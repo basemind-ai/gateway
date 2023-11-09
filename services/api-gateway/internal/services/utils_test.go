@@ -2,7 +2,6 @@ package services_test
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
@@ -37,12 +36,12 @@ func TestUtils(t *testing.T) { //nolint:revive
 			assert.Equal(t, promptConfig.ModelVendor, promptConfigDTO.ModelVendor)
 			assert.Equal(
 				t,
-				json.RawMessage(promptConfig.ModelParameters),
+				promptConfig.ModelParameters,
 				promptConfigDTO.ModelParameters,
 			)
 			assert.Equal(
 				t,
-				json.RawMessage(promptConfig.ProviderPromptMessages),
+				promptConfig.ProviderPromptMessages,
 				promptConfigDTO.ProviderPromptMessages,
 			)
 			assert.Equal(
@@ -87,12 +86,12 @@ func TestUtils(t *testing.T) { //nolint:revive
 				assert.Equal(t, promptConfig.ModelVendor, promptConfigDTO.ModelVendor)
 				assert.Equal(
 					t,
-					json.RawMessage(promptConfig.ModelParameters),
+					promptConfig.ModelParameters,
 					promptConfigDTO.ModelParameters,
 				)
 				assert.Equal(
 					t,
-					json.RawMessage(promptConfig.ProviderPromptMessages),
+					promptConfig.ProviderPromptMessages,
 					promptConfigDTO.ProviderPromptMessages,
 				)
 				assert.Equal(
@@ -131,8 +130,8 @@ func TestUtils(t *testing.T) { //nolint:revive
 		t.Run("panic if model type is not supported", func(t *testing.T) {
 			assert.Panics(t, func() {
 				services.RetrieveProviderModelPricing(context.TODO(),
-					models.ModelType("unsupported-model-type"),
-					models.ModelVendor("openai"),
+					"unsupported-model-type",
+					"openai",
 				)
 			})
 		})
@@ -140,8 +139,8 @@ func TestUtils(t *testing.T) { //nolint:revive
 		t.Run("panic if model vendor is not supported", func(t *testing.T) {
 			assert.Panics(t, func() {
 				services.RetrieveProviderModelPricing(context.TODO(),
-					models.ModelType("davinci"),
-					models.ModelVendor("unsupported-model-vendor"),
+					"davinci",
+					"unsupported-model-vendor",
 				)
 			})
 		})
@@ -173,12 +172,12 @@ func TestUtils(t *testing.T) { //nolint:revive
 			)
 			assert.Equal(
 				t,
-				json.RawMessage(promptConfig.ModelParameters),
+				promptConfig.ModelParameters,
 				requestConfigurationDTO.PromptConfigData.ModelParameters,
 			)
 			assert.Equal(
 				t,
-				json.RawMessage(promptConfig.ProviderPromptMessages),
+				promptConfig.ProviderPromptMessages,
 				requestConfigurationDTO.PromptConfigData.ProviderPromptMessages,
 			)
 			assert.Equal(

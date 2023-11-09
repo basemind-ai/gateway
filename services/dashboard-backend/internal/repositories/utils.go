@@ -12,14 +12,14 @@ import (
 
 var (
 	curlyBracesRegex = regexp.MustCompile(`\{([^}]+)\}`)
-	vendorParsers    = map[models.ModelVendor]func(json.RawMessage) ([]string, []byte, error){
+	vendorParsers    = map[models.ModelVendor]func([]byte) ([]string, []byte, error){
 		models.ModelVendorOPENAI: parseOpenAIMessages,
 	}
 	validate = validator.New(validator.WithRequiredStructEnabled())
 )
 
 func parseOpenAIMessages( //nolint: revive
-	promptMessages json.RawMessage,
+	promptMessages []byte,
 ) ([]string, []byte, error) {
 	var openAIPromptMessages []*datatypes.OpenAIPromptMessageDTO
 
@@ -56,7 +56,7 @@ func parseOpenAIMessages( //nolint: revive
 }
 
 func ParsePromptMessages( //nolint: revive
-	promptMessages json.RawMessage,
+	promptMessages []byte,
 	vendor models.ModelVendor,
 ) ([]string, []byte, error) {
 	parser, exists := vendorParsers[vendor]
