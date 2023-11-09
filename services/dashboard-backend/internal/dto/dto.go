@@ -3,6 +3,7 @@ package dto
 import (
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/shopspring/decimal"
 	"time"
 )
 
@@ -77,22 +78,10 @@ type ProjectUserAccountDTO struct { // skipcq: TCV-001
 	Permission  string    `json:"permission"`
 }
 
-// ApplicationAnalyticsDTO - DTO for serializing application analytics data.
-type ApplicationAnalyticsDTO struct { // skipcq: TCV-001
-	TotalRequests int64   `json:"totalRequests"`
-	ProjectedCost float64 `json:"projectedCost"`
-}
-
-// ProjectAnalyticsDTO - DTO for serializing project analytics data.
-type ProjectAnalyticsDTO struct { // skipcq: TCV-001
-	TotalAPICalls int64   `json:"totalAPICalls"`
-	ModelsCost    float64 `json:"modelsCost"`
-}
-
-// PromptConfigAnalyticsDTO - DTO for serializing prompt config analytics data.
-type PromptConfigAnalyticsDTO struct { // skipcq: TCV-001
-	TotalPromptRequests int64   `json:"totalPromptRequests"`
-	ModelsCost          float64 `json:"modelsCost"`
+// AnalyticsDTO - DTO for serializing analytics data.
+type AnalyticsDTO struct { // skipcq: TCV-001
+	TotalAPICalls int64           `json:"totalRequests"`
+	TokenCost     decimal.Decimal `json:"tokensCost"`
 }
 
 // PromptConfigDTO - DTO for requesting a prompt config test.

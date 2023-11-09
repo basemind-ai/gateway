@@ -118,7 +118,8 @@ FROM prompt_config
 WHERE
     application_id = $1
     AND deleted_at IS NULL
-    AND is_default = TRUE AND is_test_config = FALSE
+    AND is_default = TRUE
+    AND is_test_config = FALSE
 `
 
 type RetrieveDefaultPromptConfigRow struct {
@@ -231,47 +232,26 @@ func (q *Queries) RetrievePromptConfigAPIRequestCount(ctx context.Context, arg R
 	return total_requests, err
 }
 
-const retrievePromptConfigTokensCount = `-- name: RetrievePromptConfigTokensCount :many
-SELECT
-    pc.model_type,
-    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
+const retrievePromptConfigTokensTotalCost = `-- name: RetrievePromptConfigTokensTotalCost :one
+SELECT COALESCE(SUM(prr.request_tokens_cost + prr.response_tokens_cost), 0)
 FROM prompt_config AS pc
 LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
 WHERE
     pc.id = $1
     AND prr.created_at BETWEEN $2 AND $3
-GROUP BY pc.model_type
 `
 
-type RetrievePromptConfigTokensCountParams struct {
+type RetrievePromptConfigTokensTotalCostParams struct {
 	ID          pgtype.UUID        `json:"id"`
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
 }
 
-type RetrievePromptConfigTokensCountRow struct {
-	ModelType   ModelType `json:"modelType"`
-	TotalTokens int64     `json:"totalTokens"`
-}
-
-func (q *Queries) RetrievePromptConfigTokensCount(ctx context.Context, arg RetrievePromptConfigTokensCountParams) ([]RetrievePromptConfigTokensCountRow, error) {
-	rows, err := q.db.Query(ctx, retrievePromptConfigTokensCount, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []RetrievePromptConfigTokensCountRow
-	for rows.Next() {
-		var i RetrievePromptConfigTokensCountRow
-		if err := rows.Scan(&i.ModelType, &i.TotalTokens); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) RetrievePromptConfigTokensTotalCost(ctx context.Context, arg RetrievePromptConfigTokensTotalCostParams) (pgtype.Numeric, error) {
+	row := q.db.QueryRow(ctx, retrievePromptConfigTokensTotalCost, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
+	var coalesce pgtype.Numeric
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
 const retrievePromptConfigs = `-- name: RetrievePromptConfigs :many
@@ -290,7 +270,8 @@ SELECT
 FROM prompt_config
 WHERE
     application_id = $1
-    AND deleted_at IS NULL AND is_test_config = FALSE
+    AND deleted_at IS NULL
+    AND is_test_config = FALSE
 `
 
 type RetrievePromptConfigsRow struct {
@@ -346,7 +327,8 @@ SET
     updated_at = NOW()
 WHERE
     id = $1
-    AND deleted_at IS NULL AND is_test_config = FALSE
+    AND deleted_at IS NULL
+    AND is_test_config = FALSE
 `
 
 type UpdateDefaultPromptConfigParams struct {

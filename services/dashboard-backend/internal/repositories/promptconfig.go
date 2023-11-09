@@ -12,7 +12,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 )
@@ -249,33 +248,11 @@ func GetPromptConfigAPIRequestCountByDateRange(
 		}))
 }
 
-func GetPromptConfigTokensCountByDateRange(
-	ctx context.Context,
-	promptConfigID pgtype.UUID,
-	fromDate, toDate time.Time,
-) map[models.ModelType]int64 {
-	promptRequests := exc.MustResult(db.GetQueries().RetrievePromptConfigTokensCount(
-		ctx,
-		models.RetrievePromptConfigTokensCountParams{
-			ID:          promptConfigID,
-			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
-			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
-		},
-	))
-
-	tokenCntMap := make(map[models.ModelType]int64)
-	for _, record := range promptRequests {
-		tokenCntMap[record.ModelType] += record.TotalTokens
-	}
-
-	return tokenCntMap
-}
-
 func GetPromptConfigAnalyticsByDateRange(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
 	fromDate, toDate time.Time,
-) dto.PromptConfigAnalyticsDTO {
+) dto.AnalyticsDTO {
 	totalRequests := GetPromptConfigAPIRequestCountByDateRange(
 		ctx,
 		promptConfigID,
@@ -283,15 +260,19 @@ func GetPromptConfigAnalyticsByDateRange(
 		toDate,
 	)
 
-	tokenCntMap := GetPromptConfigTokensCountByDateRange(ctx, promptConfigID, fromDate, toDate)
+	tokensCost := exc.MustResult(
+		db.NumericToDecimal(exc.MustResult(db.GetQueries().RetrievePromptConfigTokensTotalCost(
+			ctx,
+			models.RetrievePromptConfigTokensTotalCostParams{
+				ID:          promptConfigID,
+				CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
+				CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
+			},
+		))),
+	)
 
-	var modelCost float64
-	for model, tokenCnt := range tokenCntMap {
-		modelCost += tokenutils.GetCostByModelType(tokenCnt, model)
-	}
-
-	return dto.PromptConfigAnalyticsDTO{
-		TotalPromptRequests: totalRequests,
-		ModelsCost:          modelCost,
+	return dto.AnalyticsDTO{
+		TotalAPICalls: totalRequests,
+		TokenCost:     *tokensCost,
 	}
 }

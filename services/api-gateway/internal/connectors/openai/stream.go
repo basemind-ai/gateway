@@ -8,7 +8,6 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -74,14 +73,13 @@ func (c *Client) RequestStream(
 
 	startTime := time.Now()
 
+	modelPricingID := exc.MustResult(db.StringToUUID(requestConfiguration.ProviderModelPricing.ID))
+
 	recordParams := &models.CreatePromptRequestRecordParams{
-		PromptConfigID:   requestConfiguration.PromptConfigID,
-		IsStreamResponse: true,
-		StartTime:        pgtype.Timestamptz{Time: startTime, Valid: true},
-		RequestTokens: tokenutils.GetPromptTokenCount(
-			GetRequestPromptString(promptRequest.Messages),
-			requestConfiguration.PromptConfigData.ModelType,
-		),
+		PromptConfigID:         requestConfiguration.PromptConfigID,
+		IsStreamResponse:       true,
+		StartTime:              pgtype.Timestamptz{Time: startTime, Valid: true},
+		ProviderModelPricingID: *modelPricingID,
 	}
 	finalResult := &dto.PromptResultDTO{}
 
@@ -96,10 +94,24 @@ func (c *Client) RequestStream(
 			startTime,
 			stream,
 		)
-		recordParams.ResponseTokens = tokenutils.GetPromptTokenCount(
+		tokenCountAndCost := CalculateTokenCountsAndCosts(
+			GetRequestPromptString(promptRequest.Messages),
 			promptContent,
+			requestConfiguration.ProviderModelPricing,
 			requestConfiguration.PromptConfigData.ModelType,
 		)
+		recordParams.RequestTokens = tokenCountAndCost.InputTokenCount
+		recordParams.ResponseTokens = tokenCountAndCost.OutputTokenCount
+
+		requestTokenCost := exc.MustResult(
+			db.StringToNumeric(tokenCountAndCost.InputTokenCost.String()),
+		)
+		recordParams.RequestTokensCost = *requestTokenCost
+
+		responseTokenCost := exc.MustResult(
+			db.StringToNumeric(tokenCountAndCost.OutputTokenCost.String()),
+		)
+		recordParams.ResponseTokensCost = *responseTokenCost
 	}
 
 	if finalResult.Error != nil {

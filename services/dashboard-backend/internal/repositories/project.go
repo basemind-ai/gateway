@@ -8,7 +8,6 @@ import (
 
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -89,47 +88,23 @@ func GetProjectAPIRequestByDateRange(
 	return totalAPICalls
 }
 
-func GetProjectTokenCountByProjectByDateRange(
-	ctx context.Context,
-	projectID pgtype.UUID,
-	fromDate, toDate time.Time,
-) map[models.ModelType]int64 {
-	tokensConsumed := exc.MustResult(db.GetQueries().
-		RetrieveProjectTokensCount(ctx, models.RetrieveProjectTokensCountParams{
-			ID:          projectID,
-			CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
-			CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
-		}))
-
-	projectTokenCntMap := make(map[models.ModelType]int64)
-	for _, record := range tokensConsumed {
-		projectTokenCntMap[record.ModelType] += record.TotalTokens
-	}
-
-	return projectTokenCntMap
-}
-
 func GetProjectAnalyticsByDateRange(
 	ctx context.Context,
 	projectID pgtype.UUID,
 	fromDate, toDate time.Time,
-) dto.ProjectAnalyticsDTO {
+) dto.AnalyticsDTO {
 	totalAPICalls := GetProjectAPIRequestByDateRange(ctx, projectID, fromDate, toDate)
 
-	projectTokenCntMap := GetProjectTokenCountByProjectByDateRange(
-		ctx,
-		projectID,
-		fromDate,
-		toDate,
-	)
+	tokensCost := exc.MustResult(db.NumericToDecimal(exc.MustResult(
+		db.GetQueries().
+			RetrieveProjectTokensTotalCost(ctx, models.RetrieveProjectTokensTotalCostParams{
+				ID:          projectID,
+				CreatedAt:   pgtype.Timestamptz{Time: fromDate, Valid: true},
+				CreatedAt_2: pgtype.Timestamptz{Time: toDate, Valid: true},
+			}))))
 
-	var modelCost float64
-	for model, tokenCnt := range projectTokenCntMap {
-		modelCost += tokenutils.GetCostByModelType(tokenCnt, model)
-	}
-
-	return dto.ProjectAnalyticsDTO{
+	return dto.AnalyticsDTO{
 		TotalAPICalls: totalAPICalls,
-		ModelsCost:    modelCost,
+		TokenCost:     *tokensCost,
 	}
 }

@@ -187,6 +187,8 @@ type PromptRequestRecord struct {
 	IsStreamResponse       bool               `json:"isStreamResponse"`
 	RequestTokens          int32              `json:"requestTokens"`
 	ResponseTokens         int32              `json:"responseTokens"`
+	RequestTokensCost      pgtype.Numeric     `json:"requestTokensCost"`
+	ResponseTokensCost     pgtype.Numeric     `json:"responseTokensCost"`
 	StartTime              pgtype.Timestamptz `json:"startTime"`
 	FinishTime             pgtype.Timestamptz `json:"finishTime"`
 	StreamResponseLatency  pgtype.Int8        `json:"streamResponseLatency"`

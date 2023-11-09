@@ -126,6 +126,8 @@ CREATE TABLE prompt_request_record
     is_stream_response boolean NOT NULL DEFAULT FALSE,
     request_tokens int NOT NULL,
     response_tokens int NOT NULL,
+    request_tokens_cost numeric NOT NULL,
+    response_tokens_cost numeric NOT NULL,
     start_time timestamptz NOT NULL,
     finish_time timestamptz NOT NULL,
     stream_response_latency bigint NULL,

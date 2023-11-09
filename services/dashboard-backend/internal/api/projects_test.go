@@ -387,7 +387,7 @@ func TestProjectsAPI(t *testing.T) {
 				toDate,
 			)
 
-			responseAnalytics := dto.ProjectAnalyticsDTO{}
+			responseAnalytics := dto.AnalyticsDTO{}
 			deserializationErr := serialization.DeserializeJSON(
 				response.Body,
 				&responseAnalytics,
@@ -395,7 +395,7 @@ func TestProjectsAPI(t *testing.T) {
 
 			assert.NoError(t, deserializationErr)
 			assert.Equal(t, promptReqAnalytics.TotalAPICalls, responseAnalytics.TotalAPICalls)
-			assert.Equal(t, promptReqAnalytics.ModelsCost, responseAnalytics.ModelsCost)
+			assert.Equal(t, promptReqAnalytics.TokenCost, responseAnalytics.TokenCost)
 		})
 
 		for _, permission := range []models.AccessPermissionType{

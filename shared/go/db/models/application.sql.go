@@ -115,48 +115,27 @@ func (q *Queries) RetrieveApplicationAPIRequestCount(ctx context.Context, arg Re
 	return total_requests, err
 }
 
-const retrieveApplicationTokensCount = `-- name: RetrieveApplicationTokensCount :many
-SELECT
-    pc.model_type,
-    SUM(prr.request_tokens + prr.response_tokens) AS total_tokens
-FROM application AS a
-INNER JOIN prompt_config AS pc ON a.id = pc.application_id
-INNER JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
+const retrieveApplicationTokensTotalCost = `-- name: RetrieveApplicationTokensTotalCost :one
+SELECT COALESCE(SUM(prr.request_tokens_cost + prr.response_tokens_cost), 0)
+FROM application AS app
+LEFT JOIN prompt_config AS pc ON app.id = pc.application_id
+LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
 WHERE
-    a.id = $1
+    app.id = $1
     AND prr.created_at BETWEEN $2 AND $3
-GROUP BY pc.model_type
 `
 
-type RetrieveApplicationTokensCountParams struct {
+type RetrieveApplicationTokensTotalCostParams struct {
 	ID          pgtype.UUID        `json:"id"`
 	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
 	CreatedAt_2 pgtype.Timestamptz `json:"createdAt2"`
 }
 
-type RetrieveApplicationTokensCountRow struct {
-	ModelType   ModelType `json:"modelType"`
-	TotalTokens int64     `json:"totalTokens"`
-}
-
-func (q *Queries) RetrieveApplicationTokensCount(ctx context.Context, arg RetrieveApplicationTokensCountParams) ([]RetrieveApplicationTokensCountRow, error) {
-	rows, err := q.db.Query(ctx, retrieveApplicationTokensCount, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []RetrieveApplicationTokensCountRow
-	for rows.Next() {
-		var i RetrieveApplicationTokensCountRow
-		if err := rows.Scan(&i.ModelType, &i.TotalTokens); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) RetrieveApplicationTokensTotalCost(ctx context.Context, arg RetrieveApplicationTokensTotalCostParams) (pgtype.Numeric, error) {
+	row := q.db.QueryRow(ctx, retrieveApplicationTokensTotalCost, arg.ID, arg.CreatedAt, arg.CreatedAt_2)
+	var coalesce pgtype.Numeric
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
 const retrieveApplications = `-- name: RetrieveApplications :many

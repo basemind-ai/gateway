@@ -5,7 +5,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"time"
@@ -27,10 +27,13 @@ func (c *Client) RequestPrompt(
 		return dto.PromptResultDTO{Error: createPromptRequestErr}
 	}
 
+	modelPricingID := exc.MustResult(db.StringToUUID(requestConfiguration.ProviderModelPricing.ID))
+
 	recordParams := models.CreatePromptRequestRecordParams{
-		PromptConfigID:   requestConfiguration.PromptConfigID,
-		IsStreamResponse: false,
-		StartTime:        pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		PromptConfigID:         requestConfiguration.PromptConfigID,
+		IsStreamResponse:       false,
+		StartTime:              pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		ProviderModelPricingID: *modelPricingID,
 	}
 	promptResult := dto.PromptResultDTO{}
 
@@ -39,14 +42,25 @@ func (c *Client) RequestPrompt(
 
 	if requestErr == nil {
 		promptResult.Content = &response.Content
-		recordParams.RequestTokens = tokenutils.GetPromptTokenCount(
+
+		tokenCountAndCost := CalculateTokenCountsAndCosts(
 			GetRequestPromptString(promptRequest.Messages),
-			requestConfiguration.PromptConfigData.ModelType,
-		)
-		recordParams.ResponseTokens = tokenutils.GetPromptTokenCount(
 			response.Content,
+			requestConfiguration.ProviderModelPricing,
 			requestConfiguration.PromptConfigData.ModelType,
 		)
+		recordParams.RequestTokens = tokenCountAndCost.InputTokenCount
+		recordParams.ResponseTokens = tokenCountAndCost.OutputTokenCount
+
+		requestTokenCost := exc.MustResult(
+			db.StringToNumeric(tokenCountAndCost.InputTokenCost.String()),
+		)
+		recordParams.RequestTokensCost = *requestTokenCost
+
+		responseTokenCost := exc.MustResult(
+			db.StringToNumeric(tokenCountAndCost.OutputTokenCost.String()),
+		)
+		recordParams.ResponseTokensCost = *responseTokenCost
 	} else {
 		log.Debug().Err(requestErr).Msg("request error")
 		promptResult.Error = requestErr

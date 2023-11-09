@@ -17,6 +17,7 @@ VALUES (
 
 -- name: RetrieveActiveProviderModelPricing :one
 SELECT
+    id,
     model_type,
     model_vendor,
     input_token_price,

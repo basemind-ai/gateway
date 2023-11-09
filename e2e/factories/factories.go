@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"time"
 
@@ -131,15 +132,18 @@ func CreatePromptRequestRecord(
 	ctx context.Context,
 	promptConfigID pgtype.UUID,
 ) (*models.PromptRequestRecord, error) {
-	tokenCount := int32(10)
 	promptStartTime := time.Now()
 	promptFinishTime := promptStartTime.Add(10 * time.Second)
 
+	requestTokenCost := exc.MustResult(db.StringToNumeric("0.0000105"))
+	responseTokenCost := exc.MustResult(db.StringToNumeric("0.000036"))
 	promptRequestRecord, promptRequestRecordCreateErr := db.GetQueries().
 		CreatePromptRequestRecord(ctx, models.CreatePromptRequestRecordParams{
 			IsStreamResponse:      true,
-			RequestTokens:         tokenCount,
-			ResponseTokens:        tokenCount,
+			RequestTokens:         7,
+			ResponseTokens:        18,
+			RequestTokensCost:     *requestTokenCost,
+			ResponseTokensCost:    *responseTokenCost,
 			StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
 			FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
 			StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},

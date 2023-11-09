@@ -2,7 +2,7 @@ import { DateType } from 'react-tailwindcss-datepicker';
 
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
-import { Project, ProjectAnalytics, ProjectCreateBody } from '@/types';
+import { AnalyticsDTO, Project, ProjectCreateBody } from '@/types';
 
 export async function handleCreateProject({
 	data,
@@ -56,8 +56,8 @@ export async function handleProjectAnalytics({
 	projectId: string;
 	fromDate?: DateType;
 	toDate?: DateType;
-}): Promise<ProjectAnalytics> {
-	return await fetcher<ProjectAnalytics>({
+}): Promise<AnalyticsDTO> {
+	return await fetcher<AnalyticsDTO>({
 		url: `projects/${projectId}/analytics`,
 		method: HttpMethod.Get,
 		queryParams: {

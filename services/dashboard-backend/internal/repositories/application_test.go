@@ -6,9 +6,8 @@ import (
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db"
-	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
-	"github.com/basemind-ai/monorepo/shared/go/tokenutils"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -24,7 +23,6 @@ func TestApplicationRepository(t *testing.T) {
 	_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 	fromDate := time.Now().AddDate(0, 0, -1)
 	toDate := fromDate.AddDate(0, 0, 2)
-	totalTokensUsed := int64(20)
 
 	t.Run("DeleteApplication", func(t *testing.T) {
 		t.Run("deletes an application and all of its prompt configs", func(t *testing.T) {
@@ -112,18 +110,6 @@ func TestApplicationRepository(t *testing.T) {
 		})
 	})
 
-	t.Run("GetApplicationTokensCountPerModelTypeByDateRange", func(t *testing.T) {
-		t.Run("get token usage for each model types by date range", func(t *testing.T) {
-			modelTokenCntMap := repositories.GetApplicationTokensCountPerModelTypeByDateRange(
-				context.TODO(),
-				application.ID,
-				fromDate,
-				toDate,
-			)
-			assert.Equal(t, int64(20), modelTokenCntMap[models.ModelTypeGpt35Turbo])
-		})
-	})
-
 	t.Run("GetApplicationAnalyticsByDateRange", func(t *testing.T) {
 		t.Run("get token usage for each model types by date range", func(t *testing.T) {
 			applicationAnalytics := repositories.GetApplicationAnalyticsByDateRange(
@@ -132,11 +118,11 @@ func TestApplicationRepository(t *testing.T) {
 				fromDate,
 				toDate,
 			)
-			assert.Equal(t, int64(1), applicationAnalytics.TotalRequests)
+			assert.Equal(t, int64(1), applicationAnalytics.TotalAPICalls)
 			assert.Equal(
 				t,
-				tokenutils.GetCostByModelType(totalTokensUsed, models.ModelTypeGpt35Turbo),
-				applicationAnalytics.ProjectedCost,
+				decimal.RequireFromString("0.0000465").String(),
+				applicationAnalytics.TokenCost.String(),
 			)
 		})
 	})

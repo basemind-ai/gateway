@@ -66,6 +66,7 @@ func (q *Queries) CreateProviderModelPricing(ctx context.Context, arg CreateProv
 
 const retrieveActiveProviderModelPricing = `-- name: RetrieveActiveProviderModelPricing :one
 SELECT
+    id,
     model_type,
     model_vendor,
     input_token_price,
@@ -89,6 +90,7 @@ type RetrieveActiveProviderModelPricingParams struct {
 }
 
 type RetrieveActiveProviderModelPricingRow struct {
+	ID               pgtype.UUID    `json:"id"`
 	ModelType        ModelType      `json:"modelType"`
 	ModelVendor      ModelVendor    `json:"modelVendor"`
 	InputTokenPrice  pgtype.Numeric `json:"inputTokenPrice"`
@@ -102,6 +104,7 @@ func (q *Queries) RetrieveActiveProviderModelPricing(ctx context.Context, arg Re
 	row := q.db.QueryRow(ctx, retrieveActiveProviderModelPricing, arg.ModelType, arg.ModelVendor)
 	var i RetrieveActiveProviderModelPricingRow
 	err := row.Scan(
+		&i.ID,
 		&i.ModelType,
 		&i.ModelVendor,
 		&i.InputTokenPrice,

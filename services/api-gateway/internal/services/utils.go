@@ -3,12 +3,11 @@ package services
 import (
 	"context"
 	"fmt"
-	"github.com/basemind-ai/monorepo/shared/go/db/models"
-
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
@@ -90,6 +89,7 @@ func RetrieveProviderModelPricing(
 	outputDecimalValue := exc.MustResult(db.NumericToDecimal(providerModelPricing.OutputTokenPrice))
 
 	return datatypes.ProviderModelPricingDTO{
+		ID:               db.UUIDToString(&providerModelPricing.ID),
 		InputTokenPrice:  *inputDecimalValue,
 		OutputTokenPrice: *outputDecimalValue,
 		TokenUnitSize:    providerModelPricing.TokenUnitSize,

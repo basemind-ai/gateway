@@ -71,7 +71,7 @@ export function ApplicationAnalyticsPage({
 				<DataCard
 					imageSrc={<Cash className="text-secondary w-6 h-6" />}
 					metric={t('modelsCost')}
-					totalValue={`${analytics?.projectedCost ?? ''}$`}
+					totalValue={`${analytics?.tokensCost ?? ''}$`}
 					percentage={'103'}
 					currentValue={'3.3'}
 					loading={isLoading}
