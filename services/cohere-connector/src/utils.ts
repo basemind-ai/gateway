@@ -3,12 +3,14 @@ import {
 	ChatRequest,
 	ChatStreamRequest,
 } from 'cohere-ai/api';
+import { ChatStreamEndEventFinishReason } from 'cohere-ai/api/types/ChatStreamEndEventFinishReason';
 import {
 	CohereConnector,
 	CohereConnectorType,
 	CohereModel,
 	CoherePromptRequest,
 } from 'gen/cohere/v1/cohere';
+import { StreamFinishReason } from 'shared/constants';
 
 export const modelMapping: Record<CohereModel, string> = {
 	[CohereModel.UNSPECIFIED]: 'command',
@@ -16,6 +18,17 @@ export const modelMapping: Record<CohereModel, string> = {
 	[CohereModel.COMMAND_LIGHT]: 'command-light',
 	[CohereModel.COMMAND_NIGHTLY]: 'command-nightly',
 	[CohereModel.COMMAND_LIGHT_NIGHTLY]: 'command-light-nightly',
+};
+
+export const finishReasonMapping: Record<
+	ChatStreamEndEventFinishReason,
+	StreamFinishReason
+> = {
+	[ChatStreamEndEventFinishReason.Complete]: StreamFinishReason.DONE,
+	[ChatStreamEndEventFinishReason.ErrorLimit]: StreamFinishReason.ERROR,
+	[ChatStreamEndEventFinishReason.MaxTokens]: StreamFinishReason.LIMIT,
+	[ChatStreamEndEventFinishReason.Error]: StreamFinishReason.ERROR,
+	[ChatStreamEndEventFinishReason.ErrorToxic]: StreamFinishReason.ERROR,
 };
 
 export function getCohereConnectors(

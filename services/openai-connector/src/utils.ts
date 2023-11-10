@@ -8,6 +8,7 @@ import {
 	ChatCompletionCreateParamsStreaming,
 	ChatCompletionMessageParam,
 } from 'openai/src/resources/chat/completions';
+import { StreamFinishReason } from 'shared/constants';
 
 const modelMap: Record<
 	OpenAIModel,
@@ -29,6 +30,21 @@ const messageRoleMap: Record<
 	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_SYSTEM]: 'system',
 	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_ASSISTANT]: 'assistant',
 	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_FUNCTION]: 'function',
+};
+
+type OpenAIFinishReason =
+	| 'stop'
+	| 'length'
+	| 'tool_calls'
+	| 'content_filter'
+	| 'function_call';
+
+export const finishReasonMap: Record<OpenAIFinishReason, StreamFinishReason> = {
+	stop: StreamFinishReason.DONE,
+	length: StreamFinishReason.LIMIT,
+	tool_calls: StreamFinishReason.DONE,
+	content_filter: StreamFinishReason.DONE,
+	function_call: StreamFinishReason.DONE,
 };
 
 export function getOpenAIModel(

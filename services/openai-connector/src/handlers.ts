@@ -8,11 +8,12 @@ import {
 	OpenAIPromptResponse,
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
+import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
 import logger from 'shared/logger';
 
 import { getOpenAIClient } from '@/client';
-import { createOpenAIRequest } from '@/utils';
+import { createOpenAIRequest, finishReasonMap } from '@/utils';
 
 export async function openAIPrompt(
 	call: ServerUnaryCall<OpenAIPromptRequest, OpenAIPromptResponse>,
@@ -60,8 +61,10 @@ export async function openAIStream(
 		const stream = await getOpenAIClient().chat.completions.create(request);
 		for await (const message of stream) {
 			call.write({
-				content: message.choices[0]?.delta?.content ?? '',
-				finishReason: message.choices[0]?.finish_reason ?? undefined,
+				content: message.choices[0].delta.content ?? '',
+				finishReason: message.choices[0].finish_reason
+					? finishReasonMap[message.choices[0].finish_reason]
+					: undefined,
 			} satisfies OpenAIStreamResponse);
 		}
 
@@ -71,7 +74,10 @@ export async function openAIStream(
 			'OpenAI streaming request completed',
 		);
 	} catch (error: unknown) {
-		/* c8 ignore next */
+		call.write({
+			content: '',
+			finishReason: StreamFinishReason.ERROR,
+		});
 		logger.error(error, 'error communicating with OpenAI');
 	} finally {
 		call.end();

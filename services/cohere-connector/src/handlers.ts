@@ -8,11 +8,12 @@ import {
 	CoherePromptResponse,
 	CohereStreamResponse,
 } from 'gen/cohere/v1/cohere';
+import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
 import logger from 'shared/logger';
 
 import { getCohereClient } from '@/client';
-import { createCohereRequest } from '@/utils';
+import { createCohereRequest, finishReasonMapping } from '@/utils';
 
 export async function coherePrompt(
 	call: ServerUnaryCall<CoherePromptRequest, CoherePromptResponse>,
@@ -25,13 +26,13 @@ export async function coherePrompt(
 	try {
 		logger.debug('making Cohere prompt request');
 		const startTime = Date.now();
-		const { text } = await getCohereClient().chat(
+		const { text, generationId } = await getCohereClient().chat(
 			createCohereRequest(call.request),
 		);
 		const finishTime = Date.now();
 
 		logger.debug(
-			{ startTime, finishTime, text },
+			{ startTime, finishTime, text, generationId },
 			'Cohere request completed',
 		);
 		callback(null, { content: text } satisfies CoherePromptResponse);
@@ -63,7 +64,7 @@ export async function cohereStream(
 			}
 			if (message.eventType === 'stream-end') {
 				call.write({
-					finishReason: 'done',
+					finishReason: finishReasonMapping[message.finishReason],
 				} satisfies CohereStreamResponse);
 			}
 		}
@@ -74,9 +75,8 @@ export async function cohereStream(
 			'Cohere streaming request completed',
 		);
 	} catch (error: unknown) {
-		/* c8 ignore next */
 		call.write({
-			finishReason: 'error',
+			finishReason: StreamFinishReason.ERROR,
 		} satisfies CohereStreamResponse);
 		logger.error(error, 'error communicating with Cohere');
 	} finally {
