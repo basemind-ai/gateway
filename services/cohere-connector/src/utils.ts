@@ -18,10 +18,6 @@ export const modelMapping: Record<CohereModel, string> = {
 	[CohereModel.COMMAND_LIGHT_NIGHTLY]: 'command-light-nightly',
 };
 
-export function getCohereModel(model: CohereModel): string {
-	return modelMapping[model];
-}
-
 export function getCohereConnectors(
 	connectors: CohereConnector[],
 ): CohereChatConnector[] {
@@ -44,14 +40,16 @@ export function createCohereRequest(
 ): ChatRequest | ChatStreamRequest {
 	return {
 		message: grpcRequest.message,
-		model: getCohereModel(grpcRequest.model),
+		model: modelMapping[grpcRequest.model],
 		conversationId: grpcRequest.conversationId,
 		temperature:
 			typeof grpcRequest.parameters?.temperature === 'number'
 				? grpcRequest.parameters.temperature
 				: undefined,
-		connectors: Array.isArray(grpcRequest.parameters?.connectors)
-			? getCohereConnectors(grpcRequest.parameters!.connectors)
-			: undefined,
+		connectors:
+			Array.isArray(grpcRequest.parameters?.connectors) &&
+			grpcRequest.parameters!.connectors.length
+				? getCohereConnectors(grpcRequest.parameters!.connectors)
+				: undefined,
 	} satisfies ChatRequest | ChatStreamRequest;
 }
