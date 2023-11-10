@@ -5,6 +5,8 @@ import { createServer } from 'shared/grpc';
 
 describe('gRPC utils tests', () => {
 	describe('createServer', () => {
+		const bindAsyncSpy = vi.spyOn(Server.prototype, 'bindAsync');
+
 		it('should create a new server instance and add the provided service and implementation', () => {
 			const serviceDefinition = {
 				test: {
@@ -25,8 +27,14 @@ describe('gRPC utils tests', () => {
 			const server = createServer({
 				service: serviceDefinition,
 				implementation,
+				port: 4000,
 			});
 			expect(server).toBeInstanceOf(Server);
+			expect(bindAsyncSpy).toHaveBeenCalledWith(
+				'0.0.0.0:4000',
+				expect.anything(),
+				expect.anything(),
+			);
 		});
 	});
 });

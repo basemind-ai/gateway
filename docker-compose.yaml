@@ -95,7 +95,7 @@ services:
         build:
             dockerfile: docker/Dockerfile.ts-services
             context: .
-            # target: install
+            target: install
             args:
                 BUILD_TARGET: openai-connector
         ports:
@@ -110,8 +110,29 @@ services:
             GRPC_TRACE: channel,subchannel,call_stream
             SERVER_PORT: 8000
         working_dir: /app/services/openai-connector
-        command: ['node', 'run', 'dev']
+        command: ['pnpm', 'run', 'dev']
         env_file: '.secrets/.env.openai-connector'
+    cohere-connector:
+        build:
+            dockerfile: docker/Dockerfile.ts-services
+            context: .
+            target: install
+            args:
+                BUILD_TARGET: cohere-connector
+        ports:
+            - '9000:9000'
+        volumes:
+            - ./gen/ts:/app/gen/ts:cached
+            - ./services/cohere-connector/src:/app/services/cohere-connector/src:cached
+            - ./shared/ts/src:/app/shared/ts/src:cached
+        environment:
+            NODE_ENV: development
+            GRPC_VERBOSITY: debug
+            GRPC_TRACE: channel,subchannel,call_stream
+            SERVER_PORT: 9000
+        working_dir: /app/services/cohere-connector
+        command: ['pnpm', 'run', 'dev']
+        env_file: '.secrets/.env.cohere-connector'
     frontend:
         build:
             dockerfile: docker/Dockerfile.frontend
