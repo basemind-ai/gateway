@@ -11,7 +11,7 @@ const tsWebRules = {
 const project = [
 	'./tsconfig.json',
 	'./frontend/tsconfig.json',
-	'./services/openai-connector/tsconfig.json',
+	'./services/*/tsconfig.json',
 ];
 
 const settings = {

@@ -11,6 +11,7 @@ import {
 	OpenAIPromptResponse,
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
+import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
 import { Mock } from 'vitest';
 
@@ -64,7 +65,7 @@ describe('handlers tests', () => {
 			completionsSpy.mockResolvedValueOnce({
 				id: 'abc',
 				model: 'gpt-3.5-turbo',
-				object: 'text_completion',
+				object: 'chat.completion',
 				created: Date.now(),
 				choices: [
 					{
@@ -124,7 +125,7 @@ describe('handlers tests', () => {
 			completionsSpy.mockResolvedValueOnce({
 				id: 'abc',
 				model: 'gpt-3.5-turbo',
-				object: 'text_completion',
+				object: 'chat.completion',
 				created: Date.now(),
 				choices: [],
 				usage: {
@@ -186,6 +187,60 @@ describe('handlers tests', () => {
 				null,
 			);
 		});
+
+		it("should handle finish_reasons that aren't 'stop'", async () => {
+			const call = makeMockUnaryCall({
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				messages: [
+					{
+						content: 'test',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+				],
+			});
+			const callback: sendUnaryData<OpenAIPromptResponse> = vi.fn();
+
+			completionsSpy.mockResolvedValueOnce({
+				id: 'abc',
+				model: 'gpt-3.5-turbo',
+				object: 'chat.completion',
+				created: Date.now(),
+				choices: [
+					{
+						message: {
+							content: 'Generated response',
+							role: 'assistant',
+						},
+						index: 0,
+						finish_reason: 'length',
+					},
+				],
+				usage: {
+					prompt_tokens: 10,
+					completion_tokens: 20,
+					total_tokens: 30,
+				},
+			});
+
+			await openAIPrompt(call, callback);
+			expect(completionsSpy).toHaveBeenCalledWith({
+				messages: [
+					{
+						content: 'test',
+						role: 'user',
+					},
+				],
+				model: 'gpt-3.5-turbo',
+				stream: false,
+			});
+
+			expect(callback).toHaveBeenCalledWith(null, {
+				content: 'Generated response',
+				promptTokens: 10,
+				completionTokens: 20,
+				totalTokens: 30,
+			});
+		});
 	});
 
 	describe('openAIStream', () => {
@@ -210,21 +265,25 @@ describe('handlers tests', () => {
 					const value = {
 						id: 'abc',
 						model: 'gpt-3.5-turbo',
-						object: 'text_completion',
+						object: 'chat.completion',
 						created: Date.now(),
 						choices: [
 							{
 								delta: {
-									content: count.toString(),
+									content: count < 10 ? count.toString() : '',
 									role: 'assistant',
 								},
 								index: count,
-								finish_reason: count < 10 ? null : 'stop',
+								finish_reason: count === 10 ? 'stop' : null,
 							},
 						],
 					};
+					if (count === 11) {
+						return { done: true, value };
+					}
+
 					count++;
-					return { done: count > 10, value };
+					return { done: false, value };
 				},
 				async return() {
 					return { done: true, value: undefined };
@@ -254,7 +313,9 @@ describe('handlers tests', () => {
 				applicationId: '123',
 			});
 			completionsSpy.mockResolvedValueOnce(createReadableStream() as any);
+
 			await openAIStream(call);
+
 			expect((call.write as Mock).mock.calls).toEqual([
 				[
 					{
@@ -314,6 +375,44 @@ describe('handlers tests', () => {
 					{
 						content: '9',
 						finishReason: undefined,
+					},
+				],
+				[
+					{
+						content: '',
+						finishReason: StreamFinishReason.DONE,
+					},
+				],
+			]);
+		});
+
+		it('should handle errors', async () => {
+			const call = makeServerWritableStream({
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				messages: [
+					{
+						content: 'test',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+				],
+				parameters: {
+					temperature: 0.8,
+					topP: 0.9,
+					maxTokens: 100,
+					presencePenalty: 0.5,
+					frequencyPenalty: 0.5,
+				},
+				applicationId: '123',
+			});
+
+			completionsSpy.mockRejectedValueOnce(new Error('test error'));
+
+			await openAIStream(call);
+			expect((call.write as Mock).mock.calls).toEqual([
+				[
+					{
+						content: '',
+						finishReason: StreamFinishReason.ERROR,
 					},
 				],
 			]);

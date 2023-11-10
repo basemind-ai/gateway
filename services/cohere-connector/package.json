@@ -1,8 +1,8 @@
 {
-	"name": "openai-connector",
+	"name": "cohere-connector",
 	"private": true,
 	"version": "1.0.0",
-	"description": "Connector microservice for OpenAI",
+	"description": "Connector microservice for Cohere",
 	"author": "BaseMind.AI",
 	"license": "UNLICENSED",
 	"scripts": {
@@ -13,8 +13,8 @@
 		"@grpc/grpc-js": "^1.9.9",
 		"@protobuf-ts/runtime": "^2.9.1",
 		"@protobuf-ts/runtime-rpc": "^2.9.1",
+		"cohere-ai": "^7.2.0",
 		"grpc-health-check": "^2.0.0",
-		"openai": "^4.17.3",
 		"pino": "^8.16.1"
 	}
 }
