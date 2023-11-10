@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package cohere.v1;
+
+option go_package = "github.com/basemind-ai/monorepo/gen/cohereconnector";
+
+// The CohereService service definition.
+service CohereService {
+  // Request a regular LLM prompt
+  rpc CoherePrompt(CoherePromptRequest) returns (CoherePromptResponse) {}
+  // Request a streaming LLM prompt
+  rpc CohereStream(CoherePromptRequest) returns (stream CohereStreamResponse) {}
+}
+
+//  The CoherePromptRequest contains the data that will be sent to the Cohere API.
+message CoherePromptRequest {}
+
+// The CoherePromptResponse contains the data that is returned from the Cohere API.
+message CoherePromptResponse {}
+
+// The CohereStreamResponse contains the data that is streamed from the Cohere API.
+message CohereStreamResponse {}

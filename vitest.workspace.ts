@@ -1,1 +1,6 @@
-export default ['services/openai-connector', 'frontend', 'shared/ts'];
+export default [
+	'services/openai-connector',
+	'services/cohere-connector',
+	'frontend',
+	'shared/ts',
+];
