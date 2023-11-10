@@ -6,10 +6,106 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Any } from "../../google/protobuf/any";
+/**
+ * Type of Cohere Model
+ *
+ * @generated from protobuf enum cohere.v1.CohereModel
+ */
+export var CohereModel;
+(function (CohereModel) {
+    /**
+     * Cohere Model is not specified
+     *
+     * @generated from protobuf enum value: COHERE_MODEL_UNSPECIFIED = 0;
+     */
+    CohereModel[CohereModel["UNSPECIFIED"] = 0] = "UNSPECIFIED";
+    /**
+     * Command - the default Cohere model.
+     *
+     * @generated from protobuf enum value: COHERE_MODEL_COMMAND = 1;
+     */
+    CohereModel[CohereModel["COMMAND"] = 1] = "COMMAND";
+    /**
+     * Command Light - a faster but less accurate version of Command.
+     *
+     * @generated from protobuf enum value: COHERE_MODEL_COMMAND_LIGHT = 2;
+     */
+    CohereModel[CohereModel["COMMAND_LIGHT"] = 2] = "COMMAND_LIGHT";
+    /**
+     * Command Nightly - a nightly version of Command.
+     *
+     * @generated from protobuf enum value: COHERE_MODEL_COMMAND_NIGHTLY = 3;
+     */
+    CohereModel[CohereModel["COMMAND_NIGHTLY"] = 3] = "COMMAND_NIGHTLY";
+    /**
+     * Command Light Nightly - a nightly version of Command Light.
+     *
+     * @generated from protobuf enum value: COHERE_MODEL_COMMAND_LIGHT_NIGHTLY = 4;
+     */
+    CohereModel[CohereModel["COMMAND_LIGHT_NIGHTLY"] = 4] = "COMMAND_LIGHT_NIGHTLY";
+})(CohereModel || (CohereModel = {}));
+/**
+ * Type of Cohere RAG Connector
+ *
+ * @generated from protobuf enum cohere.v1.CohereConnectorType
+ */
+export var CohereConnectorType;
+(function (CohereConnectorType) {
+    /**
+     * Cohere Connector is not specified
+     *
+     * @generated from protobuf enum value: COHERE_CONNECTOR_TYPE_UNSPECIFIED = 0;
+     */
+    CohereConnectorType[CohereConnectorType["UNSPECIFIED"] = 0] = "UNSPECIFIED";
+    /**
+     * Cohere Connector is a web search.
+     *
+     * @generated from protobuf enum value: COHERE_CONNECTOR_TYPE_WEB_SEARCH = 1;
+     */
+    CohereConnectorType[CohereConnectorType["WEB_SEARCH"] = 1] = "WEB_SEARCH";
+    /**
+     * Cohere Connector is a custom ID.
+     *
+     * @generated from protobuf enum value: COHERE_CONNECTOR_TYPE_ID = 2;
+     */
+    CohereConnectorType[CohereConnectorType["ID"] = 2] = "ID";
+})(CohereConnectorType || (CohereConnectorType = {}));
+// @generated message type with reflection information, may provide speed optimized methods
+class CohereConnector$Type extends MessageType {
+    constructor() {
+        super("cohere.v1.CohereConnector", [
+            { no: 1, name: "id", kind: "enum", T: () => ["cohere.v1.CohereConnectorType", CohereConnectorType, "COHERE_CONNECTOR_TYPE_"] },
+            { no: 2, name: "options", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Any } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message cohere.v1.CohereConnector
+ */
+export const CohereConnector = new CohereConnector$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CohereModelParameters$Type extends MessageType {
+    constructor() {
+        super("cohere.v1.CohereModelParameters", [
+            { no: 1, name: "temperature", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 2, name: "connectors", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CohereConnector }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message cohere.v1.CohereModelParameters
+ */
+export const CohereModelParameters = new CohereModelParameters$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CoherePromptRequest$Type extends MessageType {
     constructor() {
-        super("cohere.v1.CoherePromptRequest", []);
+        super("cohere.v1.CoherePromptRequest", [
+            { no: 1, name: "model", kind: "enum", T: () => ["cohere.v1.CohereModel", CohereModel, "COHERE_MODEL_"] },
+            { no: 2, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "parameters", kind: "message", T: () => CohereModelParameters },
+            { no: 4, name: "conversation_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
 }
 /**
@@ -19,7 +115,9 @@ export const CoherePromptRequest = new CoherePromptRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CoherePromptResponse$Type extends MessageType {
     constructor() {
-        super("cohere.v1.CoherePromptResponse", []);
+        super("cohere.v1.CoherePromptResponse", [
+            { no: 1, name: "content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
 }
 /**
@@ -29,7 +127,10 @@ export const CoherePromptResponse = new CoherePromptResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CohereStreamResponse$Type extends MessageType {
     constructor() {
-        super("cohere.v1.CohereStreamResponse", []);
+        super("cohere.v1.CohereStreamResponse", [
+            { no: 1, name: "content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "finish_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
 }
 /**

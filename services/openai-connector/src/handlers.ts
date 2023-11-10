@@ -29,6 +29,7 @@ export async function openAIPrompt(
 		const { usage, choices } =
 			await getOpenAIClient().chat.completions.create(request);
 		const finishTime = Date.now();
+
 		logger.debug(
 			{ startTime, finishTime, choices },
 			'OpenAI request completed',
@@ -63,6 +64,7 @@ export async function openAIStream(
 				finishReason: message.choices[0]?.finish_reason ?? undefined,
 			} satisfies OpenAIStreamResponse);
 		}
+
 		const finishTime = Date.now();
 		logger.debug(
 			{ startTime, finishTime },

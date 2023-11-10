@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package cohere.v1;
 
+import "google/protobuf/any.proto";
+
 option go_package = "github.com/basemind-ai/monorepo/gen/cohereconnector";
 
 // The CohereService service definition.
@@ -12,11 +14,73 @@ service CohereService {
   rpc CohereStream(CoherePromptRequest) returns (stream CohereStreamResponse) {}
 }
 
+// Type of Cohere Model
+enum CohereModel {
+  // Cohere Model is not specified
+  COHERE_MODEL_UNSPECIFIED = 0;
+  // Command - the default Cohere model.
+  COHERE_MODEL_COMMAND = 1;
+  // Command Light - a faster but less accurate version of Command.
+  COHERE_MODEL_COMMAND_LIGHT = 2;
+  // Command Nightly - a nightly version of Command.
+  COHERE_MODEL_COMMAND_NIGHTLY = 3;
+  // Command Light Nightly - a nightly version of Command Light.
+  COHERE_MODEL_COMMAND_LIGHT_NIGHTLY = 4;
+}
+
+// Type of Cohere RAG Connector
+enum CohereConnectorType {
+  // Cohere Connector is not specified
+  COHERE_CONNECTOR_TYPE_UNSPECIFIED = 0;
+  // Cohere Connector is a web search.
+  COHERE_CONNECTOR_TYPE_WEB_SEARCH = 1;
+  // Cohere Connector is a custom ID.
+  COHERE_CONNECTOR_TYPE_ID = 2;
+}
+
+// Cohere RAG Connector
+message CohereConnector {
+  // Cohere Connector type
+  CohereConnectorType id = 1;
+  // Cohere Connector options
+  map<string, google.protobuf.Any> options = 2;
+}
+
+// Cohere API Request parameters
+message CohereModelParameters {
+  // Temperature Sampling.
+  // Should be a non-negative float (0-1.0) that tunes the degree of randomness in generation. Lower temperatures mean
+  // less random generations, and higher temperatures mean more random generations.
+  optional float temperature = 1;
+  // RAG connectors to use, when specified, the model's reply will be enriched with information found by querying each
+  // of the connectors.
+  repeated CohereConnector connectors = 2;
+}
+
 //  The CoherePromptRequest contains the data that will be sent to the Cohere API.
-message CoherePromptRequest {}
+message CoherePromptRequest {
+  // Cohere Model identifier
+  CohereModel model = 1;
+  // Prompt message
+  string message = 2;
+  // Cohere API Request parameters
+  CohereModelParameters parameters = 3;
+  // An identifier for the conversation chain. Conversations can be resumed by providing the conversation's identifier.
+  // The contents of `message` and the model's response will be stored as part of this conversation.
+  // If a conversation with this id does not already exist, a new conversation will be created.
+  optional string conversation_id = 4;
+}
 
 // The CoherePromptResponse contains the data that is returned from the Cohere API.
-message CoherePromptResponse {}
+message CoherePromptResponse {
+  // Prompt Content
+  optional string content = 1;
+}
 
 // The CohereStreamResponse contains the data that is streamed from the Cohere API.
-message CohereStreamResponse {}
+message CohereStreamResponse {
+  // Prompt Content
+  optional string content = 1;
+  // Finish reason, if this is the last message
+  optional string finish_reason = 2;
+}
