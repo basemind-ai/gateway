@@ -18,6 +18,7 @@ jobs:
                     - api-gateway
                     - dashboard-backend
                     - openai-connector
+                    - cohere-connector
                     - frontend
                 include:
                     - file_path: ./docker/Dockerfile.go-services
@@ -26,6 +27,8 @@ jobs:
                       service: dashboard-backend
                     - file_path: ./docker/Dockerfile.ts-services
                       service: openai-connector
+                    - file_path: ./docker/Dockerfile.ts-services
+                      service: cohere-connector
                     - file_path: ./docker/Dockerfile.frontend
                       service: frontend
         permissions:

@@ -47,6 +47,13 @@ export const finishReasonMap: Record<OpenAIFinishReason, StreamFinishReason> = {
 	function_call: StreamFinishReason.DONE,
 };
 
+/**
+ * The getOpenAIModel function takes in a string that represents the OpenAI model
+ * and returns the corresponding Hugging Face model.
+ *
+ * @param requestModel a member of the OpenAIModel enum
+ * @return A string identifier of the OpenAI model to use
+ */
 export function getOpenAIModel(
 	requestModel: OpenAIModel,
 ): 'gpt-4' | 'gpt-4-32k' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' {
@@ -69,6 +76,14 @@ export function createOpenAIRequest(
 	stream: false,
 ): ChatCompletionCreateParamsNonStreaming;
 
+/**
+ * The createOpenAIRequest function takes in a request object and returns an OpenAI API request body.
+ * The function is used to create the body of the POST requests that are sent to OpenAI's API.
+
+ * @param request  OpenAIPromptRequest Create the request body for the openai api
+ * @param stream  boolean Determine whether or not the request should be streamed
+ * @return An ChatCompletionCreateParamsStreaming or ChatCompletionCreateParamsNonStreaming request object
+ */
 export function createOpenAIRequest(
 	request: OpenAIPromptRequest,
 	stream: boolean,

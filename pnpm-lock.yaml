@@ -70,6 +70,9 @@ importers:
             fork-ts-checker-webpack-plugin:
                 specifier: ^9.0.2
                 version: 9.0.2(typescript@5.2.2)(webpack@5.89.0)
+            grpc-health-check:
+                specifier: ^2.0.0
+                version: 2.0.0
             interface-forge:
                 specifier: ^1.6.1
                 version: 1.6.1
@@ -12492,7 +12495,6 @@ packages:
         dependencies:
             '@grpc/proto-loader': 0.7.10
             typescript: 5.2.2
-        dev: false
 
     /gunzip-maybe@1.4.2:
         resolution:
@@ -14341,12 +14343,14 @@ packages:
             tslib: 2.6.2
         dev: true
 
-    /lru-cache@10.0.1:
+    /lru-cache@10.0.2:
         resolution:
             {
-                integrity: sha512-IJ4uwUTi2qCccrioU6g9g/5rvvVl13bsdczUUcqbciD9iLr095yj8DQKdObriEvuNSx325N1rV1O0sJFszx75g==,
+                integrity: sha512-Yj9mA8fPiVgOUpByoTZO5pNrcl5Yk37FcSHsUINpAsaBIEZIuqcCclDZJCVxqQShDsmYX8QG63svJiTbOATZwg==,
             }
         engines: { node: 14 || >=16.14 }
+        dependencies:
+            semver: 7.5.4
         dev: true
 
     /lru-cache@5.1.1:
@@ -15767,7 +15771,7 @@ packages:
             }
         engines: { node: '>=16 || 14 >=14.17' }
         dependencies:
-            lru-cache: 10.0.1
+            lru-cache: 10.0.2
             minipass: 7.0.4
         dev: true
 

@@ -31,6 +31,13 @@ export const finishReasonMapping: Record<
 	[ChatStreamEndEventFinishReason.ErrorToxic]: StreamFinishReason.ERROR,
 };
 
+/**
+ * The getCohereConnectors function takes an array of CohereConnector enums and returns
+ * an array of connector objects.
+ *
+ * @param connector : CohereConnector[]
+ * @return An array of CohereChatConnector objects
+ */
 export function getCohereConnectors(
 	connectors: CohereConnector[],
 ): CohereChatConnector[] {
@@ -48,6 +55,13 @@ export function getCohereConnectors(
 	return result;
 }
 
+/**
+ * The createCohereRequest function takes a CoherePromptRequest and returns a ChatRequest or
+ * ChatStreamRequest.
+ *
+ * @param grpcRequest CoherePromptRequest
+ * @return A ChatRequest or a ChatStreamRequest
+ */
 export function createCohereRequest(
 	grpcRequest: CoherePromptRequest,
 ): ChatRequest | ChatStreamRequest {

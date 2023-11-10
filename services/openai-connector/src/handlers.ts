@@ -15,6 +15,12 @@ import logger from 'shared/logger';
 import { getOpenAIClient } from '@/client';
 import { createOpenAIRequest, finishReasonMap } from '@/utils';
 
+/**
+ * The openAIPrompt function is a gRPC handler function.
+ *
+ * @param call ServerUnaryCall object, including the request and metadata
+ * @param callback sendUnaryData handler, allowing sending a response back to the client.
+ */
 export async function openAIPrompt(
 	call: ServerUnaryCall<OpenAIPromptRequest, OpenAIPromptResponse>,
 	callback: sendUnaryData<OpenAIPromptResponse>,
@@ -46,7 +52,14 @@ export async function openAIPrompt(
 		callback(new GrpcError({ message: (error as Error).message }), null);
 	}
 }
-
+/**
+ * The openAIStream function is a gRPC server streaming function. The request contains the prompt, temperature,
+ * top_p, n and stream parameters. The response contains the content of each message sent by the client to openai
+ * as well as a finishReason which indicates why
+ * openai stopped sending messages (either because it reached max tokens or because it was interrupted). This function
+ *
+ * @param call ServerWritableStream - the gRPC streaming handler.
+ */
 export async function openAIStream(
 	call: ServerWritableStream<OpenAIPromptRequest, OpenAIStreamResponse>,
 ) {

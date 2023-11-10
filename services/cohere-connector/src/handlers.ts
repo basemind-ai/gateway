@@ -15,6 +15,12 @@ import logger from 'shared/logger';
 import { getCohereClient } from '@/client';
 import { createCohereRequest, finishReasonMapping } from '@/utils';
 
+/**
+ * The openAIPrompt function is a gRPC handler function.
+ *
+ * @param call ServerUnaryCall object, including the request and metadata
+ * @param callback sendUnaryData handler, allowing sending a response back to the client.
+ */
 export async function coherePrompt(
 	call: ServerUnaryCall<CoherePromptRequest, CoherePromptResponse>,
 	callback: sendUnaryData<CoherePromptResponse>,
@@ -42,6 +48,12 @@ export async function coherePrompt(
 	}
 }
 
+/**
+ * The cohereStream function is a gRPC streaming function.
+ * Each response object contains either the generated text or an indication that generation has finished (and why).
+ *
+ * @param call ServerWritableStream - the gRPC streaming handler.
+ */
 export async function cohereStream(
 	call: ServerWritableStream<CoherePromptRequest, CohereStreamResponse>,
 ) {
