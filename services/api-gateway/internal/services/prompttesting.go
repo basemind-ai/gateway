@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
@@ -8,6 +9,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"k8s.io/utils/ptr"
 )
 
 type PromptTestingServer struct {
@@ -41,10 +43,10 @@ func (PromptTestingServer) TestPrompt(
 		PromptConfigID: *promptConfigID,
 		PromptConfigData: datatypes.PromptConfigDTO{
 			ID:                        request.PromptConfigId,
-			ModelParameters:           request.ModelParameters,
+			ModelParameters:           ptr.To(json.RawMessage(request.ModelParameters)),
 			ModelType:                 models.ModelType(request.ModelType),
 			ModelVendor:               models.ModelVendor(request.ModelVendor),
-			ProviderPromptMessages:    request.ProviderPromptMessages,
+			ProviderPromptMessages:    ptr.To(json.RawMessage(request.ProviderPromptMessages)),
 			ExpectedTemplateVariables: request.ExpectedTemplateVariables,
 		},
 		ProviderModelPricing: modelPricing,

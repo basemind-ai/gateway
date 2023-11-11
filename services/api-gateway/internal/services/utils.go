@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
@@ -14,6 +15,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"k8s.io/utils/ptr"
 )
 
 // RetrievePromptConfig retrieves the prompt config - either using the provided ID, or the application default.
@@ -38,10 +40,10 @@ func RetrievePromptConfig(
 		return &datatypes.PromptConfigDTO{
 			ID:                        db.UUIDToString(&promptConfig.ID),
 			Name:                      promptConfig.Name,
-			ModelParameters:           promptConfig.ModelParameters,
+			ModelParameters:           ptr.To(json.RawMessage(promptConfig.ModelParameters)),
 			ModelType:                 promptConfig.ModelType,
 			ModelVendor:               promptConfig.ModelVendor,
-			ProviderPromptMessages:    promptConfig.ProviderPromptMessages,
+			ProviderPromptMessages:    ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
 			ExpectedTemplateVariables: promptConfig.ExpectedTemplateVariables,
 			IsDefault:                 promptConfig.IsDefault,
 			CreatedAt:                 promptConfig.CreatedAt.Time,
@@ -62,10 +64,10 @@ func RetrievePromptConfig(
 	return &datatypes.PromptConfigDTO{
 		ID:                        db.UUIDToString(&promptConfig.ID),
 		Name:                      promptConfig.Name,
-		ModelParameters:           promptConfig.ModelParameters,
+		ModelParameters:           ptr.To(json.RawMessage(promptConfig.ModelParameters)),
 		ModelType:                 promptConfig.ModelType,
 		ModelVendor:               promptConfig.ModelVendor,
-		ProviderPromptMessages:    promptConfig.ProviderPromptMessages,
+		ProviderPromptMessages:    ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
 		ExpectedTemplateVariables: promptConfig.ExpectedTemplateVariables,
 		IsDefault:                 promptConfig.IsDefault,
 		CreatedAt:                 promptConfig.CreatedAt.Time,

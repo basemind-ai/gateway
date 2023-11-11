@@ -3,10 +3,12 @@ package repositories_test
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/shopspring/decimal"
+	"k8s.io/utils/ptr"
 	"testing"
 	"time"
 
@@ -19,8 +21,9 @@ import (
 )
 
 func TestPromptConfigRepository(t *testing.T) { //nolint: revive
-	params := serialization.SerializeJSON(map[string]any{"maxTokens": 100})
-	newModelParameters := params
+	newModelParameters := ptr.To(
+		json.RawMessage(serialization.SerializeJSON(map[string]any{"maxTokens": 100})),
+	)
 
 	newName := "new name"
 	newModelType := models.ModelTypeGpt4
@@ -95,7 +98,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 				ModelVendor:            models.ModelVendorOPENAI,
 				ModelType:              models.ModelTypeGpt432k,
 				ModelParameters:        newModelParameters,
-				ProviderPromptMessages: []byte("invalid"),
+				ProviderPromptMessages: ptr.To(json.RawMessage("invalid")),
 			}
 			promptConfig, err := repositories.CreatePromptConfig(
 				context.TODO(),
@@ -255,19 +258,19 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 				},
 				{
 					Name: "updates prompt config model parameters",
-					Dto:  dto.PromptConfigUpdateDTO{ModelParameters: &newModelParameters},
+					Dto:  dto.PromptConfigUpdateDTO{ModelParameters: newModelParameters},
 				},
 				{
 					Name: "updates prompt config prompt messages",
-					Dto:  dto.PromptConfigUpdateDTO{ProviderPromptMessages: &newPromptMessages},
+					Dto:  dto.PromptConfigUpdateDTO{ProviderPromptMessages: newPromptMessages},
 				},
 				{
 					Name: "updates multiple values",
 					Dto: dto.PromptConfigUpdateDTO{
 						Name:                   &newName,
 						ModelType:              &newModelType,
-						ModelParameters:        &newModelParameters,
-						ProviderPromptMessages: &newPromptMessages,
+						ModelParameters:        newModelParameters,
+						ProviderPromptMessages: newPromptMessages,
 					},
 				},
 			}
@@ -295,12 +298,12 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 					)
 					assert.Equal(
 						t,
-						updatedPromptConfig.ModelParameters,
+						[]byte(*updatedPromptConfig.ModelParameters),
 						retrievedPromptConfig.ModelParameters,
 					)
 					assert.Equal(
 						t,
-						updatedPromptConfig.ProviderPromptMessages,
+						[]byte(*updatedPromptConfig.ProviderPromptMessages),
 						retrievedPromptConfig.ProviderPromptMessages,
 					)
 					assert.Equal(
@@ -375,11 +378,11 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
 			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
 
-			badMessage := []byte("invalid")
+			badMessage := ptr.To(json.RawMessage("invalid"))
 			_, err := repositories.UpdatePromptConfig(
 				context.TODO(),
 				promptConfig.ID,
-				dto.PromptConfigUpdateDTO{ProviderPromptMessages: &badMessage},
+				dto.PromptConfigUpdateDTO{ProviderPromptMessages: badMessage},
 			)
 			assert.Error(t, err)
 		})

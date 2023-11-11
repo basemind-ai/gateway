@@ -85,12 +85,12 @@ func TestSupportAPI(t *testing.T) {
 			//	emailSenderData.TemplateVariables["subject"],
 			//	supportRequestBody.EmailSubject,
 			//)
-			//assert.Equal(
+			// assert.Equal(
 			//	t,
 			//	emailSenderData.TemplateVariables["topic"],
 			//	supportRequestBody.RequestTopic,
 			//)
-			//assert.Equal(
+			// assert.Equal(
 			//	t,
 			//	emailSenderData.TemplateVariables["userId"],
 			//	db.UUIDToString(&userAccount.ID),

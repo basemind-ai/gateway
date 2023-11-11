@@ -277,10 +277,10 @@ func TestIntegration(t *testing.T) { //nolint: revive
 					TemplateVariables:         templateVariables,
 					ExpectedTemplateVariables: expectedTemplateVariables,
 					ApplicationId:             applicationID,
-					ModelParameters:           modelParameters,
+					ModelParameters:           *modelParameters,
 					ModelVendor:               string(models.ModelVendorOPENAI),
 					ModelType:                 string(models.ModelTypeGpt432k),
-					ProviderPromptMessages:    promptMessages,
+					ProviderPromptMessages:    *promptMessages,
 					PromptConfigId:            promptConfigID,
 				})
 				assert.NoError(t, streamErr)

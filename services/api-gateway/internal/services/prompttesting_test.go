@@ -75,8 +75,8 @@ func TestPromptTestingService(t *testing.T) {
 			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
 			err := srv.TestPrompt(&ptesting.PromptTestRequest{
 				ApplicationId:          invalidUUID,
-				ModelParameters:        modelParameters,
-				ProviderPromptMessages: promptMessages,
+				ModelParameters:        *modelParameters,
+				ProviderPromptMessages: *promptMessages,
 				PromptConfigId:         promptConfigID,
 				TemplateVariables:      nil,
 				ModelVendor:            string(models.ModelVendorOPENAI),
@@ -88,8 +88,8 @@ func TestPromptTestingService(t *testing.T) {
 			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
 			err := srv.TestPrompt(&ptesting.PromptTestRequest{
 				ApplicationId:          "38c8e86d-0027-4c99-ba34-82c77e5cd145",
-				ModelParameters:        modelParameters,
-				ProviderPromptMessages: promptMessages,
+				ModelParameters:        *modelParameters,
+				ProviderPromptMessages: *promptMessages,
 				PromptConfigId:         invalidUUID,
 				TemplateVariables:      nil,
 				ModelVendor:            string(models.ModelVendorOPENAI),

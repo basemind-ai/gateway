@@ -2,9 +2,11 @@ package repositories
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"k8s.io/utils/ptr"
 	"strings"
 	"time"
 
@@ -41,10 +43,10 @@ func CreatePromptConfig(
 		CreatePromptConfig(ctx, models.CreatePromptConfigParams{
 			ApplicationID:             applicationID,
 			Name:                      strings.TrimSpace(createPromptConfigDTO.Name),
-			ModelParameters:           createPromptConfigDTO.ModelParameters,
+			ModelParameters:           ptr.Deref(createPromptConfigDTO.ModelParameters, nil),
 			ModelType:                 createPromptConfigDTO.ModelType,
 			ModelVendor:               createPromptConfigDTO.ModelVendor,
-			ProviderPromptMessages:    promptMessages,
+			ProviderPromptMessages:    ptr.Deref(promptMessages, nil),
 			ExpectedTemplateVariables: expectedTemplateVariables,
 			IsDefault:                 !createPromptConfigDTO.IsTest && !defaultExists,
 			IsTestConfig:              createPromptConfigDTO.IsTest,
@@ -58,10 +60,10 @@ func CreatePromptConfig(
 	return &datatypes.PromptConfigDTO{
 		ID:                        db.UUIDToString(&promptConfig.ID),
 		Name:                      promptConfig.Name,
-		ModelParameters:           promptConfig.ModelParameters,
+		ModelParameters:           ptr.To(json.RawMessage(promptConfig.ModelParameters)),
 		ModelType:                 promptConfig.ModelType,
 		ModelVendor:               promptConfig.ModelVendor,
-		ProviderPromptMessages:    promptConfig.ProviderPromptMessages,
+		ProviderPromptMessages:    ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
 		ExpectedTemplateVariables: promptConfig.ExpectedTemplateVariables,
 		IsDefault:                 promptConfig.IsDefault,
 		CreatedAt:                 promptConfig.CreatedAt.Time,
@@ -164,14 +166,14 @@ func UpdatePromptConfig(
 	}
 	if updatePromptConfigDTO.ProviderPromptMessages != nil {
 		expectedTemplateVariables, providerMessages, parsePromptMessagesErr := ParsePromptMessages(
-			*updatePromptConfigDTO.ProviderPromptMessages,
+			updatePromptConfigDTO.ProviderPromptMessages,
 			updateParams.ModelVendor,
 		)
 		if parsePromptMessagesErr != nil {
 			return nil, fmt.Errorf("failed to parse prompt messages - %w", parsePromptMessagesErr)
 		}
 
-		updateParams.ProviderPromptMessages = providerMessages
+		updateParams.ProviderPromptMessages = *providerMessages
 		updateParams.ExpectedTemplateVariables = expectedTemplateVariables
 	}
 
@@ -198,12 +200,14 @@ func UpdatePromptConfig(
 	}()
 
 	return &datatypes.PromptConfigDTO{
-		ID:                        db.UUIDToString(&updatedPromptConfig.ID),
-		Name:                      updatedPromptConfig.Name,
-		ModelParameters:           updatedPromptConfig.ModelParameters,
-		ModelType:                 updatedPromptConfig.ModelType,
-		ModelVendor:               updatedPromptConfig.ModelVendor,
-		ProviderPromptMessages:    updatedPromptConfig.ProviderPromptMessages,
+		ID:              db.UUIDToString(&updatedPromptConfig.ID),
+		Name:            updatedPromptConfig.Name,
+		ModelParameters: ptr.To(json.RawMessage(updatedPromptConfig.ModelParameters)),
+		ModelType:       updatedPromptConfig.ModelType,
+		ModelVendor:     updatedPromptConfig.ModelVendor,
+		ProviderPromptMessages: ptr.To(
+			json.RawMessage(updatedPromptConfig.ProviderPromptMessages),
+		),
 		ExpectedTemplateVariables: updatedPromptConfig.ExpectedTemplateVariables,
 		IsDefault:                 updatedPromptConfig.IsDefault,
 		CreatedAt:                 updatedPromptConfig.CreatedAt.Time,

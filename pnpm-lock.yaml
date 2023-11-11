@@ -8,8 +8,8 @@ importers:
     .:
         devDependencies:
             '@bufbuild/buf':
-                specifier: ^1.27.2
-                version: 1.27.2
+                specifier: ^1.28.0
+                version: 1.28.0
             '@commitlint/cli':
                 specifier: ^18.4.0
                 version: 18.4.0(typescript@5.2.2)
@@ -312,8 +312,8 @@ importers:
                 specifier: ^2.0.0
                 version: 2.0.0
             openai:
-                specifier: ^4.17.3
-                version: 4.17.3
+                specifier: ^4.17.4
+                version: 4.17.4
             pino:
                 specifier: ^8.16.1
                 version: 8.16.1
@@ -2151,10 +2151,10 @@ packages:
             }
         dev: true
 
-    /@bufbuild/buf-darwin-arm64@1.27.2:
+    /@bufbuild/buf-darwin-arm64@1.28.0:
         resolution:
             {
-                integrity: sha512-ob1IAhFVsAVUr5o4EAwoeQ6FOGJdiS6eYGTGQiZzJEAYSs2dX/WQ9+Xz9EPQUb93n7PMjNs38DLDfwGQ3u3dsg==,
+                integrity: sha512-trbnKKCINrRUXf0Rs88QmniZeQ4ODdsA9yISOj5JdeVDr9rQf1j/P2NUM+JimQpLm78I1CRR5qQPIX3Q8xR0NA==,
             }
         engines: { node: '>=12' }
         cpu: [arm64]
@@ -2163,10 +2163,10 @@ packages:
         dev: true
         optional: true
 
-    /@bufbuild/buf-darwin-x64@1.27.2:
+    /@bufbuild/buf-darwin-x64@1.28.0:
         resolution:
             {
-                integrity: sha512-Kp0HBvLjeOxJtZ/j3vOulX6G3u5pa9vksVmJ5HGjhL0BZJwavh8Bd9YgrBDrTzKtTQMHxmhTSaNEgNUWkjecfw==,
+                integrity: sha512-AVhGVJjaR26Qe0gNv+3AijeaQABJyFY8tlInEOOtTaQi2UGR8cgQoYBCziL3NQfH06wi7nEwTJm/ej2JUpAt2Q==,
             }
         engines: { node: '>=12' }
         cpu: [x64]
@@ -2175,10 +2175,10 @@ packages:
         dev: true
         optional: true
 
-    /@bufbuild/buf-linux-aarch64@1.27.2:
+    /@bufbuild/buf-linux-aarch64@1.28.0:
         resolution:
             {
-                integrity: sha512-rq+bpT+FMR1iiUvcHno1SPS4e0Ydr+F7ArIzN5cO4DKL09sBJXcaVGa7fRRlBZvNJTt3XRVtlE8LNLGH7zjBOg==,
+                integrity: sha512-5qzLdO2MpXHPh2W5Rlf58oW8iH+wwOIjQs3vlgtgeI0nGu0FhRgpcrJ1E0lswTUE0NW19RMLI+q/QpjEl9W3aw==,
             }
         engines: { node: '>=12' }
         cpu: [arm64]
@@ -2187,10 +2187,10 @@ packages:
         dev: true
         optional: true
 
-    /@bufbuild/buf-linux-x64@1.27.2:
+    /@bufbuild/buf-linux-x64@1.28.0:
         resolution:
             {
-                integrity: sha512-t/lcJ06gELy+4hVROuoeX8Y+oXq9NrPX+UgT5WujGo21oOb8UAQETZLRefj2U4IRqYqXhTKicfOI2y8xI7CSlQ==,
+                integrity: sha512-gZm7vGjhcabb1Zqp+ARYiJYCNm2mtbXFqo9Cqy0hpaonWaKAn7lbjtT0tG7rVX++QIfOpE3CwnjUNHck5xKP6A==,
             }
         engines: { node: '>=12' }
         cpu: [x64]
@@ -2199,10 +2199,10 @@ packages:
         dev: true
         optional: true
 
-    /@bufbuild/buf-win32-arm64@1.27.2:
+    /@bufbuild/buf-win32-arm64@1.28.0:
         resolution:
             {
-                integrity: sha512-rJieGmtSw4tfteW6mhjdtDDTFBbl2HBan1FnfNAOZH4ZrTwfcOO5Vn3fUMl+jPtiCpTscyzVaYHI+LvYffSdvg==,
+                integrity: sha512-ptIfiTYW2cMlPOcnkz3YF/aSR9ztAzeozycv460qDR0p0c0KYHKRTTFKD8TRahoyU7znmWEluYBdmKZAbbtwKg==,
             }
         engines: { node: '>=12' }
         cpu: [arm64]
@@ -2211,10 +2211,10 @@ packages:
         dev: true
         optional: true
 
-    /@bufbuild/buf-win32-x64@1.27.2:
+    /@bufbuild/buf-win32-x64@1.28.0:
         resolution:
             {
-                integrity: sha512-x9IKCHgj6GmDGH2xlTo80l2feNU3hUeoEwLFLH4I5Qs2L1gfYIDMZGp+0Bhm5eK9CIWYtkJqeqGRIJkrJA6CfQ==,
+                integrity: sha512-vwjMUfelrB8RD/xHdR6MVEl9XqIxvASvzj0szz70hvQmzmU4BEOEUTHtERMOnBJxiPE1a28YEfpUlxyvm+COCg==,
             }
         engines: { node: '>=12' }
         cpu: [x64]
@@ -2223,21 +2223,21 @@ packages:
         dev: true
         optional: true
 
-    /@bufbuild/buf@1.27.2:
+    /@bufbuild/buf@1.28.0:
         resolution:
             {
-                integrity: sha512-hwZYF0DCxvmTAZIAeT/q66HYtIxnSH9jn/CVElaJA/l+Clr9zhLdfKFd1yD2lMqHpNUEeXtA8T0ABXv29NVfYQ==,
+                integrity: sha512-QizjughxiWj53BTFijxQN5YDCcIriLAsCSYgxk+l9YzEC3hHAjCBen0hGJcSezWDLKWiGxAD6AMXiRIfAHKZjQ==,
             }
         engines: { node: '>=12' }
         hasBin: true
         requiresBuild: true
         optionalDependencies:
-            '@bufbuild/buf-darwin-arm64': 1.27.2
-            '@bufbuild/buf-darwin-x64': 1.27.2
-            '@bufbuild/buf-linux-aarch64': 1.27.2
-            '@bufbuild/buf-linux-x64': 1.27.2
-            '@bufbuild/buf-win32-arm64': 1.27.2
-            '@bufbuild/buf-win32-x64': 1.27.2
+            '@bufbuild/buf-darwin-arm64': 1.28.0
+            '@bufbuild/buf-darwin-x64': 1.28.0
+            '@bufbuild/buf-linux-aarch64': 1.28.0
+            '@bufbuild/buf-linux-x64': 1.28.0
+            '@bufbuild/buf-win32-arm64': 1.28.0
+            '@bufbuild/buf-win32-x64': 1.28.0
         dev: true
 
     /@colors/colors@1.5.0:
@@ -8827,7 +8827,7 @@ packages:
         hasBin: true
         dependencies:
             caniuse-lite: 1.0.30001561
-            electron-to-chromium: 1.4.580
+            electron-to-chromium: 1.4.581
             node-releases: 2.0.13
             update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -10524,10 +10524,10 @@ packages:
             jake: 10.8.7
         dev: true
 
-    /electron-to-chromium@1.4.580:
+    /electron-to-chromium@1.4.581:
         resolution:
             {
-                integrity: sha512-T5q3pjQon853xxxHUq3ZP68ZpvJHuSMY2+BZaW3QzjS4HvNuvsMmZ/+lU+nCrftre1jFZ+OSlExynXWBihnXzw==,
+                integrity: sha512-6uhqWBIapTJUxgPTCHH9sqdbxIMPt7oXl0VcAL1kOtlU6aECdcMncCrX5Z7sHQ/invtrC9jUQUef7+HhO8vVFw==,
             }
 
     /elliptic@6.5.4:
@@ -15459,10 +15459,10 @@ packages:
             is-wsl: 2.2.0
         dev: true
 
-    /openai@4.17.3:
+    /openai@4.17.4:
         resolution:
             {
-                integrity: sha512-Gx9wzl9HWX5pjagkgXVu6U2BTFEPkQFdkppNnAX2n2Rpjtn2zt152wXh7NnZ5eJuVxUGYzRe66JmayAEGjzqAg==,
+                integrity: sha512-ThRFkl6snLbcAKS58St7N3CaKuI5WdYUvIjPvf4s+8SdymgNtOfzmZcZXVcCefx04oKFnvZJvIcTh3eAFUUhAQ==,
             }
         hasBin: true
         dependencies:
