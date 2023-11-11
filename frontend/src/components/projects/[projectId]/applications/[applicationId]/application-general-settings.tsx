@@ -28,6 +28,7 @@ export function ApplicationGeneralSettings({
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);
 	const updateApplication = useUpdateApplication();
+
 	const showError = useShowError();
 	const { mutate } = useSWRConfig();
 
@@ -65,14 +66,19 @@ export function ApplicationGeneralSettings({
 			onError({ message }: ApiError) {
 				showError(message);
 			},
-			onSuccess(promptConfigRes) {
-				setPromptConfig(applicationId, promptConfigRes);
+			onSuccess(promptConfigResponse) {
+				if (
+					Array.isArray(promptConfigResponse) &&
+					promptConfigResponse.length
+				) {
+					setPromptConfig(applicationId, promptConfigResponse);
 
-				const defaultConfig = promptConfigRes.find(
-					(promptConfig) => promptConfig.isDefault,
-				)?.id;
-				setInitialPromptConfig(defaultConfig);
-				setDefaultPromptConfig(defaultConfig);
+					const defaultConfig = promptConfigResponse.find(
+						(promptConfig) => promptConfig.isDefault,
+					)?.id;
+					setInitialPromptConfig(defaultConfig);
+					setDefaultPromptConfig(defaultConfig);
+				}
 			},
 		},
 	);
@@ -147,7 +153,7 @@ export function ApplicationGeneralSettings({
 						type="text"
 						id="app-name"
 						data-testid="application-name-input"
-						className="input mt-2.5 bg-neutral min-w-[70%]"
+						className="input mt-2.5 bg-neutral min-w-full"
 						value={name}
 						onChange={handleChange(setName)}
 					/>
@@ -159,11 +165,10 @@ export function ApplicationGeneralSettings({
 					>
 						{t('applicationDescription')}
 					</label>
-					<input
-						type="text"
+					<textarea
 						id="app-desc"
 						data-testid="application-description-input"
-						className="input mt-2.5 bg-neutral w-full"
+						className="textarea mt-2.5 bg-neutral w-full"
 						value={description}
 						onChange={handleChange(setDescription)}
 					/>

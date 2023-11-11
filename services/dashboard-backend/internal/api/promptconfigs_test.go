@@ -456,7 +456,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			assert.NoError(t, responseErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 
-			promptConfigs := make([]models.PromptConfig, 0)
+			promptConfigs := make([]*datatypes.PromptConfigDTO, 0)
 			deserializationErr := serialization.DeserializeJSON(response.Body, &promptConfigs)
 			assert.NoError(t, deserializationErr)
 

@@ -1,7 +1,10 @@
 package api
 
 import (
+	"encoding/json"
+	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"k8s.io/utils/ptr"
 	"net/http"
 	"strings"
 	"time"
@@ -64,7 +67,24 @@ func handleRetrievePromptConfigs(w http.ResponseWriter, r *http.Request) {
 		GetQueries().
 		RetrievePromptConfigs(r.Context(), applicationID))
 
-	serialization.RenderJSONResponse(w, http.StatusOK, promptConfigs)
+	responseData := make([]*datatypes.PromptConfigDTO, len(promptConfigs))
+	for i, promptConfig := range promptConfigs {
+		configID := promptConfig.ID
+		responseData[i] = &datatypes.PromptConfigDTO{
+			ID:                        db.UUIDToString(&configID),
+			Name:                      promptConfig.Name,
+			ModelParameters:           ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+			ModelType:                 promptConfig.ModelType,
+			ModelVendor:               promptConfig.ModelVendor,
+			ProviderPromptMessages:    ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
+			ExpectedTemplateVariables: promptConfig.ExpectedTemplateVariables,
+			IsDefault:                 promptConfig.IsDefault,
+			CreatedAt:                 promptConfig.CreatedAt.Time,
+			UpdatedAt:                 promptConfig.UpdatedAt.Time,
+		}
+	}
+
+	serialization.RenderJSONResponse(w, http.StatusOK, responseData)
 }
 func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 	promptConfigID := r.Context().Value(middleware.PromptConfigIDContextKey).(pgtype.UUID)
