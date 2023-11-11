@@ -7,10 +7,12 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Client implements the OpenAI connector gRPC client.
 type Client struct {
 	client openaiconnector.OpenAIServiceClient
 }
 
+// New creates a new OpenAI connector client.
 func New(serverAddress string, opts ...grpc.DialOption) *Client {
 	conn := exc.MustResult(grpc.Dial(serverAddress, opts...))
 	log.Info().Msg("initialized OpenAI connector connection")

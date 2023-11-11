@@ -56,10 +56,14 @@ func (ns NullAccessPermissionType) Value() (driver.Value, error) {
 type ModelType string
 
 const (
-	ModelTypeGpt35Turbo    ModelType = "gpt-3.5-turbo"
-	ModelTypeGpt35Turbo16k ModelType = "gpt-3.5-turbo-16k"
-	ModelTypeGpt4          ModelType = "gpt-4"
-	ModelTypeGpt432k       ModelType = "gpt-4-32k"
+	ModelTypeGpt35Turbo          ModelType = "gpt-3.5-turbo"
+	ModelTypeGpt35Turbo16k       ModelType = "gpt-3.5-turbo-16k"
+	ModelTypeGpt4                ModelType = "gpt-4"
+	ModelTypeGpt432k             ModelType = "gpt-4-32k"
+	ModelTypeCommand             ModelType = "command"
+	ModelTypeCommandLight        ModelType = "command-light"
+	ModelTypeCommandNightly      ModelType = "command-nightly"
+	ModelTypeCommandLightNightly ModelType = "command-light-nightly"
 )
 
 func (e *ModelType) Scan(src interface{}) error {
@@ -101,6 +105,7 @@ type ModelVendor string
 
 const (
 	ModelVendorOPENAI ModelVendor = "OPEN_AI"
+	ModelVendorCOHERE ModelVendor = "COHERE"
 )
 
 func (e *ModelVendor) Scan(src interface{}) error {

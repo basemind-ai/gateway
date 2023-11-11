@@ -63,7 +63,8 @@ CREATE INDEX idx_application_project_id ON application (project_id) WHERE delete
 
 -- model_vendor
 CREATE TYPE model_vendor AS ENUM (
-    'OPEN_AI'
+    'OPEN_AI',
+    'COHERE'
 );
 
 -- model_type
@@ -71,7 +72,11 @@ CREATE TYPE model_type AS ENUM (
     'gpt-3.5-turbo',
     'gpt-3.5-turbo-16k',
     'gpt-4',
-    'gpt-4-32k'
+    'gpt-4-32k',
+    'command',
+    'command-light',
+    'command-nightly',
+    'command-light-nightly'
 );
 
 -- prompt-config
