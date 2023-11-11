@@ -34,8 +34,12 @@ export function Logo({
 				height={height}
 				src="/images/pinecone-transparent-bg.svg"
 				alt="Logo"
+				data-testid="logo-image"
 			/>
-			<span className={`${textSize} font-bold text-primary`}>
+			<span
+				className={`${textSize} font-bold text-primary`}
+				data-testid="logo-text"
+			>
 				{t('basemindName')}
 			</span>
 		</div>

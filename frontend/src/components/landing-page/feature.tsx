@@ -3,12 +3,14 @@ export function Feature({
 	subtitle,
 	description,
 	reverse = false,
+	name,
 	children,
 }: {
 	title: string;
 	subtitle: string;
 	description: string;
 	reverse?: boolean;
+	name: string;
 	children: React.ReactNode;
 }) {
 	return (
@@ -16,7 +18,7 @@ export function Feature({
 			className={`card p-5 shadow shadow-neutral border-3 border-base-200/10 h-full flex flex-col md:flex-row justify-between items-center md:px-0 ${
 				reverse ? 'md:flex-row-reverse' : ''
 			}`}
-			data-testid="feature-card"
+			data-testid={`feature-card-${name}`}
 		>
 			<div className="md:w-5/12 justify-center md:text-left mt-8 md:mt-0 p-2">
 				<h4 className="text-secondary text-lg mb-4 font-semibold">
