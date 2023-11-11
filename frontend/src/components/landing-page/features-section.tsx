@@ -21,8 +21,8 @@ export function FeaturesSection() {
 					<Image
 						width={Dimensions.Twelve}
 						height={Dimensions.Twelve}
-						src="/images/stats.svg"
-						alt="Hero Image"
+						src="/images/stats-feature.svg"
+						alt="Stats Feature"
 						className="w-full z-10"
 					/>
 				</Feature>
@@ -35,8 +35,8 @@ export function FeaturesSection() {
 					<Image
 						width={Dimensions.Twelve}
 						height={Dimensions.Twelve}
-						src="/images/prompt-testing.svg"
-						alt="Hero Image"
+						src="/images/prompt-testing-feature.svg"
+						alt="Prompt Testing Feature"
 						className="w-full z-10"
 					/>
 				</Feature>
@@ -51,59 +51,59 @@ export function FeaturesSection() {
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/hugging.svg"
-							alt="Hero Image"
+							src="/images/hugging-face-logo.svg"
+							alt="Hugging Face Logo"
 							className="w-full z-10"
 						/>
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/gcp.svg"
-							alt="Hero Image"
+							src="/images/gcp-logo.svg"
+							alt="GCP Logo"
 							className="w-full pt-2 z-10"
 						/>
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/azure.svg"
-							alt="Hero Image"
+							src="/images/azure-logo.svg"
+							alt="Azure Logo"
 							className="w-full z-10"
 						/>
 
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/aws.svg"
-							alt="Hero Image"
+							src="/images/aws-logo.svg"
+							alt="AWS Logo"
 							className="w-full z-10"
 						/>
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/anthropic.svg"
-							alt="Hero Image"
+							src="/images/anthropic-logo.svg"
+							alt="Anthropic Logo"
 							className="w-full z-10"
 						/>
 
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/palm2.svg"
-							alt="Hero Image"
+							src="/images/palm2-logo.svg"
+							alt="PaLM2 Logo"
 							className="w-full z-10"
 						/>
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/cohere.svg"
-							alt="Hero Image"
+							src="/images/cohere-logo.svg"
+							alt="Cohere Logo"
 							className="w-full z-10"
 						/>
 						<Image
 							width={Dimensions.Twelve}
 							height={Dimensions.Twelve}
-							src="/images/openai.svg"
-							alt="Hero Image"
+							src="/images/openai-logo.svg"
+							alt="OpenAI Logo"
 							className="w-full z-10"
 						/>
 					</div>

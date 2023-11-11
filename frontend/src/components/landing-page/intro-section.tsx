@@ -41,7 +41,7 @@ export function IntroSection({ onClick }: { onClick: () => void }) {
 					priority
 					width={Dimensions.Twelve}
 					height={Dimensions.Twelve}
-					src="/images/hero2.svg"
+					src="/images/hero.svg"
 					alt="Hero Image"
 					className="w-full aspect-square z-10"
 				/>

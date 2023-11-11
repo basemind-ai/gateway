@@ -42,4 +42,4 @@ export enum Dimensions {
 	Eighty = 320, // 20rem
 	NinetySix = 384, // 24rem
 }
-export const marketingInfographic = '/images/infographic-basemine.svg';
+export const marketingInfographic = '/images/infographic.svg';
