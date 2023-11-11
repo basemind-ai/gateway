@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
@@ -14,6 +15,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"k8s.io/utils/ptr"
 	"testing"
 	"time"
 )
@@ -40,8 +42,8 @@ func createRequestConfigurationDTO(
 			Name:                      promptConfig.Name,
 			ModelType:                 promptConfig.ModelType,
 			ModelVendor:               promptConfig.ModelVendor,
-			ModelParameters:           promptConfig.ModelParameters,
-			ProviderPromptMessages:    promptConfig.ProviderPromptMessages,
+			ModelParameters:           ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+			ProviderPromptMessages:    ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
 			ExpectedTemplateVariables: promptConfig.ExpectedTemplateVariables,
 			IsDefault:                 promptConfig.IsDefault,
 			CreatedAt:                 promptConfig.CreatedAt.Time,

@@ -37,12 +37,12 @@ func TestUtils(t *testing.T) { //nolint:revive
 			assert.Equal(
 				t,
 				promptConfig.ModelParameters,
-				promptConfigDTO.ModelParameters,
+				[]byte(*promptConfigDTO.ModelParameters),
 			)
 			assert.Equal(
 				t,
 				promptConfig.ProviderPromptMessages,
-				promptConfigDTO.ProviderPromptMessages,
+				[]byte(*promptConfigDTO.ProviderPromptMessages),
 			)
 			assert.Equal(
 				t,
@@ -87,12 +87,12 @@ func TestUtils(t *testing.T) { //nolint:revive
 				assert.Equal(
 					t,
 					promptConfig.ModelParameters,
-					promptConfigDTO.ModelParameters,
+					[]byte(*promptConfigDTO.ModelParameters),
 				)
 				assert.Equal(
 					t,
 					promptConfig.ProviderPromptMessages,
-					promptConfigDTO.ProviderPromptMessages,
+					[]byte(*promptConfigDTO.ProviderPromptMessages),
 				)
 				assert.Equal(
 					t,
@@ -173,12 +173,12 @@ func TestUtils(t *testing.T) { //nolint:revive
 			assert.Equal(
 				t,
 				promptConfig.ModelParameters,
-				requestConfigurationDTO.PromptConfigData.ModelParameters,
+				[]byte(*requestConfigurationDTO.PromptConfigData.ModelParameters),
 			)
 			assert.Equal(
 				t,
 				promptConfig.ProviderPromptMessages,
-				requestConfigurationDTO.PromptConfigData.ProviderPromptMessages,
+				[]byte(*requestConfigurationDTO.PromptConfigData.ProviderPromptMessages),
 			)
 			assert.Equal(
 				t,

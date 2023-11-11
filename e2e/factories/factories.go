@@ -3,10 +3,12 @@ package factories
 import (
 	"context"
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
+	"k8s.io/utils/ptr"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
@@ -24,7 +26,7 @@ func CreateOpenAIPromptMessages(
 	systemMessage string,
 	userMessage string,
 	templateVariables *[]string,
-) []byte {
+) *json.RawMessage {
 	msgs := []*datatypes.OpenAIPromptMessageDTO{{
 		Content: &systemMessage,
 		Role:    "system",
@@ -33,10 +35,10 @@ func CreateOpenAIPromptMessages(
 		Content:           &userMessage,
 		TemplateVariables: templateVariables,
 	}}
-	return serialization.SerializeJSON(msgs)
+	return ptr.To(json.RawMessage(serialization.SerializeJSON(msgs)))
 }
 
-func CreateModelParameters() []byte {
+func CreateModelParameters() *json.RawMessage {
 	modelParameters := serialization.SerializeJSON(map[string]float32{
 		"temperature":       1,
 		"top_p":             1,
@@ -45,7 +47,7 @@ func CreateModelParameters() []byte {
 		"frequency_penalty": 1,
 	})
 
-	return modelParameters
+	return ptr.To(json.RawMessage(modelParameters))
 }
 
 func CreateProject(ctx context.Context) (*models.Project, error) {
@@ -115,8 +117,8 @@ func CreatePromptConfig(
 		CreatePromptConfig(ctx, models.CreatePromptConfigParams{
 			ModelType:                 models.ModelTypeGpt35Turbo,
 			ModelVendor:               models.ModelVendorOPENAI,
-			ModelParameters:           modelParams,
-			ProviderPromptMessages:    promptMessages,
+			ModelParameters:           *modelParams,
+			ProviderPromptMessages:    *promptMessages,
 			ExpectedTemplateVariables: []string{"userInput"},
 			IsDefault:                 true,
 			ApplicationID:             applicationID,

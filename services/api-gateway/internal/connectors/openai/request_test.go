@@ -2,6 +2,7 @@ package openai_test
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
@@ -9,6 +10,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/stretchr/testify/assert"
+	"k8s.io/utils/ptr"
 	"testing"
 )
 
@@ -38,8 +40,8 @@ func TestRequestPrompt(t *testing.T) {
 			Name:                      promptConfig.Name,
 			ModelType:                 promptConfig.ModelType,
 			ModelVendor:               promptConfig.ModelVendor,
-			ModelParameters:           promptConfig.ModelParameters,
-			ProviderPromptMessages:    promptConfig.ProviderPromptMessages,
+			ModelParameters:           ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+			ProviderPromptMessages:    ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
 			ExpectedTemplateVariables: promptConfig.ExpectedTemplateVariables,
 			IsDefault:                 promptConfig.IsDefault,
 			CreatedAt:                 promptConfig.CreatedAt.Time,

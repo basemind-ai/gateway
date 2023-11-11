@@ -2,6 +2,7 @@ package openai_test
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
@@ -9,6 +10,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/shopspring/decimal"
+	"k8s.io/utils/ptr"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
@@ -199,11 +201,13 @@ func TestUtils(t *testing.T) {
 
 		t.Run("handles function message correctly", func(t *testing.T) {
 			functionName := "sum"
-			promptMessages := serialization.SerializeJSON([]*datatypes.OpenAIPromptMessageDTO{{
-				Role:              "function",
-				Name:              &functionName,
-				FunctionArguments: &[]string{"value1", "value2"},
-			}})
+			promptMessages := ptr.To(
+				json.RawMessage(serialization.SerializeJSON([]*datatypes.OpenAIPromptMessageDTO{{
+					Role:              "function",
+					Name:              &functionName,
+					FunctionArguments: &[]string{"value1", "value2"},
+				}})),
+			)
 
 			functionCall := openaiconnector.OpenAIFunctionCall{
 				Arguments: "value1,value2",
@@ -237,8 +241,8 @@ func TestUtils(t *testing.T) {
 
 		t.Run("returns error for unknown model type", func(t *testing.T) {
 			modelType := "unknown"
-			modelParameters := []byte(`{}`)
-			promptMessages := []byte(`[]`)
+			modelParameters := ptr.To(json.RawMessage(`{}`))
+			promptMessages := ptr.To(json.RawMessage(`[]`))
 			templateVariables := map[string]string{}
 
 			_, err := openai.CreatePromptRequest(
@@ -256,8 +260,8 @@ func TestUtils(t *testing.T) {
 
 		t.Run("returns error for unknown message role", func(t *testing.T) {
 			modelType := models.ModelTypeGpt35Turbo
-			modelParameters := []byte(`{}`)
-			promptMessages := []byte(`[{"role": "unknown"}]`)
+			modelParameters := ptr.To(json.RawMessage(`{}`))
+			promptMessages := ptr.To(json.RawMessage(`[{"role": "unknown"}]`))
 			templateVariables := map[string]string{}
 
 			_, err := openai.CreatePromptRequest(
@@ -272,8 +276,8 @@ func TestUtils(t *testing.T) {
 
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {
 			modelType := models.ModelTypeGpt35Turbo
-			modelParameters := []byte(`invalid_json`)
-			promptMessages := []byte(`[]`)
+			modelParameters := ptr.To(json.RawMessage(`invalid_json`))
+			promptMessages := ptr.To(json.RawMessage(`[]`))
 			templateVariables := make(map[string]string)
 
 			_, err := openai.CreatePromptRequest(
@@ -288,8 +292,8 @@ func TestUtils(t *testing.T) {
 
 		t.Run("returns error if prompt messages is invalid json", func(t *testing.T) {
 			modelType := models.ModelTypeGpt35Turbo
-			modelParameters := []byte(`{"temperature": 0.8}`)
-			promptMessages := []byte(`invalid_json`)
+			modelParameters := ptr.To(json.RawMessage(`{"temperature": 0.8}`))
+			promptMessages := ptr.To(json.RawMessage(`invalid_json`))
 			templateVariables := map[string]string{
 				"userInput": "Please write me a short poem about cheese.",
 			}

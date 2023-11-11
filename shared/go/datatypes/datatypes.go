@@ -1,6 +1,7 @@
 package datatypes
 
 import (
+	"encoding/json"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/shopspring/decimal"
 	"time"
@@ -30,10 +31,10 @@ type OpenAIModelParametersDTO struct { // skipcq: TCV-001
 type PromptConfigDTO struct { // skipcq: TCV-001
 	ID                        string             `json:"id"`
 	Name                      string             `json:"name"                      validate:"required"`
-	ModelParameters           []byte             `json:"modelParameters"           validate:"required"`
+	ModelParameters           *json.RawMessage   `json:"modelParameters"           validate:"required"`
 	ModelType                 models.ModelType   `json:"modelType"                 validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	ModelVendor               models.ModelVendor `json:"modelVendor"               validate:"oneof=OPEN_AI"`
-	ProviderPromptMessages    []byte             `json:"providerPromptMessages"    validate:"required"`
+	ProviderPromptMessages    *json.RawMessage   `json:"providerPromptMessages"    validate:"required"`
 	ExpectedTemplateVariables []string           `json:"expectedTemplateVariables"`
 	IsDefault                 bool               `json:"isDefault,omitempty"`
 	CreatedAt                 time.Time          `json:"createdAt,omitempty"`

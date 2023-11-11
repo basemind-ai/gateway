@@ -7,23 +7,28 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/go-playground/validator/v10"
+	"k8s.io/utils/ptr"
 	"regexp"
 )
 
 var (
 	curlyBracesRegex = regexp.MustCompile(`\{([^}]+)\}`)
-	vendorParsers    = map[models.ModelVendor]func([]byte) ([]string, []byte, error){
+	vendorParsers    = map[models.ModelVendor]func(message *json.RawMessage) ([]string, *json.RawMessage, error){
 		models.ModelVendorOPENAI: parseOpenAIMessages,
 	}
 	validate = validator.New(validator.WithRequiredStructEnabled())
 )
 
 func parseOpenAIMessages( //nolint: revive
-	promptMessages []byte,
-) ([]string, []byte, error) {
+	promptMessages *json.RawMessage,
+) ([]string, *json.RawMessage, error) {
 	var openAIPromptMessages []*datatypes.OpenAIPromptMessageDTO
 
-	if jsonErr := json.Unmarshal(promptMessages, &openAIPromptMessages); jsonErr != nil {
+	if promptMessages == nil {
+		return nil, nil, fmt.Errorf("prompt messages are nil")
+	}
+
+	if jsonErr := json.Unmarshal(*promptMessages, &openAIPromptMessages); jsonErr != nil {
 		return nil, nil, fmt.Errorf("failed to unmarshal prompt messages - %w", jsonErr)
 	}
 
@@ -50,15 +55,15 @@ func parseOpenAIMessages( //nolint: revive
 		}
 	}
 
-	marshalledMessages := serialization.SerializeJSON(openAIPromptMessages)
+	marshalledMessages := ptr.To(json.RawMessage(serialization.SerializeJSON(openAIPromptMessages)))
 
 	return expectedVariables, marshalledMessages, nil
 }
 
 func ParsePromptMessages( //nolint: revive
-	promptMessages []byte,
+	promptMessages *json.RawMessage,
 	vendor models.ModelVendor,
-) ([]string, []byte, error) {
+) ([]string, *json.RawMessage, error) {
 	parser, exists := vendorParsers[vendor]
 	if !exists {
 		return nil, nil, fmt.Errorf("unknown model vendor '%s'", vendor)

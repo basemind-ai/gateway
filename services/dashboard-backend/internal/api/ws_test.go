@@ -145,8 +145,8 @@ func TestPromptTestingAPI(t *testing.T) {
 		Name:                   "test",
 		ModelVendor:            promptConfig.ModelVendor,
 		ModelType:              promptConfig.ModelType,
-		ModelParameters:        promptConfig.ModelParameters,
-		ProviderPromptMessages: promptConfig.ProviderPromptMessages,
+		ModelParameters:        ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+		ProviderPromptMessages: ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
 		TemplateVariables:      templateVariables,
 		PromptConfigID:         &promptConfigID,
 	}
@@ -385,12 +385,14 @@ func TestPromptTestingAPI(t *testing.T) {
 			"should create the expected payload when PromptRequestRecordId is nil",
 			func(t *testing.T) {
 				data := &dto.PromptConfigTestDTO{
-					Name:                   "test",
-					ModelVendor:            models.ModelVendorOPENAI,
-					ModelType:              models.ModelTypeGpt4,
-					ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-					ModelParameters:        promptConfig.ModelParameters,
-					TemplateVariables:      templateVariables,
+					Name:        "test",
+					ModelVendor: models.ModelVendorOPENAI,
+					ModelType:   models.ModelTypeGpt4,
+					ProviderPromptMessages: ptr.To(
+						json.RawMessage(promptConfig.ProviderPromptMessages),
+					),
+					ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+					TemplateVariables: templateVariables,
 				}
 				msg := &ptesting.PromptTestingStreamingPromptResponse{
 					Content: "test",
@@ -418,12 +420,14 @@ func TestPromptTestingAPI(t *testing.T) {
 					promptConfig.ID,
 				)
 				data := &dto.PromptConfigTestDTO{
-					Name:                   "test",
-					ModelVendor:            models.ModelVendorOPENAI,
-					ModelType:              models.ModelTypeGpt4,
-					ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-					ModelParameters:        promptConfig.ModelParameters,
-					TemplateVariables:      templateVariables,
+					Name:        "test",
+					ModelVendor: models.ModelVendorOPENAI,
+					ModelType:   models.ModelTypeGpt4,
+					ProviderPromptMessages: ptr.To(
+						json.RawMessage(promptConfig.ProviderPromptMessages),
+					),
+					ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+					TemplateVariables: templateVariables,
 				}
 				msg := &ptesting.PromptTestingStreamingPromptResponse{
 					Content:               "test",
@@ -463,12 +467,14 @@ func TestPromptTestingAPI(t *testing.T) {
 		t.Run("should write error payload when receiving an error", func(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
-				Name:                   "test",
-				ModelVendor:            models.ModelVendorOPENAI,
-				ModelType:              models.ModelTypeGpt4,
-				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-				ModelParameters:        promptConfig.ModelParameters,
-				TemplateVariables:      templateVariables,
+				Name:        "test",
+				ModelVendor: models.ModelVendorOPENAI,
+				ModelType:   models.ModelTypeGpt4,
+				ProviderPromptMessages: ptr.To(
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				),
+				ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+				TemplateVariables: templateVariables,
 			}
 			errChannel := make(chan error)
 			responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
@@ -510,12 +516,14 @@ func TestPromptTestingAPI(t *testing.T) {
 		t.Run("should return error on write error", func(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
-				Name:                   "test",
-				ModelVendor:            models.ModelVendorOPENAI,
-				ModelType:              models.ModelTypeGpt4,
-				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-				ModelParameters:        promptConfig.ModelParameters,
-				TemplateVariables:      templateVariables,
+				Name:        "test",
+				ModelVendor: models.ModelVendorOPENAI,
+				ModelType:   models.ModelTypeGpt4,
+				ProviderPromptMessages: ptr.To(
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				),
+				ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+				TemplateVariables: templateVariables,
 			}
 			errChannel := make(chan error)
 			responseChannel := make(chan *ptesting.PromptTestingStreamingPromptResponse)
@@ -556,12 +564,14 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:                   "test",
-				ModelVendor:            models.ModelVendorOPENAI,
-				ModelType:              models.ModelTypeGpt4,
-				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-				ModelParameters:        promptConfig.ModelParameters,
-				TemplateVariables:      templateVariables,
+				Name:        "test",
+				ModelVendor: models.ModelVendorOPENAI,
+				ModelType:   models.ModelTypeGpt4,
+				ProviderPromptMessages: ptr.To(
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				),
+				ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+				TemplateVariables: templateVariables,
 			}
 			content := "is it tuesday?"
 			msg := &ptesting.PromptTestingStreamingPromptResponse{
@@ -607,12 +617,14 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:                   "test",
-				ModelVendor:            models.ModelVendorOPENAI,
-				ModelType:              models.ModelTypeGpt4,
-				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-				ModelParameters:        promptConfig.ModelParameters,
-				TemplateVariables:      templateVariables,
+				Name:        "test",
+				ModelVendor: models.ModelVendorOPENAI,
+				ModelType:   models.ModelTypeGpt4,
+				ProviderPromptMessages: ptr.To(
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				),
+				ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+				TemplateVariables: templateVariables,
 			}
 
 			go func() {
@@ -642,12 +654,14 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:                   "test",
-				ModelVendor:            models.ModelVendorOPENAI,
-				ModelType:              models.ModelTypeGpt4,
-				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-				ModelParameters:        promptConfig.ModelParameters,
-				TemplateVariables:      templateVariables,
+				Name:        "test",
+				ModelVendor: models.ModelVendorOPENAI,
+				ModelType:   models.ModelTypeGpt4,
+				ProviderPromptMessages: ptr.To(
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				),
+				ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+				TemplateVariables: templateVariables,
 			}
 
 			m.On("WriteMessage", gws.OpcodeText, mock.Anything).Return(assert.AnError)
@@ -681,12 +695,14 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:                   "test",
-				ModelVendor:            models.ModelVendorOPENAI,
-				ModelType:              models.ModelTypeGpt4,
-				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-				ModelParameters:        promptConfig.ModelParameters,
-				TemplateVariables:      templateVariables,
+				Name:        "test",
+				ModelVendor: models.ModelVendorOPENAI,
+				ModelType:   models.ModelTypeGpt4,
+				ProviderPromptMessages: ptr.To(
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				),
+				ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+				TemplateVariables: templateVariables,
 			}
 
 			m.On("WriteMessage", gws.OpcodeText, mock.Anything).Return(nil)
@@ -735,34 +751,46 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when name is empty",
 					Data: dto.PromptConfigTestDTO{
-						Name:                   "",
-						ModelVendor:            models.ModelVendorOPENAI,
-						ModelType:              models.ModelTypeGpt4,
-						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-						ModelParameters:        promptConfig.ModelParameters,
-						TemplateVariables:      templateVariables,
+						Name:        "",
+						ModelVendor: models.ModelVendorOPENAI,
+						ModelType:   models.ModelTypeGpt4,
+						ProviderPromptMessages: ptr.To(
+							json.RawMessage(promptConfig.ProviderPromptMessages),
+						),
+						ModelParameters: ptr.To(
+							json.RawMessage(promptConfig.ModelParameters),
+						),
+						TemplateVariables: templateVariables,
 					},
 				},
 				{
 					Name: "should return error when model vendor is invalid",
 					Data: dto.PromptConfigTestDTO{
-						Name:                   "test",
-						ModelVendor:            models.ModelVendor("invalid"),
-						ModelType:              models.ModelTypeGpt4,
-						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-						ModelParameters:        promptConfig.ModelParameters,
-						TemplateVariables:      templateVariables,
+						Name:        "test",
+						ModelVendor: models.ModelVendor("invalid"),
+						ModelType:   models.ModelTypeGpt4,
+						ProviderPromptMessages: ptr.To(
+							json.RawMessage(promptConfig.ProviderPromptMessages),
+						),
+						ModelParameters: ptr.To(
+							json.RawMessage(promptConfig.ModelParameters),
+						),
+						TemplateVariables: templateVariables,
 					},
 				},
 				{
 					Name: "should return error when model type is invalid",
 					Data: dto.PromptConfigTestDTO{
-						Name:                   "test",
-						ModelVendor:            models.ModelVendorOPENAI,
-						ModelType:              models.ModelType("invalid"),
-						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-						ModelParameters:        promptConfig.ModelParameters,
-						TemplateVariables:      templateVariables,
+						Name:        "test",
+						ModelVendor: models.ModelVendorOPENAI,
+						ModelType:   models.ModelType("invalid"),
+						ProviderPromptMessages: ptr.To(
+							json.RawMessage(promptConfig.ProviderPromptMessages),
+						),
+						ModelParameters: ptr.To(
+							json.RawMessage(promptConfig.ModelParameters),
+						),
+						TemplateVariables: templateVariables,
 					},
 				},
 				{
@@ -771,32 +799,40 @@ func TestPromptTestingAPI(t *testing.T) {
 						Name:                   "test",
 						ModelVendor:            models.ModelVendorOPENAI,
 						ModelType:              models.ModelTypeGpt432k,
-						ProviderPromptMessages: nil,
-						ModelParameters:        promptConfig.ModelParameters,
-						TemplateVariables:      templateVariables,
+						ProviderPromptMessages: ptr.To(json.RawMessage(nil)),
+						ModelParameters: ptr.To(
+							json.RawMessage(promptConfig.ModelParameters),
+						),
+						TemplateVariables: templateVariables,
 					},
 				},
 				{
 					Name: "should return error when model Parameters are empty",
 					Data: dto.PromptConfigTestDTO{
-						Name:                   "test",
-						ModelVendor:            models.ModelVendorOPENAI,
-						ModelType:              models.ModelTypeGpt432k,
-						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-						ModelParameters:        nil,
-						TemplateVariables:      templateVariables,
+						Name:        "test",
+						ModelVendor: models.ModelVendorOPENAI,
+						ModelType:   models.ModelTypeGpt432k,
+						ProviderPromptMessages: ptr.To(
+							json.RawMessage(promptConfig.ProviderPromptMessages),
+						),
+						ModelParameters:   nil,
+						TemplateVariables: templateVariables,
 					},
 				},
 				{
 					Name: "should return error when promptConfigID is not a uuid4",
 					Data: dto.PromptConfigTestDTO{
-						Name:                   "test",
-						ModelVendor:            models.ModelVendorOPENAI,
-						ModelType:              models.ModelTypeGpt432k,
-						ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-						ModelParameters:        promptConfig.ModelParameters,
-						TemplateVariables:      templateVariables,
-						PromptConfigID:         &invalidID,
+						Name:        "test",
+						ModelVendor: models.ModelVendorOPENAI,
+						ModelType:   models.ModelTypeGpt432k,
+						ProviderPromptMessages: ptr.To(
+							json.RawMessage(promptConfig.ProviderPromptMessages),
+						),
+						ModelParameters: ptr.To(
+							json.RawMessage(promptConfig.ModelParameters),
+						),
+						TemplateVariables: templateVariables,
+						PromptConfigID:    &invalidID,
 					},
 				},
 			}
@@ -813,13 +849,15 @@ func TestPromptTestingAPI(t *testing.T) {
 
 		t.Run("should create a new prompt config when prompt config id is nil", func(t *testing.T) {
 			d := dto.PromptConfigTestDTO{
-				Name:                   factories.RandomString(10),
-				ModelVendor:            models.ModelVendorOPENAI,
-				ModelType:              models.ModelTypeGpt432k,
-				ProviderPromptMessages: promptConfig.ProviderPromptMessages,
-				ModelParameters:        promptConfig.ModelParameters,
-				TemplateVariables:      templateVariables,
-				PromptConfigID:         nil,
+				Name:        factories.RandomString(10),
+				ModelVendor: models.ModelVendorOPENAI,
+				ModelType:   models.ModelTypeGpt432k,
+				ProviderPromptMessages: ptr.To(
+					json.RawMessage(promptConfig.ProviderPromptMessages),
+				),
+				ModelParameters:   ptr.To(json.RawMessage(promptConfig.ModelParameters)),
+				TemplateVariables: templateVariables,
+				PromptConfigID:    nil,
 			}
 			serializedData := serialization.SerializeJSON(d)
 			message := &gws.Message{Data: bytes.NewBuffer(serializedData)}
@@ -833,8 +871,8 @@ func TestPromptTestingAPI(t *testing.T) {
 			assert.Equal(t, pc.Name, fmt.Sprintf("prompt config for test: %s", d.Name))
 			assert.Equal(t, pc.ModelVendor, d.ModelVendor)
 			assert.Equal(t, pc.ModelType, d.ModelType)
-			assert.Equal(t, pc.ModelParameters, d.ModelParameters)
-			assert.Equal(t, pc.ProviderPromptMessages, d.ProviderPromptMessages)
+			assert.Equal(t, pc.ModelParameters, []byte(*d.ModelParameters))
+			assert.Equal(t, pc.ProviderPromptMessages, []byte(*d.ProviderPromptMessages))
 			assert.Equal(t, pc.IsTestConfig, true)
 		})
 	})

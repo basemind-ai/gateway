@@ -74,8 +74,8 @@ func ParseTemplateVariables(
 func CreatePromptRequest(
 	applicationID pgtype.UUID,
 	modelType models.ModelType,
-	modelParameters []byte,
-	promptMessages []byte,
+	modelParameters *json.RawMessage,
+	promptMessages *json.RawMessage,
 	templateVariables map[string]string,
 ) (*openaiconnector.OpenAIPromptRequest, error) {
 	model, modelErr := GetModelType(modelType)
@@ -93,14 +93,14 @@ func CreatePromptRequest(
 	}
 
 	if parametersUnmarshalErr := json.Unmarshal(
-		modelParameters,
+		*modelParameters,
 		promptRequest.Parameters,
 	); parametersUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
 	}
 
 	var openAIPromptMessageDTOs []*datatypes.OpenAIPromptMessageDTO
-	if messagesUnmarshalErr := json.Unmarshal(promptMessages, &openAIPromptMessageDTOs); messagesUnmarshalErr != nil {
+	if messagesUnmarshalErr := json.Unmarshal(*promptMessages, &openAIPromptMessageDTOs); messagesUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal prompt messages - %w", messagesUnmarshalErr)
 	}
 

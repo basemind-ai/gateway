@@ -86,8 +86,8 @@ func (c *Client) StreamPromptTest(
 			PromptConfigId:         *data.PromptConfigID,
 			ModelVendor:            string(data.ModelVendor),
 			ModelType:              string(data.ModelType),
-			ModelParameters:        data.ModelParameters,
-			ProviderPromptMessages: data.ProviderPromptMessages,
+			ModelParameters:        *data.ModelParameters,
+			ProviderPromptMessages: *data.ProviderPromptMessages,
 			TemplateVariables:      data.TemplateVariables,
 		},
 	)

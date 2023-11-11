@@ -2,9 +2,11 @@ package api_test
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"k8s.io/utils/ptr"
 	"net/http"
 	"strings"
 	"testing"
@@ -287,8 +289,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      "unique name",
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{"userInput"},
 						IsDefault:                 true,
 					})
@@ -318,8 +320,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      "default prompt config",
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{"userInput"},
 					IsDefault:                 true,
 				})
@@ -428,8 +430,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      "a",
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{"name"},
 					IsDefault:                 true,
 				})
@@ -440,8 +442,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      "b",
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{"values"},
 					IsDefault:                 true,
 				})
@@ -577,8 +579,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 true,
 				})
@@ -590,8 +592,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 false,
 				})
@@ -632,8 +634,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 true,
 				})
@@ -645,8 +647,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 false,
 				})
@@ -690,8 +692,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})
@@ -703,8 +705,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 false,
 					})
@@ -745,8 +747,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})
@@ -758,8 +760,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 false,
 					})
@@ -799,8 +801,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      "default prompt config",
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})
@@ -888,8 +890,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      "abc prompt config",
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 true,
 				})
@@ -926,8 +928,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      "abc prompt config",
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})
@@ -971,8 +973,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      "abc prompt config",
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})
@@ -1006,8 +1008,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})
@@ -1035,8 +1037,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})
@@ -1048,8 +1050,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 false,
 					})
@@ -1079,8 +1081,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      "abc prompt config",
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 true,
 				})
@@ -1115,8 +1117,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      "abc prompt config",
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 true,
 				})
@@ -1146,8 +1148,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 true,
 				})
@@ -1156,21 +1158,21 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 
 			promptConfigToRenameID := db.UUIDToString(&promptConfigToRename.ID)
 
-			newModelParameters := serialization.SerializeJSON(map[string]float32{
-				"temperature":       2,
-				"top_p":             2,
-				"max_tokens":        2,
-				"presence_penalty":  2,
-				"frequency_penalty": 2,
-			})
-
-			jsonMessage := newModelParameters
+			newModelParameters := ptr.To(
+				json.RawMessage(serialization.SerializeJSON(map[string]float32{
+					"temperature":       2,
+					"top_p":             2,
+					"max_tokens":        2,
+					"presence_penalty":  2,
+					"frequency_penalty": 2,
+				})),
+			)
 
 			response, requestErr := testClient.Patch(
 				context.TODO(),
 				fmtDetailEndpoint(projectID, applicationID, promptConfigToRenameID),
 				dto.PromptConfigUpdateDTO{
-					ModelParameters: &jsonMessage,
+					ModelParameters: newModelParameters,
 				})
 			assert.NoError(t, requestErr)
 			assert.Equal(t, http.StatusOK, response.StatusCode)
@@ -1178,7 +1180,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			dbPromptConfig, retrivalErr := db.GetQueries().
 				RetrievePromptConfig(context.TODO(), promptConfigToRename.ID)
 			assert.NoError(t, retrivalErr)
-			assert.Equal(t, newModelParameters, dbPromptConfig.ModelParameters)
+			assert.Equal(t, []byte(*newModelParameters), dbPromptConfig.ModelParameters)
 		})
 
 		t.Run("invalidates prompt-config cache", func(t *testing.T) {
@@ -1191,8 +1193,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 true,
 				})
@@ -1282,8 +1284,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 false,
 				})
@@ -1311,8 +1313,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 					Name:                      factories.RandomString(10),
 					ModelVendor:               models.ModelVendorOPENAI,
 					ModelType:                 models.ModelTypeGpt4,
-					ModelParameters:           modelParameters,
-					ProviderPromptMessages:    promptMessages,
+					ModelParameters:           *modelParameters,
+					ProviderPromptMessages:    *promptMessages,
 					ExpectedTemplateVariables: []string{""},
 					IsDefault:                 false,
 				})
@@ -1346,8 +1348,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 false,
 					})
@@ -1379,8 +1381,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 false,
 					})
@@ -1415,8 +1417,8 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 						Name:                      factories.RandomString(10),
 						ModelVendor:               models.ModelVendorOPENAI,
 						ModelType:                 models.ModelTypeGpt4,
-						ModelParameters:           modelParameters,
-						ProviderPromptMessages:    promptMessages,
+						ModelParameters:           *modelParameters,
+						ProviderPromptMessages:    *promptMessages,
 						ExpectedTemplateVariables: []string{""},
 						IsDefault:                 true,
 					})

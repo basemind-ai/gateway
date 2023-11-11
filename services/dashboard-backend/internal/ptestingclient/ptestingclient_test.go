@@ -2,6 +2,7 @@ package ptestingclient_test
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/basemind-ai/monorepo/e2e/factories"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
@@ -13,6 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"k8s.io/utils/ptr"
 	"net"
 	"testing"
 )
@@ -78,10 +80,10 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 	promptRequestRecordID := db.UUIDToString(&promptRequestRecord.ID)
 	data := dto.PromptConfigTestDTO{
 		Name:                   "TEST",
-		ModelParameters:        promptConfig.ModelParameters,
+		ModelParameters:        ptr.To(json.RawMessage(promptConfig.ModelParameters)),
 		ModelType:              models.ModelTypeGpt432k,
 		ModelVendor:            models.ModelVendorOPENAI,
-		ProviderPromptMessages: promptConfig.ProviderPromptMessages,
+		ProviderPromptMessages: ptr.To(json.RawMessage(promptConfig.ProviderPromptMessages)),
 		TemplateVariables:      map[string]string{},
 		PromptConfigID:         &promptConfigID,
 	}
