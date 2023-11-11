@@ -36,7 +36,7 @@ describe('prompt configs API', () => {
 				modelParameters: promptConfig.modelParameters,
 				modelVendor: promptConfig.modelVendor,
 				modelType: promptConfig.modelType,
-				providerPromptMessages: promptConfig.providerPromptMessages,
+				promptMessages: promptConfig.providerPromptMessages,
 			};
 
 			const data = await handleCreatePromptConfig({
@@ -66,7 +66,7 @@ describe('prompt configs API', () => {
 		it('returns a list of prompt configs', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfigs = await PromptConfigFactory.batch(2);
+			const promptConfigs = PromptConfigFactory.batchSync(2);
 
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
@@ -110,7 +110,7 @@ describe('prompt configs API', () => {
 				modelParameters: promptConfig.modelParameters,
 				modelVendor: promptConfig.modelVendor,
 				modelType: promptConfig.modelType,
-				providerPromptMessages: promptConfig.providerPromptMessages,
+				promptMessages: promptConfig.providerPromptMessages,
 			};
 
 			const data = await handleUpdatePromptConfig({

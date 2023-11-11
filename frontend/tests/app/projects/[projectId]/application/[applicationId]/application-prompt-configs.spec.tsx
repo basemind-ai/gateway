@@ -1,6 +1,8 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import { PromptConfigFactory } from 'tests/factories';
+import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
+import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
@@ -83,6 +85,27 @@ describe('ApplicationPromptConfigs', () => {
 		fireEvent.click(copyButton);
 		expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
 			promptConfigs[0].id,
+		);
+	});
+
+	it('navigates to edit prompt screen', async () => {
+		const promptConfigs = await PromptConfigFactory.batch(1);
+		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
+
+		await waitFor(() =>
+			render(
+				<ApplicationPromptConfigs
+					projectId={projectId}
+					applicationId={applicationId}
+				/>,
+			),
+		);
+
+		const editButton = screen.getByTestId('application-edit-prompt-button');
+		fireEvent.click(editButton);
+
+		expect(routerPushMock).toHaveBeenCalledWith(
+			`/projects/${projectId}/applications/${applicationId}/prompts/${promptConfigs[0].id}`,
 		);
 	});
 });

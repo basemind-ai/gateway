@@ -32,6 +32,7 @@ export function populateLink(
 	}
 	return url;
 }
+
 export function populateProjectId(search: string, projectId: string) {
 	return search.replaceAll(':projectId', projectId);
 }
@@ -39,6 +40,7 @@ export function populateProjectId(search: string, projectId: string) {
 export function populateApplicationId(search: string, applicationId: string) {
 	return search.replaceAll(':applicationId', applicationId);
 }
+
 export function populateConfigId(search: string, configId: string) {
 	return search.replaceAll(':configId', configId);
 }

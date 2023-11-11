@@ -6,6 +6,7 @@ export enum Navigation {
 	Overview = '/projects/:projectId',
 	PrivacyPolicy = '/privacy-policy',
 	Projects = '/projects',
+	Prompts = '/projects/:projectId/applications/:applicationId/prompts/:configId',
 	Testing = '/projects/:projectId/testing',
 	TestingNewConfig = '/projects/:projectId/testing/new-config',
 	TestingConfig = '/projects/:projectId/applications/:applicationId/:configId/testing',

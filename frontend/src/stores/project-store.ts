@@ -32,7 +32,11 @@ export interface ProjectStore {
 	) => void;
 	setPromptConfig: (
 		applicationId: string,
-		promptConfig: PromptConfig[],
+		promptConfigs: PromptConfig[],
+	) => void;
+	addPromptConfig: (
+		applicationId: string,
+		promptConfig: PromptConfig,
 	) => void;
 	setAPIKeys: (applicationId: string, apiKeys: APIKey[]) => void;
 	setProjectUsers: (
@@ -130,11 +134,22 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 			},
 		}));
 	},
-	setPromptConfig: (applicationId: string, promptConfig: PromptConfig[]) => {
+	setPromptConfig: (applicationId: string, promptConfigs: PromptConfig[]) => {
 		set((state) => ({
 			promptConfigs: {
 				...state.promptConfigs,
-				[applicationId]: promptConfig,
+				[applicationId]: promptConfigs,
+			},
+		}));
+	},
+	addPromptConfig: (applicationId: string, promptConfig: PromptConfig) => {
+		set((state) => ({
+			promptConfigs: {
+				...state.promptConfigs,
+				[applicationId]: [
+					...(state.promptConfigs[applicationId] ?? []),
+					promptConfig,
+				],
 			},
 		}));
 	},
@@ -257,9 +272,21 @@ export const useDeleteApplication = () =>
 export const useAddApplication = () => useProjectStore((s) => s.addApplication);
 export const useUpdateApplication = () =>
 	useProjectStore((s) => s.updateApplication);
-export const usePromptConfig = () => useProjectStore((s) => s.promptConfigs);
-export const useSetPromptConfig = () =>
+export const usePromptConfigs = () => useProjectStore((s) => s.promptConfigs);
+export const usePromptConfig = <P, M>(
+	applicationId: string,
+	promptConfigId: string,
+) =>
+	useProjectStore(
+		(s) =>
+			s.promptConfigs[applicationId]?.find(
+				(promptConfig) => promptConfig.id === promptConfigId,
+			) as PromptConfig<P, M> | undefined,
+	);
+export const useSetPromptConfigs = () =>
 	useProjectStore((s) => s.setPromptConfig);
+export const useAddPromptConfig = () =>
+	useProjectStore((s) => s.addPromptConfig);
 export const useAPIKeys = (applicationId: string) =>
 	useProjectStore((s) => s.apiKeys[applicationId]);
 export const useSetAPIKeys = () => useProjectStore((s) => s.setAPIKeys);

@@ -9,9 +9,9 @@ import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import {
 	useApplications,
-	usePromptConfig,
+	usePromptConfigs,
 	useSetProjectApplications,
-	useSetPromptConfig,
+	useSetPromptConfigs,
 } from '@/stores/project-store';
 import { useShowError } from '@/stores/toast-store';
 import { Application, PromptConfig } from '@/types';
@@ -23,8 +23,8 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 
 	const applications = useApplications(projectId);
 	const setProjectApplications = useSetProjectApplications();
-	const promptConfigs = usePromptConfig();
-	const setPromptConfig = useSetPromptConfig();
+	const promptConfigs = usePromptConfigs();
+	const setPromptConfigs = useSetPromptConfigs();
 
 	const showError = useShowError();
 
@@ -68,7 +68,7 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 					);
 				}
 				data.forEach((promptConfig, index) => {
-					setPromptConfig(applications![index].id, promptConfig);
+					setPromptConfigs(applications![index].id, promptConfig);
 				});
 			},
 			onError({ message }: ApiError) {

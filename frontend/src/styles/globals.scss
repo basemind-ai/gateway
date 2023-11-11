@@ -68,4 +68,16 @@ div#__next > div {
 	.dialog-box {
 		@apply modal-box p-0 border border-neutral max-w-[43rem];
 	}
+
+	.main-page {
+		@apply mx-8 my-32;
+
+		h1 {
+			@apply text-2xl font-semibold text-base-content;
+		}
+
+		nav {
+			@apply mt-3.5 w-full mb-8;
+		}
+	}
 }
