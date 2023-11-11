@@ -5,6 +5,7 @@ import (
 	"errors"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -94,7 +95,7 @@ func (c *Client) RequestStream(
 			startTime,
 			stream,
 		)
-		tokenCountAndCost := CalculateTokenCountsAndCosts(
+		tokenCountAndCost := utils.CalculateTokenCountsAndCosts(
 			GetRequestPromptString(promptRequest.Messages),
 			promptContent,
 			requestConfiguration.ProviderModelPricing,

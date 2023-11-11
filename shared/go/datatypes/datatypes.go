@@ -27,6 +27,24 @@ type OpenAIModelParametersDTO struct { // skipcq: TCV-001
 	PresencePenalty  *float32 `json:"presencePenalty,omitempty"`
 }
 
+// CoherePromptMessageDTO - DTO for serializing and storing a Cohere prompt message.
+type CoherePromptMessageDTO struct { // skipcq: TCV-001
+	Content           string    `json:"content"                     validate:"required"`
+	TemplateVariables *[]string `json:"templateVariables,omitempty"`
+}
+
+// CohereConnectorDTO - DTO for a Cohere RAG connector.
+type CohereConnectorDTO struct { // skipcq: TCV-001
+	ID      string         `json:"id"      validate:"required"`
+	Options map[string]any `json:"options" validate:"required"`
+}
+
+// CohereModelParametersDTO - DTO for serializing and storing Cohere model parameters.
+type CohereModelParametersDTO struct { // skipcq: TCV-001
+	Temperature *float32              `json:"temperature,omitempty"`
+	Connectors  *[]CohereConnectorDTO `json:"connectors,omitempty"`
+}
+
 // PromptConfigDTO - DTO for serializing a prompt config.
 type PromptConfigDTO struct { // skipcq: TCV-001
 	ID                        string             `json:"id"`

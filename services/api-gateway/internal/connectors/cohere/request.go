@@ -1,9 +1,12 @@
-package openai
+package cohere
 
 import (
 	"context"
+	"fmt"
+	cohereconnector "github.com/basemind-ai/monorepo/gen/go/cohere/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
+
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -12,16 +15,43 @@ import (
 	"time"
 )
 
+var ModelTypeMap = map[models.ModelType]cohereconnector.CohereModel{
+	models.ModelTypeCommand:             cohereconnector.CohereModel_COHERE_MODEL_COMMAND,
+	models.ModelTypeCommandLight:        cohereconnector.CohereModel_COHERE_MODEL_COMMAND_LIGHT,
+	models.ModelTypeCommandNightly:      cohereconnector.CohereModel_COHERE_MODEL_COMMAND_NIGHTLY,
+	models.ModelTypeCommandLightNightly: cohereconnector.CohereModel_COHERE_MODEL_COMMAND_LIGHT_NIGHTLY,
+}
+
+func GetModelType(modelType models.ModelType) (*cohereconnector.CohereModel, error) {
+	value, ok := ModelTypeMap[modelType]
+	if !ok {
+		return nil, fmt.Errorf("unknown model type {%s}", modelType)
+	}
+
+	return &value, nil
+}
+
+func CreatePromptRequest(
+	requestConfiguration *dto.RequestConfigurationDTO,
+	templateVariables map[string]string,
+) (*cohereconnector.CoherePromptRequest, error) {
+	model, modelErr := GetModelType(requestConfiguration.PromptConfigData.ModelType)
+	if modelErr != nil {
+		return nil, modelErr
+	}
+
+	promptRequest := &cohereconnector.CoherePromptRequest{
+		Model: *model,
+	}
+}
+
 func (c *Client) RequestPrompt(
 	ctx context.Context,
 	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
 ) dto.PromptResultDTO {
 	promptRequest, createPromptRequestErr := CreatePromptRequest(
-		requestConfiguration.ApplicationID,
-		requestConfiguration.PromptConfigData.ModelType,
-		requestConfiguration.PromptConfigData.ModelParameters,
-		requestConfiguration.PromptConfigData.ProviderPromptMessages,
+		requestConfiguration,
 		templateVariables,
 	)
 	if createPromptRequestErr != nil {
@@ -38,14 +68,14 @@ func (c *Client) RequestPrompt(
 	}
 	promptResult := dto.PromptResultDTO{}
 
-	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
+	response, requestErr := c.client.CoherePrompt(ctx, promptRequest)
 	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 	if requestErr == nil {
 		promptResult.Content = &response.Content
 
 		tokenCountAndCost := utils.CalculateTokenCountsAndCosts(
-			GetRequestPromptString(promptRequest.Messages),
+			promptRequest,
 			response.Content,
 			requestConfiguration.ProviderModelPricing,
 			requestConfiguration.PromptConfigData.ModelType,

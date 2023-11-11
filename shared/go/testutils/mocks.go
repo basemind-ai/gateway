@@ -2,6 +2,7 @@ package testutils
 
 import (
 	"context"
+	cohereconnector "github.com/basemind-ai/monorepo/gen/go/cohere/v1"
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/stretchr/testify/assert"
@@ -105,6 +106,60 @@ func (m MockPromptTestingService) TestPrompt(
 		assert.Equal(m.T, m.ExpectedRequest.PromptConfigId, request.PromptConfigId)
 		assert.Equal(m.T, m.ExpectedRequest.ProviderPromptMessages, request.ProviderPromptMessages)
 		assert.Equal(m.T, m.ExpectedRequest.TemplateVariables, request.TemplateVariables)
+	}
+
+	for _, response := range m.Stream {
+		_ = stream.Send(response)
+	}
+
+	return nil
+}
+
+// Cohere Service
+
+type MockCohereService struct {
+	cohereconnector.UnimplementedCohereServiceServer
+	Context         context.Context
+	Error           error
+	ExpectedRequest *cohereconnector.CoherePromptRequest
+	Response        *cohereconnector.CoherePromptResponse
+	Stream          []*cohereconnector.CohereStreamResponse
+	T               *testing.T
+}
+
+func (m MockCohereService) CoherePrompt(
+	_ context.Context,
+	request *cohereconnector.CoherePromptRequest,
+) (*cohereconnector.CoherePromptResponse, error) {
+	if m.Error != nil {
+		return nil, m.Error
+	}
+
+	assert.NotNil(m.T, m.Response)
+
+	if m.ExpectedRequest != nil {
+		assert.Equal(m.T, m.ExpectedRequest.Model, request.Model)
+		assert.Equal(m.T, m.ExpectedRequest.Message, request.Message)
+		assert.Equal(m.T, m.ExpectedRequest.Parameters, request.Parameters)
+	}
+
+	return m.Response, nil
+}
+
+func (m MockCohereService) CohereStream(
+	request *cohereconnector.CoherePromptRequest,
+	stream cohereconnector.CohereService_CohereStreamServer,
+) error {
+	if m.Error != nil {
+		return m.Error
+	}
+
+	assert.NotNil(m.T, m.Stream)
+
+	if m.ExpectedRequest != nil {
+		assert.Equal(m.T, m.ExpectedRequest.Model, request.Model)
+		assert.Equal(m.T, m.ExpectedRequest.Message, request.Message)
+		assert.Equal(m.T, m.ExpectedRequest.Parameters, request.Parameters)
 	}
 
 	for _, response := range m.Stream {
