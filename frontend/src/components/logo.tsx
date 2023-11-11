@@ -1,19 +1,41 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
-export function Logo() {
+import { Dimensions } from '@/constants';
+
+export function Logo({
+	width = Dimensions.Seven,
+	height = Dimensions.Seven,
+	textSize = 'text-2xl',
+	onClick,
+}: {
+	width?: number;
+	height?: number;
+	textSize?: string;
+	onClick?: () => void;
+}) {
 	const t = useTranslations('common');
 
 	return (
-		<div className="align-baseline flex" data-testid="logo-component">
+		<div
+			className={`flex justify-between items-center ${
+				onClick ? 'cursor-pointer' : ''
+			} `}
+			data-testid="logo-component"
+			onClick={() => {
+				if (onClick) {
+					onClick();
+				}
+			}}
+		>
 			<Image
 				priority
-				width="26"
-				height="26"
+				width={width}
+				height={height}
 				src="/images/pinecone-transparent-bg.svg"
 				alt="Logo"
 			/>
-			<span className="text-2xl font-bold text-primary">
+			<span className={`${textSize} font-bold text-primary`}>
 				{t('basemindName')}
 			</span>
 		</div>

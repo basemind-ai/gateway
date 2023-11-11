@@ -1,12 +1,25 @@
 'use client';
 import 'firebaseui/dist/firebaseui.css';
 
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
 import { Logo } from '@/components/logo';
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';
 import { LoginBanner } from '@/components/sign-in/login-banner';
-import { marketingInfographic } from '@/constants';
+import { marketingInfographic, Navigation } from '@/constants';
+import { useUser } from '@/stores/api-store';
 
 export default function SignIn() {
+	const user = useUser();
+	const router = useRouter();
+
+	useEffect(() => {
+		if (user) {
+			router.replace(Navigation.Projects);
+		}
+	}, [user]);
+
 	return (
 		<main data-testid="login-container" className="flex bg-base-100 grow">
 			<div className="flex grow">
