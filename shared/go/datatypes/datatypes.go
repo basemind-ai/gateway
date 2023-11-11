@@ -16,6 +16,16 @@ type OpenAIPromptMessageDTO struct { // skipcq: TCV-001
 	TemplateVariables *[]string `json:"templateVariables,omitempty"`
 }
 
+// OpenAIModelParametersDTO - DTO for serializing and storing OpenAI model parameters.
+// Note- this struct represents what we store in the DB as JSON.
+type OpenAIModelParametersDTO struct { // skipcq: TCV-001
+	MaxTokens        *int32   `json:"maxTokens,omitempty"`
+	Temperature      *float32 `json:"temperature,omitempty"`
+	TopP             *float32 `json:"topP,omitempty"`
+	FrequencyPenalty *float32 `json:"frequencyPenalty,omitempty"`
+	PresencePenalty  *float32 `json:"presencePenalty,omitempty"`
+}
+
 // PromptConfigDTO - DTO for serializing a prompt config.
 type PromptConfigDTO struct { // skipcq: TCV-001
 	ID                        string             `json:"id"`
