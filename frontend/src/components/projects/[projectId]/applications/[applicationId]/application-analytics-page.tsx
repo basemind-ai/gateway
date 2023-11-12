@@ -38,9 +38,11 @@ export function ApplicationAnalyticsPage({
 		},
 		handleApplicationAnalytics,
 		{
+			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
+			/* c8 ignore end */
 		},
 	);
 

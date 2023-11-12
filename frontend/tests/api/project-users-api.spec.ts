@@ -2,11 +2,13 @@ import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 
 import {
+	handleAddUsersToProject,
 	handleRemoveUserFromProject,
 	handleRetrieveProjectUsers,
 	handleUpdateUserToPermission,
 } from '@/api';
 import { HttpMethod } from '@/constants';
+import { AddUserToProjectBody } from '@/types';
 
 describe('project users API tests', () => {
 	const bearerToken = 'Bearer test_token';
@@ -37,6 +39,47 @@ describe('project users API tests', () => {
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Get,
+				},
+			);
+		});
+	});
+
+	describe('handleAddUsersToProject', () => {
+		it('adds users to project', async () => {
+			const project = await ProjectFactory.build();
+			const userAccounts = await ProjectUserAccountFactory.batch(2);
+
+			const requestData = userAccounts.map(
+				(userAccount) =>
+					({
+						email: userAccount.email,
+						permission: userAccount.permission,
+					}) satisfies AddUserToProjectBody,
+			);
+
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: () => Promise.resolve(userAccounts),
+			});
+
+			const data = await handleAddUsersToProject({
+				projectId: project.id,
+				data: requestData,
+			});
+
+			expect(data).toEqual(userAccounts);
+			expect(mockFetch).toHaveBeenCalledWith(
+				new URL(
+					`http://www.example.com/v1/projects/${project.id}/users/`,
+				),
+				{
+					headers: {
+						'Authorization': bearerToken,
+						'Content-Type': 'application/json',
+						'X-Request-Id': expect.any(String),
+					},
+					body: JSON.stringify(requestData),
+					method: HttpMethod.Post,
 				},
 			);
 		});

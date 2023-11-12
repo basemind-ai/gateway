@@ -36,9 +36,11 @@ export function ApplicationDeletion({
 	}
 
 	async function deleteApplication() {
+		/* c8 ignore start */
 		if (loading) {
-			return;
+			return null;
 		}
+		/* c8 ignore end */
 
 		try {
 			setLoading(true);

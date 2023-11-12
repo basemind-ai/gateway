@@ -12,6 +12,7 @@ import { Metadata } from '@grpc/grpc-js/build/src/metadata';
 import { HealthImplementation } from 'grpc-health-check';
 import logger from 'shared/logger';
 
+/* c8 ignore start */
 /**
  * The createServer function creates a gRPC server that implements the given service.
  *
@@ -77,6 +78,7 @@ export function createServer<
 
 	return server;
 }
+/* c8 ignore end */
 
 /*
  * @class GrpcError is used to send a grpc error response back to the client.

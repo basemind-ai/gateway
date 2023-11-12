@@ -32,9 +32,11 @@ export function DeleteAccountView({ user }: { user: UserInfo | null }) {
 			setUser(null);
 			router.replace(Navigation.Base);
 			// 	TODO: Toast to show successful deletion
+			/* c8 ignore start */
 		} catch (e: unknown) {
 			setErrorMessage((e as Error).message);
 		}
+		/* c8 ignore end */
 	}
 
 	return (

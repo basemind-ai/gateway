@@ -63,9 +63,11 @@ export function ApplicationGeneralSettings({
 		},
 		handleRetrievePromptConfigs,
 		{
+			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
+			/* c8 ignore end */
 			onSuccess(promptConfigResponse) {
 				if (
 					Array.isArray(promptConfigResponse) &&

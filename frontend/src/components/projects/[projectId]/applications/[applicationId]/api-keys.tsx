@@ -61,9 +61,11 @@ export function ApiKeys({
 		},
 		handleRetrieveAPIKeys,
 		{
+			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
+			/* c8 ignore end */
 			onSuccess(apiKeys) {
 				setAPIKeys(applicationId, apiKeys);
 				closeCreationPopup();

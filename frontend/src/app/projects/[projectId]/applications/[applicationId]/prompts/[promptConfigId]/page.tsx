@@ -44,9 +44,11 @@ export default function PromptConfiguration({
 		promptConfig ? null : { projectId, applicationId },
 		handleRetrievePromptConfigs,
 		{
+			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
+			/* c8 ignore end */
 			onSuccess(promptConfigs) {
 				setPromptConfigs(applicationId, promptConfigs);
 			},

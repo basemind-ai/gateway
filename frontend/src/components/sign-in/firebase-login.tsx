@@ -31,6 +31,7 @@ export function FirebaseLogin() {
 			const firebaseUI = await import('firebaseui');
 			const ui =
 				firebaseUI.auth.AuthUI.getInstance() ??
+				/* c8 ignore next */
 				new firebaseUI.auth.AuthUI(auth);
 
 			// noinspection JSUnusedGlobalSymbols

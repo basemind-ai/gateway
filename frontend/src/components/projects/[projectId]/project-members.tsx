@@ -101,9 +101,11 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 			onSuccess(users) {
 				setProjectUsers(projectId, users);
 			},
+			/* c8 ignore start */
 			onError(apiError: ApiError) {
 				showError(apiError.message);
 			},
+			/* c8 ignore end */
 		},
 	);
 

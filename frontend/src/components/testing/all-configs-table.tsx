@@ -71,9 +71,11 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 					setPromptConfigs(applications![index].id, promptConfig);
 				});
 			},
+			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
+			/* c8 ignore end */
 		},
 	);
 

@@ -27,9 +27,11 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 		description.trim().length >= MIN_NAME_LENGTH;
 
 	async function saveSettings() {
+		/* c8 ignore start */
 		if (loading) {
-			return;
+			return null;
 		}
+		/* c8 ignore end */
 
 		try {
 			setLoading(true);

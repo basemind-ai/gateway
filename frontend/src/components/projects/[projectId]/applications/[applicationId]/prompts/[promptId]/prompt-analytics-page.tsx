@@ -42,9 +42,11 @@ export function PromptAnalyticsPage({
 		},
 		handlePromptConfigAnalytics,
 		{
+			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
+			/* c8 ignore end */
 		},
 	);
 

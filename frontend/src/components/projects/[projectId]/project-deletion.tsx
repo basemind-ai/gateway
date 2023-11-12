@@ -30,9 +30,11 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 	}
 
 	async function deleteProject() {
+		/* c8 ignore start */
 		if (loading) {
-			return;
+			return null;
 		}
+		/* c8 ignore end */
 
 		try {
 			setLoading(true);

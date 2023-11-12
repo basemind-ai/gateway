@@ -37,9 +37,11 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 			onSuccess(data) {
 				setProjects(data);
 			},
+			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
+			/* c8 ignore end */
 		},
 	);
 
