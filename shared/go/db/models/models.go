@@ -213,6 +213,14 @@ type PromptTestRecord struct {
 	PromptRequestRecordID pgtype.UUID        `json:"promptRequestRecordId"`
 }
 
+type ProviderKey struct {
+	ID          pgtype.UUID        `json:"id"`
+	ModelVendor ModelVendor        `json:"modelVendor"`
+	ApiKey      string             `json:"apiKey"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	ProjectID   pgtype.UUID        `json:"projectId"`
+}
+
 type ProviderModelPricing struct {
 	ID               pgtype.UUID        `json:"id"`
 	ModelType        ModelType          `json:"modelType"`

@@ -8,6 +8,7 @@ sql:
           - './sql/queries/prompt-config.sql'
           - './sql/queries/prompt-request-record.sql'
           - './sql/queries/prompt-test-record.sql'
+          - './sql/queries/provider-key.sql'
           - './sql/queries/provider-model-pricing.sql'
           - './sql/queries/user-account.sql'
           - './sql/queries/user-project.sql'
