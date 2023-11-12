@@ -130,7 +130,7 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 					onClick={handleButtonClick}
 				>
 					{isSubmitting ? (
-						<span className="loading loading-spinner"></span>
+						<span className="loading loading-spinner" />
 					) : (
 						t('submit')
 					)}
