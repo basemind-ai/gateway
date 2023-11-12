@@ -6,7 +6,7 @@ export async function handleCreateSupportTicket(
 	data: SupportTicketCreateBody,
 ): Promise<void> {
 	await fetcher<undefined>({
-		url: `support/`,
+		url: "support/",
 		method: HttpMethod.Post,
 		data,
 	});

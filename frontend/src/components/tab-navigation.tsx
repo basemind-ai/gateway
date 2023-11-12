@@ -39,7 +39,7 @@ export function TabNavigation<T = string>({
 				</button>
 			))}
 			{trailingLine && (
-				<div className="tab tab-bordered flex-1 cursor-default min-w-0 border-neutral"></div>
+				<div className="tab tab-bordered flex-1 cursor-default min-w-0 border-neutral" />
 			)}
 		</nav>
 	);
