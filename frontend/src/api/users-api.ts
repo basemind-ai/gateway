@@ -3,7 +3,7 @@ import { HttpMethod } from '@/constants';
 
 export async function handleDeleteUserAccount(): Promise<void> {
 	await fetcher({
-		url: `users/`,
+		url: "users/",
 		method: HttpMethod.Delete,
 	});
 }
