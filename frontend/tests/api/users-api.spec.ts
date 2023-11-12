@@ -12,7 +12,7 @@ describe('users API tests', () => {
 		await handleDeleteUserAccount();
 
 		expect(mockFetch).toHaveBeenCalledWith(
-			new URL("http://www.example.com/v1/users/"),
+			new URL('http://www.example.com/v1/users/'),
 			{
 				headers: {
 					'Authorization': 'Bearer test_token',

@@ -21,7 +21,7 @@ describe('support API tests', () => {
 			});
 
 			expect(mockFetch).toHaveBeenCalledWith(
-				new URL("http://www.example.com/v1/support/"),
+				new URL('http://www.example.com/v1/support/'),
 				{
 					headers: {
 						'Authorization': 'Bearer test_token',
@@ -50,7 +50,7 @@ describe('support API tests', () => {
 			});
 
 			expect(mockFetch).toHaveBeenCalledWith(
-				new URL("http://www.example.com/v1/support/"),
+				new URL('http://www.example.com/v1/support/'),
 				{
 					headers: {
 						'Authorization': 'Bearer test_token',
