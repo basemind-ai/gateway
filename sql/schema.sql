@@ -187,3 +187,16 @@ CREATE TABLE api_key
     FOREIGN KEY (application_id) REFERENCES application (id) ON DELETE CASCADE
 );
 CREATE INDEX idx_api_key_application_id ON api_key (application_id) WHERE deleted_at IS NULL;
+
+-- provider-key
+CREATE TABLE provider_key
+(
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    model_vendor model_vendor NOT NULL,
+    encrypted_api_key varchar(255) NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    project_id uuid NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
+);
+CREATE INDEX idx_provider_key_project_id ON provider_key (project_id);
+CREATE UNIQUE INDEX idx_provider_key_model_vendor_project_id ON provider_key (model_vendor, project_id);

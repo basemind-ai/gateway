@@ -108,9 +108,23 @@ func TestAPIGatewayService(t *testing.T) {
 
 	nonExistentPromptConfigID := "4503ec04-979c-42fe-a24f-15addd5c0509"
 
+	createContext := func(applicationID pgtype.UUID) context.Context {
+		return context.WithValue(context.WithValue(
+			context.TODO(), grpcutils.ProjectIDContextKey, project.ID,
+		), grpcutils.ApplicationIDContextKey, applicationID)
+	}
+
 	t.Run("RequestPrompt", func(t *testing.T) {
-		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
+		t.Run("return error when projectID is not set in context", func(t *testing.T) {
 			_, err := srv.RequestPrompt(context.TODO(), nil)
+			assert.ErrorContains(t, err, services.ErrorProjectIDNotInContext)
+		})
+
+		t.Run("return error when applicationID is not set in context", func(t *testing.T) {
+			_, err := srv.RequestPrompt(
+				context.WithValue(context.TODO(), grpcutils.ProjectIDContextKey, pgtype.UUID{}),
+				nil,
+			)
 			assert.ErrorContains(t, err, services.ErrorApplicationIDNotInContext)
 		})
 
@@ -123,12 +137,7 @@ func TestAPIGatewayService(t *testing.T) {
 
 			mockRedis.ExpectGet(db.UUIDToString(&application.ID)).RedisNil()
 
-			applicationIDContext := context.WithValue(
-				context.TODO(),
-				grpcutils.ApplicationIDContextKey,
-				application.ID,
-			)
-			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{})
+			_, err := srv.RequestPrompt(createContext(application.ID), &gateway.PromptRequest{})
 
 			assert.ErrorContains(
 				t,
@@ -144,11 +153,6 @@ func TestAPIGatewayService(t *testing.T) {
 					context.TODO(),
 					project.ID,
 				)
-				applicationIDContext := context.WithValue(
-					context.TODO(),
-					grpcutils.ApplicationIDContextKey,
-					application.ID,
-				)
 
 				_, mockRedis := createTestCache(
 					t,
@@ -158,7 +162,7 @@ func TestAPIGatewayService(t *testing.T) {
 				mockRedis.ExpectGet(db.UUIDToString(&application.ID)).RedisNil()
 
 				_, err := srv.RequestPrompt(
-					applicationIDContext,
+					createContext(application.ID),
 					&gateway.PromptRequest{PromptConfigId: &nonExistentPromptConfigID},
 				)
 
@@ -183,35 +187,66 @@ func TestAPIGatewayService(t *testing.T) {
 			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
 				SetVal("OK")
 
-			applicationIDContext := context.WithValue(
-				context.TODO(),
-				grpcutils.ApplicationIDContextKey,
-				requestConfigurationDTO.ApplicationID,
+			_, err := srv.RequestPrompt(
+				createContext(requestConfigurationDTO.ApplicationID),
+				&gateway.PromptRequest{
+					TemplateVariables: map[string]string{"name": "John"},
+				},
 			)
-			_, err := srv.RequestPrompt(applicationIDContext, &gateway.PromptRequest{
-				TemplateVariables: map[string]string{"name": "John"},
-			})
 
 			assert.ErrorContains(t, err, "missing template variable")
+		})
+
+		t.Run("returns error when no provider key is found", func(t *testing.T) {
+			cacheClient, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+			)
+			expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
+			assert.NoError(t, marshalErr)
+
+			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
+			_, err := srv.RequestPrompt(
+				createContext(requestConfigurationDTO.ApplicationID),
+				&gateway.PromptRequest{
+					TemplateVariables: map[string]string{"userInput": "x"},
+				},
+			)
+
+			assert.ErrorContains(
+				t,
+				err,
+				"missing provider API-key",
+			)
 		})
 	})
 
 	t.Run("RequestStreamingPrompt", func(t *testing.T) {
-		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
+		t.Run("return error when projectID context value is not set", func(t *testing.T) {
 			err := srv.RequestStreamingPrompt(nil, mockGatewayServerStream{})
+			assert.ErrorContains(t, err, services.ErrorProjectIDNotInContext)
+		})
+
+		t.Run("return error when applicationID context value is not set", func(t *testing.T) {
+			err := srv.RequestStreamingPrompt(nil, mockGatewayServerStream{
+				Ctx: context.WithValue(
+					context.TODO(),
+					grpcutils.ProjectIDContextKey,
+					pgtype.UUID{},
+				),
+			})
 			assert.ErrorContains(t, err, services.ErrorApplicationIDNotInContext)
 		})
 
 		t.Run("returns error when prompt config is not found", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			applicationIDContext := context.WithValue(
-				context.TODO(),
-				grpcutils.ApplicationIDContextKey,
-				application.ID,
-			)
 			err := srv.RequestStreamingPrompt(
 				&gateway.PromptRequest{},
-				mockGatewayServerStream{Ctx: applicationIDContext},
+				mockGatewayServerStream{Ctx: createContext(application.ID)},
 			)
 			assert.ErrorContains(
 				t,
@@ -231,15 +266,11 @@ func TestAPIGatewayService(t *testing.T) {
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 					RedisNil()
 
-				applicationIDContext := context.WithValue(
-					context.TODO(),
-					grpcutils.ApplicationIDContextKey,
-					requestConfigurationDTO.ApplicationID,
-				)
-
 				err := srv.RequestStreamingPrompt(
 					&gateway.PromptRequest{PromptConfigId: &nonExistentPromptConfigID},
-					mockGatewayServerStream{Ctx: applicationIDContext},
+					mockGatewayServerStream{
+						Ctx: createContext(requestConfigurationDTO.ApplicationID),
+					},
 				)
 
 				assert.ErrorContains(
@@ -263,16 +294,35 @@ func TestAPIGatewayService(t *testing.T) {
 			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
 				SetVal("OK")
 
-			applicationIDContext := context.WithValue(
-				context.TODO(),
-				grpcutils.ApplicationIDContextKey,
-				requestConfigurationDTO.ApplicationID,
-			)
 			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},
-			}, mockGatewayServerStream{Ctx: applicationIDContext})
+			}, mockGatewayServerStream{Ctx: createContext(requestConfigurationDTO.ApplicationID)})
 
 			assert.ErrorContains(t, err, "missing template variables")
+		})
+
+		t.Run("returns error when no provider key is found", func(t *testing.T) {
+			cacheClient, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+			)
+			expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
+			assert.NoError(t, marshalErr)
+
+			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
+			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
+				TemplateVariables: map[string]string{"userInput": "x"},
+			}, mockGatewayServerStream{Ctx: createContext(requestConfigurationDTO.ApplicationID)})
+
+			assert.ErrorContains(
+				t,
+				err,
+				"missing provider API-key",
+			)
 		})
 	})
 }

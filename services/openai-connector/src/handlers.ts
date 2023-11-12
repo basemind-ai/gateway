@@ -9,10 +9,10 @@ import {
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
 import { StreamFinishReason } from 'shared/constants';
-import { GrpcError } from 'shared/grpc';
+import { extractProviderAPIKeyFromMetadata, GrpcError } from 'shared/grpc';
 import logger from 'shared/logger';
 
-import { getOpenAIClient } from '@/client';
+import { createOrDefaultClient } from '@/client';
 import { createOpenAIRequest, finishReasonMap } from '@/utils';
 
 /**
@@ -29,12 +29,17 @@ export async function openAIPrompt(
 		{ path: call.getPath(), request: call.request },
 		'received OpenAI prompt request',
 	);
+
+	const client = createOrDefaultClient(
+		extractProviderAPIKeyFromMetadata(call),
+	);
+
 	try {
 		logger.debug('making OpenAI prompt request');
 		const startTime = Date.now();
 		const request = createOpenAIRequest(call.request, false);
 		const { usage, choices } =
-			await getOpenAIClient().chat.completions.create(request);
+			await client.chat.completions.create(request);
 		const finishTime = Date.now();
 
 		logger.debug(
@@ -67,11 +72,16 @@ export async function openAIStream(
 		{ path: call.getPath(), request: call.request },
 		'received OpenAI stream request',
 	);
+
+	const client = createOrDefaultClient(
+		extractProviderAPIKeyFromMetadata(call),
+	);
+
 	const startTime = Date.now();
 	try {
 		logger.debug('making OpenAI stream request');
 		const request = createOpenAIRequest(call.request, true);
-		const stream = await getOpenAIClient().chat.completions.create(request);
+		const stream = await client.chat.completions.create(request);
 		for await (const message of stream) {
 			call.write({
 				content: message.choices[0].delta.content ?? '',

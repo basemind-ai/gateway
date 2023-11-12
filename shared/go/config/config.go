@@ -20,6 +20,7 @@ type Config struct {
 	ServerHost       string `env:"SERVER_HOST,required"`
 	ServerPort       int    `env:"SERVER_PORT,required"`
 	URLSigningSecret string `env:"URL_SIGNING_SECRET,required"`
+	CryptoPassKey    string `env:"CRYPTO_PASS_KEY,required"`
 }
 
 var (

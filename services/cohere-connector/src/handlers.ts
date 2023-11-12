@@ -9,10 +9,10 @@ import {
 	CohereStreamResponse,
 } from 'gen/cohere/v1/cohere';
 import { StreamFinishReason } from 'shared/constants';
-import { GrpcError } from 'shared/grpc';
+import { extractProviderAPIKeyFromMetadata, GrpcError } from 'shared/grpc';
 import logger from 'shared/logger';
 
-import { getCohereClient } from '@/client';
+import { createOrDefaultClient } from '@/client';
 import { createCohereRequest, finishReasonMapping } from '@/utils';
 
 /**
@@ -29,10 +29,15 @@ export async function coherePrompt(
 		{ path: call.getPath(), request: call.request },
 		'received Cohere prompt request',
 	);
+
+	const client = createOrDefaultClient(
+		extractProviderAPIKeyFromMetadata(call),
+	);
+
 	try {
 		logger.debug('making Cohere prompt request');
 		const startTime = Date.now();
-		const { text, generationId } = await getCohereClient().chat(
+		const { text, generationId } = await client.chat(
 			createCohereRequest(call.request),
 		);
 		const finishTime = Date.now();
@@ -61,10 +66,15 @@ export async function cohereStream(
 		{ path: call.getPath(), request: call.request },
 		'received Cohere stream request',
 	);
+
+	const client = createOrDefaultClient(
+		extractProviderAPIKeyFromMetadata(call),
+	);
+
 	const startTime = Date.now();
 	try {
 		logger.debug('making OpenAI stream request');
-		const stream = await getCohereClient().chatStream(
+		const stream = await client.chatStream(
 			createCohereRequest(call.request),
 		);
 		for await (const message of stream) {

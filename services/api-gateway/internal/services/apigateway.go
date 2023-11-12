@@ -18,6 +18,7 @@ import (
 
 const (
 	ErrorApplicationIDNotInContext = "application ID not found in context"
+	ErrorProjectIDNotInContext     = "project ID not found in context"
 )
 
 type APIGatewayServer struct {
@@ -28,6 +29,11 @@ func (APIGatewayServer) RequestPrompt(
 	ctx context.Context,
 	request *gateway.PromptRequest,
 ) (*gateway.PromptResponse, error) {
+	projectID, ok := ctx.Value(grpcutils.ProjectIDContextKey).(pgtype.UUID)
+	if !ok {
+		return nil, status.Errorf(codes.Unauthenticated, ErrorProjectIDNotInContext)
+	}
+
 	applicationID, ok := ctx.Value(grpcutils.ApplicationIDContextKey).(pgtype.UUID)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
@@ -57,9 +63,19 @@ func (APIGatewayServer) RequestPrompt(
 		return nil, validationError
 	}
 
+	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+		ctx,
+		projectID,
+		requestConfigurationDTO.PromptConfigData.ModelVendor,
+	)
+	if providerKeyErr != nil {
+		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
+		return nil, providerKeyErr
+	}
+
 	promptResult := connectors.GetProviderConnector(requestConfigurationDTO.PromptConfigData.ModelVendor).
 		RequestPrompt(
-			ctx,
+			providerKeyContext,
 			requestConfigurationDTO,
 			request.TemplateVariables,
 		)
@@ -80,6 +96,11 @@ func (APIGatewayServer) RequestStreamingPrompt(
 	request *gateway.PromptRequest,
 	streamServer gateway.APIGatewayService_RequestStreamingPromptServer,
 ) error {
+	projectID, ok := streamServer.Context().Value(grpcutils.ProjectIDContextKey).(pgtype.UUID)
+	if !ok {
+		return status.Errorf(codes.Unauthenticated, ErrorProjectIDNotInContext)
+	}
+
 	applicationID, ok := streamServer.Context().Value(grpcutils.ApplicationIDContextKey).(pgtype.UUID)
 	if !ok {
 		return status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
@@ -109,11 +130,21 @@ func (APIGatewayServer) RequestStreamingPrompt(
 		return validationError
 	}
 
+	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+		streamServer.Context(),
+		projectID,
+		requestConfigurationDTO.PromptConfigData.ModelVendor,
+	)
+	if providerKeyErr != nil {
+		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
+		return providerKeyErr
+	}
+
 	channel := make(chan dto.PromptResultDTO)
 
 	go connectors.GetProviderConnector(requestConfigurationDTO.PromptConfigData.ModelVendor).
 		RequestStream(
-			streamServer.Context(),
+			providerKeyContext,
 			requestConfigurationDTO,
 			request.TemplateVariables,
 			channel,

@@ -23,3 +23,18 @@ export function getOpenAIClient(): OpenAI {
 	}
 	return ref.instance;
 }
+
+/*
+ * Creates an OpenAI client instance if an API key is provided, otherwise returns the singleton instance.
+ *
+ * @return An OpenAI class instance
+ * */
+export function createOrDefaultClient(apiKey?: string): OpenAI {
+	if (apiKey) {
+		return new OpenAI({
+			apiKey,
+			organization: null,
+		});
+	}
+	return getOpenAIClient();
+}

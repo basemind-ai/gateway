@@ -43,7 +43,7 @@ func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, er
 
 	apiKeyID := exc.MustResult(db.StringToUUID(sub))
 
-	applicationID, retrieveErr := db.GetQueries().RetrieveApplicationIDForAPIKey(ctx, *apiKeyID)
+	ids, retrieveErr := db.GetQueries().RetrieveApplicationDataForAPIKey(ctx, *apiKeyID)
 	if retrieveErr != nil {
 		return nil, status.Errorf(
 			codes.Unauthenticated,
@@ -51,6 +51,6 @@ func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, er
 			retrieveErr,
 		)
 	}
-
-	return context.WithValue(ctx, ApplicationIDContextKey, applicationID), nil
+	applicationIdContext := context.WithValue(ctx, ApplicationIDContextKey, ids.ApplicationID)
+	return context.WithValue(applicationIdContext, ProjectIDContextKey, ids.ProjectID), nil
 }

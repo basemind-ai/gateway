@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/config"
+	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -223,4 +225,16 @@ func CreateProviderPricingModels(
 	}
 
 	return nil
+}
+
+func CreateProviderAPIKey(
+	ctx context.Context,
+	projectID pgtype.UUID,
+	apiKey string,
+	modelVendor models.ModelVendor,
+) (models.ProviderKey, error) {
+	return db.GetQueries().CreateProviderKey(
+		ctx, models.CreateProviderKeyParams{
+			ProjectID: projectID, EncryptedApiKey: cryptoutils.Encrypt(apiKey, config.Get(ctx).CryptoPassKey), ModelVendor: modelVendor,
+		})
 }

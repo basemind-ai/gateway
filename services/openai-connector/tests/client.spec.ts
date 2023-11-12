@@ -1,7 +1,7 @@
 import { loadEnv } from 'shared/env';
 import { afterAll, beforeEach } from 'vitest';
 
-import { getOpenAIClient } from '@/client';
+import { createOrDefaultClient, getOpenAIClient } from '@/client';
 
 describe('client tests', () => {
 	describe('getOpenAIClient', () => {
@@ -23,6 +23,19 @@ describe('client tests', () => {
 		it('should throw an error when OPEN_AI_API_KEY is missing', () => {
 			delete process.env.OPEN_AI_API_KEY;
 			expect(() => loadEnv('OPEN_AI_API_KEY')).toThrow();
+		});
+	});
+
+	describe('createOrDefaultClient', () => {
+		it('should return a new client if an API key is provided', () => {
+			const client = getOpenAIClient();
+			const newClient = createOrDefaultClient('abc');
+			expect(client).not.toBe(newClient);
+		});
+		it('should return a singleton if an API key is not provided', () => {
+			const client = getOpenAIClient();
+			const newClient = createOrDefaultClient();
+			expect(client).toBe(newClient);
 		});
 	});
 });

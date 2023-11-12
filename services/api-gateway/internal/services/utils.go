@@ -6,16 +6,21 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
+	"github.com/basemind-ai/monorepo/shared/go/config"
+	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"k8s.io/utils/ptr"
+	"time"
 )
 
 // RetrievePromptConfig retrieves the prompt config - either using the provided ID, or the application default.
@@ -139,6 +144,43 @@ func RetrieveRequestConfiguration(
 			),
 		}, nil
 	}
+}
+
+// CreateProviderAPIKeyContext creates a context with the provider API key.
+// The provider API key is retrieved from the database, decrypted and set in the context.
+// We intentionally use the projectID to cache here - because we need to invalidate the cache if the provider api key is deleted.
+func CreateProviderAPIKeyContext(
+	ctx context.Context,
+	projectID pgtype.UUID,
+	modelVendor models.ModelVendor,
+) (context.Context, error) {
+	providerKey, providerKeyRetrievalErr := rediscache.With[models.RetrieveProviderKeyRow](
+		ctx,
+		db.UUIDToString(&projectID),
+		&models.RetrieveProviderKeyRow{},
+		30*time.Minute,
+		func() (*models.RetrieveProviderKeyRow, error) {
+			providerKey, retrievalErr := db.GetQueries().RetrieveProviderKey(
+				ctx,
+				models.RetrieveProviderKeyParams{
+					ProjectID:   projectID,
+					ModelVendor: modelVendor,
+				},
+			)
+			return &providerKey, retrievalErr
+		},
+	)
+	if providerKeyRetrievalErr != nil {
+		return nil, status.Error(
+			codes.PermissionDenied,
+			"missing provider API-key",
+		)
+	}
+
+	decryptedKey := cryptoutils.Decrypt(providerKey.EncryptedApiKey, config.Get(ctx).CryptoPassKey)
+	// we append the encrypted provider key to the outgoing context
+	// it will be retrieved by the connector.
+	return metadata.AppendToOutgoingContext(ctx, "X-API-Key", decryptedKey), nil
 }
 
 // ValidateExpectedVariables validates that the expected template variables are present in the request.

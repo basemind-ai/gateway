@@ -22,8 +22,10 @@ UPDATE api_key
 SET deleted_at = NOW()
 WHERE id = $1;
 
--- name: RetrieveApplicationIDForAPIKey :one
-SELECT app.id
+-- name: RetrieveApplicationDataForAPIKey :one
+SELECT
+    app.id AS application_id,
+    app.project_id AS project_id
 FROM api_key AS t
 LEFT JOIN application AS app ON t.application_id = app.id
 WHERE

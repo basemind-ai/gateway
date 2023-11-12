@@ -2,6 +2,8 @@ import {
 	Server,
 	ServerCredentials,
 	ServerErrorResponse,
+	ServerUnaryCall,
+	ServerWritableStream,
 	ServiceDefinition,
 	UntypedServiceImplementation,
 } from '@grpc/grpc-js';
@@ -100,4 +102,18 @@ export class GrpcError extends Error implements ServerErrorResponse {
 		this.metadata = metadata;
 		this.details = details ?? message;
 	}
+}
+
+/**
+ * Extracts the provider API key from the metadata of the gRPC call if present.
+ *
+ * @param call the gRPC call
+ *
+ * @returns the provider API key if present, undefined otherwise
+ */
+export function extractProviderAPIKeyFromMetadata(
+	call: ServerUnaryCall<any, any> | ServerWritableStream<any, any>,
+): string | undefined {
+	const md = call.metadata.get('X-API-Key');
+	return md.length ? (md[0] as string) : undefined;
 }
