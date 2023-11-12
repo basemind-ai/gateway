@@ -196,6 +196,12 @@ func TestIntegration(t *testing.T) { //nolint: revive
 					RedisNil()
 				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
 					SetVal("OK")
+				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{
+					ID:              providerKey.ID,
+					ModelVendor:     models.ModelVendorOPENAI,
+					EncryptedApiKey: providerKey.EncryptedApiKey,
+				})), time.Hour/2).
+					SetVal("OK")
 
 				outgoingContext := metadata.AppendToOutgoingContext(
 					context.TODO(),

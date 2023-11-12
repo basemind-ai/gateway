@@ -196,6 +196,33 @@ func TestAPIGatewayService(t *testing.T) {
 
 			assert.ErrorContains(t, err, "missing template variable")
 		})
+
+		t.Run("returns error when no provider key is found", func(t *testing.T) {
+			cacheClient, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+			)
+			expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
+			assert.NoError(t, marshalErr)
+
+			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
+			_, err := srv.RequestPrompt(
+				createContext(requestConfigurationDTO.ApplicationID),
+				&gateway.PromptRequest{
+					TemplateVariables: map[string]string{"userInput": "x"},
+				},
+			)
+
+			assert.ErrorContains(
+				t,
+				err,
+				"missing provider API-key",
+			)
+		})
 	})
 
 	t.Run("RequestStreamingPrompt", func(t *testing.T) {
@@ -272,6 +299,30 @@ func TestAPIGatewayService(t *testing.T) {
 			}, mockGatewayServerStream{Ctx: createContext(requestConfigurationDTO.ApplicationID)})
 
 			assert.ErrorContains(t, err, "missing template variables")
+		})
+
+		t.Run("returns error when no provider key is found", func(t *testing.T) {
+			cacheClient, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+			)
+			expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
+			assert.NoError(t, marshalErr)
+
+			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
+			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
+				TemplateVariables: map[string]string{"userInput": "x"},
+			}, mockGatewayServerStream{Ctx: createContext(requestConfigurationDTO.ApplicationID)})
+
+			assert.ErrorContains(
+				t,
+				err,
+				"missing provider API-key",
+			)
 		})
 	})
 }
