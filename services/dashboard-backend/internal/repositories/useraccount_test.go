@@ -52,6 +52,25 @@ func TestUserAccountRepository(t *testing.T) {
 			assert.Equal(t, "123456789", userAccount.PhoneNumber)
 			assert.Equal(t, "https://example.com/photo.jpg", userAccount.PhotoUrl)
 		})
+		t.Run("should handlle pre-created account due to invitation", func(t *testing.T) {
+			userData, _ := factories.CreateUserAccount(context.TODO())
+
+			_, _ = db.GetQueries().CreateUserAccount(context.TODO(), models.CreateUserAccountParams{
+				Email: userData.Email,
+			})
+
+			createdUserAccount := repositories.GetOrCreateUserAccount(
+				context.TODO(),
+				userData.FirebaseID,
+			)
+
+			dbUserAccount, _ := db.GetQueries().
+				RetrieveUserAccountByID(context.TODO(), createdUserAccount.ID)
+			assert.Equal(t, userData.FirebaseID, dbUserAccount.FirebaseID)
+			assert.NotEmpty(t, dbUserAccount.PhoneNumber)
+			assert.NotEmpty(t, dbUserAccount.PhotoUrl)
+			assert.NotEmpty(t, dbUserAccount.DisplayName)
+		})
 	})
 
 	t.Run("DeleteUserAccount", func(t *testing.T) {

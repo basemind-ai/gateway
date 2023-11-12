@@ -18,7 +18,7 @@ function Toast() {
 		<div data-testid="toast-container" className="toast toast-center">
 			{toasts.map(({ type, message }, index) => (
 				<div
-					key={index}
+					key={index + type}
 					data-testid="toast-message"
 					className={`alert ${type}`}
 				>

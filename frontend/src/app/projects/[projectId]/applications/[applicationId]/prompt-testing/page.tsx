@@ -78,9 +78,9 @@ export default function PromptTesting({
 			>({
 				applicationId,
 				projectId,
-				handleMessage: handleMessage,
-				handleClose: handleClose,
-				handleError: handleError,
+				handleMessage,
+				handleClose,
+				handleError,
 			});
 			setWebsocketHandler(handler);
 		})();

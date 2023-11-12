@@ -96,7 +96,7 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp: otp,
+				otp,
 				applicationId,
 				projectId,
 			});
@@ -131,7 +131,7 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp: otp,
+				otp,
 				applicationId,
 				projectId,
 			});
@@ -168,7 +168,7 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp: otp,
+				otp,
 				applicationId,
 				projectId,
 			});
@@ -207,7 +207,7 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp: otp,
+				otp,
 				applicationId,
 				projectId,
 			});
@@ -241,7 +241,7 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp: otp,
+				otp,
 				applicationId,
 				projectId,
 			});

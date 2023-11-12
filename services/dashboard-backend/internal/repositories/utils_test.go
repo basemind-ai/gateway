@@ -67,5 +67,18 @@ func TestUtils(t *testing.T) {
 			_, _, err := repositories.ParsePromptMessages(promptMessages, vendor)
 			assert.Error(t, err)
 		})
+
+		t.Run("returns error for nil prompt messages", func(t *testing.T) {
+			vendor := models.ModelVendorOPENAI
+
+			expectedVariables, parsedMessages, err := repositories.ParsePromptMessages(
+				nil,
+				vendor,
+			)
+
+			assert.Error(t, err)
+			assert.Nil(t, expectedVariables)
+			assert.Nil(t, parsedMessages)
+		})
 	})
 }

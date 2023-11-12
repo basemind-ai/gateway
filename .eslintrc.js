@@ -1,4 +1,6 @@
-const rules = {};
+const rules = {
+	'object-shorthand': 1,
+};
 
 const tsWebRules = {
 	...rules,
