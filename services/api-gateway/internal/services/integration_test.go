@@ -11,6 +11,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
@@ -59,7 +60,7 @@ func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 
 func createTestCache(
 	t *testing.T,
-	applicationIDString string,
+	ids ...string,
 ) (*cache.Cache, redismock.ClientMock) {
 	t.Helper()
 	redisDB, mockRedis := redismock.NewClientMock()
@@ -71,13 +72,17 @@ func createTestCache(
 	cacheClient := rediscache.GetClient()
 
 	t.Cleanup(func() {
-		redisDB.Del(context.TODO(), applicationIDString)
+		for _, id := range ids {
+			redisDB.Del(context.TODO(), id)
+		}
 	})
 
 	return cacheClient, mockRedis
 }
 
 func TestIntegration(t *testing.T) { //nolint: revive
+	testutils.SetTestEnv(t)
+
 	project, _ := factories.CreateProject(context.Background())
 
 	modelParameters := factories.CreateModelParameters()
@@ -93,13 +98,21 @@ func TestIntegration(t *testing.T) { //nolint: revive
 		[]byte(JWTSecret),
 		db.UUIDToString(&token.ID),
 	)
+	assert.NoError(t, jwtCreateErr)
+
 	templateVariables := map[string]string{"userInput": "I'm a rainbow"}
 	expectedTemplateVariables := []string{"userInput"}
 
 	applicationID := db.UUIDToString(&requestConfigurationDTO.ApplicationID)
 	promptConfigID := db.UUIDToString(&requestConfigurationDTO.PromptConfigID)
 
-	assert.NoError(t, jwtCreateErr)
+	providerKey, providerKeyErr := factories.CreateProviderAPIKey(
+		context.TODO(),
+		project.ID,
+		factories.RandomString(10),
+		models.ModelVendorOPENAI,
+	)
+	assert.NoError(t, providerKeyErr)
 
 	t.Run("APIGatewayService", func(t *testing.T) {
 		t.Run("RequestPrompt", func(t *testing.T) {
@@ -118,12 +131,17 @@ func TestIntegration(t *testing.T) { //nolint: revive
 					Content: expectedResponseContent,
 				}
 
-				expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
-				assert.NoError(t, marshalErr)
-
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 					RedisNil()
-				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+
+				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), exc.MustResult(cacheClient.Marshal(requestConfigurationDTO)), time.Hour/2).
+					SetVal("OK")
+
+				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{
+					ID:              providerKey.ID,
+					ModelVendor:     models.ModelVendorOPENAI,
+					EncryptedApiKey: providerKey.EncryptedApiKey,
+				})), time.Hour/2).
 					SetVal("OK")
 
 				outgoingContext := metadata.AppendToOutgoingContext(
@@ -142,7 +160,14 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				assert.Equal(t, expectedResponseContent, firstResponse.Content)
 
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
-					SetVal(string(expectedCacheValue))
+					SetVal(string(exc.MustResult(cacheClient.Marshal(requestConfigurationDTO))))
+
+				mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+					SetVal(string(exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{
+						ID:              providerKey.ID,
+						ModelVendor:     models.ModelVendorOPENAI,
+						EncryptedApiKey: providerKey.EncryptedApiKey,
+					}))))
 
 				secondResponse, secondResponseErr := client.RequestPrompt(
 					outgoingContext,
@@ -210,7 +235,15 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 					RedisNil()
+
 				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+					SetVal("OK")
+
+				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{
+					ID:              providerKey.ID,
+					ModelVendor:     models.ModelVendorOPENAI,
+					EncryptedApiKey: providerKey.EncryptedApiKey,
+				})), time.Hour/2).
 					SetVal("OK")
 
 				outgoingContext := metadata.AppendToOutgoingContext(

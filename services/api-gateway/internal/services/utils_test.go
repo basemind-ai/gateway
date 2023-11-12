@@ -7,13 +7,19 @@ import (
 	"github.com/basemind-ai/monorepo/gen/go/gateway/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
+	"github.com/basemind-ai/monorepo/shared/go/config"
+	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/metadata"
 	"testing"
+	"time"
 )
 
 func TestUtils(t *testing.T) { //nolint:revive
+	testutils.SetTestEnv(t)
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
 	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
@@ -217,6 +223,115 @@ func TestUtils(t *testing.T) { //nolint:revive
 				application.ID,
 				&missingUUID,
 			)()
+			assert.Error(t, err)
+		})
+	})
+
+	t.Run("CreateProviderAPIKeyContext", func(t *testing.T) {
+		t.Run(
+			"sets the decrypted provider key in context and caches the db result",
+			func(t *testing.T) {
+				cacheClient, mockRedis := createTestCache(
+					t,
+					db.UUIDToString(&project.ID),
+				)
+
+				plainKey := factories.RandomString(20)
+				modelProvider := models.ModelVendorOPENAI
+
+				encryptedKey := cryptoutils.Encrypt(
+					plainKey,
+					config.Get(context.TODO()).CryptoPassKey,
+				)
+
+				providerKey, err := db.GetQueries().
+					CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
+						ModelVendor:     modelProvider,
+						EncryptedApiKey: encryptedKey,
+						ProjectID:       project.ID,
+					})
+				assert.NoError(t, err)
+
+				expectedCachedValue, _ := cacheClient.Marshal(models.RetrieveProviderKeyRow{
+					ID:              providerKey.ID,
+					ModelVendor:     providerKey.ModelVendor,
+					EncryptedApiKey: providerKey.EncryptedApiKey,
+				})
+
+				mockRedis.ExpectGet(db.UUIDToString(&project.ID)).RedisNil()
+				mockRedis.ExpectSet(db.UUIDToString(&project.ID), expectedCachedValue, time.Hour/2).
+					SetVal("OK")
+
+				updatedContext, err := services.CreateProviderAPIKeyContext(
+					context.TODO(),
+					project.ID,
+					modelProvider,
+				)
+				assert.NoError(t, err)
+
+				md, ok := metadata.FromOutgoingContext(updatedContext)
+				assert.True(t, ok)
+
+				value := md.Get("X-API-Key")
+				assert.Len(t, value, 1)
+
+				assert.Equal(t, plainKey, value[0])
+			},
+		)
+
+		t.Run("retrieves results from cache and sets the context value", func(t *testing.T) {
+			newProject, _ := factories.CreateProject(context.TODO())
+
+			cacheClient, mockRedis := createTestCache(
+				t,
+				db.UUIDToString(&newProject.ID),
+			)
+
+			plainKey := factories.RandomString(20)
+			modelProvider := models.ModelVendorOPENAI
+
+			encryptedKey := cryptoutils.Encrypt(plainKey, config.Get(context.TODO()).CryptoPassKey)
+
+			providerKey, err := db.GetQueries().
+				CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
+					ModelVendor:     modelProvider,
+					EncryptedApiKey: encryptedKey,
+					ProjectID:       newProject.ID,
+				})
+			assert.NoError(t, err)
+
+			expectedCachedValue, _ := cacheClient.Marshal(models.RetrieveProviderKeyRow{
+				ID:              providerKey.ID,
+				ModelVendor:     providerKey.ModelVendor,
+				EncryptedApiKey: providerKey.EncryptedApiKey,
+			})
+
+			mockRedis.ExpectGet(db.UUIDToString(&newProject.ID)).SetVal(string(expectedCachedValue))
+
+			updatedContext, err := services.CreateProviderAPIKeyContext(
+				context.TODO(),
+				newProject.ID,
+				modelProvider,
+			)
+			assert.NoError(t, err)
+
+			md, ok := metadata.FromOutgoingContext(updatedContext)
+			assert.True(t, ok)
+
+			value := md.Get("X-API-Key")
+			assert.Len(t, value, 1)
+
+			assert.Equal(t, plainKey, value[0])
+		})
+
+		t.Run("handles error when retrieving provider key", func(t *testing.T) {
+			newProject, _ := factories.CreateProject(context.TODO())
+
+			_, err := services.CreateProviderAPIKeyContext(
+				context.TODO(),
+				newProject.ID,
+				models.ModelVendorOPENAI,
+			)
 			assert.Error(t, err)
 		})
 	})
