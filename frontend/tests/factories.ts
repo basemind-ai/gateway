@@ -11,6 +11,7 @@ import {
 	Project,
 	ProjectUserAccount,
 	PromptConfig,
+	ProviderKey,
 } from '@/types';
 
 export const UserFactory = new TypeFactory<UserInfo>(() => ({
@@ -81,3 +82,9 @@ export const ProjectUserAccountFactory = new TypeFactory<ProjectUserAccount>(
 		permission: AccessPermission.ADMIN,
 	}),
 );
+
+export const ProviderKeyFactory = new TypeFactory<ProviderKey>(() => ({
+	id: faker.string.uuid(),
+	modelVendor: ModelVendor.OpenAI,
+	createdAt: faker.date.past().toISOString(),
+}));

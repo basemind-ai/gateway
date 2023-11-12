@@ -2,6 +2,7 @@ import { SupportTopic } from '@/constants/forms';
 
 export enum ModelVendor {
 	OpenAI = 'OPEN_AI',
+	Cohere = 'COHERE',
 }
 
 export enum ModelType {
@@ -164,4 +165,17 @@ export interface SupportTicketCreateBody {
 	subject?: string;
 	body: string;
 	projectId?: string;
+}
+
+// Provider Key
+
+export interface ProviderKeyCreateBody {
+	modelVendor: ModelVendor;
+	key: string;
+}
+
+export interface ProviderKey {
+	id: string;
+	modelVendor: ModelVendor;
+	createdAt: string;
 }
