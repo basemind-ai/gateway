@@ -12,6 +12,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func TestProviderKeyRepositoriy(t *testing.T) {
@@ -73,5 +74,34 @@ func TestProviderKeyRepositoriy(t *testing.T) {
 				assert.Error(t, secondKeyErr)
 			},
 		)
+	})
+
+	t.Run("DeleteProviderKey", func(t *testing.T) {
+		t.Run("should delete a provider key", func(t *testing.T) {
+			project, _ := factories.CreateProject(context.TODO())
+			providerKey, _ := factories.CreateProviderAPIKey(
+				context.TODO(),
+				project.ID,
+				factories.RandomString(10),
+				models.ModelVendorOPENAI,
+			)
+
+			_, redisMock := testutils.CreateMockRedisClient(t)
+
+			redisMock.ExpectDel(db.UUIDToString(&project.ID)).SetVal(1)
+
+			repositories.DeleteProviderKey(context.TODO(), project.ID, providerKey.ID)
+
+			_, retrievalErr := db.GetQueries().
+				RetrieveProviderKey(context.TODO(), models.RetrieveProviderKeyParams{
+					ProjectID:   project.ID,
+					ModelVendor: models.ModelVendorOPENAI,
+				})
+			assert.Error(t, retrievalErr)
+
+			time.Sleep(100 * time.Millisecond)
+
+			assert.NoError(t, redisMock.ExpectationsWereMet())
+		})
 	})
 }

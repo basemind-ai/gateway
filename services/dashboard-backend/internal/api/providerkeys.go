@@ -58,9 +58,9 @@ func handleCreateProviderKey(w http.ResponseWriter, r *http.Request) {
 
 // handleDeleteProviderKey - deletes a provider key for the given project.
 func handleDeleteProviderKey(w http.ResponseWriter, r *http.Request) {
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
 	providerKeyID := r.Context().Value(middleware.ProviderKeyIDContextKey).(pgtype.UUID)
 
-	exc.Must(db.GetQueries().DeleteProviderKey(r.Context(), providerKeyID))
-
+	repositories.DeleteProviderKey(r.Context(), projectID, providerKeyID)
 	w.WriteHeader(http.StatusNoContent)
 }

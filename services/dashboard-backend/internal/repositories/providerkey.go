@@ -8,6 +8,8 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -38,4 +40,13 @@ func CreateProviderKey(
 		ModelVendor: result.ModelVendor,
 		CreatedAt:   result.CreatedAt.Time,
 	}, nil
+}
+
+// DeleteProviderKey - deletes a provider key by ID and invalidates the redis cache.
+func DeleteProviderKey(ctx context.Context, projectID, providerKeyID pgtype.UUID) {
+	exc.Must(db.GetQueries().DeleteProviderKey(ctx, providerKeyID))
+
+	go func() {
+		rediscache.Invalidate(ctx, db.UUIDToString(&projectID))
+	}()
 }
