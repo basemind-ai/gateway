@@ -18,13 +18,15 @@ export function SDKSection() {
 
 	return (
 		<Section name="sdk">
-			<h1
-				className="text-secondary text-lg 2xl:text-xl mb-4 text-center font-semibold"
-				data-testid="sdk-section-title"
-			>
-				{t('sdkSectionTitle')}
-			</h1>
-			<CodeSnippet codeText={kotlinCode} language="kotlin" />
+			<div className="flex flex-col justify-between content-center mx-auto">
+				<h1
+					className="text-secondary text-xl 2xl:text-xl mb-4 text-center font-semibold"
+					data-testid="sdk-section-title"
+				>
+					{t('sdkSectionTitle')}
+				</h1>
+				<CodeSnippet codeText={kotlinCode} language="kotlin" />
+			</div>
 		</Section>
 	);
 }

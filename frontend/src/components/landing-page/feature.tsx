@@ -15,7 +15,7 @@ export function Feature({
 }) {
 	return (
 		<div
-			className={`card p-5 shadow shadow-neutral border-3 border-base-200/10 h-full flex flex-col md:flex-row justify-between items-center md:px-0 ${
+			className={`card p-5 shadow shadow-neutral border-3 border-base-200/10 h-full flex flex-col justify-between items-center md:px-0 ${
 				reverse ? 'md:flex-row-reverse' : ''
 			}`}
 			data-testid={`feature-card-${name}`}

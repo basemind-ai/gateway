@@ -8,7 +8,7 @@ export function Footer() {
 			className="footer footer-center p-12 bg-base-200 text-base-content"
 			data-testid="landing-page-footer"
 		>
-			<div>
+			<div className="flex justify-between w-full">
 				<p data-testid="footer-text">{t('footerText')}</p>
 				<p data-testid="footer-copyright">{t('footerCopyright')}</p>
 			</div>

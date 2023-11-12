@@ -15,12 +15,12 @@ export function FeaturesSection() {
 					title={t('featureServerlessTitle')}
 					subtitle={t('featureServerlessSubtitle')}
 					description={t('featureServerlessDescription')}
-					reverse={true}
 					name="serverless"
+					reverse={true}
 				>
 					<Image
-						width={Dimensions.Twelve}
-						height={Dimensions.Twelve}
+						width={Dimensions.ThirtySix}
+						height={Dimensions.Twenty}
 						src="/images/stats-feature.svg"
 						alt="Stats Feature"
 						className="w-full z-10"
@@ -31,10 +31,11 @@ export function FeaturesSection() {
 					subtitle={t('featureDashboardSubtitle')}
 					description={t('featureDashboardDescription')}
 					name="dashboard"
+					reverse={true}
 				>
 					<Image
-						width={Dimensions.Twelve}
-						height={Dimensions.Twelve}
+						width={Dimensions.ThirtySix}
+						height={Dimensions.Twenty}
 						src="/images/prompt-testing-feature.svg"
 						alt="Prompt Testing Feature"
 						className="w-full z-10"
@@ -49,59 +50,59 @@ export function FeaturesSection() {
 				>
 					<div className="grid grid-cols-4 gap-8 w-full">
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/hugging-face-logo.svg"
 							alt="Hugging Face Logo"
 							className="w-full z-10"
 						/>
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/gcp-logo.svg"
 							alt="GCP Logo"
 							className="w-full pt-2 z-10"
 						/>
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/azure-logo.svg"
 							alt="Azure Logo"
 							className="w-full z-10"
 						/>
 
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/aws-logo.svg"
 							alt="AWS Logo"
 							className="w-full z-10"
 						/>
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/anthropic-logo.svg"
 							alt="Anthropic Logo"
 							className="w-full z-10"
 						/>
 
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/palm2-logo.svg"
 							alt="PaLM2 Logo"
 							className="w-full z-10"
 						/>
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/cohere-logo.svg"
 							alt="Cohere Logo"
 							className="w-full z-10"
 						/>
 						<Image
-							width={Dimensions.Twelve}
-							height={Dimensions.Twelve}
+							width={Dimensions.Twenty}
+							height={Dimensions.Twenty}
 							src="/images/openai-logo.svg"
 							alt="OpenAI Logo"
 							className="w-full z-10"
