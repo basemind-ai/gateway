@@ -63,16 +63,16 @@ func TestProviderKeysAPI(t *testing.T) {
 
 			providerKeyOne, _ := db.GetQueries().
 				CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
-					ProjectID:   project.ID,
-					ModelVendor: models.ModelVendorOPENAI,
-					ApiKey:      unencryptedKey,
+					ProjectID:       project.ID,
+					ModelVendor:     models.ModelVendorOPENAI,
+					EncryptedApiKey: unencryptedKey,
 				})
 
 			providerKeyTwo, _ := db.GetQueries().
 				CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
-					ProjectID:   project.ID,
-					ModelVendor: models.ModelVendorCOHERE,
-					ApiKey:      unencryptedKey,
+					ProjectID:       project.ID,
+					ModelVendor:     models.ModelVendorCOHERE,
+					EncryptedApiKey: unencryptedKey,
 				})
 
 			response, requestErr := testClient.Get(
@@ -231,9 +231,9 @@ func TestProviderKeysAPI(t *testing.T) {
 
 				_, _ = db.GetQueries().
 					CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
-						ProjectID:   project.ID,
-						ModelVendor: modelVendor,
-						ApiKey:      unencryptedKey,
+						ProjectID:       project.ID,
+						ModelVendor:     modelVendor,
+						EncryptedApiKey: unencryptedKey,
 					})
 
 				data := dto.ProviderKeyCreateDTO{
@@ -267,9 +267,9 @@ func TestProviderKeysAPI(t *testing.T) {
 
 			providerKey, _ := db.GetQueries().
 				CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
-					ProjectID:   project.ID,
-					ModelVendor: modelVendor,
-					ApiKey:      unencryptedKey,
+					ProjectID:       project.ID,
+					ModelVendor:     modelVendor,
+					EncryptedApiKey: unencryptedKey,
 				})
 
 			response, requestErr := testClient.Delete(
@@ -299,9 +299,9 @@ func TestProviderKeysAPI(t *testing.T) {
 
 				providerKey, _ := db.GetQueries().
 					CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
-						ProjectID:   project.ID,
-						ModelVendor: modelVendor,
-						ApiKey:      unencryptedKey,
+						ProjectID:       project.ID,
+						ModelVendor:     modelVendor,
+						EncryptedApiKey: unencryptedKey,
 					})
 
 				response, requestErr := testClient.Delete(
@@ -319,9 +319,9 @@ func TestProviderKeysAPI(t *testing.T) {
 
 				providerKey, _ := db.GetQueries().
 					CreateProviderKey(context.TODO(), models.CreateProviderKeyParams{
-						ProjectID:   project.ID,
-						ModelVendor: modelVendor,
-						ApiKey:      unencryptedKey,
+						ProjectID:       project.ID,
+						ModelVendor:     modelVendor,
+						EncryptedApiKey: unencryptedKey,
 					})
 
 				response, requestErr := testClient.Delete(

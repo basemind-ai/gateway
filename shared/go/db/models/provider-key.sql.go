@@ -24,25 +24,25 @@ func (q *Queries) CheckProviderKeyExists(ctx context.Context, id pgtype.UUID) (b
 
 const createProviderKey = `-- name: CreateProviderKey :one
 
-INSERT INTO provider_key (model_vendor, api_key, project_id)
+INSERT INTO provider_key (model_vendor, encrypted_api_key, project_id)
 VALUES ($1, $2, $3)
-RETURNING id, model_vendor, api_key, created_at, project_id
+RETURNING id, model_vendor, encrypted_api_key, created_at, project_id
 `
 
 type CreateProviderKeyParams struct {
-	ModelVendor ModelVendor `json:"modelVendor"`
-	ApiKey      string      `json:"apiKey"`
-	ProjectID   pgtype.UUID `json:"projectId"`
+	ModelVendor     ModelVendor `json:"modelVendor"`
+	EncryptedApiKey string      `json:"encryptedApiKey"`
+	ProjectID       pgtype.UUID `json:"projectId"`
 }
 
 // -- provider key
 func (q *Queries) CreateProviderKey(ctx context.Context, arg CreateProviderKeyParams) (ProviderKey, error) {
-	row := q.db.QueryRow(ctx, createProviderKey, arg.ModelVendor, arg.ApiKey, arg.ProjectID)
+	row := q.db.QueryRow(ctx, createProviderKey, arg.ModelVendor, arg.EncryptedApiKey, arg.ProjectID)
 	var i ProviderKey
 	err := row.Scan(
 		&i.ID,
 		&i.ModelVendor,
-		&i.ApiKey,
+		&i.EncryptedApiKey,
 		&i.CreatedAt,
 		&i.ProjectID,
 	)
@@ -96,7 +96,7 @@ const retrieveProviderKey = `-- name: RetrieveProviderKey :one
 SELECT
     id,
     model_vendor,
-    api_key
+    encrypted_api_key
 FROM provider_key WHERE project_id = $1 AND model_vendor = $2
 `
 
@@ -106,14 +106,14 @@ type RetrieveProviderKeyParams struct {
 }
 
 type RetrieveProviderKeyRow struct {
-	ID          pgtype.UUID `json:"id"`
-	ModelVendor ModelVendor `json:"modelVendor"`
-	ApiKey      string      `json:"apiKey"`
+	ID              pgtype.UUID `json:"id"`
+	ModelVendor     ModelVendor `json:"modelVendor"`
+	EncryptedApiKey string      `json:"encryptedApiKey"`
 }
 
 func (q *Queries) RetrieveProviderKey(ctx context.Context, arg RetrieveProviderKeyParams) (RetrieveProviderKeyRow, error) {
 	row := q.db.QueryRow(ctx, retrieveProviderKey, arg.ProjectID, arg.ModelVendor)
 	var i RetrieveProviderKeyRow
-	err := row.Scan(&i.ID, &i.ModelVendor, &i.ApiKey)
+	err := row.Scan(&i.ID, &i.ModelVendor, &i.EncryptedApiKey)
 	return i, err
 }

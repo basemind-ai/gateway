@@ -193,7 +193,7 @@ CREATE TABLE provider_key
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     model_vendor model_vendor NOT NULL,
-    api_key varchar(255) NOT NULL,
+    encrypted_api_key varchar(255) NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     project_id uuid NOT NULL,
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE

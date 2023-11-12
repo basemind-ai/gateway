@@ -89,8 +89,10 @@ func (q *Queries) RetrieveAPIKeys(ctx context.Context, id pgtype.UUID) ([]Retrie
 	return items, nil
 }
 
-const retrieveApplicationIDForAPIKey = `-- name: RetrieveApplicationIDForAPIKey :one
-SELECT app.id
+const retrieveApplicationDataForAPIKey = `-- name: RetrieveApplicationDataForAPIKey :one
+SELECT
+    app.id AS application_id,
+    app.project_id AS project_id
 FROM api_key AS t
 LEFT JOIN application AS app ON t.application_id = app.id
 WHERE
@@ -99,10 +101,16 @@ WHERE
     AND app.deleted_at IS NULL
 `
 
-func (q *Queries) RetrieveApplicationIDForAPIKey(ctx context.Context, id pgtype.UUID) (pgtype.UUID, error) {
-	row := q.db.QueryRow(ctx, retrieveApplicationIDForAPIKey, id)
-	err := row.Scan(&id)
-	return id, err
+type RetrieveApplicationDataForAPIKeyRow struct {
+	ApplicationID pgtype.UUID `json:"applicationId"`
+	ProjectID     pgtype.UUID `json:"projectId"`
+}
+
+func (q *Queries) RetrieveApplicationDataForAPIKey(ctx context.Context, id pgtype.UUID) (RetrieveApplicationDataForAPIKeyRow, error) {
+	row := q.db.QueryRow(ctx, retrieveApplicationDataForAPIKey, id)
+	var i RetrieveApplicationDataForAPIKeyRow
+	err := row.Scan(&i.ApplicationID, &i.ProjectID)
+	return i, err
 }
 
 const retrieveApplicationInternalAPIKeyID = `-- name: RetrieveApplicationInternalAPIKeyID :one

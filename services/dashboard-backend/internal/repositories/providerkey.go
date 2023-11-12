@@ -24,9 +24,9 @@ func CreateProviderKey(
 	encryptedKey := cryptoutils.Encrypt(data.Key, cfg.CryptoPassKey)
 
 	result, err := db.GetQueries().CreateProviderKey(ctx, models.CreateProviderKeyParams{
-		ProjectID:   projectID,
-		ApiKey:      encryptedKey,
-		ModelVendor: data.ModelVendor,
+		ProjectID:       projectID,
+		EncryptedApiKey: encryptedKey,
+		ModelVendor:     data.ModelVendor,
 	})
 
 	if err != nil {

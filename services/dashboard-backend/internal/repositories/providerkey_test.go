@@ -42,7 +42,7 @@ func TestProviderKeyRepositoriy(t *testing.T) {
 			assert.NoError(t, retrievalErr)
 
 			decryptedKey := cryptoutils.Decrypt(
-				retrieved.ApiKey,
+				retrieved.EncryptedApiKey,
 				config.Get(context.TODO()).CryptoPassKey,
 			)
 			assert.Equal(t, unencryptedKey, decryptedKey)

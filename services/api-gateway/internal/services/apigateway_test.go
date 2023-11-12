@@ -197,8 +197,15 @@ func TestAPIGatewayService(t *testing.T) {
 	})
 
 	t.Run("RequestStreamingPrompt", func(t *testing.T) {
-		t.Run("return error when ApplicationIDContext is not set", func(t *testing.T) {
+		t.Run("return error when projectID context value is not set", func(t *testing.T) {
 			err := srv.RequestStreamingPrompt(nil, mockGatewayServerStream{})
+			assert.ErrorContains(t, err, services.ErrorProjectIDNotInContext)
+		})
+
+		t.Run("return error when applicationID context value is not set", func(t *testing.T) {
+			err := srv.RequestStreamingPrompt(nil, mockGatewayServerStream{
+				Ctx: context.WithValue(context.TODO(), grpcutils.ProjectIDContextKey, "123"),
+			})
 			assert.ErrorContains(t, err, services.ErrorApplicationIDNotInContext)
 		})
 

@@ -34,9 +34,13 @@ func TestAuthHandler(t *testing.T) {
 			newCtx, err := handler.HandleAuth(ctx)
 			assert.NoError(t, err)
 
-			ctxValue, ok := newCtx.Value(grpcutils.ApplicationIDContextKey).(pgtype.UUID)
+			applicationContextValue, ok := newCtx.Value(grpcutils.ApplicationIDContextKey).(pgtype.UUID)
 			assert.True(t, ok)
-			assert.Equal(t, ctxValue, application.ID)
+			assert.Equal(t, applicationContextValue, application.ID)
+
+			projectContextValue, ok := newCtx.Value(grpcutils.ProjectIDContextKey).(pgtype.UUID)
+			assert.True(t, ok)
+			assert.Equal(t, projectContextValue, project.ID)
 		})
 
 		t.Run("returns unauthenticated status for missing bearer metadata", func(t *testing.T) {
