@@ -33,7 +33,7 @@ type PromptConfigDTO struct { // skipcq: TCV-001
 	Name                      string             `json:"name"                      validate:"required"`
 	ModelParameters           *json.RawMessage   `json:"modelParameters"           validate:"required"`
 	ModelType                 models.ModelType   `json:"modelType"                 validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
-	ModelVendor               models.ModelVendor `json:"modelVendor"               validate:"oneof=OPEN_AI"`
+	ModelVendor               models.ModelVendor `json:"modelVendor"               validate:"oneof=OPEN_AI COHERE"`
 	ProviderPromptMessages    *json.RawMessage   `json:"providerPromptMessages"    validate:"required"`
 	ExpectedTemplateVariables []string           `json:"expectedTemplateVariables"`
 	IsDefault                 bool               `json:"isDefault,omitempty"`

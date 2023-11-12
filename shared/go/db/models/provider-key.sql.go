@@ -11,11 +11,22 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const checkProviderKeyExists = `-- name: CheckProviderKeyExists :one
+SELECT EXISTS(SELECT 1 FROM provider_key WHERE id = $1)
+`
+
+func (q *Queries) CheckProviderKeyExists(ctx context.Context, id pgtype.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, checkProviderKeyExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createProviderKey = `-- name: CreateProviderKey :one
 
 INSERT INTO provider_key (model_vendor, api_key, project_id)
 VALUES ($1, $2, $3)
-RETURNING id
+RETURNING id, model_vendor, api_key, created_at, project_id
 `
 
 type CreateProviderKeyParams struct {
@@ -25,11 +36,17 @@ type CreateProviderKeyParams struct {
 }
 
 // -- provider key
-func (q *Queries) CreateProviderKey(ctx context.Context, arg CreateProviderKeyParams) (pgtype.UUID, error) {
+func (q *Queries) CreateProviderKey(ctx context.Context, arg CreateProviderKeyParams) (ProviderKey, error) {
 	row := q.db.QueryRow(ctx, createProviderKey, arg.ModelVendor, arg.ApiKey, arg.ProjectID)
-	var id pgtype.UUID
-	err := row.Scan(&id)
-	return id, err
+	var i ProviderKey
+	err := row.Scan(
+		&i.ID,
+		&i.ModelVendor,
+		&i.ApiKey,
+		&i.CreatedAt,
+		&i.ProjectID,
+	)
+	return i, err
 }
 
 const deleteProviderKey = `-- name: DeleteProviderKey :exec
@@ -41,8 +58,46 @@ func (q *Queries) DeleteProviderKey(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const retrieveProjectProviderKeys = `-- name: RetrieveProjectProviderKeys :many
+SELECT
+    id,
+    model_vendor,
+    created_at
+FROM provider_key WHERE project_id = $1
+`
+
+type RetrieveProjectProviderKeysRow struct {
+	ID          pgtype.UUID        `json:"id"`
+	ModelVendor ModelVendor        `json:"modelVendor"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+}
+
+func (q *Queries) RetrieveProjectProviderKeys(ctx context.Context, projectID pgtype.UUID) ([]RetrieveProjectProviderKeysRow, error) {
+	rows, err := q.db.Query(ctx, retrieveProjectProviderKeys, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RetrieveProjectProviderKeysRow
+	for rows.Next() {
+		var i RetrieveProjectProviderKeysRow
+		if err := rows.Scan(&i.ID, &i.ModelVendor, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const retrieveProviderKey = `-- name: RetrieveProviderKey :one
-SELECT id, model_vendor, api_key FROM provider_key WHERE project_id = $1 AND model_vendor = $2
+SELECT
+    id,
+    model_vendor,
+    api_key
+FROM provider_key WHERE project_id = $1 AND model_vendor = $2
 `
 
 type RetrieveProviderKeyParams struct {

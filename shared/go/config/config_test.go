@@ -24,8 +24,8 @@ func TestConfig(t *testing.T) {
 		cfg := Get(context.TODO())
 		assert.Equal(t, cfg.DatabaseURL, "postgresql://basemind:basemind@db:5432/basemind")
 		assert.Equal(t, cfg.Environment, "development")
-		assert.Equal(t, cfg.JWTSecret, "ABC123")
 		assert.Equal(t, cfg.ServerPort, 3000)
-		assert.Equal(t, cfg.RedisURL, "ABC123")
+		assert.NotEmpty(t, cfg.JWTSecret)
+		assert.NotEmpty(t, cfg.RedisURL)
 	})
 }

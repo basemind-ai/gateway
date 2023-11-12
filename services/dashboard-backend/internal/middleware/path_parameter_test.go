@@ -44,6 +44,10 @@ func TestPathParameterMiddleware(t *testing.T) {
 				Key:        "promptConfigId",
 				ContextKey: middleware.PromptConfigIDContextKey,
 			},
+			{
+				Key:        "providerKeyId",
+				ContextKey: middleware.ProviderKeyIDContextKey,
+			},
 		}
 
 		for _, testCase := range testCases {

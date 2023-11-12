@@ -53,6 +53,36 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Get("/", handleRetrieveProjectOTP)
 		})
 
+		router.Route(ProjectProviderKeyListEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
+				middleware.PathParameterMiddleware("projectId"),
+			)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet:  allPermissions,
+						http.MethodPost: allPermissions,
+					},
+				),
+			)
+			subRouter.Get("/", handleRetrieveProviderKeys)
+			subRouter.Post("/", handleCreateProviderKey)
+		})
+
+		router.Route(ProjectProviderKeyDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "providerKeyId"),
+			)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Delete("/", handleDeleteProviderKey)
+		})
+
 		router.Route(ProjectAnalyticsEndpoint, func(subRouter chi.Router) {
 			subRouter.Use(middleware.PathParameterMiddleware("projectId"))
 			subRouter.Use(
