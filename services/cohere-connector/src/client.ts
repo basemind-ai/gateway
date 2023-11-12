@@ -19,3 +19,17 @@ export function getCohereClient(): CohereClient {
 	}
 	return ref.instance;
 }
+
+/*
+ * Creates a Cohere client instance if an API key is provided, otherwise returns the singleton instance.
+ *
+ * @return An Cohere class instance
+ * */
+export function createOrDefaultClient(apiKey?: string): CohereClient {
+	if (apiKey) {
+		return new CohereClient({
+			token: apiKey,
+		});
+	}
+	return getCohereClient();
+}

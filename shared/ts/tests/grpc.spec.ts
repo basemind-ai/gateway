@@ -1,7 +1,9 @@
 // noinspection JSUnusedGlobalSymbols
 
 import { Server } from '@grpc/grpc-js';
-import { createServer } from 'shared/grpc';
+import { Metadata } from '@grpc/grpc-js/build/src/metadata';
+import { createServer, extractProviderAPIKeyFromMetadata } from 'shared/grpc';
+import { expect } from 'vitest';
 
 describe('gRPC utils tests', () => {
 	describe('createServer', () => {
@@ -35,6 +37,25 @@ describe('gRPC utils tests', () => {
 				expect.anything(),
 				expect.anything(),
 			);
+		});
+	});
+	describe('extractProviderAPIKeyFromMetadata', () => {
+		it('should return the API key from the metadata', () => {
+			const metadata = new Metadata();
+			metadata.add('X-API-KEY', 'test');
+
+			const result = extractProviderAPIKeyFromMetadata({
+				metadata,
+			} as any);
+			expect(result).toBe('test');
+		});
+		it('should return undefined if the API key is not present in the metadata', () => {
+			const metadata = new Metadata();
+
+			const result = extractProviderAPIKeyFromMetadata({
+				metadata,
+			} as any);
+			expect(result).toBeUndefined();
 		});
 	});
 });

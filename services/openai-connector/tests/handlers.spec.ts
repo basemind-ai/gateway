@@ -1,5 +1,6 @@
 /* eslint-disable unicorn/consistent-function-scoping,@typescript-eslint/require-await */
 import {
+	Metadata,
 	sendUnaryData,
 	ServerUnaryCall,
 	ServerWritableStream,
@@ -35,6 +36,7 @@ describe('handlers tests', () => {
 		): ServerUnaryCall<OpenAIPromptRequest, OpenAIPromptResponse> => {
 			return {
 				getPath: vi.fn(),
+				metadata: new Metadata(),
 				request,
 			} as unknown as ServerUnaryCall<
 				OpenAIPromptRequest,
@@ -251,6 +253,7 @@ describe('handlers tests', () => {
 				getPath: vi.fn(),
 				write: vi.fn(),
 				end: vi.fn(),
+				metadata: new Metadata(),
 				request,
 			} as unknown as ServerWritableStream<
 				OpenAIPromptRequest,
