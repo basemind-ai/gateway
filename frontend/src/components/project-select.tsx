@@ -1,44 +1,38 @@
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 
 import {
-	useCurrentProject,
+	useProject,
 	useProjects,
-	useSetCurrentProject,
+	useSetSelectedProject,
 } from '@/stores/project-store';
 import { handleChange } from '@/utils/helpers';
 
-export function ProjectSelect() {
-	const t = useTranslations('projectSelect');
-
+export function ProjectSelect({
+	selectedProjectId,
+}: {
+	selectedProjectId: string;
+}) {
 	const router = useRouter();
 
 	const projects = useProjects();
-	const currentProject = useCurrentProject();
-	const setCurrentProject = useSetCurrentProject();
+	const setSelectedProject = useSetSelectedProject();
+	const selectedProject = useProject(selectedProjectId)!;
 
 	return (
 		<div data-testid="project-select-container">
 			<select
+				className="select"
 				data-testid="project-select-component"
 				onChange={handleChange((projectId: string) => {
-					setCurrentProject(projectId);
+					setSelectedProject(projectId);
 					router.replace(`/projects/${projectId}`);
 				})}
 			>
-				<option
-					value={undefined}
-					hidden={!!currentProject}
-					selected={!currentProject}
-					data-testid="project-select-default-option"
-				>
-					{t('defaultOption')}
-				</option>
 				{projects.map((project) => (
 					<option
 						key={project.id}
 						value={project.id}
-						selected={currentProject?.id === project.id}
+						selected={selectedProject.id === project.id}
 						data-testid="project-select-option"
 					>
 						{project.name}

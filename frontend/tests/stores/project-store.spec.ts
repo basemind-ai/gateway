@@ -16,19 +16,19 @@ import {
 	useAPIKeys,
 	useApplication,
 	useApplications,
-	useCurrentProject,
 	useDeleteApplication,
 	useDeleteProject,
 	useProject,
 	useProjectUsers,
 	usePromptConfigs,
 	useRemoveProjectUser,
+	useSelectedProject,
 	useSetAPIKeys,
-	useSetCurrentProject,
 	useSetProjectApplications,
 	useSetProjects,
 	useSetProjectUsers,
 	useSetPromptConfigs,
+	useSetSelectedProject,
 	useUpdateApplication,
 	useUpdateProject,
 	useUpdateProjectUser,
@@ -132,12 +132,12 @@ describe('project-store tests', () => {
 
 			const {
 				result: { current: setCurrentProject },
-			} = renderHook(useSetCurrentProject);
+			} = renderHook(useSetSelectedProject);
 			setCurrentProject(projects[0].id);
 
 			const {
 				result: { current: currentProject },
-			} = renderHook(useCurrentProject);
+			} = renderHook(useSelectedProject);
 
 			expect(currentProject).toEqual(projects[0]);
 		});
@@ -150,12 +150,12 @@ describe('project-store tests', () => {
 			setProjects(projects);
 			const {
 				result: { current: setCurrentProject },
-			} = renderHook(useSetCurrentProject);
+			} = renderHook(useSetSelectedProject);
 			setCurrentProject(null);
 
 			const {
 				result: { current: currentProject },
-			} = renderHook(useCurrentProject);
+			} = renderHook(useSelectedProject);
 
 			expect(currentProject).toBeUndefined();
 		});

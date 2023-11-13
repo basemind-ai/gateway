@@ -53,7 +53,7 @@ describe('ProjectOverview', () => {
 		);
 
 		await waitFor(() => {
-			const pageTitle = screen.getByTestId('project-page-title');
+			const pageTitle = screen.getByTestId('navbar-container');
 			expect(pageTitle.innerHTML).toContain(projects[0].name);
 		});
 

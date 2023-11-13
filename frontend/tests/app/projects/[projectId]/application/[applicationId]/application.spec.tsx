@@ -76,7 +76,7 @@ describe('ApplicationPage', () => {
 		);
 
 		await waitFor(() => {
-			const pageTitle = screen.getByTestId('application-page-title');
+			const pageTitle = screen.getByTestId('navbar-container');
 			expect(pageTitle.innerHTML).toContain(applications[0].name);
 		});
 

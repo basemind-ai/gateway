@@ -5,9 +5,9 @@ import { expect } from 'vitest';
 
 import { ProjectSelect } from '@/components/project-select';
 import {
-	useCurrentProject,
-	useSetCurrentProject,
+	useSelectedProject,
 	useSetProjects,
+	useSetSelectedProject,
 } from '@/stores/project-store';
 
 describe('ProjectSelect tests', () => {
@@ -20,7 +20,7 @@ describe('ProjectSelect tests', () => {
 
 		setProjects(projects);
 
-		render(<ProjectSelect />);
+		render(<ProjectSelect selectedProjectId={projects[0].id} />);
 
 		const select = screen.getByTestId('project-select-component');
 		expect(select).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe('ProjectSelect tests', () => {
 		expect(options.length).toBe(projects.length);
 	});
 
-	it('should default to current project, when set', () => {
+	it('should default to selected project', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
@@ -37,18 +37,18 @@ describe('ProjectSelect tests', () => {
 		setProjects(projects);
 
 		const {
-			result: { current: setCurrentProject },
-		} = renderHook(useSetCurrentProject);
+			result: { current: setSelectedProject },
+		} = renderHook(useSetSelectedProject);
 
-		setCurrentProject(projects[0].id);
+		setSelectedProject(projects[0].id);
 
 		const {
 			result: { current: currentProject },
-		} = renderHook(useCurrentProject);
+		} = renderHook(useSelectedProject);
 
 		expect(currentProject).toBe(projects[0]);
 
-		render(<ProjectSelect />);
+		render(<ProjectSelect selectedProjectId={projects[0].id} />);
 
 		const options = screen.getAllByTestId('project-select-option');
 		expect(options.length).toBe(projects.length);
@@ -66,7 +66,7 @@ describe('ProjectSelect tests', () => {
 
 		setProjects(projects);
 
-		render(<ProjectSelect />);
+		render(<ProjectSelect selectedProjectId={projects[0].id} />);
 
 		const select = screen.getByTestId('project-select-component');
 		expect(select).toBeInTheDocument();
@@ -75,36 +75,12 @@ describe('ProjectSelect tests', () => {
 
 		const {
 			result: { current: currentProject },
-		} = renderHook(useCurrentProject);
+		} = renderHook(useSelectedProject);
 
 		expect(currentProject).toBe(projects[1]);
 
 		expect(routerReplaceMock).toHaveBeenCalledWith(
 			`/projects/${projects[1].id}`,
 		);
-	});
-
-	it('should show default option if no project is selected', () => {
-		const {
-			result: { current: setProjects },
-		} = renderHook(useSetProjects);
-
-		setProjects(projects);
-
-		render(<ProjectSelect />);
-
-		const select = screen.getByTestId('project-select-component');
-		expect(select).toBeInTheDocument();
-
-		const options = screen.getAllByTestId('project-select-option');
-		expect(options.length).toBe(projects.length);
-
-		expect((options[0] as HTMLOptionElement).selected).toBe(false);
-		expect((options[0] as HTMLOptionElement).value).toBe(projects[0].id);
-
-		const defaultOption = screen.getByTestId(
-			'project-select-default-option',
-		);
-		expect(defaultOption).toBeInTheDocument();
 	});
 });

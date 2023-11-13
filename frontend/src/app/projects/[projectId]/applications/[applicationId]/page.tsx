@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
 
+import { NavBar } from '@/components/nav-bar';
 import { ApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/api-keys';
 import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
@@ -12,7 +13,7 @@ import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/appl
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { useApplication } from '@/stores/project-store';
+import { useApplication, useProject } from '@/stores/project-store';
 
 enum TAB_NAMES {
 	OVERVIEW,
@@ -27,8 +28,10 @@ export default function Application({
 }) {
 	useAuthenticatedUser();
 	useProjectBootstrap(false);
+
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);
+	const project = useProject(projectId);
 
 	const tabs: TabData<TAB_NAMES>[] = [
 		{
@@ -49,18 +52,20 @@ export default function Application({
 	];
 	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
 
-	if (!application) {
+	if (!application || !project) {
 		return null;
 	}
 
 	return (
 		<div data-testid="application-page" className="my-8 mx-32">
+			<NavBar
+				project={project}
+				headerText={`${t('application')} / ${application.name}`}
+			/>
 			<h1
 				data-testid="application-page-title"
 				className="text-2xl font-semibold text-base-content"
-			>
-				{t('application')} / {application.name}
-			</h1>
+			></h1>
 			<div className="mt-3.5 w-full mb-8">
 				<TabNavigation<TAB_NAMES>
 					tabs={tabs}

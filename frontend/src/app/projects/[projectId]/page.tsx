@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
+import { NavBar } from '@/components/nav-bar';
 import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
 import { InviteMember } from '@/components/projects/[projectId]/invite-member';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
@@ -62,12 +63,11 @@ export default function ProjectOverview({
 
 	return (
 		<div data-testid="project-page" className="my-8 mx-32">
-			<h1
-				data-testid="project-page-title"
-				className="text-2xl font-semibold text-base-content"
-			>
-				{project.name}
-			</h1>
+			<NavBar
+				project={project}
+				headerText={`${t('project')} / ${project.name}`}
+			/>
+
 			<div className="mt-3.5 w-full mb-9">
 				<TabNavigation<TAB_NAMES>
 					tabs={tabs}
