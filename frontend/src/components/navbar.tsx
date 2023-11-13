@@ -1,12 +1,14 @@
 import { ProjectSelect } from '@/components/project-select';
 import { Project } from '@/types';
 
-export function NavBar({
+export function Navbar({
 	project,
 	headerText,
+	showSelect,
 }: {
 	project: Project;
 	headerText: string;
+	showSelect: boolean;
 }) {
 	return (
 		<div className="navbar" data-testid="navbar-container">
@@ -16,9 +18,11 @@ export function NavBar({
 			>
 				{headerText}
 			</div>
-			<div className="navbar-end">
-				<ProjectSelect selectedProjectId={project.id} />
-			</div>
+			{showSelect && (
+				<div className="navbar-end">
+					<ProjectSelect selectedProjectId={project.id} />
+				</div>
+			)}
 		</div>
 	);
 }

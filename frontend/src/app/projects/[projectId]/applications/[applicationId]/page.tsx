@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
 
-import { NavBar } from '@/components/nav-bar';
+import { Navbar } from '@/components/navbar';
 import { ApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/api-keys';
 import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
@@ -58,7 +58,7 @@ export default function Application({
 
 	return (
 		<div data-testid="application-page" className="my-8 mx-32">
-			<NavBar
+			<Navbar
 				project={project}
 				headerText={`${t('application')} / ${application.name}`}
 			/>
