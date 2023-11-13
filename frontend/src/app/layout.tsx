@@ -3,7 +3,7 @@ import '@/styles/globals.scss';
 import { Inter } from 'next/font/google';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 
-import { ToastProvider } from '@/components/toast-provider';
+import { ToastWrapper } from '@/components/toast';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,7 +33,7 @@ export default async function RootLayout({
 		<html lang={locale}>
 			<body className={inter.className}>
 				<NextIntlClientProvider locale={locale} messages={messages}>
-					<ToastProvider>{children}</ToastProvider>
+					<ToastWrapper>{children}</ToastWrapper>
 				</NextIntlClientProvider>
 			</body>
 		</html>

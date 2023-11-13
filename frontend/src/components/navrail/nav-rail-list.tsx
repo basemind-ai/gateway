@@ -10,8 +10,8 @@ import {
 	Speedometer2,
 } from 'react-bootstrap-icons';
 
-import Badge from '@/components/badge';
-import LinkMenu from '@/components/link-menu';
+import Badge from '@/components/navrail/badge';
+import LinkMenu from '@/components/navrail/link-menu';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { useApplications, useCurrentProject } from '@/stores/project-store';
 import { contextNavigation, populateApplicationId } from '@/utils/navigation';

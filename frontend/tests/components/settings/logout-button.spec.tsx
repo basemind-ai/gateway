@@ -1,7 +1,7 @@
 import { nextRouterMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
-import { LogoutButton } from '@/components/logout-button';
+import { LogoutButton } from '@/components/settings/logout-button';
 
 const signOutMock = vi.fn();
 

@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 
-import { Dropdown } from '@/components/dropdown';
+import { Dropdown } from '@/components/support/dropdown';
 
 describe('Dropdown component', () => {
 	const testHeadline = 'test headline';

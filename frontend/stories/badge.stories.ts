@@ -1,4 +1,4 @@
-import Badge, { BadgeProps } from '@/components/badge';
+import Badge, { BadgeProps } from '@/components/navrail/badge';
 
 export default {
 	title: 'Badge Component',

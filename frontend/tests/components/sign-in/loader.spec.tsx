@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import { Loader } from '@/components/loader';
+import { Loader } from '@/components/sign-in/loader';
 
 describe('Loader tests', () => {
 	it('renders loader', () => {

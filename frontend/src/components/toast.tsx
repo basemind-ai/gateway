@@ -2,7 +2,7 @@
 
 import { useToasts } from '@/stores/toast-store';
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+export function ToastWrapper({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			{children}
@@ -11,7 +11,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function Toast() {
+export function Toast() {
 	const toasts = useToasts();
 
 	return (

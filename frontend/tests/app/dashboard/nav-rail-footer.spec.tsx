@@ -2,7 +2,7 @@ import { usePathname } from 'next/navigation';
 import { render, screen } from 'tests/test-utils';
 import { Mock } from 'vitest';
 
-import NavRailFooter from '@/components/nav-rail/nav-rail-footer';
+import NavRailFooter from '@/components/navrail/nav-rail-footer';
 import { Navigation } from '@/constants';
 
 describe('NavRailFooter tests', () => {

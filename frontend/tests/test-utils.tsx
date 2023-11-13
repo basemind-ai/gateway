@@ -11,7 +11,7 @@ import locales from 'public/locales/en.json';
 import { SWRConfig } from 'swr';
 import { nextRouterMock } from 'tests/mocks';
 
-import { ToastProvider } from '@/components/toast-provider';
+import { ToastWrapper } from '@/components/toast';
 
 const customRender = (
 	ui: React.ReactElement,
@@ -23,7 +23,7 @@ const customRender = (
 				<RouterContext.Provider value={nextRouterMock}>
 					<NextIntlClientProvider locale="en" messages={locales}>
 						<SWRConfig value={{ provider: () => new Map() }}>
-							<ToastProvider>{children}</ToastProvider>
+							<ToastWrapper>{children}</ToastWrapper>
 						</SWRConfig>
 					</NextIntlClientProvider>
 				</RouterContext.Provider>

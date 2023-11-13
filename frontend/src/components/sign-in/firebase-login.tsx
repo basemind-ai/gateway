@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-import { Loader } from '@/components/loader';
+import { Loader } from '@/components/sign-in/loader';
 import { Navigation } from '@/constants';
 import { useSetUser } from '@/stores/api-store';
 import { firebaseUIConfig, getFirebaseAuth } from '@/utils/firebase';

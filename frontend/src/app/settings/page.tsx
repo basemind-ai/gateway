@@ -1,8 +1,8 @@
 'use client';
 import { useTranslations } from 'next-intl';
 
-import { LogoutButton } from '@/components/logout-button';
 import { DeleteAccountView } from '@/components/settings/delete-account-view';
+import { LogoutButton } from '@/components/settings/logout-button';
 import { UserDetails } from '@/components/settings/user-details';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
