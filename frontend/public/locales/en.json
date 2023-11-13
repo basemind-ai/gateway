@@ -168,6 +168,9 @@
 		"settings": "Settings",
 		"status": "Status"
 	},
+	"projectSelect": {
+		"defaultOption": "please select a project"
+	},
 	"projectSettings": {
 		"cancel": "Cancel",
 		"delete": "Delete",
