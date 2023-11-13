@@ -179,3 +179,24 @@ export interface ProviderKey {
 	modelVendor: ModelVendor;
 	createdAt: string;
 }
+
+// Prompt Test Record
+
+export interface PromptTestRecord<P, M> {
+	id: string;
+	createdAt: string;
+	errorLog?: string;
+	finishTime: string;
+	modelParameters: P;
+	modelType: ModelType;
+	modelVendor: ModelVendor;
+	name: string;
+	promptConfigId?: string;
+	promptResponse: string;
+	providerPromptMessages: M;
+	requestTokens: number;
+	responseTokens: number;
+	startTime: string;
+	streamResponseLatency: number;
+	userInput: Record<string, string>;
+}
