@@ -271,6 +271,38 @@ func RegisterHandlers(mux *chi.Mux) {
 			// we are mounting the websocket here instead of using a regular route because we need chi to pass control.
 			subRouter.Mount("/", http.HandlerFunc(promptTestingWebsocketHandler))
 		})
+		router.Route(PromptTestRecordListEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
+				middleware.PathParameterMiddleware("projectId", "applicationId"),
+			)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet: allPermissions,
+					},
+				),
+			)
+			subRouter.Get("/", handleRetrievePromptTestRecords)
+		})
+		router.Route(PromptTestRecordDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(
+				middleware.PathParameterMiddleware(
+					"projectId",
+					"applicationId",
+					"promptTestRecordId",
+				),
+			)
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet:    allPermissions,
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Get("/", handleRetrievePromptTestRecord)
+			subRouter.Delete("/", handleDeletePromptTestRecord)
+		})
 		router.Route(SupportRequestEndpoint, func(subRouter chi.Router) {
 			subRouter.Post("/", handleSupportEmailRequest)
 		})

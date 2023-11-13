@@ -6,11 +6,13 @@ import {
 	AccessPermission,
 	APIKey,
 	Application,
+	ModelType,
 	ModelVendor,
 	OpenAIPromptMessage,
 	Project,
 	ProjectUserAccount,
 	PromptConfig,
+	PromptTestRecord,
 	ProviderKey,
 } from '@/types';
 
@@ -87,4 +89,25 @@ export const ProviderKeyFactory = new TypeFactory<ProviderKey>(() => ({
 	id: faker.string.uuid(),
 	modelVendor: ModelVendor.OpenAI,
 	createdAt: faker.date.past().toISOString(),
+}));
+
+export const PromptTestRecordFactory = new TypeFactory<
+	PromptTestRecord<any, any>
+>(() => ({
+	id: faker.string.uuid(),
+	createdAt: faker.date.past().toISOString(),
+	errorLog: undefined,
+	finishTime: faker.date.past().toISOString(),
+	modelParameters: {},
+	modelType: ModelType.Gpt432K,
+	modelVendor: ModelVendor.OpenAI,
+	name: faker.lorem.words(),
+	promptConfigId: undefined,
+	promptResponse: 'you are a bot like me',
+	providerPromptMessages: {},
+	requestTokens: 10,
+	responseTokens: 10,
+	startTime: faker.date.past().toISOString(),
+	streamResponseLatency: 100,
+	userInput: { userInput: 'what am I?' },
 }));

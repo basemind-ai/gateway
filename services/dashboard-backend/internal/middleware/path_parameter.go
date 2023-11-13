@@ -16,17 +16,19 @@ const (
 	ApplicationIDContextKey  PathURLContextKeyType = iota
 	ProjectIDContextKey      PathURLContextKeyType = iota
 	PromptConfigIDContextKey PathURLContextKeyType = iota
-	UserIDContextKey         PathURLContextKeyType = iota
 	ProviderKeyIDContextKey  PathURLContextKeyType = iota
+	PromptTestRecordID       PathURLContextKeyType = iota
+	UserIDContextKey         PathURLContextKeyType = iota
 )
 
 var pathParameterNameToContextKeyMap = map[string]PathURLContextKeyType{
-	"apiKeyId":       APIKeyIDContextKey,
-	"applicationId":  ApplicationIDContextKey,
-	"projectId":      ProjectIDContextKey,
-	"promptConfigId": PromptConfigIDContextKey,
-	"userId":         UserIDContextKey,
-	"providerKeyId":  ProviderKeyIDContextKey,
+	"apiKeyId":           APIKeyIDContextKey,
+	"applicationId":      ApplicationIDContextKey,
+	"projectId":          ProjectIDContextKey,
+	"promptConfigId":     PromptConfigIDContextKey,
+	"promptTestRecordId": PromptTestRecordID,
+	"providerKeyId":      ProviderKeyIDContextKey,
+	"userId":             UserIDContextKey,
 }
 
 // PathParameterMiddleware - middleware that parses path parameters and adds them to the request context.

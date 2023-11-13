@@ -128,3 +128,23 @@ type ProviderKeyDTO struct { // skipcq: TCV-001
 	ModelVendor models.ModelVendor `json:"modelVendor"`
 	CreatedAt   time.Time          `json:"createdAt"`
 }
+
+// PromptTestRecordDTO - DTO for serializing prompt test record data.
+type PromptTestRecordDTO struct {
+	ID                     string             `json:"id"`
+	CreatedAt              time.Time          `json:"createdAt"`
+	ErrorLog               *string            `json:"errorLog,omitempty"`
+	FinishTime             time.Time          `json:"finishTime"`
+	ModelParameters        json.RawMessage    `json:"modelParameters"`
+	ModelType              models.ModelType   `json:"modelType"`
+	ModelVendor            models.ModelVendor `json:"modelVendor"`
+	Name                   string             `json:"name"`
+	PromptConfigID         *string            `json:"promptConfigId,omitempty"`
+	PromptResponse         string             `json:"promptResponse"`
+	ProviderPromptMessages json.RawMessage    `json:"providerPromptMessages"`
+	RequestTokens          int32              `json:"requestTokens"`
+	ResponseTokens         int32              `json:"responseTokens"`
+	StartTime              time.Time          `json:"startTime"`
+	StreamResponseLatency  int64              `json:"streamResponseLatency"`
+	UserInput              json.RawMessage    `json:"userInput"`
+}

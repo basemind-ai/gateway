@@ -20,6 +20,8 @@ const (
 	PromptConfigListEndpoint         = "/projects/{projectId}/applications/{applicationId}/prompt-configs"
 	PromptConfigSetDefaultEndpoint   = "/projects/{projectId}/applications/{applicationId}/prompt-configs/{promptConfigId}/set-default"
 	PromptConfigTestingEndpoint      = "/projects/{projectId}/applications/{applicationId}/prompt-configs/test"
+	PromptTestRecordDetailEndpoint   = "/projects/{projectId}/applications/{applicationId}/test-records/{promptTestRecordId}"
+	PromptTestRecordListEndpoint     = "/projects/{projectId}/applications/{applicationId}/test-records"
 	SupportRequestEndpoint           = "/support"
 	UserAccountDetailEndpoint        = "/users"
 )
