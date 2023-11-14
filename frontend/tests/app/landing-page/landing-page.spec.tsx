@@ -15,13 +15,13 @@ describe('Landing Page', () => {
 		render(<LandingPage />);
 		const button = screen.getByTestId('intro-section-signup-button');
 		button.click();
-		expect(routerReplaceMock).toHaveBeenCalledWith('/sign-in');
+		expect(routerReplaceMock).toHaveBeenCalledWith('/en/sign-in');
 	});
 
 	it('should replace the route to Sign-In when clicking on the Sign-In button', () => {
 		render(<LandingPage />);
 		const button = screen.getByTestId('header-sign-in-button');
 		button.click();
-		expect(routerReplaceMock).toHaveBeenCalledWith('/sign-in');
+		expect(routerReplaceMock).toHaveBeenCalledWith('/en/sign-in');
 	});
 });

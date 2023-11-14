@@ -74,7 +74,7 @@ describe('PromptGeneralInfo', () => {
 		const testButton = screen.getByTestId('prompt-test-btn');
 		fireEvent.click(testButton);
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/projects/${projectId}/applications/${application.id}/${promptConfig.id}/testing`,
+			`/en/projects/${projectId}/applications/${application.id}/${promptConfig.id}/testing`,
 		);
 	});
 
@@ -107,7 +107,7 @@ describe('PromptGeneralInfo', () => {
 		expect(clonedPromptConfigInStore).toBe(clonedPromptConfig);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/projects/${projectId}/applications/${application.id}/prompts/${clonedPromptConfig.id}`,
+			`/en/projects/${projectId}/applications/${application.id}/prompts/${clonedPromptConfig.id}`,
 		);
 	});
 
