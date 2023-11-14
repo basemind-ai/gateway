@@ -1,10 +1,6 @@
 import { useRouter } from 'next/navigation';
 
-import {
-	useProject,
-	useProjects,
-	useSetSelectedProject,
-} from '@/stores/api-store';
+import { useProjects, useSetSelectedProject } from '@/stores/api-store';
 import { handleChange } from '@/utils/helpers';
 
 export function ProjectSelect({
@@ -16,7 +12,6 @@ export function ProjectSelect({
 
 	const projects = useProjects();
 	const setSelectedProject = useSetSelectedProject();
-	const selectedProject = useProject(selectedProjectId)!;
 
 	return (
 		<div data-testid="project-select-container">
@@ -27,12 +22,12 @@ export function ProjectSelect({
 					setSelectedProject(projectId);
 					router.replace(`/projects/${projectId}`);
 				})}
+				defaultValue={selectedProjectId}
 			>
 				{projects.map((project) => (
 					<option
 						key={project.id}
 						value={project.id}
-						selected={selectedProject.id === project.id}
 						data-testid="project-select-option"
 					>
 						{project.name}

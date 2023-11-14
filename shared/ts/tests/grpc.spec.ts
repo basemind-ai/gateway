@@ -7,7 +7,10 @@ import { expect } from 'vitest';
 
 describe('gRPC utils tests', () => {
 	describe('createServer', () => {
-		const bindAsyncSpy = vi.spyOn(Server.prototype, 'bindAsync');
+		const bindAsyncSpy = vi
+			.spyOn(Server.prototype, 'bindAsync')
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			.mockImplementation(() => {});
 
 		it('should create a new server instance and add the provided service and implementation', () => {
 			const serviceDefinition = {

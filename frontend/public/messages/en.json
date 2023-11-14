@@ -129,7 +129,6 @@
 		"application": "Applications",
 		"bannerBody": "Our customer success team \n is here for you",
 		"bannerCTA": "Get Support",
-		"bannerTitle": "Need Help?",
 		"middleware": "Middleware",
 		"newApplication": "+ New",
 		"overview": "Overview",
@@ -231,6 +230,7 @@
 	"signin": {
 		"authHeader": "Welcome to",
 		"authSubtitle": "Integrate in minutes, scale to millions",
+		"bannerTitle": "Sign In",
 		"basemind": "BaseMind"
 	},
 	"support": {

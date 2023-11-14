@@ -56,7 +56,7 @@ export function createServer<
 		(error: Error | null) => {
 			if (error) {
 				logger.error('Server failed to start');
-				process.exit(1);
+				throw error;
 			}
 			logger.info('Server starting');
 			logger.info(`Listening on port ${port}`);
