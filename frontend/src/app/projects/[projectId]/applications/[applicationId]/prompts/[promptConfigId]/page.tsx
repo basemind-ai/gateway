@@ -2,18 +2,21 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
 import { PromptAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-analytics-page';
+import { PromptDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-deletion';
 import { PromptGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-info';
+import { PromptGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-settings';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { usePromptConfig, useSetPromptConfigs } from '@/stores/project-store';
 import { useShowError } from '@/stores/toast-store';
+import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
 
 enum TAB_NAMES {
 	OVERVIEW,
@@ -37,7 +40,10 @@ export default function PromptConfiguration({
 	const t = useTranslations('promptConfig');
 	const showError = useShowError();
 
-	const promptConfig = usePromptConfig(applicationId, promptConfigId);
+	const promptConfig = usePromptConfig<
+		OpenAIModelParameters,
+		OpenAIPromptMessage
+	>(applicationId, promptConfigId);
 	const setPromptConfigs = useSetPromptConfigs();
 
 	const { isLoading } = useSWR(
@@ -60,6 +66,11 @@ export default function PromptConfiguration({
 			id: TAB_NAMES.OVERVIEW,
 			text: t('overview'),
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
+		},
+		{
+			id: TAB_NAMES.SETTINGS,
+			text: t('settings'),
+			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 	];
 	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
@@ -93,14 +104,29 @@ export default function PromptConfiguration({
 				{selectedTab === TAB_NAMES.OVERVIEW && (
 					<>
 						<PromptAnalyticsPage
-							applicationId={applicationId}
 							projectId={projectId}
+							applicationId={applicationId}
 							promptConfigId={promptConfigId}
 						/>
 						<div className="h-8" />
 						<PromptGeneralInfo
-							applicationId={applicationId}
 							projectId={projectId}
+							applicationId={applicationId}
+							promptConfigId={promptConfigId}
+						/>
+					</>
+				)}
+				{selectedTab === TAB_NAMES.SETTINGS && (
+					<>
+						<PromptGeneralSettings
+							projectId={projectId}
+							applicationId={applicationId}
+							promptConfigId={promptConfigId}
+						/>
+						<div className="h-4" />
+						<PromptDeletion
+							projectId={projectId}
+							applicationId={applicationId}
 							promptConfigId={promptConfigId}
 						/>
 					</>

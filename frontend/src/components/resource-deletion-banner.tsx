@@ -85,7 +85,7 @@ export function ResourceDeletionBanner({
 					<button
 						data-testid="resource-deletion-cancel-btn"
 						onClick={onCancel}
-						className="btn btn-neutral"
+						className="btn btn-neutral capitalize"
 					>
 						{t('cancel')}
 					</button>
@@ -93,7 +93,7 @@ export function ResourceDeletionBanner({
 						data-testid="resource-deletion-delete-btn"
 						onClick={onConfirm}
 						disabled={disabled}
-						className="btn btn-error"
+						className="btn btn-error capitalize"
 					>
 						{confirmCTA ?? t('delete')}
 					</button>

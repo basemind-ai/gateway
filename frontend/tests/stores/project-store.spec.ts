@@ -18,6 +18,7 @@ import {
 	useApplications,
 	useDeleteApplication,
 	useDeleteProject,
+	useDeletePromptConfig,
 	useProject,
 	useProjectUsers,
 	usePromptConfigs,
@@ -32,6 +33,7 @@ import {
 	useUpdateApplication,
 	useUpdateProject,
 	useUpdateProjectUser,
+	useUpdatePromptConfig,
 } from '@/stores/project-store';
 
 describe('project-store tests', () => {
@@ -86,7 +88,7 @@ describe('project-store tests', () => {
 			const {
 				result: { current: setProjects },
 			} = renderHook(useSetProjects);
-			const projects = await ProjectFactory.batch(1);
+			const projects = await ProjectFactory.batch(2);
 			setProjects(projects);
 
 			const {
@@ -253,7 +255,7 @@ describe('project-store tests', () => {
 			const {
 				result: { current: setProjectApplications },
 			} = renderHook(useSetProjectApplications);
-			const applications = await ApplicationFactory.batch(1);
+			const applications = await ApplicationFactory.batch(2);
 			setProjectApplications(projects[0].id, applications);
 
 			const {
@@ -331,7 +333,7 @@ describe('project-store tests', () => {
 		});
 	});
 
-	describe('getPromptConfig, setPromptConfig and addPromptConfig', () => {
+	describe('getPromptConfig, setPromptConfig, updatePromptConfig, addPromptConfig, deletePromptConfig', () => {
 		it('sets and gets prompt config', async () => {
 			const applicationId = '1';
 			const {
@@ -370,6 +372,78 @@ describe('project-store tests', () => {
 			const config = getPromptConfig[applicationId];
 
 			expect(config).toEqual([...promptConfigs, newPromptConfig]);
+		});
+
+		it('adds a prompt config when there are no existing configs', () => {
+			const applicationId = '1';
+
+			const {
+				result: { current: setPromptConfig },
+			} = renderHook(useSetPromptConfigs);
+			setPromptConfig(applicationId);
+
+			const {
+				result: { current: addPromptConfig },
+			} = renderHook(useAddPromptConfig);
+			const newPromptConfig = PromptConfigFactory.buildSync();
+			addPromptConfig(applicationId, newPromptConfig);
+
+			const {
+				result: { current: getPromptConfig },
+			} = renderHook(usePromptConfigs);
+
+			const config = getPromptConfig[applicationId];
+
+			expect(config).toEqual([newPromptConfig]);
+		});
+
+		it('updates an existing prompt config', () => {
+			const applicationId = '1';
+			const {
+				result: { current: setPromptConfig },
+			} = renderHook(useSetPromptConfigs);
+			const promptConfigs = PromptConfigFactory.batchSync(2);
+			setPromptConfig(applicationId, promptConfigs);
+
+			const {
+				result: { current: updatePromptConfig },
+			} = renderHook(useUpdatePromptConfig);
+
+			const updatedConfig = {
+				...promptConfigs[0],
+				name: 'newName',
+			};
+			updatePromptConfig(applicationId, updatedConfig);
+
+			const {
+				result: { current: getPromptConfig },
+			} = renderHook(usePromptConfigs);
+
+			const config = getPromptConfig[applicationId];
+
+			expect(config[0]).toEqual(updatedConfig);
+		});
+
+		it('deletes a prompt Config', () => {
+			const applicationId = '1';
+			const {
+				result: { current: setPromptConfig },
+			} = renderHook(useSetPromptConfigs);
+			const promptConfigs = PromptConfigFactory.batchSync(1);
+			setPromptConfig(applicationId, promptConfigs);
+
+			const {
+				result: { current: deletePromptConfig },
+			} = renderHook(useDeletePromptConfig);
+
+			deletePromptConfig(applicationId, promptConfigs[0].id);
+
+			const {
+				result: { current: getPromptConfig },
+			} = renderHook(usePromptConfigs);
+			const config = getPromptConfig[applicationId];
+
+			expect(config).toEqual([]);
 		});
 	});
 

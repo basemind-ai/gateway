@@ -30,14 +30,19 @@ export interface ProjectStore {
 		applicationId: string,
 		application: Application,
 	) => void;
-	setPromptConfig: (
+	setPromptConfigs: (
 		applicationId: string,
 		promptConfigs: PromptConfig[],
+	) => void;
+	updatePromptConfig: (
+		applicationId: string,
+		promptConfig: PromptConfig,
 	) => void;
 	addPromptConfig: (
 		applicationId: string,
 		promptConfig: PromptConfig,
 	) => void;
+	deletePromptConfig: (applicationId: string, promptConfigId: string) => void;
 	setAPIKeys: (applicationId: string, apiKeys: APIKey[]) => void;
 	setProjectUsers: (
 		projectId: string,
@@ -134,11 +139,30 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 			},
 		}));
 	},
-	setPromptConfig: (applicationId: string, promptConfigs: PromptConfig[]) => {
+	setPromptConfigs: (
+		applicationId: string,
+		promptConfigs: PromptConfig[],
+	) => {
 		set((state) => ({
 			promptConfigs: {
 				...state.promptConfigs,
 				[applicationId]: promptConfigs,
+			},
+		}));
+	},
+	updatePromptConfig: (
+		applicationId: string,
+		updatedPromptConfig: PromptConfig,
+	) => {
+		set((state) => ({
+			promptConfigs: {
+				...state.promptConfigs,
+				[applicationId]: state.promptConfigs[applicationId]?.map(
+					(promptConfig) =>
+						promptConfig.id === updatedPromptConfig.id
+							? updatedPromptConfig
+							: promptConfig,
+				),
 			},
 		}));
 	},
@@ -150,6 +174,16 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 					...(state.promptConfigs[applicationId] ?? []),
 					promptConfig,
 				],
+			},
+		}));
+	},
+	deletePromptConfig: (applicationId: string, promptConfigId: string) => {
+		set((state) => ({
+			promptConfigs: {
+				...state.promptConfigs,
+				[applicationId]: state.promptConfigs[applicationId]?.filter(
+					(promptConfig) => promptConfig.id !== promptConfigId,
+				),
 			},
 		}));
 	},
@@ -284,9 +318,13 @@ export const usePromptConfig = <P, M>(
 			) as PromptConfig<P, M> | undefined,
 	);
 export const useSetPromptConfigs = () =>
-	useProjectStore((s) => s.setPromptConfig);
+	useProjectStore((s) => s.setPromptConfigs);
 export const useAddPromptConfig = () =>
 	useProjectStore((s) => s.addPromptConfig);
+export const useUpdatePromptConfig = () =>
+	useProjectStore((s) => s.updatePromptConfig);
+export const useDeletePromptConfig = () =>
+	useProjectStore((s) => s.deletePromptConfig);
 export const useAPIKeys = (applicationId: string) =>
 	useProjectStore((s) => s.apiKeys[applicationId]);
 export const useSetAPIKeys = () => useProjectStore((s) => s.setAPIKeys);

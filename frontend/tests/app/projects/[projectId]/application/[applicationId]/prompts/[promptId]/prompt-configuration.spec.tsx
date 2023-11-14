@@ -1,3 +1,4 @@
+import { fireEvent } from '@testing-library/react';
 import {
 	ApplicationFactory,
 	ProjectFactory,
@@ -37,7 +38,7 @@ describe('PromptConfiguration', () => {
 	const projectId = projects[0].id;
 	const applicationId = applications[0].id;
 
-	it('renders all 3 screens in tab navigation', async () => {
+	it('renders all 4 screens in tab navigation', async () => {
 		const promptConfig = PromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
 
@@ -65,6 +66,15 @@ describe('PromptConfiguration', () => {
 
 		const promptName = screen.getByTestId('prompt-general-info-name');
 		expect(promptName.innerHTML).toBe(promptConfig.name);
+
+		// Renders Settings
+		const [, settingsTab] = screen.getAllByTestId('tab-navigation-btn');
+		fireEvent.click(settingsTab);
+
+		const settingsContainer = screen.getByTestId(
+			'prompt-general-settings-container',
+		);
+		expect(settingsContainer).toBeInTheDocument();
 
 		// 	TODO: update this test when more tabs are added to navigation
 	});
