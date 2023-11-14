@@ -31,6 +31,7 @@ export function ResourceDeletionBanner({
 
 	const disabled =
 		!isDisabled && resourceName ? confirmText !== resourceName : false;
+
 	return (
 		<div className="bg-base-300">
 			<div

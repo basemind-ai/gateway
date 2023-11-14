@@ -8,9 +8,9 @@ import { expect, Mock } from 'vitest';
 import NavRail from '@/components/navrail/nav-rail';
 import { Navigation } from '@/constants';
 import {
-	useSetCurrentProject,
 	useSetProjectApplications,
 	useSetProjects,
+	useSetSelectedProject,
 } from '@/stores/project-store';
 
 const navRailTranslation = locales.navrail;
@@ -39,7 +39,7 @@ describe('NavRail tests', () => {
 		setProjects(projects);
 		const {
 			result: { current: setCurrentProject },
-		} = renderHook(useSetCurrentProject);
+		} = renderHook(useSetSelectedProject);
 		setCurrentProject(projects[0].id);
 		const {
 			result: { current: setProjectApplications },
@@ -71,7 +71,7 @@ describe('NavRail tests', () => {
 		setProjects(projects);
 		const {
 			result: { current: setCurrentProject },
-		} = renderHook(useSetCurrentProject);
+		} = renderHook(useSetSelectedProject);
 		setCurrentProject(projects[0].id);
 
 		render(<NavRail />);

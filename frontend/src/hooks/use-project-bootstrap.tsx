@@ -5,15 +5,15 @@ import { handleRetrieveApplications, handleRetrieveProjects } from '@/api';
 import { Navigation } from '@/constants';
 import {
 	useProjects,
-	useSetCurrentProject,
 	useSetProjectApplications,
 	useSetProjects,
+	useSetSelectedProject,
 } from '@/stores/project-store';
 
 export function useProjectBootstrap(redirectToDashboard = true) {
 	const router = useRouter();
 	const setProjects = useSetProjects();
-	const setCurrentProject = useSetCurrentProject();
+	const setCurrentProject = useSetSelectedProject();
 	const setProjectApplications = useSetProjectApplications();
 	const projects = useProjects();
 

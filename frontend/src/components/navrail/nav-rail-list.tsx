@@ -1,4 +1,3 @@
-'use client';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
@@ -13,7 +12,7 @@ import {
 import Badge from '@/components/navrail/badge';
 import LinkMenu from '@/components/navrail/link-menu';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
-import { useApplications, useCurrentProject } from '@/stores/project-store';
+import { useApplications, useSelectedProject } from '@/stores/project-store';
 import { contextNavigation, populateApplicationId } from '@/utils/navigation';
 
 const ICON_CLASSES = 'w-3.5 h-3.5';
@@ -54,7 +53,7 @@ export default function NavRailList() {
 	const t = useTranslations('navrail');
 	const [pathname] = usePathname().split('?');
 	// TODO: Remove this hook if current project can be ALWAYS derived from path
-	const currentProject = useCurrentProject();
+	const currentProject = useSelectedProject();
 	const navigation = contextNavigation(currentProject?.id);
 	const projectApplications = useApplications(currentProject?.id);
 

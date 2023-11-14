@@ -1,5 +1,3 @@
-'use client';
-
 import { usePathname } from 'next/navigation';
 import { Gear, QuestionCircle } from 'react-bootstrap-icons';
 
@@ -10,6 +8,7 @@ export default function NavRailFooter() {
 
 	const linkStyle = (linkPath: Navigation) =>
 		linkPath === pathname ? 'text-primary' : 'text-base-content';
+
 	return (
 		<div
 			className="flex h-12 items-center justify-around relative border-t border-base-100 shadow-sm"

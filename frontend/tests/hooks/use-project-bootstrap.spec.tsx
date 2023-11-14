@@ -14,7 +14,7 @@ describe('useProjectBootstrap tests', () => {
 	vi.spyOn(projectStore, 'useSetProjects').mockReturnValue(setProjectsMock);
 
 	const setCurrentProjectMock = vi.fn();
-	vi.spyOn(projectStore, 'useSetCurrentProject').mockReturnValue(
+	vi.spyOn(projectStore, 'useSetSelectedProject').mockReturnValue(
 		setCurrentProjectMock,
 	);
 

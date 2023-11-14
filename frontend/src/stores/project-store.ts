@@ -14,11 +14,11 @@ export interface ProjectStore {
 	applications: Record<string, Application[] | undefined>;
 	promptConfigs: Record<string, PromptConfig[] | undefined>;
 	apiKeys: Record<string, APIKey[] | undefined>;
-	currentProjectId: string | null;
+	selectedProjectId: string | null;
 	projectUsers: Record<string, ProjectUserAccount[] | undefined>;
 	setProjects: (projects: Project[]) => void;
 	addProject: (project: Project) => void;
-	setCurrentProject: (currentProjectId: string | null) => void;
+	setSelectedProject: (selectedProjectId: string | null) => void;
 	setProjectApplications: (
 		projectId: string,
 		applications: Application[],
@@ -64,7 +64,7 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 	applications: {},
 	promptConfigs: {},
 	apiKeys: {},
-	currentProjectId: null,
+	selectedProjectId: null,
 	projectUsers: {},
 	setProjects: (projects: Project[]) => {
 		set({ projects });
@@ -72,8 +72,8 @@ export const projectStoreStateCreator: StateCreator<ProjectStore> = (
 	addProject: (project: Project) => {
 		set((state) => ({ projects: [...state.projects, project] }));
 	},
-	setCurrentProject: (currentProjectId: string | null) => {
-		set(() => ({ currentProjectId }));
+	setSelectedProject: (selectedProjectId: string | null) => {
+		set(() => ({ selectedProjectId }));
 	},
 	setProjectApplications: (
 		projectId: string,
@@ -243,16 +243,16 @@ export const useProject = (projectId: string) =>
 		s.projects.find((project) => project.id === projectId),
 	);
 export const useProjects = () => useProjectStore((s) => s.projects);
-export const useCurrentProject = () =>
+export const useSelectedProject = () =>
 	useProjectStore((s) => {
-		const { projects, currentProjectId } = s;
-		if (!currentProjectId) {
+		const { projects, selectedProjectId } = s;
+		if (!selectedProjectId) {
 			return;
 		}
-		return projects.find((project) => project.id === currentProjectId);
+		return projects.find((project) => project.id === selectedProjectId);
 	});
-export const useSetCurrentProject = () =>
-	useProjectStore((s) => s.setCurrentProject);
+export const useSetSelectedProject = () =>
+	useProjectStore((s) => s.setSelectedProject);
 export const useSetProjectApplications = () =>
 	useProjectStore((s) => s.setProjectApplications);
 export const useApplications = (projectId?: string) =>
