@@ -14,7 +14,7 @@ import { ProjectMembers } from '@/components/projects/[projectId]/project-member
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { useProject } from '@/stores/project-store';
+import { useProject, useProjects } from '@/stores/project-store';
 
 enum TAB_NAMES {
 	OVERVIEW,
@@ -32,6 +32,7 @@ export default function ProjectOverview({
 	useProjectBootstrap();
 	const t = useTranslations('projectOverview');
 	const project = useProject(projectId);
+	const projects = useProjects();
 
 	const tabs: TabData<TAB_NAMES>[] = [
 		{
@@ -66,6 +67,7 @@ export default function ProjectOverview({
 			<Navbar
 				project={project}
 				headerText={`${t('project')} / ${project.name}`}
+				showSelect={projects.length > 1}
 			/>
 
 			<div className="mt-3.5 w-full mb-9">

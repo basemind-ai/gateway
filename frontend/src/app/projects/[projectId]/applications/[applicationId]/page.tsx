@@ -13,7 +13,11 @@ import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/appl
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { useApplication, useProject } from '@/stores/project-store';
+import {
+	useApplication,
+	useProject,
+	useProjects,
+} from '@/stores/project-store';
 
 enum TAB_NAMES {
 	OVERVIEW,
@@ -32,6 +36,7 @@ export default function Application({
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);
 	const project = useProject(projectId);
+	const projects = useProjects();
 
 	const tabs: TabData<TAB_NAMES>[] = [
 		{
@@ -61,6 +66,7 @@ export default function Application({
 			<Navbar
 				project={project}
 				headerText={`${t('application')} / ${application.name}`}
+				showSelect={projects.length > 1}
 			/>
 			<h1
 				data-testid="application-page-title"
