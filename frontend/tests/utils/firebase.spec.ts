@@ -19,12 +19,12 @@ describe('Firebase utils tests', () => {
 			const firebaseConfig = getFirebaseConfig();
 			expect(firebaseConfig).toEqual({
 				apiKey: '123',
+				appId: 'test-app-id',
 				authDomain: 'test.com',
+				measurementId: 'test-measurement-id',
+				messagingSenderId: '456',
 				projectId: 'abc',
 				storageBucket: 'test-bucket',
-				messagingSenderId: '456',
-				appId: 'test-app-id',
-				measurementId: 'test-measurement-id',
 			});
 		});
 		it.each([

@@ -14,17 +14,17 @@ export enum Environment {
 }
 
 export enum HttpMethod {
-	Get = 'GET',
-	Post = 'POST',
-	Patch = 'PATCH',
-	Put = 'PUT',
 	Delete = 'DELETE',
+	Get = 'GET',
+	Patch = 'PATCH',
+	Post = 'POST',
+	Put = 'PUT',
 }
 
 export enum DateFormat {
-	ISO = 'DD/MM/YYYY',
 	AMERICAN = 'MM/DD/YYYY',
 	CHINESE = 'YYYY/MM/DD',
+	ISO = 'DD/MM/YYYY',
 }
 
 export const MIN_NAME_LENGTH = 3;

@@ -11,7 +11,7 @@ import {
 	useSetProjectApplications,
 	useSetProjects,
 	useSetSelectedProject,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 
 const navRailTranslation = locales.navrail;
 

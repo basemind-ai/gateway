@@ -7,7 +7,7 @@ import * as applicationAPI from '@/api/applications-api';
 import * as projectAPI from '@/api/projects-api';
 import { Navigation } from '@/constants';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import * as projectStore from '@/stores/project-store';
+import * as projectStore from '@/stores/api-store';
 
 describe('useProjectBootstrap tests', () => {
 	const setProjectsMock = vi.fn();

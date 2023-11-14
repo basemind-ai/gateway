@@ -31,8 +31,8 @@ describe('pick config page tests', () => {
 
 	beforeEach(() => {
 		getAuthMock.mockImplementation(() => ({
-			setPersistence: vi.fn(),
 			currentUser: UserFactory.build(),
+			setPersistence: vi.fn(),
 		}));
 	});
 
@@ -42,8 +42,8 @@ describe('pick config page tests', () => {
 
 	it('should redirects unauthenticated user to login page', async () => {
 		getAuthMock.mockImplementationOnce(() => ({
-			setPersistence: vi.fn(),
 			currentUser: null,
+			setPersistence: vi.fn(),
 		}));
 		render(
 			<PickConfigPage

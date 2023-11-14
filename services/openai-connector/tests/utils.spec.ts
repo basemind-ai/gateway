@@ -62,13 +62,13 @@ describe('utils tests', () => {
 	describe('createOpenAIRequest', () => {
 		it('should return a stream request object when stream is true', () => {
 			const request: OpenAIPromptRequest = {
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 			};
 			const result = createOpenAIRequest(request, true);
 			expect(result.stream).toBeTruthy();
@@ -76,13 +76,13 @@ describe('utils tests', () => {
 
 		it('should include all required fields in the OpenAIPromptRequest object', () => {
 			const request: OpenAIPromptRequest = {
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 			};
 			const result = createOpenAIRequest(request, true);
 			expect(result.model).toBe('gpt-3.5-turbo');
@@ -91,21 +91,21 @@ describe('utils tests', () => {
 
 		it('should include optional fields in the OpenAIPromptRequest object', () => {
 			const request: OpenAIPromptRequest = {
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				applicationId: '123',
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				parameters: {
-					temperature: 0.8,
-					topP: 0.9,
+					frequencyPenalty: 0.3,
 					maxTokens: 100,
 					presencePenalty: 0.5,
-					frequencyPenalty: 0.3,
+					temperature: 0.8,
+					topP: 0.9,
 				},
-				applicationId: '123',
 			};
 			const result = createOpenAIRequest(request, true);
 			expect(result.temperature).toBe(request.parameters?.temperature);
@@ -122,13 +122,13 @@ describe('utils tests', () => {
 
 		it('should handle default values for optional fields in the OpenAIPromptRequest object', () => {
 			const request: OpenAIPromptRequest = {
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 			};
 			const result = createOpenAIRequest(request, true);
 			expect(result.temperature).toBeUndefined();

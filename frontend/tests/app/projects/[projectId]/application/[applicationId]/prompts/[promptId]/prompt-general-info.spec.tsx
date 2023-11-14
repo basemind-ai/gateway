@@ -11,7 +11,7 @@ import {
 	usePromptConfig,
 	useSetProjectApplications,
 	useSetPromptConfigs,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('PromptGeneralInfo', () => {

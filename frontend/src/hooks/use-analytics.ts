@@ -12,11 +12,11 @@ declare global {
 }
 
 export interface AnalyticsHandlers {
-	initialized: boolean;
-	track: (event: string, properties?: Record<string, any>) => void;
-	page: (name: string, properties?: Record<string, any>) => void;
-	identify: (userId: string, properties?: Record<string, any>) => void;
 	group: (groupId: string, properties?: Record<string, any>) => void;
+	identify: (userId: string, properties?: Record<string, any>) => void;
+	initialized: boolean;
+	page: (name: string, properties?: Record<string, any>) => void;
+	track: (event: string, properties?: Record<string, any>) => void;
 }
 
 /*
@@ -100,10 +100,10 @@ export function useAnalytics(): AnalyticsHandlers {
 	);
 
 	return {
-		initialized,
-		track,
-		page,
-		identify,
 		group,
+		identify,
+		initialized,
+		page,
+		track,
 	};
 }

@@ -26,13 +26,13 @@ describe('PromptTestRecord API tests', () => {
 			});
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptTestRecords),
+				ok: true,
 			});
 
 			const data = await handleRetrievePromptTestRecords({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(promptTestRecords);
@@ -61,13 +61,13 @@ describe('PromptTestRecord API tests', () => {
 			});
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptTestRecord),
+				ok: true,
 			});
 
 			const data = await handleRetrievePromptTestRecordById({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 				promptTestRecordId: promptTestRecord.id,
 			});
 
@@ -97,13 +97,13 @@ describe('PromptTestRecord API tests', () => {
 			});
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(),
+				ok: true,
 			});
 
 			await handleDeletePromptTestRecord({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 				promptTestRecordId: promptTestRecord.id,
 			});
 

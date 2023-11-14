@@ -1,18 +1,18 @@
 import Badge, { BadgeProps } from '@/components/navrail/badge';
 
 export default {
-	title: 'Badge Component',
 	component: Badge,
 	parameters: {
 		layout: 'centered',
 	},
 	tags: ['autodocs'],
+	title: 'Badge Component',
 };
 
 export const Default = {
 	args: {
 		fillColor: 'bg-base-200',
-		textColor: 'text-primary',
 		text: 'example text',
+		textColor: 'text-primary',
 	} satisfies BadgeProps,
 };

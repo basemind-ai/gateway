@@ -15,8 +15,8 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-	title: 'BaseMind.AI',
 	description: 'The platform for easy AI development',
+	title: 'BaseMind.AI',
 };
 
 export default async function RootLayout({

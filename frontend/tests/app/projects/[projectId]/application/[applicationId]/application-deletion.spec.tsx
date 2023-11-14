@@ -6,10 +6,7 @@ import { render, renderHook, screen } from 'tests/test-utils';
 import * as ApplicationAPI from '@/api/applications-api';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
 import { ApiError } from '@/errors';
-import {
-	useSetProjectApplications,
-	useSetProjects,
-} from '@/stores/project-store';
+import { useSetProjectApplications, useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('ApplicationDeletion tests', () => {

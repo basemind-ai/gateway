@@ -4,15 +4,15 @@ import { useState } from 'react';
 import { handleChange } from '@/utils/helpers';
 
 export interface ResourceDeletionBannerProps {
-	title: string;
+	confirmCTA?: string | React.ReactElement;
 	description: string;
-	resourceName?: string;
-	placeholder?: string;
+	errorMessage?: string;
+	isDisabled?: boolean;
 	onCancel: () => void;
 	onConfirm: () => void;
-	confirmCTA?: string | React.ReactElement;
-	isDisabled?: boolean;
-	errorMessage?: string;
+	placeholder?: string;
+	resourceName?: string;
+	title: string;
 }
 
 export function ResourceDeletionBanner({

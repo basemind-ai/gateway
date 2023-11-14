@@ -17,10 +17,10 @@ describe('Dropdown component', () => {
 	}
 
 	const options = [
-		{ value: '01', text: '1' },
-		{ value: '02', text: '2' },
-		{ value: '03', text: '3' },
-		{ value: '04', text: '4' },
+		{ text: '1', value: '01' },
+		{ text: '2', value: '02' },
+		{ text: '3', value: '03' },
+		{ text: '4', value: '04' },
 	];
 
 	const setSelectedMock = vi.fn();

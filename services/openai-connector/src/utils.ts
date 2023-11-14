@@ -40,11 +40,11 @@ type OpenAIFinishReason =
 	| 'function_call';
 
 export const finishReasonMap: Record<OpenAIFinishReason, StreamFinishReason> = {
-	stop: StreamFinishReason.DONE,
-	length: StreamFinishReason.LIMIT,
-	tool_calls: StreamFinishReason.DONE,
 	content_filter: StreamFinishReason.DONE,
 	function_call: StreamFinishReason.DONE,
+	length: StreamFinishReason.LIMIT,
+	stop: StreamFinishReason.DONE,
+	tool_calls: StreamFinishReason.DONE,
 };
 
 /**
@@ -103,14 +103,8 @@ export function createOpenAIRequest(
 		applicationId,
 	} = request;
 	return {
-		stream,
-		temperature,
-		user: applicationId,
-		top_p: topP,
-		max_tokens: !!maxTokens && maxTokens > 0 ? maxTokens : undefined,
 		frequency_penalty: frequencyPenalty,
-		presence_penalty: presencePenalty,
-		model: getOpenAIModel(model),
+		max_tokens: !!maxTokens && maxTokens > 0 ? maxTokens : undefined,
 		messages: messages.map<ChatCompletionMessageParam>((msg) => {
 			const { content, role, ...rest } = msg;
 			return {
@@ -119,5 +113,11 @@ export function createOpenAIRequest(
 				...rest,
 			} as ChatCompletionMessageParam;
 		}),
+		model: getOpenAIModel(model),
+		presence_penalty: presencePenalty,
+		stream,
+		temperature,
+		top_p: topP,
+		user: applicationId,
 	};
 }

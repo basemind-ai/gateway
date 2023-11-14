@@ -9,7 +9,7 @@ import {
 	useAddPromptConfig,
 	useApplication,
 	usePromptConfig,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
 import { getCloneName } from '@/utils/helpers';
@@ -20,8 +20,8 @@ export function PromptGeneralInfo({
 	applicationId,
 	promptConfigId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 	promptConfigId: string;
 }) {
 	const t = useTranslations('promptConfig');
@@ -65,15 +65,15 @@ export function PromptGeneralInfo({
 		try {
 			setCloning(true);
 			const newPromptConfig = await handleCreatePromptConfig({
-				projectId,
 				applicationId,
 				data: {
-					name: getCloneName(name),
-					modelVendor,
-					modelType,
 					modelParameters,
+					modelType,
+					modelVendor,
+					name: getCloneName(name),
 					promptMessages: providerPromptMessages,
 				},
+				projectId,
 			});
 			addPromptConfig(applicationId, newPromptConfig);
 			showInfo(t('configCloned'));

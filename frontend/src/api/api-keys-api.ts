@@ -8,13 +8,13 @@ export async function handleCreateAPIKey({
 	data,
 }: {
 	applicationId: string;
-	projectId: string;
 	data: APIKeyCreateBody;
+	projectId: string;
 }): Promise<Required<APIKey>> {
 	return await fetcher<Required<APIKey>>({
-		url: `projects/${projectId}/applications/${applicationId}/apikeys/`,
-		method: HttpMethod.Post,
 		data,
+		method: HttpMethod.Post,
+		url: `projects/${projectId}/applications/${applicationId}/apikeys/`,
 	});
 }
 
@@ -26,8 +26,8 @@ export async function handleRetrieveAPIKeys({
 	projectId: string;
 }): Promise<APIKey[]> {
 	return await fetcher<APIKey[]>({
-		url: `projects/${projectId}/applications/${applicationId}/apikeys/`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/applications/${applicationId}/apikeys/`,
 	});
 }
 
@@ -36,12 +36,12 @@ export async function handleDeleteAPIKey({
 	projectId,
 	apiKeyId,
 }: {
+	apiKeyId: string;
 	applicationId: string;
 	projectId: string;
-	apiKeyId: string;
 }): Promise<void> {
 	await fetcher<undefined>({
-		url: `projects/${projectId}/applications/${applicationId}/apikeys/${apiKeyId}/`,
 		method: HttpMethod.Delete,
+		url: `projects/${projectId}/applications/${applicationId}/apikeys/${apiKeyId}/`,
 	});
 }

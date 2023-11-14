@@ -8,8 +8,8 @@ export function LandingPageHeader({
 	onLogoClick,
 	onButtonClick,
 }: {
-	onLogoClick: () => void;
 	onButtonClick: () => void;
+	onLogoClick: () => void;
 }) {
 	const t = useTranslations('landingPage');
 

@@ -16,8 +16,8 @@ export function PromptAnalyticsPage({
 	applicationId,
 	promptConfigId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 	promptConfigId: string;
 }) {
 	const t = useTranslations('promptConfig');
@@ -28,16 +28,16 @@ export function PromptAnalyticsPage({
 	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
 	const [dateRange, setDateRange] = useState<DateValueType>({
-		startDate: oneWeekAgo,
 		endDate: new Date(),
+		startDate: oneWeekAgo,
 	});
 
 	const { data: analytics, isLoading } = useSWR(
 		{
-			projectId,
 			applicationId,
-			promptConfigId,
 			fromDate: dateRange?.startDate,
+			projectId,
+			promptConfigId,
 			toDate: dateRange?.endDate,
 		},
 		handlePromptConfigAnalytics,

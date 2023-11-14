@@ -13,7 +13,7 @@ import {
 	usePromptConfigs,
 	useSetProjectApplications,
 	useSetPromptConfigs,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { populateApplicationId, populateProjectId } from '@/utils/navigation';
 
@@ -30,11 +30,11 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 	const showError = useShowError();
 
 	const { isLoading } = useSWR(projectId, handleRetrieveApplications, {
-		onSuccess(data) {
-			setProjectApplications(projectId, data);
-		},
 		onError({ message }: ApiError) {
 			showError(message);
+		},
+		onSuccess(data) {
+			setProjectApplications(projectId, data);
 		},
 	});
 
@@ -44,8 +44,8 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 			Promise.all(
 				applications.map((application) =>
 					handleRetrievePromptConfigs({
-						projectId,
 						applicationId: application.id,
+						projectId,
 					}),
 				),
 			),

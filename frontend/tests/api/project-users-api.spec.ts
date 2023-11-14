@@ -19,8 +19,8 @@ describe('project users API tests', () => {
 			const userAccounts = await ProjectUserAccountFactory.batch(2);
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(userAccounts),
+				ok: true,
 			});
 
 			const data = await handleRetrieveProjectUsers({
@@ -58,13 +58,13 @@ describe('project users API tests', () => {
 			);
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(userAccounts),
+				ok: true,
 			});
 
 			const data = await handleAddUsersToProject({
-				projectId: project.id,
 				data: requestData,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(userAccounts);
@@ -73,12 +73,12 @@ describe('project users API tests', () => {
 					`http://www.example.com/v1/projects/${project.id}/users/`,
 				),
 				{
+					body: JSON.stringify(requestData),
 					headers: {
 						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
-					body: JSON.stringify(requestData),
 					method: HttpMethod.Post,
 				},
 			);
@@ -91,18 +91,18 @@ describe('project users API tests', () => {
 			const userAccount = await ProjectUserAccountFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(userAccount),
+				ok: true,
 			});
 
 			const body = {
-				userId: userAccount.id,
 				permission: userAccount.permission,
+				userId: userAccount.id,
 			};
 
 			const data = await handleUpdateUserToPermission({
-				projectId: project.id,
 				data: body,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(userAccount);
@@ -111,13 +111,13 @@ describe('project users API tests', () => {
 					`http://www.example.com/v1/projects/${project.id}/users/${userAccount.id}/`,
 				),
 				{
+					body: JSON.stringify(body),
 					headers: {
 						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Patch,
-					body: JSON.stringify(body),
 				},
 			);
 		});
@@ -128,8 +128,8 @@ describe('project users API tests', () => {
 			const userAccount = await ProjectUserAccountFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(),
+				ok: true,
 			});
 
 			// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression

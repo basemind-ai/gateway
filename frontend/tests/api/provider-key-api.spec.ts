@@ -17,8 +17,8 @@ describe('Provider Keys API tests', () => {
 			const providerKey = await ProviderKeyFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(providerKey),
+				ok: true,
 			});
 
 			const body = {
@@ -27,8 +27,8 @@ describe('Provider Keys API tests', () => {
 			} satisfies ProviderKeyCreateBody;
 
 			const data = await handleCreateProviderKey({
-				projectId: project.id,
 				data: body,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(providerKey);
@@ -37,13 +37,13 @@ describe('Provider Keys API tests', () => {
 					`http://www.example.com/v1/projects/${project.id}/provider-keys/`,
 				),
 				{
+					body: JSON.stringify(body),
 					headers: {
 						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Post,
-					body: JSON.stringify(body),
 				},
 			);
 		});
@@ -55,8 +55,8 @@ describe('Provider Keys API tests', () => {
 			const providerKeys = await ProviderKeyFactory.batch(2);
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(providerKeys),
+				ok: true,
 			});
 
 			const data = await handleRetrieveProviderKeys({
@@ -86,8 +86,8 @@ describe('Provider Keys API tests', () => {
 			const providerKey = await ProviderKeyFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(providerKey),
+				ok: true,
 			});
 
 			await handleDeleteProviderKey({

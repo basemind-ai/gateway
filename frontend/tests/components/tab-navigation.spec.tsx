@@ -5,6 +5,8 @@ import { TabNavigation, TabNavigationProps } from '@/components/tab-navigation';
 
 describe('TabNavigation tests', () => {
 	const props: TabNavigationProps = {
+		onTabChange: vi.fn(),
+		selectedTab: '1',
 		tabs: [
 			{
 				id: '1',
@@ -15,8 +17,6 @@ describe('TabNavigation tests', () => {
 				text: 'Settings',
 			},
 		],
-		selectedTab: '1',
-		onTabChange: vi.fn(),
 	};
 
 	beforeEach(() => {

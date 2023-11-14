@@ -66,17 +66,17 @@ export function createCohereRequest(
 	grpcRequest: CoherePromptRequest,
 ): ChatRequest | ChatStreamRequest {
 	return {
-		message: grpcRequest.message,
-		model: modelMapping[grpcRequest.model],
-		conversationId: grpcRequest.conversationId,
-		temperature:
-			typeof grpcRequest.parameters?.temperature === 'number'
-				? grpcRequest.parameters.temperature
-				: undefined,
 		connectors:
 			Array.isArray(grpcRequest.parameters?.connectors) &&
 			grpcRequest.parameters!.connectors.length
 				? getCohereConnectors(grpcRequest.parameters!.connectors)
+				: undefined,
+		conversationId: grpcRequest.conversationId,
+		message: grpcRequest.message,
+		model: modelMapping[grpcRequest.model],
+		temperature:
+			typeof grpcRequest.parameters?.temperature === 'number'
+				? grpcRequest.parameters.temperature
 				: undefined,
 	} satisfies ChatRequest | ChatStreamRequest;
 }

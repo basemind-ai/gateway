@@ -6,8 +6,8 @@ export function Navbar({
 	headerText,
 	showSelect,
 }: {
-	project: Project;
 	headerText: string;
+	project: Project;
 	showSelect: boolean;
 }) {
 	return (

@@ -14,9 +14,9 @@ const implementation = {
 } satisfies ICohereService;
 
 createServer({
-	service: cohereServiceDefinition,
 	implementation,
 	port: process.env.SERVER_PORT
 		? Number.parseInt(process.env.SERVER_PORT!)
 		: 50_051,
+	service: cohereServiceDefinition,
 });

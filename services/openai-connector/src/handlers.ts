@@ -43,13 +43,13 @@ export async function openAIPrompt(
 		const finishTime = Date.now();
 
 		logger.debug(
-			{ startTime, finishTime, choices },
+			{ choices, finishTime, startTime },
 			'OpenAI request completed',
 		);
 		callback(null, {
+			completionTokens: usage?.completion_tokens ?? 0,
 			content: choices[0]?.message.content ?? '',
 			promptTokens: usage?.prompt_tokens ?? 0,
-			completionTokens: usage?.completion_tokens ?? 0,
 			totalTokens: usage?.total_tokens ?? 0,
 		} satisfies OpenAIPromptResponse);
 	} catch (error: unknown) {
@@ -93,7 +93,7 @@ export async function openAIStream(
 
 		const finishTime = Date.now();
 		logger.debug(
-			{ startTime, finishTime },
+			{ finishTime, startTime },
 			'OpenAI streaming request completed',
 		);
 	} catch (error: unknown) {

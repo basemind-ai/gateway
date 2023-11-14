@@ -20,11 +20,11 @@ vi.mock(
 			...original,
 			AnalyticsBrowser: {
 				load: vi.fn(() => ({
-					ready: mockReady,
-					track: mockTrack,
+					group: mockGroup,
 					identify: mockIdentify,
 					page: mockPage,
-					group: mockGroup,
+					ready: mockReady,
+					track: mockTrack,
 				})),
 			},
 		};

@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
 export enum ToastType {
+	ERROR = 'alert-error',
 	INFO = 'alert-info',
 	SUCCESS = 'alert-success',
-	ERROR = 'alert-error',
 	WARNING = 'alert-warning',
 }
 
@@ -16,33 +16,30 @@ interface ToastMessage {
 }
 
 export interface ToastStore {
-	toasts: ToastMessage[];
-	addToast: (toast: ToastMessage) => void;
 	addErrorToast: (message: string) => void;
-	addSuccessToast: (message: string) => void;
 	addInfoToast: (message: string) => void;
+	addSuccessToast: (message: string) => void;
+	addToast: (toast: ToastMessage) => void;
 	addWarningToast: (message: string) => void;
 	popToast: () => void;
 	timeout: number;
+	toasts: ToastMessage[];
 }
 
 export const useToastStoreStateCreator: StateCreator<ToastStore> = (
 	set,
 	get,
 ) => ({
-	toasts: [],
-	addToast: (toast: ToastMessage) => {
-		set((state) => ({
-			toasts: [...state.toasts, toast],
-		}));
-		setTimeout(() => {
-			get().popToast();
-		}, get().timeout);
-	},
 	addErrorToast: (message: string) => {
 		get().addToast({
 			message,
 			type: ToastType.ERROR,
+		});
+	},
+	addInfoToast: (message: string) => {
+		get().addToast({
+			message,
+			type: ToastType.INFO,
 		});
 	},
 	addSuccessToast: (message: string) => {
@@ -51,11 +48,13 @@ export const useToastStoreStateCreator: StateCreator<ToastStore> = (
 			type: ToastType.SUCCESS,
 		});
 	},
-	addInfoToast: (message: string) => {
-		get().addToast({
-			message,
-			type: ToastType.INFO,
-		});
+	addToast: (toast: ToastMessage) => {
+		set((state) => ({
+			toasts: [...state.toasts, toast],
+		}));
+		setTimeout(() => {
+			get().popToast();
+		}, get().timeout);
 	},
 	addWarningToast: (message: string) => {
 		get().addToast({
@@ -69,6 +68,7 @@ export const useToastStoreStateCreator: StateCreator<ToastStore> = (
 		}));
 	},
 	timeout: DEFAULT_TIMEOUT,
+	toasts: [],
 });
 
 export const useToastStore = create(useToastStoreStateCreator);

@@ -15,11 +15,11 @@ export function CreateApiKey({
 	onCancel,
 	initialAPIKeyHash = '',
 }: {
-	projectId: string;
 	applicationId: string;
-	onSubmit: () => void;
-	onCancel: () => void;
 	initialAPIKeyHash?: string;
+	onCancel: () => void;
+	onSubmit: () => void;
+	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const showError = useShowError();
@@ -40,8 +40,8 @@ export function CreateApiKey({
 			setLoading(true);
 			const apiKey = await handleCreateAPIKey({
 				applicationId,
-				projectId,
 				data: { name: apiKeyName },
+				projectId,
 			});
 			setAPIKeyHash(apiKey.hash);
 		} catch (e) {

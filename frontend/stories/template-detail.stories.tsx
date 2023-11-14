@@ -4,12 +4,12 @@ import {
 } from '@/components/prompt-config/template-detail';
 
 export default {
-	title: 'Template Detail Component',
 	component: TemplateDetail,
 	parameters: {
 		layout: 'centered',
 	},
 	tags: ['autodocs'],
+	title: 'Template Detail Component',
 };
 
 export const Default = {

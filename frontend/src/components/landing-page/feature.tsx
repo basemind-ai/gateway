@@ -6,12 +6,12 @@ export function Feature({
 	name,
 	children,
 }: {
-	title: string;
-	subtitle: string;
-	description: string;
-	reverse?: boolean;
-	name: string;
 	children: React.ReactNode;
+	description: string;
+	name: string;
+	reverse?: boolean;
+	subtitle: string;
+	title: string;
 }) {
 	return (
 		<div

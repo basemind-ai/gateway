@@ -24,8 +24,8 @@ describe('handleChange tests', () => {
 	it('stops propagation of event if specified.', () => {
 		const mockCallback = vi.fn();
 		const event = {
-			stopPropagation: vi.fn(),
 			preventDefault: vi.fn(),
+			stopPropagation: vi.fn(),
 			target: { value: 'test' },
 		};
 		const eventHandler = handleChange(mockCallback, true);

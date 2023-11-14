@@ -4,8 +4,8 @@ import { DatePicker } from '@/components/dashboard/date-picker';
 
 describe('Date Picker tests', () => {
 	const dateRange = {
-		startDate: new Date(),
 		endDate: new Date(),
+		startDate: new Date(),
 	};
 	const onDateChange = vi.fn();
 

@@ -15,7 +15,7 @@ import { handleChange } from '@/utils/helpers';
 export default function PromptTesting({
 	params: { projectId, applicationId },
 }: {
-	params: { projectId: string; applicationId: string };
+	params: { applicationId: string; projectId: string };
 }) {
 	const [isError, setIsError] = useState(false);
 	const [isClosed, setIsClosed] = useState(false);
@@ -34,15 +34,15 @@ export default function PromptTesting({
 
 	const sendMessage = () => {
 		void websocketHandler?.sendMessage({
-			name: `test${new Date().toISOString()}`,
 			modelParameters: {},
 			modelType: ModelType.Gpt35Turbo,
 			modelVendor: ModelVendor.OpenAI,
+			name: `test${new Date().toISOString()}`,
+			promptConfigId: undefined,
 			promptMessages: [
-				{ role: 'user', content: prompt, templateVariables: [] },
+				{ content: prompt, role: 'user', templateVariables: [] },
 			],
 			templateVariables: {},
-			promptConfigId: undefined,
 		});
 	};
 
@@ -77,10 +77,10 @@ export default function PromptTesting({
 				OpenAIPromptMessage
 			>({
 				applicationId,
-				projectId,
-				handleMessage,
 				handleClose,
 				handleError,
+				handleMessage,
+				projectId,
 			});
 			setWebsocketHandler(handler);
 		})();

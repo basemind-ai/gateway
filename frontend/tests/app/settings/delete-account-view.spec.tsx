@@ -20,12 +20,12 @@ describe('user account deletion tests', () => {
 		result: { current: t },
 	} = renderHook(() => useTranslations('userSettings'));
 	const mockUser = {
-		phoneNumber: '',
-		providerId: '',
-		uid: '',
 		displayName: 'Skywalker',
 		email: 'Skywalker@gmail.com',
+		phoneNumber: '',
 		photoURL: 'https://picsum.photos/200',
+		providerId: '',
+		uid: '',
 	};
 	HTMLDialogElement.prototype.showModal = vi.fn();
 	HTMLDialogElement.prototype.close = vi.fn();

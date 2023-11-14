@@ -19,14 +19,14 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	const oneWeekAgo = new Date();
 	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 	const [dateRange, setDateRange] = useState<DateValueType>({
-		startDate: oneWeekAgo,
 		endDate: new Date(),
+		startDate: oneWeekAgo,
 	});
 
 	const { data: analytics, isLoading } = useSWR(
 		{
-			projectId,
 			fromDate: dateRange?.startDate,
+			projectId,
 			toDate: dateRange?.endDate,
 		},
 		handleProjectAnalytics,

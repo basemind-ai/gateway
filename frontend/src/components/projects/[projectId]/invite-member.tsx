@@ -4,7 +4,7 @@ import { Envelope } from 'react-bootstrap-icons';
 
 import { handleAddUsersToProject } from '@/api';
 import { ApiError } from '@/errors';
-import { useAddProjectUser } from '@/stores/project-store';
+import { useAddProjectUser } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 import { isValidEmail } from '@/utils/form';
@@ -28,13 +28,13 @@ export function InviteMember({ projectId }: { projectId: string }) {
 		try {
 			setLoading(true);
 			const projectUser = await handleAddUsersToProject({
-				projectId,
 				data: [
 					{
 						email,
 						permission,
 					},
 				],
+				projectId,
 			});
 			setEmail('');
 			setPermission(AccessPermission.MEMBER);

@@ -14,7 +14,7 @@ import {
 	usePromptConfigs,
 	useSetPromptConfigs,
 	useUpdateApplication,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { handleChange } from '@/utils/helpers';
 
@@ -22,8 +22,8 @@ export function ApplicationGeneralSettings({
 	projectId,
 	applicationId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);
@@ -94,11 +94,11 @@ export function ApplicationGeneralSettings({
 		}
 		const updatedApplication = await handleUpdateApplication({
 			applicationId,
-			projectId,
 			data: {
-				name: name?.trim(),
 				description: description?.trim(),
+				name: name?.trim(),
 			},
+			projectId,
 		});
 		updateApplication(projectId, applicationId, updatedApplication);
 	}
@@ -111,8 +111,8 @@ export function ApplicationGeneralSettings({
 			return;
 		}
 		await handleSetDefaultPromptConfig({
-			projectId,
 			applicationId,
+			projectId,
 			promptConfigId: defaultPromptConfig,
 		});
 		await mutate({

@@ -2,14 +2,14 @@ import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	test: {
-		globals: true,
 		coverage: {
-			reporter: ['text', 'cobertura'],
 			exclude: [
 				...(configDefaults.coverage.exclude ?? []),
 				'gen/**/*.*',
 				'**/tests/**/*.*',
 			],
+			reporter: ['text', 'cobertura'],
 		},
+		globals: true,
 	},
 });

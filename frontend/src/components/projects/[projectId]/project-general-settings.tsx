@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { handleUpdateProject } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
-import { useProject, useUpdateProject } from '@/stores/project-store';
+import { useProject, useUpdateProject } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { handleChange } from '@/utils/helpers';
 
@@ -36,11 +36,11 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 		try {
 			setLoading(true);
 			const updatedProject = await handleUpdateProject({
-				projectId,
 				data: {
-					name: name.trim(),
 					description: description.trim(),
+					name: name.trim(),
 				},
+				projectId,
 			});
 			updateProject(projectId, updatedProject);
 		} catch (e) {

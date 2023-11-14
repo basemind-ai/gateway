@@ -14,7 +14,7 @@ import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { usePromptConfig, useSetPromptConfigs } from '@/stores/project-store';
+import { usePromptConfig, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
 
@@ -29,8 +29,8 @@ export default function PromptConfiguration({
 	params: { projectId, applicationId, promptConfigId },
 }: {
 	params: {
-		projectId: string;
 		applicationId: string;
+		projectId: string;
 		promptConfigId: string;
 	};
 }) {
@@ -47,7 +47,7 @@ export default function PromptConfiguration({
 	const setPromptConfigs = useSetPromptConfigs();
 
 	const { isLoading } = useSWR(
-		promptConfig ? null : { projectId, applicationId },
+		promptConfig ? null : { applicationId, projectId },
 		handleRetrievePromptConfigs,
 		{
 			/* c8 ignore start */
@@ -63,14 +63,14 @@ export default function PromptConfiguration({
 
 	const tabs: TabData<TAB_NAMES>[] = [
 		{
+			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.OVERVIEW,
 			text: t('overview'),
-			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 		},
 		{
+			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.SETTINGS,
 			text: t('settings'),
-			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 	];
 	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);

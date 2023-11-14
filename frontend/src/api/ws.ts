@@ -13,8 +13,8 @@ export async function handleCreateOTP({
 	projectId: string;
 }): Promise<OTP> {
 	return await fetcher<OTP>({
-		url: `projects/${projectId}/otp/`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/otp/`,
 	});
 }
 
@@ -23,8 +23,8 @@ export function createWebsocketURL({
 	applicationId,
 	projectId,
 }: {
-	otp: string;
 	applicationId: string;
+	otp: string;
 	projectId: string;
 }): string {
 	const url = new URL(
@@ -50,16 +50,16 @@ export async function createWebsocket<P, M>({
 	handleMessage,
 	handleError,
 }: {
-	projectId: string;
 	applicationId: string;
 	handleClose: (isError: boolean, reason: string) => void;
-	handleMessage: (event: MessageEvent<PromptConfigTestResultChunk>) => void;
 	handleError: (event: Event) => void;
+	handleMessage: (event: MessageEvent<PromptConfigTestResultChunk>) => void;
+	projectId: string;
 }): Promise<WebsocketHandler<P, M>> {
 	// we need to create an OTP to access the websocket.
 	// The OTP is valid for one minute and it should be sent as a query param.
 	const { otp } = await handleCreateOTP({ projectId });
-	const url = createWebsocketURL({ otp, applicationId, projectId });
+	const url = createWebsocketURL({ applicationId, otp, projectId });
 	const websocket = new WebSocket(url);
 
 	let pingInterval: NodeJS.Timeout;

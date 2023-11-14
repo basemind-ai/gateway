@@ -12,7 +12,7 @@ import {
 	usePromptConfigs,
 	useSetProjectApplications,
 	useSetPromptConfigs,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { Application, PromptConfig } from '@/types';
 import { populateLink } from '@/utils/navigation';
@@ -32,6 +32,9 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 		Application[],
 		ApiError
 	>(projectId, handleRetrieveApplications, {
+		onError({ message }: ApiError) {
+			showError(message);
+		},
 		onSuccess(data) {
 			if (data.length === 0) {
 				router.push(
@@ -39,9 +42,6 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 				);
 			}
 			setProjectApplications(projectId, data);
-		},
-		onError({ message }: ApiError) {
-			showError(message);
 		},
 	});
 
@@ -55,12 +55,17 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 			Promise.all(
 				applications.map((application) =>
 					handleRetrievePromptConfigs({
-						projectId,
 						applicationId: application.id,
+						projectId,
 					}),
 				),
 			),
 		{
+			/* c8 ignore start */
+			onError({ message }: ApiError) {
+				showError(message);
+			},
+
 			onSuccess(data) {
 				if (data.every((innerArray) => innerArray.length === 0)) {
 					router.push(
@@ -70,10 +75,6 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 				data.forEach((promptConfig, index) => {
 					setPromptConfigs(applications![index].id, promptConfig);
 				});
-			},
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
 			},
 			/* c8 ignore end */
 		},

@@ -4,7 +4,7 @@ import {
 	useProject,
 	useProjects,
 	useSetSelectedProject,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { handleChange } from '@/utils/helpers';
 
 export function ProjectSelect({

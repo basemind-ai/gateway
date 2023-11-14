@@ -35,9 +35,10 @@ module.exports = {
 		'alert-warning',
 	],
 	plugins: [
+		require('@tailwindcss/forms'),
 		require('@tailwindcss/typography'),
-		require('tailwindcss-elevation'),
 		require('daisyui'),
+		require('tailwindcss-elevation'),
 	],
 	daisyui: {
 		base: true,

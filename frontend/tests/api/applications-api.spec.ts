@@ -19,15 +19,15 @@ describe('applications API tests', () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(application),
+				ok: true,
 			});
 			const data = await handleCreateApplication({
-				projectId: project.id,
 				data: {
-					name: application.name,
 					description: application.description,
+					name: application.name,
 				},
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(application);
@@ -36,16 +36,16 @@ describe('applications API tests', () => {
 					`http://www.example.com/v1/projects/${project.id}/applications/`,
 				),
 				{
+					body: JSON.stringify({
+						description: application.description,
+						name: application.name,
+					}),
 					headers: {
 						'Authorization': 'Bearer test_token',
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Post,
-					body: JSON.stringify({
-						name: application.name,
-						description: application.description,
-					}),
 				},
 			);
 		});
@@ -55,8 +55,8 @@ describe('applications API tests', () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve([application]),
+				ok: true,
 			});
 			const data = await handleRetrieveApplications(project.id);
 
@@ -81,12 +81,12 @@ describe('applications API tests', () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(application),
+				ok: true,
 			});
 			const data = await handleRetrieveApplication({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(application);
@@ -110,16 +110,16 @@ describe('applications API tests', () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(application),
+				ok: true,
 			});
 			const data = await handleUpdateApplication({
-				projectId: project.id,
 				applicationId: application.id,
 				data: {
-					name: application.name,
 					description: application.description,
+					name: application.name,
 				},
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(application);
@@ -128,16 +128,16 @@ describe('applications API tests', () => {
 					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/`,
 				),
 				{
+					body: JSON.stringify({
+						description: application.description,
+						name: application.name,
+					}),
 					headers: {
 						'Authorization': 'Bearer test_token',
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Patch,
-					body: JSON.stringify({
-						name: application.name,
-						description: application.description,
-					}),
 				},
 			);
 		});
@@ -147,12 +147,12 @@ describe('applications API tests', () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(),
+				ok: true,
 			});
 			const data = await handleDeleteApplication({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 			});
 
 			expect(data).toBeUndefined();
@@ -180,12 +180,12 @@ describe('applications API tests', () => {
 				totalRequests: 1000,
 			} satisfies AnalyticsDTO;
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(applicationAnalytics),
+				ok: true,
 			});
 			const data = await handleApplicationAnalytics({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(applicationAnalytics);
@@ -215,13 +215,13 @@ describe('applications API tests', () => {
 			const toDate = '2023-10-02T15:34:09.136Z';
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(applicationAnalytics),
+				ok: true,
 			});
 			const data = await handleApplicationAnalytics({
-				projectId: project.id,
 				applicationId: application.id,
 				fromDate,
+				projectId: project.id,
 				toDate,
 			});
 

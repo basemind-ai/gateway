@@ -15,8 +15,8 @@ export function ApplicationAnalyticsPage({
 	projectId,
 	applicationId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
@@ -25,15 +25,15 @@ export function ApplicationAnalyticsPage({
 	const oneWeekAgo = new Date();
 	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 	const [dateRange, setDateRange] = useState<DateValueType>({
-		startDate: oneWeekAgo,
 		endDate: new Date(),
+		startDate: oneWeekAgo,
 	});
 
 	const { data: analytics, isLoading } = useSWR(
 		{
-			projectId,
 			applicationId,
 			fromDate: dateRange?.startDate,
+			projectId,
 			toDate: dateRange?.endDate,
 		},
 		handleApplicationAnalytics,

@@ -13,7 +13,7 @@ import {
 	useSetProjectApplications,
 	useSetProjects,
 	useSetPromptConfigs,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('PromptGeneralSettings', () => {
@@ -168,12 +168,12 @@ describe('PromptGeneralSettings', () => {
 		// takes care of covering the loading line
 		fireEvent.click(saveBtn);
 		expect(handleUpdatePromptConfigSpy).toHaveBeenCalledWith({
-			projectId: project.id,
 			applicationId: application.id,
-			promptConfigId: promptConfig.id,
 			data: {
 				name: 'new name',
 			},
+			projectId: project.id,
+			promptConfigId: promptConfig.id,
 		});
 	});
 

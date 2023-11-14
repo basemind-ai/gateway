@@ -72,10 +72,10 @@ describe('Contact component', () => {
 		fireEvent.click(submitButton);
 		await waitFor(() => {
 			expect(handleSupportTicketSpy).toHaveBeenCalledWith({
-				topic: SupportTopic.API,
-				subject: 'test',
 				body: 'test',
 				projectId: 'null',
+				subject: 'test',
+				topic: SupportTopic.API,
 			});
 		});
 	});

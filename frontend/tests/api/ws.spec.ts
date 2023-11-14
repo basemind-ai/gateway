@@ -30,8 +30,8 @@ describe('prompt testing websocket', () => {
 			const otp = { otp: 'abc' };
 			const projectId = '123';
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(otp),
+				ok: true,
 			});
 			const data = await handleCreateOTP({ projectId });
 
@@ -55,8 +55,8 @@ describe('prompt testing websocket', () => {
 
 			expect(
 				createWebsocketURL({
-					otp: 'abc',
 					applicationId: '123',
+					otp: 'abc',
 					projectId: '456',
 				}),
 			).toBe(
@@ -70,19 +70,19 @@ describe('prompt testing websocket', () => {
 		const applicationId = faker.string.uuid();
 
 		const wsData = {
-			name: 'test',
 			modelParameters: {},
 			modelType: ModelType.Gpt35Turbo,
 			modelVendor: ModelVendor.OpenAI,
+			name: 'test',
+			promptConfigId: undefined,
 			promptMessages: [],
 			templateVariables: {},
-			promptConfigId: undefined,
 		} satisfies PromptConfigTest<any, any>;
 
 		beforeEach(() => {
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve({ otp }),
+				ok: true,
 			});
 		});
 
@@ -96,8 +96,8 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp,
 				applicationId,
+				otp,
 				projectId,
 			});
 			const mockServer = new Server(mockServerURL);
@@ -112,10 +112,10 @@ describe('prompt testing websocket', () => {
 
 			await createWebsocket({
 				applicationId,
-				projectId,
 				handleClose: () => {},
 				handleError: () => {},
 				handleMessage: () => {},
+				projectId,
 			});
 
 			while (!ping) {
@@ -131,8 +131,8 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp,
 				applicationId,
+				otp,
 				projectId,
 			});
 			const mockServer = new Server(mockServerURL);
@@ -147,10 +147,10 @@ describe('prompt testing websocket', () => {
 
 			const { sendMessage } = await createWebsocket({
 				applicationId,
-				projectId,
 				handleClose: () => {},
 				handleError: () => {},
 				handleMessage: () => {},
+				projectId,
 			});
 
 			await sendMessage(wsData);
@@ -168,8 +168,8 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp,
 				applicationId,
+				otp,
 				projectId,
 			});
 			const mockServer = new Server(mockServerURL);
@@ -188,10 +188,10 @@ describe('prompt testing websocket', () => {
 
 			await createWebsocket({
 				applicationId,
-				projectId,
 				handleClose: () => {},
 				handleError: () => {},
 				handleMessage,
+				projectId,
 			});
 
 			while (!message) {
@@ -207,8 +207,8 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp,
 				applicationId,
+				otp,
 				projectId,
 			});
 			const mockServer = new Server(mockServerURL);
@@ -221,10 +221,10 @@ describe('prompt testing websocket', () => {
 
 			const { sendMessage } = await createWebsocket({
 				applicationId,
-				projectId,
 				handleClose: () => {},
 				handleError: () => {},
 				handleMessage: () => {},
+				projectId,
 			});
 
 			mockServer.close();
@@ -241,8 +241,8 @@ describe('prompt testing websocket', () => {
 			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
-				otp,
 				applicationId,
+				otp,
 				projectId,
 			});
 			const mockServer = new Server(mockServerURL);
@@ -255,10 +255,10 @@ describe('prompt testing websocket', () => {
 
 			const { closeSocket } = await createWebsocket({
 				applicationId,
-				projectId,
 				handleClose: () => {},
 				handleError: () => {},
 				handleMessage: () => {},
+				projectId,
 			});
 
 			closeSocket();

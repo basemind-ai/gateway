@@ -3,10 +3,6 @@ import postcss from 'postcss';
 import sass from 'sass';
 
 const config: StorybookConfig = {
-	stories: [
-		'../stories/**/*.mdx',
-		'../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-	],
 	addons: [
 		'@storybook/addon-links',
 		'@storybook/addon-essentials',
@@ -16,21 +12,25 @@ const config: StorybookConfig = {
 		{
 			name: '@storybook/addon-styling',
 			options: {
-				sass: {
-					implementation: sass,
-				},
 				postCss: {
 					implementation: postcss,
+				},
+				sass: {
+					implementation: sass,
 				},
 			},
 		},
 	],
+	docs: {
+		autodocs: 'tag',
+	},
 	framework: {
 		name: '@storybook/nextjs',
 		options: {},
 	},
-	docs: {
-		autodocs: 'tag',
-	},
+	stories: [
+		'../stories/**/*.mdx',
+		'../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+	],
 };
 export default config;

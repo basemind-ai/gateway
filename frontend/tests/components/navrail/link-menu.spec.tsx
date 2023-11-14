@@ -4,12 +4,12 @@ import LinkMenu, { LinkMenuProps } from '@/components/navrail/link-menu';
 
 describe('LinkMenu tests', () => {
 	const props: LinkMenuProps = {
-		text: 'Navigation',
-		icon: <h1>Icon</h1>,
 		badge: <h1>Badge</h1>,
-		isCurrent: true,
-		href: 'http://example.com/',
 		children: <h1>Child</h1>,
+		href: 'http://example.com/',
+		icon: <h1>Icon</h1>,
+		isCurrent: true,
+		text: 'Navigation',
 	};
 
 	it('renders LinkMenu correctly', () => {

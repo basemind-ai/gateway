@@ -9,10 +9,10 @@ export function Logo({
 	textSize = 'text-2xl',
 	onClick,
 }: {
-	width?: number;
 	height?: number;
-	textSize?: string;
 	onClick?: () => void;
+	textSize?: string;
+	width?: number;
 }) {
 	const t = useTranslations('common');
 

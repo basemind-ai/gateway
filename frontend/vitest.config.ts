@@ -6,9 +6,9 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	plugins: [tsconfigPaths(), react(), magicalSvg({ target: 'react' })],
 	test: {
-		globals: true,
-		environment: 'jsdom',
-		setupFiles: ['./tests/vitest.setup.ts', './tests/mocks.ts'],
 		css: true,
+		environment: 'jsdom',
+		globals: true,
+		setupFiles: ['./tests/vitest.setup.ts', './tests/mocks.ts'],
 	},
 });

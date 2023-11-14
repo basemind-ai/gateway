@@ -59,15 +59,15 @@ describe('utils tests', () => {
 
 		it('returns a ChatRequest with the correct conversationId', () => {
 			const grpcRequest = {
+				conversationId: '123',
 				message: 'hello world',
 				model: CohereModel.COMMAND,
-				conversationId: '123',
 			} satisfies CoherePromptRequest;
 			const result = createCohereRequest(grpcRequest);
 			expect(result).toEqual({
+				conversationId: '123',
 				message: 'hello world',
 				model: 'command',
-				conversationId: '123',
 			});
 		});
 
@@ -76,8 +76,8 @@ describe('utils tests', () => {
 				message: 'hello world',
 				model: CohereModel.COMMAND,
 				parameters: {
-					temperature: 0.5,
 					connectors: [],
+					temperature: 0.5,
 				},
 			} satisfies CoherePromptRequest;
 			const result = createCohereRequest(grpcRequest);
@@ -93,8 +93,8 @@ describe('utils tests', () => {
 				message: 'hello world',
 				model: CohereModel.COMMAND,
 				parameters: {
-					temperature: 0,
 					connectors: [],
+					temperature: 0,
 				},
 			} satisfies CoherePromptRequest;
 			const result = createCohereRequest(grpcRequest);
@@ -110,26 +110,26 @@ describe('utils tests', () => {
 				message: 'hello world',
 				model: CohereModel.COMMAND,
 				parameters: {
-					temperature: 0.5,
 					connectors: [
 						{
 							id: CohereConnectorType.WEB_SEARCH,
 							options: {},
 						},
 					],
+					temperature: 0.5,
 				},
 			} satisfies CoherePromptRequest;
 			const result = createCohereRequest(grpcRequest);
 			expect(result).toEqual({
-				message: 'hello world',
-				model: 'command',
-				temperature: 0.5,
 				connectors: [
 					{
 						id: 'web-search',
 						options: {},
 					},
 				],
+				message: 'hello world',
+				model: 'command',
+				temperature: 0.5,
 			});
 		});
 
@@ -138,8 +138,8 @@ describe('utils tests', () => {
 				message: 'hello world',
 				model: CohereModel.COMMAND,
 				parameters: {
-					temperature: 0.5,
 					connectors: [],
+					temperature: 0.5,
 				},
 			} satisfies CoherePromptRequest;
 			const result = createCohereRequest(grpcRequest);
@@ -155,8 +155,8 @@ describe('utils tests', () => {
 				message: 'hello world',
 				model: CohereModel.COMMAND,
 				parameters: {
-					temperature: 0.5,
 					connectors: [],
+					temperature: 0.5,
 				},
 			} satisfies CoherePromptRequest;
 			const result = createCohereRequest(grpcRequest);

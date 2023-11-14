@@ -10,10 +10,7 @@ import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { ApplicationGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/application-general-settings';
 import { ApiError } from '@/errors';
-import {
-	useSetProjectApplications,
-	useSetProjects,
-} from '@/stores/project-store';
+import { useSetProjectApplications, useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('ApplicationGeneralSettings', () => {
@@ -183,12 +180,12 @@ describe('ApplicationGeneralSettings', () => {
 		});
 		fireEvent.click(saveBtn);
 		expect(handleUpdateApplicationSpy).toHaveBeenCalledWith({
-			projectId: projects[0].id,
 			applicationId: applications[0].id,
 			data: {
-				name: applications[0].name,
 				description: 'new description',
+				name: applications[0].name,
 			},
+			projectId: projects[0].id,
 		});
 	});
 
@@ -216,8 +213,8 @@ describe('ApplicationGeneralSettings', () => {
 		fireEvent.click(saveBtn);
 		await waitFor(() => {
 			expect(handleSetDefaultPromptConfigSpy).toHaveBeenCalledWith({
-				projectId: projects[0].id,
 				applicationId: applications[0].id,
+				projectId: projects[0].id,
 				promptConfigId: prompts[1].id,
 			});
 		});

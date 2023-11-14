@@ -8,7 +8,7 @@ import {
 	useApplication,
 	usePromptConfig,
 	useUpdatePromptConfig,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
 import { handleChange } from '@/utils/helpers';
@@ -18,8 +18,8 @@ export function PromptGeneralSettings({
 	applicationId,
 	promptConfigId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 	promptConfigId: string;
 }) {
 	const t = useTranslations('promptConfig');
@@ -47,12 +47,12 @@ export function PromptGeneralSettings({
 		try {
 			setLoading(true);
 			const updatedPromptConfig = await handleUpdatePromptConfig({
-				projectId,
 				applicationId,
-				promptConfigId,
 				data: {
 					name: name.trim(),
 				},
+				projectId,
+				promptConfigId,
 			});
 			updatePromptConfig(applicationId, updatedPromptConfig);
 		} catch (e) {

@@ -6,7 +6,7 @@ import { handleDeleteProject } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { useDeleteProject, useProject } from '@/stores/project-store';
+import { useDeleteProject, useProject } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 
 export function ProjectDeletion({ projectId }: { projectId: string }) {

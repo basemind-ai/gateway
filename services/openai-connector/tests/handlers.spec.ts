@@ -46,42 +46,42 @@ describe('handlers tests', () => {
 
 		it('should successfully complete an OpenAI prompt request and send the expected response', async () => {
 			const call = makeMockUnaryCall({
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				applicationId: '123',
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				parameters: {
-					temperature: 0.8,
-					topP: 0.9,
+					frequencyPenalty: 0.5,
 					maxTokens: 100,
 					presencePenalty: 0.5,
-					frequencyPenalty: 0.5,
+					temperature: 0.8,
+					topP: 0.9,
 				},
-				applicationId: '123',
 			});
 			const callback: sendUnaryData<OpenAIPromptResponse> = vi.fn();
 
 			completionsSpy.mockResolvedValueOnce({
-				id: 'abc',
-				model: 'gpt-3.5-turbo',
-				object: 'chat.completion',
-				created: Date.now(),
 				choices: [
 					{
+						finish_reason: 'stop',
+						index: 0,
 						message: {
 							content: 'Generated response',
 							role: 'assistant',
 						},
-						index: 0,
-						finish_reason: 'stop',
 					},
 				],
+				created: Date.now(),
+				id: 'abc',
+				model: 'gpt-3.5-turbo',
+				object: 'chat.completion',
 				usage: {
-					prompt_tokens: 10,
 					completion_tokens: 20,
+					prompt_tokens: 10,
 					total_tokens: 30,
 				},
 			});
@@ -105,34 +105,34 @@ describe('handlers tests', () => {
 			});
 
 			expect(callback).toHaveBeenCalledWith(null, {
+				completionTokens: 20,
 				content: 'Generated response',
 				promptTokens: 10,
-				completionTokens: 20,
 				totalTokens: 30,
 			});
 		});
 
 		it('should return an empty content string when the choices array is empty', async () => {
 			const call = makeMockUnaryCall({
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 			});
 			const callback: sendUnaryData<OpenAIPromptResponse> = vi.fn();
 
 			completionsSpy.mockResolvedValueOnce({
+				choices: [],
+				created: Date.now(),
 				id: 'abc',
 				model: 'gpt-3.5-turbo',
 				object: 'chat.completion',
-				created: Date.now(),
-				choices: [],
 				usage: {
-					prompt_tokens: 10,
 					completion_tokens: 0,
+					prompt_tokens: 10,
 					total_tokens: 10,
 				},
 			});
@@ -150,22 +150,22 @@ describe('handlers tests', () => {
 			});
 
 			expect(callback).toHaveBeenCalledWith(null, {
+				completionTokens: 0,
 				content: '',
 				promptTokens: 10,
-				completionTokens: 0,
 				totalTokens: 10,
 			});
 		});
 
 		it('should send a GrpcError when an error occurs during the OpenAI prompt request', async () => {
 			const call = makeMockUnaryCall({
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 			});
 			const callback: sendUnaryData<OpenAIPromptResponse> = vi.fn();
 
@@ -192,34 +192,34 @@ describe('handlers tests', () => {
 
 		it("should handle finish_reasons that aren't 'stop'", async () => {
 			const call = makeMockUnaryCall({
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 			});
 			const callback: sendUnaryData<OpenAIPromptResponse> = vi.fn();
 
 			completionsSpy.mockResolvedValueOnce({
-				id: 'abc',
-				model: 'gpt-3.5-turbo',
-				object: 'chat.completion',
-				created: Date.now(),
 				choices: [
 					{
+						finish_reason: 'length',
+						index: 0,
 						message: {
 							content: 'Generated response',
 							role: 'assistant',
 						},
-						index: 0,
-						finish_reason: 'length',
 					},
 				],
+				created: Date.now(),
+				id: 'abc',
+				model: 'gpt-3.5-turbo',
+				object: 'chat.completion',
 				usage: {
-					prompt_tokens: 10,
 					completion_tokens: 20,
+					prompt_tokens: 10,
 					total_tokens: 30,
 				},
 			});
@@ -237,9 +237,9 @@ describe('handlers tests', () => {
 			});
 
 			expect(callback).toHaveBeenCalledWith(null, {
+				completionTokens: 20,
 				content: 'Generated response',
 				promptTokens: 10,
-				completionTokens: 20,
 				totalTokens: 30,
 			});
 		});
@@ -250,11 +250,11 @@ describe('handlers tests', () => {
 			request: OpenAIPromptRequest,
 		): ServerWritableStream<OpenAIPromptRequest, OpenAIStreamResponse> => {
 			return {
-				getPath: vi.fn(),
-				write: vi.fn(),
 				end: vi.fn(),
+				getPath: vi.fn(),
 				metadata: new Metadata(),
 				request,
+				write: vi.fn(),
 			} as unknown as ServerWritableStream<
 				OpenAIPromptRequest,
 				OpenAIStreamResponse
@@ -266,20 +266,20 @@ describe('handlers tests', () => {
 			return {
 				async next() {
 					const value = {
-						id: 'abc',
-						model: 'gpt-3.5-turbo',
-						object: 'chat.completion',
-						created: Date.now(),
 						choices: [
 							{
 								delta: {
 									content: count < 10 ? count.toString() : '',
 									role: 'assistant',
 								},
-								index: count,
 								finish_reason: count === 10 ? 'stop' : null,
+								index: count,
 							},
 						],
+						created: Date.now(),
+						id: 'abc',
+						model: 'gpt-3.5-turbo',
+						object: 'chat.completion',
 					};
 					if (count === 11) {
 						return { done: true, value };
@@ -299,21 +299,21 @@ describe('handlers tests', () => {
 
 		it('should successfully create an OpenAI stream request and write the response to the call', async () => {
 			const call = makeServerWritableStream({
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				applicationId: '123',
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				parameters: {
-					temperature: 0.8,
-					topP: 0.9,
+					frequencyPenalty: 0.5,
 					maxTokens: 100,
 					presencePenalty: 0.5,
-					frequencyPenalty: 0.5,
+					temperature: 0.8,
+					topP: 0.9,
 				},
-				applicationId: '123',
 			});
 			completionsSpy.mockResolvedValueOnce(createReadableStream() as any);
 
@@ -391,21 +391,21 @@ describe('handlers tests', () => {
 
 		it('should handle errors', async () => {
 			const call = makeServerWritableStream({
-				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+				applicationId: '123',
 				messages: [
 					{
 						content: 'test',
 						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
 					},
 				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
 				parameters: {
-					temperature: 0.8,
-					topP: 0.9,
+					frequencyPenalty: 0.5,
 					maxTokens: 100,
 					presencePenalty: 0.5,
-					frequencyPenalty: 0.5,
+					temperature: 0.8,
+					topP: 0.9,
 				},
-				applicationId: '123',
 			});
 
 			completionsSpy.mockRejectedValueOnce(new Error('test error'));

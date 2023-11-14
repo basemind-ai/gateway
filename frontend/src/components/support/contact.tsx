@@ -7,7 +7,7 @@ import DashboardCard from '@/components/dashboard/dashboard-card';
 import { Dropdown } from '@/components/support/dropdown';
 import { SupportTopic } from '@/constants/forms';
 import { ApiError } from '@/errors';
-import { useProjects, useSetProjects } from '@/stores/project-store';
+import { useProjects, useSetProjects } from '@/stores/api-store';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { Project } from '@/types';
 import { handleChange } from '@/utils/helpers';
@@ -23,8 +23,8 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 
 	const projects = useProjects();
 	const topics = Object.values(SupportTopic).map((topic) => ({
-		value: topic,
 		text: topic,
+		value: topic,
 	}));
 	const setProjects = useSetProjects();
 	const showError = useShowError();
@@ -34,12 +34,13 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 		() => isAuthenticated,
 		handleRetrieveProjects,
 		{
-			onSuccess(data) {
-				setProjects(data);
-			},
 			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
+			},
+
+			onSuccess(data) {
+				setProjects(data);
 			},
 			/* c8 ignore end */
 		},
@@ -49,10 +50,10 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 		setIsSubmitting(true);
 		try {
 			await handleCreateSupportTicket({
-				topic: selectedTopic ?? SupportTopic.Other,
-				subject: emailSubject.trim(),
 				body: emailBody.trim(),
 				projectId: selectedProjectId,
+				subject: emailSubject.trim(),
+				topic: selectedTopic ?? SupportTopic.Other,
 			});
 			showSuccess(t('successComment'));
 			setEmailBody('');
@@ -84,7 +85,7 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 						selected={selectedProjectId}
 						setSelected={setSelectedProjectId}
 						options={projects.map((project) => {
-							return { value: project.id, text: project.name };
+							return { text: project.name, value: project.id };
 						})}
 						isLoading={isLoading}
 						optional={true}
@@ -92,9 +93,7 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 				</div>
 				<div className="form-control">
 					<label className="label">
-						<span className="label-text text-">
-							{t('emailSubject')}
-						</span>
+						<span className="label-text">{t('emailSubject')}</span>
 					</label>
 					<input
 						placeholder={t('emailSubjectPlaceholder')}
@@ -106,9 +105,7 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 				</div>
 				<div className="form-control">
 					<label className="label">
-						<span className="label-text text-">
-							{t('emailBody')}
-						</span>
+						<span className="label-text">{t('emailBody')}</span>
 					</label>
 					<textarea
 						placeholder={t('emailBodyPlaceholder')}

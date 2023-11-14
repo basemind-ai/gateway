@@ -125,11 +125,11 @@ describe('CreateApplication', () => {
 		fireEvent.click(submitButton);
 
 		expect(handleCreateApplicationSpy).toHaveBeenCalledWith({
-			projectId,
 			data: {
-				name: 'Acme corp',
 				description: '',
+				name: 'Acme corp',
 			},
+			projectId,
 		});
 		await waitFor(() => {
 			expect(nextRouterMock.push).toHaveBeenCalledWith(
@@ -194,20 +194,20 @@ describe('CreateApplication', () => {
 		fireEvent.click(submitButton);
 
 		expect(handleCreateApplicationSpy).toHaveBeenCalledWith({
-			projectId,
 			data: {
-				name: 'Acme corp',
 				description: '',
+				name: 'Acme corp',
 			},
+			projectId,
 		});
 
 		await waitFor(() => {
 			expect(handleCreateAPIKeySpy).toHaveBeenCalledWith({
-				projectId,
 				applicationId: application.id,
 				data: {
 					name: 'New API key',
 				},
+				projectId,
 			});
 		});
 

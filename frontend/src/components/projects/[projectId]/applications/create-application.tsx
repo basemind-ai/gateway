@@ -6,7 +6,7 @@ import { handleCreateAPIKey, handleCreateApplication } from '@/api';
 import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { useAddApplication } from '@/stores/project-store';
+import { useAddApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { handleChange } from '@/utils/helpers';
 import { populateApplicationId, populateProjectId } from '@/utils/navigation';
@@ -15,8 +15,8 @@ export function CreateApplication({
 	onClose,
 	projectId,
 }: {
-	projectId: string;
 	onClose: () => void;
+	projectId: string;
 }) {
 	const t = useTranslations('createApplication');
 	const router = useRouter();
@@ -45,11 +45,11 @@ export function CreateApplication({
 			setLoading(true);
 
 			const application = await handleCreateApplication({
-				projectId,
 				data: {
-					name: name.trim(),
 					description: description.trim(),
+					name: name.trim(),
 				},
+				projectId,
 			});
 			const applicationUrl = populateApplicationId(
 				populateProjectId(Navigation.Applications, projectId),
@@ -62,11 +62,11 @@ export function CreateApplication({
 
 			if (apiKeyName.trim()) {
 				const apiKey = await handleCreateAPIKey({
-					projectId,
 					applicationId: application.id,
 					data: {
 						name: apiKeyName.trim(),
 					},
+					projectId,
 				});
 				setAPIKey(apiKey.hash);
 			} else {

@@ -27,8 +27,8 @@ describe('PromptAnalyticsPage', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('application'));
 		const analytics = {
-			totalRequests: 434,
 			tokensCost: 3,
+			totalRequests: 434,
 		} satisfies AnalyticsDTO;
 		handlePromptConfigAnalyticsSpy.mockResolvedValueOnce(analytics);
 
@@ -57,8 +57,8 @@ describe('PromptAnalyticsPage', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('application'));
 		const initialAnalytics = {
-			totalRequests: 434,
 			tokensCost: 3,
+			totalRequests: 434,
 		} satisfies AnalyticsDTO;
 		handlePromptConfigAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
@@ -77,8 +77,8 @@ describe('PromptAnalyticsPage', () => {
 		);
 
 		const updatedAnalytics = {
-			totalRequests: 474,
 			tokensCost: 4,
+			totalRequests: 474,
 		} satisfies AnalyticsDTO;
 		handlePromptConfigAnalyticsSpy.mockResolvedValueOnce(updatedAnalytics);
 

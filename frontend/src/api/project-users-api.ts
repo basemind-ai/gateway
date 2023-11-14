@@ -12,8 +12,8 @@ export async function handleRetrieveProjectUsers({
 	projectId: string;
 }): Promise<ProjectUserAccount[]> {
 	return await fetcher<ProjectUserAccount[]>({
-		url: `projects/${projectId}/users/`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/users/`,
 	});
 }
 
@@ -21,13 +21,13 @@ export async function handleAddUsersToProject({
 	projectId,
 	data,
 }: {
-	projectId: string;
 	data: AddUserToProjectBody[];
+	projectId: string;
 }): Promise<ProjectUserAccount> {
 	return await fetcher<ProjectUserAccount>({
-		url: `projects/${projectId}/users/`,
-		method: HttpMethod.Post,
 		data,
+		method: HttpMethod.Post,
+		url: `projects/${projectId}/users/`,
 	});
 }
 
@@ -35,13 +35,13 @@ export async function handleUpdateUserToPermission({
 	projectId,
 	data,
 }: {
-	projectId: string;
 	data: UserProjectPermissionUpdateBody;
+	projectId: string;
 }): Promise<ProjectUserAccount> {
 	return await fetcher<ProjectUserAccount>({
-		url: `projects/${projectId}/users/`,
-		method: HttpMethod.Patch,
 		data,
+		method: HttpMethod.Patch,
+		url: `projects/${projectId}/users/`,
 	});
 }
 
@@ -53,7 +53,7 @@ export async function handleRemoveUserFromProject({
 	userId: string;
 }): Promise<void> {
 	await fetcher<undefined>({
-		url: `projects/${projectId}/users/${userId}/`,
 		method: HttpMethod.Delete,
+		url: `projects/${projectId}/users/${userId}/`,
 	});
 }

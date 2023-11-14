@@ -139,7 +139,6 @@
 	"projectOverview": {
 		"apiCalls": "API Calls",
 		"applications": "Applications",
-		"billing": "Billing",
 		"cancel": "Cancel",
 		"configs": "Configs",
 		"delete": "Delete",
@@ -162,6 +161,7 @@
 		"projectDeletion": "Project Deletion",
 		"projectDescription": "Project Description",
 		"projectName": "Project Name",
+		"providerKeys": "Provider API Keys",
 		"role": "Role",
 		"roles": "Roles",
 		"save": "Save",
@@ -217,6 +217,16 @@
 		"template": "Template",
 		"test": "Test",
 		"warning": "Warning"
+	},
+	"providerKeys": {
+		"cohere": "Cohere",
+		"createKey": "Create Key",
+		"createdAt": "Created at",
+		"keyValue": "API Key",
+		"modelVendor": "AI Provider",
+		"newProviderKey": "New Provider Key",
+		"openai": "OpenAI",
+		"selectVendor": "Please select an AI provider"
 	},
 	"signin": {
 		"authHeader": "Welcome to",

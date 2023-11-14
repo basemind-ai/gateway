@@ -22,8 +22,8 @@ describe('API Keys API tests', () => {
 			const apiKey = await APIKeyFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(apiKey),
+				ok: true,
 			});
 
 			const body = {
@@ -31,9 +31,9 @@ describe('API Keys API tests', () => {
 			};
 
 			const data = await handleCreateAPIKey({
-				projectId: project.id,
 				applicationId: application.id,
 				data: body,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(apiKey);
@@ -42,13 +42,13 @@ describe('API Keys API tests', () => {
 					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/apikeys/`,
 				),
 				{
+					body: JSON.stringify(body),
 					headers: {
 						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Post,
-					body: JSON.stringify(body),
 				},
 			);
 		});
@@ -60,13 +60,13 @@ describe('API Keys API tests', () => {
 			const apiKeys = await APIKeyFactory.batch(2);
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(apiKeys),
+				ok: true,
 			});
 
 			const data = await handleRetrieveAPIKeys({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(apiKeys);
@@ -92,15 +92,15 @@ describe('API Keys API tests', () => {
 			const apiKey = await APIKeyFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(),
+				ok: true,
 			});
 
 			// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
 			const data = await handleDeleteAPIKey({
-				projectId: project.id,
-				applicationId: application.id,
 				apiKeyId: apiKey.id,
+				applicationId: application.id,
+				projectId: project.id,
 			});
 
 			expect(data).toBeUndefined();

@@ -14,7 +14,7 @@ import {
 	useSetProjectApplications,
 	useSetProjects,
 	useSetPromptConfigs,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('PromptDeletion', () => {

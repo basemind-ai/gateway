@@ -23,9 +23,9 @@ export class ApiError extends Error {
 			statusText,
 			context,
 		}: {
+			context?: Record<string, any>;
 			statusCode: number;
 			statusText: string;
-			context?: Record<string, any>;
 		},
 	) {
 		super(msg);

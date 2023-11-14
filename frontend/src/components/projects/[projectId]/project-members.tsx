@@ -12,13 +12,13 @@ import {
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Dimensions } from '@/constants';
 import { ApiError } from '@/errors';
-import { useUser } from '@/stores/api-store';
 import {
 	useProjectUsers,
 	useRemoveProjectUser,
 	useSetProjectUsers,
 	useUpdateProjectUser,
-} from '@/stores/project-store';
+	useUser,
+} from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 import { handleChange } from '@/utils/helpers';
@@ -30,9 +30,9 @@ function UserCard({
 	displayName,
 	email,
 }: {
-	photoUrl: string;
 	displayName: string;
 	email: string;
+	photoUrl: string;
 }) {
 	return (
 		<div className="flex flex-row gap-3.5 items-center">
@@ -55,8 +55,8 @@ function PermissionSelect({
 	permission,
 	onChange,
 }: {
-	permission: AccessPermission;
 	onChange: (value: AccessPermission) => void;
+	permission: AccessPermission;
 }) {
 	const t = useTranslations('members');
 
@@ -98,12 +98,13 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 		},
 		handleRetrieveProjectUsers,
 		{
-			onSuccess(users) {
-				setProjectUsers(projectId, users);
-			},
 			/* c8 ignore start */
 			onError(apiError: ApiError) {
 				showError(apiError.message);
+			},
+
+			onSuccess(users) {
+				setProjectUsers(projectId, users);
 			},
 			/* c8 ignore end */
 		},
@@ -130,11 +131,11 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 		permission: AccessPermission,
 	) {
 		const updatedProjectUser = await handleUpdateUserToPermission({
-			projectId,
 			data: {
-				userId,
 				permission,
+				userId,
 			},
+			projectId,
 		});
 		updateProjectUser(projectId, updatedProjectUser);
 		showInfo(t('roleUpdated'));

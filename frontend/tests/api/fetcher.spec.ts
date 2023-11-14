@@ -9,22 +9,22 @@ describe('fetcher tests', () => {
 	it('handles a success response correctly', async () => {
 		const mockResponse = { data: 'success' };
 		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(mockResponse),
 			ok: true,
 			status: 200,
-			json: () => Promise.resolve(mockResponse),
 		});
 
-		const result = await fetcher({ url: 'test', method: HttpMethod.Get });
+		const result = await fetcher({ method: HttpMethod.Get, url: 'test' });
 
 		expect(mockFetch).toHaveBeenCalledWith(
 			new URL('http://www.example.com/v1/test'),
 			{
-				method: HttpMethod.Get,
 				headers: {
-					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
+					'Content-Type': 'application/json',
 					'X-Request-Id': expect.any(String),
 				},
+				method: HttpMethod.Get,
 			},
 		);
 		expect(result).toEqual(mockResponse);
@@ -36,17 +36,17 @@ describe('fetcher tests', () => {
 			status: 204,
 		});
 
-		const result = await fetcher({ url: 'test', method: HttpMethod.Get });
+		const result = await fetcher({ method: HttpMethod.Get, url: 'test' });
 
 		expect(mockFetch).toHaveBeenCalledWith(
 			new URL('http://www.example.com/v1/test'),
 			{
-				method: HttpMethod.Get,
 				headers: {
-					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
+					'Content-Type': 'application/json',
 					'X-Request-Id': expect.any(String),
 				},
+				method: HttpMethod.Get,
 			},
 		);
 		expect(result).toEqual({});
@@ -55,7 +55,7 @@ describe('fetcher tests', () => {
 	it('handles an invalid HTTP method', async () => {
 		await expect(
 			// @ts-expect-error
-			fetcher({ url: 'test', method: 'INVALID' }),
+			fetcher({ method: 'INVALID', url: 'test' }),
 		).rejects.toThrow(ConfigurationError);
 	});
 
@@ -65,32 +65,32 @@ describe('fetcher tests', () => {
 			currentUser: null,
 		} as any);
 		await expect(
-			fetcher({ url: 'test', method: HttpMethod.Get }),
+			fetcher({ method: HttpMethod.Get, url: 'test' }),
 		).rejects.toThrow(TokenError);
 	});
 
 	it('handles a non-200 range status code', async () => {
 		const mockResponse = { message: 'error' };
 		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(mockResponse),
 			ok: false,
 			status: 400,
 			statusText: 'Bad Request',
-			json: () => Promise.resolve(mockResponse),
 		});
 
 		await expect(
-			fetcher({ url: 'test', method: HttpMethod.Get }),
+			fetcher({ method: HttpMethod.Get, url: 'test' }),
 		).rejects.toThrow(ApiError);
 
 		expect(mockFetch).toHaveBeenCalledWith(
 			new URL('http://www.example.com/v1/test'),
 			{
-				method: HttpMethod.Get,
 				headers: {
-					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
+					'Content-Type': 'application/json',
 					'X-Request-Id': expect.any(String),
 				},
+				method: HttpMethod.Get,
 			},
 		);
 	});
@@ -98,78 +98,78 @@ describe('fetcher tests', () => {
 	it('handles a non-200 range status code that does not include message', async () => {
 		const mockResponse = {};
 		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(mockResponse),
 			ok: false,
 			status: 500,
 			statusText: 'Internal Server Error',
-			json: () => Promise.resolve(mockResponse),
 		});
 
 		await expect(
-			fetcher({ url: 'test', method: HttpMethod.Get }),
+			fetcher({ method: HttpMethod.Get, url: 'test' }),
 		).rejects.toThrow(ApiError);
 
 		expect(mockFetch).toHaveBeenCalledWith(
 			new URL('http://www.example.com/v1/test'),
 			{
-				method: HttpMethod.Get,
 				headers: {
-					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
+					'Content-Type': 'application/json',
 					'X-Request-Id': expect.any(String),
 				},
+				method: HttpMethod.Get,
 			},
 		);
 	});
 
 	it('handles custom headers', async () => {
 		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve({}),
 			ok: true,
 			status: 200,
-			json: () => Promise.resolve({}),
 		});
 
 		await fetcher({
-			url: 'test',
-			method: HttpMethod.Get,
 			headers: { 'X-Test': 'test' },
+			method: HttpMethod.Get,
+			url: 'test',
 		});
 
 		expect(mockFetch).toHaveBeenCalledWith(
 			new URL('http://www.example.com/v1/test'),
 			{
-				method: HttpMethod.Get,
 				headers: {
-					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
+					'Content-Type': 'application/json',
 					'X-Request-Id': expect.any(String),
 					'X-Test': 'test',
 				},
+				method: HttpMethod.Get,
 			},
 		);
 	});
 
 	it('handles request with query params', async () => {
 		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve({}),
 			ok: true,
 			status: 200,
-			json: () => Promise.resolve({}),
 		});
 
 		await fetcher({
-			url: 'test',
 			method: HttpMethod.Get,
 			queryParams: { foo: 'bar' },
+			url: 'test',
 		});
 
 		expect(mockFetch).toHaveBeenCalledWith(
 			new URL('http://www.example.com/v1/test?foo=bar'),
 			{
-				method: HttpMethod.Get,
 				headers: {
-					'Content-Type': 'application/json',
 					'Authorization': 'Bearer test_token',
+					'Content-Type': 'application/json',
 					'X-Request-Id': expect.any(String),
 				},
+				method: HttpMethod.Get,
 			},
 		);
 	});

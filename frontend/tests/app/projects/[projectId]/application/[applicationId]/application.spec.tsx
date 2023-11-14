@@ -10,10 +10,7 @@ import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 import * as APIKeysAPI from '@/api/api-keys-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import ApplicationPage from '@/app/projects/[projectId]/applications/[applicationId]/page';
-import {
-	useSetProjectApplications,
-	useSetProjects,
-} from '@/stores/project-store';
+import { useSetProjectApplications, useSetProjects } from '@/stores/api-store';
 
 describe('ApplicationPage', () => {
 	const handleRetrievePromptConfigsSpy = vi.spyOn(
@@ -40,8 +37,8 @@ describe('ApplicationPage', () => {
 		render(
 			<ApplicationPage
 				params={{
-					projectId: projects[0].id,
 					applicationId: '1',
+					projectId: projects[0].id,
 				}}
 			/>,
 		);
@@ -69,8 +66,8 @@ describe('ApplicationPage', () => {
 		render(
 			<ApplicationPage
 				params={{
-					projectId: projects[0].id,
 					applicationId: applications[0].id,
+					projectId: projects[0].id,
 				}}
 			/>,
 		);

@@ -12,24 +12,24 @@ describe('gRPC utils tests', () => {
 		it('should create a new server instance and add the provided service and implementation', () => {
 			const serviceDefinition = {
 				test: {
-					path: '/test/Test',
 					originalName: 'Test',
-					requestStream: false,
-					responseStream: false,
-					responseDeserialize: (bytes: any) => bytes,
+					path: '/test/Test',
 					requestDeserialize: (bytes: any) => bytes,
-					responseSerialize: (value: any) =>
-						Buffer.from(new ArrayBuffer(value)),
 					requestSerialize: (value: any) =>
 						Buffer.from(new ArrayBuffer(value)),
+					requestStream: false,
+					responseDeserialize: (bytes: any) => bytes,
+					responseSerialize: (value: any) =>
+						Buffer.from(new ArrayBuffer(value)),
+					responseStream: false,
 				},
 			};
 
 			const implementation = { test: () => null };
 			const server = createServer({
-				service: serviceDefinition,
 				implementation,
 				port: 4000,
+				service: serviceDefinition,
 			});
 			expect(server).toBeInstanceOf(Server);
 			expect(bindAsyncSpy).toHaveBeenCalledWith(

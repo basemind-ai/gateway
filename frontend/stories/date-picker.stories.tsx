@@ -4,12 +4,12 @@ import {
 } from '@/components/dashboard/date-picker';
 
 export default {
-	title: 'Date Picker Component',
 	component: DatePicker,
 	parameters: {
 		layout: 'centered',
 	},
 	tags: ['autodocs'],
+	title: 'Date Picker Component',
 };
 
 const oneWeekAgo = new Date();
@@ -17,13 +17,16 @@ oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
 export const Default = {
 	args: {
-		showShortcuts: true,
-		useRange: false,
-		value: {
-			startDate: oneWeekAgo,
-			endDate: new Date(),
-		},
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		onValueChange: () => {},
+
+		showShortcuts: true,
+
+		useRange: false,
+
+		value: {
+			endDate: new Date(),
+			startDate: oneWeekAgo,
+		},
 	} satisfies DatePickerProps,
 };

@@ -6,7 +6,7 @@ import useSWR from 'swr';
 import { handleRetrievePromptConfigs } from '@/api';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { usePromptConfigs, useSetPromptConfigs } from '@/stores/project-store';
+import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { copyToClipboard } from '@/utils/helpers';
 import { populateLink } from '@/utils/navigation';
@@ -15,8 +15,8 @@ export function ApplicationPromptConfigs({
 	projectId,
 	applicationId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const router = useRouter();

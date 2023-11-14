@@ -10,16 +10,16 @@ export async function handleCreateProject({
 	data: ProjectCreateBody;
 }): Promise<Project> {
 	return await fetcher<Project>({
-		url: 'projects',
-		method: HttpMethod.Post,
 		data,
+		method: HttpMethod.Post,
+		url: 'projects',
 	});
 }
 
 export async function handleRetrieveProjects(): Promise<Project[]> {
 	return await fetcher<Project[]>({
-		url: 'projects',
 		method: HttpMethod.Get,
+		url: 'projects',
 	});
 }
 
@@ -27,13 +27,13 @@ export async function handleUpdateProject({
 	projectId,
 	data,
 }: {
-	projectId: string;
 	data: ProjectCreateBody;
+	projectId: string;
 }): Promise<Project> {
 	return await fetcher<Project>({
-		url: `projects/${projectId}/`,
-		method: HttpMethod.Patch,
 		data,
+		method: HttpMethod.Patch,
+		url: `projects/${projectId}/`,
 	});
 }
 
@@ -43,8 +43,8 @@ export async function handleDeleteProject({
 	projectId: string;
 }): Promise<void> {
 	await fetcher<undefined>({
-		url: `projects/${projectId}/`,
 		method: HttpMethod.Delete,
+		url: `projects/${projectId}/`,
 	});
 }
 
@@ -53,16 +53,16 @@ export async function handleProjectAnalytics({
 	fromDate,
 	toDate,
 }: {
-	projectId: string;
 	fromDate?: DateType;
+	projectId: string;
 	toDate?: DateType;
 }): Promise<AnalyticsDTO> {
 	return await fetcher<AnalyticsDTO>({
-		url: `projects/${projectId}/analytics`,
 		method: HttpMethod.Get,
 		queryParams: {
 			fromDate: fromDate ? new Date(fromDate).toISOString() : undefined,
 			toDate: toDate ? new Date(toDate).toISOString() : undefined,
 		},
+		url: `projects/${projectId}/analytics`,
 	});
 }

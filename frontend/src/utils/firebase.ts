@@ -12,12 +12,12 @@ const instanceRef: { app: FirebaseApp | null; auth: Auth | null } = {
 export function getFirebaseConfig(): FirebaseOptions {
 	const firebaseConfig = {
 		apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+		appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 		authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+		measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+		messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
 		projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
 		storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-		messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
-		appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-		measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 	} satisfies FirebaseOptions;
 
 	for (const [key, value] of Object.entries(firebaseConfig)) {
@@ -50,24 +50,24 @@ export async function getFirebaseAuth(): Promise<Auth> {
 	return instanceRef.auth;
 }
 export const firebaseUIConfig = {
-	signInFlow: 'popup',
 	popupMode: true,
-	siteName: 'BaseMind',
-	tosUrl: Navigation.TOS,
 	privacyPolicyUrl: Navigation.PrivacyPolicy,
+	signInFlow: 'popup',
 	signInOptions: [
 		GithubAuthProvider.PROVIDER_ID,
 		GoogleAuthProvider.PROVIDER_ID,
 		{
-			provider: 'microsoft.com',
-			providerName: 'Microsoft',
 			buttonColor: '#00a2ed',
-			iconUrl:
-				'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
 			customParameters: {
 				prompt: 'consent',
 				tenant: process.env.NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID,
 			},
+			iconUrl:
+				'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
+			provider: 'microsoft.com',
+			providerName: 'Microsoft',
 		},
 	],
+	siteName: 'BaseMind',
+	tosUrl: Navigation.TOS,
 };

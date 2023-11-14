@@ -6,7 +6,7 @@ const formats = {};
 
 export const reactIntl = {
 	defaultLocale: 'en',
+	formats,
 	locales,
 	messages,
-	formats,
 };

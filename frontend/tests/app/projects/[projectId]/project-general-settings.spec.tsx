@@ -5,7 +5,7 @@ import { render, renderHook, screen } from 'tests/test-utils';
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
 import { ApiError } from '@/errors';
-import { useSetProjects } from '@/stores/project-store';
+import { useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('ProjectGeneralSettings', () => {
@@ -61,11 +61,11 @@ describe('ProjectGeneralSettings', () => {
 		});
 		fireEvent.click(saveButton);
 		expect(handleUpdateProjectSpy).toHaveBeenCalledWith({
-			projectId,
 			data: {
-				name: project.name,
 				description: 'new description',
+				name: project.name,
 			},
+			projectId,
 		});
 	});
 

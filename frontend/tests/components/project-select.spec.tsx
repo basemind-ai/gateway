@@ -8,7 +8,7 @@ import {
 	useSelectedProject,
 	useSetProjects,
 	useSetSelectedProject,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 
 describe('ProjectSelect tests', () => {
 	const projects = ProjectFactory.batchSync(3);

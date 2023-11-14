@@ -7,10 +7,10 @@ import { handleCreateProject } from '@/api';
 import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useAddProject, useProjects } from '@/stores/project-store';
+import { useAddProject, useProjects } from '@/stores/api-store';
 import { handleChange } from '@/utils/helpers';
 
-function PageHeader({ title, subTitle }: { title: string; subTitle: string }) {
+function PageHeader({ title, subTitle }: { subTitle: string; title: string }) {
 	return (
 		<div className="pt-10 pb-6" data-testid="create-project-view-header">
 			<h1
@@ -64,12 +64,12 @@ function FormActions({
 	showCancel,
 	handleSubmit,
 }: {
+	HandleCancel: () => void;
+	allowSubmit: boolean;
+	handleSubmit: () => void;
 	isError: boolean;
 	isLoading: boolean;
-	allowSubmit: boolean;
 	showCancel: boolean;
-	HandleCancel: () => void;
-	handleSubmit: () => void;
 }) {
 	const t = useTranslations('createProject');
 
@@ -181,7 +181,7 @@ export default function CreateProjectPage() {
 		setIsError(false);
 		try {
 			const project = await handleCreateProject({
-				data: { name, description },
+				data: { description, name },
 			});
 			addProject(project);
 			router.replace(`${Navigation.Projects}/${project.id}`);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
@@ -11,15 +11,16 @@ import { ProjectAnalytics } from '@/components/projects/[projectId]/project-anal
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
 import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
+import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { useProject, useProjects } from '@/stores/project-store';
+import { useProject, useProjects } from '@/stores/api-store';
 
-enum TAB_NAMES {
+enum TAB {
 	OVERVIEW,
 	MEMBERS,
-	BILLING,
+	PROVIDER_KEYS,
 	SETTINGS,
 }
 
@@ -30,37 +31,80 @@ export default function ProjectOverview({
 }) {
 	useAuthenticatedUser();
 	useProjectBootstrap();
+
 	const t = useTranslations('projectOverview');
+
+	const [selectedTab, setSelectedTab] = useState(TAB.OVERVIEW);
+
 	const project = useProject(projectId);
 	const projects = useProjects();
 
-	const tabs: TabData<TAB_NAMES>[] = [
+	const tabs: TabData<TAB>[] = [
 		{
-			id: TAB_NAMES.OVERVIEW,
+			id: TAB.OVERVIEW,
 			text: t('overview'),
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 		},
 		{
-			id: TAB_NAMES.MEMBERS,
+			id: TAB.MEMBERS,
 			text: t('members'),
 			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 		{
-			id: TAB_NAMES.BILLING,
-			text: t('billing'),
+			id: TAB.PROVIDER_KEYS,
+			text: t('providerKeys'),
 			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 		{
-			id: TAB_NAMES.SETTINGS,
+			id: TAB.SETTINGS,
 			text: t('settings'),
 			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 	];
-	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
 
 	if (!project) {
 		return null;
 	}
+
+	const tabComponent = useMemo(() => {
+		switch (selectedTab) {
+			case TAB.OVERVIEW: {
+				return (
+					<div data-testid="project-overview-tab">
+						<ProjectAnalytics projectId={projectId} />
+						<ApplicationsList projectId={projectId} />
+					</div>
+				);
+			}
+			case TAB.MEMBERS: {
+				return (
+					<div data-testid="project-members-tab">
+						<InviteMember projectId={projectId} />
+						<div className="mt-10">
+							<ProjectMembers projectId={projectId} />
+						</div>
+					</div>
+				);
+			}
+			case TAB.PROVIDER_KEYS: {
+				return (
+					<div data-testid="project-provider-keys-tab">
+						<ProjectProviderKeys projectId={projectId} />
+					</div>
+				);
+			}
+			case TAB.SETTINGS: {
+				return (
+					<div data-testid="project-settings-tab">
+						<ProjectGeneralSettings projectId={projectId} />
+						<div className="mt-10">
+							<ProjectDeletion projectId={projectId} />
+						</div>
+					</div>
+				);
+			}
+		}
+	}, [selectedTab, projectId]);
 
 	return (
 		<div data-testid="project-page" className="my-8 mx-32">
@@ -69,37 +113,15 @@ export default function ProjectOverview({
 				headerText={`${t('project')} / ${project.name}`}
 				showSelect={projects.length > 1}
 			/>
-
 			<div className="mt-3.5 w-full mb-9">
-				<TabNavigation<TAB_NAMES>
+				<TabNavigation<TAB>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}
 					trailingLine={true}
 				/>
 			</div>
-			{selectedTab === TAB_NAMES.OVERVIEW && (
-				<>
-					<ProjectAnalytics projectId={projectId} />
-					<ApplicationsList projectId={projectId} />
-				</>
-			)}
-			{selectedTab === TAB_NAMES.MEMBERS && (
-				<>
-					<InviteMember projectId={projectId} />
-					<div className="mt-10">
-						<ProjectMembers projectId={projectId} />
-					</div>
-				</>
-			)}
-			{selectedTab === TAB_NAMES.SETTINGS && (
-				<>
-					<ProjectGeneralSettings projectId={projectId} />
-					<div className="mt-10">
-						<ProjectDeletion projectId={projectId} />
-					</div>
-				</>
-			)}
+			{tabComponent}
 		</div>
 	);
 }

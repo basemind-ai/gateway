@@ -1,7 +1,7 @@
 export interface BadgeProps {
 	fillColor: string;
-	textColor: string;
 	text: string;
+	textColor: string;
 }
 
 export default function Badge({ fillColor, textColor, text }: BadgeProps) {

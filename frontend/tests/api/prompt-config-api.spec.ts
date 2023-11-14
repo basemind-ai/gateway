@@ -27,22 +27,22 @@ describe('prompt configs API', () => {
 			const promptConfig = await PromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptConfig),
+				ok: true,
 			});
 
 			const body = {
-				name: promptConfig.name,
 				modelParameters: promptConfig.modelParameters,
-				modelVendor: promptConfig.modelVendor,
 				modelType: promptConfig.modelType,
+				modelVendor: promptConfig.modelVendor,
+				name: promptConfig.name,
 				promptMessages: promptConfig.providerPromptMessages,
 			};
 
 			const data = await handleCreatePromptConfig({
-				projectId: project.id,
 				applicationId: application.id,
 				data: body,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(promptConfig);
@@ -51,13 +51,13 @@ describe('prompt configs API', () => {
 					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/prompt-configs/`,
 				),
 				{
+					body: JSON.stringify(body),
 					headers: {
 						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Post,
-					body: JSON.stringify(body),
 				},
 			);
 		});
@@ -69,13 +69,13 @@ describe('prompt configs API', () => {
 			const promptConfigs = PromptConfigFactory.batchSync(2);
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptConfigs),
+				ok: true,
 			});
 
 			const data = await handleRetrievePromptConfigs({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(promptConfigs);
@@ -101,23 +101,23 @@ describe('prompt configs API', () => {
 			const promptConfig = await PromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptConfig),
+				ok: true,
 			});
 
 			const body = {
-				name: promptConfig.name,
 				modelParameters: promptConfig.modelParameters,
-				modelVendor: promptConfig.modelVendor,
 				modelType: promptConfig.modelType,
+				modelVendor: promptConfig.modelVendor,
+				name: promptConfig.name,
 				promptMessages: promptConfig.providerPromptMessages,
 			};
 
 			const data = await handleUpdatePromptConfig({
-				projectId: project.id,
 				applicationId: application.id,
-				promptConfigId: promptConfig.id,
 				data: body,
+				projectId: project.id,
+				promptConfigId: promptConfig.id,
 			});
 
 			expect(data).toEqual(promptConfig);
@@ -126,13 +126,13 @@ describe('prompt configs API', () => {
 					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/prompt-configs/${promptConfig.id}/`,
 				),
 				{
+					body: JSON.stringify(body),
 					headers: {
 						'Authorization': bearerToken,
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Patch,
-					body: JSON.stringify(body),
 				},
 			);
 		});
@@ -144,13 +144,13 @@ describe('prompt configs API', () => {
 			const promptConfig = await PromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(),
+				ok: true,
 			});
 
 			const data = await handleDeletePromptConfig({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 				promptConfigId: promptConfig.id,
 			});
 
@@ -177,13 +177,13 @@ describe('prompt configs API', () => {
 			const promptConfig = await PromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptConfig),
+				ok: true,
 			});
 
 			const data = await handleSetDefaultPromptConfig({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 				promptConfigId: promptConfig.id,
 			});
 
@@ -214,12 +214,12 @@ describe('prompt configs API', () => {
 				totalRequests: 1000,
 			} satisfies AnalyticsDTO;
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptConfigAnalytics),
+				ok: true,
 			});
 			const data = await handlePromptConfigAnalytics({
-				projectId: project.id,
 				applicationId: application.id,
+				projectId: project.id,
 				promptConfigId: promptConfig.id,
 			});
 
@@ -251,14 +251,14 @@ describe('prompt configs API', () => {
 			const toDate = '2023-10-02T15:34:09.136Z';
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(promptConfigAnalytics),
+				ok: true,
 			});
 			const data = await handlePromptConfigAnalytics({
-				projectId: project.id,
 				applicationId: application.id,
-				promptConfigId: promptConfig.id,
 				fromDate,
+				projectId: project.id,
+				promptConfigId: promptConfig.id,
 				toDate,
 			});
 

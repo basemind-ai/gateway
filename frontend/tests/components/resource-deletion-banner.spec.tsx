@@ -8,12 +8,12 @@ import {
 
 describe('ResourceDeletionBanner tests', () => {
 	const props: ResourceDeletionBannerProps = {
-		title: 'title',
 		description: 'description',
+		onCancel: vi.fn(),
+		onConfirm: vi.fn(),
 		placeholder: 'placeholder',
 		resourceName: 'important',
-		onConfirm: vi.fn(),
-		onCancel: vi.fn(),
+		title: 'title',
 	};
 
 	beforeEach(() => {

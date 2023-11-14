@@ -43,7 +43,7 @@ export async function coherePrompt(
 		const finishTime = Date.now();
 
 		logger.debug(
-			{ startTime, finishTime, text, generationId },
+			{ finishTime, generationId, startTime, text },
 			'Cohere request completed',
 		);
 		callback(null, { content: text } satisfies CoherePromptResponse);
@@ -93,7 +93,7 @@ export async function cohereStream(
 
 		const finishTime = Date.now();
 		logger.debug(
-			{ startTime, finishTime },
+			{ finishTime, startTime },
 			'Cohere streaming request completed',
 		);
 	} catch (error: unknown) {

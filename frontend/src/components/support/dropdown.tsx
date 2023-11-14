@@ -3,16 +3,16 @@ import { useTranslations } from 'next-intl';
 import { handleChange } from '@/utils/helpers';
 
 export interface DropdownOption {
-	value: string;
 	text: string;
+	value: string;
 }
 interface DropdownProps {
 	headline: string;
-	selected?: string;
-	setSelected: (value: any) => void;
-	options: DropdownOption[];
 	isLoading?: boolean;
 	optional?: boolean;
+	options: DropdownOption[];
+	selected?: string;
+	setSelected: (value: any) => void;
 }
 
 export function Dropdown({

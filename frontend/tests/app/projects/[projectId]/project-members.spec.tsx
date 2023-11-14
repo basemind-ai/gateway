@@ -112,11 +112,11 @@ describe('ProjectMembers', () => {
 		handleUpdateUserToPermissionSpy.mockResolvedValueOnce(memberUser);
 
 		expect(handleUpdateUserToPermissionSpy).toHaveBeenCalledWith({
-			projectId,
 			data: {
-				userId: memberUser.id,
 				permission: AccessPermission.ADMIN,
+				userId: memberUser.id,
 			},
+			projectId,
 		});
 	});
 

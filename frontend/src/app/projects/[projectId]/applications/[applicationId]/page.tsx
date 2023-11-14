@@ -13,11 +13,7 @@ import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/appl
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import {
-	useApplication,
-	useProject,
-	useProjects,
-} from '@/stores/project-store';
+import { useApplication, useProject, useProjects } from '@/stores/api-store';
 
 enum TAB_NAMES {
 	OVERVIEW,
@@ -28,7 +24,7 @@ enum TAB_NAMES {
 export default function Application({
 	params: { projectId, applicationId },
 }: {
-	params: { projectId: string; applicationId: string };
+	params: { applicationId: string; projectId: string };
 }) {
 	useAuthenticatedUser();
 	useProjectBootstrap(false);
@@ -40,19 +36,19 @@ export default function Application({
 
 	const tabs: TabData<TAB_NAMES>[] = [
 		{
+			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.OVERVIEW,
 			text: t('overview'),
-			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 		},
 		{
+			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.SETTINGS,
 			text: t('settings'),
-			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 		{
+			icon: <KeyFill className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.API_KEYS,
 			text: t('apiKeys'),
-			icon: <KeyFill className="w-3.5 h-3.5" />,
 		},
 	];
 	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);

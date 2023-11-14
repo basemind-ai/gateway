@@ -6,12 +6,12 @@ export async function handleRetrievePromptTestRecords<P = any, M = any>({
 	projectId,
 	applicationId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 }): Promise<PromptTestRecord<P, M>[]> {
 	return await fetcher<PromptTestRecord<P, M>[]>({
-		url: `projects/${projectId}/applications/${applicationId}/test-records/`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/applications/${applicationId}/test-records/`,
 	});
 }
 
@@ -20,13 +20,13 @@ export async function handleRetrievePromptTestRecordById<P = any, M = any>({
 	applicationId,
 	promptTestRecordId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 	promptTestRecordId: string;
 }): Promise<PromptTestRecord<P, M>> {
 	return await fetcher<PromptTestRecord<P, M>>({
-		url: `projects/${projectId}/applications/${applicationId}/test-records/${promptTestRecordId}/`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/applications/${applicationId}/test-records/${promptTestRecordId}/`,
 	});
 }
 
@@ -35,12 +35,12 @@ export async function handleDeletePromptTestRecord({
 	applicationId,
 	promptTestRecordId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 	promptTestRecordId: string;
 }): Promise<void> {
 	await fetcher<undefined>({
-		url: `projects/${projectId}/applications/${applicationId}/test-records/${promptTestRecordId}/`,
 		method: HttpMethod.Delete,
+		url: `projects/${projectId}/applications/${applicationId}/test-records/${promptTestRecordId}/`,
 	});
 }

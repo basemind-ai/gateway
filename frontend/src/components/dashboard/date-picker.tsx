@@ -3,11 +3,11 @@ import Datepicker, { DateValueType } from 'react-tailwindcss-datepicker';
 import { DateFormat } from '@/constants';
 
 export interface DatePickerProps {
+	displayFormat?: DateFormat;
+	onValueChange: (value: DateValueType) => void;
 	showShortcuts?: boolean;
 	useRange?: boolean;
-	displayFormat?: DateFormat;
 	value: DateValueType;
-	onValueChange: (value: DateValueType) => void;
 }
 
 export function DatePicker({

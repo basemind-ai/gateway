@@ -8,7 +8,7 @@ import {
 	useSetProjectApplications,
 	useSetProjects,
 	useSetSelectedProject,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 
 export function useProjectBootstrap(redirectToDashboard = true) {
 	const router = useRouter();

@@ -1,30 +1,30 @@
 import { faker } from '@faker-js/faker';
 
 export const mockFetch = vi.fn().mockResolvedValue({
+	json: () => Promise.resolve({}),
 	ok: true,
 	status: 200,
-	json: () => Promise.resolve({}),
 });
 
 const env = {
 	NEXT_PUBLIC_BACKEND_BASE_URL: 'http://www.example.com',
 	NEXT_PUBLIC_FIREBASE_API_KEY: faker.string.uuid(),
+	NEXT_PUBLIC_FIREBASE_APP_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'devlingo-demo.firebaseapp.com',
+	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: faker.string.uuid(),
+	NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 12_345_678_910,
+	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'devlingo-demo',
 	NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'devlingo-demo.appspot.com',
-	NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 12_345_678_910,
-	NEXT_PUBLIC_FIREBASE_APP_ID: faker.string.uuid(),
-	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: faker.string.uuid(),
-	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
 	NEXT_PUBLIC_SEGMENT_WRITE_KEY: faker.string.uuid(),
 };
 
 const initializeAppMock = vi.fn().mockReturnValue({});
 const getAuthMock = vi.fn().mockImplementation(() => ({
-	setPersistence: vi.fn(),
 	currentUser: {
 		getIdToken: vi.fn().mockResolvedValue('test_token'),
 	},
+	setPersistence: vi.fn(),
 }));
 
 vi.mock(
@@ -42,8 +42,8 @@ vi.mock(
 
 		return {
 			...original,
-			getAuth: getAuthMock,
 			browserLocalPersistence: vi.fn(),
+			getAuth: getAuthMock,
 		};
 	},
 );
@@ -74,29 +74,29 @@ export const useParamsMock = vi.fn();
 export const usePathnameMock = vi.fn(() => '');
 
 export const nextRouterMock = {
-	basePath: '',
-	pathname: '',
-	route: '',
-	query: {},
 	asPath: '/',
 	back: vi.fn(),
+	basePath: '',
 	beforePopState: vi.fn(),
-	prefetch: vi.fn(),
-	push: routerPushMock,
-	reload: vi.fn(),
-	forward: vi.fn(),
-	replace: routerReplaceMock,
-	events: {
-		on: vi.fn(),
-		off: vi.fn(),
-		emit: vi.fn(),
-	},
-	isFallback: false,
-	isLocaleDomain: false,
-	isReady: true,
 	defaultLocale: 'en',
 	domainLocales: [],
+	events: {
+		emit: vi.fn(),
+		off: vi.fn(),
+		on: vi.fn(),
+	},
+	forward: vi.fn(),
+	isFallback: false,
+	isLocaleDomain: false,
 	isPreview: false,
+	isReady: true,
+	pathname: '',
+	prefetch: vi.fn(),
+	push: routerPushMock,
+	query: {},
+	reload: vi.fn(),
+	replace: routerReplaceMock,
+	route: '',
 };
 
 vi.mock(
@@ -105,9 +105,9 @@ vi.mock(
 		const original = await importOriginal();
 		return {
 			...original,
-			useRouter: () => nextRouterMock,
-			usePathname: usePathnameMock,
 			useParams: useParamsMock,
+			usePathname: usePathnameMock,
+			useRouter: () => nextRouterMock,
 		};
 	},
 );

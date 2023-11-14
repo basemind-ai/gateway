@@ -5,9 +5,9 @@ import { Feature } from '@/components/landing-page/feature';
 describe('Feature', () => {
 	it('should render the component with required props', () => {
 		const props = {
-			title: 'Title',
-			subtitle: 'Subtitle',
 			description: 'Description',
+			subtitle: 'Subtitle',
+			title: 'Title',
 		};
 
 		render(
@@ -23,10 +23,10 @@ describe('Feature', () => {
 
 	it('should render the component with all props', () => {
 		const props = {
-			title: 'Title',
-			subtitle: 'Subtitle',
 			description: 'Description',
 			reverse: true,
+			subtitle: 'Subtitle',
+			title: 'Title',
 		};
 
 		render(
@@ -42,10 +42,10 @@ describe('Feature', () => {
 
 	it('should render the component with reverse prop as true', () => {
 		const props = {
-			title: 'Title',
-			subtitle: 'Subtitle',
 			description: 'Description',
 			reverse: true,
+			subtitle: 'Subtitle',
+			title: 'Title',
 		};
 
 		render(

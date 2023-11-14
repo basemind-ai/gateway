@@ -2,12 +2,12 @@ import { ReactElement } from 'react';
 import { ArrowUpRight } from 'react-bootstrap-icons';
 
 export interface DataCardProps {
-	imageSrc: ReactElement;
-	metric: string;
-	totalValue: string | number;
 	currentValue?: string;
-	percentage?: string;
+	imageSrc: ReactElement;
 	loading?: boolean;
+	metric: string;
+	percentage?: string;
+	totalValue: string | number;
 }
 
 export function DataCard({

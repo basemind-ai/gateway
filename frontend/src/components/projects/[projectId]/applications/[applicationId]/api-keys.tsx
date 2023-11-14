@@ -8,7 +8,7 @@ import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
 import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { ApiError } from '@/errors';
-import { useAPIKeys, useSetAPIKeys } from '@/stores/project-store';
+import { useApiKeys, useSetAPIKeys } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
 import { APIKey } from '@/types';
@@ -17,8 +17,8 @@ export function ApiKeys({
 	projectId,
 	applicationId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
@@ -26,7 +26,7 @@ export function ApiKeys({
 	const { mutate } = useSWRConfig();
 	const [loading, setLoading] = useState(false);
 
-	const apiKeys = useAPIKeys(applicationId);
+	const apiKeys = useApiKeys(applicationId);
 	const setAPIKeys = useSetAPIKeys();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);
@@ -56,8 +56,8 @@ export function ApiKeys({
 
 	const { isLoading } = useSWR(
 		{
-			projectId,
 			applicationId,
+			projectId,
 		},
 		handleRetrieveAPIKeys,
 		{
@@ -81,8 +81,8 @@ export function ApiKeys({
 		try {
 			setLoading(true);
 
-			await handleDeleteAPIKey({ projectId, applicationId, apiKeyId });
-			await mutate({ projectId, applicationId });
+			await handleDeleteAPIKey({ apiKeyId, applicationId, projectId });
+			await mutate({ applicationId, projectId });
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {
@@ -184,7 +184,7 @@ export function ApiKeys({
 							onCancel={closeCreationPopup}
 							onSubmit={() => {
 								closeCreationPopup();
-								void mutate({ projectId, applicationId });
+								void mutate({ applicationId, projectId });
 							}}
 						/>
 					</div>

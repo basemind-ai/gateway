@@ -14,8 +14,8 @@ describe('user settings page tests', () => {
 
 	beforeEach(() => {
 		getAuthMock.mockImplementation(() => ({
-			setPersistence: vi.fn(),
 			currentUser: UserFactory.build(),
+			setPersistence: vi.fn(),
 		}));
 	});
 
@@ -25,8 +25,8 @@ describe('user settings page tests', () => {
 
 	it('should route to sign in page when user is not present', async () => {
 		getAuthMock.mockImplementationOnce(() => ({
-			setPersistence: vi.fn(),
 			currentUser: null,
+			setPersistence: vi.fn(),
 		}));
 		render(<UserSettings />);
 		await waitFor(() => {

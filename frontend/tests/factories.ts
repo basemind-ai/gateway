@@ -26,78 +26,78 @@ export const UserFactory = new TypeFactory<UserInfo>(() => ({
 }));
 
 export const ProjectFactory = new TypeFactory<Project>(() => ({
+	applications: undefined,
+	createdAt: faker.date.past().toISOString(),
+	description: faker.lorem.paragraph(),
 	id: faker.string.uuid(),
 	name: faker.lorem.words(),
-	description: faker.lorem.paragraph(),
 	permission: AccessPermission.ADMIN,
-	createdAt: faker.date.past().toISOString(),
 	updatedAt: faker.date.past().toISOString(),
-	applications: undefined,
 }));
 
 export const ApplicationFactory = new TypeFactory<Application>(() => ({
+	createdAt: faker.date.past().toISOString(),
+	description: faker.lorem.paragraph(),
 	id: faker.string.uuid(),
 	name: faker.lorem.words(),
-	description: faker.lorem.paragraph(),
-	createdAt: faker.date.past().toISOString(),
 	updatedAt: faker.date.past().toISOString(),
 }));
 export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
 	() => ({
-		templateVariables: [],
 		content: faker.lorem.sentence(),
 		name: undefined,
 		role: TypeFactory.sample(['user', 'system', 'assistant']),
+		templateVariables: [],
 	}),
 );
 
 export const PromptConfigFactory = new TypeFactory<PromptConfig>(() => ({
-	id: faker.string.uuid(),
-	name: faker.lorem.words(),
-	modelParameters: {},
-	modelVendor: ModelVendor.OpenAI,
-	modelType: TypeFactory.sample(Object.values(ModelVendor)),
-	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),
-	expectedTemplateVariables: [],
-	isDefault: false,
 	createdAt: faker.date.past().toISOString(),
+	expectedTemplateVariables: [],
+	id: faker.string.uuid(),
+	isDefault: false,
+	modelParameters: {},
+	modelType: TypeFactory.sample(Object.values(ModelVendor)),
+	modelVendor: ModelVendor.OpenAI,
+	name: faker.lorem.words(),
+	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),
 	updatedAt: faker.date.past().toISOString(),
 }));
 
 export const APIKeyFactory = new TypeFactory<APIKey>(() => ({
-	id: faker.string.uuid(),
-	hash: faker.string.uuid(),
-	name: faker.lorem.words(),
 	createdAt: faker.date.past().toISOString(),
+	hash: faker.string.uuid(),
+	id: faker.string.uuid(),
 	isDefault: faker.datatype.boolean(),
+	name: faker.lorem.words(),
 }));
 
 export const ProjectUserAccountFactory = new TypeFactory<ProjectUserAccount>(
 	() => ({
-		id: faker.string.uuid(),
+		createdAt: faker.date.past().toISOString(),
 		displayName: faker.person.fullName(),
 		email: faker.internet.email(),
 		firebaseId: faker.string.uuid(),
+		id: faker.string.uuid(),
+		permission: AccessPermission.ADMIN,
 		phoneNumber: faker.phone.number(),
 		photoUrl: faker.internet.url(),
-		createdAt: faker.date.past().toISOString(),
-		permission: AccessPermission.ADMIN,
 	}),
 );
 
 export const ProviderKeyFactory = new TypeFactory<ProviderKey>(() => ({
+	createdAt: faker.date.past().toISOString(),
 	id: faker.string.uuid(),
 	modelVendor: ModelVendor.OpenAI,
-	createdAt: faker.date.past().toISOString(),
 }));
 
 export const PromptTestRecordFactory = new TypeFactory<
 	PromptTestRecord<any, any>
 >(() => ({
-	id: faker.string.uuid(),
 	createdAt: faker.date.past().toISOString(),
 	errorLog: undefined,
 	finishTime: faker.date.past().toISOString(),
+	id: faker.string.uuid(),
 	modelParameters: {},
 	modelType: ModelType.Gpt432K,
 	modelVendor: ModelVendor.OpenAI,

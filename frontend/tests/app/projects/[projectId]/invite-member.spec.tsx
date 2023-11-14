@@ -92,13 +92,13 @@ describe('InviteMember', () => {
 		fireEvent.click(sendInviteButton);
 
 		expect(handleAddUserToProjectSpy).toHaveBeenCalledWith({
-			projectId,
 			data: [
 				{
 					email: validEmail,
 					permission: AccessPermission.MEMBER,
 				},
 			],
+			projectId,
 		});
 		await waitFor(() => {
 			expect(emailInput.value).toBe('');

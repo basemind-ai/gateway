@@ -13,13 +13,13 @@ export async function handleCreateApplication({
 	projectId,
 	data,
 }: {
-	projectId: string;
 	data: ApplicationCreateBody;
+	projectId: string;
 }): Promise<Application> {
 	return await fetcher<Application>({
-		url: `projects/${projectId}/applications/`,
-		method: HttpMethod.Post,
 		data,
+		method: HttpMethod.Post,
+		url: `projects/${projectId}/applications/`,
 	});
 }
 
@@ -27,8 +27,8 @@ export async function handleRetrieveApplications(
 	projectId: string,
 ): Promise<Application[]> {
 	return await fetcher<Application[]>({
-		url: `projects/${projectId}/applications`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/applications`,
 	});
 }
 
@@ -40,8 +40,8 @@ export async function handleRetrieveApplication({
 	projectId: string;
 }): Promise<Application> {
 	return await fetcher<Application>({
-		url: `projects/${projectId}/applications/${applicationId}/`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/applications/${applicationId}/`,
 	});
 }
 
@@ -51,13 +51,13 @@ export async function handleUpdateApplication({
 	data,
 }: {
 	applicationId: string;
-	projectId: string;
 	data: ApplicationUpdateBody;
+	projectId: string;
 }): Promise<Application> {
 	return await fetcher<Application>({
-		url: `projects/${projectId}/applications/${applicationId}/`,
-		method: HttpMethod.Patch,
 		data,
+		method: HttpMethod.Patch,
+		url: `projects/${projectId}/applications/${applicationId}/`,
 	});
 }
 
@@ -69,8 +69,8 @@ export async function handleDeleteApplication({
 	projectId: string;
 }): Promise<void> {
 	await fetcher<undefined>({
-		url: `projects/${projectId}/applications/${applicationId}/`,
 		method: HttpMethod.Delete,
+		url: `projects/${projectId}/applications/${applicationId}/`,
 	});
 }
 
@@ -81,16 +81,16 @@ export async function handleApplicationAnalytics({
 	toDate,
 }: {
 	applicationId: string;
-	projectId: string;
 	fromDate?: DateType;
+	projectId: string;
 	toDate?: DateType;
 }): Promise<AnalyticsDTO> {
 	return await fetcher<AnalyticsDTO>({
-		url: `projects/${projectId}/applications/${applicationId}/analytics`,
 		method: HttpMethod.Get,
 		queryParams: {
 			fromDate: fromDate ? new Date(fromDate).toISOString() : undefined,
 			toDate: toDate ? new Date(toDate).toISOString() : undefined,
 		},
+		url: `projects/${projectId}/applications/${applicationId}/analytics`,
 	});
 }

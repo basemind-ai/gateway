@@ -14,7 +14,7 @@ import {
 	useSetProjectApplications,
 	useSetProjects,
 	useSetPromptConfigs,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('PromptConfiguration', () => {
@@ -45,8 +45,8 @@ describe('PromptConfiguration', () => {
 		render(
 			<PromptConfiguration
 				params={{
-					projectId,
 					applicationId,
+					projectId,
 					promptConfigId: promptConfig.id,
 				}}
 			/>,
@@ -86,8 +86,8 @@ describe('PromptConfiguration', () => {
 		render(
 			<PromptConfiguration
 				params={{
-					projectId,
 					applicationId,
+					projectId,
 					promptConfigId: promptConfig.id,
 				}}
 			/>,
@@ -104,8 +104,8 @@ describe('PromptConfiguration', () => {
 		render(
 			<PromptConfiguration
 				params={{
-					projectId,
 					applicationId,
+					projectId,
 					promptConfigId: promptConfig.id,
 				}}
 			/>,
@@ -135,8 +135,8 @@ describe('PromptConfiguration', () => {
 		render(
 			<PromptConfiguration
 				params={{
-					projectId,
 					applicationId,
+					projectId,
 					promptConfigId: promptConfig.id,
 				}}
 			/>,
@@ -158,8 +158,8 @@ describe('PromptConfiguration', () => {
 		render(
 			<PromptConfiguration
 				params={{
-					projectId,
 					applicationId,
+					projectId,
 					promptConfigId: promptConfig.id,
 				}}
 			/>,

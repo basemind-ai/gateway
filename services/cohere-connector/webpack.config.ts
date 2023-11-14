@@ -11,31 +11,14 @@ import nodeExternals from 'webpack-node-externals';
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 const config: Configuration = {
-	entry: path.resolve(__dirname, 'src', 'index.ts'),
 	devtool: isDevelopment ? 'eval-source-map' : 'inline-source-map',
-	externalsPresets: { node: true },
+	entry: path.resolve(__dirname, 'src', 'index.ts'),
 	externals: [nodeExternals()],
-	plugins: [
-		new ForkTsCheckerWebpackPlugin({
-			typescript: { configFile: 'tsconfig.build.json' },
-			issue: {
-				exclude: [
-					(issue: Issue) => {
-						return !!issue.file?.includes(
-							'/node_modules/.pnpm/openai',
-						);
-					},
-				],
-			},
-		}),
-		new NodemonPlugin(),
-		new PinoWebpackPlugin({
-			transports: isDevelopment ? ['pino-pretty'] : [],
-		}),
-	],
+	externalsPresets: { node: true },
 	module: {
 		rules: [
 			{
+				exclude: /node_modules/,
 				test: /\.tsx?$/,
 				use: [
 					{
@@ -45,30 +28,47 @@ const config: Configuration = {
 						},
 					},
 				],
-				exclude: /node_modules/,
 			},
 		],
 	},
+	optimization: {
+		nodeEnv: process.env.NODE_ENV,
+		splitChunks: false,
+	},
+	output: {
+		filename: '[name].js',
+		path: path.resolve(__dirname, 'dist'),
+	},
+	plugins: [
+		new ForkTsCheckerWebpackPlugin({
+			issue: {
+				exclude: [
+					(issue: Issue) => {
+						return !!issue.file?.includes(
+							'/node_modules/.pnpm/openai',
+						);
+					},
+				],
+			},
+			typescript: { configFile: 'tsconfig.build.json' },
+		}),
+		new NodemonPlugin(),
+		new PinoWebpackPlugin({
+			transports: isDevelopment ? ['pino-pretty'] : [],
+		}),
+	],
 	resolve: {
 		alias: {
 			gen: path.resolve(__dirname, '../../gen/ts'),
 			shared: path.resolve(__dirname, '../../shared/ts/src'),
 		},
+		extensions: ['.ts', '.js', '.json'],
 		modules: [
 			path.resolve(__dirname, '../../node_modules'),
 			path.resolve(__dirname, '../../gen/ts'),
 			path.resolve(__dirname, '../../shared/ts/src'),
 		],
-		extensions: ['.ts', '.js', '.json'],
 		plugins: [new TsconfigPathsPlugin()],
-	},
-	optimization: {
-		splitChunks: false,
-		nodeEnv: process.env.NODE_ENV,
-	},
-	output: {
-		filename: '[name].js',
-		path: path.resolve(__dirname, 'dist'),
 	},
 };
 

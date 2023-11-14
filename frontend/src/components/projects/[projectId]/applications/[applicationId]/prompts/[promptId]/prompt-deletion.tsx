@@ -6,7 +6,7 @@ import { handleDeletePromptConfig } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { useDeletePromptConfig, usePromptConfig } from '@/stores/project-store';
+import { useDeletePromptConfig, usePromptConfig } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
 import { populateLink } from '@/utils/navigation';
@@ -16,8 +16,8 @@ export function PromptDeletion({
 	applicationId,
 	promptConfigId,
 }: {
-	projectId: string;
 	applicationId: string;
+	projectId: string;
 	promptConfigId: string;
 }) {
 	const router = useRouter();
@@ -51,8 +51,8 @@ export function PromptDeletion({
 		try {
 			setLoading(true);
 			await handleDeletePromptConfig({
-				projectId,
 				applicationId,
+				projectId,
 				promptConfigId,
 			});
 			deletePromptConfig(applicationId, promptConfigId);

@@ -2,8 +2,8 @@ export function Section({
 	name,
 	children,
 }: {
-	name: string;
 	children: React.ReactNode;
+	name: string;
 }) {
 	return (
 		<section

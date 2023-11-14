@@ -6,6 +6,18 @@ import { Preview } from '@storybook/react';
 import { reactIntl } from './react-intl';
 
 const preview: Preview = {
+	decorators: [
+		// Adds theme switching support.
+		// NOTE: requires setting "darkMode" to "class" in your tailwind config
+		withThemeByClassName({
+			defaultTheme: 'light',
+			themes: {
+				dark: 'dark',
+				light: 'light',
+			},
+		}),
+	],
+
 	globals: {
 		locale: reactIntl.defaultLocale,
 		locales: {
@@ -14,7 +26,6 @@ const preview: Preview = {
 	},
 
 	parameters: {
-		reactIntl,
 		actions: { argTypesRegex: '^on[A-Z].*' },
 		controls: {
 			matchers: {
@@ -22,19 +33,8 @@ const preview: Preview = {
 				date: /Date$/,
 			},
 		},
+		reactIntl,
 	},
-
-	decorators: [
-		// Adds theme switching support.
-		// NOTE: requires setting "darkMode" to "class" in your tailwind config
-		withThemeByClassName({
-			themes: {
-				light: 'light',
-				dark: 'dark',
-			},
-			defaultTheme: 'light',
-		}),
-	],
 };
 
 export default preview;

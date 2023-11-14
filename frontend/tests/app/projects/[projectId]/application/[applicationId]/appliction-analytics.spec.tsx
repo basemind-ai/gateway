@@ -23,8 +23,8 @@ describe('ApplicationAnalytics', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('application'));
 		const analytics = {
-			totalRequests: 434,
 			tokensCost: 3,
+			totalRequests: 434,
 		} satisfies AnalyticsDTO;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(analytics);
 
@@ -52,8 +52,8 @@ describe('ApplicationAnalytics', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('application'));
 		const initialAnalytics = {
-			totalRequests: 434,
 			tokensCost: 3,
+			totalRequests: 434,
 		} satisfies AnalyticsDTO;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
@@ -71,8 +71,8 @@ describe('ApplicationAnalytics', () => {
 		);
 
 		const updatedAnalytics = {
-			totalRequests: 474,
 			tokensCost: 4,
+			totalRequests: 474,
 		} satisfies AnalyticsDTO;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(updatedAnalytics);
 

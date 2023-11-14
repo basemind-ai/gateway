@@ -1,15 +1,15 @@
 import { ReactElement } from 'react';
 
 export interface TabData<T = string> {
+	icon?: ReactElement;
 	id: T;
 	text: string;
-	icon?: ReactElement;
 }
 
 export interface TabNavigationProps<T = string> {
-	tabs: TabData<T>[];
-	selectedTab: T;
 	onTabChange: (tab: T) => void;
+	selectedTab: T;
+	tabs: TabData<T>[];
 	trailingLine?: boolean;
 }
 

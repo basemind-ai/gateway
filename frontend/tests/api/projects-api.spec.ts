@@ -16,13 +16,13 @@ describe('projects API tests', () => {
 		it('returns a project', async () => {
 			const project = await ProjectFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(project),
+				ok: true,
 			});
 			const data = await handleCreateProject({
 				data: {
-					name: project.name,
 					description: project.description,
+					name: project.name,
 				},
 			});
 
@@ -30,16 +30,16 @@ describe('projects API tests', () => {
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL('http://www.example.com/v1/projects'),
 				{
+					body: JSON.stringify({
+						description: project.description,
+						name: project.name,
+					}),
 					headers: {
 						'Authorization': 'Bearer test_token',
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Post,
-					body: JSON.stringify({
-						name: project.name,
-						description: project.description,
-					}),
 				},
 			);
 		});
@@ -48,8 +48,8 @@ describe('projects API tests', () => {
 		it('returns a list of projects', async () => {
 			const projects = await ProjectFactory.batch(2);
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(projects),
+				ok: true,
 			});
 			const data = await handleRetrieveProjects();
 
@@ -71,31 +71,31 @@ describe('projects API tests', () => {
 		it('returns a project', async () => {
 			const project = await ProjectFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(project),
+				ok: true,
 			});
 			const data = await handleUpdateProject({
-				projectId: project.id,
 				data: {
-					name: project.name,
 					description: project.description,
+					name: project.name,
 				},
+				projectId: project.id,
 			});
 
 			expect(data).toEqual(project);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(`http://www.example.com/v1/projects/${project.id}/`),
 				{
+					body: JSON.stringify({
+						description: project.description,
+						name: project.name,
+					}),
 					headers: {
 						'Authorization': 'Bearer test_token',
 						'Content-Type': 'application/json',
 						'X-Request-Id': expect.any(String),
 					},
 					method: HttpMethod.Patch,
-					body: JSON.stringify({
-						name: project.name,
-						description: project.description,
-					}),
 				},
 			);
 		});
@@ -104,8 +104,8 @@ describe('projects API tests', () => {
 		it('returns undefined', async () => {
 			const project = await ProjectFactory.build();
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(),
+				ok: true,
 			});
 			// eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
 			const data = await handleDeleteProject({
@@ -135,8 +135,8 @@ describe('projects API tests', () => {
 			} satisfies AnalyticsDTO;
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(projectAnalytics),
+				ok: true,
 			});
 			const data = await handleProjectAnalytics({
 				projectId: project.id,
@@ -168,12 +168,12 @@ describe('projects API tests', () => {
 			const toDate = '2023-10-02T15:34:09.136Z';
 
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(projectAnalytics),
+				ok: true,
 			});
 			const data = await handleProjectAnalytics({
-				projectId: project.id,
 				fromDate,
+				projectId: project.id,
 				toDate,
 			});
 

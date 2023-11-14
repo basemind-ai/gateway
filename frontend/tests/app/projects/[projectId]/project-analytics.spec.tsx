@@ -22,8 +22,8 @@ describe('ProjectAnalytics', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('projectOverview'));
 		const analytics = {
-			totalRequests: 4374,
 			tokensCost: 35,
+			totalRequests: 4374,
 		} satisfies AnalyticsDTO;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(analytics);
 
@@ -45,8 +45,8 @@ describe('ProjectAnalytics', () => {
 			result: { current: t },
 		} = renderHook(() => useTranslations('projectOverview'));
 		const initialAnalytics = {
-			totalRequests: 434,
 			tokensCost: 3,
+			totalRequests: 434,
 		} satisfies AnalyticsDTO;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
@@ -60,8 +60,8 @@ describe('ProjectAnalytics', () => {
 		);
 
 		const updatedAnalytics = {
-			totalRequests: 474,
 			tokensCost: 5.2,
+			totalRequests: 474,
 		} satisfies AnalyticsDTO;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(updatedAnalytics);
 

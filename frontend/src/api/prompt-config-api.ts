@@ -13,13 +13,13 @@ export async function handleCreatePromptConfig({
 	data,
 }: {
 	applicationId: string;
-	projectId: string;
 	data: PromptConfigCreateBody;
+	projectId: string;
 }): Promise<PromptConfig> {
 	return await fetcher<PromptConfig>({
-		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/`,
-		method: HttpMethod.Post,
 		data,
+		method: HttpMethod.Post,
+		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/`,
 	});
 }
 
@@ -31,8 +31,8 @@ export async function handleRetrievePromptConfigs({
 	projectId: string;
 }): Promise<PromptConfig[]> {
 	return await fetcher<PromptConfig[]>({
-		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/`,
 		method: HttpMethod.Get,
+		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/`,
 	});
 }
 
@@ -43,14 +43,14 @@ export async function handleUpdatePromptConfig({
 	data,
 }: {
 	applicationId: string;
+	data: PromptConfigUpdateBody;
 	projectId: string;
 	promptConfigId: string;
-	data: PromptConfigUpdateBody;
 }): Promise<PromptConfig> {
 	return await fetcher<PromptConfig>({
-		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/`,
-		method: HttpMethod.Patch,
 		data,
+		method: HttpMethod.Patch,
+		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/`,
 	});
 }
 
@@ -64,8 +64,8 @@ export async function handleDeletePromptConfig({
 	promptConfigId: string;
 }): Promise<PromptConfig> {
 	return await fetcher<PromptConfig>({
-		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/`,
 		method: HttpMethod.Delete,
+		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/`,
 	});
 }
 
@@ -79,8 +79,8 @@ export async function handleSetDefaultPromptConfig({
 	promptConfigId: string;
 }): Promise<PromptConfig> {
 	return await fetcher<PromptConfig>({
-		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/set-default/`,
 		method: HttpMethod.Patch,
+		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/set-default/`,
 	});
 }
 
@@ -91,18 +91,18 @@ export async function handlePromptConfigAnalytics({
 	fromDate,
 	toDate,
 }: {
-	promptConfigId: string;
 	applicationId: string;
-	projectId: string;
 	fromDate?: string;
+	projectId: string;
+	promptConfigId: string;
 	toDate?: string;
 }): Promise<AnalyticsDTO> {
 	return await fetcher<AnalyticsDTO>({
-		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/analytics`,
 		method: HttpMethod.Get,
 		queryParams: {
 			fromDate,
 			toDate,
 		},
+		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/analytics`,
 	});
 }

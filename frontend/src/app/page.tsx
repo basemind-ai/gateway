@@ -22,8 +22,8 @@ export default function LandingPage() {
 	/* c8 ignore start */
 	const scrollToTop = () => {
 		containerRef.current?.scrollTo({
-			top: 0,
 			behavior: 'smooth',
+			top: 0,
 		});
 	};
 	/* c8 ignore stop */

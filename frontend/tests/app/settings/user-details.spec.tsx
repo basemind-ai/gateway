@@ -8,12 +8,12 @@ describe('user details card tests', () => {
 	const { result } = renderHook(() => useTranslations('userSettings'));
 	const t = result.current;
 	const mockUser = {
-		phoneNumber: '',
-		providerId: '',
-		uid: '',
 		displayName: 'Skywalker',
 		email: 'Skywalker@gmail.com',
+		phoneNumber: '',
 		photoURL: 'https://picsum.photos/200',
+		providerId: '',
+		uid: '',
 	};
 	it('should render', () => {
 		render(<UserDetails user={mockUser} />);

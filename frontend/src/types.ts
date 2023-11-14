@@ -1,13 +1,13 @@
 import { SupportTopic } from '@/constants/forms';
 
 export enum ModelVendor {
-	OpenAI = 'OPEN_AI',
 	Cohere = 'COHERE',
+	OpenAI = 'OPEN_AI',
 }
 
 export enum ModelType {
-	Gpt35Turbo = 'gpt-3.5-turbo',
 	Gpt3516K = 'gpt-3.5-turbo-16k',
+	Gpt35Turbo = 'gpt-3.5-turbo',
 	Gpt4 = 'gpt-4',
 	Gpt432K = 'gpt-4-32k',
 }
@@ -20,19 +20,19 @@ export enum AccessPermission {
 // Analytics
 
 export interface AnalyticsDTO {
-	totalRequests: number;
 	tokensCost: number;
+	totalRequests: number;
 }
 
 // Project
 
 export interface Project {
+	createdAt: string;
+	description?: string;
 	id: string;
 	name: string;
-	description?: string;
-	createdAt: string;
-	updatedAt: string;
 	permission: AccessPermission;
+	updatedAt: string;
 }
 
 export type ProjectCreateBody = Pick<Project, 'name' | 'description'>;
@@ -41,10 +41,10 @@ export type ProjectUpdateBody = Partial<ProjectCreateBody>;
 // Application
 
 export interface Application {
+	createdAt: string;
+	description?: string;
 	id: string;
 	name: string;
-	description?: string;
-	createdAt: string;
 	updatedAt: string;
 }
 
@@ -54,15 +54,15 @@ export type ApplicationUpdateBody = Partial<ApplicationCreateBody>;
 // PromptConfig
 
 export interface PromptConfig<P = any, M = any> {
+	createdAt: string;
+	expectedTemplateVariables: string[];
 	id: string;
-	name: string;
+	isDefault: boolean;
 	modelParameters: P;
 	modelType: ModelType;
 	modelVendor: ModelVendor;
+	name: string;
 	providerPromptMessages: M[];
-	expectedTemplateVariables: string[];
-	isDefault: boolean;
-	createdAt: string;
 	updatedAt: string;
 }
 
@@ -76,10 +76,10 @@ export type PromptConfigUpdateBody = Partial<PromptConfigCreateBody>;
 // APIKey
 
 export interface APIKey {
-	id: string;
-	hash?: string;
-	name: string;
 	createdAt: string;
+	hash?: string;
+	id: string;
+	name: string;
 }
 
 export type APIKeyCreateBody = Pick<APIKey, 'name'>;
@@ -104,34 +104,34 @@ export type OpenAIPromptMessage = {
 // Provider Model Parameters
 
 export interface OpenAIModelParameters {
-	temperature?: number;
-	maxTokens?: number;
-	topP?: number;
 	frequencyPenalty?: number;
+	maxTokens?: number;
 	presencePenalty?: number;
+	temperature?: number;
+	topP?: number;
 }
 
 // UserAccount
 
 export interface AddUserToProjectBody {
-	permission: AccessPermission;
 	email: string;
+	permission: AccessPermission;
 }
 
 export interface UserProjectPermissionUpdateBody {
-	userId: string;
 	permission: AccessPermission;
+	userId: string;
 }
 
 export interface ProjectUserAccount {
-	id: string;
+	createdAt: string;
 	displayName: string;
 	email: string;
 	firebaseId: string;
+	id: string;
+	permission: AccessPermission;
 	phoneNumber: string;
 	photoUrl: string;
-	createdAt: string;
-	permission: AccessPermission;
 }
 
 // OTP
@@ -143,13 +143,13 @@ export interface OTP {
 // Prompt Testing
 
 export interface PromptConfigTest<P, M> {
-	name: string;
 	modelParameters: P;
 	modelType: ModelType;
 	modelVendor: ModelVendor;
+	name: string;
+	promptConfigId?: string;
 	promptMessages: M[];
 	templateVariables: Record<string, string>;
-	promptConfigId?: string;
 }
 
 export interface PromptConfigTestResultChunk {
@@ -161,32 +161,32 @@ export interface PromptConfigTestResultChunk {
 }
 
 export interface SupportTicketCreateBody {
-	topic: SupportTopic;
-	subject?: string;
 	body: string;
 	projectId?: string;
+	subject?: string;
+	topic: SupportTopic;
 }
 
 // Provider Key
 
 export interface ProviderKeyCreateBody {
-	modelVendor: ModelVendor;
 	key: string;
+	modelVendor: ModelVendor;
 }
 
 export interface ProviderKey {
+	createdAt: string;
 	id: string;
 	modelVendor: ModelVendor;
-	createdAt: string;
 }
 
 // Prompt Test Record
 
 export interface PromptTestRecord<P, M> {
-	id: string;
 	createdAt: string;
 	errorLog?: string;
 	finishTime: string;
+	id: string;
 	modelParameters: P;
 	modelType: ModelType;
 	modelVendor: ModelVendor;

@@ -13,20 +13,20 @@ describe('Support Page Tests', () => {
 		result: { current: t },
 	} = renderHook(() => useTranslations('support'));
 	const mockUser: UserInfo = {
-		phoneNumber: '',
-		providerId: '',
-		uid: '',
 		displayName: 'Skywalker',
 		email: 'Skywalker@gmail.com',
+		phoneNumber: '',
 		photoURL: 'https://picsum.photos/200',
+		providerId: '',
+		uid: '',
 	};
 	it('route to sign in page when user is not authenticate', async () => {
 		// render setUser store to null
 		const { result: setResult } = renderHook(() => useSetUser());
 		setResult.current(null);
 		getAuthMock.mockImplementationOnce(() => ({
-			setPersistence: vi.fn(),
 			currentUser: null,
+			setPersistence: vi.fn(),
 		}));
 		render(<Support />);
 		await waitFor(() => {
@@ -35,8 +35,8 @@ describe('Support Page Tests', () => {
 	});
 	it('renders support page', () => {
 		getAuthMock.mockImplementationOnce(() => ({
-			setPersistence: vi.fn(),
 			currentUser: mockUser,
+			setPersistence: vi.fn(),
 		}));
 		render(<Support />);
 		const page = screen.getByTestId('support-page');
@@ -44,8 +44,8 @@ describe('Support Page Tests', () => {
 	});
 	it('renders headline support page', () => {
 		getAuthMock.mockImplementationOnce(() => ({
-			setPersistence: vi.fn(),
 			currentUser: mockUser,
+			setPersistence: vi.fn(),
 		}));
 		render(<Support />);
 		const page = screen.getByText(t('headline'));

@@ -6,8 +6,8 @@ import { HttpMethod } from '@/constants';
 describe('users API tests', () => {
 	it('deletes a user', async () => {
 		mockFetch.mockResolvedValueOnce({
-			ok: true,
 			json: () => Promise.resolve(),
+			ok: true,
 		});
 		await handleDeleteUserAccount();
 

@@ -31,9 +31,9 @@ export function createServer<
 	implementation,
 	port,
 }: {
-	service: T;
 	implementation: I;
 	port: number;
+	service: T;
 }): Server {
 	const server = new Server();
 	server.addService(service, implementation);
@@ -94,10 +94,10 @@ export class GrpcError extends Error implements ServerErrorResponse {
 		metadata,
 		details,
 	}: {
-		message: string;
 		code?: Status;
-		metadata?: Metadata;
 		details?: string;
+		message: string;
+		metadata?: Metadata;
 	}) {
 		super(message);
 		this.code = code;

@@ -2,13 +2,13 @@
 import Link from 'next/link';
 
 export interface LinkMenuProps {
-	text?: string;
-	icon?: React.ReactElement;
 	badge?: React.ReactNode;
+	children?: React.ReactNode;
+	href?: string;
+	icon?: React.ReactElement;
 	isCurrent?: boolean;
 	isDisabled?: boolean;
-	href?: string;
-	children?: React.ReactNode;
+	text?: string;
 }
 
 export default function LinkMenu({

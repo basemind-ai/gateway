@@ -42,9 +42,6 @@ export function FirebaseLogin() {
 				...firebaseUIConfig,
 
 				callbacks: {
-					uiShown: () => {
-						setIsUIRendered(true);
-					},
 					signInSuccessWithAuthResult: () => {
 						// prevent the UI from redirecting the user using a preconfigured redirect-url
 						setIsSignedIn(true);
@@ -52,6 +49,9 @@ export function FirebaseLogin() {
 						identify(auth.currentUser!.uid, auth.currentUser!);
 						track('user sign in');
 						return false;
+					},
+					uiShown: () => {
+						setIsUIRendered(true);
 					},
 				},
 			});

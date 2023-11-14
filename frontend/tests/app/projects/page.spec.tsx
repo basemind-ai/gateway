@@ -8,17 +8,17 @@ import {
 	useApplications,
 	useProjects,
 	useSetProjects,
-} from '@/stores/project-store';
+} from '@/stores/api-store';
 
 describe('projects page tests', () => {
 	it('should route to sign in page when user is not present', async () => {
 		getAuthMock.mockImplementationOnce(() => ({
-			setPersistence: vi.fn(),
 			currentUser: null,
+			setPersistence: vi.fn(),
 		}));
 		mockFetch.mockResolvedValueOnce({
-			ok: true,
 			json: () => Promise.resolve([]),
+			ok: true,
 		});
 		render(<Projects />);
 		await waitFor(() => {
@@ -29,12 +29,12 @@ describe('projects page tests', () => {
 	it('navigate to project id overview when user has one project', async () => {
 		const projects = await ProjectFactory.batch(1);
 		mockFetch.mockResolvedValueOnce({
-			ok: true,
 			json: () => Promise.resolve(projects),
+			ok: true,
 		});
 		mockFetch.mockResolvedValueOnce({
-			ok: true,
 			json: () => Promise.resolve([]),
+			ok: true,
 		});
 		const { result: setProjects } = renderHook(() => useSetProjects());
 		setProjects.current([]);
@@ -49,8 +49,8 @@ describe('projects page tests', () => {
 
 	it('navigate to create project when user has no projects', async () => {
 		mockFetch.mockResolvedValueOnce({
-			ok: true,
 			json: () => Promise.resolve([]),
+			ok: true,
 		});
 		const { result: setProjects } = renderHook(() => useSetProjects());
 		setProjects.current([]);
@@ -65,8 +65,8 @@ describe('projects page tests', () => {
 
 	it('renders loading state before projects are retrieved', () => {
 		mockFetch.mockResolvedValueOnce({
-			ok: true,
 			json: () => Promise.resolve([]),
+			ok: true,
 		});
 		const { result: setProjects } = renderHook(() => useSetProjects());
 		setProjects.current([]);
@@ -87,12 +87,12 @@ describe('projects page tests', () => {
 		);
 		act(() => {
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(projects),
+				ok: true,
 			});
 			mockFetch.mockResolvedValueOnce({
-				ok: true,
 				json: () => Promise.resolve(applications),
+				ok: true,
 			});
 		});
 
