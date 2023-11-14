@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { Loader } from '@/components/sign-in/loader';
 import { Navigation } from '@/constants';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useSetUser } from '@/stores/api-store';
 import { firebaseUIConfig, getFirebaseAuth } from '@/utils/firebase';
 
@@ -17,6 +18,7 @@ export function FirebaseLogin() {
 
 	const router = useRouter();
 	const setUser = useSetUser();
+	const { identify, track } = useAnalytics();
 
 	/* firebaseui cannot be imported in SSR mode, so we have to import it only when the browser loads. */
 	useEffect(() => {
@@ -25,6 +27,7 @@ export function FirebaseLogin() {
 			if (auth.currentUser) {
 				setUser(auth.currentUser);
 				router.replace(Navigation.Projects);
+				identify(auth.currentUser.uid, auth.currentUser);
 				return null;
 			}
 
@@ -46,6 +49,8 @@ export function FirebaseLogin() {
 						// prevent the UI from redirecting the user using a preconfigured redirect-url
 						setIsSignedIn(true);
 						setUser(auth.currentUser);
+						identify(auth.currentUser!.uid, auth.currentUser!);
+						track('user sign in');
 						return false;
 					},
 				},

@@ -1,5 +1,7 @@
 import { waitFor } from '@testing-library/react';
+import * as process from 'process';
 import { renderHook } from 'tests/test-utils';
+import { beforeEach } from 'vitest';
 
 import { useAnalytics } from '@/hooks/use-analytics';
 
@@ -30,6 +32,23 @@ vi.mock(
 );
 
 describe('useAnalytics tests', () => {
+	const originalWriteKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
+
+	beforeEach(() => {
+		process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = 'test';
+	});
+
+	afterAll(() => {
+		process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = originalWriteKey;
+	});
+
+	it("should throw an error if the NEXT_PUBLIC_SEGMENT_WRITE_KEY isn't set", () => {
+		delete process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
+		expect(() => {
+			renderHook(useAnalytics);
+		}).toThrow();
+	});
+
 	it('should return an object with the expected AnalyticsHandlers interface', () => {
 		const { result } = renderHook(() => useAnalytics());
 
@@ -66,7 +85,11 @@ describe('useAnalytics tests', () => {
 		result.current.track('test', { test: 'test' });
 
 		expect(mockTrack).toHaveBeenCalledTimes(1);
-		expect(mockTrack).toHaveBeenCalledWith('test', { test: 'test' });
+		expect(mockTrack).toHaveBeenCalledWith('test', {
+			path: '',
+			test: 'test',
+			userId: undefined,
+		});
 	});
 
 	it('should call the identify function with the expected arguments', async () => {
@@ -105,6 +128,10 @@ describe('useAnalytics tests', () => {
 		result.current.page('test', { test: 'test' });
 
 		expect(mockPage).toHaveBeenCalledTimes(1);
-		expect(mockPage).toHaveBeenCalledWith('test', { test: 'test' });
+		expect(mockPage).toHaveBeenCalledWith('test', {
+			path: '',
+			test: 'test',
+			userId: undefined,
+		});
 	});
 });
