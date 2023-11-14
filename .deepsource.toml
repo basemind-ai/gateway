@@ -6,6 +6,7 @@ exclude_patterns = [
     "build/**",
     "dist/**",
     "e2e/**",
+    "frontend/public/**",
     "gen/**",
     "node_modules/**",
     "shared/go/db/models/**",

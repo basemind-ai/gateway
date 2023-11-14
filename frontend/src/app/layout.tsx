@@ -1,5 +1,6 @@
 import '@/styles/globals.scss';
 
+import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 
@@ -12,6 +13,11 @@ const supportedLocales = ['en'];
 export function generateStaticParams() {
 	return supportedLocales.map((loc) => ({ locale: loc }));
 }
+
+export const metadata: Metadata = {
+	title: 'BaseMind.AI',
+	description: 'The platform for easy AI development',
+};
 
 export default async function RootLayout({
 	children,

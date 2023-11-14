@@ -16,6 +16,7 @@ const env = {
 	NEXT_PUBLIC_FIREBASE_APP_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
+	NEXT_PUBLIC_SEGMENT_WRITE_KEY: faker.string.uuid(),
 };
 
 const initializeAppMock = vi.fn().mockReturnValue({});
