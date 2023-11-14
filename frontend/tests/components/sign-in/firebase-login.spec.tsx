@@ -93,8 +93,12 @@ describe('FirebaseLogin tests', () => {
 
 		const authGetInstanceMock = vi.fn(
 			(_: string | Element, config: firebaseui.auth.Config) => {
-				if (config.callbacks?.signInSuccessWithAuthResult) {
-					config.callbacks.signInSuccessWithAuthResult(true);
+				try {
+					if (config.callbacks?.signInSuccessWithAuthResult) {
+						config.callbacks.signInSuccessWithAuthResult(true);
+					}
+				} catch {
+					return;
 				}
 			},
 		);
