@@ -12,7 +12,7 @@ import { describe, it } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import PickConfigPage from '@/app/projects/[projectId]/testing/page';
+import PickConfigPage from '@/app/[locale]/projects/[projectId]/testing/page';
 import { Navigation } from '@/constants';
 
 describe('pick config page tests', () => {

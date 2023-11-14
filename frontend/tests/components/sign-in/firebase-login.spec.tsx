@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react';
-import locales from 'public/locales/en.json';
+import locales from 'public/messages/en.json';
 import { render, routerReplaceMock, screen } from 'tests/test-utils';
 import { Mock } from 'vitest';
 

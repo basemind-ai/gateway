@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { getAuthMock, routerReplaceMock } from 'tests/mocks';
 import { render, renderHook, screen } from 'tests/test-utils';
 
-import Support from '@/app/support/page';
+import Support from '@/app/[locale]/support/page';
 import { Navigation } from '@/constants';
 import { useSetUser } from '@/stores/api-store';
 

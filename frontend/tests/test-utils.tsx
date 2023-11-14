@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import { RouterContext } from 'next/dist/shared/lib/router-context.shared-runtime';
 import { NextIntlClientProvider } from 'next-intl';
-import locales from 'public/locales/en.json';
+import locales from 'public/messages/en.json';
 import { SWRConfig } from 'swr';
 import { nextRouterMock } from 'tests/mocks';
 

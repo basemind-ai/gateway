@@ -1,7 +1,7 @@
 import { routerReplaceMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 
-import LandingPage from '@/app/page';
+import LandingPage from '@/app/[locale]/page';
 
 describe('Landing Page', () => {
 	it('should render all sections', () => {

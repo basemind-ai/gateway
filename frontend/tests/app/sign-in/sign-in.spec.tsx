@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import SignIn from '@/app/sign-in/page';
+import SignIn from '@/app/[locale]/sign-in/page';
 
 describe('Sign-in page tests', () => {
 	it('renders LoginContainer', () => {

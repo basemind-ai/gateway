@@ -1,4 +1,4 @@
-import en from '../public/locales/en.json';
+import en from 'public/messages/en.json';
 
 const locales = ['en'];
 const messages = { en };

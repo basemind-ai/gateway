@@ -29,7 +29,7 @@ COPY frontend/public frontend/public
 COPY --from=build --chown=app:nodejs /app/frontend/dist frontend/dist
 
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
-COPY frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/i18n.js frontend/tailwind.config.js ./frontend/
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/tailwind.config.js ./frontend/
 RUN pnpm install -r --prod
 
 WORKDIR /app/frontend

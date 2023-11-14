@@ -55,7 +55,8 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cfg := config.Get(r.Context())
-	redirectURL := fmt.Sprintf("%s/sign-in", cfg.FrontendBaseURL)
+	// TODO: when we support localisation, we should pass locale as a query param as well.
+	redirectURL := fmt.Sprintf("%s/en/sign-in", cfg.FrontendBaseURL)
 
 	if exc.MustResult(
 		db.GetQueries().CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{

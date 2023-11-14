@@ -1,6 +1,6 @@
 import { fireEvent } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
-import locales from 'public/locales/en.json';
+import locales from 'public/messages/en.json';
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 import { expect, Mock } from 'vitest';

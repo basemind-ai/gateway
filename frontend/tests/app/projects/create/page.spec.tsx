@@ -8,7 +8,7 @@ import {
 } from 'tests/test-utils';
 
 import * as projectsAPI from '@/api/projects-api';
-import CreateProjectPage from '@/app/projects/create/page';
+import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { Navigation } from '@/constants';
 import { useSetProjects } from '@/stores/api-store';
 

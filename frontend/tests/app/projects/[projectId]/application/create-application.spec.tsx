@@ -133,7 +133,7 @@ describe('CreateApplication', () => {
 		});
 		await waitFor(() => {
 			expect(nextRouterMock.push).toHaveBeenCalledWith(
-				`/projects/${projectId}/applications/${application.id}`,
+				`/en/projects/${projectId}/applications/${application.id}`,
 			);
 		});
 		expect(onClose).toHaveBeenCalledOnce();
@@ -221,7 +221,7 @@ describe('CreateApplication', () => {
 		fireEvent.click(closebutton);
 
 		expect(nextRouterMock.push).toHaveBeenCalledWith(
-			`/projects/${projectId}/applications/${application.id}`,
+			`/en/projects/${projectId}/applications/${application.id}`,
 		);
 		expect(onClose).toHaveBeenCalledOnce();
 	});

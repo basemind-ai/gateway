@@ -2,7 +2,7 @@ import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { getAuthMock, mockFetch, routerReplaceMock } from 'tests/mocks';
 import { act, render, renderHook, screen, waitFor } from 'tests/test-utils';
 
-import Projects from '@/app/projects/page';
+import Projects from '@/app/[locale]/projects/page';
 import { Navigation } from '@/constants';
 import {
 	useApplications,

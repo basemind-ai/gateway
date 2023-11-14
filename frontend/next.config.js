@@ -1,7 +1,7 @@
-const nextTranslate = require('next-translate-plugin');
+const withNextIntl = require('next-intl/plugin')();
 
 /** @type {import('next').NextConfig} */
-const nextConfig = nextTranslate({
+const nextConfig = withNextIntl({
 	experimental: {
 		externalDir: true,
 		serverComponentsExternalPackages: ['react-bootstrap-icons'],

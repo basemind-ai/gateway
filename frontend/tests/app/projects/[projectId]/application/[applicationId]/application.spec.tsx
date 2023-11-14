@@ -9,7 +9,7 @@ import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import ApplicationPage from '@/app/projects/[projectId]/applications/[applicationId]/page';
+import ApplicationPage from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/page';
 import { useSetProjectApplications, useSetProjects } from '@/stores/api-store';
 
 describe('ApplicationPage', () => {
