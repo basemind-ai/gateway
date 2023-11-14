@@ -22,9 +22,9 @@ export function ProviderKeyCreateModal({
 	projectId,
 	closeModal,
 }: {
-	vendors: string[];
-	projectId: string;
 	closeModal: () => void;
+	projectId: string;
+	vendors: string[];
 }) {
 	const t = useTranslations('providerKeys');
 
@@ -39,11 +39,11 @@ export function ProviderKeyCreateModal({
 
 		try {
 			await handleCreateProviderKey({
-				projectId,
 				data: {
-					modelVendor: selectedVendor as ModelVendor,
 					key: keyValue.trim(),
+					modelVendor: selectedVendor as ModelVendor,
 				},
+				projectId,
 			});
 		} catch (e: unknown) {
 			showError((e as ApiError).message);
@@ -128,12 +128,13 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		},
 		handleRetrieveProviderKeys,
 		{
-			onSuccess(data) {
-				setProviderKeys(data);
-			},
 			/* c8 ignore start */
 			onError(apiError: ApiError) {
 				showError(apiError.message);
+			},
+
+			onSuccess(data) {
+				setProviderKeys(data);
 			},
 			/* c8 ignore end */
 		},

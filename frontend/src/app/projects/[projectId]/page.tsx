@@ -41,24 +41,24 @@ export default function ProjectOverview({
 
 	const tabs: TabData<TAB>[] = [
 		{
+			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 			id: TAB.OVERVIEW,
 			text: t('overview'),
-			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 		},
 		{
+			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB.MEMBERS,
 			text: t('members'),
-			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 		{
+			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB.PROVIDER_KEYS,
 			text: t('providerKeys'),
-			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 		{
+			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB.SETTINGS,
 			text: t('settings'),
-			icon: <Gear className="w-3.5 h-3.5" />,
 		},
 	];
 
