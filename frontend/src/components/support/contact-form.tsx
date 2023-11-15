@@ -4,7 +4,7 @@ import useSWR from 'swr';
 
 import { handleCreateSupportTicket, handleRetrieveProjects } from '@/api';
 import DashboardCard from '@/components/dashboard/dashboard-card';
-import { Dropdown } from '@/components/support/dropdown';
+import { Dropdown } from '@/components/dropdown';
 import { SupportTopic } from '@/constants/forms';
 import { ApiError } from '@/errors';
 import { useProjects, useSetProjects } from '@/stores/api-store';

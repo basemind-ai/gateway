@@ -53,6 +53,7 @@ module.exports = {
 					...require('daisyui/src/theming/themes')['dracula'],
 					primary: '#bd93f9',
 					secondary: '#976FD2',
+					accent: '#FE7AC6',
 				},
 			},
 		],

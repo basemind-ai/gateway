@@ -107,7 +107,7 @@ describe('PromptGeneralInfo', () => {
 		expect(clonedPromptConfigInStore).toBe(clonedPromptConfig);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${application.id}/prompts/${clonedPromptConfig.id}`,
+			`/en/projects/${projectId}/applications/${application.id}/${clonedPromptConfig.id}/${clonedPromptConfig.name}`,
 		);
 	});
 

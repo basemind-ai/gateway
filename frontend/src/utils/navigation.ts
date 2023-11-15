@@ -19,6 +19,7 @@ export function populateLink(
 	projectId?: string,
 	applicationId?: string,
 	configId?: string,
+	name?: string,
 ) {
 	let url = JSON.stringify(enumUrl);
 	if (projectId) {
@@ -29,6 +30,9 @@ export function populateLink(
 	}
 	if (configId) {
 		url = populateConfigId(url, configId);
+	}
+	if (name) {
+		url = url.replaceAll(':name', name);
 	}
 	return url;
 }
