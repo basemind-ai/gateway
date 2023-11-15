@@ -4,6 +4,11 @@ export enum ModelVendor {
 	Cohere = 'COHERE',
 	OpenAI = 'OPEN_AI',
 }
+export enum unavailableModelVendors {
+	A21Labs = 'A21_LABS',
+	Anthropic = 'ANTHROPIC',
+	Google = 'GOOGLE',
+}
 
 export enum ModelType {
 	Gpt3516K = 'gpt-3.5-turbo-16k',
@@ -87,19 +92,18 @@ export type APIKeyCreateBody = Pick<APIKey, 'name'>;
 // Provider Message Types
 
 export type OpenAIPromptMessage = {
-	templateVariables: string[];
-} & (
-	| {
-			content: string;
-			name?: string;
-			role: 'system' | 'user' | 'assistant';
-	  }
-	| {
-			functionArguments: string[];
-			name: string;
-			role: 'function';
-	  }
-);
+	templateVariables?: string[];
+} & {
+	content: string;
+	name?: string;
+	role: 'system' | 'user' | 'assistant';
+};
+// todo: Good luck Naaman with adding this back in as it breaks typing
+// | {
+// 		functionArguments: string[];
+// 		name: string;
+// 		role: 'function';
+//   };
 
 // Provider Model Parameters
 
@@ -110,7 +114,6 @@ export interface OpenAIModelParameters {
 	temperature?: number;
 	topP?: number;
 }
-
 // UserAccount
 
 export interface AddUserToProjectBody {
@@ -200,3 +203,30 @@ export interface PromptTestRecord<P, M> {
 	streamResponseLatency: number;
 	userInput: Record<string, string>;
 }
+
+export enum TestSection {
+	ModelConfiguration = 'modelConfiguration',
+	PromptTemplate = 'promptTemplate',
+	Results = 'results',
+	TestInputs = 'testInputs',
+}
+
+export enum PromptMessageRole {
+	Assistant = 'assistant',
+	System = 'system',
+	User = 'user',
+}
+interface ModelConfig {
+	icon: string;
+	name: string;
+	parameters: {
+		[P in keyof OpenAIModelParameters]: {
+			max: number;
+			min: number;
+			step: number;
+		};
+	};
+}
+
+// Define the Record type for models
+export type ModelsRecord = Record<ModelVendor, Record<ModelType, ModelConfig>>;

@@ -8,7 +8,7 @@ import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import PromptConfiguration from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/prompts/[promptConfigId]/page';
+import PromptConfiguration from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/[configId]/page';
 import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,

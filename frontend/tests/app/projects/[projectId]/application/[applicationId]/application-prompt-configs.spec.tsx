@@ -105,7 +105,7 @@ describe('ApplicationPromptConfigs', () => {
 		fireEvent.click(editButton);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${applicationId}/prompts/${promptConfigs[0].id}`,
+			`/en/projects/${projectId}/applications/${applicationId}/${promptConfigs[0].id}/${promptConfigs[0].name}`,
 		);
 	});
 });

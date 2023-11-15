@@ -64,13 +64,14 @@ export function PromptGeneralInfo({
 
 		try {
 			setCloning(true);
+			const cloneName = getCloneName(name);
 			const newPromptConfig = await handleCreatePromptConfig({
 				applicationId,
 				data: {
 					modelParameters,
 					modelType,
 					modelVendor,
-					name: getCloneName(name),
+					name: cloneName,
 					promptMessages: providerPromptMessages,
 				},
 				projectId,
@@ -79,10 +80,11 @@ export function PromptGeneralInfo({
 			showInfo(t('configCloned'));
 			router.push(
 				populateLink(
-					Navigation.Prompts,
+					Navigation.ConfigEdit,
 					projectId,
 					applicationId,
 					newPromptConfig.id,
+					newPromptConfig.name,
 				),
 			);
 		} catch (e) {

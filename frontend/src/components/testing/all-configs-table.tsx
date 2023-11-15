@@ -1,49 +1,29 @@
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Search } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
-import { handleRetrieveApplications, handleRetrievePromptConfigs } from '@/api';
+import { handleRetrievePromptConfigs } from '@/api';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import {
-	useApplications,
-	usePromptConfigs,
-	useSetProjectApplications,
-	useSetPromptConfigs,
-} from '@/stores/api-store';
+import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { Application, PromptConfig } from '@/types';
 import { populateLink } from '@/utils/navigation';
 
-export function AllConfigsTable({ projectId }: { projectId: string }) {
-	const router = useRouter();
-	const t = useTranslations('testing');
-
-	const applications = useApplications(projectId);
-	const setProjectApplications = useSetProjectApplications();
+export function AllConfigsTable({
+	projectId,
+	applications,
+	handleNoConfigs,
+}: {
+	applications: Application[] | undefined;
+	handleNoConfigs: () => void;
+	projectId: string;
+}) {
+	const t = useTranslations('promptTesting');
 	const promptConfigs = usePromptConfigs();
-	const setPromptConfigs = useSetPromptConfigs();
-
+	const setPromptConfig = useSetPromptConfigs();
 	const showError = useShowError();
-
-	const { isValidating: isApplicationLoading, error: isAppsError } = useSWR<
-		Application[],
-		ApiError
-	>(projectId, handleRetrieveApplications, {
-		onError({ message }: ApiError) {
-			showError(message);
-		},
-		onSuccess(data) {
-			if (data.length === 0) {
-				router.push(
-					populateLink(Navigation.TestingNewConfig, projectId),
-				);
-			}
-			setProjectApplications(projectId, data);
-		},
-	});
 
 	const { isValidating: isConfigLoading, error: isConfigError } = useSWR<
 		PromptConfig[][],
@@ -61,26 +41,24 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 				),
 			),
 		{
-			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
-
 			onSuccess(data) {
+				data = data.filter(Boolean);
 				if (data.every((innerArray) => innerArray.length === 0)) {
-					router.push(
-						populateLink(Navigation.TestingNewConfig, projectId),
-					);
+					handleNoConfigs();
 				}
 				data.forEach((promptConfig, index) => {
-					setPromptConfigs(applications![index].id, promptConfig);
+					if (applications) {
+						setPromptConfig(applications[index].id, promptConfig);
+					}
 				});
 			},
-			/* c8 ignore end */
 		},
 	);
 
-	if (isApplicationLoading || isConfigLoading) {
+	if (!applications || isConfigLoading) {
 		return (
 			<div
 				className="w-full flex mb-8"
@@ -91,13 +69,10 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 		);
 	}
 
-	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-	if (isAppsError || isConfigError) {
+	if (isConfigError) {
 		return (
 			<div className="w-full flex  mb-8">
-				<span className="text-red-500 mx-auto">
-					{t('errorLoading')}
-				</span>
+				<span className="text-error mx-auto">{t('errorLoading')}</span>
 			</div>
 		);
 	}
@@ -114,6 +89,7 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 									projectId,
 									appId,
 									config.id,
+									config.name,
 								)}
 							>
 								{config.name}
@@ -126,6 +102,7 @@ export function AllConfigsTable({ projectId }: { projectId: string }) {
 									projectId,
 									appId,
 									config.id,
+									config.name,
 								)}
 								className="text-secondary"
 								data-testid={`${config.id}test-config-button`}

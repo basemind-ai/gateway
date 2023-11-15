@@ -16,7 +16,6 @@ import { handleChange } from '@/utils/helpers';
 
 const modelVendorsTranslationKeyMap: Record<ModelVendor, string> = {
 	[ModelVendor.OpenAI]: 'openai',
-	[ModelVendor.Cohere]: 'cohere',
 };
 
 export function ProviderKeyCreateModal({

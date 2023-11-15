@@ -45,13 +45,14 @@ export function ApplicationPromptConfigs({
 		},
 	);
 
-	function editPrompt(promptId: string) {
+	function editPrompt(promptId: string, name: string) {
 		router.push(
 			populateLink(
-				Navigation.Prompts,
+				Navigation.ConfigEdit,
 				projectId,
 				applicationId,
 				promptId,
+				name,
 			),
 		);
 	}
@@ -104,7 +105,7 @@ export function ApplicationPromptConfigs({
 									<button
 										data-testid="application-edit-prompt-button"
 										onClick={() => {
-											editPrompt(id);
+											editPrompt(id, name);
 										}}
 									>
 										<PencilFill className="w-3.5 h-3.5 text-secondary" />
