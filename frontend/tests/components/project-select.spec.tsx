@@ -80,7 +80,7 @@ describe('ProjectSelect tests', () => {
 		expect(currentProject).toBe(projects[1]);
 
 		expect(routerReplaceMock).toHaveBeenCalledWith(
-			`/projects/${projects[1].id}`,
+			`/en/projects/${projects[1].id}`,
 		);
 	});
 });
