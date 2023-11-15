@@ -12,7 +12,7 @@ export async function handleCreateProviderKey({
 	return await fetcher<ProviderKey>({
 		data,
 		method: HttpMethod.Post,
-		url: `projects/${projectId}/provider-keys'`,
+		url: `projects/${projectId}/provider-keys/`,
 	});
 }
 
@@ -23,7 +23,7 @@ export async function handleRetrieveProviderKeys({
 }): Promise<ProviderKey[]> {
 	return await fetcher<ProviderKey[]>({
 		method: HttpMethod.Get,
-		url: `projects/${projectId}/provider-keys`,
+		url: `projects/${projectId}/provider-keys/`,
 	});
 }
 
@@ -36,6 +36,6 @@ export async function handleDeleteProviderKey({
 }): Promise<void> {
 	await fetcher<undefined>({
 		method: HttpMethod.Delete,
-		url: `projects/${projectId}/provider-keys/${providerKeyId}`,
+		url: `projects/${projectId}/provider-keys/${providerKeyId}/`,
 	});
 }

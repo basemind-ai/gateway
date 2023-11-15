@@ -50,9 +50,7 @@ module.exports = {
 		themes: [
 			{
 				dracula: {
-					...require('daisyui/src/theming/themes')[
-						'[data-theme=dracula]'
-					],
+					...require('daisyui/src/theming/themes')['dracula'],
 					primary: '#bd93f9',
 					secondary: '#976FD2',
 				},

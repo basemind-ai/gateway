@@ -49,7 +49,7 @@ services:
             SERVER_HOST: localhost
             SERVER_PORT: 4000
             URL_SIGNING_SECRET: jeronimo
-            CRYPTO_PASS_KEY: abc123jeronimo
+            CRYPTO_PASS_KEY: KJgicfWjOGNzr0Bwo9z7W1jcOLFi6Ael
         command:
             [
                 'gow',
@@ -85,7 +85,7 @@ services:
             SERVER_HOST: localhost
             SERVER_PORT: 4100
             URL_SIGNING_SECRET: jeronimo
-            CRYPTO_PASS_KEY: abc123jeronimo
+            CRYPTO_PASS_KEY: KJgicfWjOGNzr0Bwo9z7W1jcOLFi6Ael
         command:
             [
                 'gow',

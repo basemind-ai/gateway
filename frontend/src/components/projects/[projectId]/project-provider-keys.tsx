@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
-import { Plus } from 'react-bootstrap-icons';
+import { Plus, Trash } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import {
@@ -48,6 +48,9 @@ export function ProviderKeyCreateModal({
 		} catch (e: unknown) {
 			showError((e as ApiError).message);
 		} finally {
+			setKeyValue('');
+			// eslint-disable-next-line unicorn/no-useless-undefined
+			setSelectedVendor(undefined);
 			setIsLoading(false);
 			closeModal();
 		}
@@ -58,46 +61,50 @@ export function ProviderKeyCreateModal({
 			data-testid="create-provider-key-modal"
 			className="flex flex-col justify-evenly"
 		>
-			<div className="form-control">
-				<label className="label">
-					<span className="label-text">{t('modelVendor')}</span>
-				</label>
-				<select
-					data-testid="vendor-select"
-					value={selectedVendor}
-					defaultValue={undefined}
-					onChange={handleChange(setSelectedVendor)}
-					className="select"
-				>
-					<option value={undefined}>{t('selectVendor')}</option>
-					{vendors.map((value) => (
-						<option
-							key={value}
-							value={value}
-							data-testid="model-vendor-option"
-						>
-							{t(
-								modelVendorsTranslationKeyMap[
-									value as ModelVendor
-								],
-							)}
-						</option>
-					))}
-				</select>
-			</div>
-			<div className="form-control">
-				<label className="label">
-					<span className="label-text">{t('keyValue')}</span>
-				</label>
-				<input
-					type="text"
-					className="input"
-					value={keyValue}
-					onChange={handleChange(setKeyValue)}
-				/>
+			<span className="font-semibold text-center">
+				Create Provider Key
+			</span>
+			<div className="flex flex-col justify-evenly">
+				<div className="form-control p-2">
+					<label className="label">
+						<span className="label-text">{t('modelVendor')}</span>
+					</label>
+					<select
+						data-testid="vendor-select"
+						value={selectedVendor}
+						defaultValue={undefined}
+						onChange={handleChange(setSelectedVendor)}
+						className="select select-bordered rounded w-full"
+					>
+						<option value={undefined}>{t('selectVendor')}</option>
+						{vendors.map((value) => (
+							<option
+								key={value}
+								value={value}
+								data-testid="model-vendor-option"
+							>
+								{t(
+									modelVendorsTranslationKeyMap[
+										value as ModelVendor
+									],
+								)}
+							</option>
+						))}
+					</select>
+				</div>
+				<div className="form-control p-2">
+					<label className="label">
+						<span className="label-text">{t('keyValue')}</span>
+					</label>
+					<textarea
+						className="textarea textarea-bordered rounded w-full"
+						value={keyValue}
+						onChange={handleChange(setKeyValue)}
+					/>
+				</div>
 			</div>
 			<button
-				className="btn btn-primary self-end mt-2"
+				className="btn btn-primary rounded self-end m-2"
 				data-testid="create-provider-key-submit-btn"
 				disabled={isLoading || !selectedVendor || !keyValue.trim()}
 				onClick={() => {
@@ -149,6 +156,10 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		(value) => !vendorsWithKeys.has(value),
 	);
 
+	const openModal = () => {
+		dialogRef.current?.showModal();
+	};
+
 	const closeModal = () => {
 		dialogRef.current?.close();
 	};
@@ -160,6 +171,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 					<tr>
 						<th>{t('modelVendor')}</th>
 						<th>{t('createdAt')}</th>
+						<th />
 					</tr>
 				</thead>
 				<tbody>
@@ -167,6 +179,9 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 						<tr key={value.id}>
 							<td>{value.modelVendor}</td>
 							<td>{value.createdAt}</td>
+							<td>
+								<Trash />
+							</td>
 						</tr>
 					))}
 				</tbody>
@@ -174,10 +189,8 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 			<div className="custom-card flex flex-col">
 				<button
 					data-testid="new-application-btn"
-					onClick={() => {
-						dialogRef.current?.showModal();
-					}}
-					disabled={!dialogRef.current || !vendorsWithoutKeys.length}
+					onClick={openModal}
+					disabled={!vendorsWithoutKeys.length}
 					className="flex gap-2 items-center text-secondary hover:brightness-90"
 				>
 					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
@@ -185,7 +198,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 				</button>
 			</div>
 			<dialog ref={dialogRef} className="modal">
-				<div className="dialog-box border-0 rounded-none">
+				<div className="dialog-box border-2 rounded p-10">
 					<ProviderKeyCreateModal
 						projectId={projectId}
 						vendors={vendorsWithoutKeys}

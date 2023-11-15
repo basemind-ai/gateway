@@ -17,11 +17,11 @@ importers:
                 specifier: ^18.4.0
                 version: 18.4.0
             '@faker-js/faker':
-                specifier: ^8.2.0
-                version: 8.2.0
+                specifier: ^8.3.1
+                version: 8.3.1
             '@grpc/grpc-js':
-                specifier: ^1.9.9
-                version: 1.9.9
+                specifier: ^1.9.10
+                version: 1.9.10
             '@next/eslint-plugin-next':
                 specifier: ^14.0.2
                 version: 14.0.2
@@ -95,8 +95,8 @@ importers:
                 specifier: ^3.1.0
                 version: 3.1.0(prettier@3.1.0)
             ts-loader:
-                specifier: ^9.5.0
-                version: 9.5.0(typescript@5.2.2)(webpack@5.89.0)
+                specifier: ^9.5.1
+                version: 9.5.1(typescript@5.2.2)(webpack@5.89.0)
             ts-node:
                 specifier: ^10.9.1
                 version: 10.9.1(@types/node@20.9.0)(typescript@5.2.2)
@@ -261,8 +261,8 @@ importers:
                 specifier: 10.4.16
                 version: 10.4.16(postcss@8.4.31)
             daisyui:
-                specifier: ^3.9.4
-                version: 3.9.4(ts-node@10.9.1)
+                specifier: ^4.0.7
+                version: 4.0.7(postcss@8.4.31)
             jsdom:
                 specifier: ^22.1.0
                 version: 22.1.0
@@ -294,8 +294,8 @@ importers:
     services/cohere-connector:
         dependencies:
             '@grpc/grpc-js':
-                specifier: ^1.9.9
-                version: 1.9.9
+                specifier: ^1.9.10
+                version: 1.9.10
             '@protobuf-ts/runtime':
                 specifier: ^2.9.1
                 version: 2.9.1
@@ -315,8 +315,8 @@ importers:
     services/openai-connector:
         dependencies:
             '@grpc/grpc-js':
-                specifier: ^1.9.9
-                version: 1.9.9
+                specifier: ^1.9.10
+                version: 1.9.10
             '@protobuf-ts/runtime':
                 specifier: ^2.9.1
                 version: 2.9.1
@@ -327,8 +327,8 @@ importers:
                 specifier: ^2.0.0
                 version: 2.0.0
             openai:
-                specifier: ^4.17.5
-                version: 4.17.5
+                specifier: ^4.18.0
+                version: 4.18.0
             pino:
                 specifier: ^8.16.1
                 version: 8.16.1
@@ -2821,10 +2821,10 @@ packages:
         engines: { node: ^12.22.0 || ^14.17.0 || >=16.0.0 }
         dev: true
 
-    /@faker-js/faker@8.2.0:
+    /@faker-js/faker@8.3.1:
         resolution:
             {
-                integrity: sha512-VacmzZqVxdWdf9y64lDOMZNDMM/FQdtM9IsaOPKOm2suYwEatb8VkdHqOzXcDnZbk7YDE2BmsJmy/2Hmkn563g==,
+                integrity: sha512-FdgpFxY6V6rLZE9mmIBb9hM0xpfvQOSNOLnzolzKwsE1DH+gC7lEKV1p1IbR0lAYyvYd5a4u3qWJzowUkw1bIw==,
             }
         engines: { node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13' }
         dev: true
@@ -3117,7 +3117,7 @@ packages:
             '@firebase/logger': 0.4.0
             '@firebase/util': 1.9.3
             '@firebase/webchannel-wrapper': 0.10.3
-            '@grpc/grpc-js': 1.9.9
+            '@grpc/grpc-js': 1.9.10
             '@grpc/proto-loader': 0.7.10
             node-fetch: 2.6.7(encoding@0.1.13)
             tslib: 2.6.2
@@ -3598,10 +3598,10 @@ packages:
             tslib: 2.6.2
             typescript: 5.2.2
 
-    /@grpc/grpc-js@1.9.9:
+    /@grpc/grpc-js@1.9.10:
         resolution:
             {
-                integrity: sha512-vQ1qwi/Kiyprt+uhb1+rHMpyk4CVRMTGNUGGPRGS7pLNfWkdCHrGEnT6T3/JyC2VZgoOX/X1KwdoU0WYQAeYcQ==,
+                integrity: sha512-6W1NMW40R0fs4Tlv+Tx2+4J23IA/kV+ifnNaOcDAqDOBfbk3BTPuFmHVOxVQX0DEK9oD6KzKPyu2OiHW87tFpA==,
             }
         engines: { node: ^8.13.0 || >=10.10.0 }
         dependencies:
@@ -10316,7 +10316,7 @@ packages:
         hasBin: true
         dependencies:
             caniuse-lite: 1.0.30001562
-            electron-to-chromium: 1.4.582
+            electron-to-chromium: 1.4.583
             node-releases: 2.0.13
             update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -10839,13 +10839,6 @@ packages:
             {
                 integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==,
             }
-
-    /colord@2.9.3:
-        resolution:
-            {
-                integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==,
-            }
-        dev: true
 
     /colorette@2.0.20:
         resolution:
@@ -11407,20 +11400,27 @@ packages:
                 integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==,
             }
 
-    /daisyui@3.9.4(ts-node@10.9.1):
+    /culori@3.2.0:
         resolution:
             {
-                integrity: sha512-fvi2RGH4YV617/6DntOVGcOugOPym9jTGWW2XySb5ZpvdWO4L7bEG77VHirrnbRUEWvIEVXkBpxUz2KFj0rVnA==,
+                integrity: sha512-HIEbTSP7vs1mPq/2P9In6QyFE0Tkpevh0k9a+FkjhD+cwsYm9WRSbn4uMdW9O0yXlNYC3ppxL3gWWPOcvEl57w==,
+            }
+        engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
+        dev: true
+
+    /daisyui@4.0.7(postcss@8.4.31):
+        resolution:
+            {
+                integrity: sha512-D84DnNDZKcamwNsxCMrwYaddyz5kC6VO6oe30nM1x67GzCAfarfd3Ar1rpLGXCIqSsEoNZUHO8EcXvX93W2ZkA==,
             }
         engines: { node: '>=16.9.0' }
         dependencies:
-            colord: 2.9.3
             css-selector-tokenizer: 0.8.0
-            postcss: 8.4.31
+            culori: 3.2.0
+            picocolors: 1.0.0
             postcss-js: 4.0.1(postcss@8.4.31)
-            tailwindcss: 3.3.5(ts-node@10.9.1)
         transitivePeerDependencies:
-            - ts-node
+            - postcss
         dev: true
 
     /damerau-levenshtein@1.0.8:
@@ -12047,10 +12047,10 @@ packages:
             jake: 10.8.7
         dev: true
 
-    /electron-to-chromium@1.4.582:
+    /electron-to-chromium@1.4.583:
         resolution:
             {
-                integrity: sha512-89o0MGoocwYbzqUUjc+VNpeOFSOK9nIdC5wY4N+PVUarUK0MtjyTjks75AZS2bW4Kl8MdewdFsWaH0jLy+JNoA==,
+                integrity: sha512-93y1gcONABZ7uqYe/JWDVQP/Pj/sQSunF0HVAPdlg/pfBnOyBMLlQUxWvkqcljJg1+W6cjvPuYD+r1Th9Tn8mA==,
             }
 
     /elliptic@6.5.4:
@@ -15391,7 +15391,7 @@ packages:
             }
         engines: { node: '>= 10.13.0' }
         dependencies:
-            '@types/node': 20.9.0
+            '@types/node': 18.18.9
             merge-stream: 2.0.0
             supports-color: 8.1.1
         dev: true
@@ -17163,10 +17163,10 @@ packages:
             is-wsl: 2.2.0
         dev: true
 
-    /openai@4.17.5:
+    /openai@4.18.0:
         resolution:
             {
-                integrity: sha512-SDgA933/QOjISCgWRc/JQhY1HweYZ6FOie3bWrCpj09FA5xIlaomldbyzICHNjtkh7SWEmGYFjRHIDtuwr+eTw==,
+                integrity: sha512-0C+waXoU7mvp/1QZzwnmPCkq4t02VJkjL1EXn0Pd7pFuTA0Y4y1LwzSZSiF/tpxw+Pr7diHVJjbfJ8QbdZnEcA==,
             }
         hasBin: true
         dependencies:
@@ -20615,10 +20615,10 @@ packages:
             }
         dev: true
 
-    /ts-loader@9.5.0(typescript@5.2.2)(webpack@5.89.0):
+    /ts-loader@9.5.1(typescript@5.2.2)(webpack@5.89.0):
         resolution:
             {
-                integrity: sha512-LLlB/pkB4q9mW2yLdFMnK3dEHbrBjeZTYguaaIfusyojBgAGf5kF+O6KcWqiGzWqHk0LBsoolrp4VftEURhybg==,
+                integrity: sha512-rNH3sK9kGZcH9dYzC7CewQm4NtxJTjSEVRJ2DyBZR7f8/wcta+iV44UPCXc5+nzDzivKtlzV6c9P4e+oFhDLYg==,
             }
         engines: { node: '>=12.0.0' }
         peerDependencies:

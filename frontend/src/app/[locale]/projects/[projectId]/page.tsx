@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
@@ -66,45 +66,37 @@ export default function ProjectOverview({
 		return null;
 	}
 
-	const tabComponent = useMemo(() => {
-		switch (selectedTab) {
-			case TAB.OVERVIEW: {
-				return (
-					<div data-testid="project-overview-tab">
-						<ProjectAnalytics projectId={projectId} />
-						<ApplicationsList projectId={projectId} />
-					</div>
-				);
-			}
-			case TAB.MEMBERS: {
-				return (
-					<div data-testid="project-members-tab">
-						<InviteMember projectId={projectId} />
-						<div className="mt-10">
-							<ProjectMembers projectId={projectId} />
-						</div>
-					</div>
-				);
-			}
-			case TAB.PROVIDER_KEYS: {
-				return (
-					<div data-testid="project-provider-keys-tab">
-						<ProjectProviderKeys projectId={projectId} />
-					</div>
-				);
-			}
-			case TAB.SETTINGS: {
-				return (
-					<div data-testid="project-settings-tab">
-						<ProjectGeneralSettings projectId={projectId} />
-						<div className="mt-10">
-							<ProjectDeletion projectId={projectId} />
-						</div>
-					</div>
-				);
-			}
-		}
-	}, [selectedTab, projectId]);
+	const tabComponents: Record<TAB, React.FC> = {
+		[TAB.OVERVIEW]: () => (
+			<div data-testid="project-overview-tab">
+				<ProjectAnalytics projectId={projectId} />
+				<ApplicationsList projectId={projectId} />
+			</div>
+		),
+		[TAB.MEMBERS]: () => (
+			<div data-testid="project-members-tab">
+				<InviteMember projectId={projectId} />
+				<div className="mt-10">
+					<ProjectMembers projectId={projectId} />
+				</div>
+			</div>
+		),
+		[TAB.PROVIDER_KEYS]: () => (
+			<div data-testid="project-provider-keys-tab">
+				<ProjectProviderKeys projectId={projectId} />
+			</div>
+		),
+		[TAB.SETTINGS]: () => (
+			<div data-testid="project-settings-tab">
+				<ProjectGeneralSettings projectId={projectId} />
+				<div className="mt-10">
+					<ProjectDeletion projectId={projectId} />
+				</div>
+			</div>
+		),
+	};
+
+	const TabComponent = tabComponents[selectedTab];
 
 	return (
 		<div data-testid="project-page" className="my-8 mx-32">
@@ -121,7 +113,7 @@ export default function ProjectOverview({
 					trailingLine={true}
 				/>
 			</div>
-			{tabComponent}
+			<TabComponent />
 		</div>
 	);
 }
