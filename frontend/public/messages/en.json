@@ -44,6 +44,7 @@
 	},
 	"common": {
 		"accept": "Accept",
+		"action": "Action",
 		"basemindName": "BaseMind",
 		"cancel": "Cancel",
 		"continue": "Continue",
@@ -218,14 +219,17 @@
 		"warning": "Warning"
 	},
 	"providerKeys": {
+		"actions": "Actions",
 		"cohere": "Cohere",
 		"createKey": "Create Key",
 		"createdAt": "Created at",
+		"deleteProviderKeyWarning": "Are you sure you want to delete this provider key?",
 		"keyValue": "API Key",
 		"modelVendor": "AI Provider",
 		"newProviderKey": "New Provider Key",
 		"openai": "OpenAI",
-		"selectVendor": "Please select an AI provider"
+		"selectVendor": "Please select an AI provider",
+		"warning": "Warning"
 	},
 	"signin": {
 		"authHeader": "Welcome to",

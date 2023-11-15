@@ -20,7 +20,7 @@ export function ProjectSelect({
 				data-testid="project-select-component"
 				onChange={handleChange((projectId: string) => {
 					setSelectedProject(projectId);
-					router.replace(`/projects/${projectId}`);
+					router.replace(`/en/projects/${projectId}`);
 				})}
 				defaultValue={selectedProjectId}
 			>

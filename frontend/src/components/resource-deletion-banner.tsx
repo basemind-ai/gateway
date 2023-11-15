@@ -41,13 +41,13 @@ export function ResourceDeletionBanner({
 			>
 				<h1
 					data-testid="resource-deletion-title"
-					className="text-error font-bold text-xl"
+					className="text-error font-bold text-2xl pb-5"
 				>
 					{title}
 				</h1>
 				<p
 					data-testid="resource-deletion-description"
-					className="mt-2.5 font-medium "
+					className="mt-2.5 text-lg"
 				>
 					{description}
 				</p>

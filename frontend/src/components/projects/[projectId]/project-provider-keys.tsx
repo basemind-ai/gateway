@@ -5,8 +5,10 @@ import useSWR from 'swr';
 
 import {
 	handleCreateProviderKey,
+	handleDeleteProviderKey,
 	handleRetrieveProviderKeys,
 } from '@/api/provider-keys-api';
+import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, ProviderKey } from '@/types';
@@ -21,35 +23,38 @@ export function ProviderKeyCreateModal({
 	vendors,
 	projectId,
 	closeModal,
+	setProviderKeys,
 }: {
 	closeModal: () => void;
 	projectId: string;
+	setProviderKeys: (
+		setter: (prevState: ProviderKey[]) => ProviderKey[],
+	) => void;
 	vendors: string[];
 }) {
 	const t = useTranslations('providerKeys');
-
 	const showError = useShowError();
 
-	const [selectedVendor, setSelectedVendor] = useState<string | undefined>();
-	const [keyValue, setKeyValue] = useState<string>('');
 	const [isLoading, setIsLoading] = useState(false);
+	const [keyValue, setKeyValue] = useState<string>('');
+	const [selectedVendor, setSelectedVendor] = useState<string | undefined>();
 
 	const handleSubmit = async () => {
 		setIsLoading(true);
 
 		try {
-			await handleCreateProviderKey({
+			const providerKey = await handleCreateProviderKey({
 				data: {
 					key: keyValue.trim(),
 					modelVendor: selectedVendor as ModelVendor,
 				},
 				projectId,
 			});
+			setProviderKeys((prevState) => [...prevState, providerKey]);
 		} catch (e: unknown) {
 			showError((e as ApiError).message);
 		} finally {
 			setKeyValue('');
-			// eslint-disable-next-line unicorn/no-useless-undefined
 			setSelectedVendor(undefined);
 			setIsLoading(false);
 			closeModal();
@@ -126,10 +131,16 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 
 	const showError = useShowError();
 
-	const [providerKeys, setProviderKeys] = useState<ProviderKey[]>([]);
-	const dialogRef = useRef<HTMLDialogElement>(null);
+	const deletionDialogRef = useRef<HTMLDialogElement>(null);
+	const creationDialogRef = useRef<HTMLDialogElement>(null);
 
-	const { isLoading } = useSWR(
+	const [providerKeyIdToDelete, setProviderKeyIdToDelete] = useState<
+		string | undefined
+	>();
+	const [providerKeys, setProviderKeys] = useState<ProviderKey[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
+
+	const { isLoading: swrIsLoading } = useSWR(
 		{
 			projectId,
 		},
@@ -147,7 +158,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		},
 	);
 
-	if (isLoading) {
+	if (swrIsLoading) {
 		return <div className="loading" />;
 	}
 
@@ -157,11 +168,31 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 	);
 
 	const openModal = () => {
-		dialogRef.current?.showModal();
+		creationDialogRef.current?.showModal();
 	};
 
 	const closeModal = () => {
-		dialogRef.current?.close();
+		creationDialogRef.current?.close();
+	};
+
+	const deleteProviderKey = async () => {
+		const providerKeyId = providerKeyIdToDelete!;
+		setIsLoading(true);
+		try {
+			await handleDeleteProviderKey({
+				projectId,
+				providerKeyId,
+			});
+		} catch (e) {
+			showError((e as ApiError).message);
+		} finally {
+			setIsLoading(false);
+			setProviderKeyIdToDelete(undefined);
+			setProviderKeys((prevState) =>
+				prevState.filter((v) => v.id !== providerKeyId),
+			);
+			deletionDialogRef.current?.close();
+		}
 	};
 
 	return (
@@ -171,16 +202,24 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 					<tr>
 						<th>{t('modelVendor')}</th>
 						<th>{t('createdAt')}</th>
-						<th />
+						<th>{t('actions')}</th>
 					</tr>
 				</thead>
 				<tbody>
 					{providerKeys.map((value) => (
-						<tr key={value.id}>
+						<tr key={value.id} className="hover">
 							<td>{value.modelVendor}</td>
 							<td>{value.createdAt}</td>
 							<td>
-								<Trash />
+								<span className="flex justify-center">
+									<Trash
+										className="text-red-400"
+										onClick={() => {
+											setProviderKeyIdToDelete(value.id);
+											deletionDialogRef.current?.showModal();
+										}}
+									/>
+								</span>
 							</td>
 						</tr>
 					))}
@@ -197,13 +236,38 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 					<span>{t('newProviderKey')}</span>
 				</button>
 			</div>
-			<dialog ref={dialogRef} className="modal">
+			<dialog ref={creationDialogRef} className="modal">
 				<div className="dialog-box border-2 rounded p-10">
 					<ProviderKeyCreateModal
 						projectId={projectId}
 						vendors={vendorsWithoutKeys}
 						closeModal={closeModal}
+						setProviderKeys={setProviderKeys}
 					/>
+				</div>
+				<form method="dialog" className="modal-backdrop">
+					<button />
+				</form>
+			</dialog>
+			<dialog ref={deletionDialogRef} className="modal">
+				<div className="dialog-box">
+					{providerKeyIdToDelete && (
+						<ResourceDeletionBanner
+							title={t('warning')}
+							description={t('deleteProviderKeyWarning')}
+							onConfirm={() => {
+								void deleteProviderKey();
+							}}
+							confirmCTA={
+								isLoading ? (
+									<span className="loading loading-spinner loading-xs mx-1.5" />
+								) : undefined
+							}
+							onCancel={() => {
+								setProviderKeyIdToDelete(undefined);
+							}}
+						/>
+					)}
 				</div>
 				<form method="dialog" className="modal-backdrop">
 					<button />

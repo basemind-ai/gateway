@@ -1,5 +1,6 @@
 const rules = {
 	'object-shorthand': 1,
+	'unicorn/no-useless-undefined': 0,
 };
 
 const tsWebRules = {

@@ -15,8 +15,8 @@ export function WarningModal({
 	return (
 		<div className="modal modal-open modal-middle sm:modal-middle">
 			<div className="modal-box bg-warning">
-				<div className="flex gap-4">
-					<ExclamationDiamond className="text-warning-content h-6 w-4" />
+				<div className="flex justify-between items-center">
+					<ExclamationDiamond className="text-warning-content h-6 w-6" />
 					<span
 						className="text-warning-content"
 						data-testid="warning-modal-text"
@@ -27,7 +27,7 @@ export function WarningModal({
 				<div className="modal-action">
 					<button
 						data-testid="warning-modal-cancel-button"
-						className="btn btn-xs btn-outline"
+						className="btn btn-xs btn-info"
 						onClick={closeModal}
 					>
 						<span className="text-warning-content">
