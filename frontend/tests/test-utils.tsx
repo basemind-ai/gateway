@@ -23,7 +23,16 @@ const customRender = (
 				<RouterContext.Provider value={nextRouterMock}>
 					<NextIntlClientProvider locale="en" messages={locales}>
 						<SWRConfig value={{ provider: () => new Map() }}>
-							<ToastWrapper>{children}</ToastWrapper>
+							<ToastWrapper>
+								<SWRConfig
+									value={{
+										provider: () => new Map(),
+										refreshInterval: 0,
+									}}
+								>
+									{children}
+								</SWRConfig>
+							</ToastWrapper>
 						</SWRConfig>
 					</NextIntlClientProvider>
 				</RouterContext.Provider>

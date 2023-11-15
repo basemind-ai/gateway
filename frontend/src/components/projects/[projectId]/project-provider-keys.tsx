@@ -66,8 +66,11 @@ export function ProviderKeyCreateModal({
 			data-testid="create-provider-key-modal"
 			className="flex flex-col justify-evenly"
 		>
-			<span className="font-semibold text-center">
-				Create Provider Key
+			<span
+				className="font-semibold text-center"
+				data-testid="create-provider-key-modal-title"
+			>
+				{t('createProviderKey')}
 			</span>
 			<div className="flex flex-col justify-evenly">
 				<div className="form-control p-2">
@@ -102,26 +105,39 @@ export function ProviderKeyCreateModal({
 						<span className="label-text">{t('keyValue')}</span>
 					</label>
 					<textarea
+						data-testid="key-value-textarea"
 						className="textarea textarea-bordered rounded w-full"
 						value={keyValue}
 						onChange={handleChange(setKeyValue)}
 					/>
 				</div>
 			</div>
-			<button
-				className="btn btn-primary rounded self-end m-2"
-				data-testid="create-provider-key-submit-btn"
-				disabled={isLoading || !selectedVendor || !keyValue.trim()}
-				onClick={() => {
-					void handleSubmit();
-				}}
-			>
-				{isLoading ? (
-					<span className="loading loading-spinner" />
-				) : (
-					t('createKey')
-				)}
-			</button>
+			<div className="flex justify-between m-2">
+				<button
+					className="btn btn-outline rounded"
+					data-testid="create-provider-key-cancel-btn"
+					onClick={closeModal}
+				>
+					{t('cancel')}
+				</button>
+				<button
+					className="btn btn-primary rounded"
+					data-testid="create-provider-key-submit-btn"
+					disabled={isLoading || !selectedVendor || !keyValue.trim()}
+					onClick={() => {
+						void handleSubmit();
+					}}
+				>
+					{isLoading ? (
+						<span
+							className="loading loading-spinner"
+							data-testid="spinner"
+						/>
+					) : (
+						t('createKey')
+					)}
+				</button>
+			</div>
 		</div>
 	);
 }
@@ -146,20 +162,17 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		},
 		handleRetrieveProviderKeys,
 		{
-			/* c8 ignore start */
 			onError(apiError: ApiError) {
 				showError(apiError.message);
 			},
-
 			onSuccess(data) {
 				setProviderKeys(data);
 			},
-			/* c8 ignore end */
 		},
 	);
 
 	if (swrIsLoading) {
-		return <div className="loading" />;
+		return <div className="loading" data-testid="loader" />;
 	}
 
 	const vendorsWithKeys = new Set(providerKeys.map((key) => key.modelVendor));
@@ -167,12 +180,26 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		(value) => !vendorsWithKeys.has(value),
 	);
 
-	const openModal = () => {
-		creationDialogRef.current?.showModal();
+	const openCreateModal = () => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		creationDialogRef.current?.showModal?.();
 	};
 
-	const closeModal = () => {
-		creationDialogRef.current?.close();
+	/* c8 ignore start */
+	const closeCreateModal = () => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		creationDialogRef.current?.close?.();
+	};
+	/* c8 ignore end */
+
+	const openDeleteModal = () => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		deletionDialogRef.current?.showModal?.();
+	};
+
+	const closeDeleteModal = () => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		deletionDialogRef.current?.close?.();
 	};
 
 	const deleteProviderKey = async () => {
@@ -191,34 +218,54 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 			setProviderKeys((prevState) =>
 				prevState.filter((v) => v.id !== providerKeyId),
 			);
-			deletionDialogRef.current?.close();
+			closeDeleteModal();
 		}
 	};
 
 	return (
 		<div>
-			<table className="custom-table mb-16">
+			<table
+				className="custom-table mb-16"
+				data-testid="provider-keys-table"
+			>
 				<thead>
 					<tr>
-						<th>{t('modelVendor')}</th>
-						<th>{t('createdAt')}</th>
-						<th>{t('actions')}</th>
+						<th data-testid="provider-keys-table-header">
+							{t('modelVendor')}
+						</th>
+						<th data-testid="provider-keys-table-header">
+							{t('createdAt')}
+						</th>
+						<th data-testid="provider-keys-table-header">
+							{t('actions')}
+						</th>
 					</tr>
 				</thead>
 				<tbody>
 					{providerKeys.map((value) => (
-						<tr key={value.id} className="hover">
-							<td>{value.modelVendor}</td>
-							<td>{value.createdAt}</td>
-							<td>
+						<tr
+							key={value.id}
+							className="hover"
+							data-testid="provider-keys-table-row"
+						>
+							<td data-testid="key-provider-name">
+								{value.modelVendor}
+							</td>
+							<td data-testid="key-created-at">
+								{value.createdAt}
+							</td>
+							<td data-testid="key-actions">
 								<span className="flex justify-center">
-									<Trash
-										className="text-red-400"
+									<button
+										className="btn btn-ghost"
+										data-testid="delete-provider-key-button"
 										onClick={() => {
 											setProviderKeyIdToDelete(value.id);
-											deletionDialogRef.current?.showModal();
+											openDeleteModal();
 										}}
-									/>
+									>
+										<Trash className="text-red-400" />
+									</button>
 								</span>
 							</td>
 						</tr>
@@ -227,8 +274,8 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 			</table>
 			<div className="custom-card flex flex-col">
 				<button
-					data-testid="new-application-btn"
-					onClick={openModal}
+					data-testid="new-provider-key-btn"
+					onClick={openCreateModal}
 					disabled={!vendorsWithoutKeys.length}
 					className="flex gap-2 items-center text-secondary hover:brightness-90"
 				>
@@ -241,7 +288,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 					<ProviderKeyCreateModal
 						projectId={projectId}
 						vendors={vendorsWithoutKeys}
-						closeModal={closeModal}
+						closeModal={closeCreateModal}
 						setProviderKeys={setProviderKeys}
 					/>
 				</div>
@@ -260,11 +307,15 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 							}}
 							confirmCTA={
 								isLoading ? (
-									<span className="loading loading-spinner loading-xs mx-1.5" />
+									<span
+										className="loading loading-spinner loading-xs mx-1.5"
+										data-testid="delete-key-loader"
+									/>
 								) : undefined
 							}
 							onCancel={() => {
 								setProviderKeyIdToDelete(undefined);
+								closeDeleteModal();
 							}}
 						/>
 					)}

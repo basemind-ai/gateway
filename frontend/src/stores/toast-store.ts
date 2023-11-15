@@ -10,7 +10,7 @@ export enum ToastType {
 
 const DEFAULT_TIMEOUT = 4000;
 
-interface ToastMessage {
+export interface ToastMessage {
 	message: string;
 	type: ToastType;
 }
