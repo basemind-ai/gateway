@@ -11,11 +11,11 @@ importers:
                 specifier: ^1.28.1
                 version: 1.28.1
             '@commitlint/cli':
-                specifier: ^18.4.1
-                version: 18.4.1(typescript@5.2.2)
+                specifier: ^18.4.2
+                version: 18.4.2(typescript@5.2.2)
             '@commitlint/config-conventional':
-                specifier: ^18.4.0
-                version: 18.4.0
+                specifier: ^18.4.2
+                version: 18.4.2
             '@faker-js/faker':
                 specifier: ^8.3.1
                 version: 8.3.1
@@ -261,8 +261,8 @@ importers:
                 specifier: 10.4.16
                 version: 10.4.16(postcss@8.4.31)
             daisyui:
-                specifier: ^4.0.7
-                version: 4.0.7(postcss@8.4.31)
+                specifier: ^4.0.9
+                version: 4.0.9(postcss@8.4.31)
             jsdom:
                 specifier: ^22.1.0
                 version: 22.1.0
@@ -327,8 +327,8 @@ importers:
                 specifier: ^2.0.0
                 version: 2.0.0
             openai:
-                specifier: ^4.18.0
-                version: 4.18.0
+                specifier: ^4.19.0
+                version: 4.19.0
             pino:
                 specifier: ^8.16.2
                 version: 8.16.2
@@ -2264,17 +2264,17 @@ packages:
         dev: true
         optional: true
 
-    /@commitlint/cli@18.4.1(typescript@5.2.2):
+    /@commitlint/cli@18.4.2(typescript@5.2.2):
         resolution:
             {
-                integrity: sha512-4+jljfd29Udw9RDDyigavLO9LvdbmB8O9xjDzVZ0R3lJuG7nCeyHgnKWIVpFaN590isZMV/cMeQK0gH7hRF40A==,
+                integrity: sha512-dDfb2+wzeQe6ogdHNHOy0J0nraok+La0BoxamNMhBOng9/5GoESPDmKUJ1Lt1oivh5MfIgZh0Vm6f0rxkB8CoA==,
             }
         engines: { node: '>=v18' }
         hasBin: true
         dependencies:
             '@commitlint/format': 18.4.0
-            '@commitlint/lint': 18.4.0
-            '@commitlint/load': 18.4.1(typescript@5.2.2)
+            '@commitlint/lint': 18.4.2
+            '@commitlint/load': 18.4.2(typescript@5.2.2)
             '@commitlint/read': 18.4.0
             '@commitlint/types': 18.4.0
             execa: 5.1.1
@@ -2286,10 +2286,10 @@ packages:
             - typescript
         dev: true
 
-    /@commitlint/config-conventional@18.4.0:
+    /@commitlint/config-conventional@18.4.2:
         resolution:
             {
-                integrity: sha512-vArwCZopsZs0FnGsh9AR7uUTPZ5oVGk8+qnEZWq2KTsMjrE0k80b+oZ32GSQmXQT2iMKVrDC8pKX5uKNkCe9Sw==,
+                integrity: sha512-qFjIqgKGV89lzUGHxanq2WJDXk5wZIxoZmZvf0I4i4CirL06Xj8qRh1shPsXNyI15d8Rj2HExww6cGJSFU9DdA==,
             }
         engines: { node: '>=v18' }
         dependencies:
@@ -2341,10 +2341,10 @@ packages:
             chalk: 4.1.2
         dev: true
 
-    /@commitlint/is-ignored@18.4.0:
+    /@commitlint/is-ignored@18.4.2:
         resolution:
             {
-                integrity: sha512-vyBKBj3Q4N3Xe4ZQcJXW9ef6gVrDL9Fl2HXnnC3F0Qt/F6E4runhJkEuUh5DB3WCXTJUHIJkByKPqrnz4RNrZw==,
+                integrity: sha512-uujjyJlrXsMsQrv0r8HDGigAwJELPAMtA1Vxi2WUB54HbyAWa0Ue6ujMRZNKov2YeA96r6o72gLDnugb6yu8IA==,
             }
         engines: { node: '>=v18' }
         dependencies:
@@ -2352,23 +2352,23 @@ packages:
             semver: 7.5.4
         dev: true
 
-    /@commitlint/lint@18.4.0:
+    /@commitlint/lint@18.4.2:
         resolution:
             {
-                integrity: sha512-Wkkf1DPVeLdHYGqtzMBfWoMbUtCojvlzDR89OKVic1rid41iZbb0FzTcwgMYs/1TNWNxoIq9PVVwY7ovLX1aJQ==,
+                integrity: sha512-ljGOIH7w9SnjvZFoKjf30iWFxDnezfRtOc50+rNLdDP0TpLspaYYLPhDO/TeVdmii1/AJiDgBIuBboQlaIy7Bw==,
             }
         engines: { node: '>=v18' }
         dependencies:
-            '@commitlint/is-ignored': 18.4.0
+            '@commitlint/is-ignored': 18.4.2
             '@commitlint/parse': 18.4.0
             '@commitlint/rules': 18.4.0
             '@commitlint/types': 18.4.0
         dev: true
 
-    /@commitlint/load@18.4.1(typescript@5.2.2):
+    /@commitlint/load@18.4.2(typescript@5.2.2):
         resolution:
             {
-                integrity: sha512-o/plBiPJQgbSq/4ipDpsq4HCmURjBAEjr1EO/p2falr3VhwV0WGXTvb8NlihgI8xtSyO6lHvtycrE535GMLQbA==,
+                integrity: sha512-CKmzXdF9XwZJoVijAqpUlV9qzZOkyiYni4KuSCtTZVAAVudi9H84cJ4FqZxSwEP9G21vmoJiNrW8G042AsduVg==,
             }
         engines: { node: '>=v18' }
         dependencies:
@@ -10316,7 +10316,7 @@ packages:
         hasBin: true
         dependencies:
             caniuse-lite: 1.0.30001562
-            electron-to-chromium: 1.4.584
+            electron-to-chromium: 1.4.585
             node-releases: 2.0.13
             update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -11408,10 +11408,10 @@ packages:
         engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
         dev: true
 
-    /daisyui@4.0.7(postcss@8.4.31):
+    /daisyui@4.0.9(postcss@8.4.31):
         resolution:
             {
-                integrity: sha512-D84DnNDZKcamwNsxCMrwYaddyz5kC6VO6oe30nM1x67GzCAfarfd3Ar1rpLGXCIqSsEoNZUHO8EcXvX93W2ZkA==,
+                integrity: sha512-x9E1UL/gF4ZWOAJaMKOw3Ji9WmNZA0Tok/knRzzJWu9KJu+7kOHREqlhpvnP9Qz/4EOTu0ep9akquQnbeldYYQ==,
             }
         engines: { node: '>=16.9.0' }
         dependencies:
@@ -12047,10 +12047,10 @@ packages:
             jake: 10.8.7
         dev: true
 
-    /electron-to-chromium@1.4.584:
+    /electron-to-chromium@1.4.585:
         resolution:
             {
-                integrity: sha512-rXCtDiXCBtfTfEegkthruCvyWZnr1/FCrUGY/nYQiF+lSZDmwQBDxp0rivZxV8trXb6cbgojhcSTW5xsDcHQ8g==,
+                integrity: sha512-B4yBlX0azdA3rVMxpYwLQfDpdwOgcnLCkpvSOd68iFmeedo+WYjaBJS3/W58LVD8CB2nf+o7C4K9xz1l09RkWg==,
             }
 
     /elliptic@6.5.4:
@@ -13519,10 +13519,10 @@ packages:
             }
         dev: true
 
-    /flow-parser@0.221.0:
+    /flow-parser@0.222.0:
         resolution:
             {
-                integrity: sha512-i+GzdLcKYy5bxhx1N+FIcR1bTqssuVWTJcuytMhwqLAxifz46g4BSNicWXGrtzT0HibJUBIzZOYA3FveJucTPg==,
+                integrity: sha512-Fq5OkFlFRSMV2EOZW+4qUYMTE0uj8pcLsYJMxXYriSBDpHAF7Ofx3PibCTy3cs5P6vbsry7eYj7Z7xFD49GIOQ==,
             }
         engines: { node: '>=0.4.0' }
         dev: true
@@ -15488,7 +15488,7 @@ packages:
             '@babel/register': 7.22.15(@babel/core@7.23.3)
             babel-core: 7.0.0-bridge.0(@babel/core@7.23.3)
             chalk: 4.1.2
-            flow-parser: 0.221.0
+            flow-parser: 0.222.0
             graceful-fs: 4.2.11
             micromatch: 4.0.5
             neo-async: 2.6.2
@@ -17163,10 +17163,10 @@ packages:
             is-wsl: 2.2.0
         dev: true
 
-    /openai@4.18.0:
+    /openai@4.19.0:
         resolution:
             {
-                integrity: sha512-0C+waXoU7mvp/1QZzwnmPCkq4t02VJkjL1EXn0Pd7pFuTA0Y4y1LwzSZSiF/tpxw+Pr7diHVJjbfJ8QbdZnEcA==,
+                integrity: sha512-cJbl0noZyAaXVKBTMMq6X5BAvP1pm2rWYDBnZes99NL+Zh5/4NmlAwyuhTZEru5SqGGZIoiYKeMPXy4bm9DI0w==,
             }
         hasBin: true
         dependencies:
