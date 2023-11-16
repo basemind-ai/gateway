@@ -56,13 +56,13 @@ export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 				topic: selectedTopic ?? SupportTopic.Other,
 			});
 			showSuccess(t('successComment'));
+			setEmailBody('');
+			setEmailSubject('');
+			setSelectedProjectId('');
 		} catch {
 			showError(t('errorComment'));
 		} finally {
 			setIsSubmitting(false);
-			setEmailBody('');
-			setEmailSubject('');
-			setSelectedProjectId('');
 		}
 	};
 
