@@ -5,7 +5,7 @@ import {
 	uniqueNamesGenerator,
 } from 'unique-names-generator';
 
-import { ModelType, OpenAIPromptMessage } from '@/types';
+import { OpenAIModelType, OpenAIPromptMessage } from '@/types';
 
 export function handleChange<T = any>(
 	cb: (value: any) => void,
@@ -30,18 +30,18 @@ export function getCloneName(name: string) {
 	})} clone of ${name}`;
 }
 
-export function maxTokensForModelType(modelType: ModelType): string {
+export function maxTokensForModelType(modelType: OpenAIModelType): string {
 	switch (modelType) {
-		case ModelType.Gpt35Turbo: {
+		case OpenAIModelType.Gpt35Turbo: {
 			return '4096';
 		}
-		case ModelType.Gpt3516K: {
+		case OpenAIModelType.Gpt3516K: {
 			return '16384';
 		}
-		case ModelType.Gpt4: {
+		case OpenAIModelType.Gpt4: {
 			return '8192';
 		}
-		case ModelType.Gpt432K: {
+		case OpenAIModelType.Gpt432K: {
 			return '32768';
 		}
 	}
@@ -80,9 +80,6 @@ export function updateTemplateVariablesRecord(
 
 	return updatedVariables;
 }
-export function decodeUrlSpaces(str: string): string {
-	return str.replaceAll('%20', ' ');
-}
 
 export function areArraysEqual(arr1?: string[], arr2?: string[]): boolean {
 	if (!arr1 || !arr2 || arr1.length !== arr2.length) {
@@ -92,8 +89,12 @@ export function areArraysEqual(arr1?: string[], arr2?: string[]): boolean {
 	const sortedArr2 = [...arr2].sort();
 	return sortedArr1.every((value, index) => value === sortedArr2[index]);
 }
-export function formatNumber(num: number | undefined) {
-	if (num === undefined) {
+export function formatNumber(num: string | number | undefined) {
+	if (typeof num === 'string') {
+		num = Number.parseFloat(num);
+	}
+
+	if (num === undefined || Number.isNaN(num)) {
 		return '0.00';
 	}
 	return num <= 2 ? num.toFixed(2) : num.toString();

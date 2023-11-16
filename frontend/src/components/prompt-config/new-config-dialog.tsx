@@ -2,11 +2,11 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { Dropdown, DropdownOption } from '@/components/dropdown';
+import { Dropdown } from '@/components/dropdown';
 import { Navigation } from '@/constants';
 import { Application } from '@/types';
 import { handleChange } from '@/utils/helpers';
-import { populateLink } from '@/utils/navigation';
+import { setPathParams } from '@/utils/navigation';
 
 export default function NewConfigDialog({
 	applications,
@@ -19,23 +19,10 @@ export default function NewConfigDialog({
 }) {
 	const t = useTranslations('promptTesting');
 	const router = useRouter();
-	const [selectedApp, setSelectedApp] = useState('');
+	const [selectedApplicationId, setSelectedApplicationId] = useState<
+		undefined | string
+	>(undefined);
 	const [name, setName] = useState('');
-
-	const appDropdownOption: DropdownOption[] = applications.map((app) => {
-		return { text: app.name, value: app.id };
-	});
-
-	function handleCreate() {
-		const link = populateLink(
-			Navigation.TestingConfig,
-			projectId,
-			selectedApp,
-			'new',
-			name,
-		);
-		router.push(link);
-	}
 
 	return (
 		<div
@@ -71,10 +58,17 @@ export default function NewConfigDialog({
 							/>
 						</div>
 						<Dropdown
-							headline={t('saveInApplication')}
-							selected={selectedApp}
-							setSelected={setSelectedApp}
-							options={appDropdownOption}
+							labelText={t('application')}
+							placeholderText={t('saveInApplication')}
+							value={selectedApplicationId}
+							setSelected={setSelectedApplicationId}
+							options={applications.map(
+								({ name: text, id: value }) => ({
+									text,
+									value,
+								}),
+							)}
+							testId="create-dialog-app-dropdown"
 						/>
 					</div>
 				</div>
@@ -88,8 +82,15 @@ export default function NewConfigDialog({
 					</button>
 					<button
 						data-testid="create-dialog-create-btn"
-						onClick={handleCreate}
-						disabled={!selectedApp || !name}
+						onClick={() => {
+							router.replace(
+								setPathParams(Navigation.TestingConfig, {
+									applicationId: selectedApplicationId,
+									projectId,
+								}),
+							);
+						}}
+						disabled={!selectedApplicationId || !name}
 						className="btn btn-primary"
 					>
 						{t('create')}

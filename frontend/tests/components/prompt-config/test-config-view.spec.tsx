@@ -3,11 +3,11 @@ import { render } from 'tests/test-utils';
 import { describe, expect, vi } from 'vitest';
 
 import TestConfigView from '@/components/prompt-config/test-config-view';
-import { PromptConfigDefault } from '@/constants/forms';
+import { DefaultPromptConfigTest } from '@/constants/forms';
 
 describe('TestConfigView tests', () => {
 	// Mock props
-	const config = PromptConfigDefault;
+	const config = DefaultPromptConfigTest;
 	const setConfig = vi.fn();
 	const projectId = 'testProjectId';
 	const applicationId = 'testApplicationId';

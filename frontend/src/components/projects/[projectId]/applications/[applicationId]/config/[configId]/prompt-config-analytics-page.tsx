@@ -10,15 +10,16 @@ import { DatePicker } from '@/components/dashboard/date-picker';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
+import { PromptConfig } from '@/types';
 
-export function PromptAnalyticsPage({
+export function PromptConfigAnalyticsPage({
 	projectId,
 	applicationId,
-	promptConfigId,
+	promptConfig,
 }: {
 	applicationId: string;
 	projectId: string;
-	promptConfigId: string;
+	promptConfig: PromptConfig;
 }) {
 	const t = useTranslations('promptConfig');
 	const dateFormat = useDateFormat();
@@ -37,7 +38,7 @@ export function PromptAnalyticsPage({
 			applicationId,
 			fromDate: dateRange?.startDate,
 			projectId,
-			promptConfigId,
+			promptConfigId: promptConfig.id,
 			toDate: dateRange?.endDate,
 		},
 		handlePromptConfigAnalytics,

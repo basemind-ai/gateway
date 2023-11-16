@@ -4,7 +4,7 @@ import { render, renderHook } from 'tests/test-utils';
 import { describe } from 'vitest';
 
 import TestInputs from '@/components/prompt-config/test-inputs';
-import { PromptConfigDefault } from '@/constants/forms';
+import { DefaultPromptConfigTest } from '@/constants/forms';
 
 describe('TestInputs component tests', () => {
 	const {
@@ -16,7 +16,7 @@ describe('TestInputs component tests', () => {
 		test1: '',
 		test2: '',
 	};
-	let config = PromptConfigDefault;
+	let config = DefaultPromptConfigTest;
 	const setConfig = vi.fn();
 	setConfig.mockImplementation((updater) => {
 		// Replace the original config with the new state for subsequent assertions

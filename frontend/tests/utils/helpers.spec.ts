@@ -2,7 +2,6 @@ import { OpenAIPromptMessage } from '@/types';
 import {
 	areArraysEqual,
 	copyToClipboard,
-	decodeUrlSpaces,
 	extractVariables,
 	getCloneName,
 	handleChange,
@@ -203,28 +202,6 @@ describe('updateTemplateVariablesRecord tests', () => {
 		);
 
 		expect(updatedRecord).toEqual({});
-	});
-});
-
-describe('decodeUrlSpaces tests', () => {
-	it('should replace %20 with space in a single instance', () => {
-		const result = decodeUrlSpaces('test%20config');
-		expect(result).toBe('test config');
-	});
-
-	it('should replace %20 with space in multiple instances', () => {
-		const result = decodeUrlSpaces('multiple%20words%20with%20spaces');
-		expect(result).toBe('multiple words with spaces');
-	});
-
-	it('should return the same string if no %20 is present', () => {
-		const result = decodeUrlSpaces('no spaces');
-		expect(result).toBe('no spaces');
-	});
-
-	it('should return an empty string if input is empty', () => {
-		const result = decodeUrlSpaces('');
-		expect(result).toBe('');
 	});
 });
 

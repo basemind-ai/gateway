@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-analytics-page';
+import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-analytics-page';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
 import { AnalyticsDTO } from '@/types';
@@ -34,7 +34,7 @@ describe('PromptAnalyticsPage', () => {
 
 		await waitFor(() =>
 			render(
-				<PromptAnalyticsPage
+				<PromptConfigAnalyticsPage
 					projectId={projectId}
 					applicationId={applicationId}
 					promptConfigId={promptConfigId}
@@ -64,7 +64,7 @@ describe('PromptAnalyticsPage', () => {
 
 		await waitFor(() =>
 			render(
-				<PromptAnalyticsPage
+				<PromptConfigAnalyticsPage
 					projectId={projectId}
 					applicationId={applicationId}
 					promptConfigId={promptConfigId}
@@ -103,7 +103,7 @@ describe('PromptAnalyticsPage', () => {
 		});
 
 		render(
-			<PromptAnalyticsPage
+			<PromptConfigAnalyticsPage
 				projectId={projectId}
 				applicationId={applicationId}
 				promptConfigId={promptConfigId}

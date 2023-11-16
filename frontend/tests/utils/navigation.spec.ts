@@ -1,8 +1,8 @@
 import { Navigation } from '@/constants';
 import {
 	contextNavigation,
-	populateApplicationId,
-	populateProjectId,
+	setApplicationId,
+	setProjectId,
 } from '@/utils/navigation';
 
 describe('contextNavigation tests', () => {
@@ -23,8 +23,8 @@ describe('contextNavigation tests', () => {
 describe('populateProjectId tests', () => {
 	it('replaces :projectId in string with the given project id', () => {
 		const projectId = '123';
-		const url = populateProjectId(
-			'/projects/:projectId/application',
+		const url = setProjectId(
+			`/projects/${projectId}/application`,
 			projectId,
 		);
 		expect(url).toBe('/projects/123/application');
@@ -34,7 +34,7 @@ describe('populateProjectId tests', () => {
 describe('populateApplicationId tests', () => {
 	it('replaces :applicationId in string with the given application id', () => {
 		const applicationId = '123';
-		const url = populateApplicationId(
+		const url = setApplicationId(
 			'/projects/:projectId/applications/:applicationId',
 			applicationId,
 		);

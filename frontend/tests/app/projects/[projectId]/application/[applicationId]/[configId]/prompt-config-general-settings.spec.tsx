@@ -7,7 +7,7 @@ import {
 import { render, renderHook, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-settings';
+import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-settings';
 import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,
@@ -46,7 +46,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('renders prompt config details', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -63,7 +63,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('renders null when prompt is not defined', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={''}
@@ -78,7 +78,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('renders null when application is not defined', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={''}
 				promptConfigId={promptConfig.id}
@@ -93,7 +93,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('does not save when form is pristine', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -107,7 +107,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('does not save when form is unchanged', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -130,7 +130,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('does not save when form is invalid', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -150,7 +150,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('saves only when fields are changed and valid', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -179,7 +179,7 @@ describe('PromptGeneralSettings', () => {
 
 	it('shows error when unable to save prompt config changes', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}

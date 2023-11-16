@@ -5,7 +5,7 @@ import { render, renderHook, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-info';
+import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-info';
 import { ApiError } from '@/errors';
 import {
 	usePromptConfig,
@@ -36,7 +36,7 @@ describe('PromptGeneralInfo', () => {
 
 	it('renders prompt settings', () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -49,7 +49,7 @@ describe('PromptGeneralInfo', () => {
 
 	it('returns null when application not found', () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={'2'}
 				promptConfigId={promptConfig.id}
@@ -64,7 +64,7 @@ describe('PromptGeneralInfo', () => {
 
 	it('navigates to prompt testing screen when clicked on test button', () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -80,7 +80,7 @@ describe('PromptGeneralInfo', () => {
 
 	it('successfully clones a prompt and navigates to it', async () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -113,7 +113,7 @@ describe('PromptGeneralInfo', () => {
 
 	it('shows error when fails to clone a prompt', () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}

@@ -9,7 +9,7 @@ import { ApplicationsList } from '@/components/projects/[projectId]/applications
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
-import { populateApplicationId, populateProjectId } from '@/utils/navigation';
+import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 describe('ApplicationsList', () => {
 	const projectId = '1';
@@ -71,8 +71,8 @@ describe('ApplicationsList', () => {
 
 		await waitFor(() => render(<ApplicationsList projectId={projectId} />));
 
-		const applicationUrl = populateApplicationId(
-			populateProjectId(Navigation.Applications, projectId),
+		const applicationUrl = setApplicationId(
+			setProjectId(Navigation.Applications, projectId),
 			applications[0].id,
 		);
 

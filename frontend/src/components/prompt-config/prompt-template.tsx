@@ -4,8 +4,8 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import {
 	OpenAIModelParameters,
 	OpenAIPromptMessage,
+	OpenAIPromptMessageRole,
 	PromptConfigTest,
-	PromptMessageRole,
 } from '@/types';
 import {
 	extractVariables,
@@ -16,7 +16,7 @@ import {
 const newMessage: OpenAIPromptMessage = {
 	content: '',
 	name: '',
-	role: PromptMessageRole.System,
+	role: OpenAIPromptMessageRole.System,
 };
 
 export default function PromptTemplate({
@@ -35,10 +35,10 @@ export default function PromptTemplate({
 	const [draftMessage, setDraftMessage] = useState<OpenAIPromptMessage>(
 		config.promptMessages[0] ?? {
 			content: '',
-			role: PromptMessageRole.System,
+			role: OpenAIPromptMessageRole.System,
 		},
 	);
-	function handleRoleChange(role: PromptMessageRole) {
+	function handleRoleChange(role: OpenAIPromptMessageRole) {
 		setDraftMessage({ ...draftMessage, role });
 	}
 
@@ -154,12 +154,14 @@ export default function PromptTemplate({
 							onChange={handleChange(handleRoleChange)}
 							data-testid="prompt-message-role"
 						>
-							{Object.values(PromptMessageRole).map((role) => (
-								<option key={role} id={role} value={role}>
-									{role.charAt(0).toUpperCase() +
-										role.slice(1)}
-								</option>
-							))}
+							{Object.values(OpenAIPromptMessageRole).map(
+								(role) => (
+									<option key={role} id={role} value={role}>
+										{role.charAt(0).toUpperCase() +
+											role.slice(1)}
+									</option>
+								),
+							)}
 						</select>
 					</div>
 					<span className="text-info text-sm">

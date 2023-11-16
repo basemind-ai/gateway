@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 import { createWebsocket, WebsocketHandler } from '@/api';
-import ModelConfiguration from '@/components/prompt-config/model-configuration';
+import ModelConfigurationView from '@/components/prompt-config/model-configuration-view';
 import PromptTemplate from '@/components/prompt-config/prompt-template';
 import Results from '@/components/prompt-config/results';
 import TestInputs from '@/components/prompt-config/test-inputs';
@@ -27,40 +27,16 @@ export default function TestConfigView({
 }) {
 	const t = useTranslations('promptTesting');
 	const showError = useShowError();
+
 	const [openSection, setOpenSection] = useState<TestSection | null>(
 		TestSection.ModelConfiguration,
 	);
-	const toggleSection = (section: TestSection | null) => {
-		setOpenSection(openSection === section ? null : section);
-	};
 	const [websocketHandler, setWebsocketHandler] =
 		useState<null | WebsocketHandler<any, any>>(null);
-	const [testConfig, setTestConfig] = useState<PromptConfigTest<
-		any,
-		any
-	> | null>(null);
+	const [testConfig, setTestConfig] = useState<PromptConfigTest | null>(null);
 	const [testResult, setTestResult] = useState<PromptConfigTestResultChunk[]>(
 		[],
 	);
-
-	function handleRunTest() {
-		setTestConfig(config);
-		setTestResult([]);
-		if (openSection === TestSection.TestInputs) {
-			toggleSection(TestSection.Results);
-		}
-		void websocketHandler?.sendMessage(config);
-	}
-
-	const handleMessage = useCallback(
-		({ data }: MessageEvent<PromptConfigTestResultChunk>) => {
-			setTestResult((oldResults) => [...oldResults, data]);
-		},
-		[testResult],
-	);
-	const handleError = useCallback(() => {
-		showError(t('runningTestError'));
-	}, []);
 
 	useEffect(() => {
 		(async () => {
@@ -79,13 +55,37 @@ export default function TestConfigView({
 		return () => websocketHandler?.closeSocket();
 	}, []);
 
-	function getHeadlineOpacity(section: string) {
-		return openSection === section ? 'opacity-100' : 'opacity-80';
-	}
+	const toggleSection = (section: TestSection | null) => {
+		setOpenSection(openSection === section ? null : section);
+	};
 
-	function getSectionYSize(section: string) {
-		return openSection === section ? 'scale-y-100' : 'scale-y-0';
-	}
+	const handleRunTest = () => {
+		setTestConfig(config);
+		setTestResult([]);
+
+		if (openSection === TestSection.TestInputs) {
+			toggleSection(TestSection.Results);
+		}
+
+		void websocketHandler?.sendMessage(config);
+	};
+
+	const handleMessage = useCallback(
+		({ data }: MessageEvent<PromptConfigTestResultChunk>) => {
+			setTestResult((oldResults) => [...oldResults, data]);
+		},
+		[testResult],
+	);
+
+	const handleError = useCallback(() => {
+		showError(t('runningTestError'));
+	}, []);
+
+	const getHeadlineOpacity = (section: string) =>
+		openSection === section ? 'opacity-100' : 'opacity-80';
+
+	const getSectionYSize = (section: string) =>
+		openSection === section ? 'scale-y-100' : 'scale-y-0';
 
 	return (
 		<>
@@ -99,9 +99,7 @@ export default function TestConfigView({
 						toggleSection(TestSection.ModelConfiguration);
 					}}
 				>
-					<h2
-						className={`text-xl font-normal text-base-content mb-4`}
-					>
+					<h2 className="text-xl font-normal text-base-content mb-4">
 						{t('modelConfig')}
 					</h2>
 					{openSection === TestSection.ModelConfiguration ? (
@@ -116,12 +114,9 @@ export default function TestConfigView({
 					)} origin-top`}
 				>
 					{openSection === 'modelConfiguration' && (
-						<ModelConfiguration<
-							typeof config.modelParameters,
-							typeof config.promptMessages
-						>
-							config={config}
-							setConfig={setConfig}
+						<ModelConfigurationView
+							promptTestConfig={config}
+							setPromptTestConfig={setConfig}
 						/>
 					)}
 				</div>

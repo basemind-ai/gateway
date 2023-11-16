@@ -9,7 +9,7 @@ import { ApiError } from '@/errors';
 import { useAddApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { handleChange } from '@/utils/helpers';
-import { populateApplicationId, populateProjectId } from '@/utils/navigation';
+import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 export function CreateApplication({
 	onClose,
@@ -51,8 +51,8 @@ export function CreateApplication({
 				},
 				projectId,
 			});
-			const applicationUrl = populateApplicationId(
-				populateProjectId(Navigation.Applications, projectId),
+			const applicationUrl = setApplicationId(
+				setProjectId(Navigation.Applications, projectId),
 				application.id,
 			);
 			setRedirectUrl(applicationUrl);
@@ -71,7 +71,7 @@ export function CreateApplication({
 				setAPIKey(apiKey.hash);
 			} else {
 				onClose();
-				router.push(applicationUrl);
+				router.replace(applicationUrl);
 			}
 		} catch (e) {
 			showError((e as ApiError).message);
@@ -87,7 +87,7 @@ export function CreateApplication({
 		onClose();
 		setAPIKey(null);
 		if (redirectUrl) {
-			router.push(redirectUrl);
+			router.replace(redirectUrl);
 		}
 	}
 

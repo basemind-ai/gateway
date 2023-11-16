@@ -37,6 +37,7 @@
 		"settings": "Settings",
 		"status": "Status",
 		"test": "Test",
+		"testPrompt": "Test Prompt",
 		"type": "Type",
 		"warning": "Warning",
 		"warningMessageAPIKey": "Once a API key is deleted, all server requests sent with that key will not work.",

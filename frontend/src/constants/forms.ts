@@ -1,7 +1,7 @@
 import {
-	ModelType,
 	ModelVendor,
 	OpenAIModelParameters,
+	OpenAIModelType,
 	OpenAIPromptMessage,
 	PromptConfigTest,
 } from '@/types';
@@ -15,7 +15,7 @@ export enum SupportTopic {
 	WebApp = 'Web-app',
 }
 
-export const PromptConfigDefault: PromptConfigTest<
+export const DefaultPromptConfigTest: PromptConfigTest<
 	OpenAIModelParameters,
 	OpenAIPromptMessage
 > = {
@@ -26,7 +26,7 @@ export const PromptConfigDefault: PromptConfigTest<
 		temperature: 1,
 		topP: 1,
 	},
-	modelType: ModelType.Gpt35Turbo,
+	modelType: OpenAIModelType.Gpt35Turbo,
 	modelVendor: ModelVendor.OpenAI,
 	name: '',
 	promptMessages: [],

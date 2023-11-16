@@ -3,17 +3,17 @@ import { render } from 'tests/test-utils';
 import { beforeEach, describe, expect } from 'vitest';
 
 import PromptTemplate from '@/components/prompt-config/prompt-template';
-import { PromptConfigDefault } from '@/constants/forms';
+import { DefaultPromptConfigTest } from '@/constants/forms';
 
 describe('PromptTemplate tests', () => {
-	let config = PromptConfigDefault;
+	let config = DefaultPromptConfigTest;
 	const setConfig = vi.fn();
 	setConfig.mockImplementation((updater) => {
 		// Replace the original config with the new state for subsequent assertions
 		config = typeof updater === 'function' ? updater(config) : updater;
 	});
 	beforeEach(() => {
-		config = PromptConfigDefault;
+		config = DefaultPromptConfigTest;
 		config.promptMessages = [
 			{
 				content: 'test user',

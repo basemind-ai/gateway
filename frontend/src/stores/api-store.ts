@@ -296,7 +296,10 @@ export const useProject = (projectId: string) =>
 export const useProjectUsers = (projectId: string) =>
 	useApiStore((s) => s.projectUsers[projectId]);
 export const useProjects = () => useApiStore((s) => s.projects);
-export const usePromptConfig = <P, M>(
+export const usePromptConfig = <
+	P extends Record<string, any>,
+	M extends Record<string, any>,
+>(
 	applicationId: string,
 	promptConfigId: string,
 ) =>

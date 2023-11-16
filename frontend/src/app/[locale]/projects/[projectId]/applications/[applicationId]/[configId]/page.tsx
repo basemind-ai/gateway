@@ -2,14 +2,15 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Gear, Speedometer2 } from 'react-bootstrap-icons';
+import { CodeSquare, Gear, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
-import { PromptAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-analytics-page';
-import { PromptDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-deletion';
-import { PromptGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-info';
-import { PromptGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-settings';
+import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-analytics-page';
+import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-deletion';
+import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-info';
+import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-settings';
+import { PromptConfigTest } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-test';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
@@ -20,8 +21,7 @@ import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
 
 enum TAB_NAMES {
 	OVERVIEW,
-	MODEL,
-	PROMPT,
+	PROMPT_TESTING,
 	SETTINGS,
 }
 
@@ -61,11 +61,31 @@ export default function PromptConfiguration({
 		},
 	);
 
+	if (isLoading) {
+		return (
+			<div
+				data-testid="prompt-config-page-loading"
+				className="h-full w-full flex items-center justify-center"
+			>
+				<span className="loading loading-spinner loading-md" />
+			</div>
+		);
+	}
+
+	if (!promptConfig) {
+		return null;
+	}
+
 	const tabs: TabData<TAB_NAMES>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.OVERVIEW,
 			text: t('overview'),
+		},
+		{
+			icon: <CodeSquare className="w-3.5 h-3.5" />,
+			id: TAB_NAMES.PROMPT_TESTING,
+			text: t('test'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
@@ -75,65 +95,73 @@ export default function PromptConfiguration({
 	];
 	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
 
-	if (!promptConfig && isLoading) {
-		return (
-			<div
-				data-testid="prompt-config-page-loading"
-				className="h-full w-full flex items-center justify-center"
+	const tabComponents: Record<TAB_NAMES, React.FC> = {
+		[TAB_NAMES.OVERVIEW]: () => (
+			<>
+				<PromptConfigAnalyticsPage
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+				/>
+				<div className="h-8" />
+				<PromptConfigGeneralInfo
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+					navigateToPromptTesting={() => {
+						setSelectedTab(TAB_NAMES.PROMPT_TESTING);
+					}}
+				/>
+			</>
+		),
+		[TAB_NAMES.PROMPT_TESTING]: () => (
+			<>
+				<PromptConfigTest
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+					navigateToOverview={() => {
+						setSelectedTab(TAB_NAMES.OVERVIEW);
+					}}
+				/>
+			</>
+		),
+		[TAB_NAMES.SETTINGS]: () => (
+			<>
+				<PromptConfigGeneralSettings
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+				/>
+				<div className="h-4" />
+				<PromptConfigDeletion
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfigId={promptConfigId}
+				/>
+			</>
+		),
+	};
+
+	const TabComponent = tabComponents[selectedTab];
+
+	return (
+		<div data-testid="prompt-page" className="my-8 mx-32">
+			<h1
+				data-testid="prompt-page-title"
+				className="text-2xl font-semibold text-base-content"
 			>
-				<span className="loading loading-spinner loading-md" />
+				{t('modelConfiguration')} / {promptConfig.name}
+			</h1>
+			<div className="mt-3.5 w-full mb-8">
+				<TabNavigation<TAB_NAMES>
+					tabs={tabs}
+					selectedTab={selectedTab}
+					onTabChange={setSelectedTab}
+					trailingLine={true}
+				/>
 			</div>
-		);
-	} else if (promptConfig) {
-		return (
-			<div data-testid="prompt-page" className="my-8 mx-32">
-				<h1
-					data-testid="prompt-page-title"
-					className="text-2xl font-semibold text-base-content"
-				>
-					{t('modelConfiguration')} / {promptConfig.name}
-				</h1>
-				<div className="mt-3.5 w-full mb-8">
-					<TabNavigation<TAB_NAMES>
-						tabs={tabs}
-						selectedTab={selectedTab}
-						onTabChange={setSelectedTab}
-						trailingLine={true}
-					/>
-				</div>
-				{selectedTab === TAB_NAMES.OVERVIEW && (
-					<>
-						<PromptAnalyticsPage
-							projectId={projectId}
-							applicationId={applicationId}
-							promptConfigId={promptConfigId}
-						/>
-						<div className="h-8" />
-						<PromptGeneralInfo
-							projectId={projectId}
-							applicationId={applicationId}
-							promptConfigId={promptConfigId}
-						/>
-					</>
-				)}
-				{selectedTab === TAB_NAMES.SETTINGS && (
-					<>
-						<PromptGeneralSettings
-							projectId={projectId}
-							applicationId={applicationId}
-							promptConfigId={promptConfigId}
-						/>
-						<div className="h-4" />
-						<PromptDeletion
-							projectId={projectId}
-							applicationId={applicationId}
-							promptConfigId={promptConfigId}
-						/>
-					</>
-				)}
-			</div>
-		);
-	} else {
-		return null;
-	}
+			<TabComponent />
+		</div>
+	);
 }

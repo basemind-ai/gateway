@@ -5,32 +5,26 @@ import { useState } from 'react';
 import { handleCreatePromptConfig } from '@/api';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import {
-	useAddPromptConfig,
-	useApplication,
-	usePromptConfig,
-} from '@/stores/api-store';
+import { useAddPromptConfig, useApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
+import { PromptConfig } from '@/types';
 import { getCloneName } from '@/utils/helpers';
-import { populateLink } from '@/utils/navigation';
+import { setPathParams } from '@/utils/navigation';
 
-export function PromptGeneralInfo({
+export function PromptConfigGeneralInfo({
 	projectId,
 	applicationId,
-	promptConfigId,
+	promptConfig,
+	navigateToPromptTesting,
 }: {
 	applicationId: string;
+	navigateToPromptTesting: () => void;
 	projectId: string;
-	promptConfigId: string;
+	promptConfig: PromptConfig;
 }) {
 	const t = useTranslations('promptConfig');
 	const router = useRouter();
 
-	const promptConfig = usePromptConfig<
-		OpenAIPromptMessage,
-		OpenAIModelParameters
-	>(applicationId, promptConfigId);
 	const addPromptConfig = useAddPromptConfig();
 	const application = useApplication(projectId, applicationId);
 
@@ -38,19 +32,8 @@ export function PromptGeneralInfo({
 	const showError = useShowError();
 	const showInfo = useShowInfo();
 
-	function navigateToPromptTesting() {
-		router.push(
-			populateLink(
-				Navigation.TestingConfig,
-				projectId,
-				applicationId,
-				promptConfigId,
-			),
-		);
-	}
-
 	async function clonePrompt() {
-		if (!promptConfig || cloning) {
+		if (cloning) {
 			return;
 		}
 
@@ -78,14 +61,12 @@ export function PromptGeneralInfo({
 			});
 			addPromptConfig(applicationId, newPromptConfig);
 			showInfo(t('configCloned'));
-			router.push(
-				populateLink(
-					Navigation.ConfigEdit,
-					projectId,
+			router.replace(
+				setPathParams(Navigation.ConfigEdit, {
 					applicationId,
-					newPromptConfig.id,
-					newPromptConfig.name,
-				),
+					configId: newPromptConfig.id,
+					projectId,
+				}),
 			);
 		} catch (e) {
 			showError((e as ApiError).message);

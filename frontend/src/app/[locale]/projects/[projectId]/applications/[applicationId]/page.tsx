@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
+import { CodeSquare, Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
 import { ApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/api-keys';
@@ -17,6 +17,7 @@ import { useApplication, useProject, useProjects } from '@/stores/api-store';
 
 enum TAB_NAMES {
 	OVERVIEW,
+	TEST_PROMPT,
 	SETTINGS,
 	API_KEYS,
 }
@@ -41,6 +42,11 @@ export default function Application({
 			text: t('overview'),
 		},
 		{
+			icon: <CodeSquare className="w-3.5 h-3.5" />,
+			id: TAB_NAMES.TEST_PROMPT,
+			text: t('testPrompt'),
+		},
+		{
 			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.SETTINGS,
 			text: t('settings'),
@@ -56,6 +62,39 @@ export default function Application({
 	if (!application || !project) {
 		return null;
 	}
+
+	const tabComponents: Record<TAB_NAMES, React.FC> = {
+		[TAB_NAMES.OVERVIEW]: () => (
+			<>
+				<ApplicationAnalyticsPage
+					applicationId={applicationId}
+					projectId={projectId}
+				/>
+				<ApplicationPromptConfigs
+					applicationId={applicationId}
+					projectId={projectId}
+				/>
+			</>
+		),
+		[TAB_NAMES.TEST_PROMPT]: () => <div>Test Prompt</div>,
+		[TAB_NAMES.SETTINGS]: () => (
+			<>
+				<ApplicationGeneralSettings
+					applicationId={applicationId}
+					projectId={projectId}
+				/>
+				<ApplicationDeletion
+					applicationId={applicationId}
+					projectId={projectId}
+				/>
+			</>
+		),
+		[TAB_NAMES.API_KEYS]: () => (
+			<ApiKeys applicationId={applicationId} projectId={projectId} />
+		),
+	};
+
+	const TabComponent = tabComponents[selectedTab];
 
 	return (
 		<div data-testid="application-page" className="my-8 mx-32">
@@ -76,33 +115,7 @@ export default function Application({
 					trailingLine={true}
 				/>
 			</div>
-			{selectedTab === TAB_NAMES.OVERVIEW && (
-				<>
-					<ApplicationAnalyticsPage
-						applicationId={applicationId}
-						projectId={projectId}
-					/>
-					<ApplicationPromptConfigs
-						applicationId={applicationId}
-						projectId={projectId}
-					/>
-				</>
-			)}
-			{selectedTab === TAB_NAMES.SETTINGS && (
-				<>
-					<ApplicationGeneralSettings
-						applicationId={applicationId}
-						projectId={projectId}
-					/>
-					<ApplicationDeletion
-						applicationId={applicationId}
-						projectId={projectId}
-					/>
-				</>
-			)}
-			{selectedTab === TAB_NAMES.API_KEYS && (
-				<ApiKeys applicationId={applicationId} projectId={projectId} />
-			)}
+			<TabComponent />
 		</div>
 	);
 }

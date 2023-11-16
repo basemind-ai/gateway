@@ -9,9 +9,9 @@ import { ApiError } from '@/errors';
 import { useDeletePromptConfig, usePromptConfig } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
-import { populateLink } from '@/utils/navigation';
+import { setPathParams } from '@/utils/navigation';
 
-export function PromptDeletion({
+export function PromptConfigDeletion({
 	projectId,
 	applicationId,
 	promptConfigId,
@@ -57,7 +57,11 @@ export function PromptDeletion({
 			});
 			deletePromptConfig(applicationId, promptConfigId);
 			router.replace(
-				populateLink(Navigation.Applications, projectId, applicationId),
+				setPathParams(
+					Navigation.Applications,
+					projectId,
+					applicationId,
+				),
 			);
 			showInfo(t('promptDeleted'));
 		} catch (e) {

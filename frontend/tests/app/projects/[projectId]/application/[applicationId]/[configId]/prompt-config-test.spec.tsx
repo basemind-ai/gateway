@@ -10,7 +10,7 @@ import { render, renderHook, routerReplaceMock } from 'tests/test-utils';
 import { beforeEach, describe, expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import ConfigEditScreen from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/[configId]/[name]/page';
+import { PromptConfigTest } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-test';
 import { Navigation } from '@/constants';
 import { useSetPromptConfigs } from '@/stores/api-store';
 
@@ -38,15 +38,12 @@ describe('config-edit-screen', () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
 		const promptConfig = await PromptConfigFactory.build();
-		const name = 'test-config';
 		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: promptConfig.id,
-					name,
-					projectId: project.id,
-				}}
+			<PromptConfigTest
+				applicationId={application.id}
+				projectId={project.id}
+				promptConfig={promptConfig}
+				navigateToOverview={vi.fn()}
 			/>,
 		);
 		await waitFor(() => {
@@ -62,43 +59,16 @@ describe('config-edit-screen', () => {
 		const promptConfig = await PromptConfigFactory.build();
 		const name = 'test-config';
 		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: promptConfig.id,
-					name,
-					projectId: project.id,
-				}}
+			<PromptConfigTest
+				applicationId={application.id}
+				projectId={project.id}
+				promptConfig={promptConfig}
+				navigateToOverview={vi.fn()}
 			/>,
 		);
 		expect(
 			screen.getByTestId('config-edit-screen-title'),
 		).toHaveTextContent(name);
-	});
-
-	it('clicking createConfig should new config when configId is "new"', async () => {
-		const handleCreatePromptConfigSpy = vi
-			.spyOn(PromptConfigAPI, 'handleCreatePromptConfig')
-			.mockResolvedValueOnce(await PromptConfigFactory.build());
-		const project = await ProjectFactory.build();
-		const application = await ApplicationFactory.build();
-		const name = 'test-config';
-		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: 'new',
-					name,
-					projectId: project.id,
-				}}
-			/>,
-		);
-		const createConfigButton = screen.getByTestId('test-create-button');
-		fireEvent.click(createConfigButton);
-		expect(handleCreatePromptConfigSpy).toHaveBeenCalled();
-		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalled();
-		});
 	});
 
 	it('saves an existing configuration', async () => {
@@ -108,18 +78,15 @@ describe('config-edit-screen', () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
 		const promptConfig = await PromptConfigFactory.build();
-		const name = 'existing-config';
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [promptConfig]);
 
 		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: promptConfig.id,
-					name,
-					projectId: project.id,
-				}}
+			<PromptConfigTest
+				applicationId={application.id}
+				projectId={project.id}
+				promptConfig={promptConfig}
+				navigateToOverview={vi.fn()}
 			/>,
 		);
 		fireEvent.click(screen.getByTestId('test-create-button'));
@@ -130,40 +97,10 @@ describe('config-edit-screen', () => {
 		handleUpdatePromptConfigSpy.mockRestore();
 	});
 
-	it('creates a new configuration', async () => {
-		const project = await ProjectFactory.build();
-		const application = await ApplicationFactory.build();
-		const name = 'New Configuration';
-		const mockNewConfig = await PromptConfigFactory.build({ name });
-		const handleCreatePromptConfigSpy = vi
-			.spyOn(PromptConfigAPI, 'handleCreatePromptConfig')
-			.mockResolvedValueOnce(mockNewConfig);
-		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: 'new',
-					name: '',
-					projectId: project.id,
-				}}
-			/>,
-		);
-		fireEvent.click(screen.getByTestId('test-create-button'));
-		await waitFor(() => {
-			expect(handleCreatePromptConfigSpy).toHaveBeenCalled();
-		});
-
-		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalled();
-		});
-		handleCreatePromptConfigSpy.mockRestore();
-	});
-
 	it('shows warning modal when expected template variables are changed', async () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
 		const promptConfig = await PromptConfigFactory.build();
-		const name = 'existing-config';
 
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [
@@ -173,13 +110,11 @@ describe('config-edit-screen', () => {
 		]);
 
 		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: promptConfig.id,
-					name,
-					projectId: project.id,
-				}}
+			<PromptConfigTest
+				applicationId={application.id}
+				projectId={project.id}
+				promptConfig={promptConfig}
+				navigateToOverview={vi.fn()}
 			/>,
 		);
 		await waitFor(() => {
@@ -208,7 +143,6 @@ describe('config-edit-screen', () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
 		const promptConfig = await PromptConfigFactory.build();
-		const name = 'existing-config';
 
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [
@@ -218,13 +152,11 @@ describe('config-edit-screen', () => {
 		]);
 
 		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: promptConfig.id,
-					name,
-					projectId: project.id,
-				}}
+			<PromptConfigTest
+				applicationId={application.id}
+				projectId={project.id}
+				promptConfig={promptConfig}
+				navigateToOverview={vi.fn()}
 			/>,
 		);
 		await waitFor(() => {
@@ -259,7 +191,6 @@ describe('config-edit-screen', () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
 		const promptConfig = await PromptConfigFactory.build();
-		const name = 'existing-config';
 
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [
@@ -269,13 +200,11 @@ describe('config-edit-screen', () => {
 		]);
 
 		render(
-			<ConfigEditScreen
-				params={{
-					applicationId: application.id,
-					configId: promptConfig.id,
-					name,
-					projectId: project.id,
-				}}
+			<PromptConfigTest
+				applicationId={application.id}
+				projectId={project.id}
+				promptConfig={promptConfig}
+				navigateToOverview={vi.fn()}
 			/>,
 		);
 		await waitFor(() => {

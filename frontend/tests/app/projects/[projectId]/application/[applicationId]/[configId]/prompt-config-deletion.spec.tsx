@@ -8,7 +8,7 @@ import {
 import { render, renderHook, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-deletion';
+import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-deletion';
 import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,
@@ -48,7 +48,7 @@ describe('PromptDeletion', () => {
 		setPromptConfigs(application.id, [promptConfig]);
 
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -61,7 +61,7 @@ describe('PromptDeletion', () => {
 
 	it('renders null when prompt config not present', () => {
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={''}
@@ -80,7 +80,7 @@ describe('PromptDeletion', () => {
 		setPromptConfigs(application.id, [promptConfig]);
 
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -119,7 +119,7 @@ describe('PromptDeletion', () => {
 		setPromptConfigs(application.id, [promptConfig]);
 
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}

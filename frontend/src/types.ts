@@ -1,3 +1,5 @@
+import { Record } from 'react-bootstrap-icons';
+
 import { SupportTopic } from '@/constants/forms';
 
 export enum ModelVendor {
@@ -10,11 +12,18 @@ export enum unavailableModelVendors {
 	Google = 'GOOGLE',
 }
 
-export enum ModelType {
+export enum OpenAIModelType {
 	Gpt3516K = 'gpt-3.5-turbo-16k',
 	Gpt35Turbo = 'gpt-3.5-turbo',
 	Gpt4 = 'gpt-4',
 	Gpt432K = 'gpt-4-32k',
+}
+
+export enum CohereModelType {
+	Command = 'command',
+	CommandLight = 'command-light',
+	CommandLightNightly = 'command-light-nightly',
+	CommandNightly = 'command-nightly',
 }
 
 export enum AccessPermission {
@@ -58,20 +67,26 @@ export type ApplicationUpdateBody = Partial<ApplicationCreateBody>;
 
 // PromptConfig
 
-export interface PromptConfig<P = any, M = any> {
+export interface PromptConfig<
+	P extends Record<string, any> = Record<string, any>,
+	M extends Record<string, any> = Record<string, any>,
+> {
 	createdAt: string;
 	expectedTemplateVariables: string[];
 	id: string;
 	isDefault: boolean;
 	modelParameters: P;
-	modelType: ModelType;
+	modelType: OpenAIModelType;
 	modelVendor: ModelVendor;
 	name: string;
 	providerPromptMessages: M[];
 	updatedAt: string;
 }
 
-export type PromptConfigCreateBody<P = any, M = any> = Pick<
+export type PromptConfigCreateBody<
+	P extends Record<string, any> = Record<string, any>,
+	M extends Record<string, any> = Record<string, any>,
+> = Pick<
 	PromptConfig<P, M>,
 	'name' | 'modelParameters' | 'modelType' | 'modelVendor'
 > & { promptMessages: M[] };
@@ -91,19 +106,19 @@ export type APIKeyCreateBody = Pick<APIKey, 'name'>;
 
 // Provider Message Types
 
-export type OpenAIPromptMessage = {
-	templateVariables?: string[];
-} & {
-	content: string;
-	name?: string;
-	role: 'system' | 'user' | 'assistant';
-};
-// todo: Good luck Naaman with adding this back in as it breaks typing
-// | {
-// 		functionArguments: string[];
-// 		name: string;
-// 		role: 'function';
-//   };
+export type OpenAIPromptMessage =
+	| ({
+			templateVariables?: string[];
+	  } & {
+			content: string;
+			name?: string;
+			role: 'system' | 'user' | 'assistant';
+	  })
+	| {
+			functionArguments: string[];
+			name: string;
+			role: 'function';
+	  };
 
 // Provider Model Parameters
 
@@ -114,6 +129,11 @@ export interface OpenAIModelParameters {
 	temperature?: number;
 	topP?: number;
 }
+
+export interface CohereModelParameters {
+	temperature?: number;
+}
+
 // UserAccount
 
 export interface AddUserToProjectBody {
@@ -145,9 +165,12 @@ export interface OTP {
 
 // Prompt Testing
 
-export interface PromptConfigTest<P, M> {
+export interface PromptConfigTest<
+	P extends Record<string, any> = Record<string, any>,
+	M extends Record<string, any> = Record<string, any>,
+> {
 	modelParameters: P;
-	modelType: ModelType;
+	modelType: OpenAIModelType | CohereModelType;
 	modelVendor: ModelVendor;
 	name: string;
 	promptConfigId?: string;
@@ -191,7 +214,7 @@ export interface PromptTestRecord<P, M> {
 	finishTime: string;
 	id: string;
 	modelParameters: P;
-	modelType: ModelType;
+	modelType: OpenAIModelType;
 	modelVendor: ModelVendor;
 	name: string;
 	promptConfigId?: string;
@@ -211,16 +234,17 @@ export enum TestSection {
 	TestInputs = 'testInputs',
 }
 
-export enum PromptMessageRole {
+export enum OpenAIPromptMessageRole {
 	Assistant = 'assistant',
 	System = 'system',
 	User = 'user',
 }
-interface ModelConfig {
+
+export interface ModelConfig<P extends Record<string, any>> {
 	icon: string;
 	name: string;
 	parameters: {
-		[P in keyof OpenAIModelParameters]: {
+		[K in keyof P]: {
 			max: number;
 			min: number;
 			step: number;
@@ -228,5 +252,12 @@ interface ModelConfig {
 	};
 }
 
-// Define the Record type for models
-export type ModelsRecord = Record<ModelVendor, Record<ModelType, ModelConfig>>;
+export type OpenAIModelsRecord = Record<
+	OpenAIModelType,
+	ModelConfig<Required<OpenAIModelParameters>>
+>;
+
+export type CohereModelsRecord = Record<
+	CohereModelType,
+	ModelConfig<Required<CohereModelParameters>>
+>;

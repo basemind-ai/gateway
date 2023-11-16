@@ -12,8 +12,8 @@ import {
 } from '@/api/ws';
 import { HttpMethod } from '@/constants';
 import {
-	ModelType,
 	ModelVendor,
+	OpenAIModelType,
 	PromptConfigTest,
 	PromptConfigTestResultChunk,
 } from '@/types';
@@ -71,7 +71,7 @@ describe('prompt testing websocket', () => {
 
 		const wsData = {
 			modelParameters: {},
-			modelType: ModelType.Gpt35Turbo,
+			modelType: OpenAIModelType.Gpt35Turbo,
 			modelVendor: ModelVendor.OpenAI,
 			name: 'test',
 			promptConfigId: undefined,

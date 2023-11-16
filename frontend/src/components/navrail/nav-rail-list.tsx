@@ -13,7 +13,7 @@ import Badge from '@/components/navrail/badge';
 import LinkMenu from '@/components/navrail/link-menu';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { useApplications, useSelectedProject } from '@/stores/api-store';
-import { contextNavigation, populateApplicationId } from '@/utils/navigation';
+import { contextNavigation, setApplicationId } from '@/utils/navigation';
 
 const ICON_CLASSES = 'w-3.5 h-3.5';
 
@@ -77,7 +77,7 @@ export default function NavRailList() {
 				icon={<Boxes className={ICON_CLASSES} />}
 			>
 				{projectApplications?.map((application) => {
-					const applicationUrl = populateApplicationId(
+					const applicationUrl = setApplicationId(
 						navigation.Applications,
 						application.id,
 					);
