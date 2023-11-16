@@ -46,7 +46,7 @@ repos:
       hooks:
           - id: golines
     - repo: https://github.com/bufbuild/buf
-      rev: v1.28.0
+      rev: v1.28.1
       hooks:
           - id: buf-format
           - id: buf-lint
