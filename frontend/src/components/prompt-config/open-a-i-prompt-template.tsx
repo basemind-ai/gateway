@@ -2,8 +2,8 @@ import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 import {
-	OpenAIModelParameters,
-	OpenAIPromptMessage,
+	ModelVendor,
+	OpenAIContentMessage,
 	OpenAIPromptMessageRole,
 	PromptConfigTest,
 } from '@/types';
@@ -13,27 +13,19 @@ import {
 	updateTemplateVariablesRecord,
 } from '@/utils/helpers';
 
-const newMessage: OpenAIPromptMessage = {
-	content: '',
-	name: '',
-	role: OpenAIPromptMessageRole.System,
-};
-
-export default function PromptTemplate({
-	config,
-	setConfig,
+export default function OpenAIPromptTemplate({
+	promptTestConfig,
+	setPromptTestConfig,
 }: {
-	config: PromptConfigTest<OpenAIModelParameters, OpenAIPromptMessage>;
-	setConfig: Dispatch<
-		SetStateAction<
-			PromptConfigTest<OpenAIModelParameters, OpenAIPromptMessage>
-		>
+	promptTestConfig: PromptConfigTest<ModelVendor.OpenAI>;
+	setPromptTestConfig: Dispatch<
+		SetStateAction<PromptConfigTest<ModelVendor.OpenAI>>
 	>;
 }) {
 	const t = useTranslations('promptTesting');
 	const [activeMessage, setActiveMessage] = useState<number>(0);
-	const [draftMessage, setDraftMessage] = useState<OpenAIPromptMessage>(
-		config.promptMessages[0] ?? {
+	const [draftMessage, setDraftMessage] = useState<OpenAIContentMessage>(
+		(promptTestConfig.promptMessages[0] as OpenAIContentMessage) ?? {
 			content: '',
 			role: OpenAIPromptMessageRole.System,
 		},
@@ -42,14 +34,7 @@ export default function PromptTemplate({
 		setDraftMessage({ ...draftMessage, role });
 	}
 
-	function handleMessageClick(
-		index: number,
-		message: { templateVariables?: string[] } & {
-			content: string;
-			name?: string;
-			role: 'system' | 'user' | 'assistant';
-		},
-	) {
+	function handleMessageClick(index: number, message: OpenAIContentMessage) {
 		return () => {
 			setActiveMessage(index);
 			setDraftMessage(message);
@@ -65,18 +50,23 @@ export default function PromptTemplate({
 	}
 
 	function handleDelete() {
-		const newConfig = { ...config };
+		const newConfig = { ...promptTestConfig };
 		newConfig.promptMessages.splice(activeMessage, 1);
-		setConfig(newConfig);
+		setPromptTestConfig(newConfig);
 		setActiveMessage(0);
-		setDraftMessage(newConfig.promptMessages[0] ?? newMessage);
+		setDraftMessage(
+			(newConfig.promptMessages[0] as OpenAIContentMessage) ?? {
+				content: '',
+				role: OpenAIPromptMessageRole.System,
+			},
+		);
 	}
 
 	function handleSave() {
 		draftMessage.templateVariables = extractVariables(draftMessage.content);
 
-		const newConfig = { ...config };
-		if (activeMessage === config.promptMessages.length) {
+		const newConfig = { ...promptTestConfig };
+		if (activeMessage === promptTestConfig.promptMessages.length) {
 			newConfig.promptMessages.push(draftMessage);
 		} else {
 			newConfig.promptMessages[activeMessage] = draftMessage;
@@ -85,7 +75,7 @@ export default function PromptTemplate({
 			newConfig.promptMessages,
 			newConfig.templateVariables,
 		);
-		setConfig(newConfig);
+		setPromptTestConfig(newConfig);
 	}
 	return (
 		<div
@@ -93,7 +83,7 @@ export default function PromptTemplate({
 			data-testid="prompt-template-card"
 		>
 			<div className="flex items-start content-start gap-4 self-stretch flex-wrap pb-4">
-				{config.promptMessages.map((message, index) => (
+				{promptTestConfig.promptMessages.map((message, index) => (
 					<label
 						key={index}
 						className={`rounded-4xl border border-0.5 text-xs  py-2.5 px-4  ${
@@ -107,7 +97,10 @@ export default function PromptTemplate({
 							name="promptMessage"
 							value={index}
 							checked={activeMessage === index}
-							onChange={handleMessageClick(index, message)}
+							onChange={handleMessageClick(
+								index,
+								message as OpenAIContentMessage,
+							)}
 							className="hidden"
 							data-testid={`prompt-message-${index}`}
 						/>
@@ -115,9 +108,9 @@ export default function PromptTemplate({
 					</label>
 				))}
 				<label
-					key={config.promptMessages.length}
+					key={promptTestConfig.promptMessages.length}
 					className={`rounded-4xl border border-0.5 text-xs  py-2.5 px-4  ${
-						activeMessage === config.promptMessages.length
+						activeMessage === promptTestConfig.promptMessages.length
 							? 'text-secondary border-secondary'
 							: 'border-neutral text-base-content'
 					}`}
@@ -125,11 +118,17 @@ export default function PromptTemplate({
 					<input
 						type="radio"
 						name="promptMessage"
-						value={config.promptMessages.length}
-						checked={activeMessage === config.promptMessages.length}
+						value={promptTestConfig.promptMessages.length}
+						checked={
+							activeMessage ===
+							promptTestConfig.promptMessages.length
+						}
 						onChange={handleMessageClick(
-							config.promptMessages.length,
-							newMessage,
+							promptTestConfig.promptMessages.length,
+							{
+								content: '',
+								role: OpenAIPromptMessageRole.System,
+							},
 						)}
 						data-testid={'prompt-message-new'}
 						className="hidden"
@@ -181,7 +180,9 @@ export default function PromptTemplate({
 					className="btn btn-outline btn-sm btn-error"
 					onClick={handleDelete}
 					data-testid="prompt-message-delete"
-					disabled={activeMessage === config.promptMessages.length}
+					disabled={
+						activeMessage === promptTestConfig.promptMessages.length
+					}
 				>
 					{t('delete')}
 				</button>

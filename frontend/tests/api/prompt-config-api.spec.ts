@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 
@@ -24,7 +24,7 @@ describe('prompt configs API', () => {
 		it('returns a newly created prompt config', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(promptConfig),
@@ -66,7 +66,7 @@ describe('prompt configs API', () => {
 		it('returns a list of prompt configs', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfigs = PromptConfigFactory.batchSync(2);
+			const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(promptConfigs),
@@ -98,7 +98,7 @@ describe('prompt configs API', () => {
 		it('returns the updated prompt config', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(promptConfig),
@@ -141,7 +141,7 @@ describe('prompt configs API', () => {
 		it('returns undefined for delete prompt config api', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(),
@@ -174,7 +174,7 @@ describe('prompt configs API', () => {
 		it('returns a default prompt config', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(promptConfig),
@@ -208,7 +208,7 @@ describe('prompt configs API', () => {
 		it('returns prompt config analytics', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 			const promptConfigAnalytics = {
 				tokensCost: 10,
 				totalRequests: 1000,
@@ -241,7 +241,7 @@ describe('prompt configs API', () => {
 		it('returns prompt config analytics for a given date range', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 			const promptConfigAnalytics = {
 				tokensCost: 10,
 				totalRequests: 1000,

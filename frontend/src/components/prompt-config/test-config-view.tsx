@@ -1,14 +1,24 @@
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import {
+	Dispatch,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 import { createWebsocket, WebsocketHandler } from '@/api';
 import ModelConfigurationView from '@/components/prompt-config/model-configuration-view';
-import PromptTemplate from '@/components/prompt-config/prompt-template';
+import OpenAIPromptTemplate from '@/components/prompt-config/open-a-i-prompt-template';
 import Results from '@/components/prompt-config/results';
 import TestInputs from '@/components/prompt-config/test-inputs';
 import { useShowError } from '@/stores/toast-store';
-import { PromptConfigTest, PromptConfigTestResultChunk } from '@/types';
+import {
+	ModelVendor,
+	PromptConfigTest,
+	PromptConfigTestResultChunk,
+} from '@/types';
 
 enum TestSection {
 	ModelConfiguration = 'modelConfiguration',
@@ -17,16 +27,16 @@ enum TestSection {
 	TestInputs = 'testInputs',
 }
 
-export default function TestConfigView({
-	config,
-	setConfig,
+export default function TestConfigView<T extends ModelVendor>({
+	promptTestConfig,
+	setPromptTestConfig,
 	projectId,
 	applicationId,
 }: {
 	applicationId: string;
-	config: PromptConfigTest<any, any>;
 	projectId: string;
-	setConfig: React.Dispatch<React.SetStateAction<PromptConfigTest<any, any>>>;
+	promptTestConfig: PromptConfigTest<T>;
+	setPromptTestConfig: Dispatch<SetStateAction<PromptConfigTest<T>>>;
 }) {
 	const t = useTranslations('promptTesting');
 	const showError = useShowError();
@@ -35,15 +45,17 @@ export default function TestConfigView({
 		TestSection.ModelConfiguration,
 	);
 	const [websocketHandler, setWebsocketHandler] =
-		useState<null | WebsocketHandler<any, any>>(null);
-	const [testConfig, setTestConfig] = useState<PromptConfigTest | null>(null);
+		useState<null | WebsocketHandler<any>>(null);
+
+	const [resultTestConfig, setResultTestConfig] =
+		useState<PromptConfigTest<T> | null>(null);
 	const [testResult, setTestResult] = useState<PromptConfigTestResultChunk[]>(
 		[],
 	);
 
 	useEffect(() => {
 		(async () => {
-			const handler = await createWebsocket<any, any>({
+			const handler = await createWebsocket<any>({
 				applicationId,
 				handleClose: () => {
 					return;
@@ -63,14 +75,14 @@ export default function TestConfigView({
 	};
 
 	const handleRunTest = () => {
-		setTestConfig(config);
+		setResultTestConfig(promptTestConfig);
 		setTestResult([]);
 
 		if (openSection === TestSection.TestInputs) {
 			toggleSection(TestSection.Results);
 		}
 
-		void websocketHandler?.sendMessage(config);
+		void websocketHandler?.sendMessage(promptTestConfig);
 	};
 
 	const handleMessage = useCallback(
@@ -118,8 +130,8 @@ export default function TestConfigView({
 				>
 					{openSection === 'modelConfiguration' && (
 						<ModelConfigurationView
-							promptTestConfig={config}
-							setPromptTestConfig={setConfig}
+							promptTestConfig={promptTestConfig}
+							setPromptTestConfig={setPromptTestConfig}
 						/>
 					)}
 				</div>
@@ -150,9 +162,21 @@ export default function TestConfigView({
 						TestSection.PromptTemplate,
 					)} origin-top`}
 				>
-					{openSection === TestSection.PromptTemplate && (
-						<PromptTemplate config={config} setConfig={setConfig} />
-					)}
+					{openSection === TestSection.PromptTemplate &&
+						(promptTestConfig.modelVendor === ModelVendor.OpenAI ? (
+							<OpenAIPromptTemplate
+								promptTestConfig={
+									promptTestConfig as PromptConfigTest<ModelVendor.OpenAI>
+								}
+								setPromptTestConfig={
+									setPromptTestConfig as Dispatch<
+										SetStateAction<
+											PromptConfigTest<ModelVendor.OpenAI>
+										>
+									>
+								}
+							/>
+						) : null)}
 				</div>
 			</div>
 			<div>
@@ -179,9 +203,11 @@ export default function TestConfigView({
 					)} origin-top`}
 				>
 					{openSection === TestSection.TestInputs && (
-						<TestInputs
-							templateVariables={config.templateVariables}
-							setConfig={setConfig}
+						<TestInputs<T>
+							templateVariables={
+								promptTestConfig.templateVariables
+							}
+							setPromptTestConfig={setPromptTestConfig}
 							handleRunTest={handleRunTest}
 						/>
 					)}
@@ -213,7 +239,7 @@ export default function TestConfigView({
 					{openSection === TestSection.Results && (
 						<Results
 							handleRunTest={handleRunTest}
-							testConfig={testConfig}
+							testConfig={resultTestConfig}
 							result={testResult}
 						/>
 					)}

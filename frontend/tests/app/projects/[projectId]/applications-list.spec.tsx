@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ApplicationFactory, PromptConfigFactory } from 'tests/factories';
+import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
 
@@ -40,7 +40,7 @@ describe('ApplicationsList', () => {
 		const promptConfigLengths = [2, 3];
 		promptConfigLengths.forEach((configLength) => {
 			handleRetrievePromptConfigsSpy.mockReturnValueOnce(
-				PromptConfigFactory.batch(configLength),
+				OpenAIPromptConfigFactory.batch(configLength),
 			);
 		});
 
@@ -65,7 +65,7 @@ describe('ApplicationsList', () => {
 		const promptConfigLengths = [2, 3];
 		promptConfigLengths.forEach((configLength) => {
 			handleRetrievePromptConfigsSpy.mockReturnValueOnce(
-				PromptConfigFactory.batch(configLength),
+				OpenAIPromptConfigFactory.batch(configLength),
 			);
 		});
 

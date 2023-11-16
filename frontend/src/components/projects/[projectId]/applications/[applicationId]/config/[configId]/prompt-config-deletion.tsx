@@ -8,10 +8,10 @@ import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useDeletePromptConfig, usePromptConfig } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
+import { ModelVendor } from '@/types';
 import { setPathParams } from '@/utils/navigation';
 
-export function PromptConfigDeletion({
+export function PromptConfigDeletion<T extends ModelVendor>({
 	projectId,
 	applicationId,
 	promptConfigId,
@@ -23,10 +23,7 @@ export function PromptConfigDeletion({
 	const router = useRouter();
 	const t = useTranslations('promptConfig');
 
-	const promptConfig = usePromptConfig<
-		OpenAIModelParameters,
-		OpenAIPromptMessage
-	>(applicationId, promptConfigId);
+	const promptConfig = usePromptConfig<T>(applicationId, promptConfigId);
 	const deletePromptConfig = useDeletePromptConfig();
 
 	const showError = useShowError();

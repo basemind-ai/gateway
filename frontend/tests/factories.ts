@@ -51,7 +51,9 @@ export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
 	}),
 );
 
-export const PromptConfigFactory = new TypeFactory<PromptConfig>(() => ({
+export const OpenAIPromptConfigFactory = new TypeFactory<
+	PromptConfig<ModelVendor.OpenAI>
+>(() => ({
 	createdAt: faker.date.past().toISOString(),
 	expectedTemplateVariables: [],
 	id: faker.string.uuid(),

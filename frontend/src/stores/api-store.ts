@@ -5,6 +5,7 @@ import { StateCreator } from 'zustand/vanilla';
 import {
 	APIKey,
 	Application,
+	ModelVendor,
 	Project,
 	ProjectUserAccount,
 	PromptConfig,
@@ -17,9 +18,9 @@ export interface ApiStore {
 		projectId: string,
 		projectUser: ProjectUserAccount,
 	) => void;
-	addPromptConfig: (
+	addPromptConfig: <V extends ModelVendor>(
 		applicationId: string,
-		promptConfig: PromptConfig,
+		promptConfig: PromptConfig<V>,
 	) => void;
 	apiKeys: Record<string, APIKey[] | undefined>;
 	applications: Record<string, Application[] | undefined>;
@@ -28,7 +29,7 @@ export interface ApiStore {
 	deletePromptConfig: (applicationId: string, promptConfigId: string) => void;
 	projectUsers: Record<string, ProjectUserAccount[] | undefined>;
 	projects: Project[];
-	promptConfigs: Record<string, PromptConfig[] | undefined>;
+	promptConfigs: Record<string, PromptConfig<any>[] | undefined>;
 	removeProjectUser: (projectId: string, projectUserId: string) => void;
 	selectedProjectId: string | null;
 	setAPIKeys: (applicationId: string, apiKeys: APIKey[]) => void;
@@ -43,7 +44,7 @@ export interface ApiStore {
 	setProjects: (projects: Project[]) => void;
 	setPromptConfigs: (
 		applicationId: string,
-		promptConfigs: PromptConfig[],
+		promptConfigs: PromptConfig<any>[],
 	) => void;
 	setSelectedProject: (selectedProjectId: string | null) => void;
 	setUser: (user: UserInfo | null) => void;
@@ -57,9 +58,9 @@ export interface ApiStore {
 		projectId: string,
 		projectUser: ProjectUserAccount,
 	) => void;
-	updatePromptConfig: (
+	updatePromptConfig: <V extends ModelVendor>(
 		applicationId: string,
-		promptConfig: PromptConfig,
+		promptConfig: PromptConfig<V>,
 	) => void;
 	user: UserInfo | null;
 }
@@ -93,7 +94,10 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 			},
 		}));
 	},
-	addPromptConfig: (applicationId: string, promptConfig: PromptConfig) => {
+	addPromptConfig: <V extends ModelVendor>(
+		applicationId: string,
+		promptConfig: PromptConfig<V>,
+	) => {
 		set((state) => ({
 			promptConfigs: {
 				...state.promptConfigs,
@@ -192,7 +196,7 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 	},
 	setPromptConfigs: (
 		applicationId: string,
-		promptConfigs: PromptConfig[],
+		promptConfigs: PromptConfig<any>[],
 	) => {
 		set((state) => ({
 			promptConfigs: {
@@ -251,9 +255,9 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 			},
 		}));
 	},
-	updatePromptConfig: (
+	updatePromptConfig: <V extends ModelVendor>(
 		applicationId: string,
-		updatedPromptConfig: PromptConfig,
+		updatedPromptConfig: PromptConfig<V>,
 	) => {
 		set((state) => ({
 			promptConfigs: {
@@ -296,10 +300,7 @@ export const useProject = (projectId: string) =>
 export const useProjectUsers = (projectId: string) =>
 	useApiStore((s) => s.projectUsers[projectId]);
 export const useProjects = () => useApiStore((s) => s.projects);
-export const usePromptConfig = <
-	P extends Record<string, any>,
-	M extends Record<string, any>,
->(
+export const usePromptConfig = <V extends ModelVendor>(
 	applicationId: string,
 	promptConfigId: string,
 ) =>
@@ -307,7 +308,7 @@ export const usePromptConfig = <
 		(s) =>
 			s.promptConfigs[applicationId]?.find(
 				(promptConfig) => promptConfig.id === promptConfigId,
-			) as PromptConfig<P, M> | undefined,
+			) as PromptConfig<V> | undefined,
 	);
 export const usePromptConfigs = () => useApiStore((s) => s.promptConfigs);
 export const useRemoveProjectUser = () =>

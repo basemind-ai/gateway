@@ -2,8 +2,8 @@ import { fireEvent } from '@testing-library/react';
 import {
 	APIKeyFactory,
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 
@@ -60,7 +60,7 @@ describe('ApplicationPage', () => {
 		} = renderHook(useSetProjectApplications);
 		setProjectApplications(projects[0].id, applications);
 
-		const promptConfigs = await PromptConfigFactory.batch(2);
+		const promptConfigs = await OpenAIPromptConfigFactory.batch(2);
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 
 		render(

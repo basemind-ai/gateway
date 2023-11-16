@@ -3,11 +3,11 @@ import { render } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
 import ModelConfigurationView from '@/components/prompt-config/model-configuration-view';
-import { DefaultPromptConfigTest } from '@/constants/forms';
+import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 import { OpenAIModelType } from '@/types';
 
 describe('model configuration tests', () => {
-	let config = DefaultPromptConfigTest;
+	let config = DefaultOpenAIPromptConfigTest;
 	const setConfig = vi.fn();
 	setConfig.mockImplementation((updater) => {
 		// Replace the original config with the new state for subsequent assertions

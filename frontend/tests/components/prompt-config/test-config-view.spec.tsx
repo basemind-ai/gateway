@@ -3,24 +3,24 @@ import { render } from 'tests/test-utils';
 import { describe, expect, vi } from 'vitest';
 
 import TestConfigView from '@/components/prompt-config/test-config-view';
-import { DefaultPromptConfigTest } from '@/constants/forms';
+import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 
 describe('TestConfigView tests', () => {
 	// Mock props
-	const config = DefaultPromptConfigTest;
-	const setConfig = vi.fn();
+	const config = DefaultOpenAIPromptConfigTest;
+	const setPromptTestConfig = vi.fn();
 	const projectId = 'testProjectId';
 	const applicationId = 'testApplicationId';
 
 	beforeEach(() => {
-		setConfig.mockClear();
+		setPromptTestConfig.mockClear();
 	});
 
 	it('should render the TestConfigView component', () => {
 		render(
 			<TestConfigView
-				config={config}
-				setConfig={setConfig}
+				promptTestConfig={config}
+				setPromptTestConfig={setPromptTestConfig}
 				projectId={projectId}
 				applicationId={applicationId}
 			/>,
@@ -32,8 +32,8 @@ describe('TestConfigView tests', () => {
 	it('should toggle sections correctly', async () => {
 		render(
 			<TestConfigView
-				config={config}
-				setConfig={setConfig}
+				promptTestConfig={config}
+				setPromptTestConfig={setPromptTestConfig}
 				projectId={projectId}
 				applicationId={applicationId}
 			/>,

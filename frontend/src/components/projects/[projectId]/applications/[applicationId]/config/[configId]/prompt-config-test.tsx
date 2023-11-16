@@ -6,10 +6,10 @@ import TestConfigView from '@/components/prompt-config/test-config-view';
 import { WarningModal } from '@/components/warning-modal';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useShowError } from '@/stores/toast-store';
-import { PromptConfig, PromptConfigTest } from '@/types';
+import { ModelVendor, PromptConfig, PromptConfigTest } from '@/types';
 import { areArraysEqual } from '@/utils/helpers';
 
-export function PromptConfigTest({
+export function PromptConfigTest<T extends ModelVendor>({
 	projectId,
 	applicationId,
 	promptConfig,
@@ -18,7 +18,7 @@ export function PromptConfigTest({
 	applicationId: string;
 	navigateToOverview: () => void;
 	projectId: string;
-	promptConfig: PromptConfig;
+	promptConfig: PromptConfig<T>;
 }) {
 	void useAuthenticatedUser();
 	const t = useTranslations('config');
@@ -28,7 +28,9 @@ export function PromptConfigTest({
 	const [isLoading, setIsLoading] = useState(false);
 	const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
 
-	const [promptTestConfig, setPromptTestConfig] = useState<PromptConfigTest>({
+	const [promptTestConfig, setPromptTestConfig] = useState<
+		PromptConfigTest<T>
+	>({
 		modelParameters: promptConfig.modelParameters,
 		modelType: promptConfig.modelType,
 		modelVendor: promptConfig.modelVendor,
@@ -36,7 +38,10 @@ export function PromptConfigTest({
 		promptConfigId: promptConfig.id,
 		promptMessages: promptConfig.providerPromptMessages,
 		templateVariables: Object.fromEntries(
-			promptConfig.expectedTemplateVariables.map((key) => [key, '']),
+			promptConfig.expectedTemplateVariables.map((key: string) => [
+				key,
+				'',
+			]),
 		),
 	});
 
@@ -107,8 +112,8 @@ export function PromptConfigTest({
 			<TestConfigView
 				projectId={projectId}
 				applicationId={applicationId}
-				config={promptTestConfig}
-				setConfig={setPromptTestConfig}
+				promptTestConfig={promptTestConfig}
+				setPromptTestConfig={setPromptTestConfig}
 			/>
 			{isWarningModalVisible && (
 				<WarningModal

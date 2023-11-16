@@ -4,17 +4,22 @@ import { useState } from 'react';
 
 import { handleCreatePromptConfig } from '@/api';
 import { Navigation } from '@/constants';
-import { DefaultPromptConfigTest } from '@/constants/forms';
+import {
+	DefaultCoherePromptConfigTest,
+	DefaultOpenAIPromptConfigTest,
+} from '@/constants/forms';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useShowError } from '@/stores/toast-store';
-import { PromptConfigTest } from '@/types';
+import { ModelVendor, PromptConfigTest } from '@/types';
 import { setPathParams } from '@/utils/navigation';
 
-export function CreatePromptConfigView({
+export function CreatePromptConfigView<T extends ModelVendor>({
 	projectId,
 	applicationId,
+	modelVendor,
 }: {
 	applicationId: string;
+	modelVendor: T;
 	projectId: string;
 }) {
 	void useAuthenticatedUser();
@@ -24,13 +29,17 @@ export function CreatePromptConfigView({
 	const showError = useShowError();
 
 	const [isLoading, setIsLoading] = useState(false);
-	const [promptTestConfig, setPromptTestConfig] = useState<PromptConfigTest>(
-		DefaultPromptConfigTest,
+	const [promptTestConfig, setPromptTestConfig] = useState<
+		PromptConfigTest<T>
+	>(
+		(modelVendor === ModelVendor.OpenAI
+			? DefaultOpenAIPromptConfigTest
+			: DefaultCoherePromptConfigTest) as PromptConfigTest<T>,
 	);
 	async function createConfig() {
 		setIsLoading(true);
 		try {
-			const { id: configId, name } = await handleCreatePromptConfig({
+			const { id: configId } = await handleCreatePromptConfig({
 				applicationId,
 				data: {
 					modelParameters: promptTestConfig.modelParameters,
@@ -45,7 +54,6 @@ export function CreatePromptConfigView({
 			const url = setPathParams(Navigation.Config, {
 				applicationId,
 				configId,
-				name,
 				projectId,
 			});
 

@@ -2,7 +2,12 @@ import { wait } from 'shared/time';
 
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
-import { OTP, PromptConfigTest, PromptConfigTestResultChunk } from '@/types';
+import {
+	ModelVendor,
+	OTP,
+	PromptConfigTest,
+	PromptConfigTestResultChunk,
+} from '@/types';
 
 export const WS_STATUS_OK = 1000;
 export const PING_INTERVAL = 15_000;
@@ -38,12 +43,12 @@ export function createWebsocketURL({
 	return url.toString();
 }
 
-export interface WebsocketHandler<P, M> {
+export interface WebsocketHandler<T extends ModelVendor> {
 	closeSocket: () => void;
-	sendMessage: (message: PromptConfigTest<P, M>) => Promise<void>;
+	sendMessage: (message: PromptConfigTest<T>) => Promise<void>;
 }
 
-export async function createWebsocket<P, M>({
+export async function createWebsocket<T extends ModelVendor>({
 	applicationId,
 	projectId,
 	handleClose,
@@ -55,7 +60,7 @@ export async function createWebsocket<P, M>({
 	handleError: (event: Event) => void;
 	handleMessage: (event: MessageEvent<PromptConfigTestResultChunk>) => void;
 	projectId: string;
-}): Promise<WebsocketHandler<P, M>> {
+}): Promise<WebsocketHandler<T>> {
 	// we need to create an OTP to access the websocket.
 	// The OTP is valid for one minute and it should be sent as a query param.
 	const { otp } = await handleCreateOTP({ projectId });
@@ -88,7 +93,7 @@ export async function createWebsocket<P, M>({
 			clearInterval(pingInterval);
 			websocket.close(WS_STATUS_OK, 'user action');
 		},
-		sendMessage: async (message: PromptConfigTest<P, M>) => {
+		sendMessage: async (message: PromptConfigTest<T>) => {
 			if (
 				websocket.readyState === WebSocket.CLOSED ||
 				websocket.readyState === WebSocket.CLOSING

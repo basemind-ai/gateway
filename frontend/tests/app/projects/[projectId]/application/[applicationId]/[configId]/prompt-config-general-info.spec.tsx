@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ApplicationFactory, PromptConfigFactory } from 'tests/factories';
+import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, renderHook, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
@@ -28,7 +28,7 @@ describe('PromptGeneralInfo', () => {
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(projectId, [application]);
 
-	const promptConfig = PromptConfigFactory.buildSync();
+	const promptConfig = OpenAIPromptConfigFactory.buildSync();
 	const {
 		result: { current: setPromptConfigs },
 	} = renderHook(useSetPromptConfigs);
@@ -91,7 +91,7 @@ describe('PromptGeneralInfo', () => {
 			/>,
 		);
 
-		const clonedPromptConfig = PromptConfigFactory.buildSync();
+		const clonedPromptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleCreatePromptConfigSpy.mockResolvedValueOnce(clonedPromptConfig);
 
 		const cloneButton = screen.getByTestId('prompt-clone-btn');

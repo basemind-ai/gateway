@@ -77,7 +77,7 @@ describe('prompt testing websocket', () => {
 			promptConfigId: undefined,
 			promptMessages: [],
 			templateVariables: {},
-		} satisfies PromptConfigTest<any, any>;
+		} satisfies PromptConfigTest<any>;
 
 		beforeEach(() => {
 			mockFetch.mockResolvedValueOnce({

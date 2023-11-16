@@ -7,11 +7,11 @@ import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useAddPromptConfig, useApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { PromptConfig } from '@/types';
+import { ModelVendor, PromptConfig } from '@/types';
 import { getCloneName } from '@/utils/helpers';
 import { setPathParams } from '@/utils/navigation';
 
-export function PromptConfigGeneralInfo({
+export function PromptConfigGeneralInfo<T extends ModelVendor>({
 	projectId,
 	applicationId,
 	promptConfig,
@@ -20,7 +20,7 @@ export function PromptConfigGeneralInfo({
 	applicationId: string;
 	navigateToPromptTesting: () => void;
 	projectId: string;
-	promptConfig: PromptConfig;
+	promptConfig: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
 	const router = useRouter();

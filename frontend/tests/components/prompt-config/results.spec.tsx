@@ -3,7 +3,7 @@ import { render } from 'tests/test-utils';
 import { afterEach, describe, expect } from 'vitest';
 
 import Results from '@/components/prompt-config/results';
-import { DefaultPromptConfigTest } from '@/constants/forms';
+import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 
 describe('PromptTemplate tests', () => {
 	const handleRunTest = vi.fn();
@@ -46,7 +46,7 @@ describe('PromptTemplate tests', () => {
 			/>,
 		);
 		expect(screen.queryByTestId('post-run-card')).not.toBeInTheDocument();
-		testConfig = DefaultPromptConfigTest;
+		testConfig = DefaultOpenAIPromptConfigTest;
 		render(
 			<Results
 				handleRunTest={handleRunTest}
@@ -62,7 +62,7 @@ describe('PromptTemplate tests', () => {
 			<Results
 				handleRunTest={handleRunTest}
 				result={[]}
-				testConfig={DefaultPromptConfigTest}
+				testConfig={DefaultOpenAIPromptConfigTest}
 			/>,
 		);
 		fireEvent.click(screen.getByTestId('button-repeat-test'));

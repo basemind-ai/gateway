@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
-import { PromptConfigFactory } from 'tests/factories';
+import { OpenAIPromptConfigFactory } from 'tests/factories';
 import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
@@ -31,7 +31,7 @@ describe('PromptAnalyticsPage', () => {
 			tokensCost: 3,
 			totalRequests: 434,
 		} satisfies Analytics;
-		const promptConfig = await PromptConfigFactory.build({
+		const promptConfig = await OpenAIPromptConfigFactory.build({
 			id: promptConfigId,
 		});
 		handlePromptConfigAnalyticsSpy.mockResolvedValueOnce(analytics);
@@ -65,7 +65,7 @@ describe('PromptAnalyticsPage', () => {
 			totalRequests: 434,
 		} satisfies Analytics;
 		handlePromptConfigAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
-		const promptConfig = await PromptConfigFactory.build({
+		const promptConfig = await OpenAIPromptConfigFactory.build({
 			id: promptConfigId,
 		});
 
@@ -108,7 +108,7 @@ describe('PromptAnalyticsPage', () => {
 				statusText: 'Bad Request',
 			});
 		});
-		const promptConfig = await PromptConfigFactory.build({
+		const promptConfig = await OpenAIPromptConfigFactory.build({
 			id: promptConfigId,
 		});
 

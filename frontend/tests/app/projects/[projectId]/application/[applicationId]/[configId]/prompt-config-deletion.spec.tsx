@@ -2,8 +2,8 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 
@@ -41,7 +41,7 @@ describe('PromptDeletion', () => {
 	});
 
 	it('renders prompt config deletion component', () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		const {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);
@@ -73,7 +73,7 @@ describe('PromptDeletion', () => {
 	});
 
 	it('renders confirmation banner and deletes prompt config after entering input', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		const {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);
@@ -112,7 +112,7 @@ describe('PromptDeletion', () => {
 	});
 
 	it('shows error when unable to delete prompt config', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		const {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);

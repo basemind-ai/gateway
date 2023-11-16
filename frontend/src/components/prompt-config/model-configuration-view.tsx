@@ -21,8 +21,8 @@ export default function ModelConfigurationView({
 	promptTestConfig,
 	setPromptTestConfig,
 }: {
-	promptTestConfig: PromptConfigTest;
-	setPromptTestConfig: (promptTestConfig: PromptConfigTest) => void;
+	promptTestConfig: PromptConfigTest<any>;
+	setPromptTestConfig: (promptTestConfig: PromptConfigTest<any>) => void;
 }) {
 	const selectModelVendor = useCallback(
 		(modelVendor: ModelVendor) => {

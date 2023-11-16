@@ -4,7 +4,7 @@ import { render, renderHook } from 'tests/test-utils';
 import { describe } from 'vitest';
 
 import TestInputs from '@/components/prompt-config/test-inputs';
-import { DefaultPromptConfigTest } from '@/constants/forms';
+import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 
 describe('TestInputs component tests', () => {
 	const {
@@ -16,9 +16,9 @@ describe('TestInputs component tests', () => {
 		test1: '',
 		test2: '',
 	};
-	let config = DefaultPromptConfigTest;
-	const setConfig = vi.fn();
-	setConfig.mockImplementation((updater) => {
+	let config = DefaultOpenAIPromptConfigTest;
+	const setPromptTestConfig = vi.fn();
+	setPromptTestConfig.mockImplementation((updater) => {
 		// Replace the original config with the new state for subsequent assertions
 		config = typeof updater === 'function' ? updater(config) : updater;
 	});
@@ -28,7 +28,7 @@ describe('TestInputs component tests', () => {
 			<TestInputs
 				templateVariables={emptyTemplateVariables}
 				handleRunTest={handleRunTestMock}
-				setConfig={setConfig}
+				setPromptTestConfig={setPromptTestConfig}
 			/>,
 		);
 		expect(screen.getByTestId('test-inputs-card')).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe('TestInputs component tests', () => {
 			<TestInputs
 				templateVariables={emptyTemplateVariables}
 				handleRunTest={handleRunTestMock}
-				setConfig={setConfig}
+				setPromptTestConfig={setPromptTestConfig}
 			/>,
 		);
 		expect(screen.getByText(t('noVariablesHeadline'))).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe('TestInputs component tests', () => {
 		render(
 			<TestInputs
 				templateVariables={noValuesTemplateVariables}
-				setConfig={setConfig}
+				setPromptTestConfig={setPromptTestConfig}
 				handleRunTest={handleRunTestMock}
 			/>,
 		);
@@ -66,7 +66,7 @@ describe('TestInputs component tests', () => {
 		render(
 			<TestInputs
 				templateVariables={noValuesTemplateVariables}
-				setConfig={setConfig}
+				setPromptTestConfig={setPromptTestConfig}
 				handleRunTest={handleRunTestMock}
 			/>,
 		);
@@ -81,7 +81,7 @@ describe('TestInputs component tests', () => {
 		render(
 			<TestInputs
 				templateVariables={noValuesTemplateVariables}
-				setConfig={setConfig}
+				setPromptTestConfig={setPromptTestConfig}
 				handleRunTest={handleRunTestMock}
 			/>,
 		);
@@ -92,7 +92,7 @@ describe('TestInputs component tests', () => {
 			fireEvent.change(textarea, {
 				target: { value: `test ${variable}` },
 			});
-			expect(setConfig).toHaveBeenCalled();
+			expect(setPromptTestConfig).toHaveBeenCalled();
 			expect(config.templateVariables[variable]).toBe(`test ${variable}`);
 		}
 	});

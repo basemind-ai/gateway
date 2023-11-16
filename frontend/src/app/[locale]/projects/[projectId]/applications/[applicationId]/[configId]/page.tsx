@@ -17,7 +17,6 @@ import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { usePromptConfig, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
-import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
 
 enum TAB_NAMES {
 	OVERVIEW,
@@ -40,10 +39,7 @@ export default function PromptConfiguration({
 	const t = useTranslations('promptConfig');
 	const showError = useShowError();
 
-	const promptConfig = usePromptConfig<
-		OpenAIModelParameters,
-		OpenAIPromptMessage
-	>(applicationId, promptConfigId);
+	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
 	const setPromptConfigs = useSetPromptConfigs();
 
 	const { isLoading } = useSWR(

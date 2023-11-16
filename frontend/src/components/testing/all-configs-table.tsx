@@ -26,7 +26,7 @@ export function AllConfigsTable({
 	const showError = useShowError();
 
 	const { isValidating: isConfigLoading, error: isConfigError } = useSWR<
-		PromptConfig[][],
+		PromptConfig<any>[][],
 		ApiError,
 		() => Application[] | undefined
 	>(

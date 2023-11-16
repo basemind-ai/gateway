@@ -1,12 +1,12 @@
 // Analytics
 
 import { SupportTopic } from '@/constants/forms';
+import { AccessPermission, ModelVendor, OpenAIModelType } from '@/types/enums';
 import {
-	AccessPermission,
-	CohereModelType,
-	ModelVendor,
-	OpenAIModelType,
-} from '@/types/enums';
+	ModelParameters,
+	ModelType,
+	ProviderMessageType,
+} from '@/types/models';
 
 export interface Analytics {
 	tokensCost: number;
@@ -42,31 +42,27 @@ export type ApplicationUpdateBody = Partial<ApplicationCreateBody>;
 
 // PromptConfig
 
-export interface PromptConfig<
-	P extends Record<string, any> = Record<string, any>,
-	M extends Record<string, any> = Record<string, any>,
-> {
+export interface PromptConfig<T extends ModelVendor> {
 	createdAt: string;
 	expectedTemplateVariables: string[];
 	id: string;
 	isDefault: boolean;
-	modelParameters: P;
-	modelType: OpenAIModelType;
-	modelVendor: ModelVendor;
+	modelParameters: ModelParameters<T>;
+	modelType: ModelType<T>;
+	modelVendor: T;
 	name: string;
-	providerPromptMessages: M[];
+	providerPromptMessages: ProviderMessageType<T>[];
 	updatedAt: string;
 }
 
-export type PromptConfigCreateBody<
-	P extends Record<string, any> = Record<string, any>,
-	M extends Record<string, any> = Record<string, any>,
-> = Pick<
-	PromptConfig<P, M>,
+export type PromptConfigCreateBody<T extends ModelVendor> = Pick<
+	PromptConfig<T>,
 	'name' | 'modelParameters' | 'modelType' | 'modelVendor'
-> & { promptMessages: M[] };
+> & { promptMessages: ProviderMessageType<T>[] };
 
-export type PromptConfigUpdateBody = Partial<PromptConfigCreateBody>;
+export type PromptConfigUpdateBody<T extends ModelVendor> = Partial<
+	PromptConfigCreateBody<T>
+>;
 
 // APIKey
 
@@ -110,16 +106,13 @@ export interface OTP {
 
 // Prompt Testing
 
-export interface PromptConfigTest<
-	P extends Record<string, any> = Record<string, any>,
-	M extends Record<string, any> = Record<string, any>,
-> {
-	modelParameters: P;
-	modelType: OpenAIModelType | CohereModelType;
+export interface PromptConfigTest<T extends ModelVendor> {
+	modelParameters: ModelParameters<T>;
+	modelType: ModelType<T>;
 	modelVendor: ModelVendor;
 	name: string;
 	promptConfigId?: string;
-	promptMessages: M[];
+	promptMessages: ProviderMessageType<T>[];
 	templateVariables: Record<string, string>;
 }
 

@@ -10,7 +10,7 @@ export default function Results({
 }: {
 	handleRunTest: () => void;
 	result: PromptConfigTestResultChunk[];
-	testConfig: PromptConfigTest<any, any> | null;
+	testConfig: PromptConfigTest<any> | null;
 }) {
 	const t = useTranslations('promptTesting');
 	return (

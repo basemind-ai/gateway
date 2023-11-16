@@ -1,37 +1,33 @@
 import { useTranslations } from 'next-intl';
-import { Dispatch, SetStateAction } from 'react';
 
-import {
-	OpenAIModelParameters,
-	OpenAIPromptMessage,
-	PromptConfigTest,
-} from '@/types';
+import { ModelVendor, PromptConfigTest } from '@/types';
 import { handleChange } from '@/utils/helpers';
 
-export default function TestInputs({
+export default function TestInputs<T extends ModelVendor>({
 	templateVariables,
-	setConfig,
+	setPromptTestConfig,
 	handleRunTest,
 }: {
 	handleRunTest: () => void;
-	setConfig: Dispatch<
-		SetStateAction<
-			PromptConfigTest<OpenAIModelParameters, OpenAIPromptMessage>
-		>
-	>;
+	setPromptTestConfig: (
+		mutator: (prev: PromptConfigTest<T>) => PromptConfigTest<T>,
+	) => void;
 	templateVariables: Record<string, string>;
 }) {
 	const t = useTranslations('promptTesting');
 	const variablesKeys = Object.keys(templateVariables);
 	function onVariableChange(key: string) {
 		return (value: string) => {
-			setConfig((prev) => ({
-				...prev,
-				templateVariables: {
-					...prev.templateVariables,
-					[key]: value,
-				},
-			}));
+			setPromptTestConfig(
+				(prev: PromptConfigTest<T>) =>
+					({
+						...prev,
+						templateVariables: {
+							...prev.templateVariables,
+							[key]: value,
+						},
+					}) as PromptConfigTest<T>,
+			);
 		};
 	}
 	return (

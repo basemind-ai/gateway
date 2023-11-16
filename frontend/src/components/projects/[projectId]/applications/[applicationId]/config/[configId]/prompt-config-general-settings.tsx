@@ -6,17 +6,17 @@ import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
 import { useApplication, useUpdatePromptConfig } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
-import { PromptConfig } from '@/types';
+import { ModelVendor, PromptConfig } from '@/types';
 import { handleChange } from '@/utils/helpers';
 
-export function PromptConfigGeneralSettings({
+export function PromptConfigGeneralSettings<T extends ModelVendor>({
 	projectId,
 	applicationId,
 	promptConfig,
 }: {
 	applicationId: string;
 	projectId: string;
-	promptConfig: PromptConfig;
+	promptConfig: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
 

@@ -1,8 +1,8 @@
 import { fireEvent } from '@testing-library/react';
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
@@ -39,7 +39,7 @@ describe('PromptConfiguration', () => {
 	const applicationId = applications[0].id;
 
 	it('renders all 4 screens in tab navigation', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
 
 		render(
@@ -80,7 +80,7 @@ describe('PromptConfiguration', () => {
 	});
 
 	it('shows loading when prompt config is being fetched', () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
 
 		render(
@@ -98,7 +98,7 @@ describe('PromptConfiguration', () => {
 	});
 
 	it('shows null when there is no prompt config available', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([]);
 
 		render(
@@ -124,7 +124,7 @@ describe('PromptConfiguration', () => {
 	});
 
 	it('shows error when unable to fetch prompt config', () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockImplementationOnce(() => {
 			throw new ApiError('unable to fetch prompt configs', {
 				statusCode: 401,
@@ -148,7 +148,7 @@ describe('PromptConfiguration', () => {
 
 	it('does not make the prompt config API call when prompt config is already in store', () => {
 		vi.resetAllMocks();
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 
 		const {
 			result: { current: setPromptConfigs },

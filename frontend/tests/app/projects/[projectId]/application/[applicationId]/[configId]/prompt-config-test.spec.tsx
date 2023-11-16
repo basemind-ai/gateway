@@ -1,8 +1,8 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 	UserFactory,
 } from 'tests/factories';
 import { getAuthMock } from 'tests/mocks';
@@ -37,7 +37,7 @@ describe('config-edit-screen', () => {
 		}));
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
-		const promptConfig = await PromptConfigFactory.build();
+		const promptConfig = await OpenAIPromptConfigFactory.build();
 		render(
 			<PromptConfigTest
 				applicationId={application.id}
@@ -56,7 +56,7 @@ describe('config-edit-screen', () => {
 	it('should render headline', async () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
-		const promptConfig = await PromptConfigFactory.build();
+		const promptConfig = await OpenAIPromptConfigFactory.build();
 		const name = 'test-config';
 		render(
 			<PromptConfigTest
@@ -74,10 +74,10 @@ describe('config-edit-screen', () => {
 	it('saves an existing configuration', async () => {
 		const handleUpdatePromptConfigSpy = vi
 			.spyOn(PromptConfigAPI, 'handleUpdatePromptConfig')
-			.mockResolvedValueOnce(await PromptConfigFactory.build());
+			.mockResolvedValueOnce(await OpenAIPromptConfigFactory.build());
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
-		const promptConfig = await PromptConfigFactory.build();
+		const promptConfig = await OpenAIPromptConfigFactory.build();
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [promptConfig]);
 
@@ -100,7 +100,7 @@ describe('config-edit-screen', () => {
 	it('shows warning modal when expected template variables are changed', async () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
-		const promptConfig = await PromptConfigFactory.build();
+		const promptConfig = await OpenAIPromptConfigFactory.build();
 
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [
@@ -142,7 +142,7 @@ describe('config-edit-screen', () => {
 		);
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
-		const promptConfig = await PromptConfigFactory.build();
+		const promptConfig = await OpenAIPromptConfigFactory.build();
 
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [
@@ -190,7 +190,7 @@ describe('config-edit-screen', () => {
 		);
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
-		const promptConfig = await PromptConfigFactory.build();
+		const promptConfig = await OpenAIPromptConfigFactory.build();
 
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [

@@ -2,59 +2,60 @@ import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
 import {
 	Analytics,
+	ModelVendor,
 	PromptConfig,
 	PromptConfigCreateBody,
 	PromptConfigUpdateBody,
 } from '@/types';
 
-export async function handleCreatePromptConfig({
+export async function handleCreatePromptConfig<T extends ModelVendor>({
 	applicationId,
 	projectId,
 	data,
 }: {
 	applicationId: string;
-	data: PromptConfigCreateBody;
+	data: PromptConfigCreateBody<T>;
 	projectId: string;
-}): Promise<PromptConfig> {
-	return await fetcher<PromptConfig>({
+}): Promise<PromptConfig<T>> {
+	return await fetcher<PromptConfig<T>>({
 		data,
 		method: HttpMethod.Post,
 		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/`,
 	});
 }
 
-export async function handleRetrievePromptConfigs({
+export async function handleRetrievePromptConfigs<T extends ModelVendor>({
 	applicationId,
 	projectId,
 }: {
 	applicationId: string;
 	projectId: string;
-}): Promise<PromptConfig[]> {
-	return await fetcher<PromptConfig[]>({
+}): Promise<PromptConfig<T>[]> {
+	return await fetcher<PromptConfig<T>[]>({
 		method: HttpMethod.Get,
 		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/`,
 	});
 }
 
-export async function handleUpdatePromptConfig({
+export async function handleUpdatePromptConfig<T extends ModelVendor>({
 	applicationId,
 	projectId,
 	promptConfigId,
 	data,
 }: {
 	applicationId: string;
-	data: PromptConfigUpdateBody;
+	data: PromptConfigUpdateBody<T>;
 	projectId: string;
 	promptConfigId: string;
-}): Promise<PromptConfig> {
-	return await fetcher<PromptConfig>({
+}): Promise<PromptConfig<T>> {
+	return await fetcher<PromptConfig<T>>({
 		data,
 		method: HttpMethod.Patch,
 		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/`,
 	});
 }
 
-export async function handleDeletePromptConfig({
+export async function handleDeletePromptConfig<T extends ModelVendor>({
 	applicationId,
 	projectId,
 	promptConfigId,
@@ -62,14 +63,14 @@ export async function handleDeletePromptConfig({
 	applicationId: string;
 	projectId: string;
 	promptConfigId: string;
-}): Promise<PromptConfig> {
-	return await fetcher<PromptConfig>({
+}): Promise<PromptConfig<T>> {
+	return await fetcher<PromptConfig<T>>({
 		method: HttpMethod.Delete,
 		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/`,
 	});
 }
 
-export async function handleSetDefaultPromptConfig({
+export async function handleSetDefaultPromptConfig<T extends ModelVendor>({
 	applicationId,
 	projectId,
 	promptConfigId,
@@ -77,8 +78,8 @@ export async function handleSetDefaultPromptConfig({
 	applicationId: string;
 	projectId: string;
 	promptConfigId: string;
-}): Promise<PromptConfig> {
-	return await fetcher<PromptConfig>({
+}): Promise<PromptConfig<T>> {
+	return await fetcher<PromptConfig<T>>({
 		method: HttpMethod.Patch,
 		url: `projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigId}/set-default/`,
 	});

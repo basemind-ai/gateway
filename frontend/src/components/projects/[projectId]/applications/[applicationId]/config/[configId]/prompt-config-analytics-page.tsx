@@ -19,7 +19,7 @@ export function PromptConfigAnalyticsPage({
 }: {
 	applicationId: string;
 	projectId: string;
-	promptConfig: PromptConfig;
+	promptConfig: PromptConfig<any>;
 }) {
 	const t = useTranslations('promptConfig');
 	const dateFormat = useDateFormat();

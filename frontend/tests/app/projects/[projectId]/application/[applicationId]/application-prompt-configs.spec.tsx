@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { PromptConfigFactory } from 'tests/factories';
+import { OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
@@ -20,7 +20,7 @@ describe('ApplicationPromptConfigs', () => {
 	);
 
 	it('renders prompt configs', async () => {
-		const promptConfigs = await PromptConfigFactory.batch(2);
+		const promptConfigs = await OpenAIPromptConfigFactory.batch(2);
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 
 		await waitFor(() =>
@@ -60,7 +60,7 @@ describe('ApplicationPromptConfigs', () => {
 	});
 
 	it('copies application id to clipboard', async () => {
-		const promptConfigs = await PromptConfigFactory.batch(2);
+		const promptConfigs = await OpenAIPromptConfigFactory.batch(2);
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 
 		const writeText = vi.fn();
@@ -89,7 +89,7 @@ describe('ApplicationPromptConfigs', () => {
 	});
 
 	it('navigates to edit prompt screen', async () => {
-		const promptConfigs = await PromptConfigFactory.batch(1);
+		const promptConfigs = await OpenAIPromptConfigFactory.batch(1);
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 
 		await waitFor(() =>
