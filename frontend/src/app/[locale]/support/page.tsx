@@ -1,7 +1,7 @@
 'use client';
 import { useTranslations } from 'next-intl';
 
-import { Contact } from '@/components/support/contact';
+import { ContactForm } from '@/components/support/contact-form';
 import { GetInTouch } from '@/components/support/get-in-touch';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
@@ -17,7 +17,7 @@ export default function Support() {
 			<div className="mb-10">
 				<GetInTouch />
 			</div>
-			<Contact isAuthenticated={!!user} />
+			<ContactForm isAuthenticated={!!user} />
 		</div>
 	);
 }

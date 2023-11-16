@@ -12,7 +12,7 @@ import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { Project } from '@/types';
 import { handleChange } from '@/utils/helpers';
 
-export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
+export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 	const t = useTranslations('support');
 
 	const [selectedTopic, setSelectedTopic] = useState<SupportTopic>();
@@ -73,22 +73,35 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 	return (
 		<DashboardCard title={t('contactUs')}>
 			<div className="flex flex-col flex-end grow gap-2">
-				<div className="flex justify-between">
+				<div className="flex flex-col justify-between">
+					{projects.length > 1 && (
+						<>
+							<Dropdown
+								placeholderText={t('selectProjectPlaceholder')}
+								labelText={t('selectProjectLabel')}
+								value={selectedProjectId}
+								setSelected={setSelectedProjectId}
+								options={projects.map((project) => {
+									return {
+										text: project.name,
+										value: project.id,
+									};
+								})}
+								isLoading={isLoading || isSubmitting}
+								isOptional={true}
+								testId="project-select"
+							/>
+							<div className="divider divider-neutral" />
+						</>
+					)}
 					<Dropdown
-						headline={t('helpTopic')}
-						selected={selectedTopic}
+						labelText={t('helpTopic')}
+						placeholderText={t('helpTopicPlaceholder')}
+						value={selectedTopic}
 						setSelected={setSelectedTopic}
 						options={topics}
-					/>
-					<Dropdown
-						headline={t('selectProject')}
-						selected={selectedProjectId}
-						setSelected={setSelectedProjectId}
-						options={projects.map((project) => {
-							return { text: project.name, value: project.id };
-						})}
-						isLoading={isLoading}
-						optional={true}
+						isLoading={isSubmitting}
+						testId="topic-select"
 					/>
 				</div>
 				<div className="form-control">
@@ -100,6 +113,7 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 						className="input w-full bg-neutral text-neutral-content"
 						data-testid="support-subject"
 						value={emailSubject}
+						disabled={isSubmitting}
 						onChange={handleChange(setEmailSubject)}
 					/>
 				</div>
@@ -112,6 +126,7 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 						data-testid="support-body"
 						className="textarea w-full bg-neutral text-neutral-content"
 						value={emailBody}
+						disabled={isSubmitting}
 						onChange={handleChange(setEmailBody)}
 					/>
 				</div>
@@ -120,6 +135,7 @@ export function Contact({ isAuthenticated }: { isAuthenticated: boolean }) {
 					className="btn btn-primary self-end mt-2"
 					data-testid="support-submit"
 					disabled={
+						isSubmitting ||
 						!selectedTopic?.trim() ||
 						!emailSubject.trim() ||
 						!emailBody.trim()

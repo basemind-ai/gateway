@@ -2,58 +2,61 @@ import { useTranslations } from 'next-intl';
 
 import { handleChange } from '@/utils/helpers';
 
-export interface DropdownOption {
+export interface DropdownOption<
+	T extends string | number | undefined = undefined,
+> {
 	text: string;
-	value: string;
+	value: T;
 }
-interface DropdownProps {
-	headline: string;
-	isLoading?: boolean;
-	optional?: boolean;
-	options: DropdownOption[];
-	selected?: string;
-	setSelected: (value: any) => void;
-}
-
-export function Dropdown({
-	headline,
-	selected = '',
+export function Dropdown<T extends string | number | undefined = undefined>({
+	placeholderText,
+	value,
 	setSelected,
 	options,
+	labelText,
 	isLoading = false,
-	optional = false,
-}: DropdownProps) {
+	isOptional = false,
+	testId,
+}: {
+	isLoading?: boolean;
+	isOptional?: boolean;
+	labelText: string;
+	options: DropdownOption<T>[];
+	placeholderText: string;
+	setSelected: (value: T) => void;
+	testId: string;
+	value: T;
+}) {
 	const t = useTranslations('common');
 	return (
-		<div className="form-control w-full max-w-xs">
+		<div
+			className="form-control w-full max-w-xs"
+			data-testid="dropdown-container"
+		>
 			<label className="label">
-				<span className="label-text">{headline}</span>
-				{optional && (
+				<span className="label-text">{labelText}</span>
+				{isOptional && (
 					<span className="label-text-alt"> {t('optional')}</span>
 				)}
 			</label>
 			<select
-				className="select w-full max-w-xs bg-neutral text-neutral-content"
-				value={selected}
+				className="select w-full bg-neutral text-neutral-content"
+				value={value}
 				onChange={handleChange(setSelected)}
-				data-testid={`dropdown-input-select-${headline}`}
+				data-testid={testId}
+				disabled={isLoading}
+				required={!isOptional}
 			>
-				<option value={''}>{headline}</option>
-				{isLoading ? (
-					<option value={''} className="animate-pulse">
-						Loading...
+				<option value={undefined}>{placeholderText}</option>
+				{options.map((option) => (
+					<option
+						key={option.value}
+						value={option.value}
+						data-testid="dropdown-option"
+					>
+						{option.text}
 					</option>
-				) : (
-					options.map((option) => (
-						<option
-							key={option.value}
-							value={option.value}
-							data-testid={option.value}
-						>
-							{option.text}
-						</option>
-					))
-				)}
+				))}
 			</select>
 		</div>
 	);
