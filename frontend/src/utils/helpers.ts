@@ -67,7 +67,9 @@ export function updateTemplateVariablesRecord(
 	existingVars: Record<string, string>,
 ): Record<string, string> {
 	const uniqueVariablesFromMessages = new Set<string>(
-		messages.flatMap((msg) => extractVariables(msg.content)),
+		messages
+			.filter((msg) => !!Reflect.get(msg, 'content'))
+			.map((msg) => Reflect.get(msg, 'content') as string),
 	);
 	const updatedVariables: Record<string, string> = {};
 	uniqueVariablesFromMessages.forEach((variable) => {

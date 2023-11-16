@@ -1,7 +1,7 @@
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
 import {
-	AnalyticsDTO,
+	Analytics,
 	PromptConfig,
 	PromptConfigCreateBody,
 	PromptConfigUpdateBody,
@@ -96,8 +96,8 @@ export async function handlePromptConfigAnalytics({
 	projectId: string;
 	promptConfigId: string;
 	toDate?: string;
-}): Promise<AnalyticsDTO> {
-	return await fetcher<AnalyticsDTO>({
+}): Promise<Analytics> {
+	return await fetcher<Analytics>({
 		method: HttpMethod.Get,
 		queryParams: {
 			fromDate,

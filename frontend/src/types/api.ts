@@ -1,39 +1,14 @@
-import { Record } from 'react-bootstrap-icons';
-
-import { SupportTopic } from '@/constants/forms';
-
-export enum ModelVendor {
-	Cohere = 'COHERE',
-	OpenAI = 'OPEN_AI',
-}
-export enum unavailableModelVendors {
-	A21Labs = 'A21_LABS',
-	Anthropic = 'ANTHROPIC',
-	Google = 'GOOGLE',
-}
-
-export enum OpenAIModelType {
-	Gpt3516K = 'gpt-3.5-turbo-16k',
-	Gpt35Turbo = 'gpt-3.5-turbo',
-	Gpt4 = 'gpt-4',
-	Gpt432K = 'gpt-4-32k',
-}
-
-export enum CohereModelType {
-	Command = 'command',
-	CommandLight = 'command-light',
-	CommandLightNightly = 'command-light-nightly',
-	CommandNightly = 'command-nightly',
-}
-
-export enum AccessPermission {
-	ADMIN = 'ADMIN',
-	MEMBER = 'MEMBER',
-}
-
 // Analytics
 
-export interface AnalyticsDTO {
+import { SupportTopic } from '@/constants/forms';
+import {
+	AccessPermission,
+	CohereModelType,
+	ModelVendor,
+	OpenAIModelType,
+} from '@/types/enums';
+
+export interface Analytics {
 	tokensCost: number;
 	totalRequests: number;
 }
@@ -103,36 +78,6 @@ export interface APIKey {
 }
 
 export type APIKeyCreateBody = Pick<APIKey, 'name'>;
-
-// Provider Message Types
-
-export type OpenAIPromptMessage =
-	| ({
-			templateVariables?: string[];
-	  } & {
-			content: string;
-			name?: string;
-			role: 'system' | 'user' | 'assistant';
-	  })
-	| {
-			functionArguments: string[];
-			name: string;
-			role: 'function';
-	  };
-
-// Provider Model Parameters
-
-export interface OpenAIModelParameters {
-	frequencyPenalty?: number;
-	maxTokens?: number;
-	presencePenalty?: number;
-	temperature?: number;
-	topP?: number;
-}
-
-export interface CohereModelParameters {
-	temperature?: number;
-}
 
 // UserAccount
 
@@ -226,38 +171,3 @@ export interface PromptTestRecord<P, M> {
 	streamResponseLatency: number;
 	userInput: Record<string, string>;
 }
-
-export enum TestSection {
-	ModelConfiguration = 'modelConfiguration',
-	PromptTemplate = 'promptTemplate',
-	Results = 'results',
-	TestInputs = 'testInputs',
-}
-
-export enum OpenAIPromptMessageRole {
-	Assistant = 'assistant',
-	System = 'system',
-	User = 'user',
-}
-
-export interface ModelConfig<P extends Record<string, any>> {
-	icon: string;
-	name: string;
-	parameters: {
-		[K in keyof P]: {
-			max: number;
-			min: number;
-			step: number;
-		};
-	};
-}
-
-export type OpenAIModelsRecord = Record<
-	OpenAIModelType,
-	ModelConfig<Required<OpenAIModelParameters>>
->;
-
-export type CohereModelsRecord = Record<
-	CohereModelType,
-	ModelConfig<Required<CohereModelParameters>>
->;

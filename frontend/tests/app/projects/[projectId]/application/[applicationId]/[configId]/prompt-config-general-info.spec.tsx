@@ -39,7 +39,8 @@ describe('PromptGeneralInfo', () => {
 			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 
@@ -52,7 +53,8 @@ describe('PromptGeneralInfo', () => {
 			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={'2'}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 
@@ -67,7 +69,8 @@ describe('PromptGeneralInfo', () => {
 			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 
@@ -83,7 +86,8 @@ describe('PromptGeneralInfo', () => {
 			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 
@@ -116,7 +120,8 @@ describe('PromptGeneralInfo', () => {
 			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 

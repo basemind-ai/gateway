@@ -15,7 +15,7 @@ import {
 	handleUpdatePromptConfig,
 } from '@/api/prompt-config-api';
 import { HttpMethod } from '@/constants';
-import { AnalyticsDTO } from '@/types';
+import { Analytics } from '@/types';
 
 describe('prompt configs API', () => {
 	const bearerToken = 'Bearer test_token';
@@ -212,7 +212,7 @@ describe('prompt configs API', () => {
 			const promptConfigAnalytics = {
 				tokensCost: 10,
 				totalRequests: 1000,
-			} satisfies AnalyticsDTO;
+			} satisfies Analytics;
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(promptConfigAnalytics),
 				ok: true,
@@ -245,7 +245,7 @@ describe('prompt configs API', () => {
 			const promptConfigAnalytics = {
 				tokensCost: 10,
 				totalRequests: 1000,
-			} satisfies AnalyticsDTO;
+			} satisfies Analytics;
 
 			const fromDate = '2023-09-30T15:34:09.136Z';
 			const toDate = '2023-10-02T15:34:09.136Z';

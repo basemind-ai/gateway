@@ -8,11 +8,14 @@ import PromptTemplate from '@/components/prompt-config/prompt-template';
 import Results from '@/components/prompt-config/results';
 import TestInputs from '@/components/prompt-config/test-inputs';
 import { useShowError } from '@/stores/toast-store';
-import {
-	PromptConfigTest,
-	PromptConfigTestResultChunk,
-	TestSection,
-} from '@/types';
+import { PromptConfigTest, PromptConfigTestResultChunk } from '@/types';
+
+enum TestSection {
+	ModelConfiguration = 'modelConfiguration',
+	PromptTemplate = 'promptTemplate',
+	Results = 'results',
+	TestInputs = 'testInputs',
+}
 
 export default function TestConfigView({
 	config,

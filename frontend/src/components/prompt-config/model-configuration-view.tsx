@@ -13,7 +13,7 @@ import {
 	OpenAIModelParameters,
 	OpenAIModelType,
 	PromptConfigTest,
-	unavailableModelVendors,
+	UnavailableModelVendor,
 } from '@/types';
 import { formatNumber, handleChange } from '@/utils/helpers';
 
@@ -110,7 +110,7 @@ export function ModelVendorSelect({
 						</option>
 					);
 				})}
-				{Object.entries(unavailableModelVendors).map(([key, value]) => (
+				{Object.entries(UnavailableModelVendor).map(([key, value]) => (
 					<option disabled key={value} value={value}>
 						{key}
 					</option>

@@ -57,11 +57,10 @@ export function PromptConfigDeletion({
 			});
 			deletePromptConfig(applicationId, promptConfigId);
 			router.replace(
-				setPathParams(
-					Navigation.Applications,
-					projectId,
+				setPathParams(Navigation.Applications, {
 					applicationId,
-				),
+					projectId,
+				}),
 			);
 			showInfo(t('promptDeleted'));
 		} catch (e) {

@@ -49,7 +49,7 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -66,7 +66,8 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={''}
+				// @ts-expect-error
+				promptConfig={undefined}
 			/>,
 		);
 
@@ -81,7 +82,7 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={''}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -96,7 +97,7 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -110,7 +111,7 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -133,7 +134,7 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -153,7 +154,7 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -182,7 +183,7 @@ describe('PromptGeneralSettings', () => {
 			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
