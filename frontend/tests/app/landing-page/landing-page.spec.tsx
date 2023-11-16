@@ -1,4 +1,4 @@
-import { routerReplaceMock } from 'tests/mocks';
+import { routerPushMock, routerReplaceMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 
 import LandingPage from '@/app/[locale]/page';
@@ -22,6 +22,6 @@ describe('Landing Page', () => {
 		render(<LandingPage />);
 		const button = screen.getByTestId('header-sign-in-button');
 		button.click();
-		expect(routerReplaceMock).toHaveBeenCalledWith('/en/sign-in');
+		expect(routerPushMock).toHaveBeenCalledWith('/en/sign-in');
 	});
 });

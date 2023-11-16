@@ -200,3 +200,10 @@ export interface PromptTestRecord<P, M> {
 	streamResponseLatency: number;
 	userInput: Record<string, string>;
 }
+
+export interface LegalDocument {
+	Paragraphs: { content: string[]; title: string }[];
+	lastUpdated: string;
+	openingParagraphs: string[];
+	title: string;
+}
