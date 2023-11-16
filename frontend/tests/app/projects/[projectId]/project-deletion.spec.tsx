@@ -1,5 +1,4 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
 import { ProjectFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 

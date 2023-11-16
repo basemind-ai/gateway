@@ -1,5 +1,4 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
 import { APIKeyFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
