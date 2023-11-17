@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { beforeEach, describe, expect } from 'vitest';
 
-import OpenAIPromptTemplate from '@/components/prompt-config/open-a-i-prompt-template';
+import { OpenAIPromptTemplate } from '@/components/prompt-config/open-a-i-prompt-template';
 import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 import { OpenAIPromptMessage } from '@/types';
 
@@ -107,7 +107,7 @@ describe('PromptTemplate tests', () => {
 		expect(screen.getByTestId('prompt-message-save')).toBeDisabled();
 	});
 
-	it('save should add a new message on new message is selected', () => {
+	it('save should add a new message when a new message is selected', () => {
 		render(
 			<OpenAIPromptTemplate
 				promptTestConfig={config}
@@ -134,8 +134,8 @@ describe('PromptTemplate tests', () => {
 				},
 				{
 					content: 'test',
-					name: '',
 					role: 'system',
+					templateVariables: [],
 				},
 			],
 		});
@@ -165,6 +165,7 @@ describe('PromptTemplate tests', () => {
 					content: 'updated message',
 					name: 'test system',
 					role: 'system',
+					templateVariables: [],
 				},
 			],
 		});
@@ -194,6 +195,7 @@ describe('PromptTemplate tests', () => {
 					content: 'test system',
 					name: 'test system',
 					role: 'user',
+					templateVariables: [],
 				},
 			],
 		});
@@ -223,6 +225,7 @@ describe('PromptTemplate tests', () => {
 					content: 'test system',
 					name: 'new name',
 					role: 'system',
+					templateVariables: [],
 				},
 			],
 		});

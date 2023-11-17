@@ -9,10 +9,10 @@ import {
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 import { createWebsocket, WebsocketHandler } from '@/api';
-import ModelConfigurationView from '@/components/prompt-config/model-configuration-view';
-import OpenAIPromptTemplate from '@/components/prompt-config/open-a-i-prompt-template';
-import Results from '@/components/prompt-config/results';
-import TestInputs from '@/components/prompt-config/test-inputs';
+import { ModelConfigurationView } from '@/components/prompt-config/model-configuration-view';
+import { OpenAIPromptTemplate } from '@/components/prompt-config/open-a-i-prompt-template';
+import { Results } from '@/components/prompt-config/results';
+import { TestInputs } from '@/components/prompt-config/test-inputs';
 import { useShowError } from '@/stores/toast-store';
 import {
 	ModelVendor,
@@ -27,7 +27,7 @@ enum TestSection {
 	TestInputs = 'testInputs',
 }
 
-export default function TestConfigView<T extends ModelVendor>({
+export function TestConfigView<T extends ModelVendor>({
 	promptTestConfig,
 	setPromptTestConfig,
 	projectId,

@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleUpdatePromptConfig } from '@/api';
-import TestConfigView from '@/components/prompt-config/test-config-view';
+import { TestConfigView } from '@/components/prompt-config/test-config-view';
 import { WarningModal } from '@/components/warning-modal';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useShowError } from '@/stores/toast-store';

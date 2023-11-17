@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { describe, expect, vi } from 'vitest';
 
-import TestConfigView from '@/components/prompt-config/test-config-view';
+import { TestConfigView } from '@/components/prompt-config/test-config-view';
 import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 
 describe('TestConfigView tests', () => {

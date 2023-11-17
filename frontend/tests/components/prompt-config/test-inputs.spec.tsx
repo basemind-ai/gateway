@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { render, renderHook } from 'tests/test-utils';
 import { describe } from 'vitest';
 
-import TestInputs from '@/components/prompt-config/test-inputs';
+import { TestInputs } from '@/components/prompt-config/test-inputs';
 import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 
 describe('TestInputs component tests', () => {

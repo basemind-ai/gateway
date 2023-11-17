@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { afterEach, describe, expect } from 'vitest';
 
-import Results from '@/components/prompt-config/results';
+import { Results } from '@/components/prompt-config/results';
 import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 
 describe('PromptTemplate tests', () => {

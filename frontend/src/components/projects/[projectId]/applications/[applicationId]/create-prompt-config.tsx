@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleCreatePromptConfig } from '@/api';
-import TestConfigView from '@/components/prompt-config/test-config-view';
+import { TestConfigView } from '@/components/prompt-config/test-config-view';
 import { Navigation } from '@/constants';
 import {
 	DefaultCoherePromptConfigTest,

@@ -42,6 +42,8 @@ export default function PromptConfiguration({
 	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
 	const setPromptConfigs = useSetPromptConfigs();
 
+	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
+
 	const { isLoading } = useSWR(
 		promptConfig ? null : { applicationId, projectId },
 		handleRetrievePromptConfigs,
@@ -89,7 +91,6 @@ export default function PromptConfiguration({
 			text: t('settings'),
 		},
 	];
-	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
 
 	const tabComponents: Record<TAB_NAMES, React.FC> = {
 		[TAB_NAMES.OVERVIEW]: () => (

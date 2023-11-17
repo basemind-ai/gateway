@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { ModelVendor, PromptConfigTest } from '@/types';
 import { handleChange } from '@/utils/helpers';
 
-export default function TestInputs<T extends ModelVendor>({
+export function TestInputs<T extends ModelVendor>({
 	templateVariables,
 	setPromptTestConfig,
 	handleRunTest,

@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
-import ModelConfigurationView from '@/components/prompt-config/model-configuration-view';
+import { ModelConfigurationView } from '@/components/prompt-config/model-configuration-view';
 import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 import { OpenAIModelType } from '@/types';
 

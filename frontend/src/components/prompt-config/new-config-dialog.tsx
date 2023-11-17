@@ -8,7 +8,7 @@ import { Application } from '@/types';
 import { handleChange } from '@/utils/helpers';
 import { setPathParams } from '@/utils/navigation';
 
-export default function NewConfigDialog({
+export function NewConfigDialog({
 	applications,
 	projectId,
 	handleClose,

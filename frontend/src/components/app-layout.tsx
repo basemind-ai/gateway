@@ -1,4 +1,4 @@
-import NavRail from '@/components/navrail/nav-rail';
+import { NavRail } from '@/components/navrail/nav-rail';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
 	return (

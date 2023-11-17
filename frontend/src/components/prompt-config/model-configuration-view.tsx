@@ -17,7 +17,7 @@ import {
 } from '@/types';
 import { formatNumber, handleChange } from '@/utils/helpers';
 
-export default function ModelConfigurationView({
+export function ModelConfigurationView({
 	promptTestConfig,
 	setPromptTestConfig,
 }: {
@@ -105,7 +105,7 @@ export function ModelVendorSelect({
 			>
 				{Object.entries(ModelVendor).map(([key, value]) => {
 					return (
-						<option className="text-xs" value={value}>
+						<option className="text-xs" key={key} value={value}>
 							{key}
 						</option>
 					);
@@ -230,11 +230,12 @@ export function modelParametersFactory<
 		const models =
 			modelTypeEnum === OpenAIModelType ? openAIModels : cohereModels;
 
-		const modelParameters = (
-			models[
-				modelType as unknown as keyof typeof models
-			] as unknown as ModelConfig<P>
-		).parameters;
+		const model = Reflect.get(
+			models,
+			modelType as keyof typeof models,
+		) as ModelConfig<P>;
+
+		const modelParameters = model.parameters;
 
 		return Object.entries(modelParameters).map(
 			([key, { min, max, step }]) => {

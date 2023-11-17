@@ -9,8 +9,8 @@ import {
 	Speedometer2,
 } from 'react-bootstrap-icons';
 
-import Badge from '@/components/navrail/badge';
-import LinkMenu from '@/components/navrail/link-menu';
+import { Badge } from '@/components/navrail/badge';
+import { LinkMenu } from '@/components/navrail/link-menu';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { useApplications, useSelectedProject } from '@/stores/api-store';
 import { contextNavigation, setApplicationId } from '@/utils/navigation';
@@ -49,7 +49,7 @@ function NewApplication({ projectId }: { projectId?: string }) {
 	);
 }
 
-export default function NavRailList() {
+export function NavRailList() {
 	const t = useTranslations('navrail');
 	const [pathname] = usePathname().split('?');
 	// TODO: Remove this hook if current project can be ALWAYS derived from path

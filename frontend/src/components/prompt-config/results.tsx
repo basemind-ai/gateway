@@ -3,7 +3,7 @@ import { ArrowRepeat } from 'react-bootstrap-icons';
 
 import { PromptConfigTest, PromptConfigTestResultChunk } from '@/types';
 
-export default function Results({
+export function Results({
 	handleRunTest,
 	result,
 	testConfig,

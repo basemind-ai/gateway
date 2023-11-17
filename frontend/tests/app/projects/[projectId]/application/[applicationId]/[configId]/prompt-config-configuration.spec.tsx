@@ -38,7 +38,7 @@ describe('PromptConfiguration', () => {
 	const projectId = projects[0].id;
 	const applicationId = applications[0].id;
 
-	it('renders all 4 screens in tab navigation', async () => {
+	it('renders all screens in tab navigation', async () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
 
@@ -53,11 +53,15 @@ describe('PromptConfiguration', () => {
 		);
 
 		await waitFor(() => {
-			const pageTitle = screen.getByTestId('prompt-page-title');
-			expect(pageTitle.innerHTML).toContain(promptConfig.name);
+			expect(
+				screen.getByTestId('prompt-config-page-loading'),
+			).toBeInTheDocument();
 		});
 
-		// 	Renders overview
+		await waitFor(() => {
+			expect(screen.getByTestId('prompt-page-title')).toBeInTheDocument();
+		});
+
 		const analytics = screen.getByTestId('prompt-analytics-container');
 		expect(analytics).toBeInTheDocument();
 
@@ -67,7 +71,6 @@ describe('PromptConfiguration', () => {
 		const promptName = screen.getByTestId('prompt-general-info-name');
 		expect(promptName.innerHTML).toBe(promptConfig.name);
 
-		// Renders Settings
 		const [, settingsTab] = screen.getAllByTestId('tab-navigation-btn');
 		fireEvent.click(settingsTab);
 
@@ -75,8 +78,6 @@ describe('PromptConfiguration', () => {
 			'prompt-general-settings-container',
 		);
 		expect(settingsContainer).toBeInTheDocument();
-
-		// 	TODO: update this test when more tabs are added to navigation
 	});
 
 	it('shows loading when prompt config is being fetched', () => {
