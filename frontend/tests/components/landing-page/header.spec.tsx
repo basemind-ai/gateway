@@ -1,7 +1,7 @@
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen } from 'tests/test-utils';
 
-import { LandingPageHeader } from '@/components/landing-page/header';
+import { LandingPageHeader } from '@/components/marketing-site/header';
 import { Navigation } from '@/constants';
 
 describe('LandingPageHeader', () => {

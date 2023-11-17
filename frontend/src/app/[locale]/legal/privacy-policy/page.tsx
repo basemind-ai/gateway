@@ -1,6 +1,6 @@
-import { Footer } from '@/components/landing-page/footer';
-import { LandingPageHeader } from '@/components/landing-page/header';
 import { LegalDoc } from '@/components/legal-doc';
+import { Footer } from '@/components/marketing-site/footer';
+import { LandingPageHeader } from '@/components/marketing-site/header';
 import { PrivacyPolicyDoc } from '@/constants/legal';
 
 export default function PrivacyPolicyPage() {

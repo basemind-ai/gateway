@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
-import { Feature } from '@/components/landing-page/feature';
-import { Section } from '@/components/landing-page/section';
+import { Feature } from '@/components/marketing-site/feature';
+import { Section } from '@/components/marketing-site/section';
 import { Dimensions } from '@/constants';
 
 export function FeaturesSection() {

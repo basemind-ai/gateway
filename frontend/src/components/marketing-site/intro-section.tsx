@@ -1,11 +1,17 @@
+'use client';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { Section } from '@/components/landing-page/section';
-import { Dimensions } from '@/constants';
+import { Section } from '@/components/marketing-site/section';
+import { Dimensions, Navigation } from '@/constants';
 
-export function IntroSection({ onClick }: { onClick: () => void }) {
+export function IntroSection() {
 	const t = useTranslations('landingPage');
+	const router = useRouter();
+	function handleSignUpClick() {
+		router.push(Navigation.SignIn);
+	}
 
 	return (
 		<Section name="intro">
@@ -27,7 +33,7 @@ export function IntroSection({ onClick }: { onClick: () => void }) {
 				</p>
 				<button
 					className="btn btn-primary mt-6"
-					onClick={onClick}
+					onClick={handleSignUpClick}
 					data-testid="intro-section-signup-button"
 				>
 					{t('signUp')}

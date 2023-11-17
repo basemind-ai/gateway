@@ -1,7 +1,8 @@
-import { routerPushMock, routerReplaceMock } from 'tests/mocks';
+import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 
 import LandingPage from '@/app/[locale]/page';
+import { Navigation } from '@/constants';
 
 describe('Landing Page', () => {
 	it('should render all sections', () => {
@@ -15,13 +16,13 @@ describe('Landing Page', () => {
 		render(<LandingPage />);
 		const button = screen.getByTestId('intro-section-signup-button');
 		button.click();
-		expect(routerReplaceMock).toHaveBeenCalledWith('/en/sign-in');
+		expect(routerPushMock).toHaveBeenCalledWith(Navigation.SignIn);
 	});
 
 	it('should replace the route to Sign-In when clicking on the Sign-In button', () => {
 		render(<LandingPage />);
 		const button = screen.getByTestId('header-sign-in-button');
 		button.click();
-		expect(routerPushMock).toHaveBeenCalledWith('/en/sign-in');
+		expect(routerPushMock).toHaveBeenCalledWith(Navigation.SignIn);
 	});
 });
