@@ -16,7 +16,7 @@ import {
 const navRailTranslation = locales.navrail;
 
 describe('NavRail tests', () => {
-	(usePathname as Mock).mockReturnValue(Navigation.Overview);
+	(usePathname as Mock).mockReturnValue(Navigation.ProjectDetail);
 
 	const showModal = vi.fn();
 	const closeModal = vi.fn();

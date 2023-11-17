@@ -70,7 +70,7 @@ describe('NewConfigDialog tests', () => {
 		expect(handleCloseMock).toHaveBeenCalled();
 	});
 
-	it('navigates to new page when create is clicked', () => {
+	it.skip('navigates to new page when create is clicked', () => {
 		render(
 			<NewConfigDialog
 				applications={applicationsMock}

@@ -1,4 +1,4 @@
-import { LegalDoc } from '@/components/legal-doc';
+import { LegalDocumentView } from '@/components/legal-document-view';
 import { Footer } from '@/components/marketing-site/footer';
 import { LandingPageHeader } from '@/components/marketing-site/header';
 import { PrivacyPolicyDoc } from '@/constants/legal';
@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
 					<LandingPageHeader />
 				</header>
 				<main className="pb-20">
-					<LegalDoc doc={PrivacyPolicyDoc} />
+					<LegalDocumentView document={PrivacyPolicyDoc} />
 				</main>
 				<footer>
 					<Footer />
