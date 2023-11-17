@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import { IntroSection } from '@/components/landing-page/intro-section';
+import { IntroSection } from '@/components/marketing-site/intro-section';
 
 describe('IntroSection', () => {
 	it('should render a section with name "intro"', () => {

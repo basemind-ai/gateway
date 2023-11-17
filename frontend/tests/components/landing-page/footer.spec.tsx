@@ -1,12 +1,12 @@
 import { render, screen } from 'tests/test-utils';
 
-import { Footer } from '@/components/landing-page/footer';
+import { Footer } from '@/components/marketing-site/footer';
 
 describe('Footer', () => {
 	it('should render a footer element', () => {
 		render(<Footer />);
 
-		const footerElement = screen.getByTestId('landing-page-footer');
+		const footerElement = screen.getByTestId('marketing-site-footer');
 		expect(footerElement).toBeInTheDocument();
 		const footerTextElement = screen.getByTestId('footer-text');
 		const footerCopyrightElement = screen.getByTestId('footer-copyright');

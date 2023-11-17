@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import { Feature } from '@/components/landing-page/feature';
+import { Feature } from '@/components/marketing-site/feature';
 
 describe('Feature', () => {
 	it('should render the component with required props', () => {

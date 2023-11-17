@@ -1,18 +1,20 @@
+'use client';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ChevronRight } from 'react-bootstrap-icons';
 
 import { Logo } from '@/components/logo';
-import { Dimensions } from '@/constants';
+import { Dimensions, Navigation } from '@/constants';
 
-export function LandingPageHeader({
-	onLogoClick,
-	onButtonClick,
-}: {
-	onButtonClick: () => void;
-	onLogoClick: () => void;
-}) {
+export function LandingPageHeader() {
 	const t = useTranslations('landingPage');
-
+	const router = useRouter();
+	const handleLogoClick = () => {
+		router.push(Navigation.Base);
+	};
+	const handleSignInClick = () => {
+		router.push(Navigation.SignIn);
+	};
 	return (
 		<header
 			className="navbar md:w-9/12 mx-auto sticky top-0 z-50 bg-base-100 pb-5"
@@ -23,14 +25,14 @@ export function LandingPageHeader({
 					textSize="text-3xl"
 					height={Dimensions.Eleven}
 					width={Dimensions.Eleven}
-					onClick={onLogoClick}
+					onClick={handleLogoClick}
 				/>
 			</div>
 			<div className="navbar-end">
 				<button
 					className="btn btn-outline btn-md m-2"
 					data-testid="header-sign-in-button"
-					onClick={onButtonClick}
+					onClick={handleSignInClick}
 				>
 					{t('signIn')}
 					<ChevronRight />
