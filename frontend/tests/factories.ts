@@ -59,7 +59,7 @@ export const OpenAIPromptConfigFactory = new TypeFactory<
 	id: faker.string.uuid(),
 	isDefault: false,
 	modelParameters: {},
-	modelType: TypeFactory.sample(Object.values(ModelVendor)),
+	modelType: TypeFactory.sample(Object.values(OpenAIModelType)),
 	modelVendor: ModelVendor.OpenAI,
 	name: faker.lorem.words(),
 	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),

@@ -65,20 +65,19 @@ describe('PromptGeneralInfo', () => {
 	});
 
 	it('navigates to prompt testing screen when clicked on test button', () => {
+		const navigateToPromptTesting = vi.fn();
 		render(
 			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
 				promptConfig={promptConfig}
-				navigateToPromptTesting={vi.fn()}
+				navigateToPromptTesting={navigateToPromptTesting}
 			/>,
 		);
 
 		const testButton = screen.getByTestId('prompt-test-btn');
 		fireEvent.click(testButton);
-		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${application.id}/${promptConfig.id}/testing`,
-		);
+		expect(navigateToPromptTesting).toHaveBeenCalled();
 	});
 
 	it('successfully clones a prompt and navigates to it', async () => {
@@ -111,7 +110,7 @@ describe('PromptGeneralInfo', () => {
 		expect(clonedPromptConfigInStore).toBe(clonedPromptConfig);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${application.id}/${clonedPromptConfig.id}/${clonedPromptConfig.name}`,
+			`/en/projects/${projectId}/applications/${application.id}/${clonedPromptConfig.id}`,
 		);
 	});
 

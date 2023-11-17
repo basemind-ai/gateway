@@ -27,7 +27,7 @@ enum TestSection {
 	TestInputs = 'testInputs',
 }
 
-export function TestConfigView<T extends ModelVendor>({
+export function TestPromptConfigView<T extends ModelVendor>({
 	promptTestConfig,
 	setPromptTestConfig,
 	projectId,
@@ -106,7 +106,7 @@ export function TestConfigView<T extends ModelVendor>({
 		<>
 			<div>
 				<div
-					data-testid="model-config-headline"
+					data-testid="test-prompt-config-view-model-headline"
 					className={`flex justify-between cursor-pointer hover:opacity-100 ${getHeadlineOpacity(
 						TestSection.ModelConfiguration,
 					)}`}
@@ -138,7 +138,7 @@ export function TestConfigView<T extends ModelVendor>({
 			</div>
 			<div>
 				<div
-					data-testid="prompt-template-headline"
+					data-testid="test-prompt-config-view-template-headline"
 					className={`flex justify-between cursor-pointer hover:opacity-100 ${getHeadlineOpacity(
 						TestSection.PromptTemplate,
 					)}`}

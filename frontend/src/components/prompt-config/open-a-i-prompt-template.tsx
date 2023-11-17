@@ -85,7 +85,7 @@ export function OpenAIPromptTemplate({
 		}
 		copiedPromptTestConfig.templateVariables =
 			updateTemplateVariablesRecord(
-				copiedPromptTestConfig.promptMessages,
+				copiedPromptTestConfig.promptMessages as OpenAIContentMessage[],
 				copiedPromptTestConfig.templateVariables,
 			);
 

@@ -3,9 +3,8 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleUpdatePromptConfig } from '@/api';
-import { TestConfigView } from '@/components/prompt-config/test-config-view';
+import { TestPromptConfigView } from '@/components/prompt-config/test-prompt-config-view';
 import { WarningModal } from '@/components/warning-modal';
-import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, PromptConfig, PromptConfigTest } from '@/types';
 
@@ -20,7 +19,6 @@ export function PromptConfigTest<T extends ModelVendor>({
 	projectId: string;
 	promptConfig: PromptConfig<T>;
 }) {
-	void useAuthenticatedUser();
 	const t = useTranslations('config');
 
 	const showError = useShowError();
@@ -69,12 +67,11 @@ export function PromptConfigTest<T extends ModelVendor>({
 	}
 
 	function handleSave() {
-		if (
-			equal(
-				Object.keys(promptTestConfig.templateVariables),
-				promptConfig.expectedTemplateVariables,
-			)
-		) {
+		const templateVariablesAreEqual = equal(
+			Object.keys(promptTestConfig.templateVariables),
+			promptConfig.expectedTemplateVariables,
+		);
+		if (templateVariablesAreEqual) {
 			void updateConfig();
 			return;
 		}
@@ -95,7 +92,7 @@ export function PromptConfigTest<T extends ModelVendor>({
 				</h1>
 				<button
 					className="btn btn-primary self-end"
-					data-testid="test-create-button"
+					data-testid="prompt-config-test-create-button"
 					disabled={isLoading}
 					onClick={handleSave}
 				>
@@ -109,7 +106,7 @@ export function PromptConfigTest<T extends ModelVendor>({
 					)}
 				</button>
 			</div>
-			<TestConfigView
+			<TestPromptConfigView
 				projectId={projectId}
 				applicationId={applicationId}
 				promptTestConfig={promptTestConfig}

@@ -3,61 +3,21 @@ import {
 	ApplicationFactory,
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	UserFactory,
 } from 'tests/factories';
-import { getAuthMock } from 'tests/mocks';
-import { render, renderHook, routerReplaceMock } from 'tests/test-utils';
-import { beforeEach, describe, expect } from 'vitest';
+import { mockFetch } from 'tests/mocks';
+import { render, renderHook } from 'tests/test-utils';
+import { describe, expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { PromptConfigTest } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-test';
-import { Navigation } from '@/constants';
 import { useSetPromptConfigs } from '@/stores/api-store';
 
-describe('config-edit-screen', () => {
-	const getIdTokenMock = vi.fn().mockResolvedValue('token');
-
-	beforeEach(() => {
-		getAuthMock.mockImplementationOnce(() => ({
-			currentUser: {
-				...UserFactory.buildSync(),
-				getIdToken: getIdTokenMock,
-			},
-			setPersistence: vi.fn(),
-		}));
-	});
-	afterEach(() => {
-		getAuthMock.mockReset();
-	});
-
-	it('should redirects unauthenticated user to login page', async () => {
-		getAuthMock.mockImplementationOnce(() => ({
-			currentUser: null,
-			setPersistence: vi.fn(),
-		}));
-		const project = await ProjectFactory.build();
-		const application = await ApplicationFactory.build();
-		const promptConfig = await OpenAIPromptConfigFactory.build();
-		render(
-			<PromptConfigTest
-				applicationId={application.id}
-				projectId={project.id}
-				promptConfig={promptConfig}
-				navigateToOverview={vi.fn()}
-			/>,
-		);
-		await waitFor(() => {
-			expect(routerReplaceMock).not.toHaveBeenCalledWith(
-				Navigation.SignIn,
-			);
-		});
-	});
-
+describe('PromptConfigTest', () => {
 	it('should render headline', async () => {
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
 		const promptConfig = await OpenAIPromptConfigFactory.build();
-		const name = 'test-config';
+
 		render(
 			<PromptConfigTest
 				applicationId={application.id}
@@ -68,33 +28,44 @@ describe('config-edit-screen', () => {
 		);
 		expect(
 			screen.getByTestId('config-edit-screen-title'),
-		).toHaveTextContent(name);
+		).toHaveTextContent(promptConfig.name);
 	});
 
 	it('saves an existing configuration', async () => {
-		const handleUpdatePromptConfigSpy = vi
-			.spyOn(PromptConfigAPI, 'handleUpdatePromptConfig')
-			.mockResolvedValueOnce(await OpenAIPromptConfigFactory.build());
+		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(OpenAIPromptConfigFactory.buildSync()),
+			ok: true,
+		});
 		const project = await ProjectFactory.build();
 		const application = await ApplicationFactory.build();
 		const promptConfig = await OpenAIPromptConfigFactory.build();
 		const { result } = renderHook(() => useSetPromptConfigs());
 		result.current(application.id, [promptConfig]);
 
+		const navigateToOverview = vi.fn();
+
 		render(
 			<PromptConfigTest
 				applicationId={application.id}
 				projectId={project.id}
 				promptConfig={promptConfig}
-				navigateToOverview={vi.fn()}
+				navigateToOverview={navigateToOverview}
 			/>,
 		);
-		fireEvent.click(screen.getByTestId('test-create-button'));
+
+		const button = screen.getByTestId('prompt-config-test-create-button');
 		await waitFor(() => {
-			expect(handleUpdatePromptConfigSpy).toHaveBeenCalled();
+			expect(button).toBeInTheDocument();
 		});
-		expect(routerReplaceMock).toHaveBeenCalled();
-		handleUpdatePromptConfigSpy.mockRestore();
+
+		fireEvent.click(button);
+
+		await waitFor(() => {
+			expect(mockFetch).toHaveBeenCalled();
+		});
+		await waitFor(() => {
+			expect(navigateToOverview).toHaveBeenCalled();
+		});
 	});
 
 	it('shows warning modal when expected template variables are changed', async () => {
@@ -117,16 +88,23 @@ describe('config-edit-screen', () => {
 				navigateToOverview={vi.fn()}
 			/>,
 		);
+		const sectionHeadline = screen.getByTestId(
+			'test-prompt-config-view-template-headline',
+		);
+
 		await waitFor(() => {
-			fireEvent.click(screen.getByTestId('prompt-template-headline'));
+			expect(sectionHeadline).toBeInTheDocument();
 		});
+		fireEvent.click(sectionHeadline);
+
 		fireEvent.change(screen.getByTestId('prompt-message-editor'), {
-			target: { value: 'update message with {variable}' },
+			target: { value: 'update message with {newVariable}' },
 		});
-		fireEvent.click(screen.getByTestId('test-create-button'));
+		fireEvent.click(screen.getByTestId('prompt-config-test-create-button'));
+
 		await waitFor(() => {
 			expect(
-				screen.getByTestId('warning-modal-continue-button'),
+				screen.getByTestId('warning-modal-container'),
 			).toBeInTheDocument();
 		});
 	});
@@ -159,13 +137,19 @@ describe('config-edit-screen', () => {
 				navigateToOverview={vi.fn()}
 			/>,
 		);
+		const sectionHeadline = screen.getByTestId(
+			'test-prompt-config-view-template-headline',
+		);
+
 		await waitFor(() => {
-			fireEvent.click(screen.getByTestId('prompt-template-headline'));
+			expect(sectionHeadline).toBeInTheDocument();
 		});
+		fireEvent.click(sectionHeadline);
+
 		fireEvent.change(screen.getByTestId('prompt-message-editor'), {
 			target: { value: 'update message with {variable}' },
 		});
-		fireEvent.click(screen.getByTestId('test-create-button'));
+		fireEvent.click(screen.getByTestId('prompt-config-test-create-button'));
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('warning-modal-continue-button'),
@@ -208,12 +192,14 @@ describe('config-edit-screen', () => {
 			/>,
 		);
 		await waitFor(() => {
-			fireEvent.click(screen.getByTestId('prompt-template-headline'));
+			fireEvent.click(
+				screen.getByTestId('test-prompt-config-view-template-headline'),
+			);
 		});
 		fireEvent.change(screen.getByTestId('prompt-message-editor'), {
 			target: { value: 'update message with {variable}' },
 		});
-		fireEvent.click(screen.getByTestId('test-create-button'));
+		fireEvent.click(screen.getByTestId('prompt-config-test-create-button'));
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('warning-modal-continue-button'),

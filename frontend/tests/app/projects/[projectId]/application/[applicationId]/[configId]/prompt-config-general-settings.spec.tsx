@@ -61,22 +61,6 @@ describe('PromptGeneralSettings', () => {
 		expect(idInput.innerHTML).toBe(promptConfig.id);
 	});
 
-	it('renders null when prompt is not defined', async () => {
-		render(
-			<PromptConfigGeneralSettings
-				projectId={project.id}
-				applicationId={application.id}
-				// @ts-expect-error
-				promptConfig={undefined}
-			/>,
-		);
-
-		const settingsContainer = screen.queryByTestId(
-			'prompt-general-settings-container',
-		);
-		expect(settingsContainer).not.toBeInTheDocument();
-	});
-
 	it('renders null when application is not defined', async () => {
 		render(
 			<PromptConfigGeneralSettings

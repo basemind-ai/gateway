@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleCreatePromptConfig } from '@/api';
-import { TestConfigView } from '@/components/prompt-config/test-config-view';
+import { TestPromptConfigView } from '@/components/prompt-config/test-prompt-config-view';
 import { Navigation } from '@/constants';
 import {
 	DefaultCoherePromptConfigTest,
@@ -96,7 +96,7 @@ export function CreatePromptConfigView<T extends ModelVendor>({
 					)}
 				</button>
 			</div>
-			<TestConfigView
+			<TestPromptConfigView
 				projectId={projectId}
 				applicationId={applicationId}
 				promptTestConfig={promptTestConfig}

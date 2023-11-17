@@ -71,7 +71,7 @@ export function CreateApplication({
 				setAPIKey(apiKey.hash);
 			} else {
 				onClose();
-				router.replace(applicationUrl);
+				router.push(applicationUrl);
 			}
 		} catch (e) {
 			showError((e as ApiError).message);
@@ -86,8 +86,9 @@ export function CreateApplication({
 	function close() {
 		onClose();
 		setAPIKey(null);
+
 		if (redirectUrl) {
-			router.replace(redirectUrl);
+			router.push(redirectUrl);
 		}
 	}
 

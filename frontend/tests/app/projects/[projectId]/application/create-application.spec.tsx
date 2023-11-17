@@ -1,6 +1,6 @@
 import { fireEvent } from '@testing-library/react';
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
-import { nextRouterMock } from 'tests/mocks';
+import { routerPushMock } from 'tests/mocks';
 import { render, screen, waitFor } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
 
@@ -132,7 +132,7 @@ describe('CreateApplication', () => {
 			projectId,
 		});
 		await waitFor(() => {
-			expect(nextRouterMock.push).toHaveBeenCalledWith(
+			expect(routerPushMock).toHaveBeenCalledWith(
 				`/en/projects/${projectId}/applications/${application.id}`,
 			);
 		});
@@ -220,7 +220,7 @@ describe('CreateApplication', () => {
 		const closebutton = screen.getByTestId('create-api-key-close-btn');
 		fireEvent.click(closebutton);
 
-		expect(nextRouterMock.push).toHaveBeenCalledWith(
+		expect(routerPushMock).toHaveBeenCalledWith(
 			`/en/projects/${projectId}/applications/${application.id}`,
 		);
 		expect(onClose).toHaveBeenCalledOnce();
