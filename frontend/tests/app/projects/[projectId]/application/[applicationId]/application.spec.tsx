@@ -6,6 +6,7 @@ import {
 	ProjectFactory,
 } from 'tests/factories';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
+import { expect } from 'vitest';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
@@ -77,7 +78,6 @@ describe('ApplicationPage', () => {
 			expect(pageTitle.innerHTML).toContain(applications[0].name);
 		});
 
-		// 	Renders overview
 		const analytics = screen.getByTestId('application-analytics-container');
 		expect(analytics).toBeInTheDocument();
 		const promptConfig = screen.getByTestId(
@@ -85,18 +85,27 @@ describe('ApplicationPage', () => {
 		);
 		expect(promptConfig).toBeInTheDocument();
 
-		const [, settingsTab, apiKeysTab] =
-			screen.getAllByTestId('tab-navigation-btn');
+		const tabs = screen.getAllByTestId('tab-navigation-btn');
+		expect(tabs.length).toBe(4);
+		const [, testingTab, settingsTab, apiKeysTab] = tabs;
+
+		fireEvent.click(testingTab);
+		const promptTestingContainer = screen.getByTestId(
+			'application-prompt-testing-container',
+		);
+		await waitFor(() => {
+			expect(promptTestingContainer).toBeInTheDocument();
+		});
 
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 		fireEvent.click(settingsTab);
-		// 	Renders Settings
+		const settingsContainer = screen.getByTestId(
+			'application-general-settings-container',
+		);
 		await waitFor(() => {
-			const settings = screen.getByTestId(
-				'application-general-settings-container',
-			);
-			expect(settings).toBeInTheDocument();
+			expect(settingsContainer).toBeInTheDocument();
 		});
+
 		const appDeletion = screen.getByTestId(
 			'application-deletion-container',
 		);
@@ -106,9 +115,11 @@ describe('ApplicationPage', () => {
 			await APIKeyFactory.batch(2),
 		);
 		fireEvent.click(apiKeysTab);
+		const apiKeysContainer = screen.getByTestId(
+			'application-api-keys-container',
+		);
 		await waitFor(() => {
-			const apiKeysTitle = screen.getByTestId('api-keys-title');
-			expect(apiKeysTitle).toBeInTheDocument();
+			expect(apiKeysContainer).toBeInTheDocument();
 		});
 	});
 });

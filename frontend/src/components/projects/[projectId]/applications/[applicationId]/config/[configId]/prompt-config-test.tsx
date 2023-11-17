@@ -80,7 +80,7 @@ export function PromptConfigTest<T extends ModelVendor>({
 
 	return (
 		<div
-			data-testid="config-edit-screen"
+			data-testid="prompt-testing-container"
 			className="my-6 mx-32 flex flex-col gap-8"
 		>
 			<div className="flex justify-between">

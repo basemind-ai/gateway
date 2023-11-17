@@ -100,6 +100,7 @@ describe('PromptConfigTest', () => {
 		fireEvent.change(screen.getByTestId('prompt-message-editor'), {
 			target: { value: 'update message with {newVariable}' },
 		});
+		fireEvent.click(screen.getByTestId('prompt-message-save'));
 		fireEvent.click(screen.getByTestId('prompt-config-test-create-button'));
 
 		await waitFor(() => {
@@ -149,6 +150,7 @@ describe('PromptConfigTest', () => {
 		fireEvent.change(screen.getByTestId('prompt-message-editor'), {
 			target: { value: 'update message with {variable}' },
 		});
+		fireEvent.click(screen.getByTestId('prompt-message-save'));
 		fireEvent.click(screen.getByTestId('prompt-config-test-create-button'));
 		await waitFor(() => {
 			expect(
@@ -199,6 +201,7 @@ describe('PromptConfigTest', () => {
 		fireEvent.change(screen.getByTestId('prompt-message-editor'), {
 			target: { value: 'update message with {variable}' },
 		});
+		fireEvent.click(screen.getByTestId('prompt-message-save'));
 		fireEvent.click(screen.getByTestId('prompt-config-test-create-button'));
 		await waitFor(() => {
 			expect(

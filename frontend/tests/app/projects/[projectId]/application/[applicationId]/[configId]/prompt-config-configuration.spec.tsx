@@ -71,13 +71,24 @@ describe('PromptConfiguration', () => {
 		const promptName = screen.getByTestId('prompt-general-info-name');
 		expect(promptName.innerHTML).toBe(promptConfig.name);
 
-		const [, settingsTab] = screen.getAllByTestId('tab-navigation-btn');
-		fireEvent.click(settingsTab);
+		const tabs = screen.getAllByTestId('tab-navigation-btn');
+		expect(tabs.length).toBe(3);
 
+		const [, testingTab, settingsTab] = tabs;
+
+		fireEvent.click(testingTab);
+		const testingContainer = screen.getByTestId('prompt-testing-container');
+		await waitFor(() => {
+			expect(testingContainer).toBeInTheDocument();
+		});
+
+		fireEvent.click(settingsTab);
 		const settingsContainer = screen.getByTestId(
 			'prompt-general-settings-container',
 		);
-		expect(settingsContainer).toBeInTheDocument();
+		await waitFor(() => {
+			expect(settingsContainer).toBeInTheDocument();
+		});
 	});
 
 	it('shows loading when prompt config is being fetched', () => {

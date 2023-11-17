@@ -62,7 +62,7 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 			addPromptConfig(applicationId, newPromptConfig);
 			showInfo(t('configCloned'));
 			router.push(
-				setPathParams(Navigation.ConfigEdit, {
+				setPathParams(Navigation.Config, {
 					applicationId,
 					configId: newPromptConfig.id,
 					projectId,
@@ -75,6 +75,7 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (!promptConfig || !application) {
 		return null;
 	}

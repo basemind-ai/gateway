@@ -3,7 +3,6 @@ export enum Navigation {
 	Base = '/en',
 	Billing = '/en/projects/:projectId/billing',
 	Config = '/en/projects/:projectId/applications/:applicationId/:configId',
-	ConfigEdit = '/en/projects/:projectId/applications/:applicationId/:configId',
 	CreateProject = '/en/projects/create',
 	Overview = '/en/projects/:projectId',
 	PrivacyPolicy = '/en/privacy-policy',

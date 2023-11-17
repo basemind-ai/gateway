@@ -76,7 +76,11 @@ export default function Application({
 				/>
 			</>
 		),
-		[TAB_NAMES.TEST_PROMPT]: () => <div>Test Prompt</div>,
+		[TAB_NAMES.TEST_PROMPT]: () => (
+			<div data-testid="application-prompt-testing-container">
+				Test Prompt
+			</div>
+		),
 		[TAB_NAMES.SETTINGS]: () => (
 			<>
 				<ApplicationGeneralSettings
