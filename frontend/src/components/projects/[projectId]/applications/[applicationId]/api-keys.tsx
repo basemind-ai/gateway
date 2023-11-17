@@ -135,7 +135,7 @@ export function ApiKeys({
 	}
 
 	return (
-		<>
+		<div data-testid="application-api-keys-container">
 			<h2
 				data-testid="api-keys-title"
 				className="font-semibold text-white text-xl"
@@ -190,6 +190,6 @@ export function ApiKeys({
 					</div>
 				</dialog>
 			</div>
-		</>
+		</div>
 	);
 }

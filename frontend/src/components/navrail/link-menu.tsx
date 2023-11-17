@@ -11,7 +11,7 @@ export interface LinkMenuProps {
 	text?: string;
 }
 
-export default function LinkMenu({
+export function LinkMenu({
 	text,
 	icon,
 	badge,

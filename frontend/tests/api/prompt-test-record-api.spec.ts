@@ -1,7 +1,7 @@
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 	PromptTestRecordFactory,
 } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
@@ -20,7 +20,7 @@ describe('PromptTestRecord API tests', () => {
 		it('should return an array of PromptTestRecords', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 			const promptTestRecords = await PromptTestRecordFactory.batch(2, {
 				promptConfigId: promptConfig.id,
 			});
@@ -55,7 +55,7 @@ describe('PromptTestRecord API tests', () => {
 		it('should return a PromptTestRecord', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 			const promptTestRecord = await PromptTestRecordFactory.build({
 				promptConfigId: promptConfig.id,
 			});
@@ -91,7 +91,7 @@ describe('PromptTestRecord API tests', () => {
 		it('should delete a PromptTestRecord', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
-			const promptConfig = await PromptConfigFactory.build();
+			const promptConfig = await OpenAIPromptConfigFactory.build();
 			const promptTestRecord = await PromptTestRecordFactory.build({
 				promptConfigId: promptConfig.id,
 			});

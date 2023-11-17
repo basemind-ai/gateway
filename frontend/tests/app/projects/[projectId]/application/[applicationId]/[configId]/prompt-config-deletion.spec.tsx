@@ -2,13 +2,13 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-deletion';
+import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-deletion';
 import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,
@@ -41,14 +41,14 @@ describe('PromptDeletion', () => {
 	});
 
 	it('renders prompt config deletion component', () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		const {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);
 		setPromptConfigs(application.id, [promptConfig]);
 
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -61,7 +61,7 @@ describe('PromptDeletion', () => {
 
 	it('renders null when prompt config not present', () => {
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={''}
@@ -73,14 +73,14 @@ describe('PromptDeletion', () => {
 	});
 
 	it('renders confirmation banner and deletes prompt config after entering input', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		const {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);
 		setPromptConfigs(application.id, [promptConfig]);
 
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}
@@ -112,14 +112,14 @@ describe('PromptDeletion', () => {
 	});
 
 	it('shows error when unable to delete prompt config', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		const {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);
 		setPromptConfigs(application.id, [promptConfig]);
 
 		render(
-			<PromptDeletion
+			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
 				promptConfigId={promptConfig.id}

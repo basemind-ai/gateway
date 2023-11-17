@@ -1,13 +1,13 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-settings';
+import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-settings';
 import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,
@@ -34,7 +34,7 @@ describe('PromptGeneralSettings', () => {
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(project.id, [application]);
 
-	const promptConfig = PromptConfigFactory.buildSync();
+	const promptConfig = OpenAIPromptConfigFactory.buildSync();
 	const {
 		result: { current: setPromptConfigs },
 	} = renderHook(useSetPromptConfigs);
@@ -46,10 +46,10 @@ describe('PromptGeneralSettings', () => {
 
 	it('renders prompt config details', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -61,27 +61,12 @@ describe('PromptGeneralSettings', () => {
 		expect(idInput.innerHTML).toBe(promptConfig.id);
 	});
 
-	it('renders null when prompt is not defined', async () => {
-		render(
-			<PromptGeneralSettings
-				projectId={project.id}
-				applicationId={application.id}
-				promptConfigId={''}
-			/>,
-		);
-
-		const settingsContainer = screen.queryByTestId(
-			'prompt-general-settings-container',
-		);
-		expect(settingsContainer).not.toBeInTheDocument();
-	});
-
 	it('renders null when application is not defined', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={''}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -93,10 +78,10 @@ describe('PromptGeneralSettings', () => {
 
 	it('does not save when form is pristine', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -107,10 +92,10 @@ describe('PromptGeneralSettings', () => {
 
 	it('does not save when form is unchanged', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -130,10 +115,10 @@ describe('PromptGeneralSettings', () => {
 
 	it('does not save when form is invalid', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -150,10 +135,10 @@ describe('PromptGeneralSettings', () => {
 
 	it('saves only when fields are changed and valid', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -179,10 +164,10 @@ describe('PromptGeneralSettings', () => {
 
 	it('shows error when unable to save prompt config changes', async () => {
 		render(
-			<PromptGeneralSettings
+			<PromptConfigGeneralSettings
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 

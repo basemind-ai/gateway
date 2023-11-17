@@ -1,11 +1,11 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ApplicationFactory, PromptConfigFactory } from 'tests/factories';
+import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, renderHook, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/prompts/[promptId]/prompt-general-info';
+import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-info';
 import { ApiError } from '@/errors';
 import {
 	usePromptConfig,
@@ -28,7 +28,7 @@ describe('PromptGeneralInfo', () => {
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(projectId, [application]);
 
-	const promptConfig = PromptConfigFactory.buildSync();
+	const promptConfig = OpenAIPromptConfigFactory.buildSync();
 	const {
 		result: { current: setPromptConfigs },
 	} = renderHook(useSetPromptConfigs);
@@ -36,10 +36,11 @@ describe('PromptGeneralInfo', () => {
 
 	it('renders prompt settings', () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 
@@ -49,10 +50,11 @@ describe('PromptGeneralInfo', () => {
 
 	it('returns null when application not found', () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={'2'}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 
@@ -63,31 +65,32 @@ describe('PromptGeneralInfo', () => {
 	});
 
 	it('navigates to prompt testing screen when clicked on test button', () => {
+		const navigateToPromptTesting = vi.fn();
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={navigateToPromptTesting}
 			/>,
 		);
 
 		const testButton = screen.getByTestId('prompt-test-btn');
 		fireEvent.click(testButton);
-		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${application.id}/${promptConfig.id}/testing`,
-		);
+		expect(navigateToPromptTesting).toHaveBeenCalled();
 	});
 
 	it('successfully clones a prompt and navigates to it', async () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 
-		const clonedPromptConfig = PromptConfigFactory.buildSync();
+		const clonedPromptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleCreatePromptConfigSpy.mockResolvedValueOnce(clonedPromptConfig);
 
 		const cloneButton = screen.getByTestId('prompt-clone-btn');
@@ -107,16 +110,17 @@ describe('PromptGeneralInfo', () => {
 		expect(clonedPromptConfigInStore).toBe(clonedPromptConfig);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${application.id}/prompts/${clonedPromptConfig.id}`,
+			`/en/projects/${projectId}/applications/${application.id}/${clonedPromptConfig.id}`,
 		);
 	});
 
 	it('shows error when fails to clone a prompt', () => {
 		render(
-			<PromptGeneralInfo
+			<PromptConfigGeneralInfo
 				projectId={projectId}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
+				navigateToPromptTesting={vi.fn()}
 			/>,
 		);
 

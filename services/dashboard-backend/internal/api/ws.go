@@ -150,7 +150,11 @@ func ParseMessageData(
 			context.Background(),
 			applicationID,
 			dto.PromptConfigCreateDTO{
-				Name:                   fmt.Sprintf("prompt config for test: %s", data.Name),
+				Name: fmt.Sprintf(
+					"prompt config for test: %s -%s",
+					data.Name,
+					time.Now().Format(time.RFC3339),
+				),
 				ModelParameters:        data.ModelParameters,
 				ModelType:              data.ModelType,
 				ModelVendor:            data.ModelVendor,

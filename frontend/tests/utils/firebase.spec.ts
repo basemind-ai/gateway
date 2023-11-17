@@ -4,7 +4,7 @@ import {
 	getFirebaseConfig,
 } from '@/utils/firebase';
 
-describe('Firebase utils tests', () => {
+describe('firebase utils tests', () => {
 	beforeEach(() => {
 		process.env.NEXT_PUBLIC_FIREBASE_API_KEY = '123';
 		process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = 'test.com';

@@ -6,7 +6,8 @@ import { handleCreateAPIKey } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
-import { copyToClipboard, handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
+import { copyToClipboard } from '@/utils/helpers';
 
 export function CreateApiKey({
 	projectId,

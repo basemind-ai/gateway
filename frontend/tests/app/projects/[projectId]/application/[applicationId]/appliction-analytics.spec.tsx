@@ -4,7 +4,7 @@ import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
 import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
-import { AnalyticsDTO } from '@/types';
+import { Analytics } from '@/types';
 
 describe('ApplicationAnalytics', () => {
 	const projectId = '1';
@@ -25,7 +25,7 @@ describe('ApplicationAnalytics', () => {
 		const analytics = {
 			tokensCost: 3,
 			totalRequests: 434,
-		} satisfies AnalyticsDTO;
+		} satisfies Analytics;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(analytics);
 
 		await waitFor(() =>
@@ -54,7 +54,7 @@ describe('ApplicationAnalytics', () => {
 		const initialAnalytics = {
 			tokensCost: 3,
 			totalRequests: 434,
-		} satisfies AnalyticsDTO;
+		} satisfies Analytics;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
 		await waitFor(() =>
@@ -73,7 +73,7 @@ describe('ApplicationAnalytics', () => {
 		const updatedAnalytics = {
 			tokensCost: 4,
 			totalRequests: 474,
-		} satisfies AnalyticsDTO;
+		} satisfies Analytics;
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(updatedAnalytics);
 
 		const datePicker = screen.getByTestId('datepicker');

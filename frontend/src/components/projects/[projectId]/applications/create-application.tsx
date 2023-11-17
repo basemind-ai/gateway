@@ -8,8 +8,8 @@ import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useAddApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { handleChange } from '@/utils/helpers';
-import { populateApplicationId, populateProjectId } from '@/utils/navigation';
+import { handleChange } from '@/utils/events';
+import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 export function CreateApplication({
 	onClose,
@@ -51,8 +51,8 @@ export function CreateApplication({
 				},
 				projectId,
 			});
-			const applicationUrl = populateApplicationId(
-				populateProjectId(Navigation.Applications, projectId),
+			const applicationUrl = setApplicationId(
+				setProjectId(Navigation.ApplicationDetail, projectId),
 				application.id,
 			);
 			setRedirectUrl(applicationUrl);
@@ -86,6 +86,7 @@ export function CreateApplication({
 	function close() {
 		onClose();
 		setAPIKey(null);
+
 		if (redirectUrl) {
 			router.push(redirectUrl);
 		}

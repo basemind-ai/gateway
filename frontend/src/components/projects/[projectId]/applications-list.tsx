@@ -15,7 +15,7 @@ import {
 	useSetPromptConfigs,
 } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
-import { populateApplicationId, populateProjectId } from '@/utils/navigation';
+import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 export function ApplicationsList({ projectId }: { projectId: string }) {
 	const t = useTranslations('projectOverview');
@@ -89,9 +89,9 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 				</thead>
 				<tbody>
 					{applications.map(({ name, id }) => {
-						const applicationUrl = populateApplicationId(
-							populateProjectId(
-								Navigation.Applications,
+						const applicationUrl = setApplicationId(
+							setProjectId(
+								Navigation.ApplicationDetail,
 								projectId,
 							),
 							id,

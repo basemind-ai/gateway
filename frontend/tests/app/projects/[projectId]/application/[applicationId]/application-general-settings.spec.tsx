@@ -1,8 +1,8 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 
@@ -38,7 +38,7 @@ describe('ApplicationGeneralSettings', () => {
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(projects[0].id, applications);
 
-	const prompts = PromptConfigFactory.batchSync(2);
+	const prompts = OpenAIPromptConfigFactory.batchSync(2);
 	prompts[0].isDefault = true;
 	prompts[1].isDefault = false;
 

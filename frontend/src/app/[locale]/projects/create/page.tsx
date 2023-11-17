@@ -8,7 +8,7 @@ import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useAddProject, useProjects } from '@/stores/api-store';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 function PageHeader({ title, subTitle }: { subTitle: string; title: string }) {
 	return (

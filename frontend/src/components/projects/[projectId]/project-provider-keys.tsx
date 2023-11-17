@@ -12,7 +12,7 @@ import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, ProviderKey } from '@/types';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 const modelVendorsTranslationKeyMap: Record<ModelVendor, string> = {
 	[ModelVendor.OpenAI]: 'openai',

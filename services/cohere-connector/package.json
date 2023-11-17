@@ -10,7 +10,7 @@
 		"dev": "webpack --watch"
 	},
 	"dependencies": {
-		"@grpc/grpc-js": "^1.9.10",
+		"@grpc/grpc-js": "^1.9.11",
 		"@protobuf-ts/runtime": "^2.9.1",
 		"@protobuf-ts/runtime-rpc": "^2.9.1",
 		"cohere-ai": "^7.2.0",

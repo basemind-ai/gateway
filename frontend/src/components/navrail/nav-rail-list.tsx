@@ -9,11 +9,11 @@ import {
 	Speedometer2,
 } from 'react-bootstrap-icons';
 
-import Badge from '@/components/navrail/badge';
-import LinkMenu from '@/components/navrail/link-menu';
+import { Badge } from '@/components/navrail/badge';
+import { LinkMenu } from '@/components/navrail/link-menu';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { useApplications, useSelectedProject } from '@/stores/api-store';
-import { contextNavigation, populateApplicationId } from '@/utils/navigation';
+import { contextNavigation, setApplicationId } from '@/utils/navigation';
 
 const ICON_CLASSES = 'w-3.5 h-3.5';
 
@@ -49,7 +49,7 @@ function NewApplication({ projectId }: { projectId?: string }) {
 	);
 }
 
-export default function NavRailList() {
+export function NavRailList() {
 	const t = useTranslations('navrail');
 	const [pathname] = usePathname().split('?');
 	// TODO: Remove this hook if current project can be ALWAYS derived from path
@@ -60,10 +60,10 @@ export default function NavRailList() {
 	return (
 		<div className="mt-10 ml-2 flex flex-col " data-testid="nav-rail-list">
 			<LinkMenu
-				href={navigation.Overview}
+				href={navigation.ProjectDetail}
 				text={t('overview')}
 				icon={<HouseDoor className={ICON_CLASSES} />}
-				isCurrent={navigation.Overview === pathname}
+				isCurrent={navigation.ProjectDetail === pathname}
 			/>
 			<LinkMenu
 				href={navigation.Testing}
@@ -77,8 +77,8 @@ export default function NavRailList() {
 				icon={<Boxes className={ICON_CLASSES} />}
 			>
 				{projectApplications?.map((application) => {
-					const applicationUrl = populateApplicationId(
-						navigation.Applications,
+					const applicationUrl = setApplicationId(
+						navigation.ApplicationDetail,
 						application.id,
 					);
 					return (

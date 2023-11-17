@@ -1,7 +1,7 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { UserFactory } from 'tests/factories';
-import { getAuthMock, routerPushMock } from 'tests/mocks';
+import { getAuthMock } from 'tests/mocks';
 import {
 	render,
 	renderHook,
@@ -18,7 +18,7 @@ import { Navigation } from '@/constants';
 describe('pick config page tests', () => {
 	const {
 		result: { current: t },
-	} = renderHook(() => useTranslations('testing'));
+	} = renderHook(() => useTranslations('promptTesting'));
 
 	vi.spyOn(
 		PromptConfigAPI,
@@ -90,24 +90,5 @@ describe('pick config page tests', () => {
 		);
 		const pickSectionHeading = screen.getByText(t('pickConfigHeading'));
 		expect(pickSectionHeading).toBeInTheDocument();
-	});
-
-	it('should route to test new config page on new config click', async () => {
-		render(
-			<PickConfigPage
-				params={{
-					projectId: '',
-				}}
-			/>,
-		);
-		const newConfigButton = screen.getByTestId('new-config-button');
-		fireEvent.click(newConfigButton);
-		await waitFor(() => {
-			expect(routerPushMock).toHaveBeenCalledWith(
-				Navigation.TestingNewConfig,
-				expect.anything(),
-				expect.anything(),
-			);
-		});
 	});
 });

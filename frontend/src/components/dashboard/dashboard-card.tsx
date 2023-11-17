@@ -1,4 +1,4 @@
-export default function DashboardCard({
+export function DashboardCard({
 	children,
 	title,
 }: {

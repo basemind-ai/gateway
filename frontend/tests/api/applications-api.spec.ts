@@ -11,7 +11,7 @@ import {
 	handleUpdateApplication,
 } from '@/api';
 import { HttpMethod } from '@/constants';
-import { AnalyticsDTO } from '@/types';
+import { Analytics } from '@/types';
 
 describe('applications API tests', () => {
 	describe('handleCreateApplication', () => {
@@ -178,7 +178,7 @@ describe('applications API tests', () => {
 			const applicationAnalytics = {
 				tokensCost: 10,
 				totalRequests: 1000,
-			} satisfies AnalyticsDTO;
+			} satisfies Analytics;
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(applicationAnalytics),
 				ok: true,
@@ -209,7 +209,7 @@ describe('applications API tests', () => {
 			const applicationAnalytics = {
 				tokensCost: 10,
 				totalRequests: 1000,
-			} satisfies AnalyticsDTO;
+			} satisfies Analytics;
 
 			const fromDate = '2023-09-30T15:34:09.136Z';
 			const toDate = '2023-10-02T15:34:09.136Z';

@@ -4,7 +4,7 @@ import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
-import { AnalyticsDTO } from '@/types';
+import { Analytics } from '@/types';
 
 describe('ProjectAnalytics', () => {
 	const projectId = '1';
@@ -24,7 +24,7 @@ describe('ProjectAnalytics', () => {
 		const analytics = {
 			tokensCost: 35,
 			totalRequests: 4374,
-		} satisfies AnalyticsDTO;
+		} satisfies Analytics;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(analytics);
 
 		await waitFor(() => render(<ProjectAnalytics projectId={projectId} />));
@@ -47,7 +47,7 @@ describe('ProjectAnalytics', () => {
 		const initialAnalytics = {
 			tokensCost: 3,
 			totalRequests: 434,
-		} satisfies AnalyticsDTO;
+		} satisfies Analytics;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
 		await waitFor(() => render(<ProjectAnalytics projectId={projectId} />));
@@ -62,7 +62,7 @@ describe('ProjectAnalytics', () => {
 		const updatedAnalytics = {
 			tokensCost: 5.2,
 			totalRequests: 474,
-		} satisfies AnalyticsDTO;
+		} satisfies Analytics;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(updatedAnalytics);
 
 		const datePicker = screen.getByTestId('datepicker');

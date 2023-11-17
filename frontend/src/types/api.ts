@@ -1,25 +1,14 @@
-import { SupportTopic } from '@/constants/forms';
-
-export enum ModelVendor {
-	Cohere = 'COHERE',
-	OpenAI = 'OPEN_AI',
-}
-
-export enum ModelType {
-	Gpt3516K = 'gpt-3.5-turbo-16k',
-	Gpt35Turbo = 'gpt-3.5-turbo',
-	Gpt4 = 'gpt-4',
-	Gpt432K = 'gpt-4-32k',
-}
-
-export enum AccessPermission {
-	ADMIN = 'ADMIN',
-	MEMBER = 'MEMBER',
-}
-
 // Analytics
 
-export interface AnalyticsDTO {
+import { SupportTopic } from '@/constants/forms';
+import { AccessPermission, ModelVendor, OpenAIModelType } from '@/types/enums';
+import {
+	ModelParameters,
+	ModelType,
+	ProviderMessageType,
+} from '@/types/models';
+
+export interface Analytics {
 	tokensCost: number;
 	totalRequests: number;
 }
@@ -53,25 +42,27 @@ export type ApplicationUpdateBody = Partial<ApplicationCreateBody>;
 
 // PromptConfig
 
-export interface PromptConfig<P = any, M = any> {
+export interface PromptConfig<T extends ModelVendor> {
 	createdAt: string;
 	expectedTemplateVariables: string[];
 	id: string;
 	isDefault: boolean;
-	modelParameters: P;
-	modelType: ModelType;
-	modelVendor: ModelVendor;
+	modelParameters: ModelParameters<T>;
+	modelType: ModelType<T>;
+	modelVendor: T;
 	name: string;
-	providerPromptMessages: M[];
+	providerPromptMessages: ProviderMessageType<T>[];
 	updatedAt: string;
 }
 
-export type PromptConfigCreateBody<P = any, M = any> = Pick<
-	PromptConfig<P, M>,
+export type PromptConfigCreateBody<T extends ModelVendor> = Pick<
+	PromptConfig<T>,
 	'name' | 'modelParameters' | 'modelType' | 'modelVendor'
-> & { promptMessages: M[] };
+> & { promptMessages: ProviderMessageType<T>[] };
 
-export type PromptConfigUpdateBody = Partial<PromptConfigCreateBody>;
+export type PromptConfigUpdateBody<T extends ModelVendor> = Partial<
+	PromptConfigCreateBody<T>
+>;
 
 // APIKey
 
@@ -83,33 +74,6 @@ export interface APIKey {
 }
 
 export type APIKeyCreateBody = Pick<APIKey, 'name'>;
-
-// Provider Message Types
-
-export type OpenAIPromptMessage = {
-	templateVariables: string[];
-} & (
-	| {
-			content: string;
-			name?: string;
-			role: 'system' | 'user' | 'assistant';
-	  }
-	| {
-			functionArguments: string[];
-			name: string;
-			role: 'function';
-	  }
-);
-
-// Provider Model Parameters
-
-export interface OpenAIModelParameters {
-	frequencyPenalty?: number;
-	maxTokens?: number;
-	presencePenalty?: number;
-	temperature?: number;
-	topP?: number;
-}
 
 // UserAccount
 
@@ -142,13 +106,13 @@ export interface OTP {
 
 // Prompt Testing
 
-export interface PromptConfigTest<P, M> {
-	modelParameters: P;
-	modelType: ModelType;
+export interface PromptConfigTest<T extends ModelVendor> {
+	modelParameters: ModelParameters<T>;
+	modelType: ModelType<T>;
 	modelVendor: ModelVendor;
 	name: string;
 	promptConfigId?: string;
-	promptMessages: M[];
+	promptMessages: ProviderMessageType<T>[];
 	templateVariables: Record<string, string>;
 }
 
@@ -188,7 +152,7 @@ export interface PromptTestRecord<P, M> {
 	finishTime: string;
 	id: string;
 	modelParameters: P;
-	modelType: ModelType;
+	modelType: OpenAIModelType;
 	modelVendor: ModelVendor;
 	name: string;
 	promptConfigId?: string;
@@ -199,11 +163,4 @@ export interface PromptTestRecord<P, M> {
 	startTime: string;
 	streamResponseLatency: number;
 	userInput: Record<string, string>;
-}
-
-export interface LegalDocument {
-	Paragraphs: { content: string[]; title: string }[];
-	lastUpdated: string;
-	openingParagraphs: string[];
-	title: string;
 }

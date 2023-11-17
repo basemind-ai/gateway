@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { ExclamationDiamond } from 'react-bootstrap-icons';
+import { ExclamationTriangle } from 'react-bootstrap-icons';
 
 export function WarningModal({
 	warningText,
@@ -13,10 +13,13 @@ export function WarningModal({
 	const t = useTranslations('common');
 
 	return (
-		<div className="modal modal-open modal-middle sm:modal-middle">
+		<div
+			className="modal modal-open modal-middle sm:modal-middle"
+			data-testid="warning-modal-container"
+		>
 			<div className="modal-box bg-warning">
 				<div className="flex justify-between items-center">
-					<ExclamationDiamond className="text-warning-content h-6 w-6" />
+					<ExclamationTriangle className="text-warning-content h-6 w-6" />
 					<span
 						className="text-warning-content"
 						data-testid="warning-modal-text"

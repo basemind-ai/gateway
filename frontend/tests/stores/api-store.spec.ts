@@ -1,9 +1,9 @@
 import {
 	APIKeyFactory,
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
 	ProjectUserAccountFactory,
-	PromptConfigFactory,
 	UserFactory,
 } from 'tests/factories';
 import { renderHook } from 'tests/test-utils';
@@ -342,7 +342,7 @@ describe('api-store tests', () => {
 			const {
 				result: { current: setPromptConfig },
 			} = renderHook(useSetPromptConfigs);
-			const promptConfigs = await PromptConfigFactory.batch(2);
+			const promptConfigs = await OpenAIPromptConfigFactory.batch(2);
 			setPromptConfig(applicationId, promptConfigs);
 
 			const {
@@ -359,13 +359,13 @@ describe('api-store tests', () => {
 			const {
 				result: { current: setPromptConfig },
 			} = renderHook(useSetPromptConfigs);
-			const promptConfigs = PromptConfigFactory.batchSync(2);
+			const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 			setPromptConfig(applicationId, promptConfigs);
 
 			const {
 				result: { current: addPromptConfig },
 			} = renderHook(useAddPromptConfig);
-			const newPromptConfig = PromptConfigFactory.buildSync();
+			const newPromptConfig = OpenAIPromptConfigFactory.buildSync();
 			addPromptConfig(applicationId, newPromptConfig);
 
 			const {
@@ -388,7 +388,7 @@ describe('api-store tests', () => {
 			const {
 				result: { current: addPromptConfig },
 			} = renderHook(useAddPromptConfig);
-			const newPromptConfig = PromptConfigFactory.buildSync();
+			const newPromptConfig = OpenAIPromptConfigFactory.buildSync();
 			addPromptConfig(applicationId, newPromptConfig);
 
 			const {
@@ -405,7 +405,7 @@ describe('api-store tests', () => {
 			const {
 				result: { current: setPromptConfig },
 			} = renderHook(useSetPromptConfigs);
-			const promptConfigs = PromptConfigFactory.batchSync(2);
+			const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 			setPromptConfig(applicationId, promptConfigs);
 
 			const {
@@ -432,7 +432,7 @@ describe('api-store tests', () => {
 			const {
 				result: { current: setPromptConfig },
 			} = renderHook(useSetPromptConfigs);
-			const promptConfigs = PromptConfigFactory.batchSync(1);
+			const promptConfigs = OpenAIPromptConfigFactory.batchSync(1);
 			setPromptConfig(applicationId, promptConfigs);
 
 			const {

@@ -9,38 +9,42 @@ export function contextNavigation(
 	return Object.fromEntries(
 		Object.entries(Navigation).map(([key, url]) => [
 			key,
-			populateProjectId(url, projectId),
+			setProjectId(url, projectId),
 		]),
 	) as Record<keyof typeof Navigation, string>;
 }
 
-export function populateLink(
-	enumUrl: string,
-	projectId?: string,
-	applicationId?: string,
-	configId?: string,
-) {
-	let url = JSON.stringify(enumUrl);
-	if (projectId) {
-		url = populateProjectId(enumUrl, projectId);
+export type NavigationPathParam = 'projectId' | 'applicationId' | 'configId';
+
+const keyReplacerMap: Record<
+	NavigationPathParam,
+	(url: string, value: string) => string
+> = {
+	applicationId: setApplicationId,
+	configId: setConfigId,
+	projectId: setProjectId,
+};
+
+export function setPathParams<T extends string>(
+	url: T,
+	params: Partial<Record<NavigationPathParam, string>>,
+): string {
+	let result = url as string;
+	for (const [key, value] of Object.entries(params)) {
+		result = keyReplacerMap[key as NavigationPathParam](result, value);
 	}
-	if (applicationId) {
-		url = populateApplicationId(url, applicationId);
-	}
-	if (configId) {
-		url = populateConfigId(url, configId);
-	}
-	return url;
+
+	return result;
 }
 
-export function populateProjectId(search: string, projectId: string) {
-	return search.replaceAll(':projectId', projectId);
+export function setProjectId(url: string, projectId: string) {
+	return url.replaceAll(':projectId', projectId);
 }
 
-export function populateApplicationId(search: string, applicationId: string) {
-	return search.replaceAll(':applicationId', applicationId);
+export function setApplicationId(url: string, applicationId: string) {
+	return url.replaceAll(':applicationId', applicationId);
 }
 
-export function populateConfigId(search: string, configId: string) {
-	return search.replaceAll(':configId', configId);
+export function setConfigId(url: string, configId: string) {
+	return url.replaceAll(':configId', configId);
 }
