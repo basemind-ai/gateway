@@ -90,7 +90,10 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 				<tbody>
 					{applications.map(({ name, id }) => {
 						const applicationUrl = setApplicationId(
-							setProjectId(Navigation.Applications, projectId),
+							setProjectId(
+								Navigation.ApplicationDetail,
+								projectId,
+							),
 							id,
 						);
 						return (

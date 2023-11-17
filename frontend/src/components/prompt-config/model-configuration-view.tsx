@@ -13,7 +13,6 @@ import {
 	OpenAIModelParameters,
 	OpenAIModelType,
 	PromptConfigTest,
-	UnavailableModelVendor,
 } from '@/types';
 import { handleChange } from '@/utils/events';
 import { formatNumber } from '@/utils/format';
@@ -83,6 +82,12 @@ export function ModelConfigurationView({
 		</div>
 	);
 }
+export enum UnavailableModelVendor {
+	A21Labs = 'A21_LABS',
+	Anthropic = 'ANTHROPIC',
+	Cohere = 'COHERE',
+	Google = 'GOOGLE',
+}
 
 export function ModelVendorSelect({
 	selectedModelVendor,
@@ -99,18 +104,22 @@ export function ModelVendorSelect({
 				<span className="label-text text-xs">{t('provider')}</span>
 			</label>
 			<select
-				className="select select-xs bg-base-300 w-fit"
+				className="select bg-base-300 w-fit"
 				value={selectedModelVendor}
 				onChange={handleChange(setSelectedModelVendor)}
+				defaultValue={ModelVendor.OpenAI}
+				disabled={true}
 				data-testid="model-vendor-select"
 			>
-				{Object.entries(ModelVendor).map(([key, value]) => {
-					return (
-						<option className="text-xs" key={key} value={value}>
-							{key}
-						</option>
-					);
-				})}
+				{Object.entries(ModelVendor)
+					.filter(([, value]) => value === ModelVendor.OpenAI)
+					.map(([key, value]) => {
+						return (
+							<option key={key} value={value}>
+								{key}
+							</option>
+						);
+					})}
 				{Object.entries(UnavailableModelVendor).map(([key, value]) => (
 					<option disabled key={value} value={value}>
 						{key}

@@ -16,8 +16,8 @@ describe('navigation utils tests', () => {
 			const projectId = '2';
 			const navigation = contextNavigation(projectId);
 
-			expect(navigation.Applications).toContain(projectId);
-			expect(navigation.Applications).not.toContain(':projectId');
+			expect(navigation.ApplicationDetail).toContain(projectId);
+			expect(navigation.ApplicationDetail).not.toContain(':projectId');
 		});
 	});
 

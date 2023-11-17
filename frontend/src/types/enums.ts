@@ -2,12 +2,6 @@ export enum ModelVendor {
 	Cohere = 'COHERE',
 	OpenAI = 'OPEN_AI',
 }
-export enum UnavailableModelVendor {
-	A21Labs = 'A21_LABS',
-	Anthropic = 'ANTHROPIC',
-	Google = 'GOOGLE',
-}
-
 export enum OpenAIModelType {
 	Gpt3516K = 'gpt-3.5-turbo-16k',
 	Gpt35Turbo = 'gpt-3.5-turbo',

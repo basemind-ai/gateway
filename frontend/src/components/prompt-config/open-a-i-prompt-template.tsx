@@ -164,7 +164,7 @@ export function OpenAIPromptTemplate({
 							onChange={handleChange(handleNameChange)}
 						/>
 						<select
-							className="select select-sm select-bordered w-1/4 bg-transparent"
+							className="select  select-bordered w-1/4 bg-transparent"
 							value={draftMessage.role}
 							onChange={handleChange(handleRoleChange)}
 							data-testid="prompt-message-role"

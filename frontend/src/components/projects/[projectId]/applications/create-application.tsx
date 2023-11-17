@@ -52,7 +52,7 @@ export function CreateApplication({
 				projectId,
 			});
 			const applicationUrl = setApplicationId(
-				setProjectId(Navigation.Applications, projectId),
+				setProjectId(Navigation.ApplicationDetail, projectId),
 				application.id,
 			);
 			setRedirectUrl(applicationUrl);

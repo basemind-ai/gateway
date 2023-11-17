@@ -56,14 +56,6 @@
 		"signIn": "Sign-In",
 		"submit": "Submit"
 	},
-	"config": {
-		"config": "Configuration",
-		"createConfig": "Create Configuration",
-		"createConfigError": "There was an error creating your configuration. Please try again later or contact support for assistance.",
-		"saveConfig": "Save Configuration",
-		"saveConfigError": "Error occurred while saving your configuration. Please try again.",
-		"warningText": "Caution: Modifying these variables can disrupt the current production setup and may lead to unintended consequences."
-	},
 	"createApplication": {
 		"applicationCreated": "Application Created",
 		"applicationDescription": "Application Description",
@@ -88,6 +80,12 @@
 		"subTitle": "Create your first project, you can always edit later",
 		"submitButton": "Create",
 		"title": "Setup Project"
+	},
+	"createPromptConfig": {
+		"configNameInputLabel": "Configuration Name",
+		"configNameInputPlaceholder": "For example: Default Configuration",
+		"createConfig": "Create Configuration",
+		"createConfigError": "There was an error creating your configuration. Please try again later or contact support for assistance."
 	},
 	"deletionBanner": {
 		"cancel": "Cancel",
@@ -227,6 +225,13 @@
 		"template": "Template",
 		"test": "Test",
 		"warning": "Warning"
+	},
+	"promptConfigTest": {
+		"config": "Configuration",
+
+		"saveConfig": "Save Configuration",
+		"saveConfigError": "Error occurred while saving your configuration. Please try again.",
+		"warningText": "Caution: Modifying these variables can disrupt the current production setup and may lead to unintended consequences."
 	},
 	"promptTesting": {
 		"cancel": "Cancel",

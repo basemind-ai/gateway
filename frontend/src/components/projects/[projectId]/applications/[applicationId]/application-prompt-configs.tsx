@@ -47,7 +47,7 @@ export function ApplicationPromptConfigs({
 
 	const editPromptConfig = (configId: string) => {
 		router.push(
-			setPathParams(Navigation.Config, {
+			setPathParams(Navigation.PromptConfigDetail, {
 				applicationId,
 				configId,
 				projectId,

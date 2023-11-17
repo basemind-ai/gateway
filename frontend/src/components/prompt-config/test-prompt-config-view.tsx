@@ -46,7 +46,6 @@ export function TestPromptConfigView<T extends ModelVendor>({
 	);
 	const [websocketHandler, setWebsocketHandler] =
 		useState<null | WebsocketHandler<any>>(null);
-
 	const [resultTestConfig, setResultTestConfig] =
 		useState<PromptConfigTest<T> | null>(null);
 	const [testResult, setTestResult] = useState<PromptConfigTestResultChunk[]>(

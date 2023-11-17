@@ -19,7 +19,7 @@ export function PromptConfigTest<T extends ModelVendor>({
 	projectId: string;
 	promptConfig: PromptConfig<T>;
 }) {
-	const t = useTranslations('config');
+	const t = useTranslations('promptConfigTest');
 
 	const showError = useShowError();
 

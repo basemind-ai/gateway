@@ -54,7 +54,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 			});
 			deletePromptConfig(applicationId, promptConfigId);
 			router.replace(
-				setPathParams(Navigation.Applications, {
+				setPathParams(Navigation.ApplicationDetail, {
 					applicationId,
 					projectId,
 				}),

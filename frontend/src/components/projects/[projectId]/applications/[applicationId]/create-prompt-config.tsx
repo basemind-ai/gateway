@@ -52,7 +52,7 @@ export function CreatePromptConfigView<T extends ModelVendor>({
 				projectId,
 			});
 
-			const url = setPathParams(Navigation.Config, {
+			const url = setPathParams(Navigation.PromptConfigDetail, {
 				applicationId,
 				configId,
 				projectId,
@@ -69,19 +69,30 @@ export function CreatePromptConfigView<T extends ModelVendor>({
 	return (
 		<div
 			data-testid="create-prompt-config-screen"
-			className="my-6 mx-32 flex flex-col gap-8"
+			className="flex flex-col gap-8"
 		>
 			<div className="flex justify-between">
-				<h1
-					className="text-2xl font-semibold text-base-content"
-					data-testid="create-prompt-config-title"
-				>
-					{`${t('config')} / ${promptTestConfig.name}`}
-				</h1>
+				<div className="form-control">
+					<label className="label">
+						<span>{t('configNameInputLabel')}</span>
+					</label>
+					<input
+						type="text"
+						className="input input-bordered w-96"
+						placeholder={t('configNameInputPlaceholder')}
+						value={promptTestConfig.name}
+						onChange={(e) => {
+							setPromptTestConfig({
+								...promptTestConfig,
+								name: e.target.value,
+							});
+						}}
+					/>
+				</div>
 				<button
 					className="btn btn-primary self-end"
 					data-testid="create-prompt-config-button"
-					disabled={isLoading}
+					disabled={!promptTestConfig.name || isLoading}
 					onClick={() => {
 						void createConfig();
 					}}

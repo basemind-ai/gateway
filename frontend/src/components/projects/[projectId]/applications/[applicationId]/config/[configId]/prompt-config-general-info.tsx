@@ -62,7 +62,7 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 			addPromptConfig(applicationId, newPromptConfig);
 			showInfo(t('configCloned'));
 			router.push(
-				setPathParams(Navigation.Config, {
+				setPathParams(Navigation.PromptConfigDetail, {
 					applicationId,
 					configId: newPromptConfig.id,
 					projectId,

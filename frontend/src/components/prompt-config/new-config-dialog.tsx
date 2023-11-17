@@ -1,16 +1,12 @@
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { Dropdown } from '@/components/dropdown';
-import { Navigation } from '@/constants';
 import { Application } from '@/types';
 import { handleChange } from '@/utils/events';
-import { setPathParams } from '@/utils/navigation';
 
 export function NewConfigDialog({
 	applications,
-	projectId,
 	handleClose,
 }: {
 	applications: Application[];
@@ -18,7 +14,6 @@ export function NewConfigDialog({
 	projectId: string;
 }) {
 	const t = useTranslations('promptTesting');
-	const router = useRouter();
 	const [selectedApplicationId, setSelectedApplicationId] = useState<
 		undefined | string
 	>(undefined);
@@ -83,12 +78,7 @@ export function NewConfigDialog({
 					<button
 						data-testid="create-dialog-create-btn"
 						onClick={() => {
-							router.replace(
-								setPathParams(Navigation.TestingConfig, {
-									applicationId: selectedApplicationId,
-									projectId,
-								}),
-							);
+							alert('not implemented');
 						}}
 						disabled={!selectedApplicationId || !name}
 						className="btn btn-primary"

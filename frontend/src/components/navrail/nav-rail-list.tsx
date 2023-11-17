@@ -60,10 +60,10 @@ export function NavRailList() {
 	return (
 		<div className="mt-10 ml-2 flex flex-col " data-testid="nav-rail-list">
 			<LinkMenu
-				href={navigation.Overview}
+				href={navigation.ProjectDetail}
 				text={t('overview')}
 				icon={<HouseDoor className={ICON_CLASSES} />}
-				isCurrent={navigation.Overview === pathname}
+				isCurrent={navigation.ProjectDetail === pathname}
 			/>
 			<LinkMenu
 				href={navigation.Testing}
@@ -78,7 +78,7 @@ export function NavRailList() {
 			>
 				{projectApplications?.map((application) => {
 					const applicationUrl = setApplicationId(
-						navigation.Applications,
+						navigation.ApplicationDetail,
 						application.id,
 					);
 					return (

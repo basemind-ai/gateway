@@ -84,22 +84,28 @@ export function AllConfigsTable({
 					<tr key={config.id}>
 						<td>
 							<Link
-								href={setPathParams(Navigation.TestingConfig, {
-									applicationId: appId,
-									configId: config.id,
-									projectId,
-								})}
+								href={setPathParams(
+									Navigation.PromptConfigDetail,
+									{
+										applicationId: appId,
+										configId: config.id,
+										projectId,
+									},
+								)}
 							>
 								{config.name}
 							</Link>
 						</td>
 						<td>
 							<Link
-								href={setPathParams(Navigation.TestingConfig, {
-									applicationId: appId,
-									configId: config.id,
-									projectId,
-								})}
+								href={setPathParams(
+									Navigation.PromptConfigDetail,
+									{
+										applicationId: appId,
+										configId: config.id,
+										projectId,
+									},
+								)}
 								className="text-secondary"
 								data-testid={`${config.id}test-config-button`}
 							>

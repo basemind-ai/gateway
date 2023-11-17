@@ -72,7 +72,7 @@ describe('ApplicationsList', () => {
 		await waitFor(() => render(<ApplicationsList projectId={projectId} />));
 
 		const applicationUrl = setApplicationId(
-			setProjectId(Navigation.Applications, projectId),
+			setProjectId(Navigation.ApplicationDetail, projectId),
 			applications[0].id,
 		);
 
