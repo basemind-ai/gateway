@@ -3,7 +3,7 @@ import { Gear, QuestionCircle } from 'react-bootstrap-icons';
 
 import { Navigation } from '@/constants';
 
-export default function NavRailFooter() {
+export function NavRailFooter() {
 	const [pathname] = usePathname().split('?');
 
 	const linkStyle = (linkPath: Navigation) =>

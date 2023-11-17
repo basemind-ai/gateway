@@ -4,65 +4,52 @@ import { useState } from 'react';
 import { handleUpdatePromptConfig } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
-import {
-	useApplication,
-	usePromptConfig,
-	useUpdatePromptConfig,
-} from '@/stores/api-store';
+import { useApplication, useUpdatePromptConfig } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
-import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
-import { handleChange } from '@/utils/helpers';
+import { ModelVendor, PromptConfig } from '@/types';
+import { handleChange } from '@/utils/events';
 
-export function PromptGeneralSettings({
+export function PromptConfigGeneralSettings<T extends ModelVendor>({
 	projectId,
 	applicationId,
-	promptConfigId,
+	promptConfig,
 }: {
 	applicationId: string;
 	projectId: string;
-	promptConfigId: string;
+	promptConfig: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
-	const promptConfig = usePromptConfig<
-		OpenAIModelParameters,
-		OpenAIPromptMessage
-	>(applicationId, promptConfigId);
-	const updatePromptConfig = useUpdatePromptConfig();
 
 	const application = useApplication(projectId, applicationId);
-
-	const [name, setName] = useState(promptConfig?.name ?? '');
-	const [loading, setLoading] = useState(false);
-
 	const showError = useShowError();
+	const updatePromptConfig = useUpdatePromptConfig();
 
-	const isChanged = name !== promptConfig?.name;
+	const [name, setName] = useState(promptConfig.name);
+	const [isLoading, setIsLoading] = useState(false);
+
+	const isChanged = name !== promptConfig.name;
 	const isValid = name.trim().length >= MIN_NAME_LENGTH;
 
 	async function saveSettings() {
-		if (loading) {
-			return;
-		}
-
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const updatedPromptConfig = await handleUpdatePromptConfig({
 				applicationId,
 				data: {
 					name: name.trim(),
 				},
 				projectId,
-				promptConfigId,
+				promptConfigId: promptConfig.id,
 			});
 			updatePromptConfig(applicationId, updatedPromptConfig);
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	}
 
-	if (!promptConfig || !application) {
+	if (!application) {
 		return null;
 	}
 
@@ -98,10 +85,10 @@ export function PromptGeneralSettings({
 						</label>
 						<input
 							type="text"
-							id="prompt-name"
 							data-testid="prompt-name-input"
 							className="input mt-2.5 bg-neutral min-w-[70%]"
 							value={name}
+							disabled={isLoading}
 							onChange={handleChange(setName)}
 						/>
 					</div>
@@ -109,11 +96,11 @@ export function PromptGeneralSettings({
 
 				<button
 					data-testid="prompt-setting-save-btn"
-					disabled={!isChanged || !isValid}
+					disabled={!isChanged || !isValid || isLoading}
 					className="btn btn-primary ml-auto mt-8 capitalize"
 					onClick={() => void saveSettings()}
 				>
-					{loading ? (
+					{isLoading ? (
 						<span className="loading loading-spinner loading-sm mx-2" />
 					) : (
 						t('save')

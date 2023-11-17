@@ -1,8 +1,8 @@
 import { fireEvent } from '@testing-library/react';
 import {
 	ApplicationFactory,
+	OpenAIPromptConfigFactory,
 	ProjectFactory,
-	PromptConfigFactory,
 } from 'tests/factories';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
@@ -38,8 +38,8 @@ describe('PromptConfiguration', () => {
 	const projectId = projects[0].id;
 	const applicationId = applications[0].id;
 
-	it('renders all 4 screens in tab navigation', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+	it('renders all screens in tab navigation', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
 
 		render(
@@ -53,11 +53,15 @@ describe('PromptConfiguration', () => {
 		);
 
 		await waitFor(() => {
-			const pageTitle = screen.getByTestId('prompt-page-title');
-			expect(pageTitle.innerHTML).toContain(promptConfig.name);
+			expect(
+				screen.getByTestId('prompt-config-page-loading'),
+			).toBeInTheDocument();
 		});
 
-		// 	Renders overview
+		await waitFor(() => {
+			expect(screen.getByTestId('prompt-page-title')).toBeInTheDocument();
+		});
+
 		const analytics = screen.getByTestId('prompt-analytics-container');
 		expect(analytics).toBeInTheDocument();
 
@@ -67,20 +71,28 @@ describe('PromptConfiguration', () => {
 		const promptName = screen.getByTestId('prompt-general-info-name');
 		expect(promptName.innerHTML).toBe(promptConfig.name);
 
-		// Renders Settings
-		const [, settingsTab] = screen.getAllByTestId('tab-navigation-btn');
-		fireEvent.click(settingsTab);
+		const tabs = screen.getAllByTestId('tab-navigation-btn');
+		expect(tabs.length).toBe(3);
 
+		const [, testingTab, settingsTab] = tabs;
+
+		fireEvent.click(testingTab);
+		const testingContainer = screen.getByTestId('prompt-testing-container');
+		await waitFor(() => {
+			expect(testingContainer).toBeInTheDocument();
+		});
+
+		fireEvent.click(settingsTab);
 		const settingsContainer = screen.getByTestId(
 			'prompt-general-settings-container',
 		);
-		expect(settingsContainer).toBeInTheDocument();
-
-		// 	TODO: update this test when more tabs are added to navigation
+		await waitFor(() => {
+			expect(settingsContainer).toBeInTheDocument();
+		});
 	});
 
 	it('shows loading when prompt config is being fetched', () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
 
 		render(
@@ -98,7 +110,7 @@ describe('PromptConfiguration', () => {
 	});
 
 	it('shows null when there is no prompt config available', async () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([]);
 
 		render(
@@ -124,7 +136,7 @@ describe('PromptConfiguration', () => {
 	});
 
 	it('shows error when unable to fetch prompt config', () => {
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		handleRetrievePromptConfigsSpy.mockImplementationOnce(() => {
 			throw new ApiError('unable to fetch prompt configs', {
 				statusCode: 401,
@@ -148,7 +160,7 @@ describe('PromptConfiguration', () => {
 
 	it('does not make the prompt config API call when prompt config is already in store', () => {
 		vi.resetAllMocks();
-		const promptConfig = PromptConfigFactory.buildSync();
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 
 		const {
 			result: { current: setPromptConfigs },

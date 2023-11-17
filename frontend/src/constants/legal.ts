@@ -1,4 +1,4 @@
-import { LegalDocument } from '@/types';
+import { LegalDocument } from '@/components/legal-doc';
 
 export const PrivacyPolicyDoc: LegalDocument = {
 	Paragraphs: [

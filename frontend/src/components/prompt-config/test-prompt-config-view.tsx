@@ -1,70 +1,60 @@
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import {
+	Dispatch,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useState,
+} from 'react';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 import { createWebsocket, WebsocketHandler } from '@/api';
-import ModelConfiguration from '@/components/prompt-config/model-configuration';
-import PromptTemplate from '@/components/prompt-config/prompt-template';
-import Results from '@/components/prompt-config/results';
-import TestInputs from '@/components/prompt-config/test-inputs';
+import { ModelConfigurationView } from '@/components/prompt-config/model-configuration-view';
+import { OpenAIPromptTemplate } from '@/components/prompt-config/open-a-i-prompt-template';
+import { Results } from '@/components/prompt-config/results';
+import { TestInputs } from '@/components/prompt-config/test-inputs';
 import { useShowError } from '@/stores/toast-store';
 import {
+	ModelVendor,
 	PromptConfigTest,
 	PromptConfigTestResultChunk,
-	TestSection,
 } from '@/types';
 
-export default function TestConfigView({
-	config,
-	setConfig,
+enum TestSection {
+	ModelConfiguration = 'modelConfiguration',
+	PromptTemplate = 'promptTemplate',
+	Results = 'results',
+	TestInputs = 'testInputs',
+}
+
+export function TestPromptConfigView<T extends ModelVendor>({
+	promptTestConfig,
+	setPromptTestConfig,
 	projectId,
 	applicationId,
 }: {
 	applicationId: string;
-	config: PromptConfigTest<any, any>;
 	projectId: string;
-	setConfig: React.Dispatch<React.SetStateAction<PromptConfigTest<any, any>>>;
+	promptTestConfig: PromptConfigTest<T>;
+	setPromptTestConfig: Dispatch<SetStateAction<PromptConfigTest<T>>>;
 }) {
 	const t = useTranslations('promptTesting');
 	const showError = useShowError();
+
 	const [openSection, setOpenSection] = useState<TestSection | null>(
 		TestSection.ModelConfiguration,
 	);
-	const toggleSection = (section: TestSection | null) => {
-		setOpenSection(openSection === section ? null : section);
-	};
 	const [websocketHandler, setWebsocketHandler] =
-		useState<null | WebsocketHandler<any, any>>(null);
-	const [testConfig, setTestConfig] = useState<PromptConfigTest<
-		any,
-		any
-	> | null>(null);
+		useState<null | WebsocketHandler<any>>(null);
+	const [resultTestConfig, setResultTestConfig] =
+		useState<PromptConfigTest<T> | null>(null);
 	const [testResult, setTestResult] = useState<PromptConfigTestResultChunk[]>(
 		[],
 	);
 
-	function handleRunTest() {
-		setTestConfig(config);
-		setTestResult([]);
-		if (openSection === TestSection.TestInputs) {
-			toggleSection(TestSection.Results);
-		}
-		void websocketHandler?.sendMessage(config);
-	}
-
-	const handleMessage = useCallback(
-		({ data }: MessageEvent<PromptConfigTestResultChunk>) => {
-			setTestResult((oldResults) => [...oldResults, data]);
-		},
-		[testResult],
-	);
-	const handleError = useCallback(() => {
-		showError(t('runningTestError'));
-	}, []);
-
 	useEffect(() => {
 		(async () => {
-			const handler = await createWebsocket<any, any>({
+			const handler = await createWebsocket<any>({
 				applicationId,
 				handleClose: () => {
 					return;
@@ -79,19 +69,43 @@ export default function TestConfigView({
 		return () => websocketHandler?.closeSocket();
 	}, []);
 
-	function getHeadlineOpacity(section: string) {
-		return openSection === section ? 'opacity-100' : 'opacity-80';
-	}
+	const toggleSection = (section: TestSection | null) => {
+		setOpenSection(openSection === section ? null : section);
+	};
 
-	function getSectionYSize(section: string) {
-		return openSection === section ? 'scale-y-100' : 'scale-y-0';
-	}
+	const handleRunTest = () => {
+		setResultTestConfig(promptTestConfig);
+		setTestResult([]);
+
+		if (openSection === TestSection.TestInputs) {
+			toggleSection(TestSection.Results);
+		}
+
+		void websocketHandler?.sendMessage(promptTestConfig);
+	};
+
+	const handleMessage = useCallback(
+		({ data }: MessageEvent<PromptConfigTestResultChunk>) => {
+			setTestResult((oldResults) => [...oldResults, data]);
+		},
+		[testResult],
+	);
+
+	const handleError = useCallback(() => {
+		showError(t('runningTestError'));
+	}, []);
+
+	const getHeadlineOpacity = (section: string) =>
+		openSection === section ? 'opacity-100' : 'opacity-80';
+
+	const getSectionYSize = (section: string) =>
+		openSection === section ? 'scale-y-100' : 'scale-y-0';
 
 	return (
 		<>
 			<div>
 				<div
-					data-testid="model-config-headline"
+					data-testid="test-prompt-config-view-model-headline"
 					className={`flex justify-between cursor-pointer hover:opacity-100 ${getHeadlineOpacity(
 						TestSection.ModelConfiguration,
 					)}`}
@@ -99,9 +113,7 @@ export default function TestConfigView({
 						toggleSection(TestSection.ModelConfiguration);
 					}}
 				>
-					<h2
-						className={`text-xl font-normal text-base-content mb-4`}
-					>
+					<h2 className="text-xl font-normal text-base-content mb-4">
 						{t('modelConfig')}
 					</h2>
 					{openSection === TestSection.ModelConfiguration ? (
@@ -116,19 +128,16 @@ export default function TestConfigView({
 					)} origin-top`}
 				>
 					{openSection === 'modelConfiguration' && (
-						<ModelConfiguration<
-							typeof config.modelParameters,
-							typeof config.promptMessages
-						>
-							config={config}
-							setConfig={setConfig}
+						<ModelConfigurationView
+							promptTestConfig={promptTestConfig}
+							setPromptTestConfig={setPromptTestConfig}
 						/>
 					)}
 				</div>
 			</div>
 			<div>
 				<div
-					data-testid="prompt-template-headline"
+					data-testid="test-prompt-config-view-template-headline"
 					className={`flex justify-between cursor-pointer hover:opacity-100 ${getHeadlineOpacity(
 						TestSection.PromptTemplate,
 					)}`}
@@ -152,9 +161,21 @@ export default function TestConfigView({
 						TestSection.PromptTemplate,
 					)} origin-top`}
 				>
-					{openSection === TestSection.PromptTemplate && (
-						<PromptTemplate config={config} setConfig={setConfig} />
-					)}
+					{openSection === TestSection.PromptTemplate &&
+						(promptTestConfig.modelVendor === ModelVendor.OpenAI ? (
+							<OpenAIPromptTemplate
+								promptTestConfig={
+									promptTestConfig as PromptConfigTest<ModelVendor.OpenAI>
+								}
+								setPromptTestConfig={
+									setPromptTestConfig as Dispatch<
+										SetStateAction<
+											PromptConfigTest<ModelVendor.OpenAI>
+										>
+									>
+								}
+							/>
+						) : null)}
 				</div>
 			</div>
 			<div>
@@ -181,9 +202,11 @@ export default function TestConfigView({
 					)} origin-top`}
 				>
 					{openSection === TestSection.TestInputs && (
-						<TestInputs
-							templateVariables={config.templateVariables}
-							setConfig={setConfig}
+						<TestInputs<T>
+							templateVariables={
+								promptTestConfig.templateVariables
+							}
+							setPromptTestConfig={setPromptTestConfig}
 							handleRunTest={handleRunTest}
 						/>
 					)}
@@ -215,7 +238,7 @@ export default function TestConfigView({
 					{openSection === TestSection.Results && (
 						<Results
 							handleRunTest={handleRunTest}
-							testConfig={testConfig}
+							testConfig={resultTestConfig}
 							result={testResult}
 						/>
 					)}

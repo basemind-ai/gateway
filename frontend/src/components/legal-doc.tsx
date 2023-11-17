@@ -1,4 +1,9 @@
-import { LegalDocument } from '@/types';
+export interface LegalDocument {
+	Paragraphs: { content: string[]; title: string }[];
+	lastUpdated: string;
+	openingParagraphs: string[];
+	title: string;
+}
 
 export function LegalDoc({ doc }: { doc: LegalDocument }) {
 	return (

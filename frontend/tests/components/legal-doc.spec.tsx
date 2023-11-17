@@ -2,8 +2,7 @@ import { screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { describe, it } from 'vitest';
 
-import { LegalDoc } from '@/components/legal-doc';
-import { LegalDocument } from '@/types';
+import { LegalDoc, LegalDocument } from '@/components/legal-doc';
 
 describe('LegalDoc component tests', () => {
 	const mockDoc: LegalDocument = {

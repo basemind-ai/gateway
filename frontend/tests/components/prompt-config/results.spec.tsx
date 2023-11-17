@@ -2,8 +2,8 @@ import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { afterEach, describe, expect } from 'vitest';
 
-import Results from '@/components/prompt-config/results';
-import { PromptConfigDefault } from '@/constants/forms';
+import { Results } from '@/components/prompt-config/results';
+import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
 
 describe('PromptTemplate tests', () => {
 	const handleRunTest = vi.fn();
@@ -46,7 +46,7 @@ describe('PromptTemplate tests', () => {
 			/>,
 		);
 		expect(screen.queryByTestId('post-run-card')).not.toBeInTheDocument();
-		testConfig = PromptConfigDefault;
+		testConfig = DefaultOpenAIPromptConfigTest;
 		render(
 			<Results
 				handleRunTest={handleRunTest}
@@ -62,7 +62,7 @@ describe('PromptTemplate tests', () => {
 			<Results
 				handleRunTest={handleRunTest}
 				result={[]}
-				testConfig={PromptConfigDefault}
+				testConfig={DefaultOpenAIPromptConfigTest}
 			/>,
 		);
 		fireEvent.click(screen.getByTestId('button-repeat-test'));

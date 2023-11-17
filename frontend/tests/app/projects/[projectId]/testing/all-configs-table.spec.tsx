@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
-import { ApplicationFactory, PromptConfigFactory } from 'tests/factories';
+import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, renderHook } from 'tests/test-utils';
 import { beforeEach, describe, expect } from 'vitest';
@@ -22,7 +22,7 @@ describe('AllConfigsTable component tests', async () => {
 	);
 
 	const mockApplications = await ApplicationFactory.batch(1);
-	const mockConfigs = await PromptConfigFactory.batch(2);
+	const mockConfigs = await OpenAIPromptConfigFactory.batch(2);
 	const handleNoConfigsMock = vi.fn();
 
 	beforeEach(() => {

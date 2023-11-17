@@ -13,7 +13,10 @@ export function WarningModal({
 	const t = useTranslations('common');
 
 	return (
-		<div className="modal modal-open modal-middle sm:modal-middle">
+		<div
+			className="modal modal-open modal-middle sm:modal-middle"
+			data-testid="warning-modal-container"
+		>
 			<div className="modal-box bg-warning">
 				<div className="flex justify-between items-center">
 					<ExclamationTriangle className="text-warning-content h-6 w-6" />

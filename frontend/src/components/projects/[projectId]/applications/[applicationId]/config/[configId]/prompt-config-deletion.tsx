@@ -8,10 +8,10 @@ import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useDeletePromptConfig, usePromptConfig } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { OpenAIModelParameters, OpenAIPromptMessage } from '@/types';
-import { populateLink } from '@/utils/navigation';
+import { ModelVendor } from '@/types';
+import { setPathParams } from '@/utils/navigation';
 
-export function PromptDeletion({
+export function PromptConfigDeletion<T extends ModelVendor>({
 	projectId,
 	applicationId,
 	promptConfigId,
@@ -23,10 +23,7 @@ export function PromptDeletion({
 	const router = useRouter();
 	const t = useTranslations('promptConfig');
 
-	const promptConfig = usePromptConfig<
-		OpenAIModelParameters,
-		OpenAIPromptMessage
-	>(applicationId, promptConfigId);
+	const promptConfig = usePromptConfig<T>(applicationId, promptConfigId);
 	const deletePromptConfig = useDeletePromptConfig();
 
 	const showError = useShowError();
@@ -57,7 +54,10 @@ export function PromptDeletion({
 			});
 			deletePromptConfig(applicationId, promptConfigId);
 			router.replace(
-				populateLink(Navigation.Applications, projectId, applicationId),
+				setPathParams(Navigation.ApplicationDetail, {
+					applicationId,
+					projectId,
+				}),
 			);
 			showInfo(t('promptDeleted'));
 		} catch (e) {

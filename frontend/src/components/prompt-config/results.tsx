@@ -3,14 +3,14 @@ import { ArrowRepeat } from 'react-bootstrap-icons';
 
 import { PromptConfigTest, PromptConfigTestResultChunk } from '@/types';
 
-export default function Results({
+export function Results({
 	handleRunTest,
 	result,
 	testConfig,
 }: {
 	handleRunTest: () => void;
 	result: PromptConfigTestResultChunk[];
-	testConfig: PromptConfigTest<any, any> | null;
+	testConfig: PromptConfigTest<any> | null;
 }) {
 	const t = useTranslations('promptTesting');
 	return (

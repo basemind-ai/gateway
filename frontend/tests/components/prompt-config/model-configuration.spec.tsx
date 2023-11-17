@@ -2,12 +2,12 @@ import { fireEvent, screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
-import ModelConfiguration from '@/components/prompt-config/model-configuration';
-import { PromptConfigDefault } from '@/constants/forms';
-import { ModelType } from '@/types';
+import { ModelConfigurationView } from '@/components/prompt-config/model-configuration-view';
+import { DefaultOpenAIPromptConfigTest } from '@/constants/forms';
+import { OpenAIModelType } from '@/types';
 
 describe('model configuration tests', () => {
-	let config = PromptConfigDefault;
+	let config = DefaultOpenAIPromptConfigTest;
 	const setConfig = vi.fn();
 	setConfig.mockImplementation((updater) => {
 		// Replace the original config with the new state for subsequent assertions
@@ -15,24 +15,39 @@ describe('model configuration tests', () => {
 	});
 
 	it('should render', () => {
-		render(<ModelConfiguration config={config} setConfig={setConfig} />);
+		render(
+			<ModelConfigurationView
+				promptTestConfig={config}
+				setPromptTestConfig={setConfig}
+			/>,
+		);
 		expect(screen.getByTestId('model-config-card')).toBeInTheDocument();
 	});
 
 	it('picking a model should update the config', () => {
-		render(<ModelConfiguration config={config} setConfig={setConfig} />);
+		render(
+			<ModelConfigurationView
+				promptTestConfig={config}
+				setPromptTestConfig={setConfig}
+			/>,
+		);
 		const radio = screen.getByTestId(
-			`model-type-select-${ModelType.Gpt3516K}`,
+			`model-type-select-${OpenAIModelType.Gpt3516K}`,
 		);
 		expect(radio).toBeInTheDocument();
 		fireEvent.click(radio);
 
 		expect(setConfig).toHaveBeenCalled();
-		expect(config.modelType).toBe(ModelType.Gpt3516K);
+		expect(config.modelType).toBe(OpenAIModelType.Gpt3516K);
 	});
 
 	it('slider should update the config', () => {
-		render(<ModelConfiguration config={config} setConfig={setConfig} />);
+		render(
+			<ModelConfigurationView
+				promptTestConfig={config}
+				setPromptTestConfig={setConfig}
+			/>,
+		);
 		const slider = screen.getByTestId('temperature-slider');
 		expect(slider).toBeInTheDocument();
 		fireEvent.change(slider, { target: { value: 0.5 } });
@@ -42,7 +57,12 @@ describe('model configuration tests', () => {
 	});
 
 	it('should render all parameters sliders', () => {
-		render(<ModelConfiguration config={config} setConfig={setConfig} />);
+		render(
+			<ModelConfigurationView
+				promptTestConfig={config}
+				setPromptTestConfig={setConfig}
+			/>,
+		);
 		Object.keys(config.modelParameters).forEach((key) => {
 			const slider = screen.getByTestId(`${key}-slider`);
 			expect(slider).toBeInTheDocument();

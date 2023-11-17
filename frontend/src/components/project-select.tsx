@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 
 import { useProjects, useSetSelectedProject } from '@/stores/api-store';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export function ProjectSelect({
 	selectedProjectId,

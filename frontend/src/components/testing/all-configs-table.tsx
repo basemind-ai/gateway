@@ -9,7 +9,7 @@ import { ApiError } from '@/errors';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { Application, PromptConfig } from '@/types';
-import { populateLink } from '@/utils/navigation';
+import { setPathParams } from '@/utils/navigation';
 
 export function AllConfigsTable({
 	projectId,
@@ -26,7 +26,7 @@ export function AllConfigsTable({
 	const showError = useShowError();
 
 	const { isValidating: isConfigLoading, error: isConfigError } = useSWR<
-		PromptConfig[][],
+		PromptConfig<any>[][],
 		ApiError,
 		() => Application[] | undefined
 	>(
@@ -84,12 +84,13 @@ export function AllConfigsTable({
 					<tr key={config.id}>
 						<td>
 							<Link
-								href={populateLink(
-									Navigation.TestingConfig,
-									projectId,
-									appId,
-									config.id,
-									config.name,
+								href={setPathParams(
+									Navigation.PromptConfigDetail,
+									{
+										applicationId: appId,
+										configId: config.id,
+										projectId,
+									},
 								)}
 							>
 								{config.name}
@@ -97,12 +98,13 @@ export function AllConfigsTable({
 						</td>
 						<td>
 							<Link
-								href={populateLink(
-									Navigation.TestingConfig,
-									projectId,
-									appId,
-									config.id,
-									config.name,
+								href={setPathParams(
+									Navigation.PromptConfigDetail,
+									{
+										applicationId: appId,
+										configId: config.id,
+										projectId,
+									},
 								)}
 								className="text-secondary"
 								data-testid={`${config.id}test-config-button`}

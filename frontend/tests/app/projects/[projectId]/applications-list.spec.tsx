@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ApplicationFactory, PromptConfigFactory } from 'tests/factories';
+import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
 
@@ -9,7 +9,7 @@ import { ApplicationsList } from '@/components/projects/[projectId]/applications
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
-import { populateApplicationId, populateProjectId } from '@/utils/navigation';
+import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 describe('ApplicationsList', () => {
 	const projectId = '1';
@@ -40,7 +40,7 @@ describe('ApplicationsList', () => {
 		const promptConfigLengths = [2, 3];
 		promptConfigLengths.forEach((configLength) => {
 			handleRetrievePromptConfigsSpy.mockReturnValueOnce(
-				PromptConfigFactory.batch(configLength),
+				OpenAIPromptConfigFactory.batch(configLength),
 			);
 		});
 
@@ -65,14 +65,14 @@ describe('ApplicationsList', () => {
 		const promptConfigLengths = [2, 3];
 		promptConfigLengths.forEach((configLength) => {
 			handleRetrievePromptConfigsSpy.mockReturnValueOnce(
-				PromptConfigFactory.batch(configLength),
+				OpenAIPromptConfigFactory.batch(configLength),
 			);
 		});
 
 		await waitFor(() => render(<ApplicationsList projectId={projectId} />));
 
-		const applicationUrl = populateApplicationId(
-			populateProjectId(Navigation.Applications, projectId),
+		const applicationUrl = setApplicationId(
+			setProjectId(Navigation.ApplicationDetail, projectId),
 			applications[0].id,
 		);
 

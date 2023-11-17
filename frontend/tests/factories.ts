@@ -6,8 +6,8 @@ import {
 	AccessPermission,
 	APIKey,
 	Application,
-	ModelType,
 	ModelVendor,
+	OpenAIModelType,
 	OpenAIPromptMessage,
 	Project,
 	ProjectUserAccount,
@@ -51,13 +51,15 @@ export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
 	}),
 );
 
-export const PromptConfigFactory = new TypeFactory<PromptConfig>(() => ({
+export const OpenAIPromptConfigFactory = new TypeFactory<
+	PromptConfig<ModelVendor.OpenAI>
+>(() => ({
 	createdAt: faker.date.past().toISOString(),
 	expectedTemplateVariables: [],
 	id: faker.string.uuid(),
 	isDefault: false,
 	modelParameters: {},
-	modelType: TypeFactory.sample(Object.values(ModelVendor)),
+	modelType: TypeFactory.sample(Object.values(OpenAIModelType)),
 	modelVendor: ModelVendor.OpenAI,
 	name: faker.lorem.words(),
 	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),
@@ -99,7 +101,7 @@ export const PromptTestRecordFactory = new TypeFactory<
 	finishTime: faker.date.past().toISOString(),
 	id: faker.string.uuid(),
 	modelParameters: {},
-	modelType: ModelType.Gpt432K,
+	modelType: OpenAIModelType.Gpt432K,
 	modelVendor: ModelVendor.OpenAI,
 	name: faker.lorem.words(),
 	promptConfigId: undefined,

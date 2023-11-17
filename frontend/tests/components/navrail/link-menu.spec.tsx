@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import LinkMenu, { LinkMenuProps } from '@/components/navrail/link-menu';
+import { LinkMenu, LinkMenuProps } from '@/components/navrail/link-menu';
 
 describe('LinkMenu tests', () => {
 	const props: LinkMenuProps = {

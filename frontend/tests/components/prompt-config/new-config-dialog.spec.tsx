@@ -1,10 +1,10 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { ApplicationFactory } from 'tests/factories';
-import { routerPushMock } from 'tests/mocks';
+import { routerReplaceMock } from 'tests/mocks';
 import { render, renderHook } from 'tests/test-utils';
 
-import NewConfigDialog from '@/components/prompt-config/new-config-dialog';
+import { NewConfigDialog } from '@/components/prompt-config/new-config-dialog';
 
 describe('NewConfigDialog tests', () => {
 	const {
@@ -51,14 +51,9 @@ describe('NewConfigDialog tests', () => {
 			target: { value: 'New Config Name' },
 		});
 		expect(screen.getByTestId('create-dialog-create-btn')).toBeDisabled();
-		fireEvent.change(
-			screen.getByTestId(
-				`dropdown-input-select-${t('saveInApplication')}`,
-			),
-			{
-				target: { value: applicationsMock[0].id },
-			},
-		);
+		fireEvent.change(screen.getByTestId(`create-dialog-app-dropdown`), {
+			target: { value: applicationsMock[0].id },
+		});
 		expect(screen.getByTestId('create-dialog-create-btn')).toBeEnabled();
 	});
 
@@ -86,16 +81,11 @@ describe('NewConfigDialog tests', () => {
 		fireEvent.change(screen.getByTestId('create-dialog-name-input'), {
 			target: { value: 'New Config Name' },
 		});
-		fireEvent.change(
-			screen.getByTestId(
-				`dropdown-input-select-${t('saveInApplication')}`,
-			),
-			{
-				target: { value: applicationsMock[0].id },
-			},
-		);
+		fireEvent.change(screen.getByTestId('create-dialog-app-dropdown'), {
+			target: { value: applicationsMock[0].id },
+		});
 
 		fireEvent.click(screen.getByTestId('create-dialog-create-btn'));
-		expect(routerPushMock).toHaveBeenCalled();
+		expect(routerReplaceMock).toHaveBeenCalled();
 	});
 });

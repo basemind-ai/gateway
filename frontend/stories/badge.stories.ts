@@ -1,4 +1,4 @@
-import Badge, { BadgeProps } from '@/components/navrail/badge';
+import { Badge, BadgeProps } from '@/components/navrail/badge';
 
 export default {
 	component: Badge,

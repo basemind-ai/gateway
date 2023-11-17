@@ -6,7 +6,7 @@ import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
 import { useProject, useUpdateProject } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 	const t = useTranslations('projectSettings');

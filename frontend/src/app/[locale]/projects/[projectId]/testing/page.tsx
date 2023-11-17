@@ -6,7 +6,7 @@ import { Plus } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrieveApplications } from '@/api';
-import NewConfigDialog from '@/components/prompt-config/new-config-dialog';
+import { NewConfigDialog } from '@/components/prompt-config/new-config-dialog';
 import { AllConfigsTable } from '@/components/testing/all-configs-table';
 import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
