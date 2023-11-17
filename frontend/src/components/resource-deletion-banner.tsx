@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export interface ResourceDeletionBannerProps {
 	confirmCTA?: string | React.ReactElement;

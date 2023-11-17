@@ -21,7 +21,7 @@ import {
 } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 const DEFAULT_AVATAR = '/images/avatar.svg';
 

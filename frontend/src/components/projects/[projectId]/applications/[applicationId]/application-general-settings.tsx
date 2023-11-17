@@ -16,7 +16,7 @@ import {
 	useUpdateApplication,
 } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export function ApplicationGeneralSettings({
 	projectId,

@@ -7,8 +7,8 @@ import { ApiError } from '@/errors';
 import { useAddProjectUser } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
-import { isValidEmail } from '@/utils/form';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
+import { isValidEmail } from '@/utils/validation';
 
 export function InviteMember({ projectId }: { projectId: string }) {
 	const t = useTranslations('members');

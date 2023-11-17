@@ -7,11 +7,11 @@ import {
 	OpenAIPromptMessageRole,
 	PromptConfigTest,
 } from '@/types';
+import { handleChange } from '@/utils/events';
 import {
-	extractVariables,
-	handleChange,
+	extractTemplateVariables,
 	updateTemplateVariablesRecord,
-} from '@/utils/helpers';
+} from '@/utils/models';
 
 export function OpenAIPromptTemplate({
 	promptTestConfig,
@@ -72,7 +72,9 @@ export function OpenAIPromptTemplate({
 	};
 
 	const handleSave = () => {
-		draftMessage.templateVariables = extractVariables(draftMessage.content);
+		draftMessage.templateVariables = extractTemplateVariables(
+			draftMessage.content,
+		);
 
 		const copiedPromptTestConfig = structuredClone(promptTestConfig);
 		if (activeMessageIndex === promptTestConfig.promptMessages.length) {

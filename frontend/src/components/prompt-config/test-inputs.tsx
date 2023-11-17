@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 
 import { ModelVendor, PromptConfigTest } from '@/types';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export function TestInputs<T extends ModelVendor>({
 	templateVariables,

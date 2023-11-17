@@ -1,3 +1,4 @@
+import equal from 'deep-equal';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
@@ -7,7 +8,6 @@ import { WarningModal } from '@/components/warning-modal';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, PromptConfig, PromptConfigTest } from '@/types';
-import { areArraysEqual } from '@/utils/helpers';
 
 export function PromptConfigTest<T extends ModelVendor>({
 	projectId,
@@ -70,7 +70,7 @@ export function PromptConfigTest<T extends ModelVendor>({
 
 	function handleSave() {
 		if (
-			areArraysEqual(
+			equal(
 				Object.keys(promptTestConfig.templateVariables),
 				promptConfig.expectedTemplateVariables,
 			)

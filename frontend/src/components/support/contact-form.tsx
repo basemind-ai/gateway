@@ -10,7 +10,7 @@ import { ApiError } from '@/errors';
 import { useProjects, useSetProjects } from '@/stores/api-store';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { Project } from '@/types';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 	const t = useTranslations('support');

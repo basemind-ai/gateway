@@ -7,7 +7,7 @@ import { ApiError } from '@/errors';
 import { useApplication, useUpdatePromptConfig } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, PromptConfig } from '@/types';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export function PromptConfigGeneralSettings<T extends ModelVendor>({
 	projectId,

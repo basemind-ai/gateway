@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 
 export interface DropdownOption<
 	T extends string | number | undefined = undefined,

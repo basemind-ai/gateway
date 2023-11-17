@@ -15,7 +15,8 @@ import {
 	PromptConfigTest,
 	UnavailableModelVendor,
 } from '@/types';
-import { formatNumber, handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
+import { formatNumber } from '@/utils/format';
 
 export function ModelConfigurationView({
 	promptTestConfig,

@@ -8,7 +8,7 @@ import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useAddApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 export function CreateApplication({

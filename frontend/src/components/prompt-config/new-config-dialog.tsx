@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Dropdown } from '@/components/dropdown';
 import { Navigation } from '@/constants';
 import { Application } from '@/types';
-import { handleChange } from '@/utils/helpers';
+import { handleChange } from '@/utils/events';
 import { setPathParams } from '@/utils/navigation';
 
 export function NewConfigDialog({
