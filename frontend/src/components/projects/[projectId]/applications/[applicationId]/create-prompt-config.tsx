@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleCreatePromptConfig } from '@/api';
+import TestConfigView from '@/components/prompt-config/test-config-view';
 import { Navigation } from '@/constants';
 import {
 	DefaultCoherePromptConfigTest,
@@ -64,4 +65,43 @@ export function CreatePromptConfigView<T extends ModelVendor>({
 			setIsLoading(false);
 		}
 	}
+
+	return (
+		<div
+			data-testid="create-prompt-config-screen"
+			className="my-6 mx-32 flex flex-col gap-8"
+		>
+			<div className="flex justify-between">
+				<h1
+					className="text-2xl font-semibold text-base-content"
+					data-testid="create-prompt-config-title"
+				>
+					{`${t('config')} / ${promptTestConfig.name}`}
+				</h1>
+				<button
+					className="btn btn-primary self-end"
+					data-testid="create-prompt-config-button"
+					disabled={isLoading}
+					onClick={() => {
+						void createConfig();
+					}}
+				>
+					{isLoading ? (
+						<span
+							data-testid="loading-spinner"
+							className="loading loading-spinner loading-xs mx-1.5"
+						/>
+					) : (
+						t('createConfig')
+					)}
+				</button>
+			</div>
+			<TestConfigView
+				projectId={projectId}
+				applicationId={applicationId}
+				promptTestConfig={promptTestConfig}
+				setPromptTestConfig={setPromptTestConfig}
+			/>
+		</div>
+	);
 }
