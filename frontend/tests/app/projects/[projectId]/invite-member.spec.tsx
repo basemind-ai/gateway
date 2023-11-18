@@ -16,6 +16,10 @@ describe('InviteMember', () => {
 		ProjectUsersAPI,
 		'handleAddUsersToProject',
 	);
+	const handleRetrieveProjectUsersSpy = vi.spyOn(
+		ProjectUsersAPI,
+		'handleRetrieveProjectUsers',
+	);
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -35,21 +39,27 @@ describe('InviteMember', () => {
 	});
 
 	test.each([
-		['plainaddress', false],
-		['#@%^%#$@#$@#.com', false],
-		['email.example.com', false],
-		['.email@example.com', false],
-		['valid@gm.com', true],
-		['"email"@example.com', true],
-		['_______@example.com', true],
+		[['plainaddress'], false],
+		[['#@%^%#$@#$@#.com'], false],
+		[['email.example.com'], false],
+		[['.email@example.com'], false],
+		[['a', 'b'], false],
+		[['valid@gm.com', 'invalid@gm'], false],
+		[['valid@gm.com', 'valid_again@gm.com'], true],
+		[['valid@gm.com'], true],
+		[['"email"@example.com'], true],
+		[['_______@example.com'], true],
 	])(
 		'enables send invite only on valid email %p valid: %p',
-		(email, valid) => {
+		(emails, valid) => {
 			render(<InviteMember projectId={projectId} />);
 
 			const emailInput = screen.getByTestId('invite-email-input');
-			fireEvent.change(emailInput, {
-				target: { value: email },
+			emails.forEach((email) => {
+				fireEvent.change(emailInput, {
+					target: { value: email },
+				});
+				fireEvent.blur(emailInput);
 			});
 
 			const sendInviteButton =
@@ -83,10 +93,13 @@ describe('InviteMember', () => {
 		fireEvent.change(emailInput, {
 			target: { value: validEmail },
 		});
+		fireEvent.blur(emailInput);
 
-		handleAddUserToProjectSpy.mockResolvedValueOnce(
-			ProjectUserAccountFactory.buildSync({ email: validEmail }),
+		handleAddUserToProjectSpy.mockResolvedValueOnce(null);
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(
+			ProjectUserAccountFactory.batchSync(2),
 		);
+
 		const sendInviteButton =
 			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
 		fireEvent.click(sendInviteButton);
@@ -114,10 +127,13 @@ describe('InviteMember', () => {
 		fireEvent.change(emailInput, {
 			target: { value: validEmail },
 		});
+		fireEvent.blur(emailInput);
 
-		handleAddUserToProjectSpy.mockResolvedValueOnce(
-			ProjectUserAccountFactory.buildSync({ email: validEmail }),
+		handleAddUserToProjectSpy.mockResolvedValueOnce(null);
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(
+			ProjectUserAccountFactory.batchSync(2),
 		);
+
 		const sendInviteButton =
 			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
 		fireEvent.click(sendInviteButton);
@@ -135,6 +151,7 @@ describe('InviteMember', () => {
 		fireEvent.change(emailInput, {
 			target: { value: validEmail },
 		});
+		fireEvent.blur(emailInput);
 
 		handleAddUserToProjectSpy.mockImplementationOnce(() => {
 			throw new ApiError('user does not exist', {
@@ -148,5 +165,83 @@ describe('InviteMember', () => {
 
 		const errorToast = screen.getByText('user does not exist');
 		expect(errorToast.className).toContain(ToastType.ERROR);
+	});
+
+	it('removes duplicate emails on user input', async () => {
+		render(<InviteMember projectId={projectId} />);
+
+		const validEmail = faker.internet.email();
+		const emailInput =
+			screen.getByTestId<HTMLInputElement>('invite-email-input');
+
+		fireEvent.change(emailInput, {
+			target: { value: validEmail },
+		});
+		fireEvent.blur(emailInput);
+
+		// add duplicate email
+		fireEvent.change(emailInput, {
+			target: { value: validEmail },
+		});
+		fireEvent.blur(emailInput);
+
+		handleAddUserToProjectSpy.mockResolvedValueOnce(null);
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(
+			ProjectUserAccountFactory.batchSync(2),
+		);
+
+		const sendInviteButton =
+			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
+		fireEvent.click(sendInviteButton);
+
+		expect(handleAddUserToProjectSpy).toHaveBeenCalledWith({
+			data: [
+				{
+					email: validEmail,
+					permission: AccessPermission.MEMBER,
+				},
+			],
+			projectId,
+		});
+		await waitFor(() => {
+			expect(emailInput.value).toBe('');
+		});
+	});
+
+	it('disables submit when blank email is entered', async () => {
+		render(<InviteMember projectId={projectId} />);
+
+		const emailInput =
+			screen.getByTestId<HTMLInputElement>('invite-email-input');
+
+		fireEvent.change(emailInput, {
+			target: { value: '' },
+		});
+		fireEvent.keyDown(emailInput, { code: 13, key: 'Enter' });
+
+		const sendInviteButton =
+			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
+		expect(sendInviteButton.disabled).toBe(true);
+	});
+
+	it('removes an email when clicked on cross button', async () => {
+		render(<InviteMember projectId={projectId} />);
+
+		const emailInput =
+			screen.getByTestId<HTMLInputElement>('invite-email-input');
+
+		const sendInviteButton =
+			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
+
+		fireEvent.change(emailInput, {
+			target: { value: faker.internet.email() },
+		});
+		fireEvent.blur(emailInput);
+
+		expect(sendInviteButton.disabled).toBe(false);
+
+		const removeEmailButton = screen.getByTestId('remove-email-btn');
+		fireEvent.click(removeEmailButton);
+		expect(sendInviteButton.disabled).toBe(true);
 	});
 });

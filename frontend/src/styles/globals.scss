@@ -34,6 +34,14 @@ div#__next > div {
 	height: 100%;
 }
 
+.flex-2 {
+	flex-grow: 2;
+}
+
+.flex-3 {
+	flex-grow: 3;
+}
+
 @layer components {
 	.custom-table {
 		@apply table border-white w-full;

@@ -58,16 +58,15 @@ describe('project users API tests', () => {
 			);
 
 			mockFetch.mockResolvedValueOnce({
-				json: () => Promise.resolve(userAccounts),
+				json: () => Promise.resolve(null),
 				ok: true,
 			});
 
-			const data = await handleAddUsersToProject({
+			await handleAddUsersToProject({
 				data: requestData,
 				projectId: project.id,
 			});
 
-			expect(data).toEqual(userAccounts);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
 					`http://www.example.com/v1/projects/${project.id}/users/`,
