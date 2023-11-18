@@ -6,7 +6,7 @@ import { ChevronRight } from 'react-bootstrap-icons';
 import { Logo } from '@/components/logo';
 import { Dimensions, Navigation } from '@/constants';
 
-export function LandingPageHeader() {
+export function StaticPageHeader() {
 	const t = useTranslations('landingPage');
 	const router = useRouter();
 	const handleLogoClick = () => {

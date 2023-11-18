@@ -1,8 +1,8 @@
-import { FeaturesSection } from '@/components/marketing-site/features-section';
-import { Footer } from '@/components/marketing-site/footer';
-import { LandingPageHeader } from '@/components/marketing-site/header';
-import { IntroSection } from '@/components/marketing-site/intro-section';
-import { SDKSection } from '@/components/marketing-site/sdk-section';
+import { FeaturesSection } from '@/components/static-site/features-section';
+import { Footer } from '@/components/static-site/footer';
+import { StaticPageHeader } from '@/components/static-site/header';
+import { IntroSection } from '@/components/static-site/intro-section';
+import { SDKSection } from '@/components/static-site/sdk-section';
 
 export default function LandingPage() {
 	return (
@@ -10,7 +10,7 @@ export default function LandingPage() {
 			className="container mx-auto overflow-y-scroll bg-base-100"
 			data-testid="landing-page-container"
 		>
-			<LandingPageHeader />
+			<StaticPageHeader />
 			<main className="md:w-9/12 mx-auto pb-12 relative z-0">
 				<IntroSection />
 				<FeaturesSection />

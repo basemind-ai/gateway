@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { Section } from '@/components/marketing-site/section';
+import { Section } from '@/components/static-site/section';
 import { Dimensions, Navigation } from '@/constants';
 
 export function IntroSection() {

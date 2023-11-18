@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 
-import { CodeSnippet } from '@/components/marketing-site/code-snippet';
-import { Section } from '@/components/marketing-site/section';
+import { CodeSnippet } from '@/components/static-site/code-snippet';
+import { Section } from '@/components/static-site/section';
 
 export function SDKSection() {
 	const kotlinCode = `suspend fun getPrompt(userInput: String): String {

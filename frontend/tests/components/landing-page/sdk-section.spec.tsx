@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import { SDKSection } from '@/components/marketing-site/sdk-section';
+import { SDKSection } from '@/components/static-site/sdk-section';
 
 describe('SDKSection', () => {
 	it('should render a section with a title and code snippet', () => {

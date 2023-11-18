@@ -1,14 +1,14 @@
 import { LegalDoc } from '@/components/legal-doc';
 import { LegalDocument } from '@/components/legal-document-view';
-import { Footer } from '@/components/marketing-site/footer';
-import { LandingPageHeader } from '@/components/marketing-site/header';
+import { Footer } from '@/components/static-site/footer';
+import { StaticPageHeader } from '@/components/static-site/header';
 
 export default function TermsOfServicePage() {
 	return (
 		<div className="w-screen bg-base-100">
 			<div className="container w-full mx-auto">
 				<header>
-					<LandingPageHeader />
+					<StaticPageHeader />
 				</header>
 				<main className="pb-20">
 					<LegalDoc doc={termsOfServiceDocument} />

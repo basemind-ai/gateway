@@ -1,12 +1,12 @@
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen } from 'tests/test-utils';
 
-import { LandingPageHeader } from '@/components/marketing-site/header';
+import { StaticPageHeader } from '@/components/static-site/header';
 import { Navigation } from '@/constants';
 
 describe('LandingPageHeader', () => {
 	it('should render a header component with a logo and a sign-up button', () => {
-		render(<LandingPageHeader />);
+		render(<StaticPageHeader />);
 		const header = screen.getByTestId('landing-page-header');
 		const logo = screen.getByTestId('logo-component');
 		const signUpButton = screen.getByTestId('header-sign-in-button');
@@ -17,7 +17,7 @@ describe('LandingPageHeader', () => {
 	});
 
 	it('logo click should navigate to home page', () => {
-		render(<LandingPageHeader />);
+		render(<StaticPageHeader />);
 		const logo = screen.getByTestId('logo-component');
 		fireEvent.click(logo);
 
@@ -25,7 +25,7 @@ describe('LandingPageHeader', () => {
 	});
 
 	it('sign-in click should navigate to signup', () => {
-		render(<LandingPageHeader />);
+		render(<StaticPageHeader />);
 		const signInButton = screen.getByTestId('header-sign-in-button');
 		fireEvent.click(signInButton);
 

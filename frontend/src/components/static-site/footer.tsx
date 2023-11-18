@@ -6,7 +6,7 @@ export function Footer() {
 	return (
 		<footer
 			className="footer footer-center p-12 bg-base-200 text-base-content"
-			data-testid="marketing-site-footer"
+			data-testid="static-site-footer"
 		>
 			<div className="flex justify-between w-full">
 				<p data-testid="footer-text">{t('footerText')}</p>

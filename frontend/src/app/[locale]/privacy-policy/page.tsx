@@ -2,15 +2,15 @@ import {
 	LegalDocument,
 	LegalDocumentView,
 } from '@/components/legal-document-view';
-import { Footer } from '@/components/marketing-site/footer';
-import { LandingPageHeader } from '@/components/marketing-site/header';
+import { Footer } from '@/components/static-site/footer';
+import { StaticPageHeader } from '@/components/static-site/header';
 
 export default function PrivacyPolicyPage() {
 	return (
 		<div className="w-screen bg-base-100">
 			<div className="container w-full mx-auto">
 				<header>
-					<LandingPageHeader />
+					<StaticPageHeader />
 				</header>
 				<main className="pb-20">
 					<LegalDocumentView document={privacyPolicyDocument} />
