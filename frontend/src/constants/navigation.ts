@@ -2,6 +2,7 @@ export enum Navigation {
 	ApplicationDetail = '/en/projects/:projectId/applications/:applicationId',
 	Base = '/en',
 	Billing = '/en/projects/:projectId/billing',
+	ConfigCreateWizard = '/en/projects/:projectId/applications/:applicationId/config-create-wizard',
 	CreateProject = '/en/projects/create',
 	PrivacyPolicy = '/en/privacy-policy',
 	ProjectDetail = '/en/projects/:projectId',

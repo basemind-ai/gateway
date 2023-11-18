@@ -115,10 +115,6 @@ export default function Application({
 				headerText={`${t('application')} / ${application.name}`}
 				showSelect={projects.length > 1}
 			/>
-			<h1
-				data-testid="application-page-title"
-				className="text-2xl font-semibold text-base-content"
-			/>
 			<div className="mt-3.5 w-full mb-8">
 				<TabNavigation<TAB_NAMES>
 					tabs={tabs}

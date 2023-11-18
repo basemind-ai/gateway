@@ -9,6 +9,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/rs/zerolog/log"
 	"k8s.io/utils/ptr"
 )
 
@@ -51,6 +52,10 @@ func (PromptTestingServer) TestPrompt(
 		},
 		ProviderModelPricing: modelPricing,
 	}
+
+	log.Debug().
+		Interface("requestConfigurationDTO", requestConfigurationDTO).
+		Msg("initiating stream request")
 
 	go connectors.GetProviderConnector(models.ModelVendor(request.ModelVendor)).
 		RequestStream(

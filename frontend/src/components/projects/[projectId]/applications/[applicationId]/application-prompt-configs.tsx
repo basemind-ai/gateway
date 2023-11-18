@@ -120,7 +120,17 @@ export function ApplicationPromptConfigs({
 				) : (
 					<PromptConfigTable />
 				)}
-				<button className="flex gap-2 items-center text-secondary hover:brightness-90">
+				<button
+					className="flex gap-2 items-center text-secondary hover:brightness-90"
+					onClick={() => {
+						router.push(
+							setPathParams(Navigation.ConfigCreateWizard, {
+								applicationId,
+								projectId,
+							}),
+						);
+					}}
+				>
 					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
 					<span>{t('newConfiguration')}</span>
 				</button>

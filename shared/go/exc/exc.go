@@ -3,13 +3,21 @@ package exc
 import (
 	"errors"
 	"github.com/rs/zerolog/log"
+	"runtime"
 	"strings"
 )
 
 // MustResult - panics if the error is not nil, otherwise returns the result.
 func MustResult[T any](value T, err error, messages ...string) T {
 	if err != nil {
-		log.Error().Err(err).Msg(strings.Join(messages, " "))
+		pc, _, lineNumber, _ := runtime.Caller(1)
+		details := runtime.FuncForPC(pc)
+
+		log.Error().
+			Err(err).
+			Str("caller", details.Name()).
+			Int("line number", lineNumber).
+			Msg(strings.Join(messages, " "))
 		panic(err)
 	}
 	return value

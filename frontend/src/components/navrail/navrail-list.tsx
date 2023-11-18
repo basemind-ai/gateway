@@ -5,7 +5,6 @@ import {
 	Boxes,
 	HddStack,
 	HouseDoor,
-	Search,
 	Speedometer2,
 } from 'react-bootstrap-icons';
 
@@ -64,12 +63,6 @@ export function NavRailList() {
 				text={t('overview')}
 				icon={<HouseDoor className={ICON_CLASSES} />}
 				isCurrent={navigation.ProjectDetail === pathname}
-			/>
-			<LinkMenu
-				href={navigation.Testing}
-				text={t('testing')}
-				icon={<Search className={ICON_CLASSES} />}
-				isCurrent={navigation.Testing === pathname}
 			/>
 			<LinkMenu
 				isDisabled={true}

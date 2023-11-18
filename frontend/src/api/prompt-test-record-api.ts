@@ -1,21 +1,23 @@
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
-import { PromptTestRecord } from '@/types';
+import { ModelVendor, PromptTestRecord } from '@/types';
 
-export async function handleRetrievePromptTestRecords<P = any, M = any>({
+export async function handleRetrievePromptTestRecords<T extends ModelVendor>({
 	projectId,
 	applicationId,
 }: {
 	applicationId: string;
 	projectId: string;
-}): Promise<PromptTestRecord<P, M>[]> {
-	return await fetcher<PromptTestRecord<P, M>[]>({
+}): Promise<PromptTestRecord<T>[]> {
+	return await fetcher<PromptTestRecord<T>[]>({
 		method: HttpMethod.Get,
 		url: `projects/${projectId}/applications/${applicationId}/test-records/`,
 	});
 }
 
-export async function handleRetrievePromptTestRecordById<P = any, M = any>({
+export async function handleRetrievePromptTestRecordById<
+	T extends ModelVendor,
+>({
 	projectId,
 	applicationId,
 	promptTestRecordId,
@@ -23,8 +25,8 @@ export async function handleRetrievePromptTestRecordById<P = any, M = any>({
 	applicationId: string;
 	projectId: string;
 	promptTestRecordId: string;
-}): Promise<PromptTestRecord<P, M>> {
-	return await fetcher<PromptTestRecord<P, M>>({
+}): Promise<PromptTestRecord<T>> {
+	return await fetcher<PromptTestRecord<T>>({
 		method: HttpMethod.Get,
 		url: `projects/${projectId}/applications/${applicationId}/test-records/${promptTestRecordId}/`,
 	});

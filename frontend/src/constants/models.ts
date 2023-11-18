@@ -2,6 +2,8 @@ import {
 	CohereModelsRecord,
 	CohereModelType,
 	ModelConfig,
+	ModelType,
+	ModelVendor,
 	OpenAIModelParameters,
 	OpenAIModelsRecord,
 	OpenAIModelType,
@@ -24,6 +26,35 @@ const presencePenaltyTooltip =
 
 const maxTokensTooltip =
 	'The maximum number of tokens to generate. Requests can use up to 2048 tokens shared between prompt and response.';
+
+export const OPEN_AI_MAX_TOKENS = 2048;
+
+export const vendorImageSourceMap: Record<ModelVendor, string> = {
+	[ModelVendor.OpenAI]: `/images/${openAIIcon}`,
+	[ModelVendor.Cohere]: `/images/${cohereIcon}`,
+};
+
+export const modelTypeToNameMap: Record<ModelType<any>, string> = {
+	[OpenAIModelType.Gpt35Turbo]: 'GPT-3.5 Turbo',
+	[OpenAIModelType.Gpt3516K]: 'GPT-3.5 Turbo 16K',
+	[OpenAIModelType.Gpt4]: 'GPT-4',
+	[OpenAIModelType.Gpt432K]: 'GPT-4 32K',
+	[CohereModelType.Command]: 'Command',
+	[CohereModelType.CommandLight]: 'Command Light',
+	[CohereModelType.CommandNightly]: 'Command Nightly',
+	[CohereModelType.CommandLightNightly]: 'Command Light Nightly',
+};
+
+export const modelTypeToMaxTokensMap: Record<ModelType<any>, number> = {
+	[OpenAIModelType.Gpt35Turbo]: 4096,
+	[OpenAIModelType.Gpt3516K]: 16_384,
+	[OpenAIModelType.Gpt4]: 8192,
+	[OpenAIModelType.Gpt432K]: 32_768,
+	[CohereModelType.Command]: 4096,
+	[CohereModelType.CommandLight]: 4096,
+	[CohereModelType.CommandNightly]: 4096,
+	[CohereModelType.CommandLightNightly]: 4096,
+};
 
 const createOpenAIModelParameter = (
 	maxTokens: number,

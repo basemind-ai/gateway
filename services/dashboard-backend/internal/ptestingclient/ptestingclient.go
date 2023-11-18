@@ -79,17 +79,19 @@ func (c *Client) StreamPromptTest(
 		fmt.Sprintf("bearer %s", jwt),
 	)
 
+	testRequest := &ptesting.PromptTestRequest{
+		ApplicationId:          applicationID,
+		PromptConfigId:         *data.PromptConfigID,
+		ModelVendor:            string(data.ModelVendor),
+		ModelType:              string(data.ModelType),
+		ModelParameters:        *data.ModelParameters,
+		ProviderPromptMessages: *data.ProviderPromptMessages,
+		TemplateVariables:      data.TemplateVariables,
+	}
+
 	stream, connectionErr := c.GRPCServiceClient.TestPrompt(
 		contextWithMetadata,
-		&ptesting.PromptTestRequest{
-			ApplicationId:          applicationID,
-			PromptConfigId:         *data.PromptConfigID,
-			ModelVendor:            string(data.ModelVendor),
-			ModelType:              string(data.ModelType),
-			ModelParameters:        *data.ModelParameters,
-			ProviderPromptMessages: *data.ProviderPromptMessages,
-			TemplateVariables:      data.TemplateVariables,
-		},
+		testRequest,
 	)
 
 	if connectionErr != nil {

@@ -43,6 +43,7 @@ export interface CohereModelParameters {
 
 export interface CoherePromptMessage {
 	message: string;
+	templateVariables?: string[];
 }
 
 // composite types

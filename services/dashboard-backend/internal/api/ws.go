@@ -137,6 +137,7 @@ func ParseMessageData(
 	if deserializationErr := serialization.DeserializeJSON(message, &data); deserializationErr != nil {
 		return nil, fmt.Errorf("failed to deserialize message: %w", deserializationErr)
 	}
+	log.Debug().Interface("data", data).Msg("received message")
 
 	if validationErr := validate.Struct(data); validationErr != nil {
 		log.Error().Interface("data", data).Msg("data failed validation")
@@ -165,6 +166,7 @@ func ParseMessageData(
 		if createErr != nil {
 			return nil, fmt.Errorf("failed to create prompt config: %w", createErr)
 		}
+		log.Debug().Interface("promptConfig", promptConfig).Msg("created prompt config")
 		data.PromptConfigID = &promptConfig.ID
 	}
 	return &data, nil

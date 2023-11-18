@@ -5,7 +5,7 @@ import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 import { expect, Mock } from 'vitest';
 
-import { NavRail } from '@/components/navrail/nav-rail';
+import { NavRail } from '@/components/navrail/navrail';
 import { Navigation } from '@/constants';
 import {
 	useSetProjectApplications,
