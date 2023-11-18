@@ -6,7 +6,7 @@ import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
 import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
-import { InviteMember } from '@/components/projects/[projectId]/invite-member';
+import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
@@ -75,7 +75,7 @@ export default function ProjectOverview({
 		),
 		[TAB.MEMBERS]: () => (
 			<div data-testid="project-members-tab">
-				<InviteMember projectId={projectId} />
+				<InviteProjectMembers projectId={projectId} />
 				<div className="mt-10">
 					<ProjectMembers projectId={projectId} />
 				</div>

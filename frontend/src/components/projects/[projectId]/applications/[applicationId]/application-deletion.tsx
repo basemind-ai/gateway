@@ -63,16 +63,13 @@ export function ApplicationDeletion({
 
 	return (
 		<div data-testid="application-deletion-container" className="mt-8">
-			<h2 className="font-semibold text-white text-xl">
-				{t('applicationDeletion')}
-			</h2>
 			<div className="custom-card flex items-center justify-between text-neutral-content">
 				<div>
 					<h6 className="font-medium ">
 						{t('deleteYourApplication')}
 					</h6>
 					<p className="font-light text-xs mt-2.5">
-						{t('deleteYourApplicationMessage')}
+						{t('deleteApplicationWarning')}
 					</p>
 				</div>
 				<button
@@ -85,7 +82,7 @@ export function ApplicationDeletion({
 				<dialog ref={dialogRef} className="modal">
 					<div className="dialog-box">
 						<ResourceDeletionBanner
-							title={t('warning')}
+							title={t('warningTitleDeleteApplication')}
 							description={t('warningMessageApplication')}
 							placeholder={t('deletePlaceholderApplication')}
 							resourceName={application.name}
