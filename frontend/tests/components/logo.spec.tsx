@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from 'tests/test-utils';
+import { render, screen } from 'tests/test-utils';
 
 import { Logo } from '@/components/logo';
 
@@ -23,21 +23,6 @@ describe('Logo', () => {
 		expect(logoComponent).toBeInTheDocument();
 		expect(logoImage).toBeInTheDocument();
 		expect(logoText).toBeInTheDocument();
-	});
-
-	it('should render the logo image and text with onClick function', () => {
-		const handleClick = vi.fn();
-		render(<Logo onClick={handleClick} />);
-		const logoComponent = screen.getByTestId('logo-component');
-		const logoImage = screen.getByTestId('logo-image');
-		const logoText = screen.getByTestId('logo-text');
-
-		expect(logoComponent).toBeInTheDocument();
-		expect(logoImage).toBeInTheDocument();
-		expect(logoText).toBeInTheDocument();
-
-		fireEvent.click(logoComponent);
-		expect(handleClick).toHaveBeenCalled();
 	});
 
 	it('should render the logo image and text with very small dimensions', () => {

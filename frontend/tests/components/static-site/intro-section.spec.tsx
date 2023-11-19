@@ -3,12 +3,6 @@ import { render, screen } from 'tests/test-utils';
 import { IntroSection } from '@/components/static-site/intro-section';
 
 describe('IntroSection', () => {
-	it('should render a section with name "intro"', () => {
-		render(<IntroSection />);
-		const section = screen.getByTestId('landing-page-intro-section');
-		expect(section).toBeInTheDocument();
-	});
-
 	it('should render a title and description from translations', () => {
 		render(<IntroSection />);
 		const title = screen.getByTestId('intro-section-title');

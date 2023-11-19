@@ -9,10 +9,14 @@ export function CodeSnippet({
 	language: string;
 }) {
 	return (
-		<div data-testid={`code-snippet-${language}`}>
+		<div
+			data-testid={`code-snippet-${language}`}
+			className="flex flex-wrap"
+		>
 			<SyntaxHighlighter
 				language={language}
 				style={darcula as Record<string, any>}
+				className="rounded-4xl text-xs "
 			>
 				{codeText}
 			</SyntaxHighlighter>

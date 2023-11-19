@@ -1,42 +1,32 @@
-'use client';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ChevronRight } from 'react-bootstrap-icons';
 
 import { Logo } from '@/components/logo';
-import { Dimensions, Navigation } from '@/constants';
+import { Navigation } from '@/constants';
 
 export function StaticPageHeader() {
 	const t = useTranslations('landingPage');
-	const router = useRouter();
-	const handleLogoClick = () => {
-		router.push(Navigation.Base);
-	};
-	const handleSignInClick = () => {
-		router.push(Navigation.SignIn);
-	};
+
 	return (
 		<header
-			className="navbar md:w-9/12 mx-auto sticky top-0 z-50 bg-base-100 pb-5"
-			data-testid="landing-page-header"
+			className=" navbar mx-auto sticky top-0 z-50 bg-base-100 pb-5"
+			data-testid="static-site-header"
 		>
 			<div className="flex-none lg:flex navbar-start">
-				<Logo
-					textSize="text-3xl"
-					height={Dimensions.Eleven}
-					width={Dimensions.Eleven}
-					onClick={handleLogoClick}
-				/>
+				<Link href={Navigation.Base}>
+					<Logo />
+				</Link>
 			</div>
 			<div className="navbar-end">
-				<button
-					className="btn btn-outline btn-md m-2"
+				<Link
+					className="btn btn-primary btn-sm m-1"
 					data-testid="header-sign-in-button"
-					onClick={handleSignInClick}
+					href={Navigation.SignIn}
 				>
 					{t('signIn')}
 					<ChevronRight />
-				</button>
+				</Link>
 			</div>
 		</header>
 	);

@@ -7,10 +7,8 @@ export function Logo({
 	width = Dimensions.Seven,
 	height = Dimensions.Seven,
 	textSize = 'text-2xl',
-	onClick,
 }: {
 	height?: number;
-	onClick?: () => void;
 	textSize?: string;
 	width?: number;
 }) {
@@ -18,15 +16,8 @@ export function Logo({
 
 	return (
 		<div
-			className={`flex justify-between items-center ${
-				onClick ? 'cursor-pointer' : ''
-			} `}
+			className={`flex justify-between items-center `}
 			data-testid="logo-component"
-			onClick={() => {
-				if (onClick) {
-					onClick();
-				}
-			}}
 		>
 			<Image
 				priority

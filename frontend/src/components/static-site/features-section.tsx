@@ -1,16 +1,18 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
+import { CodeSnippet } from '@/components/static-site/code-snippet';
 import { Feature } from '@/components/static-site/feature';
 import { Section } from '@/components/static-site/section';
 import { Dimensions } from '@/constants';
+import { KotlinCode } from '@/constants/code-examples';
 
 export function FeaturesSection() {
 	const t = useTranslations('landingPage');
 
 	return (
 		<Section name="features">
-			<div className="md:w-9/12 flex flex-col mx-auto gap-8 md:gap-32">
+			<div className="flex flex-col mx-auto gap-8 md:gap-20 xl:gap-28 2xl:gap-32">
 				<Feature
 					title={t('featureServerlessTitle')}
 					subtitle={t('featureServerlessSubtitle')}
@@ -31,7 +33,6 @@ export function FeaturesSection() {
 					subtitle={t('featureDashboardSubtitle')}
 					description={t('featureDashboardDescription')}
 					name="dashboard"
-					reverse={true}
 				>
 					<Image
 						width={Dimensions.ThirtySix}
@@ -48,7 +49,7 @@ export function FeaturesSection() {
 					reverse={true}
 					name="vendor-agnostic"
 				>
-					<div className="grid grid-cols-4 gap-8 w-full">
+					<div className="grid grid-cols-4 gap-12 w-full lg:p-8">
 						<Image
 							width={Dimensions.Twenty}
 							height={Dimensions.Twenty}
@@ -109,6 +110,16 @@ export function FeaturesSection() {
 						/>
 					</div>
 				</Feature>
+				<div className="hidden lg:block">
+					<Feature
+						title={t('featureSdkTitle')}
+						subtitle={t('featureSdkSubtitle')}
+						description={t('featureSdkDescription')}
+						name="sdk"
+					>
+						<CodeSnippet codeText={KotlinCode} language="kotlin" />
+					</Feature>
+				</div>
 			</div>
 		</Section>
 	);
