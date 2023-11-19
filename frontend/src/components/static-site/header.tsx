@@ -10,7 +10,7 @@ export function StaticPageHeader() {
 
 	return (
 		<header
-			className=" navbar mx-auto sticky top-0 z-50 bg-base-100 pb-5"
+			className="navbar mx-auto sticky top-0 z-50 bg-base-100 pb-5"
 			data-testid="static-site-header"
 		>
 			<div className="flex-none lg:flex navbar-start">

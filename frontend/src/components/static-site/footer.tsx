@@ -2,13 +2,14 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { Logo } from '@/components/logo';
-import DiscordBtn from '@/components/static-site/discord-btn';
+import DiscordButton from '@/components/static-site/discord-button';
 import { Navigation } from '@/constants';
 
 export const LegalFooterLinks = [
 	{ href: Navigation.PrivacyPolicy, title: 'pp' },
 	{ href: Navigation.TOS, title: 'tos' },
 ];
+
 export const GeneralFooterLinks = [
 	{ href: Navigation.Base, title: 'home' },
 	{ href: Navigation.SignIn, title: 'signIn' },
@@ -25,16 +26,15 @@ export function Footer() {
 		>
 			<aside>
 				<Logo />
-				<br />
 				<p
-					className="text-base-content text-xs"
-					data-testid={'footer-copyright'}
+					className="text-base-content text-xs pt-6 pl-2"
+					data-testid="footer-copyright"
 				>
 					{t('footerCopyright')}
 				</p>
 			</aside>
-			<nav className="">
-				<span className="footer-title">{t('general')}</span>
+			<nav>
+				<header className="footer-title">{t('general')}</header>
 				{GeneralFooterLinks.map(({ title, href }) => (
 					<Link
 						key={title}
@@ -47,8 +47,8 @@ export function Footer() {
 					</Link>
 				))}
 			</nav>
-			<nav className="">
-				<span className="footer-title">{t('legal')}</span>
+			<nav>
+				<header className="footer-title">{t('legal')}</header>
 				{LegalFooterLinks.map(({ href, title }) => (
 					<Link
 						key={title}
@@ -62,11 +62,11 @@ export function Footer() {
 				))}
 			</nav>
 			<nav>
-				<span className="footer-title" data-testid="footer-social">
+				<header className="footer-title" data-testid="footer-social">
 					{t('social')}
-				</span>
+				</header>
 				<div className="grid grid-flow-col gap-4">
-					<DiscordBtn />
+					<DiscordButton />
 				</div>
 			</nav>
 		</footer>

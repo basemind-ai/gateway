@@ -3,18 +3,18 @@ import { routerPushMock } from 'tests/mocks';
 import { render } from 'tests/test-utils';
 import { describe } from 'vitest';
 
-import DiscordBtn from '@/components/static-site/discord-btn';
+import DiscordButton from '@/components/static-site/discord-button';
 import { DISCORD_INVITE_LINK } from '@/constants';
 
 describe('discord-btn tests', () => {
 	it('should render the discord button', () => {
-		render(<DiscordBtn />);
+		render(<DiscordButton />);
 
 		expect(screen.getByTestId('discord-btn')).toBeInTheDocument();
 	});
 
 	it('clicking on the discord button should open the discord invite link', () => {
-		render(<DiscordBtn />);
+		render(<DiscordButton />);
 		const discordBtn = screen.getByTestId('discord-btn');
 		fireEvent.click(discordBtn);
 

@@ -16,7 +16,8 @@ export function CodeSnippet({
 			<SyntaxHighlighter
 				language={language}
 				style={darcula as Record<string, any>}
-				className="rounded-4xl text-xs "
+				lineNumberStyle={{ color: '#ccc' }}
+				className="rounded-3xl text-xs bg-base-300"
 			>
 				{codeText}
 			</SyntaxHighlighter>

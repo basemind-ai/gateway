@@ -1,4 +1,4 @@
-export function Feature({
+export function FeatureCard({
 	title,
 	subtitle,
 	description,
@@ -15,7 +15,7 @@ export function Feature({
 }) {
 	return (
 		<div
-			className={` p-5 h-full flex flex-col justify-between items-center md:px-0 ${
+			className={`p-5 h-full flex flex-col justify-between items-center md:px-0 ${
 				reverse ? 'md:flex-row-reverse' : 'md:flex-row'
 			}`}
 			data-testid={`feature-card-${name}`}
@@ -31,7 +31,7 @@ export function Feature({
 					{description}
 				</p>
 			</div>
-			<div className="md:w-5/12 m-8 md:mt-0 ">{children}</div>
+			<div className="md:w-5/12 m-8 md:mt-0">{children}</div>
 		</div>
 	);
 }

@@ -1,5 +1,7 @@
-import { LegalDoc } from '@/components/legal-doc';
-import { LegalDocument } from '@/components/legal-document-view';
+import {
+	LegalDocument,
+	LegalDocumentView,
+} from '@/components/legal-document-view';
 import { Footer } from '@/components/static-site/footer';
 import { StaticPageHeader } from '@/components/static-site/header';
 
@@ -11,7 +13,7 @@ export default function TermsOfServicePage() {
 					<StaticPageHeader />
 				</header>
 				<main className="pb-20">
-					<LegalDoc doc={termsOfServiceDocument} />
+					<LegalDocumentView document={termsOfServiceDocument} />
 				</main>
 				<footer>
 					<Footer />

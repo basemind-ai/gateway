@@ -5,12 +5,13 @@ import { Discord } from 'react-bootstrap-icons';
 import { DISCORD_INVITE_LINK } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 
-export default function DiscordBtn() {
+export default function DiscordButton() {
 	const router = useRouter();
 	const analytics = useAnalytics();
+
 	return (
 		<button
-			className="btn btn-ghost"
+			className="hover:brightness-125"
 			onClick={() => {
 				analytics.track('discord_click', {});
 				router.push(DISCORD_INVITE_LINK);

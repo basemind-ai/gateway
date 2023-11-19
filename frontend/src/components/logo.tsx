@@ -16,7 +16,7 @@ export function Logo({
 
 	return (
 		<div
-			className={`flex justify-between items-center `}
+			className="flex justify-between items-center"
 			data-testid="logo-component"
 		>
 			<Image

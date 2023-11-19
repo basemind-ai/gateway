@@ -96,7 +96,7 @@
 	},
 	"landingPage": {
 		"ctaSectionSubtitle": "Sign-up to our free beta, No credit card required.",
-		"ctaSectionTitle": "You're AI journey starts here.",
+		"ctaSectionTitle": "Your AI journey starts here.",
 		"featureDashboardDescription": "Empower your team with a user-friendly dashboard.  Make real-time changes without waiting for a new release.",
 		"featureDashboardSubtitle": "Create. Test. Deploy. Instantly.",
 		"featureDashboardTitle": "Prompt Management",
@@ -114,7 +114,7 @@
 		"general": "General",
 		"home": "Home",
 		"introSectionDescription": "The all-in-one developer platform for your mobile apps AI needs. Integrate in minutes, scale to millions.",
-		"introSectionTitle": "Build AI-powered mobile apps. Properly.",
+		"introSectionTitle": "Build AI-Powered Mobile Apps. Properly.",
 		"joinDiscord": "Join our Discord",
 		"legal": "Legal",
 		"pp": "Privacy Policy",
@@ -144,7 +144,7 @@
 		"userRemoved": "User Removed",
 		"usersInvited": "User(s) Invited",
 		"warning": "Warning",
-		"warningMessage": "You're about to remove a user access from this project"
+		"warningMessage": "Your about to remove a user access from this project"
 	},
 	"navrail": {
 		"abTesting": "A/B Testing",
@@ -242,7 +242,6 @@
 	},
 	"promptConfigTest": {
 		"config": "Configuration",
-
 		"saveConfig": "Save Configuration",
 		"saveConfigError": "Error occurred while saving your configuration. Please try again.",
 		"warningText": "Caution: Modifying these variables can disrupt the current production setup and may lead to unintended consequences."

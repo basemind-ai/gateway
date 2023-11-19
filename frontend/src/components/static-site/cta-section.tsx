@@ -5,6 +5,7 @@ import { Navigation } from '@/constants';
 
 export function CTASection() {
 	const t = useTranslations('landingPage');
+
 	return (
 		<div className="flex flex-col max-w-screen-md items-center mx-auto gap-6 py-40 xl:py-52 2xl:py-60">
 			<h2

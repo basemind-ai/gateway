@@ -2,10 +2,19 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
 import { CodeSnippet } from '@/components/static-site/code-snippet';
-import { Feature } from '@/components/static-site/feature';
+import { FeatureCard } from '@/components/static-site/feature-card';
 import { Section } from '@/components/static-site/section';
 import { Dimensions } from '@/constants';
-import { KotlinCode } from '@/constants/code-examples';
+
+export const KotlinCode = `suspend fun getPrompt(userInput: String): String {
+	val client = BaseMindClient.getInstance(apiToken = "myToken")
+
+	val templateVariables = mutableMapOf<String, String>()
+	templateVariables["userInput"] = userInput
+
+	val result = client.requestPrompt(templateVariables)
+	return result.content'
+}`;
 
 export function FeaturesSection() {
 	const t = useTranslations('landingPage');
@@ -13,7 +22,7 @@ export function FeaturesSection() {
 	return (
 		<Section name="features">
 			<div className="flex flex-col mx-auto gap-8 md:gap-20 xl:gap-28 2xl:gap-32">
-				<Feature
+				<FeatureCard
 					title={t('featureServerlessTitle')}
 					subtitle={t('featureServerlessSubtitle')}
 					description={t('featureServerlessDescription')}
@@ -24,11 +33,11 @@ export function FeaturesSection() {
 						width={Dimensions.ThirtySix}
 						height={Dimensions.Twenty}
 						src="/images/stats-feature.svg"
-						alt="Stats Feature"
+						alt="Stats FeatureCard"
 						className="w-full z-10"
 					/>
-				</Feature>
-				<Feature
+				</FeatureCard>
+				<FeatureCard
 					title={t('featureDashboardTitle')}
 					subtitle={t('featureDashboardSubtitle')}
 					description={t('featureDashboardDescription')}
@@ -38,11 +47,11 @@ export function FeaturesSection() {
 						width={Dimensions.ThirtySix}
 						height={Dimensions.Twenty}
 						src="/images/prompt-testing-feature.svg"
-						alt="Prompt Testing Feature"
+						alt="Prompt Testing FeatureCard"
 						className="w-full z-10"
 					/>
-				</Feature>
-				<Feature
+				</FeatureCard>
+				<FeatureCard
 					title={t('featureVendorAgnosticTitle')}
 					subtitle={t('featureVendorAgnosticSubtitle')}
 					description={t('featureVendorAgnosticDescription')}
@@ -109,16 +118,16 @@ export function FeaturesSection() {
 							className="w-full z-10"
 						/>
 					</div>
-				</Feature>
+				</FeatureCard>
 				<div className="hidden lg:block">
-					<Feature
+					<FeatureCard
 						title={t('featureSdkTitle')}
 						subtitle={t('featureSdkSubtitle')}
 						description={t('featureSdkDescription')}
 						name="sdk"
 					>
 						<CodeSnippet codeText={KotlinCode} language="kotlin" />
-					</Feature>
+					</FeatureCard>
 				</div>
 			</div>
 		</Section>
