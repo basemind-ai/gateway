@@ -115,6 +115,7 @@
 	"members": {
 		"admin": "Admin",
 		"emailAddress": "Email Address",
+		"emailAddresses": "Email address(es)",
 		"emailPlaceholder": "you@site.com",
 		"invitationSent": "Invitation Sent",
 		"invite": "Invite",
@@ -127,8 +128,8 @@
 		"roleUpdated": "Role Updated",
 		"roles": "Roles",
 		"sendInvite": "Send Invite",
-		"userAdded": "User Added",
 		"userRemoved": "User Removed",
+		"usersInvited": "User(s) Invited",
 		"warning": "Warning",
 		"warningMessage": "You're about to remove a user access from this project"
 	},

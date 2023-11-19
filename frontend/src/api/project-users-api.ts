@@ -23,8 +23,8 @@ export async function handleAddUsersToProject({
 }: {
 	data: AddUserToProjectBody[];
 	projectId: string;
-}): Promise<ProjectUserAccount> {
-	return await fetcher<ProjectUserAccount>({
+}): Promise<void> {
+	await fetcher<null>({
 		data,
 		method: HttpMethod.Post,
 		url: `projects/${projectId}/users/`,
