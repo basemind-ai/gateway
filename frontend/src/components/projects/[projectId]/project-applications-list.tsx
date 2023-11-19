@@ -17,7 +17,7 @@ import {
 import { useShowError } from '@/stores/toast-store';
 import { setApplicationId, setProjectId } from '@/utils/navigation';
 
-export function ApplicationsList({ projectId }: { projectId: string }) {
+export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 	const t = useTranslations('projectOverview');
 
 	const applications = useApplications(projectId);

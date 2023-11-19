@@ -48,7 +48,7 @@ describe('ApplicationPage', () => {
 		expect(pageContainer).not.toBeInTheDocument();
 	});
 
-	it('renders all 3 screens in tab navigation', async () => {
+	it('renders all  screens in tab navigation', async () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
@@ -86,17 +86,8 @@ describe('ApplicationPage', () => {
 		expect(promptConfig).toBeInTheDocument();
 
 		const tabs = screen.getAllByTestId('tab-navigation-btn');
-		expect(tabs.length).toBe(4);
-		const [, testingTab, settingsTab, apiKeysTab] = tabs;
-
-		fireEvent.click(testingTab);
-		const promptTestingContainer = screen.getByTestId(
-			'application-prompt-testing-container',
-		);
-		await waitFor(() => {
-			expect(promptTestingContainer).toBeInTheDocument();
-		});
-
+		expect(tabs.length).toBe(3);
+		const [, settingsTab, apiKeysTab] = tabs;
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 		fireEvent.click(settingsTab);
 		const settingsContainer = screen.getByTestId(

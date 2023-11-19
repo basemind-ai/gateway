@@ -5,9 +5,9 @@ import { useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
-import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
+import { ProjectApplicationsList } from '@/components/projects/[projectId]/project-applications-list';
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
 import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
@@ -70,7 +70,7 @@ export default function ProjectOverview({
 		[TAB.OVERVIEW]: () => (
 			<div data-testid="project-overview-tab">
 				<ProjectAnalytics projectId={projectId} />
-				<ApplicationsList projectId={projectId} />
+				<ProjectApplicationsList projectId={projectId} />
 			</div>
 		),
 		[TAB.MEMBERS]: () => (

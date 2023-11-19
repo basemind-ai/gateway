@@ -1,8 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
-import { UnavailableModelVendor } from '@/components/prompt-config/model-configuration-view';
-import { modelTypeToNameMap } from '@/constants/models';
+import { modelTypeToNameMap, UnavailableModelVendor } from '@/constants/models';
 import {
 	CohereModelType,
 	ModelType,

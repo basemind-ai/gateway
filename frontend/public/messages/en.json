@@ -92,12 +92,14 @@
 		"continueButtonText": "Continue",
 		"createPromptConfigTitle": "New Model Configuration",
 		"deleteMessage": "Delete Message",
+		"finishReason": "Finish Reason",
 		"messageContent": "Message Content",
 		"messageName": "Message Name",
 		"messageNameInputPlaceholder": "E.g. bot-instruction",
 		"messageRole": "Message Role",
 		"modelParameters": "Model Parameters",
 		"newMessage": "New Message",
+		"noVariablesHeadline": "The template has no variables - add as necessary or click on run test",
 		"openaiParametersFrequencyPenaltyLabel": "Frequency Penalty",
 		"openaiParametersFrequencyPenaltyTooltip": "How much to penalize new tokens based on their existing frequency in the text so far. Decreases the model's likelihood to repeat the same line verbatim.",
 		"openaiParametersMaxTokensLabel": "Max Tokens",
@@ -122,9 +124,7 @@
 		"testInputs": "Test Inputs",
 		"testName": "Test Name",
 		"testResults": "Model Response",
-		"wrapVariable": "use '{ '} to wrap a variable",
-		"finishReason": "Finish Reason",
-		"noVariablesHeadline": "The template has no variables - add as necessary or click on run test"
+		"wrapVariable": "use '{ '} to wrap a variable"
 	},
 	"deletionBanner": {
 		"cancel": "Cancel",

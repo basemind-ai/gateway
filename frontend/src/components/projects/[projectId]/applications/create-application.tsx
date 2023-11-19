@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleCreateAPIKey, handleCreateApplication } from '@/api';
-import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
+import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useAddApplication } from '@/stores/api-store';

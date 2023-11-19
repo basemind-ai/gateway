@@ -72,15 +72,9 @@ describe('PromptConfiguration', () => {
 		expect(promptName.innerHTML).toBe(promptConfig.name);
 
 		const tabs = screen.getAllByTestId('tab-navigation-btn');
-		expect(tabs.length).toBe(3);
+		expect(tabs.length).toBe(2);
 
-		const [, testingTab, settingsTab] = tabs;
-
-		fireEvent.click(testingTab);
-		const testingContainer = screen.getByTestId('prompt-testing-container');
-		await waitFor(() => {
-			expect(testingContainer).toBeInTheDocument();
-		});
+		const [, settingsTab] = tabs;
 
 		fireEvent.click(settingsTab);
 		const settingsContainer = screen.getByTestId(

@@ -10,7 +10,6 @@ export interface UserConfigStore {
 
 export const userConfigStoreStateCreator: StateCreator<UserConfigStore> = (
 	set,
-	_,
 ) => ({
 	dateFormat: DateFormat.ISO,
 	setDateFormat: (dateFormat: DateFormat) => {

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { CodeSquare, Gear, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
@@ -10,7 +10,6 @@ import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/app
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-deletion';
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-info';
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-settings';
-import { PromptConfigTest } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-test';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
@@ -20,7 +19,6 @@ import { useShowError } from '@/stores/toast-store';
 
 enum TAB_NAMES {
 	OVERVIEW,
-	PROMPT_TESTING,
 	SETTINGS,
 }
 
@@ -81,11 +79,6 @@ export default function PromptConfiguration({
 			text: t('overview'),
 		},
 		{
-			icon: <CodeSquare className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.PROMPT_TESTING,
-			text: t('test'),
-		},
-		{
 			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB_NAMES.SETTINGS,
 			text: t('settings'),
@@ -105,21 +98,6 @@ export default function PromptConfiguration({
 					projectId={projectId}
 					applicationId={applicationId}
 					promptConfig={promptConfig}
-					navigateToPromptTesting={() => {
-						setSelectedTab(TAB_NAMES.PROMPT_TESTING);
-					}}
-				/>
-			</>
-		),
-		[TAB_NAMES.PROMPT_TESTING]: () => (
-			<>
-				<PromptConfigTest
-					projectId={projectId}
-					applicationId={applicationId}
-					promptConfig={promptConfig}
-					navigateToOverview={() => {
-						setSelectedTab(TAB_NAMES.OVERVIEW);
-					}}
 				/>
 			</>
 		),

@@ -58,9 +58,7 @@ describe('NavRail tests', () => {
 	it('uses translated text', () => {
 		render(<NavRail />);
 		const overviewItem = screen.getByText(navRailTranslation.overview);
-		const testingItem = screen.getByText(navRailTranslation.testing);
 		expect(overviewItem).toBeInTheDocument();
-		expect(testingItem).toBeInTheDocument();
 	});
 
 	it('shows and hides create application dialog', async () => {

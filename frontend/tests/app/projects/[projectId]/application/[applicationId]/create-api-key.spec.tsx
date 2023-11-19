@@ -4,7 +4,7 @@ import { render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as APIKeyAPI from '@/api/api-keys-api';
-import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
+import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
 

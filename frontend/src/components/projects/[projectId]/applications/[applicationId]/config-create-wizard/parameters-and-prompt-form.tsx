@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { InfoCircle } from 'react-bootstrap-icons';
 
-import { OPEN_AI_MAX_TOKENS } from '@/constants/models';
+import { DEFAULT_MAX_TOKENS, OPEN_AI_MAX_TOKENS } from '@/constants/models';
 import {
 	ModelParameters,
 	ModelVendor,
@@ -67,7 +67,7 @@ export function OpenAIModelParametersForm({
 	const t = useTranslations('createPromptConfigDialog');
 
 	const [maxTokens, setMaxTokens] = useState(
-		existingParameters?.maxTokens ?? OPEN_AI_MAX_TOKENS,
+		existingParameters?.maxTokens ?? DEFAULT_MAX_TOKENS,
 	);
 	const [frequencyPenalty, setFrequencyPenalty] = useState(
 		existingParameters?.frequencyPenalty ?? 0,
