@@ -18,9 +18,10 @@ export function DatePicker({
 	onValueChange,
 }: DatePickerProps) {
 	return (
-		<div data-testid="datepicker">
+		<div className="custom-datepicker" data-testid="datepicker">
 			<Datepicker
-				inputClassName="bg-transparent rounded w-60 relative transition-all duration-300 py-2.5 pl-4 pr-14 text-neutral-content tracking-medium font-medium text-sm placeholder-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
+				primaryColor="violet"
+				inputClassName="bg-transparent rounded relative transition-all duration-300 py-2.5 pl-4 pr-12 text-neutral-content tracking-medium font-medium text-sm placeholder-gray-400 disabled:opacity-40 disabled:cursor-not-allowed focus:border-slate-100 no-ring-color"
 				value={value}
 				onChange={onValueChange}
 				showShortcuts={showShortcuts}

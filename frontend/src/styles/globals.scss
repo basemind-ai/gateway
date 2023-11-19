@@ -42,6 +42,10 @@ div#__next > div {
 	flex-grow: 3;
 }
 
+.no-ring-color {
+	--tw-ring-color: none !important;
+}
+
 @layer components {
 	.custom-table {
 		@apply table border-white w-full;
@@ -91,5 +95,9 @@ div#__next > div {
 		nav {
 			@apply mt-3.5 w-full mb-8;
 		}
+	}
+
+	.custom-datepicker > div > div > div {
+		@apply bg-base-200 border-neutral #{!important};
 	}
 }
