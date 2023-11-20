@@ -74,7 +74,7 @@ export function OpenAIModelParametersForm({
 	modelType: OpenAIModelType;
 	setParameters: (parameters: ModelParameters<any>) => void;
 }) {
-	const t = useTranslations('createPromptConfigDialog');
+	const t = useTranslations('createConfigWizard');
 
 	const [maxTokens, setMaxTokens] = useState(
 		existingParameters?.maxTokens ?? DEFAULT_MAX_TOKENS,
@@ -225,7 +225,7 @@ export function OpenAIPromptTemplate({
 	messages: OpenAIContentMessage[];
 	setMessages: (messages: OpenAIContentMessage[]) => void;
 }) {
-	const t = useTranslations('createPromptConfigDialog');
+	const t = useTranslations('createConfigWizard');
 
 	const [activeMessageIndex, setActiveMessageIndex] = useState(
 		messages.length,

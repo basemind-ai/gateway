@@ -17,15 +17,17 @@ export function PromptConfigBaseForm({
 	modelType,
 	setVendor,
 	setModelType,
+	nameIsInvalid,
 }: {
 	configName: string;
 	modelType: ModelType<any>;
 	modelVendor: ModelVendor;
+	nameIsInvalid: boolean;
 	setConfigName: (configName: string) => void;
 	setModelType: (modelType: ModelType<any>) => void;
 	setVendor: (modelVendor: ModelVendor) => void;
 }) {
-	const t = useTranslations('createPromptConfigDialog');
+	const t = useTranslations('createConfigWizard');
 
 	const modelChoices = useMemo(() => {
 		const providerEnum =
@@ -51,10 +53,17 @@ export function PromptConfigBaseForm({
 						data-testid="create-prompt-base-form-name-input"
 						type="text"
 						placeholder={t('promptConfigNameInputPlaceholder')}
-						className="input input-bordered bg-neutral w-full"
+						className={`input input-bordered bg-neutral w-full ${
+							nameIsInvalid && 'border-error'
+						}`}
 						value={configName}
 						onChange={handleChange(setConfigName)}
 					/>
+					{nameIsInvalid && (
+						<span className="text-sm text-error text-center">
+							{t('invalidNameErrorMessage')}
+						</span>
+					)}
 				</div>
 				<div className="px-4 form-control">
 					<label className="label">

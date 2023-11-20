@@ -69,25 +69,7 @@
 		"createApplication": "Create Application",
 		"optional": "optional"
 	},
-	"createProject": {
-		"cancelButton": "Later",
-		"errorComment": "There was an error creating your project",
-		"optional": "optional",
-		"projectDescriptionInputLabel": "Description",
-		"projectDescriptionInputPlaceholder": "Describe your project",
-		"projectInputLabel": "Project Name",
-		"projectInputPlaceholder": "Acme Corporation",
-		"subTitle": "Create your first project, you can always edit later",
-		"submitButton": "Create",
-		"title": "Setup Project"
-	},
-	"createPromptConfig": {
-		"configNameInputLabel": "Configuration Name",
-		"configNameInputPlaceholder": "For example: Default Configuration",
-		"createConfig": "Create Configuration",
-		"createConfigError": "There was an error creating your configuration. Please try again later or contact support for assistance."
-	},
-	"createPromptConfigDialog": {
+	"createConfigWizard": {
 		"backButtonText": "Back",
 		"cancelButtonText": "Cancel",
 		"cohere": "Cohere",
@@ -95,6 +77,7 @@
 		"createPromptConfigTitle": "New Model Configuration",
 		"deleteMessage": "Delete Message",
 		"finishReason": "Finish Reason",
+		"invalidNameErrorMessage": "Error: config name must be unique",
 		"latency": "Latency",
 		"messageContent": "Message Content",
 		"messageName": "Message Name",
@@ -128,11 +111,31 @@
 		"responseTokens": "Response Tokens",
 		"runTest": "Run Test",
 		"runningTestError": "There was an error running test, try again later or contact support",
+		"saveButtonText": "Save",
 		"saveMessage": "Save Message",
+		"skipAndSaveButtonText": "Skip and Save",
 		"testInputs": "Test Inputs",
 		"testName": "Test Name",
 		"testResults": "Model Response",
 		"wrapVariable": "use '{ '} to wrap a variable"
+	},
+	"createProject": {
+		"cancelButton": "Later",
+		"errorComment": "There was an error creating your project",
+		"optional": "optional",
+		"projectDescriptionInputLabel": "Description",
+		"projectDescriptionInputPlaceholder": "Describe your project",
+		"projectInputLabel": "Project Name",
+		"projectInputPlaceholder": "Acme Corporation",
+		"subTitle": "Create your first project, you can always edit later",
+		"submitButton": "Create",
+		"title": "Setup Project"
+	},
+	"createPromptConfig": {
+		"configNameInputLabel": "Configuration Name",
+		"configNameInputPlaceholder": "For example: Default Configuration",
+		"createConfig": "Create Configuration",
+		"createConfigError": "There was an error creating your configuration. Please try again later or contact support for assistance."
 	},
 	"deletionBanner": {
 		"cancel": "Cancel",

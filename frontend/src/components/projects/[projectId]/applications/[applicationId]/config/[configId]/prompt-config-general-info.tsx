@@ -62,8 +62,8 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 			router.push(
 				setPathParams(Navigation.PromptConfigDetail, {
 					applicationId,
-					configId: newPromptConfig.id,
 					projectId,
+					promptConfigId: newPromptConfig.id,
 				}),
 			);
 		} catch (e) {

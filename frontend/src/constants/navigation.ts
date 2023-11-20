@@ -7,7 +7,7 @@ export enum Navigation {
 	PrivacyPolicy = '/en/privacy-policy',
 	ProjectDetail = '/en/projects/:projectId',
 	Projects = '/en/projects',
-	PromptConfigDetail = '/en/projects/:projectId/applications/:applicationId/:configId',
+	PromptConfigDetail = '/en/projects/:projectId/applications/:applicationId/prompt-configs/:promptConfigId',
 	Settings = '/en/settings',
 	SignIn = '/en/sign-in',
 	Support = '/en/support',

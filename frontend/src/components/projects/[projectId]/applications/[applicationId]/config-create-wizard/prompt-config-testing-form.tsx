@@ -54,7 +54,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	setTemplateVariables: (templateVariables: Record<string, string>) => void;
 	templateVariables: Record<string, string>;
 }) {
-	const t = useTranslations('createPromptConfigDialog');
+	const t = useTranslations('createConfigWizard');
 	const [testName, setTestName] = useState('');
 
 	const {

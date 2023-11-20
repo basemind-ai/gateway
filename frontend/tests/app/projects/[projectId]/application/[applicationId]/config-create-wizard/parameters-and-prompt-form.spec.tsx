@@ -14,7 +14,7 @@ import {
 import { ModelVendor, OpenAIModelType, OpenAIPromptMessageRole } from '@/types';
 
 describe('parameters-and-prompt-form components tests', () => {
-	const namespace: Record<string, string> = en.createPromptConfigDialog;
+	const namespace: Record<string, string> = en.createConfigWizard;
 
 	describe('PromptConfigParametersAndPromptForm', () => {
 		it('should render two components without errors or warnings', () => {

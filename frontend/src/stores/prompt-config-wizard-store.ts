@@ -14,7 +14,7 @@ import {
 export enum WizardStage {
 	NAME_AND_MODEL,
 	PARAMETERS_AND_PROMPT,
-	TEST_AND_SAVE,
+	TEST,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -25,6 +25,7 @@ export interface PromptConfigWizardStore {
 	modelType: ModelType<any>;
 	modelVendor: ModelVendor;
 	parameters: ModelParameters<any>;
+	resetState(): void;
 	setConfigName(configName: string): void;
 	setIsNewConfig(isNewConfig: boolean): void;
 	setMessages(messages: ProviderMessageType<any>[]): void;
@@ -44,15 +45,24 @@ export interface PromptConfigWizardStore {
 	wizardStage: WizardStage;
 }
 
-export const promptConfigWizardStoreStateCreator: StateCreator<
-	PromptConfigWizardStore
-> = (set, get) => ({
+const initialState = {
 	configName: '',
 	isNewConfig: true,
 	messages: [],
 	modelType: OpenAIModelType.Gpt35Turbo,
 	modelVendor: ModelVendor.OpenAI,
 	parameters: {},
+	templateVariables: {},
+	wizardStage: WizardStage.NAME_AND_MODEL,
+};
+
+export const promptConfigWizardStoreStateCreator: StateCreator<
+	PromptConfigWizardStore
+> = (set, get) => ({
+	...initialState,
+	resetState() {
+		set(structuredClone(initialState));
+	},
 	setConfigName: (configName: string) => {
 		set({ configName });
 	},
@@ -89,8 +99,6 @@ export const promptConfigWizardStoreStateCreator: StateCreator<
 	setTestResult: (testResult: string) => {
 		set({ testResult });
 	},
-	templateVariables: {},
-	wizardStage: WizardStage.NAME_AND_MODEL,
 });
 
 export const usePromptWizardStore = createWithEqualityFn(
