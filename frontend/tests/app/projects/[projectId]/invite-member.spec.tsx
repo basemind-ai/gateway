@@ -5,7 +5,7 @@ import { render, screen } from 'tests/test-utils';
 import { beforeEach } from 'vitest';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';
-import { InviteMember } from '@/components/projects/[projectId]/invite-member';
+import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
@@ -26,7 +26,7 @@ describe('InviteMember', () => {
 	});
 
 	it('renders invite member', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const emailInput = screen.getByTestId('invite-email-input');
 		expect(emailInput).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('InviteMember', () => {
 	])(
 		'enables send invite only on valid email %p valid: %p',
 		(emails, valid) => {
-			render(<InviteMember projectId={projectId} />);
+			render(<InviteProjectMembers projectId={projectId} />);
 
 			const emailInput = screen.getByTestId('invite-email-input');
 			emails.forEach((email) => {
@@ -69,7 +69,7 @@ describe('InviteMember', () => {
 	);
 
 	it('changes role when a different role is chosen from dropdown', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const permissionSelect =
 			screen.getByTestId<HTMLSelectElement>('permission-select');
@@ -85,7 +85,7 @@ describe('InviteMember', () => {
 	});
 
 	it('sends invite to email and promptly clears the email input', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -95,7 +95,7 @@ describe('InviteMember', () => {
 		});
 		fireEvent.blur(emailInput);
 
-		handleAddUserToProjectSpy.mockResolvedValueOnce(null);
+		handleAddUserToProjectSpy.mockResolvedValueOnce(undefined);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(
 			ProjectUserAccountFactory.batchSync(2),
 		);
@@ -119,7 +119,7 @@ describe('InviteMember', () => {
 	});
 
 	it('debounce invite button when loading', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -129,7 +129,7 @@ describe('InviteMember', () => {
 		});
 		fireEvent.blur(emailInput);
 
-		handleAddUserToProjectSpy.mockResolvedValueOnce(null);
+		handleAddUserToProjectSpy.mockResolvedValueOnce(undefined);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(
 			ProjectUserAccountFactory.batchSync(2),
 		);
@@ -143,7 +143,7 @@ describe('InviteMember', () => {
 	});
 
 	it('throws error when user does not exist', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -168,7 +168,7 @@ describe('InviteMember', () => {
 	});
 
 	it('removes duplicate emails on user input', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -185,7 +185,7 @@ describe('InviteMember', () => {
 		});
 		fireEvent.blur(emailInput);
 
-		handleAddUserToProjectSpy.mockResolvedValueOnce(null);
+		handleAddUserToProjectSpy.mockResolvedValueOnce(undefined);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(
 			ProjectUserAccountFactory.batchSync(2),
 		);
@@ -209,7 +209,7 @@ describe('InviteMember', () => {
 	});
 
 	it('disables submit when blank email is entered', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const emailInput =
 			screen.getByTestId<HTMLInputElement>('invite-email-input');
@@ -225,7 +225,7 @@ describe('InviteMember', () => {
 	});
 
 	it('removes an email when clicked on cross button', async () => {
-		render(<InviteMember projectId={projectId} />);
+		render(<InviteProjectMembers projectId={projectId} />);
 
 		const emailInput =
 			screen.getByTestId<HTMLInputElement>('invite-email-input');

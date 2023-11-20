@@ -56,11 +56,14 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-deletion-container" className="mt-8">
+			<h2 className="font-semibold text-white text-xl">
+				{t('deleteProjectTitle')}
+			</h2>
 			<div className="custom-card flex items-center justify-between text-neutral-content">
 				<div>
 					<h6 className="font-medium ">{t('deleteProject')}</h6>
 					<p className="font-light text-xs mt-2.5">
-						{t('deleteProjectMessage')}
+						{t('deleteProjectWarning')}
 					</p>
 				</div>
 				<button

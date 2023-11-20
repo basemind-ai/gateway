@@ -7,8 +7,11 @@ import {
 	OpenAIPromptTemplate,
 	PromptConfigParametersAndPromptForm,
 } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
-import { DEFAULT_MAX_TOKENS, OPEN_AI_MAX_TOKENS } from '@/constants/models';
-import { ModelVendor, OpenAIPromptMessageRole } from '@/types';
+import {
+	DEFAULT_MAX_TOKENS,
+	openAIModelsMaxTokensMap,
+} from '@/constants/models';
+import { ModelVendor, OpenAIModelType, OpenAIPromptMessageRole } from '@/types';
 
 describe('parameters-and-prompt-form components tests', () => {
 	const namespace: Record<string, string> = en.createPromptConfigDialog;
@@ -17,6 +20,7 @@ describe('parameters-and-prompt-form components tests', () => {
 		it('should render two components without errors or warnings', () => {
 			render(
 				<PromptConfigParametersAndPromptForm
+					modelType={OpenAIModelType.Gpt35Turbo}
 					modelVendor={ModelVendor.OpenAI}
 					setParameters={vi.fn()}
 					setMessages={vi.fn()}
@@ -36,6 +40,7 @@ describe('parameters-and-prompt-form components tests', () => {
 
 			render(
 				<PromptConfigParametersAndPromptForm
+					modelType={OpenAIModelType.Gpt35Turbo}
 					modelVendor={ModelVendor.OpenAI}
 					setParameters={setParameters}
 					setMessages={vi.fn()}
@@ -59,7 +64,12 @@ describe('parameters-and-prompt-form components tests', () => {
 
 	describe('OpenAIModelParametersForm', () => {
 		it('should render all input fields with their respective labels and tooltips', () => {
-			render(<OpenAIModelParametersForm setParameters={vi.fn()} />);
+			render(
+				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
+					setParameters={vi.fn()}
+				/>,
+			);
 
 			const maxTokensLabel = screen.getByText(
 				namespace.openaiParametersMaxTokensLabel,
@@ -103,7 +113,12 @@ describe('parameters-and-prompt-form components tests', () => {
 		});
 
 		it('should display the default values for each input field if no existing parameters are provided', () => {
-			render(<OpenAIModelParametersForm setParameters={vi.fn()} />);
+			render(
+				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
+					setParameters={vi.fn()}
+				/>,
+			);
 
 			const maxTokensInput = screen.getByTestId(
 				'create-prompt-config-dialog-model-parameter-range-maxTokens',
@@ -130,7 +145,12 @@ describe('parameters-and-prompt-form components tests', () => {
 
 		it('should update the parameters state with the correct values when any input field is changed', () => {
 			const setParameters = vi.fn();
-			render(<OpenAIModelParametersForm setParameters={setParameters} />);
+			render(
+				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
+					setParameters={setParameters}
+				/>,
+			);
 
 			const maxTokensInput = screen.getByTestId(
 				'create-prompt-config-dialog-model-parameter-range-maxTokens',
@@ -164,7 +184,12 @@ describe('parameters-and-prompt-form components tests', () => {
 		});
 
 		it('should display the correct tooltip text when hovering over the info icon', () => {
-			render(<OpenAIModelParametersForm setParameters={vi.fn()} />);
+			render(
+				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
+					setParameters={vi.fn()}
+				/>,
+			);
 
 			const maxTokensTooltip = screen.getByTestId('maxTokens-tooltip');
 			const frequencyPenaltyTooltip = screen.getByTestId(
@@ -201,7 +226,12 @@ describe('parameters-and-prompt-form components tests', () => {
 		});
 
 		it('should format the value of each input field correctly', () => {
-			render(<OpenAIModelParametersForm setParameters={vi.fn()} />);
+			render(
+				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
+					setParameters={vi.fn()}
+				/>,
+			);
 
 			const maxTokensLabel = screen.getByText(
 				namespace.openaiParametersMaxTokensLabel,
@@ -237,7 +267,12 @@ describe('parameters-and-prompt-form components tests', () => {
 		});
 
 		it('should render a range input for each parameter with the correct min, max, and step values', () => {
-			render(<OpenAIModelParametersForm setParameters={vi.fn()} />);
+			render(
+				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
+					setParameters={vi.fn()}
+				/>,
+			);
 
 			const maxTokensInput = screen.getByTestId(
 				'create-prompt-config-dialog-model-parameter-range-maxTokens',
@@ -258,7 +293,7 @@ describe('parameters-and-prompt-form components tests', () => {
 			expect(maxTokensInput).toHaveAttribute('min', '1');
 			expect(maxTokensInput).toHaveAttribute(
 				'max',
-				OPEN_AI_MAX_TOKENS.toString(),
+				openAIModelsMaxTokensMap[OpenAIModelType.Gpt35Turbo].toString(),
 			);
 			expect(maxTokensInput).toHaveAttribute('step', '1');
 
@@ -289,6 +324,7 @@ describe('parameters-and-prompt-form components tests', () => {
 			};
 			render(
 				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
 					setParameters={vi.fn()}
 					existingParameters={existingParameters}
 				/>,
@@ -335,6 +371,7 @@ describe('parameters-and-prompt-form components tests', () => {
 			};
 			render(
 				<OpenAIModelParametersForm
+					modelType={OpenAIModelType.Gpt35Turbo}
 					setParameters={vi.fn()}
 					existingParameters={existingParameters}
 				/>,

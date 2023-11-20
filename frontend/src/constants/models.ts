@@ -8,8 +8,14 @@ import {
 const openAIIcon = 'openAI-icon.svg';
 const cohereIcon = 'cohere-icon.svg';
 
-export const OPEN_AI_MAX_TOKENS = 2048;
 export const DEFAULT_MAX_TOKENS = 256;
+
+export const openAIModelsMaxTokensMap: Record<OpenAIModelType, number> = {
+	[OpenAIModelType.Gpt35Turbo]: 4096,
+	[OpenAIModelType.Gpt3516K]: 16_384,
+	[OpenAIModelType.Gpt4]: 16_384,
+	[OpenAIModelType.Gpt432K]: 32_768,
+};
 
 export const modelVendorsTranslationKeyMap: Record<ModelVendor, string> = {
 	[ModelVendor.OpenAI]: 'openai',

@@ -108,6 +108,7 @@ export default function PromptConfigCreateWizard({
 					setParameters={handleParametersChange}
 					setMessages={handleMessagesChange}
 					existingParameters={undefined}
+					modelType={store.modelType}
 				/>
 			),
 			[

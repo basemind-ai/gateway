@@ -2,12 +2,17 @@ import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { InfoCircle } from 'react-bootstrap-icons';
 
-import { DEFAULT_MAX_TOKENS, OPEN_AI_MAX_TOKENS } from '@/constants/models';
+import {
+	DEFAULT_MAX_TOKENS,
+	openAIModelsMaxTokensMap,
+} from '@/constants/models';
 import {
 	ModelParameters,
+	ModelType,
 	ModelVendor,
 	OpenAIContentMessage,
 	OpenAIModelParameters,
+	OpenAIModelType,
 	OpenAIPromptMessageRole,
 	ProviderMessageType,
 } from '@/types';
@@ -17,6 +22,7 @@ import { extractTemplateVariables } from '@/utils/models';
 
 export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 	modelVendor,
+	modelType,
 	messages,
 	existingParameters,
 	setParameters,
@@ -24,6 +30,7 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 }: {
 	existingParameters?: ModelParameters<T>;
 	messages?: ProviderMessageType<T>[];
+	modelType: ModelType<T>;
 	modelVendor: T;
 	setMessages: (messages: ProviderMessageType<T>[]) => void;
 	setParameters: (parameters: ModelParameters<T>) => void;
@@ -33,6 +40,7 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 			<div>
 				{modelVendor === ModelVendor.OpenAI && (
 					<OpenAIModelParametersForm
+						modelType={modelType as OpenAIModelType}
 						setParameters={setParameters}
 						existingParameters={
 							existingParameters as OpenAIModelParameters
@@ -58,10 +66,12 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 }
 
 export function OpenAIModelParametersForm({
+	modelType,
 	setParameters,
 	existingParameters,
 }: {
 	existingParameters?: ModelParameters<ModelVendor.OpenAI>;
+	modelType: OpenAIModelType;
 	setParameters: (parameters: ModelParameters<any>) => void;
 }) {
 	const t = useTranslations('createPromptConfigDialog');
@@ -93,7 +103,7 @@ export function OpenAIModelParametersForm({
 		{
 			key: 'maxTokens',
 			labelText: t('openaiParametersMaxTokensLabel'),
-			max: OPEN_AI_MAX_TOKENS,
+			max: openAIModelsMaxTokensMap[modelType],
 			min: 1,
 			setter: setMaxTokens,
 			step: 1,
