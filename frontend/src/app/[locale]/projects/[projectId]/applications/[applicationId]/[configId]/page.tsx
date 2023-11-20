@@ -17,7 +17,7 @@ import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { usePromptConfig, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 
-enum TAB_NAMES {
+enum TAB_NAME {
 	OVERVIEW,
 	SETTINGS,
 }
@@ -40,7 +40,7 @@ export default function PromptConfiguration({
 	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
 	const setPromptConfigs = useSetPromptConfigs();
 
-	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
+	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
 
 	const { isLoading } = useSWR(
 		promptConfig ? null : { applicationId, projectId },
@@ -72,21 +72,21 @@ export default function PromptConfiguration({
 		return null;
 	}
 
-	const tabs: TabData<TAB_NAMES>[] = [
+	const tabs: TabData<TAB_NAME>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.OVERVIEW,
+			id: TAB_NAME.OVERVIEW,
 			text: t('overview'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.SETTINGS,
+			id: TAB_NAME.SETTINGS,
 			text: t('settings'),
 		},
 	];
 
-	const tabComponents: Record<TAB_NAMES, React.FC> = {
-		[TAB_NAMES.OVERVIEW]: () => (
+	const tabComponents: Record<TAB_NAME, React.FC> = {
+		[TAB_NAME.OVERVIEW]: () => (
 			<>
 				<PromptConfigAnalyticsPage
 					projectId={projectId}
@@ -101,7 +101,7 @@ export default function PromptConfiguration({
 				/>
 			</>
 		),
-		[TAB_NAMES.SETTINGS]: () => (
+		[TAB_NAME.SETTINGS]: () => (
 			<>
 				<PromptConfigGeneralSettings
 					projectId={projectId}
@@ -129,7 +129,7 @@ export default function PromptConfiguration({
 				{t('modelConfiguration')} / {promptConfig.name}
 			</h1>
 			<div className="mt-3.5 w-full mb-8">
-				<TabNavigation<TAB_NAMES>
+				<TabNavigation<TAB_NAME>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}

@@ -15,7 +15,7 @@ import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { useApplication, useProject, useProjects } from '@/stores/api-store';
 
-enum TAB_NAMES {
+enum TAB_NAME {
 	OVERVIEW,
 	SETTINGS,
 	API_KEYS,
@@ -34,31 +34,31 @@ export default function Application({
 	const project = useProject(projectId);
 	const projects = useProjects();
 
-	const tabs: TabData<TAB_NAMES>[] = [
+	const tabs: TabData<TAB_NAME>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.OVERVIEW,
+			id: TAB_NAME.OVERVIEW,
 			text: t('overview'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.SETTINGS,
+			id: TAB_NAME.SETTINGS,
 			text: t('settings'),
 		},
 		{
 			icon: <KeyFill className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.API_KEYS,
+			id: TAB_NAME.API_KEYS,
 			text: t('apiKeys'),
 		},
 	];
-	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
+	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
 
 	if (!application || !project) {
 		return null;
 	}
 
-	const tabComponents: Record<TAB_NAMES, React.FC> = {
-		[TAB_NAMES.OVERVIEW]: () => (
+	const tabComponents: Record<TAB_NAME, React.FC> = {
+		[TAB_NAME.OVERVIEW]: () => (
 			<>
 				<ApplicationAnalyticsPage
 					applicationId={applicationId}
@@ -71,7 +71,7 @@ export default function Application({
 			</>
 		),
 
-		[TAB_NAMES.SETTINGS]: () => (
+		[TAB_NAME.SETTINGS]: () => (
 			<>
 				<ApplicationGeneralSettings
 					applicationId={applicationId}
@@ -83,7 +83,7 @@ export default function Application({
 				/>
 			</>
 		),
-		[TAB_NAMES.API_KEYS]: () => (
+		[TAB_NAME.API_KEYS]: () => (
 			<ApiKeys applicationId={applicationId} projectId={projectId} />
 		),
 	};
@@ -98,7 +98,7 @@ export default function Application({
 				showSelect={projects.length > 1}
 			/>
 			<div className="mt-3.5 w-full mb-8">
-				<TabNavigation<TAB_NAMES>
+				<TabNavigation<TAB_NAME>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}
