@@ -16,31 +16,12 @@ import { Navigation, TimeUnit } from '@/constants';
 import { ApiError } from '@/errors';
 import { useProject, useProjects, usePromptConfigs } from '@/stores/api-store';
 import {
-	PromptConfigWizardStore,
 	usePromptWizardStore,
 	WizardStage,
+	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
 import { useShowError } from '@/stores/toast-store';
 import { setPathParams } from '@/utils/navigation';
-
-const WIZARD_STATE_SELECTOR = (s: PromptConfigWizardStore) => ({
-	configName: s.configName,
-	messages: s.messages,
-	modelType: s.modelType,
-	modelVendor: s.modelVendor,
-	parameters: s.parameters,
-	resetState: s.resetState,
-	setConfigName: s.setConfigName,
-	setMessages: s.setMessages,
-	setModelType: s.setModelType,
-	setModelVendor: s.setModelVendor,
-	setNextWizardStage: s.setNextWizardStage,
-	setParameters: s.setParameters,
-	setPrevWizardStage: s.setPrevWizardStage,
-	setTemplateVariables: s.setTemplateVariables,
-	templateVariables: s.templateVariables,
-	wizardStage: s.wizardStage,
-});
 
 export default function PromptConfigCreateWizard({
 	params: { applicationId, projectId },
@@ -56,7 +37,7 @@ export default function PromptConfigCreateWizard({
 
 	const [isLoading, setIsLoading] = useState(false);
 
-	const store = usePromptWizardStore(WIZARD_STATE_SELECTOR, shallow);
+	const store = usePromptWizardStore(wizardStoreSelector, shallow);
 
 	// callbacks
 	const handleConfigNameChange = useCallback(store.setConfigName, [
@@ -205,7 +186,7 @@ export default function PromptConfigCreateWizard({
 				)}
 				<div className="gap-4 items-center justify-between px-5 modal-action">
 					<button
-						data-testid="create-prompt-config-dialog-cacncel-button"
+						data-testid="config-create-wizard-cancel-button"
 						onClick={() => {
 							router.push(
 								setPathParams(Navigation.ApplicationDetail, {
@@ -221,7 +202,7 @@ export default function PromptConfigCreateWizard({
 					<div className="flex justify-between gap-4">
 						{store.wizardStage > 0 && (
 							<button
-								data-testid="create-prompt-config-dialog-back-button"
+								data-testid="config-create-wizard-back-button"
 								onClick={store.setPrevWizardStage}
 								className="btn btn-secondary"
 								disabled={isLoading}
@@ -231,7 +212,7 @@ export default function PromptConfigCreateWizard({
 						)}
 						{store.wizardStage >= 1 && (
 							<button
-								data-testid="create-prompt-config-dialog-continue-button"
+								data-testid="config-create-wizard-save-button"
 								onClick={() => {
 									void handleConfigSave();
 								}}
@@ -249,7 +230,7 @@ export default function PromptConfigCreateWizard({
 						)}
 						{store.wizardStage < 2 && (
 							<button
-								data-testid="create-prompt-config-dialog-continue-button"
+								data-testid="config-create-wizard-continue-button"
 								onClick={store.setNextWizardStage}
 								className="btn btn-primary"
 								disabled={

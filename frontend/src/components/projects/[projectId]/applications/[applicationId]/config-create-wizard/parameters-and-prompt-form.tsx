@@ -36,7 +36,10 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 	setParameters: (parameters: ModelParameters<T>) => void;
 }) {
 	return (
-		<div className="flex flex-col">
+		<div
+			className="flex flex-col"
+			data-testid="parameters-and-prompt-form-container"
+		>
 			<div>
 				{modelVendor === ModelVendor.OpenAI && (
 					<OpenAIModelParametersForm

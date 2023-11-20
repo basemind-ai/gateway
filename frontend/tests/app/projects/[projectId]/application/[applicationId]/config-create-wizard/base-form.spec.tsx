@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react';
 import { fireEvent, render, screen } from 'tests/test-utils';
 
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
@@ -13,6 +14,7 @@ describe('PromptConfigBaseForm', () => {
 				setConfigName={vi.fn()}
 				setModelType={vi.fn()}
 				setVendor={vi.fn()}
+				nameIsInvalid={false}
 			/>,
 		);
 		expect(
@@ -26,6 +28,34 @@ describe('PromptConfigBaseForm', () => {
 		).toBeInTheDocument();
 	});
 
+	it('should display an error message if the name is invalid', async () => {
+		render(
+			<PromptConfigBaseForm
+				configName=""
+				modelType={{} as ModelType<any>}
+				modelVendor={ModelVendor.OpenAI}
+				setConfigName={vi.fn()}
+				setModelType={vi.fn()}
+				setVendor={vi.fn()}
+				nameIsInvalid={true}
+			/>,
+		);
+		expect(
+			screen.getByTestId('create-prompt-base-form-name-input'),
+		).toBeInTheDocument();
+		expect(
+			screen.getByTestId('create-prompt-base-form-vendor-select'),
+		).toBeInTheDocument();
+		expect(
+			screen.getByTestId('create-prompt-base-form-model-select'),
+		).toBeInTheDocument();
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('invalid-name-error-message'),
+			).toBeInTheDocument();
+		});
+	});
+
 	it('should display and allow editing of the config name input field', () => {
 		const configName = 'Test Config';
 		const setConfigName = vi.fn();
@@ -37,6 +67,7 @@ describe('PromptConfigBaseForm', () => {
 				setConfigName={setConfigName}
 				setModelType={vi.fn()}
 				setVendor={vi.fn()}
+				nameIsInvalid={false}
 			/>,
 		);
 		const input: HTMLInputElement = screen.getByTestId(
@@ -58,6 +89,7 @@ describe('PromptConfigBaseForm', () => {
 				setConfigName={vi.fn()}
 				setModelType={vi.fn()}
 				setVendor={vi.fn()}
+				nameIsInvalid={false}
 			/>,
 		);
 		const select: HTMLInputElement = screen.getByTestId(
@@ -80,6 +112,7 @@ describe('PromptConfigBaseForm', () => {
 				setConfigName={vi.fn()}
 				setModelType={setModelType}
 				setVendor={vi.fn()}
+				nameIsInvalid={false}
 			/>,
 		);
 		const select: HTMLInputElement = screen.getByTestId(

@@ -38,7 +38,7 @@ export function PromptConfigBaseForm({
 	}, [modelVendor]);
 
 	return (
-		<>
+		<div data-testid="base-form-container">
 			<div className="flex flex-col">
 				<div className="px-4 form-control">
 					<label className="label">
@@ -60,7 +60,10 @@ export function PromptConfigBaseForm({
 						onChange={handleChange(setConfigName)}
 					/>
 					{nameIsInvalid && (
-						<span className="text-sm text-error text-center">
+						<span
+							className="text-sm text-error text-center"
+							data-testid="invalid-name-error-message"
+						>
 							{t('invalidNameErrorMessage')}
 						</span>
 					)}
@@ -124,6 +127,6 @@ export function PromptConfigBaseForm({
 					</select>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }
