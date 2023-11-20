@@ -1,7 +1,6 @@
 // Analytics
-
 import { SupportTopic } from '@/constants/forms';
-import { AccessPermission, ModelVendor, OpenAIModelType } from '@/types/enums';
+import { AccessPermission, ModelVendor } from '@/types/enums';
 import {
 	ModelParameters,
 	ModelType,
@@ -146,18 +145,18 @@ export interface ProviderKey {
 
 // Prompt Test Record
 
-export interface PromptTestRecord<P, M> {
+export interface PromptTestRecord<T extends ModelVendor> {
 	createdAt: string;
 	errorLog?: string;
 	finishTime: string;
 	id: string;
-	modelParameters: P;
-	modelType: OpenAIModelType;
-	modelVendor: ModelVendor;
+	modelParameters: ModelParameters<T>;
+	modelType: ModelType<T>;
+	modelVendor: T;
 	name: string;
 	promptConfigId?: string;
 	promptResponse: string;
-	providerPromptMessages: M;
+	providerPromptMessages: ProviderMessageType<T>;
 	requestTokens: number;
 	responseTokens: number;
 	startTime: string;

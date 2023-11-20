@@ -88,8 +88,8 @@ export function AllConfigsTable({
 									Navigation.PromptConfigDetail,
 									{
 										applicationId: appId,
-										configId: config.id,
 										projectId,
+										promptConfigId: config.id,
 									},
 								)}
 							>
@@ -102,8 +102,8 @@ export function AllConfigsTable({
 									Navigation.PromptConfigDetail,
 									{
 										applicationId: appId,
-										configId: config.id,
 										projectId,
+										promptConfigId: config.id,
 									},
 								)}
 								className="text-secondary"

@@ -15,10 +15,8 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 	projectId,
 	applicationId,
 	promptConfig,
-	navigateToPromptTesting,
 }: {
 	applicationId: string;
-	navigateToPromptTesting: () => void;
 	projectId: string;
 	promptConfig: PromptConfig<T>;
 }) {
@@ -64,8 +62,8 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 			router.push(
 				setPathParams(Navigation.PromptConfigDetail, {
 					applicationId,
-					configId: newPromptConfig.id,
 					projectId,
+					promptConfigId: newPromptConfig.id,
 				}),
 			);
 		} catch (e) {
@@ -128,7 +126,9 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 					<button
 						data-testid="prompt-test-btn"
 						disabled={cloning}
-						onClick={navigateToPromptTesting}
+						onClick={() => {
+							alert('not implmented');
+						}}
 						className="btn btn-outline btn-primary"
 					>
 						{t('test')}

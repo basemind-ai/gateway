@@ -93,23 +93,23 @@ export const ProviderKeyFactory = new TypeFactory<ProviderKey>(() => ({
 	modelVendor: ModelVendor.OpenAI,
 }));
 
-export const PromptTestRecordFactory = new TypeFactory<
-	PromptTestRecord<any, any>
->(() => ({
-	createdAt: faker.date.past().toISOString(),
-	errorLog: undefined,
-	finishTime: faker.date.past().toISOString(),
-	id: faker.string.uuid(),
-	modelParameters: {},
-	modelType: OpenAIModelType.Gpt432K,
-	modelVendor: ModelVendor.OpenAI,
-	name: faker.lorem.words(),
-	promptConfigId: undefined,
-	promptResponse: 'you are a bot like me',
-	providerPromptMessages: {},
-	requestTokens: 10,
-	responseTokens: 10,
-	startTime: faker.date.past().toISOString(),
-	streamResponseLatency: 100,
-	userInput: { userInput: 'what am I?' },
-}));
+export const PromptTestRecordFactory = new TypeFactory<PromptTestRecord<any>>(
+	() => ({
+		createdAt: faker.date.past().toISOString(),
+		errorLog: undefined,
+		finishTime: faker.date.past().toISOString(),
+		id: faker.string.uuid(),
+		modelParameters: {},
+		modelType: OpenAIModelType.Gpt432K,
+		modelVendor: ModelVendor.OpenAI,
+		name: faker.lorem.words(),
+		promptConfigId: undefined,
+		promptResponse: 'you are a bot like me',
+		providerPromptMessages: {},
+		requestTokens: 10,
+		responseTokens: 10,
+		startTime: faker.date.past().toISOString(),
+		streamResponseLatency: 100,
+		userInput: { userInput: 'what am I?' },
+	}),
+);

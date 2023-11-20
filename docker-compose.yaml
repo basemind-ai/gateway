@@ -109,7 +109,7 @@ services:
         environment:
             NODE_ENV: development
             GRPC_VERBOSITY: debug
-            GRPC_TRACE: channel,subchannel,call_stream
+            GRPC_TRACE: channel,subchannel,call_stream,connectivity_state,server_call,keepalive,server,subchannel_flowctrl
             SERVER_PORT: 8000
         working_dir: /app/services/openai-connector
         command: ['pnpm', 'run', 'dev']

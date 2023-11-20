@@ -34,7 +34,7 @@ describe('helper utils tests', () => {
 
 			const cloneNames = [
 				...Array.from({ length: cloneCount }).keys(),
-			].map((_) => getCloneName(sourceName));
+			].map(() => getCloneName(sourceName));
 
 			const cloneNameSet = new Set(cloneNames);
 

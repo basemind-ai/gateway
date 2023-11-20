@@ -10,7 +10,7 @@ import { AccessPermission } from '@/types';
 import { handleChange } from '@/utils/events';
 import { isValidEmail } from '@/utils/validation';
 
-export function InviteMember({ projectId }: { projectId: string }) {
+export function InviteProjectMembers({ projectId }: { projectId: string }) {
 	const t = useTranslations('members');
 
 	const [emails, setEmails] = useState<string[]>([]);

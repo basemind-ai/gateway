@@ -42,7 +42,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	return (
 		<div data-testid="project-analytics-container">
 			<div className="flex justify-between items-center">
-				<h2 className="font-semibold text-white text-xl">
+				<h2 className="font-semibold text-white text-xl self-end">
 					{t('status')}
 				</h2>
 				<DatePicker
@@ -58,8 +58,6 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}
 					totalValue={analytics?.totalRequests ?? ''}
-					percentage={'100'}
-					currentValue={'324'}
 					loading={isLoading}
 				/>
 				<div className="w-px h-12 bg-gray-200 mx-4" />
@@ -67,8 +65,6 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					imageSrc={<Cash className="text-secondary w-6 h-6" />}
 					metric={t('modelsCost')}
 					totalValue={`${analytics?.tokensCost ?? ''}$`}
-					percentage={'103'}
-					currentValue={'3.3'}
 					loading={isLoading}
 				/>
 			</div>

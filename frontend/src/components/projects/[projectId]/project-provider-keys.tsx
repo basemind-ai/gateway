@@ -9,15 +9,11 @@ import {
 	handleRetrieveProviderKeys,
 } from '@/api/provider-keys-api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
+import { modelVendorsTranslationKeyMap } from '@/constants/models';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, ProviderKey } from '@/types';
 import { handleChange } from '@/utils/events';
-
-const modelVendorsTranslationKeyMap: Record<ModelVendor, string> = {
-	[ModelVendor.OpenAI]: 'openai',
-	[ModelVendor.Cohere]: 'cohere',
-};
 
 export function ProviderKeyCreateModal({
 	vendors,

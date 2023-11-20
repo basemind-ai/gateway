@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { CodeSquare, Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
 import { ApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/api-keys';
@@ -10,16 +10,13 @@ import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/appl
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
 import { ApplicationGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/application-general-settings';
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
-import { CreatePromptConfigView } from '@/components/projects/[projectId]/applications/[applicationId]/create-prompt-config';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { useApplication, useProject, useProjects } from '@/stores/api-store';
-import { ModelVendor } from '@/types';
 
-enum TAB_NAMES {
+enum TAB_NAME {
 	OVERVIEW,
-	TEST_PROMPT,
 	SETTINGS,
 	API_KEYS,
 }
@@ -37,36 +34,31 @@ export default function Application({
 	const project = useProject(projectId);
 	const projects = useProjects();
 
-	const tabs: TabData<TAB_NAMES>[] = [
+	const tabs: TabData<TAB_NAME>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.OVERVIEW,
+			id: TAB_NAME.OVERVIEW,
 			text: t('overview'),
 		},
 		{
-			icon: <CodeSquare className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.TEST_PROMPT,
-			text: t('testPrompt'),
-		},
-		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.SETTINGS,
+			id: TAB_NAME.SETTINGS,
 			text: t('settings'),
 		},
 		{
 			icon: <KeyFill className="w-3.5 h-3.5" />,
-			id: TAB_NAMES.API_KEYS,
+			id: TAB_NAME.API_KEYS,
 			text: t('apiKeys'),
 		},
 	];
-	const [selectedTab, setSelectedTab] = useState(TAB_NAMES.OVERVIEW);
+	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
 
 	if (!application || !project) {
 		return null;
 	}
 
-	const tabComponents: Record<TAB_NAMES, React.FC> = {
-		[TAB_NAMES.OVERVIEW]: () => (
+	const tabComponents: Record<TAB_NAME, React.FC> = {
+		[TAB_NAME.OVERVIEW]: () => (
 			<>
 				<ApplicationAnalyticsPage
 					applicationId={applicationId}
@@ -78,18 +70,8 @@ export default function Application({
 				/>
 			</>
 		),
-		[TAB_NAMES.TEST_PROMPT]: () => (
-			<div data-testid="application-prompt-testing-container">
-				<CreatePromptConfigView
-					// we hardcode here to openai
-					// TODO: make this dynamic when we support other vendors
-					modelVendor={ModelVendor.OpenAI}
-					projectId={projectId}
-					applicationId={applicationId}
-				/>
-			</div>
-		),
-		[TAB_NAMES.SETTINGS]: () => (
+
+		[TAB_NAME.SETTINGS]: () => (
 			<>
 				<ApplicationGeneralSettings
 					applicationId={applicationId}
@@ -101,7 +83,7 @@ export default function Application({
 				/>
 			</>
 		),
-		[TAB_NAMES.API_KEYS]: () => (
+		[TAB_NAME.API_KEYS]: () => (
 			<ApiKeys applicationId={applicationId} projectId={projectId} />
 		),
 	};
@@ -115,12 +97,8 @@ export default function Application({
 				headerText={`${t('application')} / ${application.name}`}
 				showSelect={projects.length > 1}
 			/>
-			<h1
-				data-testid="application-page-title"
-				className="text-2xl font-semibold text-base-content"
-			/>
 			<div className="mt-3.5 w-full mb-8">
-				<TabNavigation<TAB_NAMES>
+				<TabNavigation<TAB_NAME>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}

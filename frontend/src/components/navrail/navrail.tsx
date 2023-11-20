@@ -1,8 +1,8 @@
 'use client';
 
 import { Logo } from '@/components/logo';
-import { NavRailFooter } from '@/components/navrail/nav-rail-footer';
-import { NavRailList } from '@/components/navrail/nav-rail-list';
+import { NavRailFooter } from '@/components/navrail/navrail-footer';
+import { NavRailList } from '@/components/navrail/navrail-list';
 
 export function NavRail() {
 	return (

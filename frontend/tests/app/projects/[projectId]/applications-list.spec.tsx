@@ -5,7 +5,7 @@ import { beforeEach, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
+import { ProjectApplicationsList } from '@/components/projects/[projectId]/project-applications-list';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
@@ -44,7 +44,9 @@ describe('ApplicationsList', () => {
 			);
 		});
 
-		await waitFor(() => render(<ApplicationsList projectId={projectId} />));
+		await waitFor(() =>
+			render(<ProjectApplicationsList projectId={projectId} />),
+		);
 
 		for (const [index, application] of applications.entries()) {
 			const nameElement = screen.getByText(application.name);
@@ -69,7 +71,9 @@ describe('ApplicationsList', () => {
 			);
 		});
 
-		await waitFor(() => render(<ApplicationsList projectId={projectId} />));
+		await waitFor(() =>
+			render(<ProjectApplicationsList projectId={projectId} />),
+		);
 
 		const applicationUrl = setApplicationId(
 			setProjectId(Navigation.ApplicationDetail, projectId),
@@ -88,7 +92,7 @@ describe('ApplicationsList', () => {
 	it('opens and closes the app creation dialog', async () => {
 		handleRetrieveApplicationsSpy.mockResolvedValueOnce([]);
 
-		render(<ApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList projectId={projectId} />);
 
 		const newAppButton = screen.getByTestId('new-application-btn');
 		fireEvent.click(newAppButton);
@@ -111,7 +115,7 @@ describe('ApplicationsList', () => {
 			});
 		});
 
-		render(<ApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList projectId={projectId} />);
 
 		const errorToast = screen.getByText('unable to get applications');
 		expect(errorToast.className).toContain(ToastType.ERROR);

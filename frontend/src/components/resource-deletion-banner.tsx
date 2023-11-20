@@ -41,7 +41,7 @@ export function ResourceDeletionBanner({
 			>
 				<h1
 					data-testid="resource-deletion-title"
-					className="text-error font-bold text-2xl pb-5"
+					className="text-error font-bold text-3xl pb-5"
 				>
 					{title}
 				</h1>

@@ -17,8 +17,9 @@ import {
 import { useShowError } from '@/stores/toast-store';
 import { setApplicationId, setProjectId } from '@/utils/navigation';
 
-export function ApplicationsList({ projectId }: { projectId: string }) {
+export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 	const t = useTranslations('projectOverview');
+
 	const applications = useApplications(projectId);
 	const setProjectApplications = useSetProjectApplications();
 
@@ -58,13 +59,13 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 		},
 	);
 
-	function openAppCreateFlow() {
+	const openAppCreateFlow = () => {
 		dialogRef.current?.showModal();
-	}
+	};
 
-	function closeAppCreateFlow() {
+	const closeAppCreateFlow = () => {
 		dialogRef.current?.close();
-	}
+	};
 
 	function renderTable() {
 		if (isLoading && !applications?.length) {
@@ -128,7 +129,7 @@ export function ApplicationsList({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-application-list-container" className="mt-9">
-			<h2 className="font-semibold text-white text-xl	">
+			<h2 className="font-semibold text-white text-xl">
 				{t('applications')}
 			</h2>
 			<div className="custom-card flex flex-col">

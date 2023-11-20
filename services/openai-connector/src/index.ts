@@ -1,5 +1,7 @@
-import { cohereServiceDefinition } from 'gen/cohere/v1/cohere.grpc-server';
-import { IOpenAIService } from 'gen/openai/v1/openai.grpc-server';
+import {
+	IOpenAIService,
+	openAIServiceDefinition,
+} from 'gen/openai/v1/openai.grpc-server';
 import { createServer } from 'shared/grpc';
 
 import { openAIPrompt, openAIStream } from '@/handlers';
@@ -16,5 +18,5 @@ createServer({
 	port: process.env.SERVER_PORT
 		? Number.parseInt(process.env.SERVER_PORT!)
 		: 50_051,
-	service: cohereServiceDefinition,
+	service: openAIServiceDefinition,
 });

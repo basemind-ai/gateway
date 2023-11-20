@@ -5,9 +5,9 @@ import { useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
-import { ApplicationsList } from '@/components/projects/[projectId]/applications-list';
-import { InviteMember } from '@/components/projects/[projectId]/invite-member';
+import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
+import { ProjectApplicationsList } from '@/components/projects/[projectId]/project-applications-list';
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
 import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
@@ -17,7 +17,7 @@ import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { useProject, useProjects } from '@/stores/api-store';
 
-enum TAB {
+enum TAB_NAME {
 	OVERVIEW,
 	MEMBERS,
 	PROVIDER_KEYS,
@@ -34,30 +34,30 @@ export default function ProjectOverview({
 
 	const t = useTranslations('projectOverview');
 
-	const [selectedTab, setSelectedTab] = useState(TAB.OVERVIEW);
+	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
 
 	const project = useProject(projectId);
 	const projects = useProjects();
 
-	const tabs: TabData<TAB>[] = [
+	const tabs: TabData<TAB_NAME>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
-			id: TAB.OVERVIEW,
+			id: TAB_NAME.OVERVIEW,
 			text: t('overview'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB.MEMBERS,
+			id: TAB_NAME.MEMBERS,
 			text: t('members'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB.PROVIDER_KEYS,
+			id: TAB_NAME.PROVIDER_KEYS,
 			text: t('providerKeys'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB.SETTINGS,
+			id: TAB_NAME.SETTINGS,
 			text: t('settings'),
 		},
 	];
@@ -66,27 +66,27 @@ export default function ProjectOverview({
 		return null;
 	}
 
-	const tabComponents: Record<TAB, React.FC> = {
-		[TAB.OVERVIEW]: () => (
+	const tabComponents: Record<TAB_NAME, React.FC> = {
+		[TAB_NAME.OVERVIEW]: () => (
 			<div data-testid="project-overview-tab">
 				<ProjectAnalytics projectId={projectId} />
-				<ApplicationsList projectId={projectId} />
+				<ProjectApplicationsList projectId={projectId} />
 			</div>
 		),
-		[TAB.MEMBERS]: () => (
+		[TAB_NAME.MEMBERS]: () => (
 			<div data-testid="project-members-tab">
-				<InviteMember projectId={projectId} />
+				<InviteProjectMembers projectId={projectId} />
 				<div className="mt-10">
 					<ProjectMembers projectId={projectId} />
 				</div>
 			</div>
 		),
-		[TAB.PROVIDER_KEYS]: () => (
+		[TAB_NAME.PROVIDER_KEYS]: () => (
 			<div data-testid="project-provider-keys-tab">
 				<ProjectProviderKeys projectId={projectId} />
 			</div>
 		),
-		[TAB.SETTINGS]: () => (
+		[TAB_NAME.SETTINGS]: () => (
 			<div data-testid="project-settings-tab">
 				<ProjectGeneralSettings projectId={projectId} />
 				<div className="mt-10">
@@ -106,7 +106,7 @@ export default function ProjectOverview({
 				showSelect={projects.length > 1}
 			/>
 			<div className="mt-3.5 w-full mb-9">
-				<TabNavigation<TAB>
+				<TabNavigation<TAB_NAME>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}

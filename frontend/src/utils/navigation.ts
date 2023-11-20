@@ -14,15 +14,18 @@ export function contextNavigation(
 	) as Record<keyof typeof Navigation, string>;
 }
 
-export type NavigationPathParam = 'projectId' | 'applicationId' | 'configId';
+export type NavigationPathParam =
+	| 'projectId'
+	| 'applicationId'
+	| 'promptConfigId';
 
 const keyReplacerMap: Record<
 	NavigationPathParam,
 	(url: string, value: string) => string
 > = {
 	applicationId: setApplicationId,
-	configId: setConfigId,
 	projectId: setProjectId,
+	promptConfigId: setPromptConfigId,
 };
 
 export function setPathParams<T extends string>(
@@ -45,6 +48,6 @@ export function setApplicationId(url: string, applicationId: string) {
 	return url.replaceAll(':applicationId', applicationId);
 }
 
-export function setConfigId(url: string, configId: string) {
-	return url.replaceAll(':configId', configId);
+export function setPromptConfigId(url: string, promptConfigId: string) {
+	return url.replaceAll(':promptConfigId', promptConfigId);
 }

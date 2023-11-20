@@ -5,7 +5,7 @@ import { Eraser, Plus } from 'react-bootstrap-icons';
 import useSWR, { useSWRConfig } from 'swr';
 
 import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
-import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/create-api-key';
+import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { ApiError } from '@/errors';
 import { useApiKeys, useSetAPIKeys } from '@/stores/api-store';
