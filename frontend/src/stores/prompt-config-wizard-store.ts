@@ -7,7 +7,6 @@ import {
 	ModelType,
 	ModelVendor,
 	OpenAIModelType,
-	PromptTestRecord,
 	ProviderMessageType,
 } from '@/types';
 
@@ -33,11 +32,7 @@ export interface PromptConfigWizardStore {
 	setParameters(parameters: ModelParameters<any>): void;
 	setPrevWizardStage(): void;
 	setTemplateVariables(templateVariables: Record<string, string>): void;
-	setTestName(testName: string): void;
-	setTestRecord(testRecord: PromptTestRecord<any>): void;
 	templateVariables: Record<string, string>;
-	testName?: string;
-	testRecord?: PromptTestRecord<any>;
 	wizardStage: WizardStage;
 }
 
@@ -81,12 +76,6 @@ export const promptConfigWizardStoreStateCreator: StateCreator<
 	},
 	setTemplateVariables: (templateVariables: Record<string, string>) => {
 		set({ templateVariables });
-	},
-	setTestName: (testName: string) => {
-		set({ testName });
-	},
-	setTestRecord: (testRecord: PromptTestRecord<any>) => {
-		set({ testRecord });
 	},
 });
 

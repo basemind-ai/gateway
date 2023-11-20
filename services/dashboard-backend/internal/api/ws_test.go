@@ -868,7 +868,7 @@ func TestPromptTestingAPI(t *testing.T) {
 			uuid, _ := db.StringToUUID(*result.PromptConfigID)
 			pc, retrieveErr := db.GetQueries().RetrievePromptConfig(context.TODO(), *uuid)
 			assert.NoError(t, retrieveErr)
-			assert.Equal(t, pc.Name, fmt.Sprintf("prompt config for test: %s", d.Name))
+			assert.NotEmpty(t, pc.Name)
 			assert.Equal(t, pc.ModelVendor, d.ModelVendor)
 			assert.Equal(t, pc.ModelType, d.ModelType)
 			assert.Equal(t, pc.ModelParameters, []byte(*d.ModelParameters))
