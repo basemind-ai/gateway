@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 'use client';
 
-import { router } from 'next/client';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 import { Record } from 'react-bootstrap-icons';
@@ -10,7 +10,7 @@ import { shallow } from 'zustand/shallow';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
-import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/testing-form';
+import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { Navigation } from '@/constants';
 import { useProject, useProjects } from '@/stores/api-store';
 import {
@@ -46,7 +46,7 @@ export default function PromptConfigCreateWizard({
 }) {
 	const t = useTranslations('createPromptConfigDialog');
 	const showError = useShowError();
-
+	const router = useRouter();
 	const project = useProject(projectId);
 	const projects = useProjects();
 
@@ -156,7 +156,7 @@ export default function PromptConfigCreateWizard({
 					<button
 						data-testid="create-prompt-config-dialog-cacncel-button"
 						onClick={() => {
-							void router.push(
+							router.push(
 								setPathParams(Navigation.ApplicationDetail, {
 									applicationId,
 									projectId,
@@ -170,7 +170,7 @@ export default function PromptConfigCreateWizard({
 					<div className="flex justify-between gap-4">
 						{store.wizardStage > 0 && (
 							<button
-								data-testid="create-prompt-config-dialog-cacncel-button"
+								data-testid="create-prompt-config-dialog-back-button"
 								onClick={store.setPrevWizardStage}
 								className="btn btn-secondary"
 							>

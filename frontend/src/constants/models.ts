@@ -11,6 +11,11 @@ const cohereIcon = 'cohere-icon.svg';
 export const OPEN_AI_MAX_TOKENS = 2048;
 export const DEFAULT_MAX_TOKENS = 256;
 
+export const modelVendorsTranslationKeyMap: Record<ModelVendor, string> = {
+	[ModelVendor.OpenAI]: 'openai',
+	[ModelVendor.Cohere]: 'cohere',
+};
+
 export const vendorImageSourceMap: Record<ModelVendor, string> = {
 	[ModelVendor.OpenAI]: `/images/${openAIIcon}`,
 	[ModelVendor.Cohere]: `/images/${cohereIcon}`,

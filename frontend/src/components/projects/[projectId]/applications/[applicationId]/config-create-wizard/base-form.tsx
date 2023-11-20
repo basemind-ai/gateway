@@ -48,7 +48,7 @@ export function PromptConfigBaseForm({
 						</span>
 					</label>
 					<input
-						data-testid="create-prompt-config-dialog-name-input"
+						data-testid="create-prompt-base-form-name-input"
 						type="text"
 						placeholder={t('promptConfigNameInputPlaceholder')}
 						className="input input-bordered bg-neutral w-full"
@@ -68,7 +68,7 @@ export function PromptConfigBaseForm({
 						onChange={handleChange(setVendor)}
 						defaultValue={ModelVendor.OpenAI}
 						disabled={true}
-						data-testid="create-prompt-config-dialog-vendor-select"
+						data-testid="create-prompt-base-form-vendor-select"
 					>
 						{Object.entries(ModelVendor)
 							.filter(([, value]) => value === ModelVendor.OpenAI)
@@ -99,7 +99,7 @@ export function PromptConfigBaseForm({
 						value={modelType}
 						onChange={handleChange(setModelType)}
 						defaultValue={OpenAIModelType.Gpt35Turbo}
-						data-testid="create-prompt-config-dialog-model-select"
+						data-testid="create-prompt-base-form-model-select"
 					>
 						{modelChoices.map((modelChoice) => {
 							return (

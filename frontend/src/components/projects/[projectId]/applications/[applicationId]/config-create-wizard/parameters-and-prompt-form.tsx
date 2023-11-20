@@ -44,7 +44,7 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 			<div>
 				{modelVendor === ModelVendor.OpenAI && (
 					<OpenAIPromptTemplate
-						messages={messages as OpenAIContentMessage[]}
+						messages={(messages ?? []) as OpenAIContentMessage[]}
 						setMessages={
 							setMessages as (
 								messages: OpenAIContentMessage[],
@@ -153,7 +153,7 @@ export function OpenAIModelParametersForm({
 	}, [maxTokens, frequencyPenalty, presencePenalty, temperature, topP]);
 
 	return (
-		<>
+		<div data-testid="openai-model-parameters-form">
 			<h2 className="pb-4">{t('modelParameters')}</h2>
 			<div className="flex flex-wrap gap-10">
 				{inputs.map(
@@ -199,7 +199,7 @@ export function OpenAIModelParametersForm({
 					),
 				)}
 			</div>
-		</>
+		</div>
 	);
 }
 
@@ -247,8 +247,10 @@ export function OpenAIPromptTemplate({
 
 		copiedMessages.splice(activeMessageIndex, 1);
 
-		setActiveMessageIndex(0);
 		setMessages(copiedMessages);
+		setActiveMessageIndex(
+			activeMessageIndex - 1 >= 0 ? activeMessageIndex - 1 : 0,
+		);
 	};
 
 	const handleSaveMessage = () => {
@@ -264,7 +266,10 @@ export function OpenAIPromptTemplate({
 	};
 
 	return (
-		<div className="flex flex-col gap-4" data-testid="prompt-template-card">
+		<div
+			className="flex flex-col gap-4"
+			data-testid="openai-prompt-template-form"
+		>
 			<div className="flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
 				{messages.map((message, index) => (
 					<label
@@ -282,7 +287,7 @@ export function OpenAIPromptTemplate({
 							checked={activeMessageIndex === index}
 							onChange={handleMessageClick(index, message)}
 							className="hidden"
-							data-testid={`create-prompt-config-dialog-template-prompt-message-${index}`}
+							data-testid={`parameters-and-prompt-form-message-${index}`}
 						/>
 						{message.name ?? `${message.role} message`}
 					</label>
@@ -304,7 +309,7 @@ export function OpenAIPromptTemplate({
 							content: '',
 							role: OpenAIPromptMessageRole.System,
 						})}
-						data-testid="create-prompt-config-dialog-template-prompt-new-message"
+						data-testid="parameters-and-prompt-form-new-message"
 						className="hidden"
 					/>
 					{t('newMessage')}
@@ -313,7 +318,10 @@ export function OpenAIPromptTemplate({
 			<div className="flex justify-between items-center">
 				<div className="w-full flex justify-start gap-10">
 					<div className="form-control">
-						<label className="label">
+						<label
+							className="label"
+							data-testid="parameters-and-prompt-form-new-message-role-label"
+						>
 							<span className="label-text">
 								{t('messageRole')}
 							</span>
@@ -323,7 +331,7 @@ export function OpenAIPromptTemplate({
 							value={draftMessage.role}
 							onChange={handleChange(handleRoleChange)}
 							defaultValue={OpenAIPromptMessageRole.System}
-							data-testid="create-prompt-config-dialog-template-prompt-message-role-select"
+							data-testid="parameters-and-prompt-form-message-role-select"
 						>
 							{Object.entries(OpenAIPromptMessageRole).map(
 								([key, value]) => (
@@ -339,7 +347,10 @@ export function OpenAIPromptTemplate({
 						</select>
 					</div>
 					<div className="form-control">
-						<label className="label">
+						<label
+							className="label"
+							data-testid="parameters-and-prompt-form-new-message-name-label"
+						>
 							<span className="label-text">
 								{t('messageName')}
 							</span>
@@ -351,18 +362,24 @@ export function OpenAIPromptTemplate({
 							type="text"
 							placeholder={t('messageNameInputPlaceholder')}
 							className="input"
-							data-testid="create-prompt-config-dialog-template-prompt-message-name-input"
+							data-testid="parameters-and-prompt-form-message-name-input"
 							value={draftMessage.name}
 							onChange={handleChange(handleNameChange)}
 						/>
 					</div>
 				</div>
-				<span className="text-info text-sm self-end">
+				<span
+					className="text-info text-sm self-end"
+					data-testid="parameters-and-prompt-form-wrap-variable-label"
+				>
 					{t('wrapVariable')}
 				</span>
 			</div>
 			<div className="form-control">
-				<label className="label">
+				<label
+					className="label"
+					data-testid="parameters-and-prompt-form-new-message-content-label"
+				>
 					<span className="label-text">{t('messageContent')}</span>
 				</label>
 				<textarea
@@ -370,22 +387,22 @@ export function OpenAIPromptTemplate({
 					placeholder={t('promptMessagePlaceholder')}
 					value={draftMessage.content}
 					onChange={handleChange(handleMessageChange)}
-					data-testid="create-prompt-config-dialog-template-prompt-message-textarea"
+					data-testid="parameters-and-prompt-form-message-textarea"
 				/>
 			</div>
-			<div className=" flex justify-end gap-4">
+			<div className="flex justify-end gap-4">
 				<button
 					className="btn btn-outline btn-sm btn-error"
 					onClick={handleDeleteMessage}
-					data-testid="prompt-message-delete"
-					disabled={activeMessageIndex === messages.length}
+					data-testid="parameters-and-prompt-form-delete-message-button"
+					disabled={!messages.length}
 				>
 					{t('deleteMessage')}
 				</button>
 				<button
 					className="btn btn-sm btn-primary"
 					onClick={handleSaveMessage}
-					data-testid="prompt-message-save"
+					data-testid="parameters-and-prompt-form-save-message-button"
 					disabled={!draftMessage.content}
 				>
 					{t('saveMessage')}
