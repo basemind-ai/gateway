@@ -1,47 +1,17 @@
 import { waitFor } from '@testing-library/react';
 import * as process from 'process';
+import {
+	mockGroup,
+	mockIdentify,
+	mockPage,
+	mockReady,
+	mockTrack,
+} from 'tests/mocks';
 import { renderHook } from 'tests/test-utils';
-import { beforeEach } from 'vitest';
 
 import { useAnalytics } from '@/hooks/use-analytics';
 
-const mockReady = vi.fn(async () => true);
-const mockTrack = vi.fn();
-const mockIdentify = vi.fn();
-const mockPage = vi.fn();
-const mockGroup = vi.fn();
-
-vi.mock(
-	'@segment/analytics-next',
-	async (importOriginal: () => Promise<Record<string, any>>) => {
-		const original = await importOriginal();
-
-		return {
-			...original,
-			AnalyticsBrowser: {
-				load: vi.fn(() => ({
-					group: mockGroup,
-					identify: mockIdentify,
-					page: mockPage,
-					ready: mockReady,
-					track: mockTrack,
-				})),
-			},
-		};
-	},
-);
-
 describe('useAnalytics tests', () => {
-	const originalWriteKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
-
-	beforeEach(() => {
-		process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = 'test';
-	});
-
-	afterAll(() => {
-		process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = originalWriteKey;
-	});
-
 	it("should throw an error if the NEXT_PUBLIC_SEGMENT_WRITE_KEY isn't set", () => {
 		delete process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
 		expect(() => {

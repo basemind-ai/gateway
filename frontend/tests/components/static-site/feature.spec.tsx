@@ -1,6 +1,6 @@
 import { render, screen } from 'tests/test-utils';
 
-import { Feature } from '@/components/marketing-site/feature';
+import { FeatureCard } from '@/components/static-site/feature-card';
 
 describe('Feature', () => {
 	it('should render the component with required props', () => {
@@ -11,9 +11,9 @@ describe('Feature', () => {
 		};
 
 		render(
-			<Feature {...props} name="my-feature">
+			<FeatureCard {...props} name="my-feature">
 				<div>Children</div>
-			</Feature>,
+			</FeatureCard>,
 		);
 
 		expect(
@@ -30,9 +30,9 @@ describe('Feature', () => {
 		};
 
 		render(
-			<Feature {...props} name="my-feature">
+			<FeatureCard {...props} name="my-feature">
 				<div>Children</div>
-			</Feature>,
+			</FeatureCard>,
 		);
 
 		expect(
@@ -49,9 +49,9 @@ describe('Feature', () => {
 		};
 
 		render(
-			<Feature {...props} name="my-feature">
+			<FeatureCard {...props} name="my-feature">
 				<div>Children</div>
-			</Feature>,
+			</FeatureCard>,
 		);
 
 		expect(

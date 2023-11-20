@@ -1,12 +1,12 @@
 import { render, screen } from 'tests/test-utils';
 
-import { FeaturesSection } from '@/components/marketing-site/features-section';
+import { FeaturesSection } from '@/components/static-site/features-section';
 
 describe('FeaturesSection', () => {
-	it('should render three Feature components with correct props', () => {
+	it('should render four FeatureCard components with correct props', () => {
 		render(<FeaturesSection />);
 
 		const featureCards = screen.getAllByTestId(/^feature-card-/);
-		expect(featureCards).toHaveLength(3);
+		expect(featureCards).toHaveLength(4);
 	});
 });

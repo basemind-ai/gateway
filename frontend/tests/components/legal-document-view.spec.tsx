@@ -10,8 +10,14 @@ import {
 describe('LegalDoc component tests', () => {
 	const mockDoc: LegalDocument = {
 		Paragraphs: [
-			{ content: ['test content', 'este'], title: 'test title 1' },
-			{ content: ['tsdd', 'qwqwe'], title: 'test title 2' },
+			{
+				content: ['test content', 'test content 2'],
+				title: 'test title 1',
+			},
+			{
+				content: ['test content 3', 'test content 4'],
+				title: 'test title 2',
+			},
 		],
 		lastUpdated: 'last updated on 2021-10-10',
 		openingParagraphs: [],

@@ -1,4 +1,6 @@
 import { faker } from '@faker-js/faker';
+import process from 'process';
+import { beforeEach } from 'vitest';
 
 export const mockFetch = vi.fn().mockResolvedValue({
 	json: () => Promise.resolve({}),
@@ -113,4 +115,38 @@ vi.mock(
 );
 beforeEach(() => {
 	routerReplaceMock.mockReset();
+});
+
+export const mockReady = vi.fn(async () => true);
+export const mockTrack = vi.fn();
+export const mockIdentify = vi.fn();
+export const mockPage = vi.fn();
+export const mockGroup = vi.fn();
+vi.mock(
+	'@segment/analytics-next',
+	async (importOriginal: () => Promise<Record<string, any>>) => {
+		const original = await importOriginal();
+
+		return {
+			...original,
+			AnalyticsBrowser: {
+				load: vi.fn(() => ({
+					group: mockGroup,
+					identify: mockIdentify,
+					page: mockPage,
+					ready: mockReady,
+					track: mockTrack,
+				})),
+			},
+		};
+	},
+);
+const originalWriteKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
+
+beforeEach(() => {
+	process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = 'test';
+});
+
+afterAll(() => {
+	process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = originalWriteKey;
 });

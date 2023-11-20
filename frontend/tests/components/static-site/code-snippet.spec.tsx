@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, screen } from 'tests/test-utils';
 
-import { CodeSnippet } from '@/components/marketing-site/code-snippet';
+import { CodeSnippet } from '@/components/static-site/code-snippet';
 
 describe('CodeSnippet', () => {
 	it('should render code snippet with specified language and style', () => {

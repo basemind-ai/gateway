@@ -95,22 +95,35 @@
 		"type": "Type"
 	},
 	"landingPage": {
+		"ctaSectionSubtitle": "Sign-up to our free beta, No credit card required.",
+		"ctaSectionTitle": "Your AI journey starts here.",
 		"featureDashboardDescription": "Empower your team with a user-friendly dashboard.  Make real-time changes without waiting for a new release.",
 		"featureDashboardSubtitle": "Create. Test. Deploy. Instantly.",
 		"featureDashboardTitle": "Prompt Management",
+		"featureSdkDescription": "Implement AI features quickly and securely using just a few lines of code.",
+		"featureSdkSubtitle": "Minimum Code, Maximum Impact",
+		"featureSdkTitle": "Easy-to-Use SDK",
 		"featureServerlessDescription": "Directly integrate AI models into your app. Save weeks on development and cut server costs.",
 		"featureServerlessSubtitle": "No Backend Required",
 		"featureServerlessTitle": "Serverless AI",
 		"featureVendorAgnosticDescription": "Switch between AI models and vendors. Stay agile and avoid lock-in.",
 		"featureVendorAgnosticSubtitle": "Future-Proof Your AI",
 		"featureVendorAgnosticTitle": "Vendor-Agnostic",
-		"footerCopyright": "Copyright © 2023 - All right reserved to BaseMind",
-		"footerText": "Built by Developers for Developers",
+		"footerCopyright": "Copyright © 2023 - All right reserved to BaseMind Inc",
+		"footerText": "Built by developers for developers",
+		"general": "General",
+		"home": "Home",
 		"introSectionDescription": "The all-in-one developer platform for your mobile apps AI needs. Integrate in minutes, scale to millions.",
 		"introSectionTitle": "Build AI-Powered Mobile Apps. Properly.",
+		"joinDiscord": "Join our Discord",
+		"legal": "Legal",
+		"pp": "Privacy Policy",
 		"sdkSectionTitle": "Easy-to-Use SDK",
 		"signIn": "Sign In",
-		"signUp": "Sign Up Now"
+		"signUp": "Get Started",
+		"social": "Social",
+		"support": "Support",
+		"tos": "Terms of Service"
 	},
 	"members": {
 		"admin": "Admin",
@@ -131,7 +144,7 @@
 		"userRemoved": "User Removed",
 		"usersInvited": "User(s) Invited",
 		"warning": "Warning",
-		"warningMessage": "You're about to remove a user access from this project"
+		"warningMessage": "Your about to remove a user access from this project"
 	},
 	"navrail": {
 		"abTesting": "A/B Testing",
@@ -229,7 +242,6 @@
 	},
 	"promptConfigTest": {
 		"config": "Configuration",
-
 		"saveConfig": "Save Configuration",
 		"saveConfigError": "Error occurred while saving your configuration. Please try again.",
 		"warningText": "Caution: Modifying these variables can disrupt the current production setup and may lead to unintended consequences."

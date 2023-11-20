@@ -1,22 +1,17 @@
-'use client';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { Section } from '@/components/marketing-site/section';
+import { Section } from '@/components/static-site/section';
 import { Dimensions, Navigation } from '@/constants';
 
 export function IntroSection() {
 	const t = useTranslations('landingPage');
-	const router = useRouter();
-	function handleSignUpClick() {
-		router.push(Navigation.SignIn);
-	}
 
 	return (
 		<Section name="intro">
 			<div
-				className="md:w-5/12 text-center md:text-left"
+				className="md:w-5/12 text-center md:text-left lg:py-32 xl:py-40 2xl:py-56"
 				data-testid="intro-section-text-container"
 			>
 				<h1
@@ -31,16 +26,16 @@ export function IntroSection() {
 				>
 					{t('introSectionDescription')}
 				</p>
-				<button
-					className="btn btn-primary mt-6"
-					onClick={handleSignUpClick}
+				<Link
+					href={Navigation.SignIn}
+					className=" btn-primary mt-6 btn btn-wide"
 					data-testid="intro-section-signup-button"
 				>
 					{t('signUp')}
-				</button>
+				</Link>
 			</div>
 			<div
-				className="md:w-5/12 mt-8 md:mt-0"
+				className="md:w-5/12 mt-8"
 				data-testid="intro-section-image-container"
 			>
 				<Image
