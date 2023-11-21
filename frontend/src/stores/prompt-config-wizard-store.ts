@@ -16,7 +16,6 @@ export enum WizardStage {
 	TEST,
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PromptConfigWizardStore {
 	configName: string;
 	messages: ProviderMessageType<any>[];
@@ -82,7 +81,6 @@ export const promptConfigWizardStoreStateCreator: StateCreator<
 export const usePromptWizardStore = createWithEqualityFn(
 	promptConfigWizardStoreStateCreator,
 );
-
 export const wizardStoreSelector = (s: PromptConfigWizardStore) => ({
 	configName: s.configName,
 	messages: s.messages,

@@ -31,6 +31,7 @@ export interface ApiStore {
 	projects: Project[];
 	promptConfigs: Record<string, PromptConfig<any>[] | undefined>;
 	removeProjectUser: (projectId: string, projectUserId: string) => void;
+	resetState: () => void;
 	selectedProjectId: string | null;
 	setAPIKeys: (applicationId: string, apiKeys: APIKey[]) => void;
 	setProjectApplications: (
@@ -65,7 +66,18 @@ export interface ApiStore {
 	user: UserInfo | null;
 }
 
+const initialState = {
+	apiKeys: {},
+	applications: {},
+	projectUsers: {},
+	projects: [],
+	promptConfigs: {},
+	selectedProjectId: null,
+	user: null,
+};
+
 export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
+	...initialState,
 	addApplication: (projectId: string, application: Application) => {
 		const projectApplications = get().applications[projectId] ?? [];
 
@@ -108,8 +120,6 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 			},
 		}));
 	},
-	apiKeys: {},
-	applications: {},
 	deleteApplication: (projectId: string, applicationId: string) => {
 		const projectApplications = get().applications[projectId];
 		if (!projectApplications) {
@@ -144,9 +154,6 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 			},
 		}));
 	},
-	projectUsers: {},
-	projects: [],
-	promptConfigs: {},
 	removeProjectUser: (projectId: string, projectUserId: string) => {
 		const existingUsers = get().projectUsers[projectId];
 		if (!existingUsers) {
@@ -163,7 +170,9 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 			},
 		}));
 	},
-	selectedProjectId: null,
+	resetState: () => {
+		set(() => structuredClone(initialState));
+	},
 	setAPIKeys: (applicationId: string, apiKeys: APIKey[]) => {
 		set((state) => ({
 			apiKeys: {
@@ -271,10 +280,10 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 			},
 		}));
 	},
-	user: null,
 });
 
 export const useApiStore = create(apiStoreCreator);
+export const useResetState = () => useApiStore((s) => s.resetState);
 export const useAddApplication = () => useApiStore((s) => s.addApplication);
 export const useAddProject = () => useApiStore((s) => s.addProject);
 export const useAddProjectUser = () => useApiStore((s) => s.addProjectUser);

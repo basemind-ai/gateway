@@ -24,6 +24,7 @@ import {
 	useProjectUsers,
 	usePromptConfigs,
 	useRemoveProjectUser,
+	useResetState,
 	useSelectedProject,
 	useSetAPIKeys,
 	useSetProjectApplications,
@@ -40,15 +41,19 @@ import {
 } from '@/stores/api-store';
 
 describe('api-store tests', () => {
+	const {
+		result: { current: resetState },
+	} = renderHook(useResetState);
+
+	beforeEach(() => {
+		resetState();
+	});
+
 	describe('apiStoreStateCreator', () => {
-		const set = vi.fn();
-		const get = vi.fn();
-
-		beforeEach(() => {
-			vi.resetAllMocks();
-		});
-
 		it('sets projects', async () => {
+			const set = vi.fn();
+			const get = vi.fn();
+
 			const store = apiStoreCreator(set, get, {} as any);
 			const projects = await ProjectFactory.batch(1);
 			store.setProjects(projects);

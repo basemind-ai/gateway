@@ -22,14 +22,21 @@ export interface ToastStore {
 	addToast: (toast: ToastMessage) => void;
 	addWarningToast: (message: string) => void;
 	popToast: () => void;
+	resetState: () => void;
 	timeout: number;
 	toasts: ToastMessage[];
 }
+
+const initialState = {
+	timeout: DEFAULT_TIMEOUT,
+	toasts: [],
+};
 
 export const useToastStoreStateCreator: StateCreator<ToastStore> = (
 	set,
 	get,
 ) => ({
+	...initialState,
 	addErrorToast: (message: string) => {
 		get().addToast({
 			message,
@@ -67,13 +74,15 @@ export const useToastStoreStateCreator: StateCreator<ToastStore> = (
 			toasts: state.toasts.slice(1),
 		}));
 	},
-	timeout: DEFAULT_TIMEOUT,
-	toasts: [],
+	resetState: () => {
+		set(structuredClone(initialState));
+	},
 });
 
 export const useToastStore = create(useToastStoreStateCreator);
-export const useToasts = () => useToastStore((s) => s.toasts);
+export const useResetState = () => useToastStore((s) => s.resetState);
 export const useShowError = () => useToastStore((s) => s.addErrorToast);
-export const useShowSuccess = () => useToastStore((s) => s.addSuccessToast);
 export const useShowInfo = () => useToastStore((s) => s.addInfoToast);
+export const useShowSuccess = () => useToastStore((s) => s.addSuccessToast);
 export const useShowWarning = () => useToastStore((s) => s.addWarningToast);
+export const useToasts = () => useToastStore((s) => s.toasts);

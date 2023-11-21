@@ -3,6 +3,7 @@ import { beforeEach } from 'vitest';
 
 import {
 	ToastType,
+	useResetState,
 	useShowError,
 	useShowInfo,
 	useShowSuccess,
@@ -11,6 +12,14 @@ import {
 } from '@/stores/toast-store';
 
 describe('toast-store tests', () => {
+	const {
+		result: { current: resetState },
+	} = renderHook(useResetState);
+
+	beforeEach(() => {
+		resetState();
+	});
+
 	vi.useFakeTimers();
 
 	beforeEach(() => {
