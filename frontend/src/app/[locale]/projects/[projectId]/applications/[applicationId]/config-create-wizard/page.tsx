@@ -282,7 +282,11 @@ export default function PromptConfigCreateWizard({
 					</div>
 				</div>
 			</div>
-			<dialog ref={createProviderKeyDialogRef} className="modal">
+			<dialog
+				ref={createProviderKeyDialogRef}
+				className="modal"
+				data-testid="config-create-wizard-create-provider-key-dialog"
+			>
 				<div className="dialog-box border-2 rounded p-10">
 					<ProviderKeyCreateModal
 						projectId={projectId}

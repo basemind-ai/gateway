@@ -1,13 +1,12 @@
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
-import { modelTypeToNameMap, UnavailableModelVendor } from '@/constants/models';
 import {
-	CohereModelType,
-	ModelType,
-	ModelVendor,
-	OpenAIModelType,
-} from '@/types';
+	modelTypeToNameMap,
+	modelVendorTypeMap,
+	UnavailableModelVendor,
+} from '@/constants/models';
+import { ModelType, ModelVendor, OpenAIModelType } from '@/types';
 import { handleChange } from '@/utils/events';
 
 export function PromptConfigBaseForm({
@@ -30,11 +29,7 @@ export function PromptConfigBaseForm({
 	const t = useTranslations('createConfigWizard');
 
 	const modelChoices = useMemo(() => {
-		const providerEnum =
-			modelVendor === ModelVendor.OpenAI
-				? OpenAIModelType
-				: CohereModelType;
-		return Object.values(providerEnum) as string[];
+		return Object.values(modelVendorTypeMap[modelVendor]) as string[];
 	}, [modelVendor]);
 
 	return (

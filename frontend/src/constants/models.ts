@@ -38,6 +38,13 @@ export const modelTypeToNameMap: Record<ModelType<any>, string> = {
 	[CohereModelType.CommandLightNightly]: 'Command Light Nightly',
 };
 
+type TModelType = typeof OpenAIModelType | typeof CohereModelType;
+
+export const modelVendorTypeMap: Record<ModelVendor, TModelType> = {
+	[ModelVendor.OpenAI]: OpenAIModelType,
+	[ModelVendor.Cohere]: CohereModelType,
+};
+
 export enum UnavailableModelVendor {
 	A21Labs = 'A21_LABS',
 	Anthropic = 'ANTHROPIC',

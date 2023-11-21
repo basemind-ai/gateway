@@ -17,7 +17,7 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
 				</p>
 			</div>
 			<div className="relative px-4 sm:px-6 lg:px-8">
-				<div className="mx-auto  prose prose-sm text-neutral-content">
+				<div className="mx-auto prose prose-sm text-neutral-content">
 					{document.openingParagraphs.map(
 						(openingParagraph, indexOpening) => (
 							<p key={`openingParagraph${indexOpening}`}>
