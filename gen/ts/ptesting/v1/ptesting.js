@@ -10,14 +10,15 @@ import { MessageType } from "@protobuf-ts/runtime";
 class PromptTestRequest$Type extends MessageType {
     constructor() {
         super("ptesting.v1.PromptTestRequest", [
-            { no: 1, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "prompt_config_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "model_vendor", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "model_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "model_parameters", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
-            { no: 6, name: "provider_prompt_messages", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
-            { no: 7, name: "template_variables", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 8, name: "expected_template_variables", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "project_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "application_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "prompt_config_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "model_vendor", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "model_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "model_parameters", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+            { no: 7, name: "provider_prompt_messages", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+            { no: 8, name: "template_variables", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
+            { no: 9, name: "expected_template_variables", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

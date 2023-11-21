@@ -103,6 +103,7 @@ func TestIntegration(t *testing.T) { //nolint: revive
 	templateVariables := map[string]string{"userInput": "I'm a rainbow"}
 	expectedTemplateVariables := []string{"userInput"}
 
+	projectID := db.UUIDToString(&project.ID)
 	applicationID := db.UUIDToString(&requestConfigurationDTO.ApplicationID)
 	promptConfigID := db.UUIDToString(&requestConfigurationDTO.PromptConfigID)
 
@@ -312,9 +313,22 @@ func TestIntegration(t *testing.T) { //nolint: revive
 					fmt.Sprintf("bearer %s", jwtToken),
 				)
 
+				cacheClient, mockRedis := createTestCache(
+					t,
+					db.UUIDToString(&requestConfigurationDTO.ApplicationID),
+				)
+
+				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{
+					ID:              providerKey.ID,
+					ModelVendor:     models.ModelVendorOPENAI,
+					EncryptedApiKey: providerKey.EncryptedApiKey,
+				})), time.Hour/2).
+					SetVal("OK")
+
 				stream, streamErr := client.TestPrompt(outgoingContext, &ptesting.PromptTestRequest{
 					TemplateVariables:         templateVariables,
 					ExpectedTemplateVariables: expectedTemplateVariables,
+					ProjectId:                 projectID,
 					ApplicationId:             applicationID,
 					ModelParameters:           *modelParameters,
 					ModelVendor:               string(models.ModelVendorOPENAI),

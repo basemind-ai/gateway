@@ -23,6 +23,11 @@ func (PromptTestingServer) TestPrompt(
 ) error {
 	channel := make(chan dto.PromptResultDTO)
 
+	projectID, projectIDParseErr := db.StringToUUID(request.ProjectId)
+	if projectIDParseErr != nil {
+		return fmt.Errorf("failed to parse project ID: %w", projectIDParseErr)
+	}
+
 	applicationID, applicationIDParseErr := db.StringToUUID(request.ApplicationId)
 	if applicationIDParseErr != nil {
 		return fmt.Errorf("failed to parse application ID: %w", applicationIDParseErr)
@@ -53,13 +58,23 @@ func (PromptTestingServer) TestPrompt(
 		ProviderModelPricing: modelPricing,
 	}
 
+	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+		streamServer.Context(),
+		*projectID,
+		requestConfigurationDTO.PromptConfigData.ModelVendor,
+	)
+	if providerKeyErr != nil {
+		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
+		return providerKeyErr
+	}
+
 	log.Debug().
 		Interface("requestConfigurationDTO", requestConfigurationDTO).
 		Msg("initiating stream request")
 
 	go connectors.GetProviderConnector(models.ModelVendor(request.ModelVendor)).
 		RequestStream(
-			streamServer.Context(),
+			providerKeyContext,
 			requestConfigurationDTO,
 			request.TemplateVariables,
 			channel,

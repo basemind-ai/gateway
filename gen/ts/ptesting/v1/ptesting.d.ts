@@ -9,45 +9,49 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface PromptTestRequest {
     /**
+     * @generated from protobuf field: string project_id = 1;
+     */
+    projectId: string;
+    /**
      * The application ID
      *
-     * @generated from protobuf field: string application_id = 1;
+     * @generated from protobuf field: string application_id = 2;
      */
     applicationId: string;
     /**
      * The project ID
      *
-     * @generated from protobuf field: string prompt_config_id = 2;
+     * @generated from protobuf field: string prompt_config_id = 3;
      */
     promptConfigId: string;
     /**
      * The model vendor, for example "OPEN_AI"
      *
-     * @generated from protobuf field: string model_vendor = 3;
+     * @generated from protobuf field: string model_vendor = 4;
      */
     modelVendor: string;
     /**
      * The model type to use, for example "gpt-3.5-turbo"
      *
-     * @generated from protobuf field: string model_type = 4;
+     * @generated from protobuf field: string model_type = 5;
      */
     modelType: string;
     /**
      * A serialized JSON object containing the model parameters
      *
-     * @generated from protobuf field: bytes model_parameters = 5;
+     * @generated from protobuf field: bytes model_parameters = 6;
      */
     modelParameters: Uint8Array;
     /**
      * A serialized JSON array of provider message objects
      *
-     * @generated from protobuf field: bytes provider_prompt_messages = 6;
+     * @generated from protobuf field: bytes provider_prompt_messages = 7;
      */
     providerPromptMessages: Uint8Array;
     /**
      * The User prompt variables
      *
-     * @generated from protobuf field: map<string, string> template_variables = 7;
+     * @generated from protobuf field: map<string, string> template_variables = 8;
      */
     templateVariables: {
         [key: string]: string;
@@ -55,7 +59,7 @@ export interface PromptTestRequest {
     /**
      * A list of expected prompt variables
      *
-     * @generated from protobuf field: repeated string expected_template_variables = 8;
+     * @generated from protobuf field: repeated string expected_template_variables = 9;
      */
     expectedTemplateVariables: string[];
 }
