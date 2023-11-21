@@ -8,9 +8,9 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/shopspring/decimal"
-	"k8s.io/utils/ptr"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"

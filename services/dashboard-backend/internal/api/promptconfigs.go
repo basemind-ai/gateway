@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
-	"k8s.io/utils/ptr"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"net/http"
 	"strings"
 	"time"

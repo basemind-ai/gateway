@@ -9,8 +9,8 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/rs/zerolog/log"
-	"k8s.io/utils/ptr"
 )
 
 type PromptTestingServer struct {

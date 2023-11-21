@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
-	"k8s.io/utils/ptr"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"net/http"
 	"strings"
 	"testing"

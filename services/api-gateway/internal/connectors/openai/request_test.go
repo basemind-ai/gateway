@@ -9,8 +9,8 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/stretchr/testify/assert"
-	"k8s.io/utils/ptr"
 	"testing"
 )
 
