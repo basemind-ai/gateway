@@ -12,10 +12,8 @@ import {
 } from 'tests/test-utils';
 import { expect } from 'vitest';
 
-import {
-	ProjectProviderKeys,
-	ProviderKeyCreateModal,
-} from '@/components/projects/[projectId]/project-provider-keys';
+import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
+import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 

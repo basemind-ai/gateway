@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Record } from 'react-bootstrap-icons';
 import { shallow } from 'zustand/shallow';
 
@@ -11,8 +11,10 @@ import { Navbar } from '@/components/navbar';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
+import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { Navigation, TimeUnit } from '@/constants';
 import { ApiError } from '@/errors';
+import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { useProject, useProjects, usePromptConfigs } from '@/stores/api-store';
 import {
 	usePromptWizardStore,
@@ -20,6 +22,7 @@ import {
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
 import { useShowError } from '@/stores/toast-store';
+import { ProviderKey } from '@/types';
 import { setPathParams } from '@/utils/navigation';
 
 export default function PromptConfigCreateWizard({
@@ -29,14 +32,21 @@ export default function PromptConfigCreateWizard({
 }) {
 	const t = useTranslations('createConfigWizard');
 	const showError = useShowError();
+
 	const router = useRouter();
+
 	const project = useProject(projectId);
 	const projects = useProjects();
+
 	const promptConfigs = usePromptConfigs();
 
 	const [isLoading, setIsLoading] = useState(false);
 
+	const { providerKeys, setProviderKeys } = useSwrProviderKeys({ projectId });
+
 	const store = usePromptWizardStore(wizardStoreSelector, shallow);
+
+	const createProviderKeyDialogRef = useRef<HTMLDialogElement>(null);
 
 	// callbacks
 	const handleConfigNameChange = useCallback(store.setConfigName, [
@@ -64,10 +74,19 @@ export default function PromptConfigCreateWizard({
 		[store.setTemplateVariables],
 	);
 
-	const nameIsInvalid = Boolean(
-		promptConfigs[applicationId]
-			?.map((c) => c.name)
-			?.includes(store.configName),
+	const nameIsInvalid = useMemo(
+		() =>
+			Boolean(
+				promptConfigs[applicationId]
+					?.map((c) => c.name)
+					?.includes(store.configName),
+			),
+		[promptConfigs, store.configName],
+	);
+
+	const hasProviderKey = useMemo(
+		() => providerKeys.some((p) => p.modelVendor === store.modelVendor),
+		[providerKeys, store.modelVendor],
 	);
 
 	const wizardStageComponentMap: Record<WizardStage, React.ReactElement> = {
@@ -75,12 +94,12 @@ export default function PromptConfigCreateWizard({
 			() => (
 				<PromptConfigBaseForm
 					configName={store.configName}
-					setConfigName={handleConfigNameChange}
 					modelType={store.modelType}
 					modelVendor={store.modelVendor}
+					nameIsInvalid={nameIsInvalid}
+					setConfigName={handleConfigNameChange}
 					setModelType={handleModelTypeChange}
 					setVendor={handleModelVendorChange}
-					nameIsInvalid={nameIsInvalid}
 				/>
 			),
 			[
@@ -133,6 +152,22 @@ export default function PromptConfigCreateWizard({
 			],
 		),
 	};
+
+	const openCreateProviderKeyModal = () => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		createProviderKeyDialogRef.current?.showModal?.();
+	};
+
+	const closeCreateProviderKeyModal = () => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		createProviderKeyDialogRef.current?.close?.();
+	};
+
+	useEffect(() => {
+		if (!hasProviderKey && store.wizardStage === 1) {
+			openCreateProviderKeyModal();
+		}
+	}, [store.wizardStage]);
 
 	const handleConfigSave = async () => {
 		setIsLoading(true);
@@ -247,6 +282,26 @@ export default function PromptConfigCreateWizard({
 					</div>
 				</div>
 			</div>
+			<dialog ref={createProviderKeyDialogRef} className="modal">
+				<div className="dialog-box border-2 rounded p-10">
+					<ProviderKeyCreateModal
+						projectId={projectId}
+						vendors={[]}
+						modelVendor={store.modelVendor}
+						closeModal={closeCreateProviderKeyModal}
+						handleCancel={() => {
+							closeCreateProviderKeyModal();
+							store.setPrevWizardStage();
+						}}
+						addProviderKey={(providerKey: ProviderKey) => {
+							setProviderKeys([...providerKeys, providerKey]);
+						}}
+					/>
+				</div>
+				<form method="dialog" className="modal-backdrop">
+					<button />
+				</form>
+			</dialog>
 		</div>
 	);
 }

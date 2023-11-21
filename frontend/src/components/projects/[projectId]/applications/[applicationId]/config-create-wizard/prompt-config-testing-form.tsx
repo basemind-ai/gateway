@@ -2,10 +2,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Record } from 'react-bootstrap-icons';
 
-import {
-	modelTypeToNameMap,
-	modelVendorsTranslationKeyMap,
-} from '@/constants/models';
+import { modelTypeToNameMap, modelVendorToLocaleMap } from '@/constants/models';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
 	ModelParameters,
@@ -183,9 +180,9 @@ export function PromptConfigTesting<T extends ModelVendor>({
 							className="self-end"
 							data-testid="test-model-vendor-display"
 						>
-							{`${t('modelVendor')}: ${t(
-								modelVendorsTranslationKeyMap[modelVendor],
-							)}`}
+							{`${t('modelVendor')}: ${
+								modelVendorToLocaleMap[modelVendor]
+							}`}
 						</span>
 						<span
 							className="self-end"

@@ -17,9 +17,9 @@ export const openAIModelsMaxTokensMap: Record<OpenAIModelType, number> = {
 	[OpenAIModelType.Gpt432K]: 32_768,
 };
 
-export const modelVendorsTranslationKeyMap: Record<ModelVendor, string> = {
-	[ModelVendor.OpenAI]: 'openai',
-	[ModelVendor.Cohere]: 'cohere',
+export const modelVendorToLocaleMap: Record<ModelVendor, string> = {
+	[ModelVendor.OpenAI]: 'OpenAI',
+	[ModelVendor.Cohere]: 'Cohere',
 };
 
 export const vendorImageSourceMap: Record<ModelVendor, string> = {

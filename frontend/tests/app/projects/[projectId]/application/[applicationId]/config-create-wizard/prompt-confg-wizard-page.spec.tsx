@@ -31,6 +31,17 @@ vi.mock('@/hooks/use-prompt-testing', () => ({
 	})),
 }));
 
+vi.mock('swr', async (importOriginal: () => Promise<Record<string, any>>) => {
+	const original = await importOriginal();
+
+	return {
+		...original,
+		default: vi.fn(() => ({
+			isLoading: false,
+		})),
+	};
+});
+
 const getStore = (): PromptConfigWizardStore => {
 	const { result } = renderHook(() =>
 		usePromptWizardStore(wizardStoreSelector, shallow),
