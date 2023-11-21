@@ -9,6 +9,7 @@ import {
 	Project,
 	ProjectUserAccount,
 	PromptConfig,
+	ProviderKey,
 } from '@/types';
 
 export interface ApiStore {
@@ -30,6 +31,7 @@ export interface ApiStore {
 	projectUsers: Record<string, ProjectUserAccount[] | undefined>;
 	projects: Project[];
 	promptConfigs: Record<string, PromptConfig<any>[] | undefined>;
+	providerKeys: ProviderKey[];
 	removeProjectUser: (projectId: string, projectUserId: string) => void;
 	resetState: () => void;
 	selectedProjectId: string | null;
@@ -47,6 +49,7 @@ export interface ApiStore {
 		applicationId: string,
 		promptConfigs: PromptConfig<any>[],
 	) => void;
+	setProviderKeys: (providerKeys: ProviderKey[]) => void;
 	setSelectedProject: (selectedProjectId: string | null) => void;
 	setUser: (user: UserInfo | null) => void;
 	updateApplication: (
@@ -72,6 +75,7 @@ const initialState = {
 	projectUsers: {},
 	projects: [],
 	promptConfigs: {},
+	providerKeys: [],
 	selectedProjectId: null,
 	user: null,
 };
@@ -214,6 +218,9 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 			},
 		}));
 	},
+	setProviderKeys: (providerKeys: ProviderKey[]) => {
+		set({ providerKeys });
+	},
 	setSelectedProject: (selectedProjectId: string | null) => {
 		set(() => ({ selectedProjectId }));
 	},
@@ -343,3 +350,5 @@ export const useUpdateProjectUser = () =>
 export const useUpdatePromptConfig = () =>
 	useApiStore((s) => s.updatePromptConfig);
 export const useUser = () => useApiStore((s) => s.user);
+export const useProviderKeys = () => useApiStore((s) => s.providerKeys);
+export const useSetProviderKeys = () => useApiStore((s) => s.setProviderKeys);

@@ -32,14 +32,14 @@ describe('ProviderKeyCreateModal', () => {
 			ok: true,
 		});
 
-		const setProviderKeys = vi.fn();
+		const addProviderKey = vi.fn();
 		const closeModal = vi.fn();
 
 		render(
 			<ProviderKeyCreateModal
 				closeModal={closeModal}
 				projectId={projectId}
-				setProviderKeys={setProviderKeys}
+				addProviderKey={addProviderKey}
 				vendors={Object.values(ModelVendor)}
 			/>,
 		);
@@ -67,19 +67,19 @@ describe('ProviderKeyCreateModal', () => {
 		await waitFor(() => {
 			expect(mockFetch).toHaveBeenCalled();
 		});
-		expect(setProviderKeys).toHaveBeenCalled();
+		expect(addProviderKey).toHaveBeenCalled();
 		expect(closeModal).toHaveBeenCalled();
 	});
 
 	it('should close the modal when cancel is pressed', () => {
-		const setProviderKeys = vi.fn();
+		const addProviderKey = vi.fn();
 		const closeModal = vi.fn();
 
 		render(
 			<ProviderKeyCreateModal
 				closeModal={closeModal}
 				projectId={projectId}
-				setProviderKeys={setProviderKeys}
+				addProviderKey={addProviderKey}
 				vendors={Object.values(ModelVendor)}
 			/>,
 		);
@@ -101,14 +101,14 @@ describe('ProviderKeyCreateModal', () => {
 		const { result } = renderHook(useToasts);
 		const toastsLength = result.current.length;
 
-		const setProviderKeys = vi.fn();
+		const addProviderKey = vi.fn();
 		const closeModal = vi.fn();
 
 		render(
 			<ProviderKeyCreateModal
 				closeModal={closeModal}
 				projectId={projectId}
-				setProviderKeys={setProviderKeys}
+				addProviderKey={addProviderKey}
 				vendors={Object.values(ModelVendor)}
 			/>,
 		);
@@ -140,7 +140,7 @@ describe('ProviderKeyCreateModal', () => {
 		expect((result.current[toastsLength] as ToastMessage).type).toBe(
 			'alert-error',
 		);
-		expect(setProviderKeys).not.toHaveBeenCalled();
+		expect(addProviderKey).not.toHaveBeenCalled();
 		expect(closeModal).toHaveBeenCalled();
 	});
 
@@ -149,7 +149,7 @@ describe('ProviderKeyCreateModal', () => {
 			<ProviderKeyCreateModal
 				closeModal={vi.fn()}
 				projectId={projectId}
-				setProviderKeys={vi.fn()}
+				addProviderKey={vi.fn()}
 				vendors={Object.values(ModelVendor)}
 			/>,
 		);
@@ -173,7 +173,7 @@ describe('ProviderKeyCreateModal', () => {
 			<ProviderKeyCreateModal
 				closeModal={vi.fn()}
 				projectId={projectId}
-				setProviderKeys={vi.fn()}
+				addProviderKey={vi.fn()}
 				vendors={Object.values(ModelVendor)}
 			/>,
 		);
@@ -194,7 +194,7 @@ describe('ProviderKeyCreateModal', () => {
 			<ProviderKeyCreateModal
 				closeModal={vi.fn()}
 				projectId={projectId}
-				setProviderKeys={vi.fn()}
+				addProviderKey={vi.fn()}
 				vendors={Object.values(ModelVendor)}
 			/>,
 		);

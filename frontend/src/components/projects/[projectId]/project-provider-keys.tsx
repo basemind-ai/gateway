@@ -11,6 +11,7 @@ import {
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { modelVendorsTranslationKeyMap } from '@/constants/models';
 import { ApiError } from '@/errors';
+import { useProviderKeys, useSetProviderKeys } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, ProviderKey } from '@/types';
 import { handleChange } from '@/utils/events';
@@ -19,13 +20,11 @@ export function ProviderKeyCreateModal({
 	vendors,
 	projectId,
 	closeModal,
-	setProviderKeys,
+	addProviderKey,
 }: {
+	addProviderKey: (providerKey: ProviderKey) => void;
 	closeModal: () => void;
 	projectId: string;
-	setProviderKeys: (
-		setter: (prevState: ProviderKey[]) => ProviderKey[],
-	) => void;
 	vendors: string[];
 }) {
 	const t = useTranslations('providerKeys');
@@ -46,7 +45,7 @@ export function ProviderKeyCreateModal({
 				},
 				projectId,
 			});
-			setProviderKeys((prevState) => [...prevState, providerKey]);
+			addProviderKey(providerKey);
 		} catch (e: unknown) {
 			showError((e as ApiError).message);
 		} finally {
@@ -142,6 +141,8 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 	const t = useTranslations('providerKeys');
 
 	const showError = useShowError();
+	const providerKeys = useProviderKeys();
+	const setProviderKeys = useSetProviderKeys();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);
 	const creationDialogRef = useRef<HTMLDialogElement>(null);
@@ -149,7 +150,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 	const [providerKeyIdToDelete, setProviderKeyIdToDelete] = useState<
 		string | undefined
 	>();
-	const [providerKeys, setProviderKeys] = useState<ProviderKey[]>([]);
+
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { isLoading: swrIsLoading } = useSWR(
@@ -211,9 +212,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		} finally {
 			setIsLoading(false);
 			setProviderKeyIdToDelete(undefined);
-			setProviderKeys((prevState) =>
-				prevState.filter((v) => v.id !== providerKeyId),
-			);
+			setProviderKeys(providerKeys.filter((v) => v.id !== providerKeyId));
 			closeDeleteModal();
 		}
 	};
@@ -285,7 +284,9 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 						projectId={projectId}
 						vendors={vendorsWithoutKeys}
 						closeModal={closeCreateModal}
-						setProviderKeys={setProviderKeys}
+						addProviderKey={(providerKey: ProviderKey) => {
+							setProviderKeys([...providerKeys, providerKey]);
+						}}
 					/>
 				</div>
 				<form method="dialog" className="modal-backdrop">
