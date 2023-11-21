@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/go-playground/validator/v10"
-	"k8s.io/utils/ptr"
 	"regexp"
 )
 

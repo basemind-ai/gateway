@@ -9,8 +9,8 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/rs/zerolog/log"
-	"k8s.io/utils/ptr"
 )
 
 type PromptTestingServer struct {
@@ -22,6 +22,11 @@ func (PromptTestingServer) TestPrompt(
 	streamServer ptesting.PromptTestingService_TestPromptServer,
 ) error {
 	channel := make(chan dto.PromptResultDTO)
+
+	projectID, projectIDParseErr := db.StringToUUID(request.ProjectId)
+	if projectIDParseErr != nil {
+		return fmt.Errorf("failed to parse project ID: %w", projectIDParseErr)
+	}
 
 	applicationID, applicationIDParseErr := db.StringToUUID(request.ApplicationId)
 	if applicationIDParseErr != nil {
@@ -53,13 +58,23 @@ func (PromptTestingServer) TestPrompt(
 		ProviderModelPricing: modelPricing,
 	}
 
+	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+		streamServer.Context(),
+		*projectID,
+		requestConfigurationDTO.PromptConfigData.ModelVendor,
+	)
+	if providerKeyErr != nil {
+		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
+		return providerKeyErr
+	}
+
 	log.Debug().
 		Interface("requestConfigurationDTO", requestConfigurationDTO).
 		Msg("initiating stream request")
 
 	go connectors.GetProviderConnector(models.ModelVendor(request.ModelVendor)).
 		RequestStream(
-			streamServer.Context(),
+			providerKeyContext,
 			requestConfigurationDTO,
 			request.TemplateVariables,
 			channel,

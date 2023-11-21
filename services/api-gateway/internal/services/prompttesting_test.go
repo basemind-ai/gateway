@@ -71,9 +71,24 @@ func TestPromptTestingService(t *testing.T) {
 	promptConfigID := db.UUIDToString(&promptConfig.ID)
 
 	t.Run("TestPrompt", func(t *testing.T) {
+		t.Run("should return error if project ID is not a valid UUID", func(t *testing.T) {
+			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
+			err := srv.TestPrompt(&ptesting.PromptTestRequest{
+				ProjectId:              invalidUUID,
+				ApplicationId:          db.UUIDToString(&application.ID),
+				ModelParameters:        *modelParameters,
+				ProviderPromptMessages: *promptMessages,
+				PromptConfigId:         promptConfigID,
+				TemplateVariables:      nil,
+				ModelVendor:            string(models.ModelVendorOPENAI),
+				ModelType:              string(models.ModelTypeGpt432k),
+			}, mock)
+			assert.Error(t, err)
+		})
 		t.Run("should return error if application ID is not a valid UUID", func(t *testing.T) {
 			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
 			err := srv.TestPrompt(&ptesting.PromptTestRequest{
+				ProjectId:              db.UUIDToString(&project.ID),
 				ApplicationId:          invalidUUID,
 				ModelParameters:        *modelParameters,
 				ProviderPromptMessages: *promptMessages,
@@ -87,6 +102,7 @@ func TestPromptTestingService(t *testing.T) {
 		t.Run("should return error if promptConfigID is not a valid UUID", func(t *testing.T) {
 			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
 			err := srv.TestPrompt(&ptesting.PromptTestRequest{
+				ProjectId:              db.UUIDToString(&project.ID),
 				ApplicationId:          "38c8e86d-0027-4c99-ba34-82c77e5cd145",
 				ModelParameters:        *modelParameters,
 				ProviderPromptMessages: *promptMessages,

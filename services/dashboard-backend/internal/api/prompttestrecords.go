@@ -6,9 +6,9 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/apierror"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/jackc/pgx/v5/pgtype"
-	"k8s.io/utils/ptr"
 	"net/http"
 )
 

@@ -9,8 +9,8 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"k8s.io/utils/ptr"
 	"time"
 
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"

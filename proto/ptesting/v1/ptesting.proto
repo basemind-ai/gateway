@@ -12,22 +12,24 @@ service PromptTestingService {
 
 // A request for a prompt - sending user input to the server.
 message PromptTestRequest {
-  // The application ID
-  string application_id = 1;
   // The project ID
-  string prompt_config_id = 2;
+  string project_id = 1;
+  // The application ID
+  string application_id = 2;
+  // The project ID
+  string prompt_config_id = 3;
   // The model vendor, for example "OPEN_AI"
-  string model_vendor = 3;
+  string model_vendor = 4;
   // The model type to use, for example "gpt-3.5-turbo"
-  string model_type = 4;
+  string model_type = 5;
   // A serialized JSON object containing the model parameters
-  bytes model_parameters = 5;
+  bytes model_parameters = 6;
   // A serialized JSON array of provider message objects
-  bytes provider_prompt_messages = 6;
+  bytes provider_prompt_messages = 7;
   // The User prompt variables
-  map<string, string> template_variables = 7;
+  map<string, string> template_variables = 8;
   // A list of expected prompt variables
-  repeated string expected_template_variables = 8;
+  repeated string expected_template_variables = 9;
 }
 
 // An Streaming Prompt Response Message

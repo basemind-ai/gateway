@@ -32,7 +32,7 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 
 	async function clonePrompt() {
 		if (cloning) {
-			return;
+			return null;
 		}
 
 		const {
@@ -43,8 +43,9 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 			providerPromptMessages,
 		} = promptConfig;
 
+		setCloning(true);
+
 		try {
-			setCloning(true);
 			const cloneName = getCloneName(name);
 			const newPromptConfig = await handleCreatePromptConfig({
 				applicationId,
@@ -59,6 +60,7 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 			});
 			addPromptConfig(applicationId, newPromptConfig);
 			showInfo(t('configCloned'));
+
 			router.push(
 				setPathParams(Navigation.PromptConfigDetail, {
 					applicationId,
@@ -126,9 +128,12 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 					<button
 						data-testid="prompt-test-btn"
 						disabled={cloning}
+						/* c8 ignore start */
 						onClick={() => {
-							alert('not implmented');
+							// FIXME: we have to implement this.
+							alert('not implemented');
 						}}
+						/* c8 ignore end */
 						className="btn btn-outline btn-primary"
 					>
 						{t('test')}

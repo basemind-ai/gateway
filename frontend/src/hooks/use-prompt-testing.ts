@@ -63,9 +63,11 @@ export function usePromptTesting<T extends ModelVendor>({
 		(async () => {
 			const handler = (handlerRef.value = await createWebsocket<T>({
 				applicationId,
+				/* c8 ignore start */
 				handleClose: () => {
 					setWebsocketHandler(null);
 				},
+				/* c8 ignore end */
 				handleError,
 				handleMessage: ({
 					data,

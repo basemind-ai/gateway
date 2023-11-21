@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/stretchr/testify/assert"
-	"k8s.io/utils/ptr"
 	"testing"
 )
 

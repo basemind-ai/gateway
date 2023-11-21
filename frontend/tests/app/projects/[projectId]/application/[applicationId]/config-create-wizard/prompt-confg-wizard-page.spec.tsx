@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { OpenAIPromptConfigFactory } from 'tests/factories';
+import { OpenAIPromptConfigFactory, ProviderKeyFactory } from 'tests/factories';
 import { mockFetch, routerPushMock, routerReplaceMock } from 'tests/mocks';
 import {
 	act,
@@ -13,13 +13,18 @@ import { afterEach, expect } from 'vitest';
 import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
-import { useSetPromptConfigs } from '@/stores/api-store';
+import {
+	useProviderKeys,
+	useResetState,
+	useSetPromptConfigs,
+	useSetProviderKeys,
+} from '@/stores/api-store';
 import {
 	PromptConfigWizardStore,
 	usePromptWizardStore,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
-import { PromptTestRecord } from '@/types';
+import { ModelVendor, PromptTestRecord } from '@/types';
 
 vi.mock('@/hooks/use-prompt-testing', () => ({
 	usePromptTesting: vi.fn(() => ({
@@ -30,6 +35,17 @@ vi.mock('@/hooks/use-prompt-testing', () => ({
 		testRecord: {} as PromptTestRecord<any>,
 	})),
 }));
+
+vi.mock('swr', async (importOriginal: () => Promise<Record<string, any>>) => {
+	const original = await importOriginal();
+
+	return {
+		...original,
+		default: vi.fn(() => ({
+			isLoading: false,
+		})),
+	};
+});
 
 const getStore = (): PromptConfigWizardStore => {
 	const { result } = renderHook(() =>
@@ -42,9 +58,14 @@ describe('PromptConfigCreateWizard Page tests', () => {
 	const applicationId = faker.string.uuid();
 	const projectId = faker.string.uuid();
 
+	const {
+		result: { current: resetAPIStore },
+	} = renderHook(useResetState);
+
 	afterEach(() => {
 		getStore().resetState();
 		mockFetch.mockReset();
+		resetAPIStore();
 	});
 
 	it('should render the name and model form for wizard stage 0', () => {
@@ -442,5 +463,177 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		fireEvent.click(cancelButton);
 
 		expect(routerPushMock).toHaveBeenCalledTimes(3);
+	});
+
+	it('shows the provider key create modal when no provider key exists for the given vendor', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig.name);
+			store.setMessages(promptConfig.providerPromptMessages);
+			store.setParameters(promptConfig.modelParameters);
+			store.setModelType(promptConfig.modelType);
+			store.setModelVendor(promptConfig.modelVendor);
+			store.setNextWizardStage();
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('create-provider-key-modal'),
+			).toBeInTheDocument();
+		});
+	});
+	it('does not show the provider key modal when a key is in place for the given vendor', async () => {
+		const providerKey = ProviderKeyFactory.batchSync(1, {
+			modelVendor: ModelVendor.OpenAI,
+		});
+		const {
+			result: { current: setProviderKeys },
+		} = renderHook(useSetProviderKeys);
+
+		act(() => {
+			setProviderKeys(providerKey);
+		});
+
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig.name);
+			store.setMessages(promptConfig.providerPromptMessages);
+			store.setParameters(promptConfig.modelParameters);
+			store.setModelType(promptConfig.modelType);
+			store.setModelVendor(promptConfig.modelVendor);
+			store.setNextWizardStage();
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		const dialog = screen.getByTestId(
+			'config-create-wizard-create-provider-key-dialog',
+		);
+		expect(dialog).toBeInTheDocument();
+
+		await waitFor(() => {
+			expect(dialog.open).toBeFalsy();
+		});
+	});
+	it('exits the provider modal and navigates back to stage 0 if cancel is pressed in the modal', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.batchSync(1);
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig[0].name);
+			store.setMessages(promptConfig[0].providerPromptMessages);
+			store.setParameters(promptConfig[0].modelParameters);
+			store.setModelType(promptConfig[0].modelType);
+			store.setModelVendor(promptConfig[0].modelVendor);
+			store.setNextWizardStage();
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('create-provider-key-modal'),
+			).toBeInTheDocument();
+		});
+
+		const cancelButton = screen.getByTestId(
+			'create-provider-key-cancel-btn',
+		);
+		expect(cancelButton).toBeInTheDocument();
+
+		fireEvent.click(cancelButton);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('base-form-container'),
+			).toBeInTheDocument();
+		});
+	});
+
+	it('sets the provider key in store and closes the modal when the user presses submit', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.batchSync(1);
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig[0].name);
+			store.setMessages(promptConfig[0].providerPromptMessages);
+			store.setParameters(promptConfig[0].modelParameters);
+			store.setModelType(promptConfig[0].modelType);
+			store.setModelVendor(promptConfig[0].modelVendor);
+			store.setNextWizardStage();
+		});
+
+		mockFetch.mockResolvedValueOnce({
+			json: () => ProviderKeyFactory.buildSync(),
+			ok: true,
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('create-provider-key-modal'),
+			).toBeInTheDocument();
+		});
+
+		const input = screen.getByTestId('key-value-textarea');
+		expect(input).toBeInTheDocument();
+
+		const keyValue = faker.lorem.word();
+		fireEvent.change(input, { target: { value: keyValue } });
+
+		const saveButton = screen.getByTestId('create-provider-key-submit-btn');
+		expect(saveButton).toBeInTheDocument();
+
+		fireEvent.click(saveButton);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		const {
+			result: { current: providerKeys },
+		} = renderHook(useProviderKeys);
+		expect(providerKeys).toHaveLength(1);
 	});
 });

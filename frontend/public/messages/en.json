@@ -339,10 +339,12 @@
 		"createProviderKey": "Create Provider Key",
 		"createdAt": "Created at",
 		"deleteProviderKeyWarning": "Are you sure you want to delete this provider key?",
+		"keyIsEncryptedMessage": "The API key is encrypted before being stored in our database.",
 		"keyValue": "API Key",
 		"modelVendor": "AI Provider",
 		"newProviderKey": "New Provider Key",
 		"openai": "OpenAI",
+		"providerKeyIsRequiredMessage": "An API key for {modelVendor} is required. The API key is used to communicate with {modelVendor}.",
 		"selectVendor": "Please select an AI provider",
 		"warning": "Warning"
 	},

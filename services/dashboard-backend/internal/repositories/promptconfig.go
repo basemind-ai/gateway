@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
-	"k8s.io/utils/ptr"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"strings"
 	"time"
 

@@ -79,7 +79,9 @@ describe('ApplicationPromptConfigs', () => {
 			),
 		);
 
-		const [copyButton] = screen.getAllByTestId('prompt-config-copy-btn');
+		const [copyButton] = screen.getAllByTestId(
+			'application-prompt-configs-table-config-id-copy-button',
+		);
 		expect(copyButton).toBeInTheDocument();
 
 		fireEvent.click(copyButton);
@@ -101,7 +103,9 @@ describe('ApplicationPromptConfigs', () => {
 			),
 		);
 
-		const editButton = screen.getByTestId('application-edit-prompt-button');
+		const editButton = screen.getByTestId(
+			'application-prompt-configs-table-config-edit-button',
+		);
 		fireEvent.click(editButton);
 
 		expect(routerPushMock).toHaveBeenCalledWith(

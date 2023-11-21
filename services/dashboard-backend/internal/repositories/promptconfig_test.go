@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
 	"github.com/shopspring/decimal"
-	"k8s.io/utils/ptr"
 	"testing"
 	"time"
 

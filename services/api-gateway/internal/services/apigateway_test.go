@@ -10,12 +10,12 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-	"k8s.io/utils/ptr"
 	"testing"
 	"time"
 )
