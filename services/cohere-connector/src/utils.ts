@@ -68,8 +68,8 @@ export function createCohereRequest(
 	return {
 		connectors:
 			Array.isArray(grpcRequest.parameters?.connectors) &&
-			grpcRequest.parameters!.connectors.length
-				? getCohereConnectors(grpcRequest.parameters!.connectors)
+			grpcRequest.parameters.connectors.length
+				? getCohereConnectors(grpcRequest.parameters.connectors)
 				: undefined,
 		conversationId: grpcRequest.conversationId,
 		message: grpcRequest.message,

@@ -18,7 +18,7 @@
 		"@protobuf-ts/plugin": "^2.9.1",
 		"@protobuf-ts/runtime": "^2.9.1",
 		"@protobuf-ts/runtime-rpc": "^2.9.1",
-		"@tool-belt/eslint-config": "^4.0.1",
+		"@tool-belt/eslint-config": "^4.0.2",
 		"@types/node": "20.9.3",
 		"@types/webpack": "^5.28.5",
 		"@types/webpack-node-externals": "^3.0.4",

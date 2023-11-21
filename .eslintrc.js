@@ -1,6 +1,4 @@
-const rules = {
-	'sort-vars': 1,
-};
+const rules = {};
 
 const tsWebRules = {
 	...rules,

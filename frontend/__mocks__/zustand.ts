@@ -1,5 +1,3 @@
-/* eslint-disable import/export */
-
 import { act } from 'react-dom/test-utils';
 import { create as actualCreate, StateCreator } from 'zustand';
 

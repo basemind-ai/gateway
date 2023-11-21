@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 'use client';
 
 import { useRouter } from 'next/navigation';

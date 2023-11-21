@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/consistent-function-scoping,@typescript-eslint/require-await */
+/* eslint-disable unicorn/consistent-function-scoping */
 import {
 	Metadata,
 	sendUnaryData,
