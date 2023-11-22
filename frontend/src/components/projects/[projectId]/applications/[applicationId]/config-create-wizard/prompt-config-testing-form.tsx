@@ -187,9 +187,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 								{testFinishReason || 'N/A'}
 							</td>
 							<td data-testid="test-duration-display">
-								{testRecord
-									? `${Math.abs(testRecord.durationMs)} MS`
-									: `0 MS`}
+								{`${Math.abs(testRecord?.durationMs ?? 0)} MS`}
 							</td>
 							<td data-testid="test-request-tokens-display">
 								{testRecord ? testRecord.requestTokens : 0}
