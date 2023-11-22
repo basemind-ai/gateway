@@ -145,5 +145,7 @@ type PromptTestRecordDTO struct {
 	ResponseTokens         int32              `json:"responseTokens"`
 	StartTime              time.Time          `json:"startTime"`
 	DurationMs             int32              `json:"durationMs"`
+	RequestTokensCost      decimal.Decimal    `json:"requestTokensCost"`
+	ResponseTokensCost     decimal.Decimal    `json:"responseTokensCost"`
 	UserInput              json.RawMessage    `json:"userInput"`
 }

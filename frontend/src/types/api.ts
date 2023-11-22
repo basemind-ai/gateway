@@ -109,7 +109,6 @@ export interface PromptConfigTest<T extends ModelVendor> {
 	modelParameters: ModelParameters<T>;
 	modelType: ModelType<T>;
 	modelVendor: ModelVendor;
-	name: string;
 	promptConfigId?: string;
 	promptMessages: ProviderMessageType<T>[];
 	templateVariables: Record<string, string>;
@@ -147,19 +146,20 @@ export interface ProviderKey {
 
 export interface PromptTestRecord<T extends ModelVendor> {
 	createdAt: string;
+	durationMs: number;
 	errorLog?: string;
 	finishTime: string;
 	id: string;
 	modelParameters: ModelParameters<T>;
 	modelType: ModelType<T>;
 	modelVendor: T;
-	name: string;
 	promptConfigId?: string;
 	promptResponse: string;
 	providerPromptMessages: ProviderMessageType<T>;
 	requestTokens: number;
+	requestTokensCost: string;
 	responseTokens: number;
+	responseTokensCost: string;
 	startTime: string;
-	streamResponseLatency: number;
 	userInput: Record<string, string>;
 }

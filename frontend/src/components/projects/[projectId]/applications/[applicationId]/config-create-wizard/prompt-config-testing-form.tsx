@@ -1,6 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
-import { Record } from 'react-bootstrap-icons';
+import { PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
 import { modelTypeToNameMap, modelVendorToLocaleMap } from '@/constants/models';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
@@ -12,7 +11,6 @@ import {
 	PromptConfigTest,
 	ProviderMessageType,
 } from '@/types';
-import { parseDuration } from '@/utils/datetime';
 import { handleChange } from '@/utils/events';
 
 export const finishReasonStyle = (finishReason: string): string => {
@@ -53,7 +51,6 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	templateVariables: Record<string, string>;
 }) {
 	const t = useTranslations('createConfigWizard');
-	const [testName, setTestName] = useState('');
 
 	const {
 		isRunningTest,
@@ -81,7 +78,6 @@ export function PromptConfigTesting<T extends ModelVendor>({
 			modelParameters: parameters,
 			modelType,
 			modelVendor,
-			name: testName,
 			promptConfigId,
 			promptMessages: messages,
 			templateVariables,
@@ -138,30 +134,18 @@ export function PromptConfigTesting<T extends ModelVendor>({
 					</div>
 				</div>
 			)}
-			<div className="flex justify-between items-center p-4">
-				<div className="form-control">
-					<label className="label">
-						<span className="label-text">{t('testName')}</span>
-					</label>
-					<input
-						type="text"
-						data-testid="test-name-input"
-						className="input input-sm input-bordered input-neutral"
-						value={testName}
-						onChange={handleChange(setTestName)}
-					/>
-				</div>
+			<div className="flex justify-center items-end p-4">
 				<button
-					disabled={
-						!allExpectedVariablesHaveLength ||
-						!testName.trim().length ||
-						isRunningTest
-					}
+					disabled={!allExpectedVariablesHaveLength || isRunningTest}
 					data-testid="run-test-button"
-					className="btn btn-primary btn-round self-end btn-sm"
+					className="btn btn-primary btn-outline btn-circle btn-lg"
 					onClick={testFinishReason ? resetState : handleRunTest}
 				>
-					{testFinishReason ? t('newTest') : t('runTest')}
+					{testFinishReason ? (
+						<Repeat className="h-8 w-8" />
+					) : (
+						<PlayFill className="h-8 w-8" />
+					)}
 				</button>
 			</div>
 			{modelResponses.length > 0 && (
@@ -186,7 +170,9 @@ export function PromptConfigTesting<T extends ModelVendor>({
 							<th>{t('finishReason')}</th>
 							<th>{t('duration')}</th>
 							<th>{t('requestTokens')}</th>
+							<th>{t('requestTokensCost')}</th>
 							<th>{t('responseTokens')}</th>
+							<th>{t('responseTokensCost')}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -202,16 +188,20 @@ export function PromptConfigTesting<T extends ModelVendor>({
 							</td>
 							<td data-testid="test-duration-display">
 								{testRecord
-									? parseDuration(
-											testRecord.streamResponseLatency,
-									  )
+									? `${Math.abs(testRecord.durationMs)} MS`
 									: `0 MS`}
 							</td>
 							<td data-testid="test-request-tokens-display">
 								{testRecord ? testRecord.requestTokens : 0}
 							</td>
+							<td data-testid="test-request-tokens-cost-display">
+								{testRecord ? testRecord.requestTokensCost : 0}
+							</td>
 							<td data-testid="test-response-tokens-display">
 								{testRecord ? testRecord.responseTokens : 0}
+							</td>
+							<td data-testid="test-response-tokens-cost-display">
+								{testRecord ? testRecord.responseTokensCost : 0}
 							</td>
 						</tr>
 					</tbody>

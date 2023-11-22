@@ -96,20 +96,21 @@ export const ProviderKeyFactory = new TypeFactory<ProviderKey>(() => ({
 export const PromptTestRecordFactory = new TypeFactory<PromptTestRecord<any>>(
 	() => ({
 		createdAt: faker.date.past().toISOString(),
+		durationMs: 100,
 		errorLog: undefined,
 		finishTime: faker.date.past().toISOString(),
 		id: faker.string.uuid(),
 		modelParameters: {},
 		modelType: OpenAIModelType.Gpt432K,
 		modelVendor: ModelVendor.OpenAI,
-		name: faker.lorem.words(),
 		promptConfigId: undefined,
 		promptResponse: 'you are a bot like me',
 		providerPromptMessages: {},
 		requestTokens: 10,
+		requestTokensCost: '0.00001',
 		responseTokens: 10,
+		responseTokensCost: '0.00001',
 		startTime: faker.date.past().toISOString(),
-		streamResponseLatency: 100,
 		userInput: { userInput: 'what am I?' },
 	}),
 );

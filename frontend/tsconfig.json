@@ -30,7 +30,6 @@
 		"*.d.ts",
 		"*.ts",
 		".next/types/**/*.ts",
-		".storybook/**/*.ts",
 		"dist/types/**/*.ts"
 	]
 }

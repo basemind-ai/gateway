@@ -62,7 +62,7 @@ SELECT
     prr.finish_time,
     prr.duration_ms,
     prr.request_tokens_cost,
-    prr.request_tokens_cost,
+    prr.response_tokens_cost,
     prr.request_tokens,
     prr.response_tokens,
     pc.provider_prompt_messages,
@@ -87,7 +87,7 @@ type RetrievePromptTestRecordRow struct {
 	FinishTime             pgtype.Timestamptz `json:"finishTime"`
 	DurationMs             pgtype.Int4        `json:"durationMs"`
 	RequestTokensCost      pgtype.Numeric     `json:"requestTokensCost"`
-	RequestTokensCost_2    pgtype.Numeric     `json:"requestTokensCost2"`
+	ResponseTokensCost     pgtype.Numeric     `json:"responseTokensCost"`
 	RequestTokens          pgtype.Int4        `json:"requestTokens"`
 	ResponseTokens         pgtype.Int4        `json:"responseTokens"`
 	ProviderPromptMessages []byte             `json:"providerPromptMessages"`
@@ -111,7 +111,7 @@ func (q *Queries) RetrievePromptTestRecord(ctx context.Context, id pgtype.UUID) 
 		&i.FinishTime,
 		&i.DurationMs,
 		&i.RequestTokensCost,
-		&i.RequestTokensCost_2,
+		&i.ResponseTokensCost,
 		&i.RequestTokens,
 		&i.ResponseTokens,
 		&i.ProviderPromptMessages,
@@ -135,7 +135,7 @@ SELECT
     prr.finish_time,
     prr.duration_ms,
     prr.request_tokens_cost,
-    prr.request_tokens_cost,
+    prr.response_tokens_cost,
     prr.request_tokens,
     prr.response_tokens,
     pc.provider_prompt_messages,
@@ -161,7 +161,7 @@ type RetrievePromptTestRecordsRow struct {
 	FinishTime             pgtype.Timestamptz `json:"finishTime"`
 	DurationMs             pgtype.Int4        `json:"durationMs"`
 	RequestTokensCost      pgtype.Numeric     `json:"requestTokensCost"`
-	RequestTokensCost_2    pgtype.Numeric     `json:"requestTokensCost2"`
+	ResponseTokensCost     pgtype.Numeric     `json:"responseTokensCost"`
 	RequestTokens          pgtype.Int4        `json:"requestTokens"`
 	ResponseTokens         pgtype.Int4        `json:"responseTokens"`
 	ProviderPromptMessages []byte             `json:"providerPromptMessages"`
@@ -191,7 +191,7 @@ func (q *Queries) RetrievePromptTestRecords(ctx context.Context, id pgtype.UUID)
 			&i.FinishTime,
 			&i.DurationMs,
 			&i.RequestTokensCost,
-			&i.RequestTokensCost_2,
+			&i.ResponseTokensCost,
 			&i.RequestTokens,
 			&i.ResponseTokens,
 			&i.ProviderPromptMessages,
