@@ -12,7 +12,7 @@ import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applicat
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
-import { Navigation, TimeUnit } from '@/constants';
+import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { useProject, useProjects, usePromptConfigs } from '@/stores/api-store';
@@ -184,6 +184,7 @@ export default function PromptConfigCreateWizard({
 				},
 				projectId,
 			});
+			store.resetState();
 			router.replace(
 				setPathParams(Navigation.PromptConfigDetail, {
 					applicationId,
@@ -191,9 +192,6 @@ export default function PromptConfigCreateWizard({
 					promptConfigId,
 				}),
 			);
-			setTimeout(() => {
-				store.resetState();
-			}, TimeUnit.OneSecondInMilliseconds);
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {

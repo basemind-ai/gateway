@@ -24,6 +24,7 @@ import {
 	usePromptWizardStore,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
+import { useToasts } from '@/stores/toast-store';
 import { ModelVendor, PromptTestRecord } from '@/types';
 
 vi.mock('@/hooks/use-prompt-testing', () => ({
@@ -305,6 +306,59 @@ describe('PromptConfigCreateWizard Page tests', () => {
 
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledOnce();
+		});
+	});
+
+	it('shows an error message when save fails', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
+
+		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.reject(new Error('failed')),
+			ok: false,
+		});
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig.name);
+			store.setMessages(promptConfig.providerPromptMessages);
+			store.setParameters(promptConfig.modelParameters);
+			store.setModelType(promptConfig.modelType);
+			store.setModelVendor(promptConfig.modelVendor);
+		});
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		const continueButton = screen.getByTestId(
+			'config-create-wizard-continue-button',
+		);
+		expect(continueButton).toBeInTheDocument();
+		fireEvent.click(continueButton);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		const saveButton = screen.getByTestId(
+			'config-create-wizard-save-button',
+		);
+		expect(saveButton).toBeInTheDocument();
+		expect(saveButton).not.toBeDisabled();
+
+		fireEvent.click(saveButton);
+
+		await waitFor(() => {
+			expect(mockFetch).toHaveBeenCalledTimes(1);
+		});
+
+		const {
+			result: { current: toasts },
+		} = renderHook(useToasts);
+
+		await waitFor(() => {
+			expect(toasts[0].message).toBe('failed');
 		});
 	});
 
@@ -594,7 +648,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		});
 
 		mockFetch.mockResolvedValueOnce({
-			json: () => ProviderKeyFactory.buildSync(),
+			json: () => Promise.resolve(ProviderKeyFactory.buildSync()),
 			ok: true,
 		});
 
