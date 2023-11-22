@@ -34,14 +34,13 @@ func handleRetrievePromptTestRecords(w http.ResponseWriter, r *http.Request) {
 			ModelParameters:        record.ModelParameters,
 			ModelType:              record.ModelType.ModelType,
 			ModelVendor:            record.ModelVendor.ModelVendor,
-			Name:                   record.Name,
 			PromptConfigID:         promptConfigID,
 			PromptResponse:         record.Response,
 			ProviderPromptMessages: record.ProviderPromptMessages,
 			RequestTokens:          record.RequestTokens.Int32,
 			ResponseTokens:         record.ResponseTokens.Int32,
 			StartTime:              record.StartTime.Time,
-			StreamResponseLatency:  record.StreamResponseLatency.Int64,
+			DurationMs:             record.DurationMs.Int32,
 			UserInput:              record.VariableValues,
 		}
 	}
@@ -72,14 +71,13 @@ func handleRetrievePromptTestRecord(w http.ResponseWriter, r *http.Request) {
 		ModelParameters:        record.ModelParameters,
 		ModelType:              record.ModelType.ModelType,
 		ModelVendor:            record.ModelVendor.ModelVendor,
-		Name:                   record.Name,
 		PromptConfigID:         promptConfigID,
 		PromptResponse:         record.Response,
 		ProviderPromptMessages: record.ProviderPromptMessages,
 		RequestTokens:          record.RequestTokens.Int32,
 		ResponseTokens:         record.ResponseTokens.Int32,
 		StartTime:              record.StartTime.Time,
-		StreamResponseLatency:  record.StreamResponseLatency.Int64,
+		DurationMs:             record.DurationMs.Int32,
 		UserInput:              record.VariableValues,
 	})
 }

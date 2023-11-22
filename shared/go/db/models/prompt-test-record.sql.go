@@ -14,17 +14,15 @@ import (
 const createPromptTestRecord = `-- name: CreatePromptTestRecord :one
 
 INSERT INTO prompt_test_record (
-    name,
     variable_values,
     response,
     prompt_request_record_id
 )
-VALUES ($1, $2, $3, $4)
-RETURNING id, name, variable_values, response, created_at, prompt_request_record_id
+VALUES ($1, $2, $3)
+RETURNING id, variable_values, response, created_at, prompt_request_record_id
 `
 
 type CreatePromptTestRecordParams struct {
-	Name                  string      `json:"name"`
 	VariableValues        []byte      `json:"variableValues"`
 	Response              string      `json:"response"`
 	PromptRequestRecordID pgtype.UUID `json:"promptRequestRecordId"`
@@ -32,16 +30,10 @@ type CreatePromptTestRecordParams struct {
 
 // -- prompt test record
 func (q *Queries) CreatePromptTestRecord(ctx context.Context, arg CreatePromptTestRecordParams) (PromptTestRecord, error) {
-	row := q.db.QueryRow(ctx, createPromptTestRecord,
-		arg.Name,
-		arg.VariableValues,
-		arg.Response,
-		arg.PromptRequestRecordID,
-	)
+	row := q.db.QueryRow(ctx, createPromptTestRecord, arg.VariableValues, arg.Response, arg.PromptRequestRecordID)
 	var i PromptTestRecord
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
 		&i.VariableValues,
 		&i.Response,
 		&i.CreatedAt,
@@ -62,16 +54,17 @@ func (q *Queries) DeletePromptTestRecord(ctx context.Context, id pgtype.UUID) er
 const retrievePromptTestRecord = `-- name: RetrievePromptTestRecord :one
 SELECT
     ptr.id,
-    ptr.name,
     ptr.variable_values,
     ptr.response,
     ptr.created_at,
     prr.error_log,
     prr.start_time,
     prr.finish_time,
+    prr.duration_ms,
+    prr.request_tokens_cost,
+    prr.request_tokens_cost,
     prr.request_tokens,
     prr.response_tokens,
-    prr.stream_response_latency,
     pc.provider_prompt_messages,
     pc.model_parameters,
     pc.model_type,
@@ -86,16 +79,17 @@ WHERE ptr.id = $1
 
 type RetrievePromptTestRecordRow struct {
 	ID                     pgtype.UUID        `json:"id"`
-	Name                   string             `json:"name"`
 	VariableValues         []byte             `json:"variableValues"`
 	Response               string             `json:"response"`
 	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
 	ErrorLog               pgtype.Text        `json:"errorLog"`
 	StartTime              pgtype.Timestamptz `json:"startTime"`
 	FinishTime             pgtype.Timestamptz `json:"finishTime"`
+	DurationMs             pgtype.Int4        `json:"durationMs"`
+	RequestTokensCost      pgtype.Numeric     `json:"requestTokensCost"`
+	RequestTokensCost_2    pgtype.Numeric     `json:"requestTokensCost2"`
 	RequestTokens          pgtype.Int4        `json:"requestTokens"`
 	ResponseTokens         pgtype.Int4        `json:"responseTokens"`
-	StreamResponseLatency  pgtype.Int8        `json:"streamResponseLatency"`
 	ProviderPromptMessages []byte             `json:"providerPromptMessages"`
 	ModelParameters        []byte             `json:"modelParameters"`
 	ModelType              NullModelType      `json:"modelType"`
@@ -109,16 +103,17 @@ func (q *Queries) RetrievePromptTestRecord(ctx context.Context, id pgtype.UUID) 
 	var i RetrievePromptTestRecordRow
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
 		&i.VariableValues,
 		&i.Response,
 		&i.CreatedAt,
 		&i.ErrorLog,
 		&i.StartTime,
 		&i.FinishTime,
+		&i.DurationMs,
+		&i.RequestTokensCost,
+		&i.RequestTokensCost_2,
 		&i.RequestTokens,
 		&i.ResponseTokens,
-		&i.StreamResponseLatency,
 		&i.ProviderPromptMessages,
 		&i.ModelParameters,
 		&i.ModelType,
@@ -132,16 +127,17 @@ func (q *Queries) RetrievePromptTestRecord(ctx context.Context, id pgtype.UUID) 
 const retrievePromptTestRecords = `-- name: RetrievePromptTestRecords :many
 SELECT
     ptr.id,
-    ptr.name,
     ptr.variable_values,
     ptr.response,
     ptr.created_at,
     prr.error_log,
     prr.start_time,
     prr.finish_time,
+    prr.duration_ms,
+    prr.request_tokens_cost,
+    prr.request_tokens_cost,
     prr.request_tokens,
     prr.response_tokens,
-    prr.stream_response_latency,
     pc.provider_prompt_messages,
     pc.model_parameters,
     pc.model_type,
@@ -157,16 +153,17 @@ WHERE a.id = $1
 
 type RetrievePromptTestRecordsRow struct {
 	ID                     pgtype.UUID        `json:"id"`
-	Name                   string             `json:"name"`
 	VariableValues         []byte             `json:"variableValues"`
 	Response               string             `json:"response"`
 	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
 	ErrorLog               pgtype.Text        `json:"errorLog"`
 	StartTime              pgtype.Timestamptz `json:"startTime"`
 	FinishTime             pgtype.Timestamptz `json:"finishTime"`
+	DurationMs             pgtype.Int4        `json:"durationMs"`
+	RequestTokensCost      pgtype.Numeric     `json:"requestTokensCost"`
+	RequestTokensCost_2    pgtype.Numeric     `json:"requestTokensCost2"`
 	RequestTokens          pgtype.Int4        `json:"requestTokens"`
 	ResponseTokens         pgtype.Int4        `json:"responseTokens"`
-	StreamResponseLatency  pgtype.Int8        `json:"streamResponseLatency"`
 	ProviderPromptMessages []byte             `json:"providerPromptMessages"`
 	ModelParameters        []byte             `json:"modelParameters"`
 	ModelType              NullModelType      `json:"modelType"`
@@ -186,16 +183,17 @@ func (q *Queries) RetrievePromptTestRecords(ctx context.Context, id pgtype.UUID)
 		var i RetrievePromptTestRecordsRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.Name,
 			&i.VariableValues,
 			&i.Response,
 			&i.CreatedAt,
 			&i.ErrorLog,
 			&i.StartTime,
 			&i.FinishTime,
+			&i.DurationMs,
+			&i.RequestTokensCost,
+			&i.RequestTokensCost_2,
 			&i.RequestTokens,
 			&i.ResponseTokens,
-			&i.StreamResponseLatency,
 			&i.ProviderPromptMessages,
 			&i.ModelParameters,
 			&i.ModelType,

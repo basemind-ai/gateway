@@ -528,7 +528,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			).toBeInTheDocument();
 		});
 
-		const dialog = screen.getByTestId(
+		const dialog: HTMLDialogElement = screen.getByTestId(
 			'config-create-wizard-create-provider-key-dialog',
 		);
 		expect(dialog).toBeInTheDocument();

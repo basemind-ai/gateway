@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
@@ -9,6 +10,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
+	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -102,7 +104,6 @@ func CreatePayloadFromMessage(
 		requestRecordID := exc.MustResult(db.StringToUUID(*msg.PromptRequestRecordId))
 		promptTestRecord := exc.MustResult(db.GetQueries().
 			CreatePromptTestRecord(ctx, models.CreatePromptTestRecordParams{
-				Name:                  data.Name,
 				PromptRequestRecordID: *requestRecordID,
 				Response:              builder.String(),
 				VariableValues:        serialization.SerializeJSON(data.TemplateVariables),
@@ -188,9 +189,8 @@ func ParseMessageData(
 			applicationID,
 			dto.PromptConfigCreateDTO{
 				Name: fmt.Sprintf(
-					"prompt config for test: %s -%s",
-					data.Name,
-					time.Now().Format(time.RFC3339),
+					"test config - %s - %s",
+					time.Now().Format(time.RFC3339), hex.EncodeToString(cryptoutils.RandomBytes(8)),
 				),
 				ModelParameters:        data.ModelParameters,
 				ModelType:              data.ModelType,

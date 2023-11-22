@@ -86,7 +86,6 @@ type AnalyticsDTO struct { // skipcq: TCV-001
 
 // PromptConfigTestDTO - DTO for requesting a prompt config test.
 type PromptConfigTestDTO struct { // skipcq: TCV-001
-	Name                   string             `json:"name"                        validate:"required"`
 	ModelParameters        *json.RawMessage   `json:"modelParameters,omitempty"   validate:"omitempty,required"`
 	ModelType              models.ModelType   `json:"modelType"                   validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
 	ModelVendor            models.ModelVendor `json:"modelVendor"                 validate:"oneof=OPEN_AI COHERE"`
@@ -145,6 +144,6 @@ type PromptTestRecordDTO struct {
 	RequestTokens          int32              `json:"requestTokens"`
 	ResponseTokens         int32              `json:"responseTokens"`
 	StartTime              time.Time          `json:"startTime"`
-	StreamResponseLatency  int64              `json:"streamResponseLatency"`
+	DurationMs             int32              `json:"durationMs"`
 	UserInput              json.RawMessage    `json:"userInput"`
 }

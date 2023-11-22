@@ -135,7 +135,7 @@ CREATE TABLE prompt_request_record
     response_tokens_cost numeric NOT NULL,
     start_time timestamptz NOT NULL,
     finish_time timestamptz NOT NULL,
-    stream_response_latency bigint NULL,
+    duration_ms int NULL,
     prompt_config_id uuid NULL,
     error_log text NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
@@ -162,7 +162,6 @@ CREATE INDEX idx_prompt_request_record_finish_time ON prompt_request_record (
 CREATE TABLE prompt_test_record
 (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    name varchar(255) NOT NULL,
     variable_values json NOT NULL,
     response text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),

@@ -142,7 +142,6 @@ func TestPromptTestingAPI(t *testing.T) {
 	promptRequestRecordID := db.UUIDToString(&promptRequestRecord.ID)
 
 	data := &dto.PromptConfigTestDTO{
-		Name:                   "test",
 		ModelVendor:            promptConfig.ModelVendor,
 		ModelType:              promptConfig.ModelType,
 		ModelParameters:        ptr.To(json.RawMessage(promptConfig.ModelParameters)),
@@ -270,7 +269,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				RetrievePromptTestRecord(context.TODO(), *promptTestRecordID)
 			assert.NoError(t, retrieveErr)
 
-			assert.Equal(t, promptTestRecord.Name, data.Name)
 			assert.Equal(t, promptTestRecord.Response, "123")
 
 			serializedTemplateVariables := serialization.SerializeJSON(templateVariables)
@@ -385,7 +383,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			"should create the expected payload when PromptRequestRecordId is nil",
 			func(t *testing.T) {
 				data := &dto.PromptConfigTestDTO{
-					Name:        "test",
 					ModelVendor: models.ModelVendorOPENAI,
 					ModelType:   models.ModelTypeGpt4,
 					ProviderPromptMessages: ptr.To(
@@ -420,7 +417,6 @@ func TestPromptTestingAPI(t *testing.T) {
 					promptConfig.ID,
 				)
 				data := &dto.PromptConfigTestDTO{
-					Name:        "test",
 					ModelVendor: models.ModelVendorOPENAI,
 					ModelType:   models.ModelTypeGpt4,
 					ProviderPromptMessages: ptr.To(
@@ -457,7 +453,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				promptTestRecord, retrievalErr := db.GetQueries().
 					RetrievePromptTestRecord(context.TODO(), *promptTestRecordID)
 				assert.NoError(t, retrievalErr)
-				assert.Equal(t, promptTestRecord.Name, data.Name)
 				assert.Equal(t, promptTestRecord.Response, builder.String())
 			},
 		)
@@ -467,7 +462,6 @@ func TestPromptTestingAPI(t *testing.T) {
 		t.Run("should write error payload when receiving an error", func(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -516,7 +510,6 @@ func TestPromptTestingAPI(t *testing.T) {
 		t.Run("should return error on write error", func(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -564,7 +557,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -617,7 +609,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -654,7 +645,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -695,7 +685,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -749,24 +738,8 @@ func TestPromptTestingAPI(t *testing.T) {
 				Name string
 			}{
 				{
-					Name: "should return error when name is empty",
-					Data: dto.PromptConfigTestDTO{
-						Name:        "",
-						ModelVendor: models.ModelVendorOPENAI,
-						ModelType:   models.ModelTypeGpt4,
-						ProviderPromptMessages: ptr.To(
-							json.RawMessage(promptConfig.ProviderPromptMessages),
-						),
-						ModelParameters: ptr.To(
-							json.RawMessage(promptConfig.ModelParameters),
-						),
-						TemplateVariables: templateVariables,
-					},
-				},
-				{
 					Name: "should return error when model vendor is invalid",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendor("invalid"),
 						ModelType:   models.ModelTypeGpt4,
 						ProviderPromptMessages: ptr.To(
@@ -781,7 +754,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when model type is invalid",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendorOPENAI,
 						ModelType:   models.ModelType("invalid"),
 						ProviderPromptMessages: ptr.To(
@@ -796,7 +768,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when provider prompt messages are empty",
 					Data: dto.PromptConfigTestDTO{
-						Name:                   "test",
 						ModelVendor:            models.ModelVendorOPENAI,
 						ModelType:              models.ModelTypeGpt432k,
 						ProviderPromptMessages: ptr.To(json.RawMessage(nil)),
@@ -809,7 +780,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when model Parameters are empty",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendorOPENAI,
 						ModelType:   models.ModelTypeGpt432k,
 						ProviderPromptMessages: ptr.To(
@@ -822,7 +792,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when promptConfigID is not a uuid4",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendorOPENAI,
 						ModelType:   models.ModelTypeGpt432k,
 						ProviderPromptMessages: ptr.To(
@@ -849,7 +818,6 @@ func TestPromptTestingAPI(t *testing.T) {
 
 		t.Run("should create a new prompt config when prompt config id is nil", func(t *testing.T) {
 			d := dto.PromptConfigTestDTO{
-				Name:        factories.RandomString(10),
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt432k,
 				ProviderPromptMessages: ptr.To(

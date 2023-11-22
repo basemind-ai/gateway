@@ -38,9 +38,9 @@ func streamFromClient(
 			break
 		}
 
-		if recordParams.StreamResponseLatency.Int64 == 0 {
-			duration := time.Until(startTime).Milliseconds()
-			recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
+		if recordParams.DurationMs.Int32 == 0 {
+			duration := int32(time.Until(startTime).Milliseconds())
+			recordParams.DurationMs = pgtype.Int4{Int32: duration, Valid: true}
 		}
 
 		exc.LogIfErr(exc.ReturnAnyErr(builder.WriteString(msg.Content)))

@@ -196,7 +196,7 @@ type PromptRequestRecord struct {
 	ResponseTokensCost     pgtype.Numeric     `json:"responseTokensCost"`
 	StartTime              pgtype.Timestamptz `json:"startTime"`
 	FinishTime             pgtype.Timestamptz `json:"finishTime"`
-	StreamResponseLatency  pgtype.Int8        `json:"streamResponseLatency"`
+	DurationMs             pgtype.Int4        `json:"durationMs"`
 	PromptConfigID         pgtype.UUID        `json:"promptConfigId"`
 	ErrorLog               pgtype.Text        `json:"errorLog"`
 	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
@@ -206,7 +206,6 @@ type PromptRequestRecord struct {
 
 type PromptTestRecord struct {
 	ID                    pgtype.UUID        `json:"id"`
-	Name                  string             `json:"name"`
 	VariableValues        []byte             `json:"variableValues"`
 	Response              string             `json:"response"`
 	CreatedAt             pgtype.Timestamptz `json:"createdAt"`
