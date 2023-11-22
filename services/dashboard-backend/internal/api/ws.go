@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	applicationIDSessionKey    = "application"
-	projectIDSessionKey        = "project"
+	ApplicationIDSessionKey    = "application"
+	ProjectIDSessionKey        = "project"
 	socketDeadline             = time.Minute
 	StatusWSServerError        = 1011
 	StatusWSUnsupportedPayload = 1007
@@ -58,15 +58,13 @@ type RequestIDs struct {
 	ProjectID     pgtype.UUID
 }
 
-func ExtractIDS(socket *gws.Conn) (*RequestIDs, error) {
-	session := socket.Session()
-
-	applicationIDValue, exists := session.Load(applicationIDSessionKey)
+func ExtractIDS(session gws.SessionStorage) (*RequestIDs, error) {
+	applicationIDValue, exists := session.Load(ApplicationIDSessionKey)
 	if !exists {
 		return nil, errors.New("application id not set in session")
 	}
 
-	projectIDValue, exists := session.Load(projectIDSessionKey)
+	projectIDValue, exists := session.Load(ProjectIDSessionKey)
 	if !exists {
 		return nil, errors.New("project id not set in session")
 	}
@@ -239,7 +237,7 @@ func (h handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 		}
 
 		// We are retrieving the applicationID from the session storage.
-		requestIDs, extractionErr := ExtractIDS(socket)
+		requestIDs, extractionErr := ExtractIDS(socket.Session())
 		if extractionErr != nil {
 			log.Error().Err(extractionErr).Msg("failed to extract stored variables from ws session")
 			socket.WriteClose(StatusWSServerError, []byte(extractionErr.Error()))
@@ -285,10 +283,10 @@ func promptTestingWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	// The GWS session storage is concurrency safe, and is unique per socket - so we can be certain
 	// the projectID and applicationID are the same when retrieving it in the OnMessage receiver.
 	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
-	socket.Session().Store(projectIDSessionKey, projectID)
+	socket.Session().Store(ProjectIDSessionKey, projectID)
 
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
-	socket.Session().Store(applicationIDSessionKey, applicationID)
+	socket.Session().Store(ApplicationIDSessionKey, applicationID)
 
 	go socket.ReadLoop()
 }

@@ -122,6 +122,25 @@ func createOTP(t *testing.T, userAccount *models.UserAccount, projectID string) 
 	return data.OTP
 }
 
+type mockSessionStorage struct {
+	gws.SessionStorage
+	mock.Mock
+}
+
+func (s *mockSessionStorage) Load(key string) (value any, exist bool) {
+	args := s.Called(key)
+	return args.Get(0), args.Bool(1)
+}
+func (s *mockSessionStorage) Delete(key string) {
+	s.Called(key)
+}
+func (s *mockSessionStorage) Store(key string, value any) {
+	s.Called(key, value)
+}
+func (s *mockSessionStorage) Range(f func(key string, value any) bool) {
+	s.Called(f)
+}
+
 func TestPromptTestingAPI(t *testing.T) {
 	testutils.SetTestEnv(t)
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -842,6 +861,63 @@ func TestPromptTestingAPI(t *testing.T) {
 			assert.Equal(t, pc.ModelParameters, []byte(*d.ModelParameters))
 			assert.Equal(t, pc.ProviderPromptMessages, []byte(*d.ProviderPromptMessages))
 			assert.Equal(t, pc.IsTestConfig, true)
+		})
+	})
+
+	t.Run("ExtractIDs", func(t *testing.T) {
+		t.Run("extracts values from session and parses IDs", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(application.ID, true)
+			session.On("Load", api.ProjectIDSessionKey).Return(project.ID, true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+		})
+
+		t.Run("returns error if projectID is not set in session", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(application.ID, true)
+			session.On("Load", api.ProjectIDSessionKey).Return(nil, false)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+
+		t.Run("returns error if applicationID is not set in session", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(nil, false)
+			session.On("Load", api.ProjectIDSessionKey).Return(project.ID, true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+
+		t.Run("returns error if applicationID is invalid", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return("invalid", true)
+			session.On("Load", api.ProjectIDSessionKey).Return(project.ID, true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+
+		t.Run("returns error if projectID is invalid", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(application.ID, true)
+			session.On("Load", api.ProjectIDSessionKey).Return("invalid", true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
 		})
 	})
 }
