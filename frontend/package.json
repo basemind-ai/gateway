@@ -17,6 +17,7 @@
 		"@firebase/auth": "^1.4.0",
 		"@segment/analytics-next": "^1.61.0",
 		"dayjs": "^1.11.10",
+		"days": "^1.1.1",
 		"deep-equal": "^2.2.3",
 		"deepmerge-ts": "^5.1.0",
 		"encoding": "^0.1.13",

@@ -39,7 +39,7 @@ func streamFromClient(
 		}
 
 		if recordParams.StreamResponseLatency.Int64 == 0 {
-			duration := int64(time.Until(startTime))
+			duration := time.Until(startTime).Milliseconds()
 			recordParams.StreamResponseLatency = pgtype.Int8{Int64: duration, Valid: true}
 		}
 

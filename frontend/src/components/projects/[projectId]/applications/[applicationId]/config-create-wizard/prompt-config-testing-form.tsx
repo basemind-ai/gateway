@@ -12,6 +12,7 @@ import {
 	PromptConfigTest,
 	ProviderMessageType,
 } from '@/types';
+import { parseDuration } from '@/utils/datetime';
 import { handleChange } from '@/utils/events';
 
 export const finishReasonStyle = (finishReason: string): string => {
@@ -60,6 +61,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 		sendMessage,
 		testFinishReason,
 		testRecord,
+		resetState,
 	} = usePromptTesting({
 		applicationId,
 		handleError: () => {
@@ -73,6 +75,8 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	}, []);
 
 	const handleRunTest = () => {
+		resetState();
+
 		const config = {
 			modelParameters: parameters,
 			modelType,
@@ -155,9 +159,9 @@ export function PromptConfigTesting<T extends ModelVendor>({
 					}
 					data-testid="run-test-button"
 					className="btn btn-primary btn-round self-end btn-sm"
-					onClick={handleRunTest}
+					onClick={testFinishReason ? resetState : handleRunTest}
 				>
-					{t('runTest')}
+					{testFinishReason ? t('newTest') : t('runTest')}
 				</button>
 			</div>
 			{modelResponses.length > 0 && (
@@ -174,69 +178,44 @@ export function PromptConfigTesting<T extends ModelVendor>({
 				</div>
 			)}
 			<div className="pt-10">
-				<div className="border-2 border-neutral p-4 rounded grid grid-cols-2 gap-4 min-w-[50%]">
-					<div className="flex gap-4 justify-evenly p-1">
-						<span
-							className="self-end"
-							data-testid="test-model-vendor-display"
-						>
-							{`${t('modelVendor')}: ${
-								modelVendorToLocaleMap[modelVendor]
-							}`}
-						</span>
-						<span
-							className="self-end"
-							data-testid="test-model-type-display"
-						>
-							{`${t('modelType')}: ${
-								modelTypeToNameMap[modelType]
-							}`}
-						</span>
-						{testFinishReason && (
-							<span
-								className="self-end"
-								data-testid="test-finish-reason-display"
-							>
-								{`${t('finishReason')}: `}
-								<span
-									className={`self-end ${finishReasonStyle(
-										testFinishReason,
-									)}`}
-								>
-									{testFinishReason}
-								</span>
-							</span>
-						)}
-					</div>
-					{testRecord && (
-						<div className="flex gap-4 justify-evenly p-1">
-							<span
-								className="self-end"
-								data-testid="test-latency-display"
-							>
-								{`${t('latency')}: ${
-									testRecord.streamResponseLatency
-								}`}
-							</span>
-							<span
-								className="self-end"
-								data-testid="test-request-tokens-display"
-							>
-								{`${t('requestTokens')}: ${
-									testRecord.requestTokens
-								}`}
-							</span>
-							<span
-								className="self-end"
-								data-testid="test-response-tokens-display"
-							>
-								{`${t('responseTokens')}: ${
-									testRecord.responseTokens
-								}`}
-							</span>
-						</div>
-					)}
-				</div>
+				<table className="custom-table w-full mb-5">
+					<thead>
+						<tr>
+							<th>{t('modelVendor')}</th>
+							<th>{t('modelType')}</th>
+							<th>{t('finishReason')}</th>
+							<th>{t('duration')}</th>
+							<th>{t('requestTokens')}</th>
+							<th>{t('responseTokens')}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td data-testid="test-model-vendor-display">
+								{modelVendorToLocaleMap[modelVendor]}
+							</td>
+							<td data-testid="test-model-type-display">
+								{modelTypeToNameMap[modelType]}
+							</td>
+							<td data-testid="test-finish-reason-display">
+								{testFinishReason || 'N/A'}
+							</td>
+							<td data-testid="test-duration-display">
+								{testRecord
+									? parseDuration(
+											testRecord.streamResponseLatency,
+									  )
+									: `0 MS`}
+							</td>
+							<td data-testid="test-request-tokens-display">
+								{testRecord ? testRecord.requestTokens : 0}
+							</td>
+							<td data-testid="test-response-tokens-display">
+								{testRecord ? testRecord.responseTokens : 0}
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	);

@@ -378,7 +378,7 @@ describe('PromptConfigTesting tests', () => {
 			'test-finish-reason-display',
 		);
 		expect(finishReasonDisplay).toBeInTheDocument();
-		const latencyDisplay = screen.getByTestId('test-latency-display');
+		const latencyDisplay = screen.getByTestId('test-duration-display');
 		expect(latencyDisplay).toBeInTheDocument();
 		const requestTokensDisplay = screen.getByTestId(
 			'test-request-tokens-display',

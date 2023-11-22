@@ -57,6 +57,7 @@ func Init(ctx context.Context, opts ...grpc.DialOption) {
 // StreamPromptTest - streams a prompt test to the PromptTesting gRPC service.
 func (c *Client) StreamPromptTest(
 	ctx context.Context,
+	projectID string,
 	applicationID string,
 	data *dto.PromptConfigTestDTO,
 	responseChannel chan<- *ptesting.PromptTestingStreamingPromptResponse,
@@ -80,6 +81,7 @@ func (c *Client) StreamPromptTest(
 	)
 
 	testRequest := &ptesting.PromptTestRequest{
+		ProjectId:              projectID,
 		ApplicationId:          applicationID,
 		PromptConfigId:         *data.PromptConfigID,
 		ModelVendor:            string(data.ModelVendor),
