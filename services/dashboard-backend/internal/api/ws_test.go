@@ -122,6 +122,25 @@ func createOTP(t *testing.T, userAccount *models.UserAccount, projectID string) 
 	return data.OTP
 }
 
+type mockSessionStorage struct {
+	gws.SessionStorage
+	mock.Mock
+}
+
+func (s *mockSessionStorage) Load(key string) (value any, exist bool) {
+	args := s.Called(key)
+	return args.Get(0), args.Bool(1)
+}
+func (s *mockSessionStorage) Delete(key string) {
+	s.Called(key)
+}
+func (s *mockSessionStorage) Store(key string, value any) {
+	s.Called(key, value)
+}
+func (s *mockSessionStorage) Range(f func(key string, value any) bool) {
+	s.Called(f)
+}
+
 func TestPromptTestingAPI(t *testing.T) {
 	testutils.SetTestEnv(t)
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
@@ -142,7 +161,6 @@ func TestPromptTestingAPI(t *testing.T) {
 	promptRequestRecordID := db.UUIDToString(&promptRequestRecord.ID)
 
 	data := &dto.PromptConfigTestDTO{
-		Name:                   "test",
 		ModelVendor:            promptConfig.ModelVendor,
 		ModelType:              promptConfig.ModelType,
 		ModelParameters:        ptr.To(json.RawMessage(promptConfig.ModelParameters)),
@@ -270,7 +288,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				RetrievePromptTestRecord(context.TODO(), *promptTestRecordID)
 			assert.NoError(t, retrieveErr)
 
-			assert.Equal(t, promptTestRecord.Name, data.Name)
 			assert.Equal(t, promptTestRecord.Response, "123")
 
 			serializedTemplateVariables := serialization.SerializeJSON(templateVariables)
@@ -385,7 +402,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			"should create the expected payload when PromptRequestRecordId is nil",
 			func(t *testing.T) {
 				data := &dto.PromptConfigTestDTO{
-					Name:        "test",
 					ModelVendor: models.ModelVendorOPENAI,
 					ModelType:   models.ModelTypeGpt4,
 					ProviderPromptMessages: ptr.To(
@@ -420,7 +436,6 @@ func TestPromptTestingAPI(t *testing.T) {
 					promptConfig.ID,
 				)
 				data := &dto.PromptConfigTestDTO{
-					Name:        "test",
 					ModelVendor: models.ModelVendorOPENAI,
 					ModelType:   models.ModelTypeGpt4,
 					ProviderPromptMessages: ptr.To(
@@ -457,7 +472,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				promptTestRecord, retrievalErr := db.GetQueries().
 					RetrievePromptTestRecord(context.TODO(), *promptTestRecordID)
 				assert.NoError(t, retrievalErr)
-				assert.Equal(t, promptTestRecord.Name, data.Name)
 				assert.Equal(t, promptTestRecord.Response, builder.String())
 			},
 		)
@@ -467,7 +481,6 @@ func TestPromptTestingAPI(t *testing.T) {
 		t.Run("should write error payload when receiving an error", func(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -516,7 +529,6 @@ func TestPromptTestingAPI(t *testing.T) {
 		t.Run("should return error on write error", func(t *testing.T) {
 			m := &mockSocket{}
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -564,7 +576,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -617,7 +628,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -654,7 +664,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -695,7 +704,6 @@ func TestPromptTestingAPI(t *testing.T) {
 			outgoingErrChannel := make(chan error)
 
 			data := &dto.PromptConfigTestDTO{
-				Name:        "test",
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt4,
 				ProviderPromptMessages: ptr.To(
@@ -749,24 +757,8 @@ func TestPromptTestingAPI(t *testing.T) {
 				Name string
 			}{
 				{
-					Name: "should return error when name is empty",
-					Data: dto.PromptConfigTestDTO{
-						Name:        "",
-						ModelVendor: models.ModelVendorOPENAI,
-						ModelType:   models.ModelTypeGpt4,
-						ProviderPromptMessages: ptr.To(
-							json.RawMessage(promptConfig.ProviderPromptMessages),
-						),
-						ModelParameters: ptr.To(
-							json.RawMessage(promptConfig.ModelParameters),
-						),
-						TemplateVariables: templateVariables,
-					},
-				},
-				{
 					Name: "should return error when model vendor is invalid",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendor("invalid"),
 						ModelType:   models.ModelTypeGpt4,
 						ProviderPromptMessages: ptr.To(
@@ -781,7 +773,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when model type is invalid",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendorOPENAI,
 						ModelType:   models.ModelType("invalid"),
 						ProviderPromptMessages: ptr.To(
@@ -796,7 +787,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when provider prompt messages are empty",
 					Data: dto.PromptConfigTestDTO{
-						Name:                   "test",
 						ModelVendor:            models.ModelVendorOPENAI,
 						ModelType:              models.ModelTypeGpt432k,
 						ProviderPromptMessages: ptr.To(json.RawMessage(nil)),
@@ -809,7 +799,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when model Parameters are empty",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendorOPENAI,
 						ModelType:   models.ModelTypeGpt432k,
 						ProviderPromptMessages: ptr.To(
@@ -822,7 +811,6 @@ func TestPromptTestingAPI(t *testing.T) {
 				{
 					Name: "should return error when promptConfigID is not a uuid4",
 					Data: dto.PromptConfigTestDTO{
-						Name:        "test",
 						ModelVendor: models.ModelVendorOPENAI,
 						ModelType:   models.ModelTypeGpt432k,
 						ProviderPromptMessages: ptr.To(
@@ -849,7 +837,6 @@ func TestPromptTestingAPI(t *testing.T) {
 
 		t.Run("should create a new prompt config when prompt config id is nil", func(t *testing.T) {
 			d := dto.PromptConfigTestDTO{
-				Name:        factories.RandomString(10),
 				ModelVendor: models.ModelVendorOPENAI,
 				ModelType:   models.ModelTypeGpt432k,
 				ProviderPromptMessages: ptr.To(
@@ -874,6 +861,63 @@ func TestPromptTestingAPI(t *testing.T) {
 			assert.Equal(t, pc.ModelParameters, []byte(*d.ModelParameters))
 			assert.Equal(t, pc.ProviderPromptMessages, []byte(*d.ProviderPromptMessages))
 			assert.Equal(t, pc.IsTestConfig, true)
+		})
+	})
+
+	t.Run("ExtractIDs", func(t *testing.T) {
+		t.Run("extracts values from session and parses IDs", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(application.ID, true)
+			session.On("Load", api.ProjectIDSessionKey).Return(project.ID, true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+		})
+
+		t.Run("returns error if projectID is not set in session", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(application.ID, true)
+			session.On("Load", api.ProjectIDSessionKey).Return(nil, false)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+
+		t.Run("returns error if applicationID is not set in session", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(nil, false)
+			session.On("Load", api.ProjectIDSessionKey).Return(project.ID, true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+
+		t.Run("returns error if applicationID is invalid", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return("invalid", true)
+			session.On("Load", api.ProjectIDSessionKey).Return(project.ID, true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+
+		t.Run("returns error if projectID is invalid", func(t *testing.T) {
+			session := &mockSessionStorage{}
+			session.On("Load", api.ApplicationIDSessionKey).Return(application.ID, true)
+			session.On("Load", api.ProjectIDSessionKey).Return("invalid", true)
+
+			result, err := api.ExtractIDS(session)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
 		})
 	})
 }

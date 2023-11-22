@@ -17,11 +17,13 @@ import {
 } from '@/types';
 
 const sendMessagesMock = vi.fn();
+const resetStateMock = vi.fn();
 
 vi.mock('@/hooks/use-prompt-testing', () => ({
 	usePromptTesting: vi.fn(() => ({
 		isRunningTest: false,
 		modelResponses: [],
+		resetState: resetStateMock,
 		sendMessage: sendMessagesMock,
 		testFinishReason: '',
 		testRecord: {} as PromptTestRecord<any>,
@@ -132,53 +134,6 @@ describe('PromptConfigTesting tests', () => {
 		expect(handleErrorMock).toHaveBeenCalled();
 	});
 
-	it('does not allow executing the test if the test name is not set are missing', () => {
-		render(
-			<PromptConfigTesting
-				applicationId={applicationId}
-				projectId={projectId}
-				modelType={modelType}
-				modelVendor={modelVendor}
-				templateVariables={templateVariables}
-				parameters={parameters}
-				messages={messages}
-				handleError={handleErrorMock}
-				setTemplateVariables={setTemplateVariablesMock}
-			/>,
-		);
-		const runTestButton = screen.getByTestId('run-test-button');
-		expect(runTestButton).toBeInTheDocument();
-		expect(runTestButton).toBeDisabled();
-	});
-
-	it('allows executing the test if the test name is set', async () => {
-		render(
-			<PromptConfigTesting
-				applicationId={applicationId}
-				projectId={projectId}
-				modelType={modelType}
-				modelVendor={modelVendor}
-				templateVariables={templateVariables}
-				parameters={parameters}
-				messages={messages}
-				handleError={handleErrorMock}
-				setTemplateVariables={setTemplateVariablesMock}
-			/>,
-		);
-
-		const testNameInput = screen.getByTestId('test-name-input');
-		expect(testNameInput).toBeInTheDocument();
-
-		const runTestButton = screen.getByTestId('run-test-button');
-		expect(runTestButton).toBeInTheDocument();
-
-		fireEvent.change(testNameInput, { target: { value: 'test' } });
-
-		await waitFor(() => {
-			expect(runTestButton).toBeEnabled();
-		});
-	});
-
 	it('does not allow executing the test if a template variable is missing', () => {
 		const messagesWithVariables = [
 			...messages,
@@ -203,13 +158,8 @@ describe('PromptConfigTesting tests', () => {
 			/>,
 		);
 
-		const testNameInput = screen.getByTestId('test-name-input');
-		expect(testNameInput).toBeInTheDocument();
-
 		const runTestButton = screen.getByTestId('run-test-button');
 		expect(runTestButton).toBeInTheDocument();
-
-		fireEvent.change(testNameInput, { target: { value: 'test' } });
 
 		expect(runTestButton).toBeDisabled();
 	});
@@ -238,9 +188,6 @@ describe('PromptConfigTesting tests', () => {
 			/>,
 		);
 
-		const testNameInput = screen.getByTestId('test-name-input');
-		expect(testNameInput).toBeInTheDocument();
-
 		const runTestButton = screen.getByTestId('run-test-button');
 		expect(runTestButton).toBeInTheDocument();
 
@@ -249,7 +196,6 @@ describe('PromptConfigTesting tests', () => {
 		);
 		expect(templateVariableInput).toBeInTheDocument();
 
-		fireEvent.change(testNameInput, { target: { value: 'test' } });
 		fireEvent.change(templateVariableInput, { target: { value: 'test' } });
 
 		await waitFor(() => {
@@ -290,13 +236,8 @@ describe('PromptConfigTesting tests', () => {
 			/>,
 		);
 
-		const testNameInput = screen.getByTestId('test-name-input');
-		expect(testNameInput).toBeInTheDocument();
-
 		const runTestButton = screen.getByTestId('run-test-button');
 		expect(runTestButton).toBeInTheDocument();
-
-		fireEvent.change(testNameInput, { target: { value: 'test' } });
 
 		await waitFor(() => {
 			expect(runTestButton).toBeEnabled();
@@ -304,12 +245,12 @@ describe('PromptConfigTesting tests', () => {
 
 		fireEvent.click(runTestButton);
 
+		expect(resetStateMock).toHaveBeenCalledTimes(1);
 		expect(sendMessagesMock).toHaveBeenCalledTimes(1);
 		expect(sendMessagesMock).toHaveBeenCalledWith({
 			modelParameters: parameters,
 			modelType,
 			modelVendor,
-			name: 'test',
 			promptConfigId: undefined,
 			promptMessages: messages,
 			templateVariables,
@@ -378,7 +319,7 @@ describe('PromptConfigTesting tests', () => {
 			'test-finish-reason-display',
 		);
 		expect(finishReasonDisplay).toBeInTheDocument();
-		const latencyDisplay = screen.getByTestId('test-latency-display');
+		const latencyDisplay = screen.getByTestId('test-duration-display');
 		expect(latencyDisplay).toBeInTheDocument();
 		const requestTokensDisplay = screen.getByTestId(
 			'test-request-tokens-display',

@@ -12,7 +12,7 @@ import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applicat
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
-import { Navigation, TimeUnit } from '@/constants';
+import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { useProject, useProjects, usePromptConfigs } from '@/stores/api-store';
@@ -171,6 +171,7 @@ export default function PromptConfigCreateWizard({
 
 	const handleConfigSave = async () => {
 		setIsLoading(true);
+
 		try {
 			const { id: promptConfigId } = await handleCreatePromptConfig({
 				applicationId,
@@ -183,6 +184,7 @@ export default function PromptConfigCreateWizard({
 				},
 				projectId,
 			});
+			store.resetState();
 			router.replace(
 				setPathParams(Navigation.PromptConfigDetail, {
 					applicationId,
@@ -190,9 +192,6 @@ export default function PromptConfigCreateWizard({
 					promptConfigId,
 				}),
 			);
-			setTimeout(() => {
-				store.resetState();
-			}, TimeUnit.OneSecondInMilliseconds);
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {
@@ -202,86 +201,92 @@ export default function PromptConfigCreateWizard({
 
 	return (
 		<div data-testid="config-create-wizard-page" className="my-8 mx-32">
-			<Navbar
-				project={project!}
-				headerText={`${t('createPromptConfigTitle')} / ${
-					store.configName
-				}`}
-				showSelect={projects.length > 1}
-			/>
-			<div className="bg-base-300 transform transition-transform duration-300 ease-in-out custom-card">
-				{isLoading ? (
-					<div className="loading loading-dots loading-lg" />
-				) : (
-					wizardStageComponentMap[store.wizardStage]
-				)}
-				{store.wizardStage < 2 && (
-					<div className="divider divide-accent" />
-				)}
-				<div className="gap-4 items-center justify-between px-5 modal-action">
-					<button
-						data-testid="config-create-wizard-cancel-button"
-						onClick={() => {
-							router.push(
-								setPathParams(Navigation.ApplicationDetail, {
-									applicationId,
-									projectId,
-								}),
-							);
-						}}
-						className="btn btn-neutral"
-					>
-						{t('cancelButtonText')}
-					</button>
-					<div className="flex justify-between gap-4">
-						{store.wizardStage > 0 && (
-							<button
-								data-testid="config-create-wizard-back-button"
-								onClick={store.setPrevWizardStage}
-								className="btn btn-secondary"
-								disabled={isLoading}
-							>
-								{t('backButtonText')}
-							</button>
-						)}
-						{store.wizardStage >= 1 && (
-							<button
-								data-testid="config-create-wizard-save-button"
-								onClick={() => {
-									void handleConfigSave();
-								}}
-								className="btn btn-primary"
-								disabled={
-									isLoading ||
-									(store.wizardStage === 1 &&
-										!store.messages.length)
-								}
-							>
-								{store.wizardStage === 1
-									? t('skipAndSaveButtonText')
-									: t('saveButtonText')}
-							</button>
-						)}
-						{store.wizardStage < 2 && (
-							<button
-								data-testid="config-create-wizard-continue-button"
-								onClick={store.setNextWizardStage}
-								className="btn btn-primary"
-								disabled={
-									nameIsInvalid ||
-									isLoading ||
-									(store.wizardStage === 0 &&
-										!store.configName.length) ||
-									(store.wizardStage === 1 &&
-										!store.messages.length)
-								}
-							>
-								{t('continueButtonText')}
-							</button>
-						)}
-					</div>
+			{isLoading ? (
+				<div className="flex flex-col justify-center items-center h-full right-0 left-0 top-0 bottom-0 absolute m-auto">
+					<div className="loading loading-spinner loading-lg align-middle" />
 				</div>
-			</div>
+			) : (
+				<>
+					{' '}
+					<Navbar
+						project={project!}
+						headerText={`${t('createPromptConfigTitle')} / ${
+							store.configName
+						}`}
+						showSelect={projects.length > 1}
+					/>
+					<div className="bg-base-300 transform transition-transform duration-300 ease-in-out custom-card">
+						{wizardStageComponentMap[store.wizardStage]}
+						{store.wizardStage < 2 && (
+							<div className="divider divide-accent" />
+						)}
+						<div className="gap-4 items-center justify-between px-5 modal-action">
+							<button
+								data-testid="config-create-wizard-cancel-button"
+								onClick={() => {
+									router.push(
+										setPathParams(
+											Navigation.ApplicationDetail,
+											{
+												applicationId,
+												projectId,
+											},
+										),
+									);
+								}}
+								className="btn btn-neutral"
+							>
+								{t('cancelButtonText')}
+							</button>
+							<div className="flex justify-between gap-4">
+								{store.wizardStage > 0 && (
+									<button
+										data-testid="config-create-wizard-back-button"
+										onClick={store.setPrevWizardStage}
+										className="btn btn-secondary"
+										disabled={isLoading}
+									>
+										{t('backButtonText')}
+									</button>
+								)}
+								{store.wizardStage >= 1 && (
+									<button
+										data-testid="config-create-wizard-save-button"
+										onClick={() => {
+											void handleConfigSave();
+										}}
+										className="btn btn-primary"
+										disabled={
+											store.wizardStage === 1 &&
+											!store.messages.length
+										}
+									>
+										{store.wizardStage === 1
+											? t('skipAndSaveButtonText')
+											: t('saveButtonText')}
+									</button>
+								)}
+								{store.wizardStage < 2 && (
+									<button
+										data-testid="config-create-wizard-continue-button"
+										onClick={store.setNextWizardStage}
+										className="btn btn-primary"
+										disabled={
+											nameIsInvalid ||
+											(store.wizardStage === 0 &&
+												!store.configName.length) ||
+											(store.wizardStage === 1 &&
+												!store.messages.length)
+										}
+									>
+										{t('continueButtonText')}
+									</button>
+								)}
+							</div>
+						</div>
+					</div>
+				</>
+			)}
 			<dialog
 				ref={createProviderKeyDialogRef}
 				className="modal"

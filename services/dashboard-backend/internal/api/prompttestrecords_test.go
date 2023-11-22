@@ -38,7 +38,6 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 	)
 	firstPromptTestRecord, _ := db.GetQueries().
 		CreatePromptTestRecord(context.TODO(), models.CreatePromptTestRecordParams{
-			Name:                  "test 1",
 			PromptRequestRecordID: firstPromptRequestRecord.ID,
 			Response:              "i am a bot and i will take over the world",
 			VariableValues:        []byte(`{"userInput": "bar"}`),
@@ -77,14 +76,13 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 					Time:  time.Now().Add(-9 * time.Second),
 					Valid: true,
 				},
-				StreamResponseLatency: pgtype.Int8{Int64: 1000, Valid: true},
-				PromptConfigID:        testPromptConfig.ID,
-				ErrorLog:              pgtype.Text{String: "", Valid: true},
+				DurationMs:     pgtype.Int4{Int32: 1000, Valid: true},
+				PromptConfigID: testPromptConfig.ID,
+				ErrorLog:       pgtype.Text{String: "", Valid: true},
 			}),
 	)
 	secondPromptTestRecord := exc.MustResult(
 		db.GetQueries().CreatePromptTestRecord(context.TODO(), models.CreatePromptTestRecordParams{
-			Name:                  "test 2",
 			PromptRequestRecordID: secondPromptRequestRecord.ID,
 			Response:              "roses are red, violets are blue, I will become a robot and so will you.",
 			VariableValues:        []byte(`{"userInput": "bar"}`),
@@ -131,12 +129,10 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 
 			recordOne := data[0]
 			assert.Equal(t, recordOne.ID, db.UUIDToString(&firstPromptTestRecord.ID))
-			assert.Equal(t, recordOne.Name, firstPromptTestRecord.Name)
 			assert.Equal(t, recordOne.PromptConfigID, ptr.To(db.UUIDToString(&promptConfig.ID)))
 
 			recordTwo := data[1]
 			assert.Equal(t, recordTwo.ID, db.UUIDToString(&secondPromptTestRecord.ID))
-			assert.Equal(t, recordTwo.Name, secondPromptTestRecord.Name)
 			assert.Empty(t, recordTwo.PromptConfigID)
 		})
 
@@ -190,7 +186,6 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 			assert.NoError(t, deserializationErr)
 
 			assert.Equal(t, data.ID, db.UUIDToString(&firstPromptTestRecord.ID))
-			assert.Equal(t, data.Name, firstPromptTestRecord.Name)
 			assert.Equal(t, data.PromptConfigID, ptr.To(db.UUIDToString(&promptConfig.ID)))
 		})
 

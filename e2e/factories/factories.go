@@ -143,15 +143,15 @@ func CreatePromptRequestRecord(
 	responseTokenCost := exc.MustResult(db.StringToNumeric("0.000036"))
 	promptRequestRecord, promptRequestRecordCreateErr := db.GetQueries().
 		CreatePromptRequestRecord(ctx, models.CreatePromptRequestRecordParams{
-			IsStreamResponse:      true,
-			RequestTokens:         7,
-			ResponseTokens:        18,
-			RequestTokensCost:     *requestTokenCost,
-			ResponseTokensCost:    *responseTokenCost,
-			StartTime:             pgtype.Timestamptz{Time: promptStartTime, Valid: true},
-			FinishTime:            pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
-			StreamResponseLatency: pgtype.Int8{Int64: 0, Valid: true},
-			PromptConfigID:        promptConfigID,
+			IsStreamResponse:   true,
+			RequestTokens:      7,
+			ResponseTokens:     18,
+			RequestTokensCost:  *requestTokenCost,
+			ResponseTokensCost: *responseTokenCost,
+			StartTime:          pgtype.Timestamptz{Time: promptStartTime, Valid: true},
+			FinishTime:         pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
+			DurationMs:         pgtype.Int4{Int32: 0, Valid: true},
+			PromptConfigID:     promptConfigID,
 		})
 	if promptRequestRecordCreateErr != nil {
 		return nil, promptRequestRecordCreateErr

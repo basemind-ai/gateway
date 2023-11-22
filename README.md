@@ -126,15 +126,3 @@ To test the project end-to-end do the following:
 5. Bring up the docker services with `docker compose up --build`.
 6. Once the docker services are up you can test using postman. Load the proto file for the `api-gateway` service in postman,
    and set the metadata header for authorization in the following format - key `authorization`, value `bearer <jwt-token>`.
-
-## Storybook
-
-We use [Storybook](https://storybook.js.org/) to develop frontend components with ease. To start the storybook server,
-cd into the frontend folder and execute the npm script:
-
-```shell
-cd frontend
-pnpm run storybook
-```
-
-The storybook configurations are under `frontend/.storybook` and the stories are under `frontend/stories`.

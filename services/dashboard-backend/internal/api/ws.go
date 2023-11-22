@@ -2,12 +2,15 @@ package api
 
 import (
 	"context"
+	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/dto"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/repositories"
+	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -22,7 +25,8 @@ import (
 )
 
 const (
-	applicationIDSessionKey    = "application"
+	ApplicationIDSessionKey    = "application"
+	ProjectIDSessionKey        = "project"
 	socketDeadline             = time.Minute
 	StatusWSServerError        = 1011
 	StatusWSUnsupportedPayload = 1007
@@ -49,6 +53,38 @@ var upgrader = gws.NewUpgrader(&handler{}, &gws.ServerOption{
 	Recovery:         gws.Recovery,
 })
 
+type RequestIDs struct {
+	ApplicationID pgtype.UUID
+	ProjectID     pgtype.UUID
+}
+
+func ExtractIDS(session gws.SessionStorage) (*RequestIDs, error) {
+	applicationIDValue, exists := session.Load(ApplicationIDSessionKey)
+	if !exists {
+		return nil, errors.New("application id not set in session")
+	}
+
+	projectIDValue, exists := session.Load(ProjectIDSessionKey)
+	if !exists {
+		return nil, errors.New("project id not set in session")
+	}
+
+	applicationID, ok := applicationIDValue.(pgtype.UUID)
+	if !ok {
+		return nil, errors.New("failed to extract application id from session")
+	}
+
+	projectID, ok := projectIDValue.(pgtype.UUID)
+	if !ok {
+		return nil, errors.New("failed to extract project id from session")
+	}
+
+	return &RequestIDs{
+		ApplicationID: applicationID,
+		ProjectID:     projectID,
+	}, nil
+}
+
 // CreatePayloadFromMessage - creates the payload from the message.
 // If the message contains a prompt request record ID, we create a prompt test record.
 func CreatePayloadFromMessage(
@@ -66,7 +102,6 @@ func CreatePayloadFromMessage(
 		requestRecordID := exc.MustResult(db.StringToUUID(*msg.PromptRequestRecordId))
 		promptTestRecord := exc.MustResult(db.GetQueries().
 			CreatePromptTestRecord(ctx, models.CreatePromptTestRecordParams{
-				Name:                  data.Name,
 				PromptRequestRecordID: *requestRecordID,
 				Response:              builder.String(),
 				VariableValues:        serialization.SerializeJSON(data.TemplateVariables),
@@ -152,9 +187,8 @@ func ParseMessageData(
 			applicationID,
 			dto.PromptConfigCreateDTO{
 				Name: fmt.Sprintf(
-					"prompt config for test: %s -%s",
-					data.Name,
-					time.Now().Format(time.RFC3339),
+					"test config - %s - %s",
+					time.Now().Format(time.RFC3339), hex.EncodeToString(cryptoutils.RandomBytes(8)),
 				),
 				ModelParameters:        data.ModelParameters,
 				ModelType:              data.ModelType,
@@ -203,10 +237,14 @@ func (h handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 		}
 
 		// We are retrieving the applicationID from the session storage.
-		value, _ := socket.Session().Load(applicationIDSessionKey)
-		applicationID := value.(pgtype.UUID)
+		requestIDs, extractionErr := ExtractIDS(socket.Session())
+		if extractionErr != nil {
+			log.Error().Err(extractionErr).Msg("failed to extract stored variables from ws session")
+			socket.WriteClose(StatusWSServerError, []byte(extractionErr.Error()))
+			return
+		}
 
-		data, parseErr := ParseMessageData(message, applicationID)
+		data, parseErr := ParseMessageData(message, requestIDs.ApplicationID)
 		if parseErr != nil {
 			log.Error().Err(parseErr).Msg("failed to parse message data")
 			socket.WriteClose(StatusWSUnsupportedPayload, []byte(parseErr.Error()))
@@ -220,7 +258,8 @@ func (h handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 
 		go client.StreamPromptTest(
 			context.Background(),
-			db.UUIDToString(&applicationID),
+			db.UUIDToString(&requestIDs.ProjectID),
+			db.UUIDToString(&requestIDs.ApplicationID),
 			data,
 			responseChannel,
 			errorChannel,
@@ -242,8 +281,12 @@ func promptTestingWebsocketHandler(w http.ResponseWriter, r *http.Request) {
 	// we have to pass the request applicationID via the socket session storage, because the GWS library
 	// does not expose another API for this purpose.
 	// The GWS session storage is concurrency safe, and is unique per socket - so we can be certain
-	// the ID is the same when retrieving it in the OnMessage receiver.
+	// the projectID and applicationID are the same when retrieving it in the OnMessage receiver.
+	projectID := r.Context().Value(middleware.ProjectIDContextKey).(pgtype.UUID)
+	socket.Session().Store(ProjectIDSessionKey, projectID)
+
 	applicationID := r.Context().Value(middleware.ApplicationIDContextKey).(pgtype.UUID)
-	socket.Session().Store(applicationIDSessionKey, applicationID)
+	socket.Session().Store(ApplicationIDSessionKey, applicationID)
+
 	go socket.ReadLoop()
 }

@@ -17,7 +17,6 @@ describe('usePromptTesting tests', () => {
 		modelParameters: {},
 		modelType: OpenAIModelType.Gpt35Turbo,
 		modelVendor: ModelVendor.OpenAI,
-		name: 'test',
 		promptConfigId: undefined,
 		promptMessages: [],
 		templateVariables: {},

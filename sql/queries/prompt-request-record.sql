@@ -9,7 +9,7 @@ INSERT INTO prompt_request_record (
     response_tokens_cost,
     start_time,
     finish_time,
-    stream_response_latency,
+    duration_ms,
     prompt_config_id,
     provider_model_pricing_id,
     error_log
