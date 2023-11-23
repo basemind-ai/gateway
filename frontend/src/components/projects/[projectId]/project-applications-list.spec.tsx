@@ -55,12 +55,14 @@ describe('ApplicationsList', () => {
 			const nameElement = screen.getByText(application.name);
 			expect(nameElement).toBeInTheDocument();
 
-			const configLengthElements = screen.getAllByTestId(
-				'application-prompt-config-count',
-			);
-			expect(configLengthElements[index].innerHTML).toBe(
-				promptConfigLengths[index].toString(),
-			);
+			await waitFor(() => {
+				const configLengthElements = screen.getByTestId(
+					`application-prompt-config-count-${application.id}`,
+				);
+				expect(configLengthElements.innerHTML).toBe(
+					promptConfigLengths[index].toString(),
+				);
+			});
 		}
 	});
 
