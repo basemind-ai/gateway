@@ -28,7 +28,10 @@ const keyReplacerMap: Record<
 	promptConfigId: setPromptConfigId,
 };
 
-export function setRouteParams<U extends string, T extends string = string>(
+export function setRouteParams<
+	U extends string,
+	T extends string | number = number,
+>(
 	url: U,
 	params: Partial<Record<NavigationPathParam, string>>,
 	tab?: T,

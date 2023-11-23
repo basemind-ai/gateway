@@ -188,6 +188,9 @@ export function ApplicationGeneralSettings({
 						className="mt-16 select select-bordered w-full max-w-xs bg-neutral text-base-content font-bold"
 						value={defaultPromptConfig}
 						onChange={handleChange(setDefaultPromptConfig)}
+						disabled={
+							(promptConfigs[applicationId]?.length ?? 0) < 2
+						}
 					>
 						{promptConfigs[applicationId]?.map((promptConfig) => (
 							<option
@@ -195,7 +198,7 @@ export function ApplicationGeneralSettings({
 								className="text-base-content font-bold"
 								value={promptConfig.id}
 							>
-								{promptConfig.name || promptConfig.id}
+								{promptConfig.name}
 							</option>
 						))}
 					</select>

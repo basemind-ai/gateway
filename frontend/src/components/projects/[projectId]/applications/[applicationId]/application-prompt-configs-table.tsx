@@ -74,14 +74,14 @@ export function ApplicationPromptConfigsTable({
 							<td>
 								<div className="pl-3">
 									{isDefault ? (
-										<CheckCircle className="w-3.5 h-3.5 text-secondary" />
+										<CheckCircle className="w-3.5 h-3.5 text-info" />
 									) : null}
 								</div>
 							</td>
 							<td>
 								<button
 									data-testid="application-prompt-configs-table-config-name-button"
-									className="btn-link text-secondary"
+									className="btn-link"
 									onClick={() => {
 										pustToTab({
 											promptConfigId,
@@ -93,13 +93,19 @@ export function ApplicationPromptConfigsTable({
 								</button>
 							</td>
 							<td>
-								{
-									modelVendorToLocaleMap[
-										modelVendor as ModelVendor
-									]
-								}
+								<span className="text-info">
+									{
+										modelVendorToLocaleMap[
+											modelVendor as ModelVendor
+										]
+									}
+								</span>
 							</td>
-							<td>{modelTypeToNameMap[modelType]}</td>
+							<td>
+								<span className="text-info">
+									{modelTypeToNameMap[modelType]}
+								</span>
+							</td>
 							<td>
 								<button
 									data-testid="application-prompt-configs-table-config-id-copy-button"

@@ -115,8 +115,14 @@ export function ApplicationApiKeys({
 				<tbody>
 					{apiKeys.map(({ name, createdAt, id }) => (
 						<tr data-testid="api-key-row" key={id}>
-							<td data-testid="api-key-name">{name}</td>
-							<td>{dayjs(createdAt).format(dateFormat)}</td>
+							<td data-testid="api-key-name">
+								<span className="text-info">{name}</span>
+							</td>
+							<td>
+								<span className="text-info">
+									{dayjs(createdAt).format(dateFormat)}
+								</span>
+							</td>
 							<td>
 								<button
 									data-testid="api-key-delete-btn"
@@ -124,7 +130,7 @@ export function ApplicationApiKeys({
 										openDeleteConfirmationPopup(id, name);
 									}}
 								>
-									<Eraser className="w-3.5 h-3.5 text-accent" />
+									<Eraser className="w-3.5 h-3.5 text-error" />
 								</button>
 							</td>
 						</tr>

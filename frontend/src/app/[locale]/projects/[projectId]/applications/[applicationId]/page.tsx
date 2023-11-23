@@ -21,6 +21,8 @@ enum TAB_NAME {
 	SETTINGS,
 }
 
+export { TAB_NAME as applicationPageTabNames };
+
 export default function Application({
 	params: { projectId, applicationId },
 }: {
@@ -100,6 +102,7 @@ export default function Application({
 				headerText={`${t('application')} / ${application.name}`}
 				showSelect={projects.length > 1}
 			/>
+
 			<div className="mt-3.5 w-full mb-8">
 				<TabNavigation<TAB_NAME>
 					tabs={tabs}

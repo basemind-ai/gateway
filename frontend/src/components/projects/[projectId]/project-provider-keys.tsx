@@ -5,6 +5,7 @@ import { Plus, Trash } from 'react-bootstrap-icons';
 import { handleDeleteProviderKey } from '@/api/provider-keys-api';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
+import { modelVendorToLocaleMap } from '@/constants/models';
 import { ApiError } from '@/errors';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { useShowError } from '@/stores/toast-store';
@@ -106,7 +107,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 							data-testid="provider-keys-table-row"
 						>
 							<td data-testid="key-provider-name">
-								{value.modelVendor}
+								{modelVendorToLocaleMap[value.modelVendor]}
 							</td>
 							<td data-testid="key-created-at">
 								{value.createdAt}

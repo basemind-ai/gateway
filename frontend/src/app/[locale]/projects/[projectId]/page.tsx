@@ -105,6 +105,13 @@ export default function ProjectOverview({
 				headerText={`${t('project')} / ${project.name}`}
 				showSelect={projects.length > 1}
 			/>
+			{project.description && (
+				<div className="pl-20">
+					<span className="text-sm line-clamp-1 hover:line-clamp-none">
+						{project.description}
+					</span>
+				</div>
+			)}
 			<div className="mt-3.5 w-full mb-9">
 				<TabNavigation<TAB_NAME>
 					tabs={tabs}
