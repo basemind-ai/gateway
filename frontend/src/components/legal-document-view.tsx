@@ -20,17 +20,27 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
 				<div className="mx-auto prose prose-sm text-neutral-content">
 					{document.openingParagraphs.map(
 						(openingParagraph, indexOpening) => (
-							<p key={`openingParagraph${indexOpening}`}>
+							<p
+								key={`${openingParagraph.slice(
+									0,
+									10,
+								)}${indexOpening}`}
+							>
 								{openingParagraph}
 							</p>
 						),
 					)}
-					{document.Paragraphs.map((section, index) => (
+					{document.Paragraphs.map((section, sectionIndex) => (
 						<>
-							<h2 key={section.title + index}>{section.title}</h2>
+							<h2 key={section.title + sectionIndex}>
+								{section.title}
+							</h2>
 							{section.content.map((paragraph, indexSection) => (
 								<p
-									key={`${index} section.title ${indexSection}`}
+									key={`${paragraph.slice(
+										0,
+										10,
+									)}${indexSection}${sectionIndex}`}
 								>
 									{paragraph}
 								</p>

@@ -7,7 +7,7 @@ import {
 	LegalDocumentView,
 } from '@/components/legal-document-view';
 
-describe('LegalDoc component tests', () => {
+describe('LegalDocumentView component tests', () => {
 	const mockDoc: LegalDocument = {
 		Paragraphs: [
 			{
