@@ -13,7 +13,7 @@ import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
 import { APIKey } from '@/types';
 
-export function ApiKeys({
+export function ApplicationApiKeys({
 	projectId,
 	applicationId,
 }: {
