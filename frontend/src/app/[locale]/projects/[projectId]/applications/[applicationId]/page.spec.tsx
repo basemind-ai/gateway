@@ -87,7 +87,7 @@ describe('ApplicationPage', () => {
 
 		const tabs = screen.getAllByTestId('tab-navigation-btn');
 		expect(tabs.length).toBe(3);
-		const [, settingsTab, apiKeysTab] = tabs;
+		const [, apiKeysTab, settingsTab] = tabs;
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 		fireEvent.click(settingsTab);
 		const settingsContainer = screen.getByTestId(

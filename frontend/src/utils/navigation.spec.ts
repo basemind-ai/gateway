@@ -3,6 +3,7 @@ import {
 	contextNavigation,
 	setApplicationId,
 	setProjectId,
+	setRouteParams,
 } from '@/utils/navigation';
 
 describe('navigation utils tests', () => {
@@ -40,6 +41,29 @@ describe('navigation utils tests', () => {
 				applicationId,
 			);
 			expect(url).toBe('/projects/:projectId/applications/123');
+		});
+	});
+
+	describe('setRouteParams', () => {
+		it('should replace all path parameters in the URL with the corresponding values in the params object', () => {
+			const url = '/projects/:projectId/applications/:applicationId';
+			const params = {
+				applicationId: '456',
+				projectId: '123',
+			};
+			const result = setRouteParams(url, params);
+			expect(result).toBe('/projects/123/applications/456');
+		});
+
+		it('should append the tab parameter to the URL if provided', () => {
+			const url = '/projects/:projectId/applications/:applicationId';
+			const params = {
+				applicationId: '456',
+				projectId: '123',
+			};
+			const tab = 'details';
+			const result = setRouteParams(url, params, tab);
+			expect(result).toBe('/projects/123/applications/456#tab-details');
 		});
 	});
 });

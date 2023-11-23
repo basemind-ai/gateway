@@ -1,15 +1,15 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
-import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-analytics-page';
-import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-deletion';
-import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-info';
-import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-settings';
+import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-analytics-page';
+import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
+import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
+import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
@@ -19,8 +19,11 @@ import { useShowError } from '@/stores/toast-store';
 
 enum TAB_NAME {
 	OVERVIEW,
+	TESTING,
 	SETTINGS,
 }
+
+export { TAB_NAME as PromptConfigPageTab };
 
 export default function PromptConfiguration({
 	params: { projectId, applicationId, promptConfigId },
@@ -86,7 +89,7 @@ export default function PromptConfiguration({
 	];
 
 	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: () => (
+		[TAB_NAME.OVERVIEW]: memo(() => (
 			<>
 				<PromptConfigAnalyticsPage
 					projectId={projectId}
@@ -100,8 +103,9 @@ export default function PromptConfiguration({
 					promptConfig={promptConfig}
 				/>
 			</>
-		),
-		[TAB_NAME.SETTINGS]: () => (
+		)),
+		[TAB_NAME.TESTING]: () => null,
+		[TAB_NAME.SETTINGS]: memo(() => (
 			<>
 				<PromptConfigGeneralSettings
 					projectId={projectId}
@@ -115,7 +119,7 @@ export default function PromptConfiguration({
 					promptConfigId={promptConfigId}
 				/>
 			</>
-		),
+		)),
 	};
 
 	const TabComponent = tabComponents[selectedTab];

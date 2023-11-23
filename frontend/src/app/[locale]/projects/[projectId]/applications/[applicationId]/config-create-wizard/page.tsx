@@ -23,7 +23,7 @@ import {
 } from '@/stores/prompt-config-wizard-store';
 import { useShowError } from '@/stores/toast-store';
 import { ProviderKey } from '@/types';
-import { setPathParams } from '@/utils/navigation';
+import { setRouteParams } from '@/utils/navigation';
 
 export default function PromptConfigCreateWizard({
 	params: { applicationId, projectId },
@@ -186,7 +186,7 @@ export default function PromptConfigCreateWizard({
 			});
 			store.resetState();
 			router.replace(
-				setPathParams(Navigation.PromptConfigDetail, {
+				setRouteParams(Navigation.PromptConfigDetail, {
 					applicationId,
 					projectId,
 					promptConfigId,
@@ -207,7 +207,6 @@ export default function PromptConfigCreateWizard({
 				</div>
 			) : (
 				<>
-					{' '}
 					<Navbar
 						project={project!}
 						headerText={`${t('createPromptConfigTitle')} / ${
@@ -225,7 +224,7 @@ export default function PromptConfigCreateWizard({
 								data-testid="config-create-wizard-cancel-button"
 								onClick={() => {
 									router.push(
-										setPathParams(
+										setRouteParams(
 											Navigation.ApplicationDetail,
 											{
 												applicationId,

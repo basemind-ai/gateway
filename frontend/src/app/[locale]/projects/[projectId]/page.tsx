@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
@@ -67,33 +67,33 @@ export default function ProjectOverview({
 	}
 
 	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: () => (
+		[TAB_NAME.OVERVIEW]: memo(() => (
 			<div data-testid="project-overview-tab">
 				<ProjectAnalytics projectId={projectId} />
 				<ProjectApplicationsList projectId={projectId} />
 			</div>
-		),
-		[TAB_NAME.MEMBERS]: () => (
+		)),
+		[TAB_NAME.MEMBERS]: memo(() => (
 			<div data-testid="project-members-tab">
 				<InviteProjectMembers projectId={projectId} />
 				<div className="mt-10">
 					<ProjectMembers projectId={projectId} />
 				</div>
 			</div>
-		),
-		[TAB_NAME.PROVIDER_KEYS]: () => (
+		)),
+		[TAB_NAME.PROVIDER_KEYS]: memo(() => (
 			<div data-testid="project-provider-keys-tab">
 				<ProjectProviderKeys projectId={projectId} />
 			</div>
-		),
-		[TAB_NAME.SETTINGS]: () => (
+		)),
+		[TAB_NAME.SETTINGS]: memo(() => (
 			<div data-testid="project-settings-tab">
 				<ProjectGeneralSettings projectId={projectId} />
 				<div className="mt-10">
 					<ProjectDeletion projectId={projectId} />
 				</div>
 			</div>
-		),
+		)),
 	};
 
 	const TabComponent = tabComponents[selectedTab];
