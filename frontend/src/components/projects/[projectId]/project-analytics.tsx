@@ -5,8 +5,8 @@ import { DateValueType } from 'react-tailwindcss-datepicker';
 import useSWR from 'swr';
 
 import { handleProjectAnalytics } from '@/api';
-import { DataCard } from '@/components/dashboard/data-card';
-import { DatePicker } from '@/components/dashboard/date-picker';
+import { DataCard } from '@/components/data-card';
+import { DatePicker } from '@/components/date-picker';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';

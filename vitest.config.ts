@@ -7,6 +7,7 @@ export default defineConfig({
 				...(configDefaults.coverage.exclude ?? []),
 				'gen/**/*.*',
 				'**/tests/**/*.*',
+				'**/*.spec.*',
 			],
 			reporter: ['text', 'cobertura'],
 		},

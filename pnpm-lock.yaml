@@ -161,14 +161,14 @@ importers:
                 specifier: 14.0.3
                 version: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
             next-intl:
-                specifier: ^3.1.2
-                version: 3.1.2(next@14.0.3)(react@18.2.0)
+                specifier: ^3.1.3
+                version: 3.1.3(next@14.0.3)(react@18.2.0)
             next-translate-plugin:
                 specifier: ^2.6.2
                 version: 2.6.2(next-translate@2.6.2)
             preline:
-                specifier: ^2.0.0
-                version: 2.0.0
+                specifier: ^2.0.1
+                version: 2.0.1
             react:
                 specifier: 18.2.0
                 version: 18.2.0
@@ -183,7 +183,7 @@ importers:
                 version: 4.12.0(react@18.2.0)
             react-intl:
                 specifier: ^6.5.5
-                version: 6.5.5(react@18.2.0)
+                version: 6.5.5(react@18.2.0)(typescript@5.3.2)
             react-syntax-highlighter:
                 specifier: ^15.5.0
                 version: 15.5.0(react@18.2.0)
@@ -202,7 +202,7 @@ importers:
         devDependencies:
             '@svgr/webpack':
                 specifier: ^8.1.0
-                version: 8.1.0
+                version: 8.1.0(typescript@5.3.2)
             '@tailwindcss/forms':
                 specifier: ^0.5.7
                 version: 0.5.7(tailwindcss@3.3.5)
@@ -214,7 +214,7 @@ importers:
                 version: 9.3.3
             '@testing-library/jest-dom':
                 specifier: ^6.1.4
-                version: 6.1.4
+                version: 6.1.4(vitest@0.34.6)
             '@testing-library/react':
                 specifier: ^14.1.2
                 version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
@@ -232,7 +232,7 @@ importers:
                 version: 15.5.10
             '@types/testing-library__jest-dom':
                 specifier: ^6.0.0
-                version: 6.0.0
+                version: 6.0.0(vitest@0.34.6)
             '@vitejs/plugin-react':
                 specifier: ^4.2.0
                 version: 4.2.0(vite@5.0.2)
@@ -240,8 +240,8 @@ importers:
                 specifier: 10.4.16
                 version: 10.4.16(postcss@8.4.31)
             daisyui:
-                specifier: ^4.4.2
-                version: 4.4.2(postcss@8.4.31)
+                specifier: ^4.4.4
+                version: 4.4.4(postcss@8.4.31)
             jsdom:
                 specifier: ^22.1.0
                 version: 22.1.0
@@ -256,7 +256,7 @@ importers:
                 version: 1.69.5
             tailwindcss:
                 specifier: 3.3.5
-                version: 3.3.5
+                version: 3.3.5(ts-node@10.9.1)
             tailwindcss-elevation:
                 specifier: ^2.0.0
                 version: 2.0.0(tailwindcss@3.3.5)
@@ -300,8 +300,8 @@ importers:
                 specifier: ^2.0.0
                 version: 2.0.0
             openai:
-                specifier: ^4.19.1
-                version: 4.19.1
+                specifier: ^4.20.0
+                version: 4.20.0
             pino:
                 specifier: ^8.16.2
                 version: 8.16.2
@@ -3336,7 +3336,7 @@ packages:
             tslib: 2.6.2
         dev: false
 
-    /@formatjs/intl@2.9.9:
+    /@formatjs/intl@2.9.9(typescript@5.3.2):
         resolution:
             {
                 integrity: sha512-JI3CNgL2Zdg5lv9ncT2sYKqbAj2RGrCbdzaCckIxMPxn4QuHuOVvYUGmBAXVusBmfG/0sxLmMrnwnBioz+QKdA==,
@@ -3354,6 +3354,7 @@ packages:
             '@formatjs/intl-listformat': 7.5.3
             intl-messageformat: 10.5.8
             tslib: 2.6.2
+            typescript: 5.3.2
         dev: false
 
     /@grpc/grpc-js@1.9.11:
@@ -5466,7 +5467,7 @@ packages:
             '@svgr/babel-plugin-transform-svg-component': 8.0.0(@babel/core@7.23.3)
         dev: true
 
-    /@svgr/core@8.1.0:
+    /@svgr/core@8.1.0(typescript@5.3.2):
         resolution:
             {
                 integrity: sha512-8QqtOQT5ACVlmsvKOJNEaWmRPmcojMOzCz4Hs2BGG/toAp/K38LcsMRyLp349glq5AzJbCEeimEoxaX6v/fLrA==,
@@ -5476,7 +5477,7 @@ packages:
             '@babel/core': 7.23.3
             '@svgr/babel-preset': 8.1.0(@babel/core@7.23.3)
             camelcase: 6.3.0
-            cosmiconfig: 8.3.6
+            cosmiconfig: 8.3.6(typescript@5.3.2)
             snake-case: 3.0.4
         transitivePeerDependencies:
             - supports-color
@@ -5505,14 +5506,14 @@ packages:
         dependencies:
             '@babel/core': 7.23.3
             '@svgr/babel-preset': 8.1.0(@babel/core@7.23.3)
-            '@svgr/core': 8.1.0
+            '@svgr/core': 8.1.0(typescript@5.3.2)
             '@svgr/hast-util-to-babel-ast': 8.0.0
             svg-parser: 2.0.4
         transitivePeerDependencies:
             - supports-color
         dev: true
 
-    /@svgr/plugin-svgo@8.1.0(@svgr/core@8.1.0):
+    /@svgr/plugin-svgo@8.1.0(@svgr/core@8.1.0)(typescript@5.3.2):
         resolution:
             {
                 integrity: sha512-Ywtl837OGO9pTLIN/onoWLmDQ4zFUycI1g76vuKGEz6evR/ZTJlJuz3G/fIkb6OVBJ2g0o6CGJzaEjfmEo3AHA==,
@@ -5521,15 +5522,15 @@ packages:
         peerDependencies:
             '@svgr/core': '*'
         dependencies:
-            '@svgr/core': 8.1.0
-            cosmiconfig: 8.3.6
+            '@svgr/core': 8.1.0(typescript@5.3.2)
+            cosmiconfig: 8.3.6(typescript@5.3.2)
             deepmerge: 4.3.1
             svgo: 3.0.4
         transitivePeerDependencies:
             - typescript
         dev: true
 
-    /@svgr/webpack@8.1.0:
+    /@svgr/webpack@8.1.0(typescript@5.3.2):
         resolution:
             {
                 integrity: sha512-LnhVjMWyMQV9ZmeEy26maJk+8HTIbd59cH4F2MJ439k9DqejRisfFNGAPvRYlKETuh9LrImlS8aKsBgKjMA8WA==,
@@ -5541,9 +5542,9 @@ packages:
             '@babel/preset-env': 7.23.3(@babel/core@7.23.3)
             '@babel/preset-react': 7.23.3(@babel/core@7.23.3)
             '@babel/preset-typescript': 7.23.3(@babel/core@7.23.3)
-            '@svgr/core': 8.1.0
+            '@svgr/core': 8.1.0(typescript@5.3.2)
             '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0)
-            '@svgr/plugin-svgo': 8.1.0(@svgr/core@8.1.0)
+            '@svgr/plugin-svgo': 8.1.0(@svgr/core@8.1.0)(typescript@5.3.2)
         transitivePeerDependencies:
             - supports-color
             - typescript
@@ -5567,7 +5568,7 @@ packages:
             tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
         dependencies:
             mini-svg-data-uri: 1.4.4
-            tailwindcss: 3.3.5
+            tailwindcss: 3.3.5(ts-node@10.9.1)
         dev: true
 
     /@tailwindcss/typography@0.5.10(tailwindcss@3.3.5):
@@ -5582,7 +5583,7 @@ packages:
             lodash.isplainobject: 4.0.6
             lodash.merge: 4.6.2
             postcss-selector-parser: 6.0.10
-            tailwindcss: 3.3.5
+            tailwindcss: 3.3.5(ts-node@10.9.1)
         dev: true
 
     /@testing-library/dom@9.3.3:
@@ -5602,7 +5603,7 @@ packages:
             pretty-format: 27.5.1
         dev: true
 
-    /@testing-library/jest-dom@6.1.4:
+    /@testing-library/jest-dom@6.1.4(vitest@0.34.6):
         resolution:
             {
                 integrity: sha512-wpoYrCYwSZ5/AxcrjLxJmCU6I5QAJXslEeSiMQqaWmP2Kzpd1LvF/qxmAIW2qposULGWq2gw30GgVNFLSc2Jnw==,
@@ -5631,6 +5632,7 @@ packages:
             dom-accessibility-api: 0.5.16
             lodash: 4.17.21
             redent: 3.0.0
+            vitest: 0.34.6
         dev: true
 
     /@testing-library/react@14.1.2(react-dom@18.2.0)(react@18.2.0):
@@ -5984,14 +5986,14 @@ packages:
             }
         dev: true
 
-    /@types/testing-library__jest-dom@6.0.0:
+    /@types/testing-library__jest-dom@6.0.0(vitest@0.34.6):
         resolution:
             {
                 integrity: sha512-bnreXCgus6IIadyHNlN/oI5FfX4dWgvGhOPvpr7zzCYDGAPIfvyIoAozMBINmhmsVuqV0cncejF2y5KC7ScqOg==,
             }
         deprecated: This is a stub types definition. @testing-library/jest-dom provides its own type definitions, so you do not need this installed.
         dependencies:
-            '@testing-library/jest-dom': 6.1.4
+            '@testing-library/jest-dom': 6.1.4(vitest@0.34.6)
         transitivePeerDependencies:
             - '@jest/globals'
             - '@types/jest'
@@ -6313,7 +6315,7 @@ packages:
             '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.3)
             '@types/babel__core': 7.20.5
             react-refresh: 0.14.0
-            vite: 5.0.2(sass@1.69.5)
+            vite: 5.0.2(@types/node@20.9.4)(sass@1.69.5)
         transitivePeerDependencies:
             - supports-color
         dev: true
@@ -6336,7 +6338,7 @@ packages:
             picocolors: 1.0.0
             std-env: 3.5.0
             test-exclude: 6.0.0
-            v8-to-istanbul: 9.1.3
+            v8-to-istanbul: 9.2.0
             vitest: 0.34.6
         transitivePeerDependencies:
             - supports-color
@@ -7194,7 +7196,7 @@ packages:
         hasBin: true
         dependencies:
             caniuse-lite: 1.0.30001564
-            electron-to-chromium: 1.4.590
+            electron-to-chromium: 1.4.592
             node-releases: 2.0.13
             update-browserslist-db: 1.0.13(browserslist@4.22.1)
 
@@ -7669,24 +7671,6 @@ packages:
             typescript: 5.3.2
         dev: true
 
-    /cosmiconfig@8.3.6:
-        resolution:
-            {
-                integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==,
-            }
-        engines: { node: '>=14' }
-        peerDependencies:
-            typescript: '>=4.9.5'
-        peerDependenciesMeta:
-            typescript:
-                optional: true
-        dependencies:
-            import-fresh: 3.3.0
-            js-yaml: 4.1.0
-            parse-json: 5.2.0
-            path-type: 4.0.0
-        dev: true
-
     /cosmiconfig@8.3.6(typescript@5.3.2):
         resolution:
             {
@@ -7871,10 +7855,10 @@ packages:
         engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
         dev: true
 
-    /daisyui@4.4.2(postcss@8.4.31):
+    /daisyui@4.4.4(postcss@8.4.31):
         resolution:
             {
-                integrity: sha512-Ecg5loskj9dkaAnTSK5Xn5jb24TqDlQIg/NJ025jCkw2S/zw12btjvLgY2Sv5Ws1DFVoVBRs3XYXyojZG7zVnw==,
+                integrity: sha512-ysp66uFOJNhkmaFYvifSQi+R+QSuSR6dX2Wts0GxT4Xzn6+PqpHwn2ka3SNK6HCmtjIPW3E3eIILycYY449bBw==,
             }
         engines: { node: '>=16.9.0' }
         dependencies:
@@ -8316,10 +8300,10 @@ packages:
         engines: { node: '>=4' }
         dev: false
 
-    /electron-to-chromium@1.4.590:
+    /electron-to-chromium@1.4.592:
         resolution:
             {
-                integrity: sha512-hohItzsQcG7/FBsviCYMtQwUSWvVF7NVqPOnJCErWsAshsP/CR2LAXdmq276RbESNdhxiAq5/vRo1g2pxGXVww==,
+                integrity: sha512-D3NOkROIlF+d5ixnz7pAf3Lu/AuWpd6AYgI9O67GQXMXTcCP1gJQRotOq35eQy5Sb4hez33XH1YdTtILA7Udww==,
             }
 
     /emoji-regex@8.0.0:
@@ -11530,10 +11514,10 @@ packages:
             '@segment/isodate': 1.0.3
         dev: false
 
-    /next-intl@3.1.2(next@14.0.3)(react@18.2.0):
+    /next-intl@3.1.3(next@14.0.3)(react@18.2.0):
         resolution:
             {
-                integrity: sha512-uVCklsWiYVHklIjhAn152cdmNW+nLll0nhbR4or47sj6t8I2Kd2JOsgoNuJi3XuTOoitdIdNFE+Vwyh56VzGOw==,
+                integrity: sha512-pjR6px7qj5i7gNgFMFlk6nX8Y0A2xeoYUYXEMrvg9dg3peRuZYGpcf6r46+paEd2JvvIZSb7WzlUH98nu5S5HQ==,
             }
         peerDependencies:
             next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
@@ -11543,7 +11527,7 @@ packages:
             negotiator: 0.6.3
             next: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
             react: 18.2.0
-            use-intl: 3.1.2(react@18.2.0)
+            use-intl: 3.1.3(react@18.2.0)
         dev: false
 
     /next-translate-plugin@2.6.2(next-translate@2.6.2):
@@ -11964,10 +11948,10 @@ packages:
             is-wsl: 2.2.0
         dev: true
 
-    /openai@4.19.1:
+    /openai@4.20.0:
         resolution:
             {
-                integrity: sha512-9TddzuZBn2xxhghGGTHLZ4EeNBGTLs3xVzh266NiSJvtUsCsZQ5yVV6H5NhnhyAkKK8uUiZOUUlUAk3HdV+4xg==,
+                integrity: sha512-VbAYerNZFfIIeESS+OL9vgDkK8Mnri55n+jN0UN/HZeuM0ghGh6nDN6UGRZxslNgyJ7XmY/Ca9DO4YYyvrszGA==,
             }
         hasBin: true
         dependencies:
@@ -12319,7 +12303,7 @@ packages:
             postcss: 8.4.31
         dev: true
 
-    /postcss-load-config@4.0.2(postcss@8.4.31):
+    /postcss-load-config@4.0.2(postcss@8.4.31)(ts-node@10.9.1):
         resolution:
             {
                 integrity: sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==,
@@ -12336,6 +12320,7 @@ packages:
         dependencies:
             lilconfig: 3.0.0
             postcss: 8.4.31
+            ts-node: 10.9.1(@types/node@20.9.4)(typescript@5.3.2)
             yaml: 2.3.4
         dev: true
 
@@ -12392,10 +12377,10 @@ packages:
             picocolors: 1.0.0
             source-map-js: 1.0.2
 
-    /preline@2.0.0:
+    /preline@2.0.1:
         resolution:
             {
-                integrity: sha512-zVStaGooj2iruZgklAOTBvkJK1MR8P7/zn14EwFk+icpbaRxQBKsFMB9Qrc+3+CcaJZS6sFYvdvUvTtu1MWQuQ==,
+                integrity: sha512-czXGDJn0VTRjDTH0Iit6KxWY+wdnMIsavN5aHw9LnowePgfA3e9u0HHYY/4wDSAF8iPPLEG5SVfcy3fJLClR/g==,
             }
         dependencies:
             '@popperjs/core': 2.11.8
@@ -12647,7 +12632,7 @@ packages:
             react: 18.2.0
         dev: false
 
-    /react-intl@6.5.5(react@18.2.0):
+    /react-intl@6.5.5(react@18.2.0)(typescript@5.3.2):
         resolution:
             {
                 integrity: sha512-cI5UKvBh4tc1zxLIziHBYGMX3dhYWDEFlvUDVN6NfT2i96zTXz/zH2AmM8+2waqgOhwkFUzd+7kK1G9q7fiC2g==,
@@ -12661,7 +12646,7 @@ packages:
         dependencies:
             '@formatjs/ecma402-abstract': 1.18.0
             '@formatjs/icu-messageformat-parser': 2.7.3
-            '@formatjs/intl': 2.9.9
+            '@formatjs/intl': 2.9.9(typescript@5.3.2)
             '@formatjs/intl-displaynames': 6.6.4
             '@formatjs/intl-listformat': 7.5.3
             '@types/hoist-non-react-statics': 3.3.5
@@ -12670,6 +12655,7 @@ packages:
             intl-messageformat: 10.5.8
             react: 18.2.0
             tslib: 2.6.2
+            typescript: 5.3.2
         dev: false
 
     /react-is@16.13.1:
@@ -13782,10 +13768,10 @@ packages:
             tailwindcss: ^3.0.1
         dependencies:
             hex-rgb: 4.3.0
-            tailwindcss: 3.3.5
+            tailwindcss: 3.3.5(ts-node@10.9.1)
         dev: true
 
-    /tailwindcss@3.3.5:
+    /tailwindcss@3.3.5(ts-node@10.9.1):
         resolution:
             {
                 integrity: sha512-5SEZU4J7pxZgSkv7FP1zY8i2TIAOooNZ1e/OGtxIEv6GltpoiXUqWvLy89+a10qYTB1N5Ifkuw9lqQkN9sscvA==,
@@ -13810,7 +13796,7 @@ packages:
             postcss: 8.4.31
             postcss-import: 15.1.0(postcss@8.4.31)
             postcss-js: 4.0.1(postcss@8.4.31)
-            postcss-load-config: 4.0.2(postcss@8.4.31)
+            postcss-load-config: 4.0.2(postcss@8.4.31)(ts-node@10.9.1)
             postcss-nested: 6.0.1(postcss@8.4.31)
             postcss-selector-parser: 6.0.13
             resolve: 1.22.8
@@ -14482,10 +14468,10 @@ packages:
             requires-port: 1.0.0
         dev: true
 
-    /use-intl@3.1.2(react@18.2.0):
+    /use-intl@3.1.3(react@18.2.0):
         resolution:
             {
-                integrity: sha512-kUmAiYi/ZB2jk/CeRY/IVzp+DRzBkLk2SmeN3DqMf2N9h/oRTm6qlrYzlOCYWdYPpPOJ7rUM7JERiaWox9mIIQ==,
+                integrity: sha512-rYP1O+RiVef8/iMdZxYp4KIuPszzFQQMzp1y0pMm1VBRdrwWw9YA5j2bEIbjxRk6DaVGW+cpW9mdPe5X2snNvg==,
             }
         peerDependencies:
             react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -14520,10 +14506,10 @@ packages:
             }
         dev: true
 
-    /v8-to-istanbul@9.1.3:
+    /v8-to-istanbul@9.2.0:
         resolution:
             {
-                integrity: sha512-9lDD+EVI2fjFsMWXc6dy5JJzBsVTcQ2fVkfBvncZ6xJWG9wtBhOldG+mHkSL0+V1K/xgZz0JDO5UT5hFwHUghg==,
+                integrity: sha512-/EH/sDgxU2eGxajKdwLCDmQ4FWq+kpi3uCmBGpw1xJtnAxEjlD8j8PEiGWpCIMIs3ciNAgH0d3TTJiUkYzyZjA==,
             }
         engines: { node: '>=10.12.0' }
         dependencies:
@@ -14577,7 +14563,7 @@ packages:
         dependencies:
             magic-string: 0.30.5
             svgo: 2.8.0
-            vite: 5.0.2(sass@1.69.5)
+            vite: 5.0.2(@types/node@20.9.4)(sass@1.69.5)
             xml2js: 0.6.2
         dev: true
 
@@ -14632,45 +14618,6 @@ packages:
                 optional: true
         dependencies:
             '@types/node': 20.9.4
-            esbuild: 0.19.7
-            postcss: 8.4.31
-            rollup: 4.5.1
-            sass: 1.69.5
-        optionalDependencies:
-            fsevents: 2.3.3
-        dev: true
-
-    /vite@5.0.2(sass@1.69.5):
-        resolution:
-            {
-                integrity: sha512-6CCq1CAJCNM1ya2ZZA7+jS2KgnhbzvxakmlIjN24cF/PXhRMzpM/z8QgsVJA/Dm5fWUWnVEsmtBoMhmerPxT0g==,
-            }
-        engines: { node: ^18.0.0 || >=20.0.0 }
-        hasBin: true
-        peerDependencies:
-            '@types/node': ^18.0.0 || >=20.0.0
-            less: '*'
-            lightningcss: ^1.21.0
-            sass: '*'
-            stylus: '*'
-            sugarss: '*'
-            terser: ^5.4.0
-        peerDependenciesMeta:
-            '@types/node':
-                optional: true
-            less:
-                optional: true
-            lightningcss:
-                optional: true
-            sass:
-                optional: true
-            stylus:
-                optional: true
-            sugarss:
-                optional: true
-            terser:
-                optional: true
-        dependencies:
             esbuild: 0.19.7
             postcss: 8.4.31
             rollup: 4.5.1

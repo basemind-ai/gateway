@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 
 import { handleDeleteUserAccount } from '@/api';
-import { DashboardCard } from '@/components/dashboard/dashboard-card';
+import { DashboardCard } from '@/components/dashboard-card';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useSetUser } from '@/stores/api-store';

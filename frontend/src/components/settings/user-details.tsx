@@ -1,7 +1,7 @@
 import { UserInfo } from '@firebase/auth';
 import { useTranslations } from 'next-intl';
 
-import { DashboardCard } from '@/components/dashboard/dashboard-card';
+import { DashboardCard } from '@/components/dashboard-card';
 import { UserInfoRow } from '@/components/settings/user-info-row';
 
 export function UserDetails({ user }: { user: UserInfo | null }) {

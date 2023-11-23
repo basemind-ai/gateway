@@ -8,8 +8,8 @@ import {
 	Speedometer2,
 } from 'react-bootstrap-icons';
 
-import { Badge } from '@/components/navrail/badge';
-import { LinkMenu } from '@/components/navrail/link-menu';
+import { NavrailBadge } from '@/components/navrail/navrail-badge';
+import { NavrailLinkMenu } from '@/components/navrail/navrail-link-menu';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { useApplications, useSelectedProject } from '@/stores/api-store';
 import { contextNavigation, setApplicationId } from '@/utils/navigation';
@@ -58,13 +58,13 @@ export function NavRailList() {
 
 	return (
 		<div className="mt-10 ml-2 flex flex-col " data-testid="nav-rail-list">
-			<LinkMenu
+			<NavrailLinkMenu
 				href={navigation.ProjectDetail}
 				text={t('overview')}
 				icon={<HouseDoor className={ICON_CLASSES} />}
 				isCurrent={navigation.ProjectDetail === pathname}
 			/>
-			<LinkMenu
+			<NavrailLinkMenu
 				isDisabled={true}
 				text={t('application')}
 				icon={<Boxes className={ICON_CLASSES} />}
@@ -75,7 +75,7 @@ export function NavRailList() {
 						application.id,
 					);
 					return (
-						<LinkMenu
+						<NavrailLinkMenu
 							key={applicationUrl}
 							href={applicationUrl}
 							text={application.name}
@@ -84,25 +84,25 @@ export function NavRailList() {
 					);
 				})}
 				<NewApplication projectId={currentProject?.id} />
-			</LinkMenu>
-			<LinkMenu
+			</NavrailLinkMenu>
+			<NavrailLinkMenu
 				text={t('persistence')}
 				icon={<HddStack className={ICON_CLASSES} />}
 				isDisabled={true}
 				badge={
-					<Badge
+					<NavrailBadge
 						text="Soon"
 						fillColor="bg-secondary"
 						textColor="text-secondary-content"
 					/>
 				}
 			/>
-			<LinkMenu
+			<NavrailLinkMenu
 				text={t('abTesting')}
 				icon={<Speedometer2 className={ICON_CLASSES} />}
 				isDisabled={true}
 				badge={
-					<Badge
+					<NavrailBadge
 						text="Soon"
 						fillColor="bg-secondary"
 						textColor="text-secondary-content"

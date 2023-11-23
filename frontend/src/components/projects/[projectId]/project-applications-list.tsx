@@ -1,12 +1,11 @@
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
-import { PencilFill, Plus } from 'react-bootstrap-icons';
+import { Plus } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrieveApplications, handleRetrievePromptConfigs } from '@/api';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
-import { Navigation } from '@/constants';
+import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';
 import { ApiError } from '@/errors';
 import {
 	useApplications,
@@ -15,7 +14,6 @@ import {
 	useSetPromptConfigs,
 } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
-import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 	const t = useTranslations('projectOverview');
@@ -67,73 +65,23 @@ export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 		dialogRef.current?.close();
 	};
 
-	function renderTable() {
-		if (isLoading && !applications?.length) {
-			return (
-				<div className="w-full flex mb-8">
-					<span className="loading loading-bars mx-auto" />
-				</div>
-			);
-		}
-		if (!applications?.length) {
-			return null;
-		}
-
-		return (
-			<table className="custom-table mb-16">
-				<thead>
-					<tr>
-						<th>{t('name')}</th>
-						<th>{t('configs')}</th>
-						<th>{t('edit')}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{applications.map(({ name, id }) => {
-						const applicationUrl = setApplicationId(
-							setProjectId(
-								Navigation.ApplicationDetail,
-								projectId,
-							),
-							id,
-						);
-						return (
-							<tr key={id}>
-								<td>
-									<Link
-										data-testid="application-name-anchor"
-										href={applicationUrl}
-									>
-										{name}
-									</Link>
-								</td>
-								<td data-testid="application-prompt-config-count">
-									{promptConfigs[id]?.length}
-								</td>
-								<td className="flex justify-center">
-									<Link
-										data-testid="application-edit-anchor"
-										className="block"
-										href={applicationUrl}
-									>
-										<PencilFill className="w-3.5 h-3.5 text-secondary" />
-									</Link>
-								</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-		);
-	}
-
 	return (
 		<div data-testid="project-application-list-container" className="mt-9">
 			<h2 className="font-semibold text-white text-xl">
 				{t('applications')}
 			</h2>
 			<div className="custom-card flex flex-col">
-				{renderTable()}
+				{applications?.length ? (
+					<ProjectApplicationsListTable
+						projectId={projectId}
+						applications={applications}
+						promptConfigs={promptConfigs}
+					/>
+				) : isLoading ? (
+					<div className="w-full flex mb-8">
+						<span className="loading loading-bars mx-auto" />
+					</div>
+				) : null}
 				<button
 					data-testid="new-application-btn"
 					onClick={openAppCreateFlow}

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import useSWR from 'swr';
 
 import { handleCreateSupportTicket, handleRetrieveProjects } from '@/api';
-import { DashboardCard } from '@/components/dashboard/dashboard-card';
+import { DashboardCard } from '@/components/dashboard-card';
 import { Dropdown } from '@/components/dropdown';
 import { SupportTopic } from '@/constants/forms';
 import { ApiError } from '@/errors';

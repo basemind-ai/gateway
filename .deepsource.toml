@@ -13,13 +13,14 @@ exclude_patterns = [
 ]
 
 test_patterns = [
+    "**/*.spec.*",
     "**/*_test.go",
     "**/__mocks__/**",
     "**/main.go",
     "**/mocks.*",
     "**/mocks/**",
-    "**/tests/**",
     "**/test/**",
+    "**/tests/**",
     "**/testutils/*.go",
     "**/vitest.*",
     "vitest.*",
