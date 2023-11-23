@@ -7,7 +7,7 @@ import {
 import { render, renderHook, screen } from 'tests/test-utils';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-settings';
+import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
 import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,

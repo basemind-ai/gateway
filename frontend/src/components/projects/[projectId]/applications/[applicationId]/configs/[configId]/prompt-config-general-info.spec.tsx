@@ -5,7 +5,7 @@ import { render, renderHook, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-info';
+import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
 import { ApiError } from '@/errors';
 import {
 	usePromptConfig,
@@ -91,7 +91,7 @@ describe('PromptGeneralInfo', () => {
 		expect(clonedPromptConfigInStore).toBe(clonedPromptConfig);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${application.id}/prompt-configs/${clonedPromptConfig.id}`,
+			`/en/projects/${projectId}/applications/${application.id}/configs/${clonedPromptConfig.id}`,
 		);
 	});
 

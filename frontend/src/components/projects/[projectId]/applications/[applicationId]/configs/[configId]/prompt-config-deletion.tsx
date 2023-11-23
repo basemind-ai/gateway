@@ -9,7 +9,7 @@ import { ApiError } from '@/errors';
 import { useDeletePromptConfig, usePromptConfig } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
-import { setPathParams } from '@/utils/navigation';
+import { setRouteParams } from '@/utils/navigation';
 
 export function PromptConfigDeletion<T extends ModelVendor>({
 	projectId,
@@ -54,7 +54,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 			});
 			deletePromptConfig(applicationId, promptConfigId);
 			router.replace(
-				setPathParams(Navigation.ApplicationDetail, {
+				setRouteParams(Navigation.ApplicationDetail, {
 					applicationId,
 					projectId,
 				}),

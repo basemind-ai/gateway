@@ -9,7 +9,7 @@ import { useAddPromptConfig, useApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { ModelVendor, PromptConfig } from '@/types';
 import { getCloneName } from '@/utils/helpers';
-import { setPathParams } from '@/utils/navigation';
+import { setRouteParams } from '@/utils/navigation';
 
 export function PromptConfigGeneralInfo<T extends ModelVendor>({
 	projectId,
@@ -62,7 +62,7 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 			showInfo(t('configCloned'));
 
 			router.push(
-				setPathParams(Navigation.PromptConfigDetail, {
+				setRouteParams(Navigation.PromptConfigDetail, {
 					applicationId,
 					projectId,
 					promptConfigId: newPromptConfig.id,
