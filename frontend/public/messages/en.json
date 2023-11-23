@@ -1,6 +1,4 @@
-{"test": {
-		"test": "Test"
-	},
+{
 	"application": {
 		"apiCalls": "API Calls",
 		"apiKey": "API Key",
