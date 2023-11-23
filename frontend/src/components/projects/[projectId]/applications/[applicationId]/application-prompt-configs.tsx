@@ -10,7 +10,7 @@ import { ApiError } from '@/errors';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { copyToClipboard } from '@/utils/helpers';
-import { setPathParams } from '@/utils/navigation';
+import { setRouteParams } from '@/utils/navigation';
 
 export function ApplicationPromptConfigs({
 	projectId,
@@ -22,7 +22,7 @@ export function ApplicationPromptConfigs({
 	const t = useTranslations('application');
 	const router = useRouter();
 
-	const setPromptConfig = useSetPromptConfigs();
+	const setPromptConfigs = useSetPromptConfigs();
 	const promptConfigs = usePromptConfigs();
 
 	const showError = useShowError();
@@ -35,26 +35,14 @@ export function ApplicationPromptConfigs({
 		},
 		handleRetrievePromptConfigs,
 		{
-			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
-			/* c8 ignore end */
 			onSuccess(promptConfigRes) {
-				setPromptConfig(applicationId, promptConfigRes);
+				setPromptConfigs(applicationId, promptConfigRes);
 			},
 		},
 	);
-
-	const editPromptConfig = (promptConfigId: string) => {
-		router.push(
-			setPathParams(Navigation.PromptConfigDetail, {
-				applicationId,
-				projectId,
-				promptConfigId,
-			}),
-		);
-	};
 
 	return (
 		<div data-testid="application-prompt-config-container" className="mt-9">
@@ -71,7 +59,6 @@ export function ApplicationPromptConfigs({
 						applicationId={applicationId}
 						promptConfigs={promptConfigs[applicationId] ?? []}
 						projectId={projectId}
-						handleEditPromptConfig={editPromptConfig}
 						handlePromptConfigIdCopy={(promptConfigId: string) => {
 							copyToClipboard(promptConfigId);
 							showSuccess(t('copiedToClipboard'));
@@ -82,7 +69,7 @@ export function ApplicationPromptConfigs({
 					className="flex gap-2 items-center text-secondary hover:brightness-90"
 					onClick={() => {
 						router.push(
-							setPathParams(Navigation.ConfigCreateWizard, {
+							setRouteParams(Navigation.ConfigCreateWizard, {
 								applicationId,
 								projectId,
 							}),
