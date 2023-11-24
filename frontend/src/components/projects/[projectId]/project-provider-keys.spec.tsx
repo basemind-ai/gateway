@@ -12,6 +12,7 @@ import {
 import { expect } from 'vitest';
 
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
+import { modelVendorToLocaleMap } from '@/constants/models';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
@@ -40,8 +41,12 @@ describe('ProjectProviderKeys', () => {
 
 		const vendorCells = screen.getAllByTestId('key-provider-name');
 		expect(vendorCells).toHaveLength(providerKeys.length);
-		expect(vendorCells[0]).toHaveTextContent(providerKeys[0].modelVendor);
-		expect(vendorCells[1]).toHaveTextContent(providerKeys[1].modelVendor);
+		expect(vendorCells[0]).toHaveTextContent(
+			modelVendorToLocaleMap[providerKeys[0].modelVendor],
+		);
+		expect(vendorCells[1]).toHaveTextContent(
+			modelVendorToLocaleMap[providerKeys[1].modelVendor],
+		);
 
 		const createdAtCells = screen.getAllByTestId('key-created-at');
 		expect(createdAtCells).toHaveLength(providerKeys.length);

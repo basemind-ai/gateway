@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { KeyboardEvent, useState } from 'react';
 import { XCircleFill } from 'react-bootstrap-icons';
+import isEmail from 'validator/es/lib/isEmail';
 
 import { handleAddUsersToProject, handleRetrieveProjectUsers } from '@/api';
 import { ApiError } from '@/errors';
@@ -8,7 +9,6 @@ import { useSetProjectUsers } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 import { handleChange } from '@/utils/events';
-import { isValidEmail } from '@/utils/validation';
 
 export function InviteProjectMembers({ projectId }: { projectId: string }) {
 	const t = useTranslations('members');
@@ -76,7 +76,7 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 		email: string;
 		onRemove: () => void;
 	}) {
-		const emailValid = isValidEmail(email);
+		const emailValid = isEmail(email);
 
 		return (
 			<div
@@ -96,7 +96,7 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 	}
 
 	const emailsValid =
-		!!emails.length && emails.every((email) => isValidEmail(email));
+		!!emails.length && emails.every((email) => isEmail(email));
 
 	return (
 		<div data-testid="project-invite-member">

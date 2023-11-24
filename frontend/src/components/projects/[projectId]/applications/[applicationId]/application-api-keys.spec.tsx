@@ -37,7 +37,7 @@ describe('API Keys tests', () => {
 		});
 
 		const apiKeyNameRows = screen.getAllByTestId('api-key-name');
-		expect(apiKeyNameRows[0].innerHTML).toBe(apiKeys[0].name);
+		expect(apiKeyNameRows[0]).toHaveTextContent(apiKeys[0].name);
 	});
 
 	it('deletes a apiKey', async () => {

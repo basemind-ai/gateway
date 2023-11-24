@@ -20,7 +20,10 @@ export function ProjectApplicationsListTable({
 	const router = useRouter();
 
 	return (
-		<table className="custom-table mb-16">
+		<table
+			className="custom-table mb-16"
+			data-testid="project-application-list-table-container"
+		>
 			<thead>
 				<tr>
 					<th>{t('name')}</th>
@@ -36,7 +39,7 @@ export function ProjectApplicationsListTable({
 							<tr key={applicationId}>
 								<td>
 									<button
-										data-testid="application-name-anchor"
+										data-testid="project-application-list-name-button"
 										onClick={() => {
 											router.push(
 												setRouteParams(
@@ -62,12 +65,13 @@ export function ProjectApplicationsListTable({
 									data-testid={`application-prompt-config-count-${applicationId}`}
 								>
 									<span className="text-info">
-										{promptConfigs[applicationId]?.length}
+										{promptConfigs[applicationId]?.length ??
+											'0'}
 									</span>
 								</td>
 								<td>
 									<button
-										data-testid="application-edit-anchor"
+										data-testid="project-application-list-edit-button"
 										onClick={() => {
 											router.push(
 												setRouteParams(
