@@ -6,6 +6,7 @@ import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
+import { PromptContentDisplay } from '@/components/config-display-components/prompt-content-display';
 import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-analytics-page';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
@@ -16,6 +17,7 @@ import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { usePromptConfig, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
+import { ModelVendor } from '@/types';
 
 enum TAB_NAME {
 	OVERVIEW,
@@ -95,6 +97,11 @@ export default function PromptConfiguration({
 					projectId={projectId}
 					applicationId={applicationId}
 					promptConfig={promptConfig}
+				/>
+				<div className="h-8" />
+				<PromptContentDisplay
+					messages={promptConfig.providerPromptMessages}
+					modelVendor={promptConfig.modelVendor as ModelVendor}
 				/>
 				<div className="h-8" />
 				<PromptConfigGeneralInfo

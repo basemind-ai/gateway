@@ -58,7 +58,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 			<h2 className="font-medium text-neutral-content text-xl">
 				{t('general')}
 			</h2>
-			<div className="custom-card flex flex-col">
+			<div className="rounded-data-card flex flex-col">
 				<div className="grid grid-cols-2 gap-x-4 gap-y-8 text-neutral-content">
 					<div>
 						<p className="text-sm block">

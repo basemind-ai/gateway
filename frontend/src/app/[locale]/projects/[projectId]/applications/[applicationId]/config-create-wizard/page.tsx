@@ -214,7 +214,7 @@ export default function PromptConfigCreateWizard({
 						}`}
 						showSelect={projects.length > 1}
 					/>
-					<div className="bg-base-300 transform transition-transform duration-300 ease-in-out custom-card">
+					<div className="bg-base-300 transform transition-transform duration-300 ease-in-out rounded-data-card">
 						{wizardStageComponentMap[store.wizardStage]}
 						{store.wizardStage < 2 && (
 							<div className="divider divide-accent" />

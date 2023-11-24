@@ -73,12 +73,20 @@ div#__next > div {
 		}
 	}
 
-	.custom-card {
-		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-32;
+	.card-header {
+		@apply font-semibold text-white text-xl pl-3;
 	}
 
-	.custom-card-px-16 {
+	.card-header-right {
+		@apply font-semibold text-white text-xl pr-3;
+	}
+
+	.rounded-data-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-16;
+	}
+
+	.analytics {
+		@apply rounded-data-card flex justify-around;
 	}
 
 	.dialog-box {

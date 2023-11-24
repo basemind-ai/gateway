@@ -130,7 +130,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 					))}
 				</tbody>
 			</table>
-			<div className="custom-card flex flex-col">
+			<div className="rounded-data-card flex flex-col">
 				<button
 					data-testid="new-provider-key-btn"
 					onClick={openCreateModal}

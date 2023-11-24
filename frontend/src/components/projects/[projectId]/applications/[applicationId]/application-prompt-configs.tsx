@@ -49,7 +49,7 @@ export function ApplicationPromptConfigs({
 			<h2 className="font-semibold text-base-content text-xl">
 				{t('promptConfiguration')}
 			</h2>
-			<div className="custom-card">
+			<div className="rounded-data-card">
 				{isLoading ? (
 					<div className="w-full flex mb-8">
 						<span className="loading loading-bars mx-auto" />

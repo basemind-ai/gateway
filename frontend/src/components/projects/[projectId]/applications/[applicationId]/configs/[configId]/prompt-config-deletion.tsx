@@ -74,10 +74,8 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 
 	return (
 		<div data-testid="prompt-deletion-container" className="mt-8">
-			<h2 className="font-semibold text-white text-xl">
-				{t('modelConfigDeletion')}
-			</h2>
-			<div className="custom-card flex items-center justify-between text-neutral-content">
+			<h2 className="card-header">{t('modelConfigDeletion')}</h2>
+			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>
 					<h6 className="font-medium ">
 						{t('deleteModelConfigTitle')}

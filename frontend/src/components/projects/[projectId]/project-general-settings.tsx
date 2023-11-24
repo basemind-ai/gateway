@@ -46,8 +46,8 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-general-settings-container">
-			<h2 className="font-semibold text-white text-xl">{t('general')}</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('general')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				<div>
 					<label
 						htmlFor="project-name"

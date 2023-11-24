@@ -100,8 +100,8 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-invite-member">
-			<h2 className="font-semibold text-white text-xl">{t('invite')}</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('invite')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				<div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
 					<div className="flex-2">
 						<label

@@ -67,10 +67,8 @@ export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-application-list-container" className="mt-9">
-			<h2 className="font-semibold text-white text-xl">
-				{t('applications')}
-			</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('applications')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				{applications?.length ? (
 					<ProjectApplicationsListTable
 						projectId={projectId}

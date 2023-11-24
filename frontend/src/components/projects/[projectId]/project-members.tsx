@@ -226,8 +226,8 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-members-container">
-			<h2 className="font-semibold text-white text-xl">{t('members')}</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('members')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				{isLoading && (
 					<div className="w-full flex">
 						<span className="loading loading-bars mx-auto" />

@@ -52,9 +52,7 @@ export function PromptConfigAnalyticsPage({
 	return (
 		<div data-testid="prompt-analytics-container">
 			<div className="flex justify-between items-center">
-				<h2 className="font-semibold text-white text-xl">
-					{t('status')}
-				</h2>
+				<h2 className="card-header">{t('status')}</h2>
 				<DatePicker
 					displayFormat={dateFormat}
 					showShortcuts={true}
@@ -63,7 +61,7 @@ export function PromptConfigAnalyticsPage({
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="flex items-center justify-between custom-card">
+			<div className="analytics">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}

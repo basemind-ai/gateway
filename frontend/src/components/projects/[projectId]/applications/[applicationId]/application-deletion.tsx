@@ -63,10 +63,8 @@ export function ApplicationDeletion({
 
 	return (
 		<div data-testid="application-deletion-container" className="mt-8">
-			<h2 className="font-semibold text-white text-xl">
-				{t('deleteApplicationTitle')}
-			</h2>
-			<div className="custom-card flex items-center justify-between text-neutral-content">
+			<h2 className="card-header">{t('deleteApplicationTitle')}</h2>
+			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>
 					<h6 className="font-medium ">
 						{t('deleteYourApplication')}

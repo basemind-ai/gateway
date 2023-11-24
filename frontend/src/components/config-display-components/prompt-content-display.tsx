@@ -1,21 +1,55 @@
 import { useTranslations } from 'next-intl';
 
-import { ModelVendor, ProviderMessageType } from '@/types';
+import { ModelVendor, OpenAIMessageRole, ProviderMessageType } from '@/types';
 import { isOpenAIContentMessage } from '@/utils/predicates';
+
+const openAIRoleElementMapper: Record<
+	OpenAIMessageRole,
+	React.FC<{ message: string }>
+> = {
+	assistant: ({ message }) => (
+		<span>
+			[<span className="text-accent">assistant</span>]:{' '}
+			<span className="text-info">{message}</span>
+		</span>
+	),
+	function: ({ message }) => (
+		<span>
+			[<span className="text-blue-500">function</span>]:{' '}
+			<span className="text-info">{message}</span>
+		</span>
+	),
+	system: ({ message }) => (
+		<span>
+			[<span className="text-secondary">system</span>]:{' '}
+			<span className="text-info">{message}</span>
+		</span>
+	),
+	user: ({ message }) => (
+		<span>
+			[<span className="text-primary">user</span>]:{' '}
+			<span className="text-info">{message}</span>
+		</span>
+	),
+};
 
 const contentMapper: Record<
 	ModelVendor,
-	(message: any, index: number) => string
+	(message: any, index: number) => React.ReactNode
 > = {
 	[ModelVendor.Cohere]: (
 		m: ProviderMessageType<ModelVendor.Cohere>,
 		i: number,
-	) => `${i}: ${m.message}`,
-	[ModelVendor.OpenAI]: (
-		m: ProviderMessageType<ModelVendor.OpenAI>,
-		i: number,
-	) =>
-		`${i} - [${m.role}]: ${isOpenAIContentMessage(m) ? m.content : m.name}`,
+	) => (
+		<span>
+			[<span className="text-accent">{i}</span>]:{' '}
+			<span className="text-info">{m.message}</span>
+		</span>
+	),
+	[ModelVendor.OpenAI]: (m: ProviderMessageType<ModelVendor.OpenAI>) =>
+		openAIRoleElementMapper[m.role]({
+			message: isOpenAIContentMessage(m) ? m.content : m.name,
+		}),
 };
 
 export function PromptContentDisplay<T extends ModelVendor>({
@@ -31,22 +65,19 @@ export function PromptContentDisplay<T extends ModelVendor>({
 
 	return (
 		<div data-testid="prompt-content-display-container">
-			<h4
-				className="font-medium p-4"
+			<h2
+				className="card-header"
 				data-testid="prompt-content-display-title"
 			>
 				{t('promptTemplate')}
-			</h4>
+			</h2>
 			<div
-				className="border-2 border-neutral p-4 rounded"
+				className="rounded-data-card"
 				data-testid="prompt-content-display-messages"
 			>
 				{messageContent.map((m, i) => (
-					<p
-						data-testid="message-content-paragraph"
-						key={m.slice(0, 10) + i}
-					>
-						<span className="text-info">{m}</span>
+					<p data-testid="message-content-paragraph" key={i}>
+						{m}
 					</p>
 				))}
 			</div>

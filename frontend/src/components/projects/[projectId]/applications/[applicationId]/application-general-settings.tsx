@@ -142,8 +142,8 @@ export function ApplicationGeneralSettings({
 
 	return (
 		<div data-testid="application-general-settings-container">
-			<h2 className="font-semibold text-white text-xl">{t('general')}</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('general')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				<div>
 					<label
 						htmlFor="app-name"

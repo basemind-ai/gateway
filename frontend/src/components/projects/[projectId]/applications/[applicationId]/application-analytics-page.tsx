@@ -50,9 +50,7 @@ export function ApplicationAnalyticsPage({
 	return (
 		<div data-testid="application-analytics-container">
 			<div className="flex justify-between items-center">
-				<h2 className="font-semibold text-white text-xl self-end">
-					{t('status')}
-				</h2>
+				<h2 className="card-header-right self-end">{t('status')}</h2>
 				<DatePicker
 					displayFormat={dateFormat}
 					showShortcuts={true}
@@ -61,7 +59,7 @@ export function ApplicationAnalyticsPage({
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="flex items-center justify-between custom-card">
+			<div className="analytics">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}

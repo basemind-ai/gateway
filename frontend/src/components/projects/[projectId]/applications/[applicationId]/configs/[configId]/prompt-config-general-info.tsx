@@ -3,7 +3,6 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleCreatePromptConfig } from '@/api';
-import { PromptContentDisplay } from '@/components/config-display-components/prompt-content-display';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useAddPromptConfig, useApplication } from '@/stores/api-store';
@@ -83,12 +82,8 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 
 	return (
 		<div data-testid="prompt-general-info-container">
-			<h2 className="font-semibold text-white text-xl">{t('general')}</h2>
-			<PromptContentDisplay
-				messages={promptConfig.providerPromptMessages}
-				modelVendor={promptConfig.modelVendor}
-			/>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('general')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				<div className="text-neutral-content grid grid-cols-2 gap-8">
 					<div>
 						<label className="text-sm">{t('name')}</label>

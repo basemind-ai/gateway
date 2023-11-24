@@ -142,13 +142,10 @@ export function ApplicationApiKeys({
 
 	return (
 		<div data-testid="application-api-keys-container">
-			<h2
-				data-testid="api-keys-title"
-				className="font-semibold text-white text-xl"
-			>
+			<h2 data-testid="api-keys-title" className="card-header">
 				{t('apiKeys')}
 			</h2>
-			<div className="custom-card">
+			<div className="rounded-data-card">
 				{renderApiKeys()}
 				<button
 					data-testid="api-key-create-btn"
