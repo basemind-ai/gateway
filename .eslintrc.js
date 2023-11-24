@@ -1,4 +1,6 @@
-const rules = {};
+const rules = {
+	'unicorn/no-array-callback-reference': 0,
+};
 
 const tsWebRules = {
 	...rules,

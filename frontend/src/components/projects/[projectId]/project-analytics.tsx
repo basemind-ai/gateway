@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Activity, Cash } from 'react-bootstrap-icons';
@@ -16,8 +17,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	const dateFormat = useDateFormat();
 	const showError = useShowError();
 
-	const oneWeekAgo = new Date();
-	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+	const oneWeekAgo = dayjs().subtract(7, 'days').toDate();
 	const [dateRange, setDateRange] = useState<DateValueType>({
 		endDate: new Date(),
 		startDate: oneWeekAgo,

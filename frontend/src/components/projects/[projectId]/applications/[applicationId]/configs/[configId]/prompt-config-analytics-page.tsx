@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Activity, Cash } from 'react-bootstrap-icons';
@@ -25,8 +26,7 @@ export function PromptConfigAnalyticsPage({
 	const dateFormat = useDateFormat();
 	const showError = useShowError();
 
-	const oneWeekAgo = new Date();
-	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+	const oneWeekAgo = dayjs().subtract(7, 'days').toDate();
 
 	const [dateRange, setDateRange] = useState<DateValueType>({
 		endDate: new Date(),
@@ -43,11 +43,9 @@ export function PromptConfigAnalyticsPage({
 		},
 		handlePromptConfigAnalytics,
 		{
-			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
-			/* c8 ignore end */
 		},
 	);
 
@@ -69,18 +67,14 @@ export function PromptConfigAnalyticsPage({
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}
-					totalValue={analytics?.totalRequests ?? ''}
-					percentage={'100'}
-					currentValue={'324'}
+					totalValue={analytics?.totalRequests ?? '0'}
 					loading={isLoading}
 				/>
 				<div className="w-px h-12 bg-gray-200 mx-4" />
 				<DataCard
 					imageSrc={<Cash className="text-secondary w-6 h-6" />}
 					metric={t('modelsCost')}
-					totalValue={`${analytics?.tokensCost ?? ''}$`}
-					percentage={'103'}
-					currentValue={'3.3'}
+					totalValue={`${analytics?.tokensCost ?? '0'}$`}
 					loading={isLoading}
 				/>
 			</div>
