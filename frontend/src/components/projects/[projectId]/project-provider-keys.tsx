@@ -5,15 +5,15 @@ import { Plus, Trash } from 'react-bootstrap-icons';
 import { handleDeleteProviderKey } from '@/api/provider-keys-api';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
-import { ApiError } from '@/errors';
+import { modelVendorToLocaleMap } from '@/constants/models';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
-import { useShowError } from '@/stores/toast-store';
-import { ModelVendor, ProviderKey } from '@/types';
+import { ModelVendor, Project, ProviderKey } from '@/types';
 
-export function ProjectProviderKeys({ projectId }: { projectId: string }) {
+export function ProjectProviderKeys({ project }: { project: Project }) {
 	const t = useTranslations('providerKeys');
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);
 	const creationDialogRef = useRef<HTMLDialogElement>(null);
@@ -28,7 +28,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		isLoading: swrIsLoading,
 		providerKeys,
 		setProviderKeys,
-	} = useSwrProviderKeys({ projectId });
+	} = useSwrProviderKeys({ projectId: project.id });
 
 	if (swrIsLoading) {
 		return <div className="loading" data-testid="loader" />;
@@ -66,11 +66,11 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		setIsLoading(true);
 		try {
 			await handleDeleteProviderKey({
-				projectId,
+				projectId: project.id,
 				providerKeyId,
 			});
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setIsLoading(false);
 			setProviderKeyIdToDelete(undefined);
@@ -106,7 +106,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 							data-testid="provider-keys-table-row"
 						>
 							<td data-testid="key-provider-name">
-								{value.modelVendor}
+								{modelVendorToLocaleMap[value.modelVendor]}
 							</td>
 							<td data-testid="key-created-at">
 								{value.createdAt}
@@ -129,7 +129,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 					))}
 				</tbody>
 			</table>
-			<div className="custom-card flex flex-col">
+			<div className="rounded-data-card flex flex-col">
 				<button
 					data-testid="new-provider-key-btn"
 					onClick={openCreateModal}
@@ -143,7 +143,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 			<dialog ref={creationDialogRef} className="modal">
 				<div className="dialog-box border-2 rounded p-10">
 					<ProviderKeyCreateModal
-						projectId={projectId}
+						projectId={project.id}
 						vendors={vendorsWithoutKeys}
 						closeModal={closeCreateModal}
 						addProviderKey={(providerKey: ProviderKey) => {

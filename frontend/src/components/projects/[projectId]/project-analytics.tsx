@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Activity, Cash } from 'react-bootstrap-icons';
@@ -7,17 +8,16 @@ import useSWR from 'swr';
 import { handleProjectAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
-import { ApiError } from '@/errors';
-import { useShowError } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDateFormat } from '@/stores/user-config-store';
+import { Project } from '@/types';
 
-export function ProjectAnalytics({ projectId }: { projectId: string }) {
+export function ProjectAnalytics({ project }: { project: Project }) {
 	const t = useTranslations('projectOverview');
 	const dateFormat = useDateFormat();
-	const showError = useShowError();
+	const handleError = useHandleError();
 
-	const oneWeekAgo = new Date();
-	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+	const oneWeekAgo = dayjs().subtract(7, 'days').toDate();
 	const [dateRange, setDateRange] = useState<DateValueType>({
 		endDate: new Date(),
 		startDate: oneWeekAgo,
@@ -26,25 +26,19 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	const { data: analytics, isLoading } = useSWR(
 		{
 			fromDate: dateRange?.startDate,
-			projectId,
+			projectId: project.id,
 			toDate: dateRange?.endDate,
 		},
 		handleProjectAnalytics,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 		},
 	);
 
 	return (
 		<div data-testid="project-analytics-container">
 			<div className="flex justify-between items-center">
-				<h2 className="font-semibold text-white text-xl self-end">
-					{t('status')}
-				</h2>
+				<h2 className="card-header-right self-end">{t('status')}</h2>
 				<DatePicker
 					displayFormat={dateFormat}
 					showShortcuts={true}
@@ -53,7 +47,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="flex items-center justify-between custom-card">
+			<div className="analytics">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}

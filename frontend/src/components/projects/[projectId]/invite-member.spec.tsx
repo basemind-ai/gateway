@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ProjectUserAccountFactory } from 'tests/factories';
+import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 import { beforeEach } from 'vitest';
 
@@ -11,7 +11,7 @@ import { ToastType } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 
 describe('InviteMember', () => {
-	const projectId = '1';
+	const project = ProjectFactory.buildSync();
 	const handleAddUserToProjectSpy = vi.spyOn(
 		ProjectUsersAPI,
 		'handleAddUsersToProject',
@@ -26,7 +26,7 @@ describe('InviteMember', () => {
 	});
 
 	it('renders invite member', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const emailInput = screen.getByTestId('invite-email-input');
 		expect(emailInput).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('InviteMember', () => {
 	])(
 		'enables send invite only on valid email %p valid: %p',
 		(emails, valid) => {
-			render(<InviteProjectMembers projectId={projectId} />);
+			render(<InviteProjectMembers project={project} />);
 
 			const emailInput = screen.getByTestId('invite-email-input');
 			emails.forEach((email) => {
@@ -69,7 +69,7 @@ describe('InviteMember', () => {
 	);
 
 	it('changes role when a different role is chosen from dropdown', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const permissionSelect =
 			screen.getByTestId<HTMLSelectElement>('permission-select');
@@ -85,7 +85,7 @@ describe('InviteMember', () => {
 	});
 
 	it('sends invite to email and promptly clears the email input', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -111,7 +111,7 @@ describe('InviteMember', () => {
 					permission: AccessPermission.MEMBER,
 				},
 			],
-			projectId,
+			projectId: project.id,
 		});
 		await waitFor(() => {
 			expect(emailInput.value).toBe('');
@@ -119,7 +119,7 @@ describe('InviteMember', () => {
 	});
 
 	it('debounce invite button when loading', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -143,7 +143,7 @@ describe('InviteMember', () => {
 	});
 
 	it('throws error when user does not exist', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -168,7 +168,7 @@ describe('InviteMember', () => {
 	});
 
 	it('removes duplicate emails on user input', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -201,7 +201,7 @@ describe('InviteMember', () => {
 					permission: AccessPermission.MEMBER,
 				},
 			],
-			projectId,
+			projectId: project.id,
 		});
 		await waitFor(() => {
 			expect(emailInput.value).toBe('');
@@ -209,7 +209,7 @@ describe('InviteMember', () => {
 	});
 
 	it('disables submit when blank email is entered', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const emailInput =
 			screen.getByTestId<HTMLInputElement>('invite-email-input');
@@ -225,7 +225,7 @@ describe('InviteMember', () => {
 	});
 
 	it('removes an email when clicked on cross button', async () => {
-		render(<InviteProjectMembers projectId={projectId} />);
+		render(<InviteProjectMembers project={project} />);
 
 		const emailInput =
 			screen.getByTestId<HTMLInputElement>('invite-email-input');

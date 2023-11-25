@@ -12,6 +12,7 @@ import {
 import { expect } from 'vitest';
 
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
+import { ApiError } from '@/errors';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
@@ -90,7 +91,14 @@ describe('ProviderKeyCreateModal', () => {
 
 	it('should show an error message if the server responds with an error', async () => {
 		mockFetch.mockResolvedValueOnce({
-			json: () => Promise.reject('error'),
+			json: () =>
+				Promise.reject(
+					new ApiError('failed', {
+						context: {},
+						statusCode: 500,
+						statusText: 'failed',
+					}),
+				),
 			ok: false,
 		});
 

@@ -1,26 +1,34 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
-import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-analytics-page';
-import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-deletion';
-import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-info';
-import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-general-settings';
+import { Navbar } from '@/components/navbar';
+import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-analytics-page';
+import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
+import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
+import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
-import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { usePromptConfig, useSetPromptConfigs } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
+import {
+	useProject,
+	useProjects,
+	usePromptConfig,
+	useSetPromptConfigs,
+} from '@/stores/api-store';
 
 enum TAB_NAME {
 	OVERVIEW,
+	TESTING,
 	SETTINGS,
 }
+
+export { TAB_NAME as PromptConfigPageTab };
 
 export default function PromptConfiguration({
 	params: { projectId, applicationId, promptConfigId },
@@ -35,10 +43,12 @@ export default function PromptConfiguration({
 	useProjectBootstrap(false);
 
 	const t = useTranslations('promptConfig');
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
 	const setPromptConfigs = useSetPromptConfigs();
+	const project = useProject(projectId);
+	const projects = useProjects();
 
 	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
 
@@ -46,11 +56,7 @@ export default function PromptConfiguration({
 		promptConfig ? null : { applicationId, projectId },
 		handleRetrievePromptConfigs,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 			onSuccess(promptConfigs) {
 				setPromptConfigs(applicationId, promptConfigs);
 			},
@@ -68,7 +74,7 @@ export default function PromptConfiguration({
 		);
 	}
 
-	if (!promptConfig) {
+	if (!promptConfig || !project) {
 		return null;
 	}
 
@@ -86,7 +92,7 @@ export default function PromptConfiguration({
 	];
 
 	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: () => (
+		[TAB_NAME.OVERVIEW]: memo(() => (
 			<>
 				<PromptConfigAnalyticsPage
 					projectId={projectId}
@@ -94,14 +100,11 @@ export default function PromptConfiguration({
 					promptConfig={promptConfig}
 				/>
 				<div className="h-8" />
-				<PromptConfigGeneralInfo
-					projectId={projectId}
-					applicationId={applicationId}
-					promptConfig={promptConfig}
-				/>
+				<PromptConfigGeneralInfo promptConfig={promptConfig} />
 			</>
-		),
-		[TAB_NAME.SETTINGS]: () => (
+		)),
+		[TAB_NAME.TESTING]: () => null,
+		[TAB_NAME.SETTINGS]: memo(() => (
 			<>
 				<PromptConfigGeneralSettings
 					projectId={projectId}
@@ -115,19 +118,18 @@ export default function PromptConfiguration({
 					promptConfigId={promptConfigId}
 				/>
 			</>
-		),
+		)),
 	};
 
 	const TabComponent = tabComponents[selectedTab];
 
 	return (
-		<div data-testid="prompt-page" className="my-8 mx-32">
-			<h1
-				data-testid="prompt-page-title"
-				className="text-2xl font-semibold text-base-content"
-			>
-				{t('modelConfiguration')} / {promptConfig.name}
-			</h1>
+		<div data-testid="prompt-page-container" className="my-8 mx-32">
+			<Navbar
+				project={project}
+				headerText={`${t('modelConfiguration')} / ${promptConfig.name}`}
+				showSelect={projects.length > 1}
+			/>
 			<div className="mt-3.5 w-full mb-8">
 				<TabNavigation<TAB_NAME>
 					tabs={tabs}

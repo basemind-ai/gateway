@@ -5,7 +5,7 @@ import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/config/[configId]/prompt-config-analytics-page';
+import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-analytics-page';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
 import { Analytics } from '@/types';

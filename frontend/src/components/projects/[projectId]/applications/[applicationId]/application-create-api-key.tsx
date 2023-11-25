@@ -4,12 +4,12 @@ import { Front, KeyFill } from 'react-bootstrap-icons';
 
 import { handleCreateAPIKey } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
-import { ApiError } from '@/errors';
-import { useShowError, useShowSuccess } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
+import { useShowSuccess } from '@/stores/toast-store';
 import { handleChange } from '@/utils/events';
 import { copyToClipboard } from '@/utils/helpers';
 
-export function CreateApiKey({
+export function CreateApplicationAPIKeyModal({
 	projectId,
 	applicationId,
 	onSubmit,
@@ -23,7 +23,7 @@ export function CreateApiKey({
 	projectId: string;
 }) {
 	const t = useTranslations('application');
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showSuccess = useShowSuccess();
 
 	const [apiKeyName, setAPIKeyName] = useState('');
@@ -46,7 +46,7 @@ export function CreateApiKey({
 			});
 			setAPIKeyHash(apiKey.hash);
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setLoading(false);
 		}
@@ -75,18 +75,15 @@ export function CreateApiKey({
 					{t('createApiKeyDescription')}
 				</p>
 				{!apiKeyHash && (
-					<div className="mt-8 self-start w-full">
-						<label
-							htmlFor="create-api-key-input"
-							className="text-sm font-semibold text-neutral-content"
-						>
-							{t('name')}
+					<div className=" form-control mt-8 self-start w-full">
+						<label className="label">
+							<span className="label-text">{t('name')}</span>
 						</label>
 						<input
 							type="text"
 							id="create-api-key-input"
 							data-testid="create-api-key-input"
-							className="input mt-2.5 bg-neutral w-full text-neutral-content font-medium"
+							className="card-input"
 							placeholder={t('createApiKeyPlaceholder')}
 							value={apiKeyName}
 							onChange={handleChange(setAPIKeyName)}
@@ -105,7 +102,7 @@ export function CreateApiKey({
 							<KeyFill className="w-4 h-4 text-neutral-content" />
 							<input
 								data-testid="create-api-key-hash-input"
-								className="font-medium text-success bg-transparent w-full focus:border-none"
+								className="font-medium text-success bg-transparent w-full rounded focus:border-none"
 								value={apiKeyHash}
 								onChange={() => {
 									return;

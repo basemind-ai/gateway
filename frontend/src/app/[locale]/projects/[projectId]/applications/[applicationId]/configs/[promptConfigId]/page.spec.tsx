@@ -8,7 +8,7 @@ import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
-import PromptConfiguration from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/prompt-configs/[promptConfigId]/page';
+import PromptConfiguration from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/configs/[promptConfigId]/page';
 import { ApiError } from '@/errors';
 import {
 	useSetProjectApplications,
@@ -59,7 +59,7 @@ describe('PromptConfiguration', () => {
 		});
 
 		await waitFor(() => {
-			expect(screen.getByTestId('prompt-page-title')).toBeInTheDocument();
+			expect(screen.getByTestId('navbar-header')).toBeInTheDocument();
 		});
 
 		const analytics = screen.getByTestId('prompt-analytics-container');
@@ -68,8 +68,8 @@ describe('PromptConfiguration', () => {
 		const generalInfo = screen.getByTestId('prompt-general-info-container');
 		expect(generalInfo).toBeInTheDocument();
 
-		const promptName = screen.getByTestId('prompt-general-info-name');
-		expect(promptName.innerHTML).toBe(promptConfig.name);
+		const promptName = screen.getByTestId('navbar-header');
+		expect(promptName).toHaveTextContent(promptConfig.name);
 
 		const tabs = screen.getAllByTestId('tab-navigation-btn');
 		expect(tabs.length).toBe(2);
@@ -125,7 +125,7 @@ describe('PromptConfiguration', () => {
 			expect(loading).not.toBeInTheDocument();
 		});
 
-		const promptPage = screen.queryByTestId('prompt-page');
+		const promptPage = screen.queryByTestId('prompt-page-container');
 		expect(promptPage).not.toBeInTheDocument();
 	});
 

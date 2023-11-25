@@ -1,9 +1,10 @@
+import { faker } from '@faker-js/faker';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { APIKeyFactory } from 'tests/factories';
+import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
-import { ApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/api-keys';
+import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
 
@@ -13,8 +14,8 @@ describe('API Keys tests', () => {
 		'handleRetrieveAPIKeys',
 	);
 	const handleCreateAPIKeySpy = vi.spyOn(APIKeysAPI, 'handleCreateAPIKey');
-	const projectId = '1';
-	const applicationId = '1';
+	const projectId = faker.string.uuid();
+	const application = ApplicationFactory.buildSync();
 
 	beforeAll(() => {
 		HTMLDialogElement.prototype.showModal = vi.fn();
@@ -24,7 +25,12 @@ describe('API Keys tests', () => {
 	it('renders api keys component', async () => {
 		const apiKeys = await APIKeyFactory.batch(2);
 		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
-		render(<ApiKeys projectId={projectId} applicationId={applicationId} />);
+		render(
+			<ApplicationApiKeys
+				projectId={projectId}
+				application={application}
+			/>,
+		);
 
 		await waitFor(() => {
 			const apiKeyRows = screen.getAllByTestId('api-key-row');
@@ -32,13 +38,18 @@ describe('API Keys tests', () => {
 		});
 
 		const apiKeyNameRows = screen.getAllByTestId('api-key-name');
-		expect(apiKeyNameRows[0].innerHTML).toBe(apiKeys[0].name);
+		expect(apiKeyNameRows[0]).toHaveTextContent(apiKeys[0].name);
 	});
 
 	it('deletes a apiKey', async () => {
 		const apiKeys = await APIKeyFactory.batch(2);
 		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
-		render(<ApiKeys projectId={projectId} applicationId={applicationId} />);
+		render(
+			<ApplicationApiKeys
+				projectId={projectId}
+				application={application}
+			/>,
+		);
 
 		await waitFor(() => {
 			const apiKeyRows = screen.getAllByTestId('api-key-row');
@@ -67,7 +78,12 @@ describe('API Keys tests', () => {
 	it('shows error when unable to delete api key', async () => {
 		const apiKeys = await APIKeyFactory.batch(2);
 		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
-		render(<ApiKeys projectId={projectId} applicationId={applicationId} />);
+		render(
+			<ApplicationApiKeys
+				projectId={projectId}
+				application={application}
+			/>,
+		);
 
 		await waitFor(() => {
 			const apiKeyRows = screen.getAllByTestId('api-key-row');
@@ -103,7 +119,12 @@ describe('API Keys tests', () => {
 	it('creates a apiKey', async () => {
 		const apiKeys = await APIKeyFactory.batch(2);
 		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
-		render(<ApiKeys projectId={projectId} applicationId={applicationId} />);
+		render(
+			<ApplicationApiKeys
+				projectId={projectId}
+				application={application}
+			/>,
+		);
 
 		await waitFor(() => {
 			const apiKeyRows = screen.getAllByTestId('api-key-row');

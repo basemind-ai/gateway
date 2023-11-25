@@ -14,7 +14,6 @@ describe('ApplicationPromptConfigsTable', () => {
 		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 		const projectId = faker.string.uuid();
 		const applicationId = faker.string.uuid();
-		const handleEditPromptConfig = vi.fn();
 		const handlePromptConfigIdCopy = vi.fn();
 
 		render(
@@ -22,7 +21,6 @@ describe('ApplicationPromptConfigsTable', () => {
 				promptConfigs={promptConfigs}
 				projectId={projectId}
 				applicationId={applicationId}
-				handleEditPromptConfig={handleEditPromptConfig}
 				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
 			/>,
 		);
@@ -31,7 +29,7 @@ describe('ApplicationPromptConfigsTable', () => {
 			screen.getByTestId('application-prompt-configs-table-container'),
 		).toBeInTheDocument();
 		expect(screen.getByText(namespace.name)).toBeInTheDocument();
-		expect(screen.getByText(namespace.type)).toBeInTheDocument();
+		expect(screen.getByText(namespace.vendor)).toBeInTheDocument();
 		expect(screen.getByText(namespace.model)).toBeInTheDocument();
 		expect(screen.getByText('ID')).toBeInTheDocument();
 		expect(screen.getByText(namespace.test)).toBeInTheDocument();
@@ -61,7 +59,6 @@ describe('ApplicationPromptConfigsTable', () => {
 		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 		const projectId = faker.string.uuid();
 		const applicationId = faker.string.uuid();
-		const handleEditPromptConfig = vi.fn();
 		const handlePromptConfigIdCopy = vi.fn();
 
 		render(
@@ -69,7 +66,6 @@ describe('ApplicationPromptConfigsTable', () => {
 				promptConfigs={promptConfigs}
 				projectId={projectId}
 				applicationId={applicationId}
-				handleEditPromptConfig={handleEditPromptConfig}
 				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
 			/>,
 		);
@@ -91,7 +87,6 @@ describe('ApplicationPromptConfigsTable', () => {
 		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 		const projectId = faker.string.uuid();
 		const applicationId = faker.string.uuid();
-		const handleEditPromptConfig = vi.fn();
 		const handlePromptConfigIdCopy = vi.fn();
 
 		render(
@@ -99,7 +94,6 @@ describe('ApplicationPromptConfigsTable', () => {
 				promptConfigs={promptConfigs}
 				projectId={projectId}
 				applicationId={applicationId}
-				handleEditPromptConfig={handleEditPromptConfig}
 				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
 			/>,
 		);
@@ -119,7 +113,6 @@ describe('ApplicationPromptConfigsTable', () => {
 		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 		const projectId = faker.string.uuid();
 		const applicationId = faker.string.uuid();
-		const handleEditPromptConfig = vi.fn();
 		const handlePromptConfigIdCopy = vi.fn();
 
 		render(
@@ -127,7 +120,6 @@ describe('ApplicationPromptConfigsTable', () => {
 				promptConfigs={promptConfigs}
 				projectId={projectId}
 				applicationId={applicationId}
-				handleEditPromptConfig={handleEditPromptConfig}
 				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
 			/>,
 		);
@@ -138,16 +130,13 @@ describe('ApplicationPromptConfigsTable', () => {
 			)[0],
 		);
 
-		expect(handleEditPromptConfig).toHaveBeenCalledWith(
-			promptConfigs[0].id,
-		);
+		expect(routerPushMock).toHaveBeenCalled();
 	});
 
 	it('should route to the prompt config detail page when pressing the prompt config name', () => {
 		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 		const projectId = faker.string.uuid();
 		const applicationId = faker.string.uuid();
-		const handleEditPromptConfig = vi.fn();
 		const handlePromptConfigIdCopy = vi.fn();
 
 		render(
@@ -155,7 +144,6 @@ describe('ApplicationPromptConfigsTable', () => {
 				promptConfigs={promptConfigs}
 				projectId={projectId}
 				applicationId={applicationId}
-				handleEditPromptConfig={handleEditPromptConfig}
 				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
 			/>,
 		);
@@ -173,7 +161,6 @@ describe('ApplicationPromptConfigsTable', () => {
 		const promptConfigs = [] as PromptConfig<any>[];
 		const projectId = faker.string.uuid();
 		const applicationId = faker.string.uuid();
-		const handleEditPromptConfig = vi.fn();
 		const handlePromptConfigIdCopy = vi.fn();
 
 		render(
@@ -181,7 +168,6 @@ describe('ApplicationPromptConfigsTable', () => {
 				promptConfigs={promptConfigs}
 				projectId={projectId}
 				applicationId={applicationId}
-				handleEditPromptConfig={handleEditPromptConfig}
 				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
 			/>,
 		);
@@ -189,5 +175,49 @@ describe('ApplicationPromptConfigsTable', () => {
 		expect(
 			screen.queryByTestId('application-prompt-configs-table-row'),
 		).not.toBeInTheDocument();
+	});
+
+	it('should show a default config badge when the prompt config is default', () => {
+		const promptConfigs = OpenAIPromptConfigFactory.batchSync(1, {
+			isDefault: true,
+		});
+		const projectId = faker.string.uuid();
+		const applicationId = faker.string.uuid();
+		const handlePromptConfigIdCopy = vi.fn();
+
+		render(
+			<ApplicationPromptConfigsTable
+				promptConfigs={promptConfigs}
+				projectId={projectId}
+				applicationId={applicationId}
+				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
+			/>,
+		);
+
+		expect(screen.getByText(namespace.default)).toBeInTheDocument();
+	});
+
+	it('should navigate to the prompt config detail page testing tab when pressing the test button', () => {
+		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
+		const projectId = faker.string.uuid();
+		const applicationId = faker.string.uuid();
+		const handlePromptConfigIdCopy = vi.fn();
+
+		render(
+			<ApplicationPromptConfigsTable
+				promptConfigs={promptConfigs}
+				projectId={projectId}
+				applicationId={applicationId}
+				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getAllByTestId(
+				'application-prompt-configs-table-config-test-button',
+			)[0],
+		);
+
+		expect(routerPushMock).toHaveBeenCalled();
 	});
 });

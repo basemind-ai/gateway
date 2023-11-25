@@ -27,7 +27,7 @@ export const vendorImageSourceMap: Record<ModelVendor, string> = {
 	[ModelVendor.Cohere]: `/images/${cohereIcon}`,
 };
 
-export const modelTypeToNameMap: Record<ModelType<any>, string> = {
+export const modelTypeToLocaleMap: Record<ModelType<any>, string> = {
 	[OpenAIModelType.Gpt35Turbo]: 'GPT-3.5 Turbo',
 	[OpenAIModelType.Gpt3516K]: 'GPT-3.5 Turbo 16K',
 	[OpenAIModelType.Gpt4]: 'GPT-4',

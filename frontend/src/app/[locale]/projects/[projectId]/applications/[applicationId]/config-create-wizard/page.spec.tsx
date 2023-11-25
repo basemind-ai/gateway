@@ -13,6 +13,7 @@ import { afterEach, expect } from 'vitest';
 import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
+import { ApiError } from '@/errors';
 import {
 	useProviderKeys,
 	useResetState,
@@ -112,7 +113,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		expect(continueButton).toBeDisabled();
 	});
 
-	it('allows the user to continue to the second stage if the name is set and is unique', () => {
+	it('allows the user to continue to the second stage if the name is set and is unique', async () => {
 		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
 		const {
 			result: { current: setPromptConfigs },
@@ -120,18 +121,26 @@ describe('PromptConfigCreateWizard Page tests', () => {
 
 		setPromptConfigs(applicationId, promptConfigs);
 
-		const store = getStore();
-		store.setConfigName(faker.lorem.word());
-
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
 		);
+
+		const input = screen.getByTestId('create-prompt-base-form-name-input');
+		expect(input).toBeInTheDocument();
 
 		const continueButton = screen.getByTestId(
 			'config-create-wizard-continue-button',
 		);
 		expect(continueButton).toBeInTheDocument();
-		expect(continueButton).not.toBeDisabled();
+		expect(continueButton).toBeDisabled();
+
+		fireEvent.change(input, {
+			target: { value: faker.lorem.word({ length: 5 }) },
+		});
+
+		await waitFor(() => {
+			expect(continueButton).not.toBeDisabled();
+		});
 	});
 
 	it('does not allow the user to continue to the third stage if messages are empty', async () => {
@@ -313,7 +322,14 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 
 		mockFetch.mockResolvedValueOnce({
-			json: () => Promise.reject(new Error('failed')),
+			json: () =>
+				Promise.reject(
+					new ApiError('failed', {
+						context: {},
+						statusCode: 500,
+						statusText: 'failed',
+					}),
+				),
 			ok: false,
 		});
 

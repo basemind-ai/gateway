@@ -1,12 +1,12 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
-import { ApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/api-keys';
 import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
+import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
 import { ApplicationGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/application-general-settings';
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
@@ -17,9 +17,11 @@ import { useApplication, useProject, useProjects } from '@/stores/api-store';
 
 enum TAB_NAME {
 	OVERVIEW,
-	SETTINGS,
 	API_KEYS,
+	SETTINGS,
 }
+
+export { TAB_NAME as applicationPageTabNames };
 
 export default function Application({
 	params: { projectId, applicationId },
@@ -34,6 +36,8 @@ export default function Application({
 	const project = useProject(projectId);
 	const projects = useProjects();
 
+	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
+
 	const tabs: TabData<TAB_NAME>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
@@ -41,51 +45,52 @@ export default function Application({
 			text: t('overview'),
 		},
 		{
-			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAME.SETTINGS,
-			text: t('settings'),
-		},
-		{
 			icon: <KeyFill className="w-3.5 h-3.5" />,
 			id: TAB_NAME.API_KEYS,
 			text: t('apiKeys'),
 		},
+		{
+			icon: <Gear className="w-3.5 h-3.5" />,
+			id: TAB_NAME.SETTINGS,
+			text: t('settings'),
+		},
 	];
-	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
 
 	if (!application || !project) {
 		return null;
 	}
 
 	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: () => (
+		[TAB_NAME.OVERVIEW]: memo(() => (
 			<>
 				<ApplicationAnalyticsPage
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 				<ApplicationPromptConfigs
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 			</>
-		),
-
-		[TAB_NAME.SETTINGS]: () => (
+		)),
+		[TAB_NAME.API_KEYS]: memo(() => (
+			<ApplicationApiKeys
+				application={application}
+				projectId={projectId}
+			/>
+		)),
+		[TAB_NAME.SETTINGS]: memo(() => (
 			<>
 				<ApplicationGeneralSettings
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 				<ApplicationDeletion
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 			</>
-		),
-		[TAB_NAME.API_KEYS]: () => (
-			<ApiKeys applicationId={applicationId} projectId={projectId} />
-		),
+		)),
 	};
 
 	const TabComponent = tabComponents[selectedTab];
@@ -97,6 +102,13 @@ export default function Application({
 				headerText={`${t('application')} / ${application.name}`}
 				showSelect={projects.length > 1}
 			/>
+			{application.description && (
+				<div className="pl-20">
+					<span className="text-sm line-clamp-1 hover:line-clamp-none">
+						{application.description}
+					</span>
+				</div>
+			)}
 			<div className="mt-3.5 w-full mb-8">
 				<TabNavigation<TAB_NAME>
 					tabs={tabs}

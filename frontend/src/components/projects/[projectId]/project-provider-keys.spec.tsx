@@ -1,6 +1,5 @@
-import { faker } from '@faker-js/faker';
 import { wait } from 'shared/time';
-import { ProviderKeyFactory } from 'tests/factories';
+import { ProjectFactory, ProviderKeyFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 import {
 	fireEvent,
@@ -12,11 +11,13 @@ import {
 import { expect } from 'vitest';
 
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
+import { modelVendorToLocaleMap } from '@/constants/models';
+import { ApiError } from '@/errors';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
 describe('ProjectProviderKeys', () => {
-	const projectId = faker.string.uuid();
+	const project = ProjectFactory.buildSync();
 	const providerKeys = ProviderKeyFactory.batchSync(2).map((v, i) => {
 		v.modelVendor = i % 2 === 0 ? ModelVendor.OpenAI : ModelVendor.Cohere;
 		return v;
@@ -28,7 +29,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -40,8 +41,12 @@ describe('ProjectProviderKeys', () => {
 
 		const vendorCells = screen.getAllByTestId('key-provider-name');
 		expect(vendorCells).toHaveLength(providerKeys.length);
-		expect(vendorCells[0]).toHaveTextContent(providerKeys[0].modelVendor);
-		expect(vendorCells[1]).toHaveTextContent(providerKeys[1].modelVendor);
+		expect(vendorCells[0]).toHaveTextContent(
+			modelVendorToLocaleMap[providerKeys[0].modelVendor],
+		);
+		expect(vendorCells[1]).toHaveTextContent(
+			modelVendorToLocaleMap[providerKeys[1].modelVendor],
+		);
 
 		const createdAtCells = screen.getAllByTestId('key-created-at');
 		expect(createdAtCells).toHaveLength(providerKeys.length);
@@ -54,11 +59,18 @@ describe('ProjectProviderKeys', () => {
 		const toastsLength = result.current.length;
 
 		mockFetch.mockResolvedValueOnce({
-			json: () => Promise.reject('error'),
+			json: () =>
+				Promise.reject(
+					new ApiError('failed', {
+						context: {},
+						statusCode: 500,
+						statusText: 'failed',
+					}),
+				),
 			ok: false,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		await waitFor(() => {
 			expect(mockFetch).toHaveBeenCalled();
@@ -74,7 +86,7 @@ describe('ProjectProviderKeys', () => {
 			json: () => Promise.resolve([providerKeys[0]]),
 			ok: true,
 		});
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -96,7 +108,7 @@ describe('ProjectProviderKeys', () => {
 			json: () => Promise.resolve([providerKeys[0]]),
 			ok: true,
 		});
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -129,7 +141,7 @@ describe('ProjectProviderKeys', () => {
 			json: () => Promise.resolve(providerKeys),
 			ok: true,
 		});
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -147,7 +159,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -190,7 +202,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -231,7 +243,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -250,7 +262,14 @@ describe('ProjectProviderKeys', () => {
 		expect(deleteButtons).toHaveLength(providerKeys.length);
 
 		mockFetch.mockResolvedValueOnce({
-			json: () => Promise.reject(new Error()),
+			json: () =>
+				Promise.reject(
+					new ApiError('failed', {
+						context: {},
+						statusCode: 500,
+						statusText: 'failed',
+					}),
+				),
 			ok: false,
 		});
 

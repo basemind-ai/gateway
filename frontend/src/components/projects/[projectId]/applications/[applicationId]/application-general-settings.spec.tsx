@@ -51,7 +51,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -78,7 +78,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -99,7 +99,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -130,7 +130,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -142,7 +142,7 @@ describe('ApplicationGeneralSettings', () => {
 		});
 
 		const descriptionInput = screen.getByTestId<HTMLInputElement>(
-			'application-description-input',
+			'application-name-input',
 		);
 		fireEvent.change(descriptionInput, {
 			target: { value: 'de' },
@@ -158,7 +158,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -194,7 +194,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 		const defaultPromptSelect = screen.getByTestId<HTMLSelectElement>(
@@ -223,6 +223,7 @@ describe('ApplicationGeneralSettings', () => {
 	it('shows error when unable to fetch prompt configs', async () => {
 		const errMessage =
 			'unable to fetch prompt configs for application general';
+
 		handleRetrievePromptConfigsSpy.mockImplementationOnce(() => {
 			throw new ApiError(errMessage, {
 				statusCode: 401,
@@ -233,7 +234,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 		await screen.findByTestId('application-general-settings-container');
@@ -247,7 +248,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 		const defaultPromptSelect = screen.getByTestId<HTMLSelectElement>(

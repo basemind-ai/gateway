@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Activity, Cash } from 'react-bootstrap-icons';
@@ -7,23 +8,22 @@ import useSWR from 'swr';
 import { handleApplicationAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
-import { ApiError } from '@/errors';
-import { useShowError } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDateFormat } from '@/stores/user-config-store';
+import { Application } from '@/types';
 
 export function ApplicationAnalyticsPage({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
-	const showError = useShowError();
+	const handleError = useHandleError();
 
-	const oneWeekAgo = new Date();
-	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+	const oneWeekAgo = dayjs().subtract(7, 'days').toDate();
 
 	const [dateRange, setDateRange] = useState<DateValueType>({
 		endDate: new Date(),
@@ -32,27 +32,21 @@ export function ApplicationAnalyticsPage({
 
 	const { data: analytics, isLoading } = useSWR(
 		{
-			applicationId,
+			applicationId: application.id,
 			fromDate: dateRange?.startDate,
 			projectId,
 			toDate: dateRange?.endDate,
 		},
 		handleApplicationAnalytics,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 		},
 	);
 
 	return (
 		<div data-testid="application-analytics-container">
 			<div className="flex justify-between items-center">
-				<h2 className="font-semibold text-white text-xl self-end">
-					{t('status')}
-				</h2>
+				<h2 className="card-header-right self-end">{t('status')}</h2>
 				<DatePicker
 					displayFormat={dateFormat}
 					showShortcuts={true}
@@ -61,7 +55,7 @@ export function ApplicationAnalyticsPage({
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="flex items-center justify-between custom-card">
+			<div className="analytics">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}

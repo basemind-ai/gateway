@@ -11,7 +11,7 @@ import {
 } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Dimensions } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import {
 	useProjectUsers,
 	useRemoveProjectUser,
@@ -19,8 +19,8 @@ import {
 	useUpdateProjectUser,
 	useUser,
 } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { AccessPermission } from '@/types';
+import { useShowInfo } from '@/stores/toast-store';
+import { AccessPermission, Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
 const DEFAULT_AVATAR = '/images/avatar.svg';
@@ -80,33 +80,29 @@ function PermissionSelect({
 	);
 }
 
-export function ProjectMembers({ projectId }: { projectId: string }) {
+export function ProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
 
-	const projectUsers = useProjectUsers(projectId);
+	const projectUsers = useProjectUsers(project.id);
 	const removeProjectUser = useRemoveProjectUser();
 	const setProjectUsers = useSetProjectUsers();
 	const updateProjectUser = useUpdateProjectUser();
 	const user = useUser();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	const { isLoading } = useSWR(
 		{
-			projectId,
+			projectId: project.id,
 		},
 		handleRetrieveProjectUsers,
 		{
-			/* c8 ignore start */
-			onError(apiError: ApiError) {
-				showError(apiError.message);
-			},
+			onError: handleError,
 
 			onSuccess(users) {
-				setProjectUsers(projectId, users);
+				setProjectUsers(project.id, users);
 			},
-			/* c8 ignore end */
 		},
 	);
 
@@ -135,9 +131,9 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 				permission,
 				userId,
 			},
-			projectId,
+			projectId: project.id,
 		});
-		updateProjectUser(projectId, updatedProjectUser);
+		updateProjectUser(project.id, updatedProjectUser);
 		showInfo(t('roleUpdated'));
 	}
 
@@ -162,13 +158,13 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 		try {
 			setRemoveUserLoading(true);
 			await handleRemoveUserFromProject({
-				projectId,
+				projectId: project.id,
 				userId: removalUserId,
 			});
-			removeProjectUser(projectId, removalUserId);
+			removeProjectUser(project.id, removalUserId);
 			showInfo(t('userRemoved'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setRemovalUserId(null);
 			closeRemovalConfirmationPopup();
@@ -226,8 +222,8 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-members-container">
-			<h2 className="font-semibold text-white text-xl">{t('members')}</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('members')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				{isLoading && (
 					<div className="w-full flex">
 						<span className="loading loading-bars mx-auto" />

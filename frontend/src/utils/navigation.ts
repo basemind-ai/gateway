@@ -28,16 +28,20 @@ const keyReplacerMap: Record<
 	promptConfigId: setPromptConfigId,
 };
 
-export function setPathParams<T extends string>(
-	url: T,
+export function setRouteParams<
+	U extends string,
+	T extends string | number = number,
+>(
+	url: U,
 	params: Partial<Record<NavigationPathParam, string>>,
+	tab?: T,
 ): string {
 	let result = url as string;
 	for (const [key, value] of Object.entries(params)) {
 		result = keyReplacerMap[key as NavigationPathParam](result, value);
 	}
 
-	return result;
+	return tab ? `${result}#tab-${tab}` : result;
 }
 
 export function setProjectId(url: string, projectId: string) {

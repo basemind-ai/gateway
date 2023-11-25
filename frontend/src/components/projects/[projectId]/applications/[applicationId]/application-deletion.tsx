@@ -5,26 +5,26 @@ import { useRef, useState } from 'react';
 import { handleDeleteApplication } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
-import { useApplication, useDeleteApplication } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
+import { useDeleteApplication } from '@/stores/api-store';
+import { useShowInfo } from '@/stores/toast-store';
+import { Application } from '@/types';
 
 export function ApplicationDeletion({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const router = useRouter();
-	const application = useApplication(projectId, applicationId);
 
 	const deleteApplicationHook = useDeleteApplication();
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [loading, setLoading] = useState(false);
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	function openDeleteConfirmationPopup() {
@@ -45,39 +45,36 @@ export function ApplicationDeletion({
 		try {
 			setLoading(true);
 
-			await handleDeleteApplication({ applicationId, projectId });
-			deleteApplicationHook(projectId, applicationId);
+			await handleDeleteApplication({
+				applicationId: application.id,
+				projectId,
+			});
+			deleteApplicationHook(projectId, application.id);
 			router.replace(Navigation.Projects);
 			showInfo(t('applicationDeleted'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			closeDeleteConfirmationPopup();
 			setLoading(false);
 		}
 	}
 
-	if (!application) {
-		return null;
-	}
-
 	return (
 		<div data-testid="application-deletion-container" className="mt-8">
-			<h2 className="font-semibold text-white text-xl">
-				{t('deleteApplicationTitle')}
-			</h2>
-			<div className="custom-card flex items-center justify-between text-neutral-content">
+			<h2 className="card-header">{t('deleteApplicationTitle')}</h2>
+			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>
 					<h6 className="font-medium ">
-						{t('deleteYourApplication')}
+						{t('deleteApplicationSubtitle')}
 					</h6>
-					<p className="font-light text-xs mt-2.5">
+					<p className="font-light text-sm mt-2.5">
 						{t('deleteApplicationWarning')}
 					</p>
 				</div>
 				<button
 					data-testid="application-delete-btn"
-					className="btn bg-error text-accent-content py-2.5 px-4 rounded-3xl capitalize min-h-0 h-full leading-4"
+					className="card-action-button btn-error text-black"
 					onClick={openDeleteConfirmationPopup}
 				>
 					{t('delete')}

@@ -1,20 +1,31 @@
-import { waitFor } from '@testing-library/react';
-import { fireEvent, render, screen } from 'tests/test-utils';
+import { faker } from '@faker-js/faker';
+import { OpenAIPromptConfigFactory } from 'tests/factories';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
+import { useSetPromptConfigs } from '@/stores/api-store';
 import { ModelType, ModelVendor, OpenAIModelType } from '@/types';
 
 describe('PromptConfigBaseForm', () => {
+	const applicationId = faker.string.uuid();
+
 	it('should render the component without errors', () => {
 		render(
 			<PromptConfigBaseForm
 				configName=""
+				validateConfigName={vi.fn()}
 				modelType={{} as ModelType<any>}
 				modelVendor={ModelVendor.OpenAI}
 				setConfigName={vi.fn()}
 				setModelType={vi.fn()}
 				setVendor={vi.fn()}
-				nameIsInvalid={false}
+				setIsValid={vi.fn()}
 			/>,
 		);
 		expect(
@@ -29,31 +40,115 @@ describe('PromptConfigBaseForm', () => {
 	});
 
 	it('should display an error message if the name is invalid', async () => {
-		render(
+		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
+
+		const {
+			result: { current: setPromptConfigs },
+		} = renderHook(useSetPromptConfigs);
+
+		setPromptConfigs(applicationId, promptConfigs);
+
+		const invalidName = promptConfigs[0].name;
+
+		const { rerender } = render(
 			<PromptConfigBaseForm
+				validateConfigName={vi.fn()}
+				setIsValid={vi.fn()}
 				configName=""
 				modelType={{} as ModelType<any>}
 				modelVendor={ModelVendor.OpenAI}
 				setConfigName={vi.fn()}
 				setModelType={vi.fn()}
 				setVendor={vi.fn()}
-				nameIsInvalid={true}
 			/>,
 		);
-		expect(
-			screen.getByTestId('create-prompt-base-form-name-input'),
-		).toBeInTheDocument();
+
+		let nameInput: HTMLInputElement;
+		await waitFor(() => {
+			nameInput = screen.getByTestId(
+				'create-prompt-base-form-name-input',
+			);
+			expect(nameInput).toBeInTheDocument();
+		});
+
 		expect(
 			screen.getByTestId('create-prompt-base-form-vendor-select'),
 		).toBeInTheDocument();
 		expect(
 			screen.getByTestId('create-prompt-base-form-model-select'),
 		).toBeInTheDocument();
+
+		rerender(
+			<PromptConfigBaseForm
+				validateConfigName={vi.fn()}
+				setIsValid={vi.fn()}
+				configName={invalidName}
+				modelType={{} as ModelType<any>}
+				modelVendor={ModelVendor.OpenAI}
+				setConfigName={vi.fn()}
+				setModelType={vi.fn()}
+				setVendor={vi.fn()}
+			/>,
+		);
+
 		await waitFor(() => {
 			expect(
-				screen.getByTestId('invalid-name-error-message'),
+				screen.getByTestId('invalid-name-message'),
 			).toBeInTheDocument();
 		});
+
+		expect(screen.getByTestId('label-help-text')).toBeInTheDocument();
+	});
+
+	it('should display an error message if the name is too short', async () => {
+		const { rerender } = render(
+			<PromptConfigBaseForm
+				validateConfigName={vi.fn()}
+				setIsValid={vi.fn()}
+				configName=""
+				modelType={{} as ModelType<any>}
+				modelVendor={ModelVendor.OpenAI}
+				setConfigName={vi.fn()}
+				setModelType={vi.fn()}
+				setVendor={vi.fn()}
+			/>,
+		);
+
+		let nameInput: HTMLInputElement;
+		await waitFor(() => {
+			nameInput = screen.getByTestId(
+				'create-prompt-base-form-name-input',
+			);
+			expect(nameInput).toBeInTheDocument();
+		});
+
+		expect(
+			screen.getByTestId('create-prompt-base-form-vendor-select'),
+		).toBeInTheDocument();
+		expect(
+			screen.getByTestId('create-prompt-base-form-model-select'),
+		).toBeInTheDocument();
+
+		rerender(
+			<PromptConfigBaseForm
+				validateConfigName={vi.fn()}
+				setIsValid={vi.fn()}
+				configName={'a'}
+				modelType={{} as ModelType<any>}
+				modelVendor={ModelVendor.OpenAI}
+				setConfigName={vi.fn()}
+				setModelType={vi.fn()}
+				setVendor={vi.fn()}
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('invalid-length-message'),
+			).toBeInTheDocument();
+		});
+
+		expect(screen.getByTestId('label-help-text')).toBeInTheDocument();
 	});
 
 	it('should display and allow editing of the config name input field', () => {
@@ -61,13 +156,14 @@ describe('PromptConfigBaseForm', () => {
 		const setConfigName = vi.fn();
 		render(
 			<PromptConfigBaseForm
+				validateConfigName={vi.fn()}
+				setIsValid={vi.fn()}
 				configName={configName}
 				modelType={{} as ModelType<any>}
 				modelVendor={ModelVendor.OpenAI}
 				setConfigName={setConfigName}
 				setModelType={vi.fn()}
 				setVendor={vi.fn()}
-				nameIsInvalid={false}
 			/>,
 		);
 		const input: HTMLInputElement = screen.getByTestId(
@@ -83,13 +179,14 @@ describe('PromptConfigBaseForm', () => {
 		const modelVendor = ModelVendor.OpenAI;
 		render(
 			<PromptConfigBaseForm
+				validateConfigName={vi.fn()}
+				setIsValid={vi.fn()}
 				configName=""
 				modelType={{} as ModelType<any>}
 				modelVendor={modelVendor}
 				setConfigName={vi.fn()}
 				setModelType={vi.fn()}
 				setVendor={vi.fn()}
-				nameIsInvalid={false}
 			/>,
 		);
 		const select: HTMLInputElement = screen.getByTestId(
@@ -106,13 +203,14 @@ describe('PromptConfigBaseForm', () => {
 		const setModelType = vi.fn();
 		render(
 			<PromptConfigBaseForm
+				validateConfigName={vi.fn()}
+				setIsValid={vi.fn()}
 				configName=""
 				modelType={modelType}
 				modelVendor={modelVendor}
 				setConfigName={vi.fn()}
 				setModelType={setModelType}
 				setVendor={vi.fn()}
-				nameIsInvalid={false}
 			/>,
 		);
 		const select: HTMLInputElement = screen.getByTestId(

@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	cloud.google.com/go/pubsub v1.33.0
-	firebase.google.com/go/v4 v4.12.1
+	firebase.google.com/go/v4 v4.13.0
 	github.com/basemind-ai/monorepo/cloud-functions/emailsender v0.0.0-00010101000000-000000000000
 	github.com/basemind-ai/monorepo/e2e v0.0.0-00010101000000-000000000000
 	github.com/cenkalti/backoff/v4 v4.2.1

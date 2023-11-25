@@ -1,27 +1,49 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Front, PencilFill, Search } from 'react-bootstrap-icons';
+import { CheckCircle, Front, PencilFill, Search } from 'react-bootstrap-icons';
 
+import { PromptConfigPageTab } from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/configs/[promptConfigId]/page';
 import { Navigation } from '@/constants';
-import { modelTypeToNameMap, modelVendorToLocaleMap } from '@/constants/models';
+import {
+	modelTypeToLocaleMap,
+	modelVendorToLocaleMap,
+} from '@/constants/models';
 import { ModelVendor, PromptConfig } from '@/types';
-import { setPathParams } from '@/utils/navigation';
+import { setRouteParams } from '@/utils/navigation';
 
 export function ApplicationPromptConfigsTable({
 	promptConfigs,
 	projectId,
 	applicationId,
-	handleEditPromptConfig,
 	handlePromptConfigIdCopy,
 }: {
 	applicationId: string;
-	handleEditPromptConfig: (promptConfigId: string) => void;
 	handlePromptConfigIdCopy: (promptConfigId: string) => void;
 	projectId: string;
 	promptConfigs: PromptConfig<any>[];
 }) {
 	const t = useTranslations('application');
 	const router = useRouter();
+
+	const pustToTab = ({
+		promptConfigId,
+		tab,
+	}: {
+		promptConfigId: string;
+		tab: PromptConfigPageTab;
+	}) => {
+		router.push(
+			`${setRouteParams(
+				Navigation.PromptConfigDetail,
+				{
+					applicationId,
+					projectId,
+					promptConfigId,
+				},
+				tab as unknown as string,
+			)}`,
+		);
+	};
 
 	return (
 		<table
@@ -30,8 +52,9 @@ export function ApplicationPromptConfigsTable({
 		>
 			<thead>
 				<tr>
+					<th>{t('default')}</th>
 					<th>{t('name')}</th>
-					<th>{t('type')}</th>
+					<th>{t('vendor')}</th>
 					<th>{t('model')}</th>
 					<th>ID</th>
 					<th>{t('test')}</th>
@@ -40,38 +63,51 @@ export function ApplicationPromptConfigsTable({
 			</thead>
 			<tbody>
 				{promptConfigs.map(
-					({ name, modelType, modelVendor, id: promptConfigId }) => (
+					({
+						name,
+						modelType,
+						modelVendor,
+						id: promptConfigId,
+						isDefault,
+					}) => (
 						<tr
 							key={promptConfigId}
 							data-testid="application-prompt-configs-table-row"
 						>
 							<td>
+								<div className="pl-3">
+									{isDefault ? (
+										<CheckCircle className="w-3.5 h-3.5 text-info" />
+									) : null}
+								</div>
+							</td>
+							<td>
 								<button
 									data-testid="application-prompt-configs-table-config-name-button"
 									className="btn-link"
 									onClick={() => {
-										router.push(
-											setPathParams(
-												Navigation.PromptConfigDetail,
-												{
-													applicationId,
-													projectId,
-													promptConfigId,
-												},
-											),
-										);
+										pustToTab({
+											promptConfigId,
+											tab: PromptConfigPageTab.OVERVIEW,
+										});
 									}}
 								>
 									{name}
 								</button>
 							</td>
-							<td>{modelTypeToNameMap[modelType]}</td>
 							<td>
-								{
-									modelVendorToLocaleMap[
-										modelVendor as ModelVendor
-									]
-								}
+								<span className="text-info">
+									{
+										modelVendorToLocaleMap[
+											modelVendor as ModelVendor
+										]
+									}
+								</span>
+							</td>
+							<td>
+								<span className="text-info">
+									{modelTypeToLocaleMap[modelType]}
+								</span>
 							</td>
 							<td>
 								<button
@@ -86,7 +122,15 @@ export function ApplicationPromptConfigsTable({
 								</button>
 							</td>
 							<td>
-								<button>
+								<button
+									data-testid="application-prompt-configs-table-config-test-button"
+									onClick={() => {
+										pustToTab({
+											promptConfigId,
+											tab: PromptConfigPageTab.TESTING,
+										});
+									}}
+								>
 									<Search className="w-3.5 h-3.5 text-secondary" />
 								</button>
 							</td>
@@ -94,7 +138,10 @@ export function ApplicationPromptConfigsTable({
 								<button
 									data-testid="application-prompt-configs-table-config-edit-button"
 									onClick={() => {
-										handleEditPromptConfig(promptConfigId);
+										pustToTab({
+											promptConfigId,
+											tab: PromptConfigPageTab.SETTINGS,
+										});
 									}}
 								>
 									<PencilFill className="w-3.5 h-3.5 text-secondary" />

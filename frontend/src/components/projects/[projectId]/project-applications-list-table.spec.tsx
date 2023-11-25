@@ -1,12 +1,13 @@
 import { faker } from '@faker-js/faker';
+import { fireEvent, waitFor } from '@testing-library/react';
 import en from 'public/messages/en.json';
 import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
+import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
+import { expect } from 'vitest';
 
 import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';
-import { Navigation } from '@/constants';
 import { PromptConfig } from '@/types';
-import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 describe('ProjectApplicationsListTable', () => {
 	const namespace = en.projectOverview;
@@ -54,7 +55,7 @@ describe('ProjectApplicationsListTable', () => {
 		).toBe('3');
 	});
 
-	it('should generate a link for each application', () => {
+	it('should generate a link for each application', async () => {
 		const applications = ApplicationFactory.batchSync(3);
 		const projectId = faker.string.uuid();
 		const promptConfigs = applications.reduce<
@@ -72,17 +73,16 @@ describe('ProjectApplicationsListTable', () => {
 			/>,
 		);
 
-		const links = screen.getAllByTestId('application-name-anchor');
-		expect(links).toHaveLength(applications.length);
-		links.forEach((link, index) => {
-			expect(link).toHaveAttribute(
-				'href',
-				setApplicationId(
-					setProjectId(Navigation.ApplicationDetail, projectId),
-					applications[index].id,
-				),
-			);
-		});
+		const linkButtons: HTMLButtonElement[] = screen.getAllByTestId(
+			'project-application-list-name-button',
+		);
+		expect(linkButtons).toHaveLength(applications.length);
+		for (const [i, linkButton] of linkButtons.entries()) {
+			fireEvent.click(linkButton);
+			await waitFor(() => {
+				expect(routerPushMock).toHaveBeenCalledTimes(i + 1);
+			});
+		}
 	});
 
 	it('should handle an empty applications prop', () => {
@@ -99,7 +99,7 @@ describe('ProjectApplicationsListTable', () => {
 		);
 
 		expect(
-			screen.queryByTestId('application-name-anchor'),
+			screen.queryByTestId('project-application-list-name-button'),
 		).not.toBeInTheDocument();
 	});
 
@@ -133,7 +133,7 @@ describe('ProjectApplicationsListTable', () => {
 			screen.getByTestId(
 				`application-prompt-config-count-${applications[1].id}`,
 			).textContent,
-		).toBe('');
+		).toBe('0');
 		expect(
 			screen.getByTestId(
 				`application-prompt-config-count-${applications[2].id}`,

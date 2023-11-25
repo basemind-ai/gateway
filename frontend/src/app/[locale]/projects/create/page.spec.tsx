@@ -10,6 +10,7 @@ import {
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { Navigation } from '@/constants';
+import { ApiError } from '@/errors';
 import { useSetProjects } from '@/stores/api-store';
 
 describe('ProjectCreatePage', () => {
@@ -109,7 +110,13 @@ describe('ProjectCreatePage', () => {
 			projectsAPI,
 			'handleCreateProject',
 		);
-		handleCreateProjectSpy.mockRejectedValueOnce(new Error('test'));
+		handleCreateProjectSpy.mockRejectedValueOnce(
+			new ApiError('failed', {
+				context: {},
+				statusCode: 500,
+				statusText: 'failed',
+			}),
+		);
 		render(<CreateProjectPage />);
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const nameInput = screen.getByTestId('create-project-name-input');

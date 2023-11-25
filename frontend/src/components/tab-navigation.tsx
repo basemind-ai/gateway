@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 
 export interface TabData<T = string> {
 	icon?: ReactElement;
@@ -19,6 +19,18 @@ export function TabNavigation<T = string>({
 	onTabChange,
 	trailingLine,
 }: TabNavigationProps<T>) {
+	// on the first load of the component we check for a preset hash.
+	// this allows us to link to specific tabs in a page.
+	useEffect(() => {
+		const tab = tabs.find(
+			(t) => window.location.hash.slice(1) === `tab-${t.id}`,
+		);
+		if (tab) {
+			onTabChange(tab.id);
+			window.location.hash = '';
+		}
+	}, []);
+
 	return (
 		<nav className="tabs">
 			{tabs.map((tab) => (

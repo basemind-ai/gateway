@@ -11,7 +11,6 @@ import { ToastType } from '@/stores/toast-store';
 describe('ProjectDeletion', () => {
 	const handleDeleteProjectSpy = vi.spyOn(ProjectAPI, 'handleDeleteProject');
 	const project = ProjectFactory.buildSync();
-	const projectId = project.id;
 
 	beforeAll(() => {
 		HTMLDialogElement.prototype.showModal = vi.fn();
@@ -24,7 +23,7 @@ describe('ProjectDeletion', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectDeletion projectId={projectId} />);
+		render(<ProjectDeletion project={project} />);
 
 		const deleteButton = screen.getByTestId('project-delete-btn');
 		expect(deleteButton).toBeInTheDocument();
@@ -36,7 +35,7 @@ describe('ProjectDeletion', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectDeletion projectId={projectId} />);
+		render(<ProjectDeletion project={project} />);
 
 		const deleteButton = screen.getByTestId('project-delete-btn');
 		fireEvent.click(deleteButton);
@@ -66,7 +65,7 @@ describe('ProjectDeletion', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectDeletion projectId={projectId} />);
+		render(<ProjectDeletion project={project} />);
 
 		const deleteButton = screen.getByTestId('project-delete-btn');
 		fireEvent.click(deleteButton);

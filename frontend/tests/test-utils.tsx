@@ -66,3 +66,9 @@ export { customRender as render, customRenderHook as renderHook };
 
 export { act } from '@testing-library/react';
 export { routerReplaceMock } from 'tests/mocks';
+
+export function getLocaleNamespace(
+	key: keyof typeof locales,
+): Record<string, string> {
+	return locales[key];
+}

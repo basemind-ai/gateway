@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ProjectUserAccountFactory } from 'tests/factories';
+import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';
@@ -9,6 +9,8 @@ import { useSetUser } from '@/stores/api-store';
 import { AccessPermission } from '@/types';
 
 describe('ProjectMembers', () => {
+	const project = ProjectFactory.buildSync();
+
 	const handleUpdateUserToPermissionSpy = vi.spyOn(
 		ProjectUsersAPI,
 		'handleUpdateUserToPermission',
@@ -22,11 +24,12 @@ describe('ProjectMembers', () => {
 		'handleRemoveUserFromProject',
 	);
 	const projectUsers = ProjectUserAccountFactory.batchSync(2);
+
 	projectUsers[0].permission = AccessPermission.ADMIN;
 	projectUsers[1].permission = AccessPermission.MEMBER;
 	projectUsers[1].photoUrl = '';
+
 	const [adminUser, memberUser] = projectUsers;
-	const projectId = '1';
 
 	beforeAll(() => {
 		HTMLDialogElement.prototype.showModal = vi.fn();
@@ -40,7 +43,7 @@ describe('ProjectMembers', () => {
 		setUser(adminUser);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
-		render(<ProjectMembers projectId={projectId} />);
+		render(<ProjectMembers project={project} />);
 
 		for (const projectUser of projectUsers) {
 			await waitFor(() => {
@@ -62,7 +65,7 @@ describe('ProjectMembers', () => {
 		setUser(memberUser);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
-		render(<ProjectMembers projectId={projectId} />);
+		render(<ProjectMembers project={project} />);
 
 		const removeMemberButtons =
 			screen.queryAllByTestId('remove-member-btn');
@@ -79,7 +82,7 @@ describe('ProjectMembers', () => {
 		setUser(adminUser);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce([projectUsers[0]]);
 
-		render(<ProjectMembers projectId={projectId} />);
+		render(<ProjectMembers project={project} />);
 
 		await waitFor(() => {
 			const removeMemberButtons =
@@ -98,7 +101,7 @@ describe('ProjectMembers', () => {
 		setUser(adminUser);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
-		render(<ProjectMembers projectId={projectId} />);
+		render(<ProjectMembers project={project} />);
 
 		let permissionSelect: HTMLSelectElement;
 
@@ -119,7 +122,7 @@ describe('ProjectMembers', () => {
 				permission: AccessPermission.ADMIN,
 				userId: memberUser.id,
 			},
-			projectId,
+			projectId: project.id,
 		});
 	});
 
@@ -130,7 +133,7 @@ describe('ProjectMembers', () => {
 		setUser(adminUser);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
-		render(<ProjectMembers projectId={projectId} />);
+		render(<ProjectMembers project={project} />);
 
 		const confirmButton = screen.getByTestId(
 			'resource-deletion-delete-btn',
@@ -147,7 +150,7 @@ describe('ProjectMembers', () => {
 		setUser(adminUser);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
-		render(<ProjectMembers projectId={projectId} />);
+		render(<ProjectMembers project={project} />);
 
 		let removeMemberButton: HTMLButtonElement;
 		await waitFor(() => {
@@ -165,7 +168,7 @@ describe('ProjectMembers', () => {
 		fireEvent.click(confirmButton);
 
 		expect(handleRemoveUserFromProjectSpy).toHaveBeenCalledWith({
-			projectId,
+			projectId: project.id,
 			userId: memberUser.id,
 		});
 	});
@@ -177,7 +180,7 @@ describe('ProjectMembers', () => {
 		setUser(adminUser);
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
-		render(<ProjectMembers projectId={projectId} />);
+		render(<ProjectMembers project={project} />);
 
 		let removeMemberButton: HTMLButtonElement;
 

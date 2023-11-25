@@ -1,19 +1,20 @@
+import { faker } from '@faker-js/faker';
 import { fireEvent } from '@testing-library/react';
-import { OpenAIPromptConfigFactory } from 'tests/factories';
+import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
+import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
+import { setRouteParams } from '@/utils/navigation';
 
 describe('ApplicationPromptConfigs', () => {
-	// TODO: add more tests when adding new config, test and edit functionality
-	// This component is incomplete as of now
-	const projectId = '1';
-	const applicationId = '2';
+	const projectId = faker.string.uuid();
+	const application = ApplicationFactory.buildSync();
 	const handleRetrievePromptConfigsSpy = vi.spyOn(
 		PromptConfigAPI,
 		'handleRetrievePromptConfigs',
@@ -25,7 +26,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -46,7 +47,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -68,7 +69,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -90,7 +91,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -101,7 +102,31 @@ describe('ApplicationPromptConfigs', () => {
 		fireEvent.click(editButton);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${applicationId}/prompt-configs/${promptConfigs[0].id}`,
+			`/en/projects/${projectId}/applications/${application.id}/configs/${promptConfigs[0].id}#tab-2`,
+		);
+	});
+
+	it('opens the prompt config creation wizard when the add prompt config button is pressed', async () => {
+		const promptConfigs = await OpenAIPromptConfigFactory.batch(1);
+		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
+		render(
+			<ApplicationPromptConfigs
+				projectId={projectId}
+				application={application}
+			/>,
+		);
+		await screen.findByTestId('application-prompt-config-container');
+
+		const addPromptConfigButton = screen.getByTestId(
+			'application-prompt-config-new-prompt-config-button',
+		);
+		fireEvent.click(addPromptConfigButton);
+
+		expect(routerPushMock).toHaveBeenCalledWith(
+			setRouteParams(Navigation.ConfigCreateWizard, {
+				applicationId: application.id,
+				projectId,
+			}),
 		);
 	});
 });

@@ -1,6 +1,6 @@
 import { OpenAIContentMessage } from '@/types';
 
-const curlyBracketsRe = /{([^}]+)}/g;
+export const curlyBracketsRe = /{([^}]+)}/g;
 export function extractTemplateVariables(messageContent: string) {
 	return (
 		messageContent

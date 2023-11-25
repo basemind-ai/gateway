@@ -12,7 +12,7 @@ const signinLocales = locales.signin;
 vi.mock('@/utils/firebase');
 
 describe('FirebaseLogin tests', () => {
-	it('renders Loader', () => {
+	it('renders Loader', async () => {
 		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
 			return {
 				currentUser: { displayName: 'test' },
@@ -20,9 +20,10 @@ describe('FirebaseLogin tests', () => {
 		});
 		render(<FirebaseLogin />);
 
-		const loader = screen.getByTestId('loader-anim');
-
-		expect(loader).toBeInTheDocument();
+		await waitFor(() => {
+			const loader = screen.getByTestId('loader-anim');
+			expect(loader).toBeInTheDocument();
+		});
 	});
 
 	it('redirects to dashboard when user is already logged in', async () => {

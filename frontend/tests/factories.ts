@@ -6,6 +6,7 @@ import {
 	AccessPermission,
 	APIKey,
 	Application,
+	CoherePromptMessage,
 	ModelVendor,
 	OpenAIModelType,
 	OpenAIPromptMessage,
@@ -43,12 +44,19 @@ export const ApplicationFactory = new TypeFactory<Application>(() => ({
 	updatedAt: faker.date.past().toISOString(),
 }));
 export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
-	() => ({
-		content: faker.lorem.sentence(),
-		name: undefined,
-		role: TypeFactory.sample(['user', 'system', 'assistant']),
-		templateVariables: [],
-	}),
+	(i) =>
+		i % 4 === 0
+			? {
+					functionArguments: ['a', 'b'],
+					name: 'myFunction',
+					role: 'function',
+			  }
+			: {
+					content: faker.lorem.sentence(),
+					name: undefined,
+					role: TypeFactory.sample(['user', 'system', 'assistant']),
+					templateVariables: [],
+			  },
 );
 
 export const OpenAIPromptConfigFactory = new TypeFactory<
@@ -61,10 +69,17 @@ export const OpenAIPromptConfigFactory = new TypeFactory<
 	modelParameters: {},
 	modelType: TypeFactory.sample(Object.values(OpenAIModelType)),
 	modelVendor: ModelVendor.OpenAI,
-	name: faker.lorem.words(),
+	name: faker.lorem.word({ length: 5 }),
 	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),
 	updatedAt: faker.date.past().toISOString(),
 }));
+
+export const CohereMessageFactory = new TypeFactory<CoherePromptMessage>(
+	() => ({
+		message: faker.lorem.sentence(),
+		templateVariables: [],
+	}),
+);
 
 export const APIKeyFactory = new TypeFactory<APIKey>(() => ({
 	createdAt: faker.date.past().toISOString(),

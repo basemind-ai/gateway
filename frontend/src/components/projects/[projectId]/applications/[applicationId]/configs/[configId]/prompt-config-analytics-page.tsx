@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Activity, Cash } from 'react-bootstrap-icons';
@@ -7,8 +8,7 @@ import useSWR from 'swr';
 import { handlePromptConfigAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
-import { ApiError } from '@/errors';
-import { useShowError } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDateFormat } from '@/stores/user-config-store';
 import { PromptConfig } from '@/types';
 
@@ -23,10 +23,9 @@ export function PromptConfigAnalyticsPage({
 }) {
 	const t = useTranslations('promptConfig');
 	const dateFormat = useDateFormat();
-	const showError = useShowError();
+	const handleError = useHandleError();
 
-	const oneWeekAgo = new Date();
-	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+	const oneWeekAgo = dayjs().subtract(7, 'days').toDate();
 
 	const [dateRange, setDateRange] = useState<DateValueType>({
 		endDate: new Date(),
@@ -43,20 +42,14 @@ export function PromptConfigAnalyticsPage({
 		},
 		handlePromptConfigAnalytics,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 		},
 	);
 
 	return (
 		<div data-testid="prompt-analytics-container">
 			<div className="flex justify-between items-center">
-				<h2 className="font-semibold text-white text-xl">
-					{t('status')}
-				</h2>
+				<h2 className="card-header">{t('status')}</h2>
 				<DatePicker
 					displayFormat={dateFormat}
 					showShortcuts={true}
@@ -65,22 +58,18 @@ export function PromptConfigAnalyticsPage({
 					onValueChange={setDateRange}
 				/>
 			</div>
-			<div className="flex items-center justify-between custom-card">
+			<div className="analytics">
 				<DataCard
 					imageSrc={<Activity className="text-secondary w-6 h-6" />}
 					metric={t('apiCalls')}
-					totalValue={analytics?.totalRequests ?? ''}
-					percentage={'100'}
-					currentValue={'324'}
+					totalValue={analytics?.totalRequests ?? '0'}
 					loading={isLoading}
 				/>
 				<div className="w-px h-12 bg-gray-200 mx-4" />
 				<DataCard
 					imageSrc={<Cash className="text-secondary w-6 h-6" />}
 					metric={t('modelsCost')}
-					totalValue={`${analytics?.tokensCost ?? ''}$`}
-					percentage={'103'}
-					currentValue={'3.3'}
+					totalValue={`${analytics?.tokensCost ?? '0'}$`}
 					loading={isLoading}
 				/>
 			</div>

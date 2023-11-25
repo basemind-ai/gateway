@@ -6,19 +6,19 @@ import useSWR from 'swr';
 import { handleRetrieveApplications, handleRetrievePromptConfigs } from '@/api';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import {
 	useApplications,
 	usePromptConfigs,
 	useSetProjectApplications,
 	useSetPromptConfigs,
 } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
+import { Project } from '@/types';
 
-export function ProjectApplicationsList({ projectId }: { projectId: string }) {
+export function ProjectApplicationsList({ project }: { project: Project }) {
 	const t = useTranslations('projectOverview');
 
-	const applications = useApplications(projectId);
+	const applications = useApplications(project.id);
 	const setProjectApplications = useSetProjectApplications();
 
 	const promptConfigs = usePromptConfigs();
@@ -26,14 +26,12 @@ export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 
-	const { isLoading } = useSWR(projectId, handleRetrieveApplications, {
-		onError({ message }: ApiError) {
-			showError(message);
-		},
+	const { isLoading } = useSWR(project.id, handleRetrieveApplications, {
+		onError: handleError,
 		onSuccess(data) {
-			setProjectApplications(projectId, data);
+			setProjectApplications(project.id, data);
 		},
 	});
 
@@ -44,7 +42,7 @@ export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 				applications.map((application) =>
 					handleRetrievePromptConfigs({
 						applicationId: application.id,
-						projectId,
+						projectId: project.id,
 					}),
 				),
 			),
@@ -67,13 +65,11 @@ export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 
 	return (
 		<div data-testid="project-application-list-container" className="mt-9">
-			<h2 className="font-semibold text-white text-xl">
-				{t('applications')}
-			</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('applications')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				{applications?.length ? (
 					<ProjectApplicationsListTable
-						projectId={projectId}
+						projectId={project.id}
 						applications={applications}
 						promptConfigs={promptConfigs}
 					/>
@@ -95,7 +91,7 @@ export function ProjectApplicationsList({ projectId }: { projectId: string }) {
 				<div className="dialog-box border-0 rounded-none">
 					<CreateApplication
 						onClose={closeAppCreateFlow}
-						projectId={projectId}
+						projectId={project.id}
 					/>
 				</div>
 				<form method="dialog" className="modal-backdrop">

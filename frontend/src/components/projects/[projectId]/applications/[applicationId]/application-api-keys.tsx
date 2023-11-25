@@ -5,28 +5,27 @@ import { Eraser, Plus } from 'react-bootstrap-icons';
 import useSWR, { useSWRConfig } from 'swr';
 
 import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
-import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
+import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useApiKeys, useSetAPIKeys } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
-import { APIKey } from '@/types';
+import { APIKey, Application } from '@/types';
 
-export function ApiKeys({
+export function ApplicationApiKeys({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const { mutate } = useSWRConfig();
 	const [loading, setLoading] = useState(false);
 
-	const apiKeys = useApiKeys(applicationId);
+	const apiKeys = useApiKeys(application.id);
 	const setAPIKeys = useSetAPIKeys();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);
@@ -56,18 +55,14 @@ export function ApiKeys({
 
 	const { isLoading } = useSWR(
 		{
-			applicationId,
+			applicationId: application.id,
 			projectId,
 		},
 		handleRetrieveAPIKeys,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 			onSuccess(apiKeys) {
-				setAPIKeys(applicationId, apiKeys);
+				setAPIKeys(application.id, apiKeys);
 				closeCreationPopup();
 			},
 		},
@@ -81,10 +76,14 @@ export function ApiKeys({
 		try {
 			setLoading(true);
 
-			await handleDeleteAPIKey({ apiKeyId, applicationId, projectId });
-			await mutate({ applicationId, projectId });
+			await handleDeleteAPIKey({
+				apiKeyId,
+				applicationId: application.id,
+				projectId,
+			});
+			await mutate({ applicationId: application.id, projectId });
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			closeDeleteConfirmationPopup();
 			setLoading(false);
@@ -115,8 +114,14 @@ export function ApiKeys({
 				<tbody>
 					{apiKeys.map(({ name, createdAt, id }) => (
 						<tr data-testid="api-key-row" key={id}>
-							<td data-testid="api-key-name">{name}</td>
-							<td>{dayjs(createdAt).format(dateFormat)}</td>
+							<td data-testid="api-key-name">
+								<span className="text-info">{name}</span>
+							</td>
+							<td>
+								<span className="text-info">
+									{dayjs(createdAt).format(dateFormat)}
+								</span>
+							</td>
 							<td>
 								<button
 									data-testid="api-key-delete-btn"
@@ -124,7 +129,7 @@ export function ApiKeys({
 										openDeleteConfirmationPopup(id, name);
 									}}
 								>
-									<Eraser className="w-3.5 h-3.5 text-accent" />
+									<Eraser className="w-3.5 h-3.5 text-error" />
 								</button>
 							</td>
 						</tr>
@@ -136,13 +141,10 @@ export function ApiKeys({
 
 	return (
 		<div data-testid="application-api-keys-container">
-			<h2
-				data-testid="api-keys-title"
-				className="font-semibold text-white text-xl"
-			>
+			<h2 data-testid="api-keys-title" className="card-header">
 				{t('apiKeys')}
 			</h2>
-			<div className="custom-card">
+			<div className="rounded-data-card">
 				{renderApiKeys()}
 				<button
 					data-testid="api-key-create-btn"
@@ -178,13 +180,16 @@ export function ApiKeys({
 				</dialog>
 				<dialog ref={creationDialogRef} className="modal">
 					<div className="dialog-box">
-						<CreateApiKey
+						<CreateApplicationAPIKeyModal
 							projectId={projectId}
-							applicationId={applicationId}
+							applicationId={application.id}
 							onCancel={closeCreationPopup}
 							onSubmit={() => {
 								closeCreationPopup();
-								void mutate({ applicationId, projectId });
+								void mutate({
+									applicationId: application.id,
+									projectId,
+								});
 							}}
 						/>
 					</div>

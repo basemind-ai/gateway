@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
@@ -67,33 +67,33 @@ export default function ProjectOverview({
 	}
 
 	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: () => (
+		[TAB_NAME.OVERVIEW]: memo(() => (
 			<div data-testid="project-overview-tab">
-				<ProjectAnalytics projectId={projectId} />
-				<ProjectApplicationsList projectId={projectId} />
+				<ProjectAnalytics project={project} />
+				<ProjectApplicationsList project={project} />
 			</div>
-		),
-		[TAB_NAME.MEMBERS]: () => (
+		)),
+		[TAB_NAME.MEMBERS]: memo(() => (
 			<div data-testid="project-members-tab">
-				<InviteProjectMembers projectId={projectId} />
+				<InviteProjectMembers project={project} />
 				<div className="mt-10">
-					<ProjectMembers projectId={projectId} />
+					<ProjectMembers project={project} />
 				</div>
 			</div>
-		),
-		[TAB_NAME.PROVIDER_KEYS]: () => (
+		)),
+		[TAB_NAME.PROVIDER_KEYS]: memo(() => (
 			<div data-testid="project-provider-keys-tab">
-				<ProjectProviderKeys projectId={projectId} />
+				<ProjectProviderKeys project={project} />
 			</div>
-		),
-		[TAB_NAME.SETTINGS]: () => (
+		)),
+		[TAB_NAME.SETTINGS]: memo(() => (
 			<div data-testid="project-settings-tab">
-				<ProjectGeneralSettings projectId={projectId} />
+				<ProjectGeneralSettings project={project} />
 				<div className="mt-10">
-					<ProjectDeletion projectId={projectId} />
+					<ProjectDeletion project={project} />
 				</div>
 			</div>
-		),
+		)),
 	};
 
 	const TabComponent = tabComponents[selectedTab];
@@ -105,6 +105,13 @@ export default function ProjectOverview({
 				headerText={`${t('project')} / ${project.name}`}
 				showSelect={projects.length > 1}
 			/>
+			{project.description && (
+				<div className="pl-20">
+					<span className="text-sm line-clamp-1 hover:line-clamp-none">
+						{project.description}
+					</span>
+				</div>
+			)}
 			<div className="mt-3.5 w-full mb-9">
 				<TabNavigation<TAB_NAME>
 					tabs={tabs}

@@ -13,7 +13,7 @@ import { PromptConfigParametersAndPromptForm } from '@/components/projects/[proj
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { useProject, useProjects, usePromptConfigs } from '@/stores/api-store';
 import {
@@ -21,9 +21,8 @@ import {
 	WizardStage,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
-import { useShowError } from '@/stores/toast-store';
 import { ProviderKey } from '@/types';
-import { setPathParams } from '@/utils/navigation';
+import { setRouteParams } from '@/utils/navigation';
 
 export default function PromptConfigCreateWizard({
 	params: { applicationId, projectId },
@@ -31,9 +30,11 @@ export default function PromptConfigCreateWizard({
 	params: { applicationId: string; projectId: string };
 }) {
 	const t = useTranslations('createConfigWizard');
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const router = useRouter();
+
+	const [nameIsValid, setNameIsValid] = useState(false);
 
 	const project = useProject(projectId);
 	const projects = useProjects();
@@ -69,19 +70,17 @@ export default function PromptConfigCreateWizard({
 		store.setParameters,
 	]);
 
+	const validateConfigName = useCallback(
+		(value: string) =>
+			!(promptConfigs[applicationId]?.map((c) => c.name) ?? []).includes(
+				value,
+			),
+		[promptConfigs],
+	);
+
 	const handleTemplateVariablesChange = useCallback(
 		store.setTemplateVariables,
 		[store.setTemplateVariables],
-	);
-
-	const nameIsInvalid = useMemo(
-		() =>
-			Boolean(
-				promptConfigs[applicationId]
-					?.map((c) => c.name)
-					?.includes(store.configName),
-			),
-		[promptConfigs, store.configName],
 	);
 
 	const hasProviderKey = useMemo(
@@ -93,10 +92,11 @@ export default function PromptConfigCreateWizard({
 		[WizardStage.NAME_AND_MODEL]: useMemo(
 			() => (
 				<PromptConfigBaseForm
+					validateConfigName={validateConfigName}
 					configName={store.configName}
 					modelType={store.modelType}
 					modelVendor={store.modelVendor}
-					nameIsInvalid={nameIsInvalid}
+					setIsValid={setNameIsValid}
 					setConfigName={handleConfigNameChange}
 					setModelType={handleModelTypeChange}
 					setVendor={handleModelVendorChange}
@@ -142,7 +142,7 @@ export default function PromptConfigCreateWizard({
 					modelType={store.modelType}
 					modelVendor={store.modelVendor}
 					parameters={store.parameters}
-					handleError={showError}
+					handleError={handleError}
 				/>
 			),
 			[
@@ -186,14 +186,14 @@ export default function PromptConfigCreateWizard({
 			});
 			store.resetState();
 			router.replace(
-				setPathParams(Navigation.PromptConfigDetail, {
+				setRouteParams(Navigation.PromptConfigDetail, {
 					applicationId,
 					projectId,
 					promptConfigId,
 				}),
 			);
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setIsLoading(false);
 		}
@@ -207,7 +207,6 @@ export default function PromptConfigCreateWizard({
 				</div>
 			) : (
 				<>
-					{' '}
 					<Navbar
 						project={project!}
 						headerText={`${t('createPromptConfigTitle')} / ${
@@ -215,7 +214,7 @@ export default function PromptConfigCreateWizard({
 						}`}
 						showSelect={projects.length > 1}
 					/>
-					<div className="bg-base-300 transform transition-transform duration-300 ease-in-out custom-card">
+					<div className="bg-base-300 transform transition-transform duration-300 ease-in-out rounded-data-card">
 						{wizardStageComponentMap[store.wizardStage]}
 						{store.wizardStage < 2 && (
 							<div className="divider divide-accent" />
@@ -225,7 +224,7 @@ export default function PromptConfigCreateWizard({
 								data-testid="config-create-wizard-cancel-button"
 								onClick={() => {
 									router.push(
-										setPathParams(
+										setRouteParams(
 											Navigation.ApplicationDetail,
 											{
 												applicationId,
@@ -272,7 +271,7 @@ export default function PromptConfigCreateWizard({
 										onClick={store.setNextWizardStage}
 										className="btn btn-primary"
 										disabled={
-											nameIsInvalid ||
+											!nameIsValid ||
 											(store.wizardStage === 0 &&
 												!store.configName.length) ||
 											(store.wizardStage === 1 &&

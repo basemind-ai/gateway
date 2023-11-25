@@ -1,13 +1,17 @@
 import { useTranslations } from 'next-intl';
 import { PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
-import { modelTypeToNameMap, modelVendorToLocaleMap } from '@/constants/models';
+import { PromptContentDisplay } from '@/components/prompt-content-display';
+import {
+	modelTypeToLocaleMap,
+	modelVendorToLocaleMap,
+} from '@/constants/models';
+import { WebsocketError } from '@/errors';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
 	ModelParameters,
 	ModelType,
 	ModelVendor,
-	OpenAIContentMessage,
 	PromptConfigTest,
 	ProviderMessageType,
 } from '@/types';
@@ -40,7 +44,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	promptConfigId,
 }: {
 	applicationId: string;
-	handleError: (error: string) => void;
+	handleError: (error: unknown) => void;
 	messages: ProviderMessageType<T>[];
 	modelType: ModelType<T>;
 	modelVendor: T;
@@ -62,7 +66,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	} = usePromptTesting({
 		applicationId,
 		handleError: () => {
-			handleError(t('runningTestError'));
+			handleError(new WebsocketError(t('runningTestError')));
 		},
 		projectId,
 	});
@@ -71,7 +75,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 		return [...acc, ...(cur.templateVariables ?? [])];
 	}, []);
 
-	const handleRunTest = () => {
+	const handleRunTest = async () => {
 		resetState();
 
 		const config = {
@@ -83,7 +87,11 @@ export function PromptConfigTesting<T extends ModelVendor>({
 			templateVariables,
 		} satisfies PromptConfigTest<T>;
 
-		void sendMessage(config);
+		try {
+			await sendMessage(config);
+		} catch (e) {
+			handleError(e);
+		}
 	};
 
 	const allExpectedVariablesHaveLength = expectedVariables.every(
@@ -94,19 +102,10 @@ export function PromptConfigTesting<T extends ModelVendor>({
 
 	return (
 		<div className="flex flex-col" data-testid="prompt-config-testing-form">
-			<div>
-				<h4 className="font-medium p-4">{t('promptTemplate')}</h4>
-				<div className="border-2 border-neutral p-4 rounded">
-					{messages.map((m, i) => (
-						<p
-							data-testid="message-content-paragraph"
-							key={(m as OpenAIContentMessage).content + i}
-						>
-							{(m as OpenAIContentMessage).content}
-						</p>
-					))}
-				</div>
-			</div>
+			<PromptContentDisplay
+				modelVendor={modelVendor}
+				messages={messages}
+			/>
 			{expectedVariables.length > 0 && (
 				<div>
 					<h4 className="font-medium p-4">{t('testInputs')}</h4>
@@ -181,7 +180,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 								{modelVendorToLocaleMap[modelVendor]}
 							</td>
 							<td data-testid="test-model-type-display">
-								{modelTypeToNameMap[modelType]}
+								{modelTypeToLocaleMap[modelType]}
 							</td>
 							<td data-testid="test-finish-reason-display">
 								{testFinishReason || 'N/A'}

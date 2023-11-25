@@ -4,6 +4,8 @@ import { Record } from 'react-bootstrap-icons';
 
 import { CohereModelType, ModelVendor, OpenAIModelType } from '@/types/enums';
 
+export type OpenAIMessageRole = 'system' | 'user' | 'assistant' | 'function';
+
 export interface OpenAIContentMessage {
 	content: string;
 	name?: string;

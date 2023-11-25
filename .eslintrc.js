@@ -3,9 +3,6 @@ const rules = {};
 const tsWebRules = {
 	...rules,
 	'@next/next/no-html-link-for-pages': 0,
-	'react-hooks/exhaustive-deps': 0,
-	'react/react-in-jsx-scope': 0,
-	'unicorn/prefer-node-protocol': 0,
 };
 
 const project = [
@@ -43,7 +40,11 @@ module.exports = {
 			rules,
 		},
 		{
-			files: ['frontend/**/*.ts', 'frontend/**/*.tsx'],
+			files: ['frontend/**/*.{ts,tsx}'],
+			excludedFiles: [
+				'frontend/**/tests/**/*.{ts,tsx}',
+				'frontend/**/*.spec.{ts,tsx}',
+			],
 			extends: [
 				'@tool-belt/eslint-config/react',
 				'plugin:@next/next/recommended',
@@ -51,7 +52,10 @@ module.exports = {
 			rules: tsWebRules,
 		},
 		{
-			files: ['frontend/tests/**/*.ts', 'frontend/tests/**/*.tsx'],
+			files: [
+				'frontend/tests/**/*.{ts,tsx}',
+				'frontend/**/*.spec.{ts,tsx}',
+			],
 			extends: [
 				'@tool-belt/eslint-config/react',
 				'plugin:vitest/recommended',

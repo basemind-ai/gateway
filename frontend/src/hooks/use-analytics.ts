@@ -3,6 +3,7 @@ import { deepmerge } from 'deepmerge-ts';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { ConfigurationError } from '@/errors';
 import { useUser } from '@/stores/api-store';
 
 declare global {
@@ -26,7 +27,7 @@ export function useAnalytics(): AnalyticsHandlers {
 	const writeKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
 
 	if (!writeKey) {
-		throw new Error(
+		throw new ConfigurationError(
 			'missing required env variable NEXT_PUBLIC_SEGMENT_WRITE_KEY',
 		);
 	}

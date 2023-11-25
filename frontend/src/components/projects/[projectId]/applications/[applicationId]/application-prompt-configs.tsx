@@ -6,72 +6,58 @@ import useSWR from 'swr';
 import { handleRetrievePromptConfigs } from '@/api';
 import { ApplicationPromptConfigsTable } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs-table';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
-import { useShowError, useShowSuccess } from '@/stores/toast-store';
+import { useShowSuccess } from '@/stores/toast-store';
+import { Application } from '@/types';
 import { copyToClipboard } from '@/utils/helpers';
-import { setPathParams } from '@/utils/navigation';
+import { setRouteParams } from '@/utils/navigation';
 
 export function ApplicationPromptConfigs({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const router = useRouter();
 
-	const setPromptConfig = useSetPromptConfigs();
+	const setPromptConfigs = useSetPromptConfigs();
 	const promptConfigs = usePromptConfigs();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showSuccess = useShowSuccess();
 
 	const { isLoading } = useSWR(
 		{
-			applicationId,
+			applicationId: application.id,
 			projectId,
 		},
 		handleRetrievePromptConfigs,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 			onSuccess(promptConfigRes) {
-				setPromptConfig(applicationId, promptConfigRes);
+				setPromptConfigs(application.id, promptConfigRes);
 			},
 		},
 	);
-
-	const editPromptConfig = (promptConfigId: string) => {
-		router.push(
-			setPathParams(Navigation.PromptConfigDetail, {
-				applicationId,
-				projectId,
-				promptConfigId,
-			}),
-		);
-	};
 
 	return (
 		<div data-testid="application-prompt-config-container" className="mt-9">
 			<h2 className="font-semibold text-base-content text-xl">
 				{t('promptConfiguration')}
 			</h2>
-			<div className="custom-card">
+			<div className="rounded-data-card">
 				{isLoading ? (
 					<div className="w-full flex mb-8">
 						<span className="loading loading-bars mx-auto" />
 					</div>
 				) : (
 					<ApplicationPromptConfigsTable
-						applicationId={applicationId}
-						promptConfigs={promptConfigs[applicationId] ?? []}
+						applicationId={application.id}
+						promptConfigs={promptConfigs[application.id] ?? []}
 						projectId={projectId}
-						handleEditPromptConfig={editPromptConfig}
 						handlePromptConfigIdCopy={(promptConfigId: string) => {
 							copyToClipboard(promptConfigId);
 							showSuccess(t('copiedToClipboard'));
@@ -80,10 +66,11 @@ export function ApplicationPromptConfigs({
 				)}
 				<button
 					className="flex gap-2 items-center text-secondary hover:brightness-90"
+					data-testid="application-prompt-config-new-prompt-config-button"
 					onClick={() => {
 						router.push(
-							setPathParams(Navigation.ConfigCreateWizard, {
-								applicationId,
+							setRouteParams(Navigation.ConfigCreateWizard, {
+								applicationId: application.id,
 								projectId,
 							}),
 						);

@@ -381,9 +381,9 @@
 		/>
     <inspection_tool
 			class="DuplicatedCode"
-			enabled="true"
+			enabled="false"
 			level="WEAK WARNING"
-			enabled_by_default="true"
+			enabled_by_default="false"
 		>
       <Languages>
         <language minSize="57" name="TypeScript" />

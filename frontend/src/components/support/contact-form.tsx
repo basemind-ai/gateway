@@ -6,9 +6,9 @@ import { handleCreateSupportTicket, handleRetrieveProjects } from '@/api';
 import { DashboardCard } from '@/components/dashboard-card';
 import { Dropdown } from '@/components/dropdown';
 import { SupportTopic } from '@/constants/forms';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useProjects, useSetProjects } from '@/stores/api-store';
-import { useShowError, useShowSuccess } from '@/stores/toast-store';
+import { useShowSuccess } from '@/stores/toast-store';
 import { Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
@@ -27,22 +27,18 @@ export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 		value: topic,
 	}));
 	const setProjects = useSetProjects();
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showSuccess = useShowSuccess();
 
 	const { isLoading } = useSWR<Project[]>(
 		() => isAuthenticated,
 		handleRetrieveProjects,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
+			onError: handleError,
 
 			onSuccess(data) {
 				setProjects(data);
 			},
-			/* c8 ignore end */
 		},
 	);
 
@@ -59,8 +55,8 @@ export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 			setEmailBody('');
 			setEmailSubject('');
 			setSelectedProjectId('');
-		} catch {
-			showError(t('errorComment'));
+		} catch (e) {
+			handleError(e);
 		} finally {
 			setIsSubmitting(false);
 		}

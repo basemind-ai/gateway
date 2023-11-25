@@ -1,16 +1,16 @@
 import { useTranslations } from 'next-intl';
 import { KeyboardEvent, useState } from 'react';
 import { XCircleFill } from 'react-bootstrap-icons';
+import isEmail from 'validator/es/lib/isEmail';
 
 import { handleAddUsersToProject, handleRetrieveProjectUsers } from '@/api';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useSetProjectUsers } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { AccessPermission } from '@/types';
+import { useShowInfo } from '@/stores/toast-store';
+import { AccessPermission, Project } from '@/types';
 import { handleChange } from '@/utils/events';
-import { isValidEmail } from '@/utils/validation';
 
-export function InviteProjectMembers({ projectId }: { projectId: string }) {
+export function InviteProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
 
 	const [emails, setEmails] = useState<string[]>([]);
@@ -20,7 +20,7 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 
 	const setProjectUsers = useSetProjectUsers();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	async function sendInvite() {
@@ -32,20 +32,20 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 			setLoading(true);
 			await handleAddUsersToProject({
 				data: emails.map((email) => ({ email, permission })),
-				projectId,
+				projectId: project.id,
 			});
 
 			const projectUsers = await handleRetrieveProjectUsers({
-				projectId,
+				projectId: project.id,
 			});
-			setProjectUsers(projectId, projectUsers);
+			setProjectUsers(project.id, projectUsers);
 
 			setEmails([]);
 			setCurrentEmail('');
 			setPermission(AccessPermission.MEMBER);
 			showInfo(t('usersInvited'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setLoading(false);
 		}
@@ -76,7 +76,7 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 		email: string;
 		onRemove: () => void;
 	}) {
-		const emailValid = isValidEmail(email);
+		const emailValid = isEmail(email);
 
 		return (
 			<div
@@ -96,23 +96,22 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 	}
 
 	const emailsValid =
-		!!emails.length && emails.every((email) => isValidEmail(email));
+		!!emails.length && emails.every((email) => isEmail(email));
 
 	return (
 		<div data-testid="project-invite-member">
-			<h2 className="font-semibold text-white text-xl">{t('invite')}</h2>
-			<div className="custom-card flex flex-col">
+			<h2 className="card-header">{t('invite')}</h2>
+			<div className="rounded-data-card flex flex-col">
 				<div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
-					<div className="flex-2">
-						<label
-							htmlFor="email-address-input"
-							className="text-sm font-semibold text-neutral-content"
-						>
-							{t('emailAddresses')}
+					<div className="form-control flex-2">
+						<label className="label">
+							<span className="label-text">
+								{t('emailAddresses')}
+							</span>
 						</label>
-						<div className="mt-2.5 flex flex-wrap bg-neutral rounded-lg">
+						<div className="flex flex-wrap bg-neutral rounded-lg">
 							{emails.length !== 0 && (
-								<div className="flex pl-4 py-4 flex-wrap items-center gap-2  text-neutral-content font-medium">
+								<div className="flex pl-4 py-4 pr-2 flex-wrap items-center gap-2 text-neutral-content font-medium">
 									{emails.map((email) => (
 										<EmailChip
 											key={email}
@@ -129,7 +128,7 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 								type="email"
 								id="email-address-input"
 								data-testid="invite-email-input"
-								className="flex flex-1 input bg-neutral w-full text-neutral-content font-medium min-w-[9rem]"
+								className="flex flex-1 input w-full bg-neutral text-neutral-content min-w-[9rem]"
 								placeholder={t('emailPlaceholder')}
 								value={currentEmail}
 								onKeyDown={handleKeyDown}
@@ -138,16 +137,13 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 							/>
 						</div>
 					</div>
-					<div className="flex-1">
-						<label
-							htmlFor="role-select"
-							className="text-sm font-semibold text-neutral-content"
-						>
-							{t('role')}
+					<div className="form-control flex-1">
+						<label className="label">
+							<span className="label-text">{t('role')}</span>
 						</label>
 						<select
 							data-testid="permission-select"
-							className="mt-2.5 select select-bordered w-full bg-neutral text-base-content font-medium capitalize min-w-[14rem]"
+							className="card-select w-full min-w-[14rem]"
 							value={permission}
 							onChange={handleChange(setPermission)}
 						>
@@ -165,18 +161,20 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 						</select>
 					</div>
 				</div>
-				<button
-					data-testid="send-invite-btn"
-					disabled={!emailsValid}
-					className="btn btn-primary ml-auto mt-4 capitalize font-semibold py-2.5 px-4 min-h-0 h-full "
-					onClick={() => void sendInvite()}
-				>
-					{loading ? (
-						<span className="loading loading-spinner loading-xs mx-4" />
-					) : (
-						t('sendInvite')
-					)}
-				</button>
+				<div className="flex justify-end pt-6">
+					<button
+						data-testid="send-invite-btn"
+						disabled={!emailsValid}
+						className="card-action-button invalid:disabled btn-primary"
+						onClick={() => void sendInvite()}
+					>
+						{loading ? (
+							<span className="loading loading-spinner loading-xs mx-4" />
+						) : (
+							t('sendInvite')
+						)}
+					</button>
+				</div>
 			</div>
 		</div>
 	);

@@ -73,12 +73,36 @@ div#__next > div {
 		}
 	}
 
-	.custom-card {
-		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-32;
+	.card-header {
+		@apply font-semibold text-white text-xl pl-3;
 	}
 
-	.custom-card-px-16 {
+	.card-header-right {
+		@apply font-semibold text-white text-xl pr-3;
+	}
+
+	.card-action-button {
+		@apply btn py-2.5 rounded-full capitalize min-h-0 h-full leading-4;
+	}
+
+	.card-input {
+		@apply input input-bordered rounded bg-neutral text-neutral-content;
+	}
+
+	.card-textarea {
+		@apply textarea textarea-bordered rounded bg-neutral text-neutral-content;
+	}
+
+	.card-select {
+		@apply select select-bordered rounded bg-neutral text-neutral-content;
+	}
+
+	.rounded-data-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-16;
+	}
+
+	.analytics {
+		@apply rounded-data-card flex justify-around;
 	}
 
 	.dialog-box {

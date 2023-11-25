@@ -1,18 +1,21 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
+import {
+	ApplicationFactory,
+	OpenAIPromptConfigFactory,
+	ProjectFactory,
+} from 'tests/factories';
+import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { ProjectApplicationsList } from '@/components/projects/[projectId]/project-applications-list';
-import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
-import { setApplicationId, setProjectId } from '@/utils/navigation';
 
 describe('ApplicationsList', () => {
-	const projectId = '1';
+	const project = ProjectFactory.buildSync();
 	const handleRetrievePromptConfigsSpy = vi.spyOn(
 		PromptConfigAPI,
 		'handleRetrievePromptConfigs',
@@ -44,7 +47,7 @@ describe('ApplicationsList', () => {
 			);
 		});
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('project-application-list-container'),
@@ -55,12 +58,14 @@ describe('ApplicationsList', () => {
 			const nameElement = screen.getByText(application.name);
 			expect(nameElement).toBeInTheDocument();
 
-			const configLengthElements = screen.getAllByTestId(
-				'application-prompt-config-count',
-			);
-			expect(configLengthElements[index].innerHTML).toBe(
-				promptConfigLengths[index].toString(),
-			);
+			await waitFor(() => {
+				const configLengthElements = screen.getByTestId(
+					`application-prompt-config-count-${application.id}`,
+				);
+				expect(configLengthElements).toHaveTextContent(
+					promptConfigLengths[index].toString(),
+				);
+			});
 		}
 	});
 
@@ -74,31 +79,37 @@ describe('ApplicationsList', () => {
 			);
 		});
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('project-application-list-container'),
 			).toBeInTheDocument();
 		});
 
-		const applicationUrl = setApplicationId(
-			setProjectId(Navigation.ApplicationDetail, projectId),
-			applications[0].id,
-		);
+		const [applicationNameButton] =
+			screen.getAllByTestId<HTMLButtonElement>(
+				'project-application-list-name-button',
+			);
 
-		const [applicationNameElement] =
-			screen.getAllByTestId<HTMLAnchorElement>('application-name-anchor');
-		expect(applicationNameElement.href).toContain(applicationUrl);
+		fireEvent.click(applicationNameButton);
+		await waitFor(() => {
+			expect(routerPushMock).toHaveBeenCalledOnce();
+		});
 
-		const [applicationEditElement] =
-			screen.getAllByTestId<HTMLAnchorElement>('application-edit-anchor');
-		expect(applicationEditElement.href).toContain(applicationUrl);
+		const [applicationEditButton] =
+			screen.getAllByTestId<HTMLButtonElement>(
+				'project-application-list-edit-button',
+			);
+		fireEvent.click(applicationEditButton);
+		await waitFor(() => {
+			expect(routerPushMock).toHaveBeenCalledTimes(2);
+		});
 	});
 
 	it('opens and closes the app creation dialog', async () => {
 		handleRetrieveApplicationsSpy.mockResolvedValueOnce([]);
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 
 		const newAppButton = screen.getByTestId('new-application-btn');
 		fireEvent.click(newAppButton);
@@ -121,7 +132,7 @@ describe('ApplicationsList', () => {
 			});
 		});
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 
 		const errorToast = screen.getByText('unable to get applications');
 		expect(errorToast.className).toContain(ToastType.ERROR);

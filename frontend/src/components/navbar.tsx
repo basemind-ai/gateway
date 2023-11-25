@@ -18,6 +18,7 @@ export function Navbar({
 			>
 				{headerText}
 			</div>
+
 			{showSelect && (
 				<div className="navbar-end">
 					<ProjectSelect selectedProjectId={project.id} />
