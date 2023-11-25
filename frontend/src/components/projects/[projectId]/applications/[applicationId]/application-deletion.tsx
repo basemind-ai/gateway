@@ -66,15 +66,15 @@ export function ApplicationDeletion({
 			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>
 					<h6 className="font-medium ">
-						{t('deleteYourApplication')}
+						{t('deleteApplicationSubtitle')}
 					</h6>
-					<p className="font-light text-xs mt-2.5">
+					<p className="font-light text-sm mt-2.5">
 						{t('deleteApplicationWarning')}
 					</p>
 				</div>
 				<button
 					data-testid="application-delete-btn"
-					className="btn bg-error text-accent-content py-2.5 px-4 rounded-3xl capitalize min-h-0 h-full leading-4"
+					className="card-action-button btn-error text-black"
 					onClick={openDeleteConfirmationPopup}
 				>
 					{t('delete')}

@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
+import { InfoCircle } from 'react-bootstrap-icons';
 import useSWR, { useSWRConfig } from 'swr';
 
 import {
@@ -150,8 +151,7 @@ export function ApplicationGeneralSettings({
 					validateValue={validateName}
 					value={name}
 				/>
-
-				<div className="form-control mt-8">
+				<div className="form-control">
 					<label className="label">
 						<span className="label-text">
 							{t('applicationDescription')}
@@ -164,17 +164,22 @@ export function ApplicationGeneralSettings({
 						onChange={handleChange(setDescription)}
 					/>
 				</div>
+				<div className="form-control pt-6">
+					<label className="label">
+						<span className="label-text">
+							{t('defaultPromptConfig')}
+							<span
+								className="pl-1 tooltip"
+								data-tip={t('defaultPromptConfigMessage')}
+							>
+								<InfoCircle className="h-3 w-3" />
+							</span>
+						</span>
+					</label>
 
-				<div className="mt-8 border border-neutral rounded-3xl py-6 px-8 text-neutral-content">
-					<h6 className="font-semibold text-lg">
-						{t('defaultPromptConfig')}
-					</h6>
-					<p className="mt-3.5 font-medium text-sm ">
-						{t('defaultPromptConfigMessage')}
-					</p>
 					<select
 						data-testid="application-default-prompt"
-						className="mt-16 select select-bordered w-full max-w-xs bg-neutral text-base-content font-bold"
+						className="card-select"
 						value={defaultPromptConfigId}
 						onChange={handleChange(setDefaultPromptConfigId)}
 						disabled={
@@ -192,19 +197,20 @@ export function ApplicationGeneralSettings({
 						))}
 					</select>
 				</div>
-
-				<button
-					data-testid="application-setting-save-btn"
-					disabled={isLoading || !isNameValid || !isChanged}
-					className="btn btn-primary ml-auto mt-8 capitalize"
-					onClick={() => void saveSettings()}
-				>
-					{isLoading ? (
-						<span className="loading loading-spinner loading-xs mx-2" />
-					) : (
-						t('save')
-					)}
-				</button>
+				<div className="flex justify-end pt-6">
+					<button
+						data-testid="application-setting-save-btn"
+						disabled={isLoading || !isNameValid || !isChanged}
+						className="card-action-button invalid:disabled btn-primary"
+						onClick={() => void saveSettings()}
+					>
+						{isLoading ? (
+							<span className="loading loading-spinner loading-xs mx-2" />
+						) : (
+							t('save')
+						)}
+					</button>
+				</div>
 			</div>
 		</div>
 	);

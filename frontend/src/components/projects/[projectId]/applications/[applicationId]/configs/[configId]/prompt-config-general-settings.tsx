@@ -71,7 +71,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 					setIsValid={setIsNameValid}
 					setIsChanged={setIsNameChanged}
 				/>
-				<div className="flex justify-end pt-3">
+				<div className="flex justify-end pt-6">
 					<button
 						data-testid="prompt-general-settings-save-button"
 						disabled={!isNameChanged || !isNameValid || isLoading}

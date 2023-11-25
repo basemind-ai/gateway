@@ -82,15 +82,19 @@ div#__next > div {
 	}
 
 	.card-action-button {
-		@apply btn py-2.5 rounded-3xl capitalize min-h-0 h-full leading-4;
+		@apply btn py-2.5 rounded-full capitalize min-h-0 h-full leading-4;
 	}
 
 	.card-input {
-		@apply input input-bordered rounded-full;
+		@apply input input-bordered rounded bg-neutral text-neutral-content;
 	}
 
 	.card-textarea {
-		@apply textarea textarea-bordered rounded-full;
+		@apply textarea textarea-bordered rounded bg-neutral text-neutral-content;
+	}
+
+	.card-select {
+		@apply select select-bordered rounded bg-neutral text-neutral-content;
 	}
 
 	.rounded-data-card {

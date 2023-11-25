@@ -5,7 +5,7 @@ import { Eraser, Plus } from 'react-bootstrap-icons';
 import useSWR, { useSWRConfig } from 'swr';
 
 import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
-import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
+import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useApiKeys, useSetAPIKeys } from '@/stores/api-store';
@@ -180,7 +180,7 @@ export function ApplicationApiKeys({
 				</dialog>
 				<dialog ref={creationDialogRef} className="modal">
 					<div className="dialog-box">
-						<CreateApiKey
+						<CreateApplicationAPIKeyModal
 							projectId={projectId}
 							applicationId={application.id}
 							onCancel={closeCreationPopup}

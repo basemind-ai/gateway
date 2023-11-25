@@ -1,33 +1,40 @@
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { handleUpdateProject } from '@/api';
-import { MIN_NAME_LENGTH } from '@/constants';
+import { EntityNameInput } from '@/components/entity-name-input';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useUpdateProject } from '@/stores/api-store';
+import { useProjects, useUpdateProject } from '@/stores/api-store';
 import { Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
 export function ProjectGeneralSettings({ project }: { project: Project }) {
 	const t = useTranslations('projectSettings');
 	const updateProject = useUpdateProject();
+	const handleError = useHandleError();
+	const projects = useProjects();
 
 	const [name, setName] = useState(project.name);
 	const [description, setDescription] = useState(project.description ?? '');
-	const [loading, setLoading] = useState(false);
-
-	const handleError = useHandleError();
+	const [isLoading, setIsLoading] = useState(false);
+	const [isValid, setIsValid] = useState(false);
 
 	const isChanged =
 		name !== project.name || description !== project.description;
 
-	const isValid =
-		name.trim().length >= MIN_NAME_LENGTH &&
-		description.trim().length >= MIN_NAME_LENGTH;
+	const validateName = useCallback(
+		(value: string) =>
+			!projects
+				.filter(Boolean)
+				.filter((p) => p.id !== project.id)
+				.map((p) => p.name)
+				.includes(value),
+		[projects, project],
+	);
 
 	async function saveSettings() {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const updatedProject = await handleUpdateProject({
 				data: {
 					description: description.trim(),
@@ -39,7 +46,7 @@ export function ProjectGeneralSettings({ project }: { project: Project }) {
 		} catch (e) {
 			handleError(e);
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	}
 
@@ -47,51 +54,43 @@ export function ProjectGeneralSettings({ project }: { project: Project }) {
 		<div data-testid="project-general-settings-container">
 			<h2 className="card-header">{t('general')}</h2>
 			<div className="rounded-data-card flex flex-col">
-				<div>
-					<label
-						htmlFor="project-name"
-						className="font-medium text-xl text-neutral-content block"
-					>
-						{t('projectName')}
-					</label>
-					<input
-						type="text"
-						id="project-name"
-						data-testid="project-name-input"
-						className="input mt-2.5 bg-neutral min-w-[70%]"
-						value={name}
-						onChange={handleChange(setName)}
-					/>
-				</div>
-				<div className="mt-8">
-					<label
-						htmlFor="project-desc"
-						className="font-medium text-xl text-neutral-content block"
-					>
-						{t('projectDescription')}
+				<EntityNameInput
+					dataTestId="project-name-input"
+					isLoading={isLoading}
+					setIsValid={setIsValid}
+					setValue={setName}
+					validateValue={validateName}
+					value={name}
+				/>
+				<div className="form-control">
+					<label htmlFor="project-desc" className="label">
+						<span className="label-text">
+							{t('projectDescription')}
+						</span>
 					</label>
 					<input
 						type="text"
 						id="project-desc"
 						data-testid="project-description-input"
-						className="input mt-2.5 bg-neutral w-full"
+						className="card-input"
 						value={description}
 						onChange={handleChange(setDescription)}
 					/>
 				</div>
-
-				<button
-					data-testid="project-setting-save-btn"
-					disabled={!isChanged || !isValid}
-					className="btn btn-primary ml-auto mt-8 capitalize"
-					onClick={() => void saveSettings()}
-				>
-					{loading ? (
-						<span className="loading loading-spinner loading-sm mx-2" />
-					) : (
-						t('save')
-					)}
-				</button>
+				<div className="flex justify-end pt-6">
+					<button
+						data-testid="project-setting-save-btn"
+						disabled={!isChanged || !isValid}
+						className="card-action-button invalid:disabled btn-primary"
+						onClick={() => void saveSettings()}
+					>
+						{isLoading ? (
+							<span className="loading loading-spinner loading-sm mx-2" />
+						) : (
+							t('save')
+						)}
+					</button>
+				</div>
 			</div>
 		</div>
 	);

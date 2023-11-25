@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { handleCreateAPIKey, handleCreateApplication } from '@/api';
-import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
+import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useAddApplication } from '@/stores/api-store';
@@ -94,7 +94,7 @@ export function CreateApplication({
 
 	if (apiKey) {
 		return (
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={''}
 				applicationId={''}
 				onCancel={close}

@@ -80,13 +80,13 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 					<h6 className="font-medium ">
 						{t('deleteModelConfigTitle')}
 					</h6>
-					<p className="font-light text-xs mt-2.5">
+					<p className="font-light text-sm mt-2.5">
 						{t('deleteModelConfigDescription')}
 					</p>
 				</div>
 				<button
 					data-testid="prompt-delete-btn"
-					className="btn bg-error text-accent-content py-2.5 px-4 rounded-3xl capitalize min-h-0 h-full leading-4"
+					className="card-action-button btn-error text-black"
 					onClick={openDeleteConfirmationPopup}
 				>
 					{t('delete')}

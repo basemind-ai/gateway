@@ -4,7 +4,7 @@ import { render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as APIKeyAPI from '@/api/api-keys-api';
-import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
+import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
 
@@ -21,7 +21,7 @@ describe('CreateApiKey tests', () => {
 
 	it('renders create api keys component', () => {
 		render(
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={projectId}
 				applicationId={applicationId}
 				onSubmit={onSubmit}
@@ -38,7 +38,7 @@ describe('CreateApiKey tests', () => {
 
 	it('enabled submit only on valid API key name', () => {
 		render(
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={projectId}
 				applicationId={applicationId}
 				onSubmit={onSubmit}
@@ -66,7 +66,7 @@ describe('CreateApiKey tests', () => {
 
 	it('calls cancel callback when cancel is clicked', () => {
 		render(
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={projectId}
 				applicationId={applicationId}
 				onSubmit={onSubmit}
@@ -83,7 +83,7 @@ describe('CreateApiKey tests', () => {
 
 	it('creates a apiKey and calls on submit call when closed', async () => {
 		render(
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={projectId}
 				applicationId={applicationId}
 				onSubmit={onSubmit}
@@ -117,7 +117,7 @@ describe('CreateApiKey tests', () => {
 
 	it('shows an error when unable to create API key', async () => {
 		render(
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={projectId}
 				applicationId={applicationId}
 				onSubmit={onSubmit}
@@ -148,7 +148,7 @@ describe('CreateApiKey tests', () => {
 	it('shows api key created dialog if provided api key as an initializer', async () => {
 		const hash = 'random_hash';
 		render(
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={projectId}
 				applicationId={applicationId}
 				onSubmit={onSubmit}
@@ -173,7 +173,7 @@ describe('CreateApiKey tests', () => {
 	it('copies API key to clipboard', async () => {
 		const hash = 'random_hash';
 		render(
-			<CreateApiKey
+			<CreateApplicationAPIKeyModal
 				projectId={projectId}
 				applicationId={applicationId}
 				onSubmit={onSubmit}

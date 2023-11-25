@@ -140,7 +140,7 @@ describe('ProjectGeneralSettings', () => {
 		expect(handleUpdateProjectSpy).not.toHaveBeenCalled();
 	});
 
-	it('does not save when input is of invalid length', async () => {
+	it('does not save when name is of invalid length', async () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
@@ -148,16 +148,16 @@ describe('ProjectGeneralSettings', () => {
 
 		render(<ProjectGeneralSettings project={project} />);
 
-		const descriptionInput = screen.getByTestId<HTMLInputElement>(
-			'project-description-input',
-		);
+		const nameInput =
+			screen.getByTestId<HTMLInputElement>('project-name-input');
 		const saveButton = screen.getByTestId<HTMLButtonElement>(
 			'project-setting-save-btn',
 		);
 
-		fireEvent.change(descriptionInput, {
+		fireEvent.change(nameInput, {
 			target: { value: 'de' },
 		});
+
 		fireEvent.click(saveButton);
 		expect(handleUpdateProjectSpy).not.toHaveBeenCalled();
 	});

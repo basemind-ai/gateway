@@ -103,16 +103,15 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 			<h2 className="card-header">{t('invite')}</h2>
 			<div className="rounded-data-card flex flex-col">
 				<div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
-					<div className="flex-2">
-						<label
-							htmlFor="email-address-input"
-							className="text-sm font-semibold text-neutral-content"
-						>
-							{t('emailAddresses')}
+					<div className="form-control flex-2">
+						<label className="label">
+							<span className="label-text">
+								{t('emailAddresses')}
+							</span>
 						</label>
-						<div className="mt-2.5 flex flex-wrap bg-neutral rounded-lg">
+						<div className="flex flex-wrap bg-neutral rounded-lg">
 							{emails.length !== 0 && (
-								<div className="flex pl-4 py-4 flex-wrap items-center gap-2  text-neutral-content font-medium">
+								<div className="flex pl-4 py-4 pr-2 flex-wrap items-center gap-2 text-neutral-content font-medium">
 									{emails.map((email) => (
 										<EmailChip
 											key={email}
@@ -129,7 +128,7 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 								type="email"
 								id="email-address-input"
 								data-testid="invite-email-input"
-								className="flex flex-1 input bg-neutral w-full text-neutral-content font-medium min-w-[9rem]"
+								className="flex flex-1 input w-full bg-neutral text-neutral-content min-w-[9rem]"
 								placeholder={t('emailPlaceholder')}
 								value={currentEmail}
 								onKeyDown={handleKeyDown}
@@ -138,16 +137,13 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 							/>
 						</div>
 					</div>
-					<div className="flex-1">
-						<label
-							htmlFor="role-select"
-							className="text-sm font-semibold text-neutral-content"
-						>
-							{t('role')}
+					<div className="form-control flex-1">
+						<label className="label">
+							<span className="label-text">{t('role')}</span>
 						</label>
 						<select
 							data-testid="permission-select"
-							className="mt-2.5 select select-bordered w-full bg-neutral text-base-content font-medium capitalize min-w-[14rem]"
+							className="card-select w-full min-w-[14rem]"
 							value={permission}
 							onChange={handleChange(setPermission)}
 						>
@@ -165,18 +161,20 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 						</select>
 					</div>
 				</div>
-				<button
-					data-testid="send-invite-btn"
-					disabled={!emailsValid}
-					className="btn btn-primary ml-auto mt-4 capitalize font-semibold py-2.5 px-4 min-h-0 h-full "
-					onClick={() => void sendInvite()}
-				>
-					{loading ? (
-						<span className="loading loading-spinner loading-xs mx-4" />
-					) : (
-						t('sendInvite')
-					)}
-				</button>
+				<div className="flex justify-end pt-6">
+					<button
+						data-testid="send-invite-btn"
+						disabled={!emailsValid}
+						className="card-action-button invalid:disabled btn-primary"
+						onClick={() => void sendInvite()}
+					>
+						{loading ? (
+							<span className="loading loading-spinner loading-xs mx-4" />
+						) : (
+							t('sendInvite')
+						)}
+					</button>
+				</div>
 			</div>
 		</div>
 	);
