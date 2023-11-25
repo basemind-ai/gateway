@@ -71,6 +71,14 @@ export default function PromptConfigCreateWizard({
 		store.setParameters,
 	]);
 
+	const validateConfigName = useCallback(
+		(value: string) =>
+			!(promptConfigs[applicationId]?.map((c) => c.name) ?? []).includes(
+				value,
+			),
+		[promptConfigs],
+	);
+
 	const handleTemplateVariablesChange = useCallback(
 		store.setTemplateVariables,
 		[store.setTemplateVariables],
@@ -85,7 +93,7 @@ export default function PromptConfigCreateWizard({
 		[WizardStage.NAME_AND_MODEL]: useMemo(
 			() => (
 				<PromptConfigBaseForm
-					applicationId={applicationId}
+					validateConfigName={validateConfigName}
 					configName={store.configName}
 					modelType={store.modelType}
 					modelVendor={store.modelVendor}

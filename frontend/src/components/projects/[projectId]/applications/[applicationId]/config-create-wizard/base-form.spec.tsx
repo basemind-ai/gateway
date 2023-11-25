@@ -14,11 +14,12 @@ import { ModelType, ModelVendor, OpenAIModelType } from '@/types';
 
 describe('PromptConfigBaseForm', () => {
 	const applicationId = faker.string.uuid();
+
 	it('should render the component without errors', () => {
 		render(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
 				configName=""
+				validateConfigName={vi.fn()}
 				modelType={{} as ModelType<any>}
 				modelVendor={ModelVendor.OpenAI}
 				setConfigName={vi.fn()}
@@ -51,7 +52,7 @@ describe('PromptConfigBaseForm', () => {
 
 		const { rerender } = render(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
+				validateConfigName={vi.fn()}
 				setIsValid={vi.fn()}
 				configName=""
 				modelType={{} as ModelType<any>}
@@ -79,7 +80,7 @@ describe('PromptConfigBaseForm', () => {
 
 		rerender(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
+				validateConfigName={vi.fn()}
 				setIsValid={vi.fn()}
 				configName={invalidName}
 				modelType={{} as ModelType<any>}
@@ -102,7 +103,7 @@ describe('PromptConfigBaseForm', () => {
 	it('should display an error message if the name is too short', async () => {
 		const { rerender } = render(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
+				validateConfigName={vi.fn()}
 				setIsValid={vi.fn()}
 				configName=""
 				modelType={{} as ModelType<any>}
@@ -130,7 +131,7 @@ describe('PromptConfigBaseForm', () => {
 
 		rerender(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
+				validateConfigName={vi.fn()}
 				setIsValid={vi.fn()}
 				configName={'a'}
 				modelType={{} as ModelType<any>}
@@ -155,7 +156,7 @@ describe('PromptConfigBaseForm', () => {
 		const setConfigName = vi.fn();
 		render(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
+				validateConfigName={vi.fn()}
 				setIsValid={vi.fn()}
 				configName={configName}
 				modelType={{} as ModelType<any>}
@@ -178,7 +179,7 @@ describe('PromptConfigBaseForm', () => {
 		const modelVendor = ModelVendor.OpenAI;
 		render(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
+				validateConfigName={vi.fn()}
 				setIsValid={vi.fn()}
 				configName=""
 				modelType={{} as ModelType<any>}
@@ -202,7 +203,7 @@ describe('PromptConfigBaseForm', () => {
 		const setModelType = vi.fn();
 		render(
 			<PromptConfigBaseForm
-				applicationId={applicationId}
+				validateConfigName={vi.fn()}
 				setIsValid={vi.fn()}
 				configName=""
 				modelType={modelType}

@@ -5,7 +5,7 @@ import {
 import { getLocaleNamespace, render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
-import { PromptContentDisplay } from '@/components/config-display-components/prompt-content-display';
+import { PromptContentDisplay } from '@/components/prompt-content-display';
 import { ModelVendor, OpenAIPromptMessage } from '@/types';
 import { isOpenAIContentMessage } from '@/utils/predicates';
 

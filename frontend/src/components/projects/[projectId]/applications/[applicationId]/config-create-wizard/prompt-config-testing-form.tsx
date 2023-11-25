@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
-import { PromptContentDisplay } from '@/components/config-display-components/prompt-content-display';
+import { PromptContentDisplay } from '@/components/prompt-content-display';
 import {
 	modelTypeToLocaleMap,
 	modelVendorToLocaleMap,

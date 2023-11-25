@@ -142,7 +142,7 @@ describe('ApplicationGeneralSettings', () => {
 		});
 
 		const descriptionInput = screen.getByTestId<HTMLInputElement>(
-			'application-description-input',
+			'application-name-input',
 		);
 		fireEvent.change(descriptionInput, {
 			target: { value: 'de' },

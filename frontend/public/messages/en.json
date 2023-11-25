@@ -80,8 +80,7 @@
 		"deleteMessage": "Delete Message",
 		"duration": "Duration",
 		"finishReason": "Finish Reason",
-		"invalidLengthErrorMessage": "Config name must be at least {numCharacters} characters long",
-		"invalidNameErrorMessage": "Config name must be unique",
+
 		"messageContent": "Message Content",
 		"messageName": "Message Name",
 		"messageNameInputPlaceholder": "E.g. bot-instruction",
@@ -104,8 +103,6 @@
 		"openaiParametersTopPTooltip": "Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered. As the top_p approaches 1, the model will become deterministic and repetitive.",
 		"optional": "optional",
 		"promptConfigModelSelectLabel": "Model",
-		"promptConfigNameInputLabel": "Configuration Name",
-		"promptConfigNameInputLabelAlt": "* must be unique",
 		"promptConfigNameInputPlaceholder": "For example: Default Config",
 		"promptConfigVendorSelectLabel": "Provider",
 		"promptMessagePlaceholder": "Example of a template: The user favourite albums are: '{favouriteAlbums'}.The user disliked albums are: '{dislikedAlbums'}. Please suggest 5 new albums for the user.",
@@ -147,6 +144,12 @@
 		"delete": "Delete",
 		"title": "Warning",
 		"type": "Type"
+	},
+	"entityNameInput": {
+		"entityNameInputLabel": "Name",
+		"entityNameInputLabelAlt": "* must be unique",
+		"invalidLengthErrorMessage": "Name must be at least {numCharacters} characters long",
+		"invalidNameErrorMessage": "Name must be unique"
 	},
 	"landingPage": {
 		"ctaSectionSubtitle": "Sign-up to our free beta, No credit card required.",

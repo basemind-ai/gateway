@@ -37,7 +37,7 @@ export function ApplicationGeneralSettings({
 	const [description, setDescription] = useState(
 		application.description ?? '',
 	);
-	const [loading, setLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [initialPromptConfigId, setInitialPromptConfigId] = useState<
 		string | undefined
@@ -106,12 +106,8 @@ export function ApplicationGeneralSettings({
 	}
 
 	async function saveSettings() {
-		if (loading) {
-			return;
-		}
-
 		try {
-			setLoading(true);
+			setIsLoading(true);
 
 			const operations: Promise<void>[] = [];
 
@@ -130,7 +126,7 @@ export function ApplicationGeneralSettings({
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	}
 
@@ -148,7 +144,9 @@ export function ApplicationGeneralSettings({
 						type="text"
 						data-testid="application-name-input"
 						className={
-							isNameValid ? 'card-input' : 'card-input-invalid'
+							isNameValid
+								? 'card-input'
+								: 'card-input border-red-500'
 						}
 						value={name}
 						onChange={handleChange(setName)}
@@ -198,11 +196,11 @@ export function ApplicationGeneralSettings({
 
 				<button
 					data-testid="application-setting-save-btn"
-					disabled={!isChanged || !isNameValid}
+					disabled={isLoading || !isNameValid || !isChanged}
 					className="btn btn-primary ml-auto mt-8 capitalize"
 					onClick={() => void saveSettings()}
 				>
-					{loading ? (
+					{isLoading ? (
 						<span className="loading loading-spinner loading-xs mx-2" />
 					) : (
 						t('save')

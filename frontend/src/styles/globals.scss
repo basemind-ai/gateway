@@ -89,16 +89,8 @@ div#__next > div {
 		@apply input input-bordered rounded-full;
 	}
 
-	.card-input-invalid {
-		@apply input input-bordered rounded-full border-red-500;
-	}
-
 	.card-textarea {
 		@apply textarea textarea-bordered rounded-full;
-	}
-
-	.card-textarea-invalid {
-		@apply textarea textarea-bordered rounded-full border-red-500;
 	}
 
 	.rounded-data-card {

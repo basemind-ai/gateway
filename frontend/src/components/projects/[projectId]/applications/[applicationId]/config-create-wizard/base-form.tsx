@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
-import { PromptConfigNameInput } from '@/components/config-display-components/prompt-config-name-input';
+import { EntityNameInput } from '@/components/entity-name-input';
 import {
 	modelTypeToLocaleMap,
 	modelVendorTypeMap,
@@ -18,9 +18,8 @@ export function PromptConfigBaseForm({
 	setVendor,
 	setModelType,
 	setIsValid,
-	applicationId,
+	validateConfigName,
 }: {
-	applicationId: string;
 	configName: string;
 	modelType: ModelType<any>;
 	modelVendor: ModelVendor;
@@ -28,6 +27,7 @@ export function PromptConfigBaseForm({
 	setIsValid: (isValid: boolean) => void;
 	setModelType: (modelType: ModelType<any>) => void;
 	setVendor: (modelVendor: ModelVendor) => void;
+	validateConfigName: (value: string) => boolean;
 }) {
 	const t = useTranslations('createConfigWizard');
 
@@ -38,14 +38,14 @@ export function PromptConfigBaseForm({
 	return (
 		<div data-testid="base-form-container">
 			<div className="flex flex-col">
-				<PromptConfigNameInput
+				<EntityNameInput
 					dataTestId="create-prompt-base-form-name-input"
 					placeholder={t('promptConfigNameInputPlaceholder')}
 					isLoading={false}
 					value={configName}
 					setValue={setConfigName}
 					setIsValid={setIsValid}
-					applicationId={applicationId}
+					validateValue={validateConfigName}
 				/>
 				<div className="px-4 form-control">
 					<label className="label">

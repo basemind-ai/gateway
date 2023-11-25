@@ -1,10 +1,10 @@
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { handleUpdatePromptConfig } from '@/api';
-import { PromptConfigNameInput } from '@/components/config-display-components/prompt-config-name-input';
+import { EntityNameInput } from '@/components/entity-name-input';
 import { ApiError } from '@/errors';
-import { useUpdatePromptConfig } from '@/stores/api-store';
+import { usePromptConfigs, useUpdatePromptConfig } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, PromptConfig } from '@/types';
 
@@ -21,11 +21,22 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 
 	const showError = useShowError();
 	const updatePromptConfig = useUpdatePromptConfig();
+	const promptConfigs = usePromptConfigs();
 
 	const [name, setName] = useState(promptConfig.name);
 	const [isLoading, setIsLoading] = useState(false);
-	const [nameValid, setNameValid] = useState(false);
-	const [nameChanged, setNameChanged] = useState(false);
+	const [isNameValid, setIsNameValid] = useState(false);
+	const [isNameChanged, setIsNameChanged] = useState(false);
+
+	const validateConfigName = useCallback(
+		(value: string) =>
+			!(
+				promptConfigs[applicationId]
+					?.filter((c) => c.id !== promptConfig.id)
+					.map((c) => c.name) ?? []
+			).includes(value),
+		[promptConfigs, promptConfig],
+	);
 
 	async function saveSettings() {
 		try {
@@ -52,20 +63,19 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 				{t('general')}
 			</h2>
 			<div className="rounded-data-card">
-				<PromptConfigNameInput
+				<EntityNameInput
 					dataTestId="prompt-general-settings-name-input"
-					applicationId={applicationId}
+					validateValue={validateConfigName}
 					value={name}
 					setValue={setName}
 					isLoading={isLoading}
-					promptConfigId={promptConfig.id}
-					setIsValid={setNameValid}
-					setIsChanged={setNameChanged}
+					setIsValid={setIsNameValid}
+					setIsChanged={setIsNameChanged}
 				/>
 				<div className="flex justify-end pt-3">
 					<button
 						data-testid="prompt-general-settings-save-button"
-						disabled={!nameChanged || !nameValid || isLoading}
+						disabled={!isNameChanged || !isNameValid || isLoading}
 						className="card-action-button invalid:disabled btn-primary"
 						onClick={() => void saveSettings()}
 					>
