@@ -93,6 +93,14 @@ div#__next > div {
 		@apply input input-bordered rounded-full border-red-500;
 	}
 
+	.card-textarea {
+		@apply textarea textarea-bordered rounded-full;
+	}
+
+	.card-textarea-invalid {
+		@apply textarea textarea-bordered rounded-full border-red-500;
+	}
+
 	.rounded-data-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-16;
 	}

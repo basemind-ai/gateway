@@ -6,13 +6,13 @@ import { handleDeleteProject } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { useDeleteProject, useProject } from '@/stores/api-store';
+import { useDeleteProject } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { Project } from '@/types';
 
-export function ProjectDeletion({ projectId }: { projectId: string }) {
+export function ProjectDeletion({ project }: { project: Project }) {
 	const router = useRouter();
 	const t = useTranslations('projectSettings');
-	const project = useProject(projectId);
 	const deleteProjectHook = useDeleteProject();
 
 	const showError = useShowError();
@@ -38,8 +38,8 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 
 		try {
 			setLoading(true);
-			await handleDeleteProject({ projectId });
-			deleteProjectHook(projectId);
+			await handleDeleteProject({ projectId: project.id });
+			deleteProjectHook(project.id);
 			router.replace(Navigation.Projects);
 			showInfo(t('projectDeleted'));
 		} catch (e) {
@@ -48,10 +48,6 @@ export function ProjectDeletion({ projectId }: { projectId: string }) {
 			closeDeleteConfirmationPopup();
 			setLoading(false);
 		}
-	}
-
-	if (!project) {
-		return null;
 	}
 
 	return (

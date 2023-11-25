@@ -10,113 +10,97 @@ import {
 import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
 import {
-	useApplication,
 	usePromptConfigs,
 	useSetPromptConfigs,
 	useUpdateApplication,
 } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
+import { Application } from '@/types';
 import { handleChange } from '@/utils/events';
 
 export function ApplicationGeneralSettings({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
-	const application = useApplication(projectId, applicationId);
-	const updateApplication = useUpdateApplication();
 
+	const promptConfigs = usePromptConfigs();
+	const setPromptConfig = useSetPromptConfigs();
 	const showError = useShowError();
+	const updateApplication = useUpdateApplication();
 	const { mutate } = useSWRConfig();
 
-	const [name, setName] = useState(application?.name);
-	const [description, setDescription] = useState(application?.description);
+	const [name, setName] = useState(application.name);
+	const [description, setDescription] = useState(
+		application.description ?? '',
+	);
 	const [loading, setLoading] = useState(false);
 
-	const [initialPromptConfig, setInitialPromptConfig] = useState<
+	const [initialPromptConfigId, setInitialPromptConfigId] = useState<
 		string | undefined
 	>();
-	const [defaultPromptConfig, setDefaultPromptConfig] = useState<
+	const [defaultPromptConfigId, setDefaultPromptConfigId] = useState<
 		string | undefined
 	>();
-	const setPromptConfig = useSetPromptConfigs();
-	const promptConfigs = usePromptConfigs();
 
 	const isChanged =
-		name !== application?.name ||
-		description !== application?.description ||
-		initialPromptConfig !== defaultPromptConfig;
+		name !== application.name ||
+		description !== application.description ||
+		initialPromptConfigId !== defaultPromptConfigId;
 
-	const isValid =
-		name &&
-		description &&
-		name.trim().length >= MIN_NAME_LENGTH &&
-		description.trim().length >= MIN_NAME_LENGTH;
+	const isNameValid = name.trim().length >= MIN_NAME_LENGTH;
 
 	useSWR(
 		{
-			applicationId,
+			applicationId: application.id,
 			projectId,
 		},
 		handleRetrievePromptConfigs,
 		{
-			/* c8 ignore start */
 			onError({ message }: ApiError) {
 				showError(message);
 			},
-			/* c8 ignore end */
 			onSuccess(promptConfigResponse) {
 				if (
 					Array.isArray(promptConfigResponse) &&
 					promptConfigResponse.length
 				) {
-					setPromptConfig(applicationId, promptConfigResponse);
+					setPromptConfig(application.id, promptConfigResponse);
 
 					const defaultConfig = promptConfigResponse.find(
 						(promptConfig) => promptConfig.isDefault,
-					)?.id;
-					setInitialPromptConfig(defaultConfig);
-					setDefaultPromptConfig(defaultConfig);
+					);
+
+					setInitialPromptConfigId(defaultConfig?.id);
+					setDefaultPromptConfigId(defaultConfig?.id);
 				}
 			},
 		},
 	);
 
 	async function saveFormSettings() {
-		if (
-			name === application?.name &&
-			description === application?.description
-		) {
-			return;
-		}
 		const updatedApplication = await handleUpdateApplication({
-			applicationId,
+			applicationId: application.id,
 			data: {
-				description: description?.trim(),
-				name: name?.trim(),
+				description: description.trim(),
+				name: name.trim(),
 			},
 			projectId,
 		});
-		updateApplication(projectId, applicationId, updatedApplication);
+		updateApplication(projectId, application.id, updatedApplication);
 	}
 
 	async function savePromptSettings() {
-		if (
-			!defaultPromptConfig ||
-			initialPromptConfig === defaultPromptConfig
-		) {
-			return;
-		}
 		await handleSetDefaultPromptConfig({
-			applicationId,
+			applicationId: application.id,
 			projectId,
-			promptConfigId: defaultPromptConfig,
+			promptConfigId: defaultPromptConfigId!,
 		});
 		await mutate({
-			applicationId,
+			applicationId: application.id,
 			projectId,
 		});
 	}
@@ -128,7 +112,21 @@ export function ApplicationGeneralSettings({
 
 		try {
 			setLoading(true);
-			await Promise.all([saveFormSettings(), savePromptSettings()]);
+
+			const operations: Promise<void>[] = [];
+
+			if (isChanged) {
+				operations.push(saveFormSettings());
+			}
+
+			if (
+				defaultPromptConfigId &&
+				initialPromptConfigId !== defaultPromptConfigId
+			) {
+				operations.push(savePromptSettings());
+			}
+
+			await Promise.all(operations);
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {
@@ -136,41 +134,35 @@ export function ApplicationGeneralSettings({
 		}
 	}
 
-	if (!application) {
-		return null;
-	}
-
 	return (
 		<div data-testid="application-general-settings-container">
 			<h2 className="card-header">{t('general')}</h2>
 			<div className="rounded-data-card flex flex-col">
-				<div>
-					<label
-						htmlFor="app-name"
-						className="font-medium text-xl text-neutral-content block"
-					>
-						{t('applicationName')}
+				<div className="form-control">
+					<label className="label">
+						<span className="label-text">
+							{t('applicationName')}
+						</span>
 					</label>
 					<input
 						type="text"
-						id="app-name"
 						data-testid="application-name-input"
-						className="input mt-2.5 bg-neutral min-w-full"
+						className={
+							isNameValid ? 'card-input' : 'card-input-invalid'
+						}
 						value={name}
 						onChange={handleChange(setName)}
 					/>
 				</div>
-				<div className="mt-8">
-					<label
-						htmlFor="app-desc"
-						className="font-medium text-xl text-neutral-content block"
-					>
-						{t('applicationDescription')}
+				<div className="form-control mt-8">
+					<label className="label">
+						<span className="label-text">
+							{t('applicationDescription')}
+						</span>
 					</label>
 					<textarea
-						id="app-desc"
 						data-testid="application-description-input"
-						className="textarea mt-2.5 bg-neutral w-full"
+						className="card-textarea"
 						value={description}
 						onChange={handleChange(setDescription)}
 					/>
@@ -186,13 +178,13 @@ export function ApplicationGeneralSettings({
 					<select
 						data-testid="application-default-prompt"
 						className="mt-16 select select-bordered w-full max-w-xs bg-neutral text-base-content font-bold"
-						value={defaultPromptConfig}
-						onChange={handleChange(setDefaultPromptConfig)}
+						value={defaultPromptConfigId}
+						onChange={handleChange(setDefaultPromptConfigId)}
 						disabled={
-							(promptConfigs[applicationId]?.length ?? 0) < 2
+							(promptConfigs[application.id]?.length ?? 0) < 2
 						}
 					>
-						{promptConfigs[applicationId]?.map((promptConfig) => (
+						{promptConfigs[application.id]?.map((promptConfig) => (
 							<option
 								key={promptConfig.id}
 								className="text-base-content font-bold"
@@ -206,7 +198,7 @@ export function ApplicationGeneralSettings({
 
 				<button
 					data-testid="application-setting-save-btn"
-					disabled={!isChanged || !isValid}
+					disabled={!isChanged || !isNameValid}
 					className="btn btn-primary ml-auto mt-8 capitalize"
 					onClick={() => void saveSettings()}
 				>

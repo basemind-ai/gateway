@@ -9,9 +9,9 @@ import { modelVendorToLocaleMap } from '@/constants/models';
 import { ApiError } from '@/errors';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { useShowError } from '@/stores/toast-store';
-import { ModelVendor, ProviderKey } from '@/types';
+import { ModelVendor, Project, ProviderKey } from '@/types';
 
-export function ProjectProviderKeys({ projectId }: { projectId: string }) {
+export function ProjectProviderKeys({ project }: { project: Project }) {
 	const t = useTranslations('providerKeys');
 
 	const showError = useShowError();
@@ -29,7 +29,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		isLoading: swrIsLoading,
 		providerKeys,
 		setProviderKeys,
-	} = useSwrProviderKeys({ projectId });
+	} = useSwrProviderKeys({ projectId: project.id });
 
 	if (swrIsLoading) {
 		return <div className="loading" data-testid="loader" />;
@@ -67,7 +67,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 		setIsLoading(true);
 		try {
 			await handleDeleteProviderKey({
-				projectId,
+				projectId: project.id,
 				providerKeyId,
 			});
 		} catch (e) {
@@ -144,7 +144,7 @@ export function ProjectProviderKeys({ projectId }: { projectId: string }) {
 			<dialog ref={creationDialogRef} className="modal">
 				<div className="dialog-box border-2 rounded p-10">
 					<ProviderKeyCreateModal
-						projectId={projectId}
+						projectId={project.id}
 						vendors={vendorsWithoutKeys}
 						closeModal={closeCreateModal}
 						addProviderKey={(providerKey: ProviderKey) => {

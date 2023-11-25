@@ -11,13 +11,13 @@ import { ApiError } from '@/errors';
 import { useApiKeys, useSetAPIKeys } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
-import { APIKey } from '@/types';
+import { APIKey, Application } from '@/types';
 
 export function ApplicationApiKeys({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
@@ -26,7 +26,7 @@ export function ApplicationApiKeys({
 	const { mutate } = useSWRConfig();
 	const [loading, setLoading] = useState(false);
 
-	const apiKeys = useApiKeys(applicationId);
+	const apiKeys = useApiKeys(application.id);
 	const setAPIKeys = useSetAPIKeys();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);
@@ -56,7 +56,7 @@ export function ApplicationApiKeys({
 
 	const { isLoading } = useSWR(
 		{
-			applicationId,
+			applicationId: application.id,
 			projectId,
 		},
 		handleRetrieveAPIKeys,
@@ -67,7 +67,7 @@ export function ApplicationApiKeys({
 			},
 			/* c8 ignore end */
 			onSuccess(apiKeys) {
-				setAPIKeys(applicationId, apiKeys);
+				setAPIKeys(application.id, apiKeys);
 				closeCreationPopup();
 			},
 		},
@@ -81,8 +81,12 @@ export function ApplicationApiKeys({
 		try {
 			setLoading(true);
 
-			await handleDeleteAPIKey({ apiKeyId, applicationId, projectId });
-			await mutate({ applicationId, projectId });
+			await handleDeleteAPIKey({
+				apiKeyId,
+				applicationId: application.id,
+				projectId,
+			});
+			await mutate({ applicationId: application.id, projectId });
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {
@@ -183,11 +187,14 @@ export function ApplicationApiKeys({
 					<div className="dialog-box">
 						<CreateApiKey
 							projectId={projectId}
-							applicationId={applicationId}
+							applicationId={application.id}
 							onCancel={closeCreationPopup}
 							onSubmit={() => {
 								closeCreationPopup();
-								void mutate({ applicationId, projectId });
+								void mutate({
+									applicationId: application.id,
+									projectId,
+								});
 							}}
 						/>
 					</div>

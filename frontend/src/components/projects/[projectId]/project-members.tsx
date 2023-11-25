@@ -20,7 +20,7 @@ import {
 	useUser,
 } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { AccessPermission } from '@/types';
+import { AccessPermission, Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
 const DEFAULT_AVATAR = '/images/avatar.svg';
@@ -80,10 +80,10 @@ function PermissionSelect({
 	);
 }
 
-export function ProjectMembers({ projectId }: { projectId: string }) {
+export function ProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
 
-	const projectUsers = useProjectUsers(projectId);
+	const projectUsers = useProjectUsers(project.id);
 	const removeProjectUser = useRemoveProjectUser();
 	const setProjectUsers = useSetProjectUsers();
 	const updateProjectUser = useUpdateProjectUser();
@@ -94,19 +94,17 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 
 	const { isLoading } = useSWR(
 		{
-			projectId,
+			projectId: project.id,
 		},
 		handleRetrieveProjectUsers,
 		{
-			/* c8 ignore start */
 			onError(apiError: ApiError) {
 				showError(apiError.message);
 			},
 
 			onSuccess(users) {
-				setProjectUsers(projectId, users);
+				setProjectUsers(project.id, users);
 			},
-			/* c8 ignore end */
 		},
 	);
 
@@ -135,9 +133,9 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 				permission,
 				userId,
 			},
-			projectId,
+			projectId: project.id,
 		});
-		updateProjectUser(projectId, updatedProjectUser);
+		updateProjectUser(project.id, updatedProjectUser);
 		showInfo(t('roleUpdated'));
 	}
 
@@ -162,10 +160,10 @@ export function ProjectMembers({ projectId }: { projectId: string }) {
 		try {
 			setRemoveUserLoading(true);
 			await handleRemoveUserFromProject({
-				projectId,
+				projectId: project.id,
 				userId: removalUserId,
 			});
-			removeProjectUser(projectId, removalUserId);
+			removeProjectUser(project.id, removalUserId);
 			showInfo(t('userRemoved'));
 		} catch (e) {
 			showError((e as ApiError).message);

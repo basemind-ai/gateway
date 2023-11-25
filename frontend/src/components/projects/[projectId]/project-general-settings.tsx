@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { handleUpdateProject } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
 import { ApiError } from '@/errors';
-import { useProject, useUpdateProject } from '@/stores/api-store';
+import { useUpdateProject } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
+import { Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
-export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
+export function ProjectGeneralSettings({ project }: { project: Project }) {
 	const t = useTranslations('projectSettings');
-	const project = useProject(projectId)!;
 	const updateProject = useUpdateProject();
 
 	const [name, setName] = useState(project.name);
@@ -34,9 +34,9 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
 					description: description.trim(),
 					name: name.trim(),
 				},
-				projectId,
+				projectId: project.id,
 			});
-			updateProject(projectId, updatedProject);
+			updateProject(project.id, updatedProject);
 		} catch (e) {
 			showError((e as ApiError).message);
 		} finally {

@@ -1,6 +1,5 @@
-import { faker } from '@faker-js/faker';
 import { wait } from 'shared/time';
-import { ProviderKeyFactory } from 'tests/factories';
+import { ProjectFactory, ProviderKeyFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 import {
 	fireEvent,
@@ -17,7 +16,7 @@ import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
 describe('ProjectProviderKeys', () => {
-	const projectId = faker.string.uuid();
+	const project = ProjectFactory.buildSync();
 	const providerKeys = ProviderKeyFactory.batchSync(2).map((v, i) => {
 		v.modelVendor = i % 2 === 0 ? ModelVendor.OpenAI : ModelVendor.Cohere;
 		return v;
@@ -29,7 +28,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -63,7 +62,7 @@ describe('ProjectProviderKeys', () => {
 			ok: false,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		await waitFor(() => {
 			expect(mockFetch).toHaveBeenCalled();
@@ -79,7 +78,7 @@ describe('ProjectProviderKeys', () => {
 			json: () => Promise.resolve([providerKeys[0]]),
 			ok: true,
 		});
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -101,7 +100,7 @@ describe('ProjectProviderKeys', () => {
 			json: () => Promise.resolve([providerKeys[0]]),
 			ok: true,
 		});
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -134,7 +133,7 @@ describe('ProjectProviderKeys', () => {
 			json: () => Promise.resolve(providerKeys),
 			ok: true,
 		});
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -152,7 +151,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -195,7 +194,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
@@ -236,7 +235,7 @@ describe('ProjectProviderKeys', () => {
 			ok: true,
 		});
 
-		render(<ProjectProviderKeys projectId={projectId} />);
+		render(<ProjectProviderKeys project={project} />);
 
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();

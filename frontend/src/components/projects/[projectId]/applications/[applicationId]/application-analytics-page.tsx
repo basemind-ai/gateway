@@ -11,12 +11,13 @@ import { DatePicker } from '@/components/date-picker';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
+import { Application } from '@/types';
 
 export function ApplicationAnalyticsPage({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
@@ -32,7 +33,7 @@ export function ApplicationAnalyticsPage({
 
 	const { data: analytics, isLoading } = useSWR(
 		{
-			applicationId,
+			applicationId: application.id,
 			fromDate: dateRange?.startDate,
 			projectId,
 			toDate: dateRange?.endDate,

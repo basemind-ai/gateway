@@ -69,28 +69,28 @@ export default function ProjectOverview({
 	const tabComponents: Record<TAB_NAME, React.FC> = {
 		[TAB_NAME.OVERVIEW]: memo(() => (
 			<div data-testid="project-overview-tab">
-				<ProjectAnalytics projectId={projectId} />
-				<ProjectApplicationsList projectId={projectId} />
+				<ProjectAnalytics project={project} />
+				<ProjectApplicationsList project={project} />
 			</div>
 		)),
 		[TAB_NAME.MEMBERS]: memo(() => (
 			<div data-testid="project-members-tab">
-				<InviteProjectMembers projectId={projectId} />
+				<InviteProjectMembers project={project} />
 				<div className="mt-10">
-					<ProjectMembers projectId={projectId} />
+					<ProjectMembers project={project} />
 				</div>
 			</div>
 		)),
 		[TAB_NAME.PROVIDER_KEYS]: memo(() => (
 			<div data-testid="project-provider-keys-tab">
-				<ProjectProviderKeys projectId={projectId} />
+				<ProjectProviderKeys project={project} />
 			</div>
 		)),
 		[TAB_NAME.SETTINGS]: memo(() => (
 			<div data-testid="project-settings-tab">
-				<ProjectGeneralSettings projectId={projectId} />
+				<ProjectGeneralSettings project={project} />
 				<div className="mt-10">
-					<ProjectDeletion projectId={projectId} />
+					<ProjectDeletion project={project} />
 				</div>
 			</div>
 		)),

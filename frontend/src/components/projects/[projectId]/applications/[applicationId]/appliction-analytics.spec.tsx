@@ -1,5 +1,7 @@
+import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
+import { ApplicationFactory } from 'tests/factories';
 import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
@@ -7,8 +9,8 @@ import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/appl
 import { Analytics } from '@/types';
 
 describe('ApplicationAnalytics', () => {
-	const projectId = '1';
-	const applicationId = '2';
+	const projectId = faker.string.uuid();
+	const application = ApplicationFactory.buildSync();
 	const handleApplicationAnalyticsSpy = vi.spyOn(
 		ApplicationConfigAPI,
 		'handleApplicationAnalytics',
@@ -31,7 +33,7 @@ describe('ApplicationAnalytics', () => {
 		render(
 			<ApplicationAnalyticsPage
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-analytics-container');
@@ -60,7 +62,7 @@ describe('ApplicationAnalytics', () => {
 		render(
 			<ApplicationAnalyticsPage
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-analytics-container');

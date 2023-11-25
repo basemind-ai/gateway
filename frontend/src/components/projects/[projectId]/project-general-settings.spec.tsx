@@ -23,7 +23,7 @@ describe('ProjectGeneralSettings', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectGeneralSettings projectId={projectId} />);
+		render(<ProjectGeneralSettings project={project} />);
 
 		const nameInput =
 			screen.getByTestId<HTMLInputElement>('project-name-input');
@@ -47,7 +47,7 @@ describe('ProjectGeneralSettings', () => {
 		setProjects([project]);
 		handleUpdateProjectSpy.mockResolvedValueOnce(project);
 
-		render(<ProjectGeneralSettings projectId={projectId} />);
+		render(<ProjectGeneralSettings project={project} />);
 
 		const descriptionInput = screen.getByTestId<HTMLInputElement>(
 			'project-description-input',
@@ -75,7 +75,7 @@ describe('ProjectGeneralSettings', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectGeneralSettings projectId={projectId} />);
+		render(<ProjectGeneralSettings project={project} />);
 
 		const descriptionInput = screen.getByTestId<HTMLInputElement>(
 			'project-description-input',
@@ -105,7 +105,7 @@ describe('ProjectGeneralSettings', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectGeneralSettings projectId={projectId} />);
+		render(<ProjectGeneralSettings project={project} />);
 
 		const saveButton = screen.getByTestId<HTMLButtonElement>(
 			'project-setting-save-btn',
@@ -121,7 +121,7 @@ describe('ProjectGeneralSettings', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectGeneralSettings projectId={projectId} />);
+		render(<ProjectGeneralSettings project={project} />);
 
 		const descriptionInput = screen.getByTestId<HTMLInputElement>(
 			'project-description-input',
@@ -146,7 +146,7 @@ describe('ProjectGeneralSettings', () => {
 		} = renderHook(useSetProjects);
 		setProjects([project]);
 
-		render(<ProjectGeneralSettings projectId={projectId} />);
+		render(<ProjectGeneralSettings project={project} />);
 
 		const descriptionInput = screen.getByTestId<HTMLInputElement>(
 			'project-description-input',

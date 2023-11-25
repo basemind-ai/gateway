@@ -64,29 +64,29 @@ export default function Application({
 		[TAB_NAME.OVERVIEW]: memo(() => (
 			<>
 				<ApplicationAnalyticsPage
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 				<ApplicationPromptConfigs
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 			</>
 		)),
 		[TAB_NAME.API_KEYS]: memo(() => (
 			<ApplicationApiKeys
-				applicationId={applicationId}
+				application={application}
 				projectId={projectId}
 			/>
 		)),
 		[TAB_NAME.SETTINGS]: memo(() => (
 			<>
 				<ApplicationGeneralSettings
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 				<ApplicationDeletion
-					applicationId={applicationId}
+					application={application}
 					projectId={projectId}
 				/>
 			</>

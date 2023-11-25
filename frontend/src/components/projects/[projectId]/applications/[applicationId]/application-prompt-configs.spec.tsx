@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { fireEvent } from '@testing-library/react';
-import { OpenAIPromptConfigFactory } from 'tests/factories';
+import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
@@ -14,7 +14,7 @@ import { setRouteParams } from '@/utils/navigation';
 
 describe('ApplicationPromptConfigs', () => {
 	const projectId = faker.string.uuid();
-	const applicationId = faker.string.uuid();
+	const application = ApplicationFactory.buildSync();
 	const handleRetrievePromptConfigsSpy = vi.spyOn(
 		PromptConfigAPI,
 		'handleRetrievePromptConfigs',
@@ -26,7 +26,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -47,7 +47,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -69,7 +69,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -91,7 +91,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -102,7 +102,7 @@ describe('ApplicationPromptConfigs', () => {
 		fireEvent.click(editButton);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
-			`/en/projects/${projectId}/applications/${applicationId}/configs/${promptConfigs[0].id}#tab-2`,
+			`/en/projects/${projectId}/applications/${application.id}/configs/${promptConfigs[0].id}#tab-2`,
 		);
 	});
 
@@ -112,7 +112,7 @@ describe('ApplicationPromptConfigs', () => {
 		render(
 			<ApplicationPromptConfigs
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 		await screen.findByTestId('application-prompt-config-container');
@@ -124,7 +124,7 @@ describe('ApplicationPromptConfigs', () => {
 
 		expect(routerPushMock).toHaveBeenCalledWith(
 			setRouteParams(Navigation.ConfigCreateWizard, {
-				applicationId,
+				applicationId: application.id,
 				projectId,
 			}),
 		);

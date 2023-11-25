@@ -11,8 +11,9 @@ import { DatePicker } from '@/components/date-picker';
 import { ApiError } from '@/errors';
 import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
+import { Project } from '@/types';
 
-export function ProjectAnalytics({ projectId }: { projectId: string }) {
+export function ProjectAnalytics({ project }: { project: Project }) {
 	const t = useTranslations('projectOverview');
 	const dateFormat = useDateFormat();
 	const showError = useShowError();
@@ -26,7 +27,7 @@ export function ProjectAnalytics({ projectId }: { projectId: string }) {
 	const { data: analytics, isLoading } = useSWR(
 		{
 			fromDate: dateRange?.startDate,
-			projectId,
+			projectId: project.id,
 			toDate: dateRange?.endDate,
 		},
 		handleProjectAnalytics,

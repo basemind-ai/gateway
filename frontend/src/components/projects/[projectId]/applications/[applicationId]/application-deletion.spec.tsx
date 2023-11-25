@@ -35,7 +35,7 @@ describe('ApplicationDeletion tests', () => {
 		render(
 			<ApplicationDeletion
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -49,7 +49,7 @@ describe('ApplicationDeletion tests', () => {
 		render(
 			<ApplicationDeletion
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -79,7 +79,7 @@ describe('ApplicationDeletion tests', () => {
 		render(
 			<ApplicationDeletion
 				projectId={projects[0].id}
-				applicationId={applications[1].id}
+				application={applications[1]}
 			/>,
 		);
 

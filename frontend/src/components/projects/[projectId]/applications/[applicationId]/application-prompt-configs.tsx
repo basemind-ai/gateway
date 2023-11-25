@@ -9,14 +9,15 @@ import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
+import { Application } from '@/types';
 import { copyToClipboard } from '@/utils/helpers';
 import { setRouteParams } from '@/utils/navigation';
 
 export function ApplicationPromptConfigs({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
@@ -30,7 +31,7 @@ export function ApplicationPromptConfigs({
 
 	const { isLoading } = useSWR(
 		{
-			applicationId,
+			applicationId: application.id,
 			projectId,
 		},
 		handleRetrievePromptConfigs,
@@ -39,7 +40,7 @@ export function ApplicationPromptConfigs({
 				showError(message);
 			},
 			onSuccess(promptConfigRes) {
-				setPromptConfigs(applicationId, promptConfigRes);
+				setPromptConfigs(application.id, promptConfigRes);
 			},
 		},
 	);
@@ -56,8 +57,8 @@ export function ApplicationPromptConfigs({
 					</div>
 				) : (
 					<ApplicationPromptConfigsTable
-						applicationId={applicationId}
-						promptConfigs={promptConfigs[applicationId] ?? []}
+						applicationId={application.id}
+						promptConfigs={promptConfigs[application.id] ?? []}
 						projectId={projectId}
 						handlePromptConfigIdCopy={(promptConfigId: string) => {
 							copyToClipboard(promptConfigId);
@@ -71,7 +72,7 @@ export function ApplicationPromptConfigs({
 					onClick={() => {
 						router.push(
 							setRouteParams(Navigation.ConfigCreateWizard, {
-								applicationId,
+								applicationId: application.id,
 								projectId,
 							}),
 						);

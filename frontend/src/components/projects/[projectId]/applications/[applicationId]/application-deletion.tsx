@@ -6,19 +6,19 @@ import { handleDeleteApplication } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { useApplication, useDeleteApplication } from '@/stores/api-store';
+import { useDeleteApplication } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { Application } from '@/types';
 
 export function ApplicationDeletion({
 	projectId,
-	applicationId,
+	application,
 }: {
-	applicationId: string;
+	application: Application;
 	projectId: string;
 }) {
 	const t = useTranslations('application');
 	const router = useRouter();
-	const application = useApplication(projectId, applicationId);
 
 	const deleteApplicationHook = useDeleteApplication();
 	const dialogRef = useRef<HTMLDialogElement>(null);
@@ -45,8 +45,11 @@ export function ApplicationDeletion({
 		try {
 			setLoading(true);
 
-			await handleDeleteApplication({ applicationId, projectId });
-			deleteApplicationHook(projectId, applicationId);
+			await handleDeleteApplication({
+				applicationId: application.id,
+				projectId,
+			});
+			deleteApplicationHook(projectId, application.id);
 			router.replace(Navigation.Projects);
 			showInfo(t('applicationDeleted'));
 		} catch (e) {
@@ -55,10 +58,6 @@ export function ApplicationDeletion({
 			closeDeleteConfirmationPopup();
 			setLoading(false);
 		}
-	}
-
-	if (!application) {
-		return null;
 	}
 
 	return (

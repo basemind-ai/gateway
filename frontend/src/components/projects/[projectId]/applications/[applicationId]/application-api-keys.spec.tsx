@@ -1,5 +1,6 @@
+import { faker } from '@faker-js/faker';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { APIKeyFactory } from 'tests/factories';
+import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
@@ -13,8 +14,8 @@ describe('API Keys tests', () => {
 		'handleRetrieveAPIKeys',
 	);
 	const handleCreateAPIKeySpy = vi.spyOn(APIKeysAPI, 'handleCreateAPIKey');
-	const projectId = '1';
-	const applicationId = '1';
+	const projectId = faker.string.uuid();
+	const application = ApplicationFactory.buildSync();
 
 	beforeAll(() => {
 		HTMLDialogElement.prototype.showModal = vi.fn();
@@ -27,7 +28,7 @@ describe('API Keys tests', () => {
 		render(
 			<ApplicationApiKeys
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 
@@ -46,7 +47,7 @@ describe('API Keys tests', () => {
 		render(
 			<ApplicationApiKeys
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 
@@ -80,7 +81,7 @@ describe('API Keys tests', () => {
 		render(
 			<ApplicationApiKeys
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 
@@ -121,7 +122,7 @@ describe('API Keys tests', () => {
 		render(
 			<ApplicationApiKeys
 				projectId={projectId}
-				applicationId={applicationId}
+				application={application}
 			/>,
 		);
 

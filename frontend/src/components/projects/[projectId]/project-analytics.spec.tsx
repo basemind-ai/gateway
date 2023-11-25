@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
+import { ProjectFactory } from 'tests/factories';
 import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ProjectAPI from '@/api/projects-api';
@@ -7,7 +8,7 @@ import { ProjectAnalytics } from '@/components/projects/[projectId]/project-anal
 import { Analytics } from '@/types';
 
 describe('ProjectAnalytics', () => {
-	const projectId = '1';
+	const project = ProjectFactory.buildSync();
 	const handleProjectAnalyticsSpy = vi.spyOn(
 		ProjectAPI,
 		'handleProjectAnalytics',
@@ -27,7 +28,7 @@ describe('ProjectAnalytics', () => {
 		} satisfies Analytics;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(analytics);
 
-		render(<ProjectAnalytics projectId={projectId} />);
+		render(<ProjectAnalytics project={project} />);
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('project-analytics-container'),
@@ -55,7 +56,7 @@ describe('ProjectAnalytics', () => {
 		} satisfies Analytics;
 		handleProjectAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
-		render(<ProjectAnalytics projectId={projectId} />);
+		render(<ProjectAnalytics project={project} />);
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('project-analytics-container'),

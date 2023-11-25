@@ -51,7 +51,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -78,7 +78,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -99,7 +99,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -130,7 +130,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -158,7 +158,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 
@@ -194,7 +194,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 		const defaultPromptSelect = screen.getByTestId<HTMLSelectElement>(
@@ -233,7 +233,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 		await screen.findByTestId('application-general-settings-container');
@@ -247,7 +247,7 @@ describe('ApplicationGeneralSettings', () => {
 		render(
 			<ApplicationGeneralSettings
 				projectId={projects[0].id}
-				applicationId={applications[0].id}
+				application={applications[0]}
 			/>,
 		);
 		const defaultPromptSelect = screen.getByTestId<HTMLSelectElement>(

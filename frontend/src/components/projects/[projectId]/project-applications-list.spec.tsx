@@ -1,5 +1,9 @@
 import { fireEvent, waitFor } from '@testing-library/react';
-import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
+import {
+	ApplicationFactory,
+	OpenAIPromptConfigFactory,
+	ProjectFactory,
+} from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
@@ -11,7 +15,7 @@ import { ApiError } from '@/errors';
 import { ToastType } from '@/stores/toast-store';
 
 describe('ApplicationsList', () => {
-	const projectId = '1';
+	const project = ProjectFactory.buildSync();
 	const handleRetrievePromptConfigsSpy = vi.spyOn(
 		PromptConfigAPI,
 		'handleRetrievePromptConfigs',
@@ -43,7 +47,7 @@ describe('ApplicationsList', () => {
 			);
 		});
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('project-application-list-container'),
@@ -75,7 +79,7 @@ describe('ApplicationsList', () => {
 			);
 		});
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 		await waitFor(() => {
 			expect(
 				screen.getByTestId('project-application-list-container'),
@@ -105,7 +109,7 @@ describe('ApplicationsList', () => {
 	it('opens and closes the app creation dialog', async () => {
 		handleRetrieveApplicationsSpy.mockResolvedValueOnce([]);
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 
 		const newAppButton = screen.getByTestId('new-application-btn');
 		fireEvent.click(newAppButton);
@@ -128,7 +132,7 @@ describe('ApplicationsList', () => {
 			});
 		});
 
-		render(<ProjectApplicationsList projectId={projectId} />);
+		render(<ProjectApplicationsList project={project} />);
 
 		const errorToast = screen.getByText('unable to get applications');
 		expect(errorToast.className).toContain(ToastType.ERROR);

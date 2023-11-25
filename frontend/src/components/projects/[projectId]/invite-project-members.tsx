@@ -7,10 +7,10 @@ import { handleAddUsersToProject, handleRetrieveProjectUsers } from '@/api';
 import { ApiError } from '@/errors';
 import { useSetProjectUsers } from '@/stores/api-store';
 import { useShowError, useShowInfo } from '@/stores/toast-store';
-import { AccessPermission } from '@/types';
+import { AccessPermission, Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
-export function InviteProjectMembers({ projectId }: { projectId: string }) {
+export function InviteProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
 
 	const [emails, setEmails] = useState<string[]>([]);
@@ -32,13 +32,13 @@ export function InviteProjectMembers({ projectId }: { projectId: string }) {
 			setLoading(true);
 			await handleAddUsersToProject({
 				data: emails.map((email) => ({ email, permission })),
-				projectId,
+				projectId: project.id,
 			});
 
 			const projectUsers = await handleRetrieveProjectUsers({
-				projectId,
+				projectId: project.id,
 			});
-			setProjectUsers(projectId, projectUsers);
+			setProjectUsers(project.id, projectUsers);
 
 			setEmails([]);
 			setCurrentEmail('');
