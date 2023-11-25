@@ -53,27 +53,13 @@ describe('PromptGeneralSettings', () => {
 			/>,
 		);
 
-		const nameInput =
-			screen.getByTestId<HTMLInputElement>('prompt-name-input');
-		expect(nameInput.value).toBe(promptConfig.name);
+		await waitFor(() => {
+			const nameInput = screen.getByTestId<HTMLInputElement>(
+				'prompt-general-settings-name-input',
+			);
 
-		const idInput = screen.getByTestId('prompt-id');
-		expect(idInput.innerHTML).toBe(promptConfig.id);
-	});
-
-	it('renders null when application is not defined', async () => {
-		render(
-			<PromptConfigGeneralSettings
-				projectId={project.id}
-				applicationId={''}
-				promptConfig={promptConfig}
-			/>,
-		);
-
-		const settingsContainer = screen.queryByTestId(
-			'prompt-general-settings-container',
-		);
-		expect(settingsContainer).not.toBeInTheDocument();
+			expect(nameInput.value).toBe(promptConfig.name);
+		});
 	});
 
 	it('does not save when form is pristine', async () => {
@@ -85,7 +71,9 @@ describe('PromptGeneralSettings', () => {
 			/>,
 		);
 
-		const saveBtn = screen.getByTestId('prompt-setting-save-btn');
+		const saveBtn = screen.getByTestId(
+			'prompt-general-settings-save-button',
+		);
 		fireEvent.click(saveBtn);
 		expect(handleUpdatePromptConfigSpy).not.toHaveBeenCalled();
 	});
@@ -99,8 +87,9 @@ describe('PromptGeneralSettings', () => {
 			/>,
 		);
 
-		const nameInput =
-			screen.getByTestId<HTMLInputElement>('prompt-name-input');
+		const nameInput = screen.getByTestId<HTMLInputElement>(
+			'prompt-general-settings-name-input',
+		);
 		fireEvent.change(nameInput, {
 			target: { value: `${promptConfig.name}i` },
 		});
@@ -108,7 +97,9 @@ describe('PromptGeneralSettings', () => {
 			target: { value: promptConfig.name },
 		});
 
-		const saveBtn = screen.getByTestId('prompt-setting-save-btn');
+		const saveBtn = screen.getByTestId(
+			'prompt-general-settings-save-button',
+		);
 		fireEvent.click(saveBtn);
 		expect(handleUpdatePromptConfigSpy).not.toHaveBeenCalled();
 	});
@@ -122,13 +113,16 @@ describe('PromptGeneralSettings', () => {
 			/>,
 		);
 
-		const nameInput =
-			screen.getByTestId<HTMLInputElement>('prompt-name-input');
+		const nameInput = screen.getByTestId<HTMLInputElement>(
+			'prompt-general-settings-name-input',
+		);
 		fireEvent.change(nameInput, {
 			target: { value: 'de' },
 		});
 
-		const saveBtn = screen.getByTestId('prompt-setting-save-btn');
+		const saveBtn = screen.getByTestId(
+			'prompt-general-settings-save-button',
+		);
 		fireEvent.click(saveBtn);
 		expect(handleUpdatePromptConfigSpy).not.toHaveBeenCalled();
 	});
@@ -142,13 +136,16 @@ describe('PromptGeneralSettings', () => {
 			/>,
 		);
 
-		const nameInput =
-			screen.getByTestId<HTMLInputElement>('prompt-name-input');
+		const nameInput = screen.getByTestId<HTMLInputElement>(
+			'prompt-general-settings-name-input',
+		);
 		fireEvent.change(nameInput, {
 			target: { value: 'new name' },
 		});
 
-		const saveBtn = screen.getByTestId('prompt-setting-save-btn');
+		const saveBtn = screen.getByTestId(
+			'prompt-general-settings-save-button',
+		);
 		fireEvent.click(saveBtn);
 		// takes care of covering the loading line
 		fireEvent.click(saveBtn);
@@ -171,8 +168,9 @@ describe('PromptGeneralSettings', () => {
 			/>,
 		);
 
-		const nameInput =
-			screen.getByTestId<HTMLInputElement>('prompt-name-input');
+		const nameInput = screen.getByTestId<HTMLInputElement>(
+			'prompt-general-settings-name-input',
+		);
 		fireEvent.change(nameInput, {
 			target: { value: 'new name' },
 		});
@@ -184,7 +182,9 @@ describe('PromptGeneralSettings', () => {
 				statusText: 'Bad Request',
 			});
 		});
-		const saveBtn = screen.getByTestId('prompt-setting-save-btn');
+		const saveBtn = screen.getByTestId(
+			'prompt-general-settings-save-button',
+		);
 		fireEvent.click(saveBtn);
 
 		await waitFor(() => {

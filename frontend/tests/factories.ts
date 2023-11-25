@@ -69,7 +69,7 @@ export const OpenAIPromptConfigFactory = new TypeFactory<
 	modelParameters: {},
 	modelType: TypeFactory.sample(Object.values(OpenAIModelType)),
 	modelVendor: ModelVendor.OpenAI,
-	name: faker.lorem.words(),
+	name: faker.lorem.word({ length: 5 }),
 	providerPromptMessages: OpenAIPromptMessageFactory.batchSync(3),
 	updatedAt: faker.date.past().toISOString(),
 }));

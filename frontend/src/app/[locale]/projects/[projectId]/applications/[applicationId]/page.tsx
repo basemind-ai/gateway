@@ -102,7 +102,13 @@ export default function Application({
 				headerText={`${t('application')} / ${application.name}`}
 				showSelect={projects.length > 1}
 			/>
-
+			{application.description && (
+				<div className="pl-20">
+					<span className="text-sm line-clamp-1 hover:line-clamp-none">
+						{application.description}
+					</span>
+				</div>
+			)}
 			<div className="mt-3.5 w-full mb-8">
 				<TabNavigation<TAB_NAME>
 					tabs={tabs}

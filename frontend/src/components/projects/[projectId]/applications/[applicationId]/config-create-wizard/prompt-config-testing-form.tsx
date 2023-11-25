@@ -2,7 +2,10 @@ import { useTranslations } from 'next-intl';
 import { PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
 import { PromptContentDisplay } from '@/components/config-display-components/prompt-content-display';
-import { modelTypeToNameMap, modelVendorToLocaleMap } from '@/constants/models';
+import {
+	modelTypeToLocaleMap,
+	modelVendorToLocaleMap,
+} from '@/constants/models';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
 	ModelParameters,
@@ -172,7 +175,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 								{modelVendorToLocaleMap[modelVendor]}
 							</td>
 							<td data-testid="test-model-type-display">
-								{modelTypeToNameMap[modelType]}
+								{modelTypeToLocaleMap[modelType]}
 							</td>
 							<td data-testid="test-finish-reason-display">
 								{testFinishReason || 'N/A'}

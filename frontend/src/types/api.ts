@@ -45,7 +45,7 @@ export interface PromptConfig<T extends ModelVendor> {
 	createdAt: string;
 	expectedTemplateVariables: string[];
 	id: string;
-	isDefault: boolean;
+	isDefault?: boolean;
 	modelParameters: ModelParameters<T>;
 	modelType: ModelType<T>;
 	modelVendor: T;

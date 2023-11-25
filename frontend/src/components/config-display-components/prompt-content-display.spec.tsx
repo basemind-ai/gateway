@@ -14,7 +14,7 @@ describe('PromptContentDisplay', () => {
 
 	it('should display an array of openAI messages correctly', () => {
 		const messages: OpenAIPromptMessage[] =
-			OpenAIPromptMessageFactory.batchSync(5);
+			OpenAIPromptMessageFactory.batchSync(100);
 
 		render(
 			<PromptContentDisplay
@@ -27,10 +27,10 @@ describe('PromptContentDisplay', () => {
 			'prompt-content-display-messages',
 		);
 		expect(messageContainer).toBeInTheDocument();
-		expect(messageContainer.children.length).toBe(5);
+		expect(messageContainer.children.length).toBe(100);
 
 		for (const [i, message] of messages.entries()) {
-			const content = `${i} - [${message.role}]: ${
+			const content = `[${message.role}]: ${
 				isOpenAIContentMessage(message) ? message.content : message.name
 			}`;
 			expect(content).toBe(messageContainer.children[i].textContent);
@@ -52,7 +52,7 @@ describe('PromptContentDisplay', () => {
 		expect(messageContainer.children.length).toBe(5);
 
 		for (const [i, message] of messages.entries()) {
-			const content = `${i}: ${message.message}`;
+			const content = `[${i}]: ${message.message}`;
 			expect(content).toBe(messageContainer.children[i].textContent);
 		}
 	});

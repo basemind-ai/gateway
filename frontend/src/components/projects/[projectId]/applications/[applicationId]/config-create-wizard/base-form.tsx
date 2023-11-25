@@ -1,12 +1,13 @@
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
+import { PromptConfigNameInput } from '@/components/config-display-components/prompt-config-name-input';
 import {
-	modelTypeToNameMap,
+	modelTypeToLocaleMap,
 	modelVendorTypeMap,
 	UnavailableModelVendor,
 } from '@/constants/models';
-import { ModelType, ModelVendor, OpenAIModelType } from '@/types';
+import { ModelType, ModelVendor } from '@/types';
 import { handleChange } from '@/utils/events';
 
 export function PromptConfigBaseForm({
@@ -16,13 +17,15 @@ export function PromptConfigBaseForm({
 	modelType,
 	setVendor,
 	setModelType,
-	nameIsInvalid,
+	setIsValid,
+	applicationId,
 }: {
+	applicationId: string;
 	configName: string;
 	modelType: ModelType<any>;
 	modelVendor: ModelVendor;
-	nameIsInvalid: boolean;
 	setConfigName: (configName: string) => void;
+	setIsValid: (isValid: boolean) => void;
 	setModelType: (modelType: ModelType<any>) => void;
 	setVendor: (modelVendor: ModelVendor) => void;
 }) {
@@ -35,34 +38,15 @@ export function PromptConfigBaseForm({
 	return (
 		<div data-testid="base-form-container">
 			<div className="flex flex-col">
-				<div className="px-4 form-control">
-					<label className="label">
-						<span className="label-text">
-							{t('promptConfigNameInputLabel')}
-						</span>
-						<span className="label-text-alt">
-							{t('promptConfigNameInputLabelAlt')}
-						</span>
-					</label>
-					<input
-						data-testid="create-prompt-base-form-name-input"
-						type="text"
-						placeholder={t('promptConfigNameInputPlaceholder')}
-						className={`input input-bordered bg-neutral w-full ${
-							nameIsInvalid && 'border-error'
-						}`}
-						value={configName}
-						onChange={handleChange(setConfigName)}
-					/>
-					{nameIsInvalid && (
-						<span
-							className="text-sm text-error text-center"
-							data-testid="invalid-name-error-message"
-						>
-							{t('invalidNameErrorMessage')}
-						</span>
-					)}
-				</div>
+				<PromptConfigNameInput
+					dataTestId="create-prompt-base-form-name-input"
+					placeholder={t('promptConfigNameInputPlaceholder')}
+					isLoading={false}
+					value={configName}
+					setValue={setConfigName}
+					setIsValid={setIsValid}
+					applicationId={applicationId}
+				/>
 				<div className="px-4 form-control">
 					<label className="label">
 						<span className="label-text">
@@ -73,7 +57,6 @@ export function PromptConfigBaseForm({
 						className="select select-bordered bg-neutral w-full"
 						value={modelVendor}
 						onChange={handleChange(setVendor)}
-						defaultValue={ModelVendor.OpenAI}
 						disabled={true}
 						data-testid="create-prompt-base-form-vendor-select"
 					>
@@ -105,14 +88,13 @@ export function PromptConfigBaseForm({
 						className="select select-bordered bg-neutral w-full"
 						value={modelType}
 						onChange={handleChange(setModelType)}
-						defaultValue={OpenAIModelType.Gpt35Turbo}
 						data-testid="create-prompt-base-form-model-select"
 					>
 						{modelChoices.map((modelChoice) => {
 							return (
 								<option key={modelChoice} value={modelChoice}>
 									{
-										modelTypeToNameMap[
+										modelTypeToLocaleMap[
 											modelChoice as ModelType<any>
 										]
 									}

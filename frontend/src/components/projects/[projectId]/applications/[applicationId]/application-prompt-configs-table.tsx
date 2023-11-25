@@ -4,7 +4,10 @@ import { CheckCircle, Front, PencilFill, Search } from 'react-bootstrap-icons';
 
 import { PromptConfigPageTab } from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/configs/[promptConfigId]/page';
 import { Navigation } from '@/constants';
-import { modelTypeToNameMap, modelVendorToLocaleMap } from '@/constants/models';
+import {
+	modelTypeToLocaleMap,
+	modelVendorToLocaleMap,
+} from '@/constants/models';
 import { ModelVendor, PromptConfig } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
@@ -103,7 +106,7 @@ export function ApplicationPromptConfigsTable({
 							</td>
 							<td>
 								<span className="text-info">
-									{modelTypeToNameMap[modelType]}
+									{modelTypeToLocaleMap[modelType]}
 								</span>
 							</td>
 							<td>

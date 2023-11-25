@@ -35,6 +35,8 @@ export default function PromptConfigCreateWizard({
 
 	const router = useRouter();
 
+	const [nameIsValid, setNameIsValid] = useState(false);
+
 	const project = useProject(projectId);
 	const projects = useProjects();
 
@@ -74,16 +76,6 @@ export default function PromptConfigCreateWizard({
 		[store.setTemplateVariables],
 	);
 
-	const nameIsInvalid = useMemo(
-		() =>
-			Boolean(
-				promptConfigs[applicationId]
-					?.map((c) => c.name)
-					?.includes(store.configName),
-			),
-		[promptConfigs, store.configName],
-	);
-
 	const hasProviderKey = useMemo(
 		() => providerKeys.some((p) => p.modelVendor === store.modelVendor),
 		[providerKeys, store.modelVendor],
@@ -93,10 +85,11 @@ export default function PromptConfigCreateWizard({
 		[WizardStage.NAME_AND_MODEL]: useMemo(
 			() => (
 				<PromptConfigBaseForm
+					applicationId={applicationId}
 					configName={store.configName}
 					modelType={store.modelType}
 					modelVendor={store.modelVendor}
-					nameIsInvalid={nameIsInvalid}
+					setIsValid={setNameIsValid}
 					setConfigName={handleConfigNameChange}
 					setModelType={handleModelTypeChange}
 					setVendor={handleModelVendorChange}
@@ -271,7 +264,7 @@ export default function PromptConfigCreateWizard({
 										onClick={store.setNextWizardStage}
 										className="btn btn-primary"
 										disabled={
-											nameIsInvalid ||
+											!nameIsValid ||
 											(store.wizardStage === 0 &&
 												!store.configName.length) ||
 											(store.wizardStage === 1 &&

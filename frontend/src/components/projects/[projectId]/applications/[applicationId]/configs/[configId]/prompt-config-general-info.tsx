@@ -1,82 +1,39 @@
-import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 
-import { handleCreatePromptConfig } from '@/api';
-import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
-import { useAddPromptConfig, useApplication } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import {
+	modelTypeToLocaleMap,
+	modelVendorToLocaleMap,
+} from '@/constants/models';
 import { ModelVendor, PromptConfig } from '@/types';
-import { getCloneName } from '@/utils/helpers';
-import { setRouteParams } from '@/utils/navigation';
+
+function GridCell({
+	header,
+	content,
+	dataTestId,
+}: {
+	content: string;
+	dataTestId: string;
+	header: string;
+}) {
+	return (
+		<div className="p-2">
+			<label className="text-sm">{header}</label>
+			<p data-testid={dataTestId} className="text-sm font-semibold">
+				{content}
+			</p>
+		</div>
+	);
+}
 
 export function PromptConfigGeneralInfo<T extends ModelVendor>({
-	projectId,
-	applicationId,
 	promptConfig,
 }: {
-	applicationId: string;
-	projectId: string;
-	promptConfig: PromptConfig<T>;
+	promptConfig?: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
-	const router = useRouter();
 
-	const addPromptConfig = useAddPromptConfig();
-	const application = useApplication(projectId, applicationId);
-
-	const [cloning, setCloning] = useState(false);
-	const showError = useShowError();
-	const showInfo = useShowInfo();
-
-	async function clonePrompt() {
-		if (cloning) {
-			return null;
-		}
-
-		const {
-			name,
-			modelParameters,
-			modelType,
-			modelVendor,
-			providerPromptMessages,
-		} = promptConfig;
-
-		setCloning(true);
-
-		try {
-			const cloneName = getCloneName(name);
-			const newPromptConfig = await handleCreatePromptConfig({
-				applicationId,
-				data: {
-					modelParameters,
-					modelType,
-					modelVendor,
-					name: cloneName,
-					promptMessages: providerPromptMessages,
-				},
-				projectId,
-			});
-			addPromptConfig(applicationId, newPromptConfig);
-			showInfo(t('configCloned'));
-
-			router.push(
-				setRouteParams(Navigation.PromptConfigDetail, {
-					applicationId,
-					projectId,
-					promptConfigId: newPromptConfig.id,
-				}),
-			);
-		} catch (e) {
-			showError((e as ApiError).message);
-		} finally {
-			setCloning(false);
-		}
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	if (!promptConfig || !application) {
+	if (!promptConfig) {
 		return null;
 	}
 
@@ -84,60 +41,43 @@ export function PromptConfigGeneralInfo<T extends ModelVendor>({
 		<div data-testid="prompt-general-info-container">
 			<h2 className="card-header">{t('general')}</h2>
 			<div className="rounded-data-card flex flex-col">
-				<div className="text-neutral-content grid grid-cols-2 gap-8">
-					<div>
-						<label className="text-sm">{t('name')}</label>
-						<p
-							data-testid="prompt-general-info-name"
-							className="font-medium text-xl"
-						>
-							{promptConfig.name}
-						</p>
-					</div>
-					<div>
-						<label className="text-sm">
-							{t('partOfApplication')}
-						</label>
-						<p className="font-medium text-xl">
-							{application.name}
-						</p>
-					</div>
-					<div>
-						<label className="text-sm">{t('noOfVariables')}</label>
-						<p data-testid="" className="font-medium text-xl">
-							{promptConfig.expectedTemplateVariables.length}
-						</p>
-					</div>
-					<div>
-						<label className="text-sm">{t('id')}</label>
-						<p className="font-medium text-xl">{promptConfig.id}</p>
-					</div>
-				</div>
-				<div className="mt-8 flex gap-2.5 self-end">
-					<button
-						data-testid="prompt-clone-btn"
-						onClick={() => void clonePrompt()}
-						className="btn btn-outline btn-accent"
-					>
-						{cloning ? (
-							<span className="loading loading-spinner loading-xs mx-4" />
-						) : (
-							t('clone')
+				<div className="text-neutral-content grid grid-cols-3 gap-4">
+					<GridCell
+						header={t('modelVendor')}
+						content={
+							modelVendorToLocaleMap[promptConfig.modelVendor]
+						}
+						dataTestId="prompt-general-info-model-vendor"
+					/>
+					<GridCell
+						header={t('modelType')}
+						content={modelTypeToLocaleMap[promptConfig.modelType]}
+						dataTestId="prompt-general-info-model-type"
+					/>
+					<GridCell
+						header={t('id')}
+						content={promptConfig.id}
+						dataTestId="prompt-general-info-id"
+					/>
+					<GridCell
+						header={t('isDefaultConfig')}
+						content={promptConfig.isDefault?.toString() ?? ''}
+						dataTestId="prompt-general-info-is-default"
+					/>
+					<GridCell
+						header={t('createdAt')}
+						content={dayjs(promptConfig.createdAt).format(
+							'YYYY-MM-DD',
 						)}
-					</button>
-					<button
-						data-testid="prompt-test-btn"
-						disabled={cloning}
-						/* c8 ignore start */
-						onClick={() => {
-							// FIXME: we have to implement this.
-							alert('not implemented');
-						}}
-						/* c8 ignore end */
-						className="btn btn-outline btn-primary"
-					>
-						{t('test')}
-					</button>
+						dataTestId="prompt-general-info-created-at"
+					/>
+					<GridCell
+						header={t('updatedAt')}
+						content={dayjs(promptConfig.updatedAt).format(
+							'YYYY-MM-DD',
+						)}
+						dataTestId="prompt-general-info-updated-at"
+					/>
 				</div>
 			</div>
 		</div>

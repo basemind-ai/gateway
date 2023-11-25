@@ -81,6 +81,18 @@ div#__next > div {
 		@apply font-semibold text-white text-xl pr-3;
 	}
 
+	.card-action-button {
+		@apply btn py-2.5 rounded-3xl capitalize min-h-0 h-full leading-4
+	}
+
+	.card-input {
+		@apply input input-bordered rounded-full;
+	}
+
+	.card-input-invalid {
+		@apply input input-bordered rounded-full border-red-500;
+	}
+
 	.rounded-data-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-16;
 	}
