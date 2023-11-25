@@ -67,6 +67,7 @@ export function ApplicationPromptConfigs({
 				)}
 				<button
 					className="flex gap-2 items-center text-secondary hover:brightness-90"
+					data-testid="application-prompt-config-new-prompt-config-button"
 					onClick={() => {
 						router.push(
 							setRouteParams(Navigation.ConfigCreateWizard, {

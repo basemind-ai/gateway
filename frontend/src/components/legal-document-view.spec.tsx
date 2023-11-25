@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { screen } from '@testing-library/react';
 import { render } from 'tests/test-utils';
 import { describe, it } from 'vitest';
@@ -11,8 +12,8 @@ describe('LegalDocumentView component tests', () => {
 	const mockDoc: LegalDocument = {
 		Paragraphs: [
 			{
-				content: ['test content', 'test content 2'],
-				title: 'test title 1',
+				content: [faker.lorem.paragraph(3), faker.lorem.paragraph(3)],
+				title: faker.lorem.word(),
 			},
 			{
 				content: ['test content 3', 'test content 4'],
@@ -20,7 +21,7 @@ describe('LegalDocumentView component tests', () => {
 			},
 		],
 		lastUpdated: 'last updated on 2021-10-10',
-		openingParagraphs: [],
+		openingParagraphs: [faker.lorem.paragraph(5)],
 		title: 'test title 3',
 	};
 	it('should render the title', () => {

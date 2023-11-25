@@ -176,4 +176,48 @@ describe('ApplicationPromptConfigsTable', () => {
 			screen.queryByTestId('application-prompt-configs-table-row'),
 		).not.toBeInTheDocument();
 	});
+
+	it('should show a default config badge when the prompt config is default', () => {
+		const promptConfigs = OpenAIPromptConfigFactory.batchSync(1, {
+			isDefault: true,
+		});
+		const projectId = faker.string.uuid();
+		const applicationId = faker.string.uuid();
+		const handlePromptConfigIdCopy = vi.fn();
+
+		render(
+			<ApplicationPromptConfigsTable
+				promptConfigs={promptConfigs}
+				projectId={projectId}
+				applicationId={applicationId}
+				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
+			/>,
+		);
+
+		expect(screen.getByText(namespace.default)).toBeInTheDocument();
+	});
+
+	it('should navigate to the prompt config detail page testing tab when pressing the test button', () => {
+		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
+		const projectId = faker.string.uuid();
+		const applicationId = faker.string.uuid();
+		const handlePromptConfigIdCopy = vi.fn();
+
+		render(
+			<ApplicationPromptConfigsTable
+				promptConfigs={promptConfigs}
+				projectId={projectId}
+				applicationId={applicationId}
+				handlePromptConfigIdCopy={handlePromptConfigIdCopy}
+			/>,
+		);
+
+		fireEvent.click(
+			screen.getAllByTestId(
+				'application-prompt-configs-table-config-test-button',
+			)[0],
+		);
+
+		expect(routerPushMock).toHaveBeenCalled();
+	});
 });
