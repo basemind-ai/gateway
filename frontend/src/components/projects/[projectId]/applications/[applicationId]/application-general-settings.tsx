@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
 import {
@@ -7,14 +7,14 @@ import {
 	handleSetDefaultPromptConfig,
 	handleUpdateApplication,
 } from '@/api';
-import { MIN_NAME_LENGTH } from '@/constants';
-import { ApiError } from '@/errors';
+import { EntityNameInput } from '@/components/entity-name-input';
+import { useHandleError } from '@/hooks/use-handle-error';
 import {
+	useApplications,
 	usePromptConfigs,
 	useSetPromptConfigs,
 	useUpdateApplication,
 } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 import { Application } from '@/types';
 import { handleChange } from '@/utils/events';
 
@@ -29,11 +29,13 @@ export function ApplicationGeneralSettings({
 
 	const promptConfigs = usePromptConfigs();
 	const setPromptConfig = useSetPromptConfigs();
-	const showError = useShowError();
+	const applications = useApplications(projectId);
 	const updateApplication = useUpdateApplication();
+	const handleError = useHandleError();
 	const { mutate } = useSWRConfig();
 
 	const [name, setName] = useState(application.name);
+	const [isNameValid, setIsNameValid] = useState(true);
 	const [description, setDescription] = useState(
 		application.description ?? '',
 	);
@@ -51,7 +53,15 @@ export function ApplicationGeneralSettings({
 		description !== application.description ||
 		initialPromptConfigId !== defaultPromptConfigId;
 
-	const isNameValid = name.trim().length >= MIN_NAME_LENGTH;
+	const validateName = useCallback(
+		(value: string) =>
+			!applications
+				?.filter(Boolean)
+				.filter((app) => app.id !== application.id)
+				.map((app) => app.name)
+				.includes(value),
+		[applications, application],
+	);
 
 	useSWR(
 		{
@@ -60,9 +70,7 @@ export function ApplicationGeneralSettings({
 		},
 		handleRetrievePromptConfigs,
 		{
-			onError({ message }: ApiError) {
-				showError(message);
-			},
+			onError: handleError,
 			onSuccess(promptConfigResponse) {
 				if (
 					Array.isArray(promptConfigResponse) &&
@@ -124,7 +132,7 @@ export function ApplicationGeneralSettings({
 
 			await Promise.all(operations);
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setIsLoading(false);
 		}
@@ -134,24 +142,15 @@ export function ApplicationGeneralSettings({
 		<div data-testid="application-general-settings-container">
 			<h2 className="card-header">{t('general')}</h2>
 			<div className="rounded-data-card flex flex-col">
-				<div className="form-control">
-					<label className="label">
-						<span className="label-text">
-							{t('applicationName')}
-						</span>
-					</label>
-					<input
-						type="text"
-						data-testid="application-name-input"
-						className={
-							isNameValid
-								? 'card-input'
-								: 'card-input border-red-500'
-						}
-						value={name}
-						onChange={handleChange(setName)}
-					/>
-				</div>
+				<EntityNameInput
+					dataTestId={'application-name-input'}
+					isLoading={isLoading}
+					setIsValid={setIsNameValid}
+					setValue={setName}
+					validateValue={validateName}
+					value={name}
+				/>
+
 				<div className="form-control mt-8">
 					<label className="label">
 						<span className="label-text">

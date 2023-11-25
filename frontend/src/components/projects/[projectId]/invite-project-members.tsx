@@ -4,9 +4,9 @@ import { XCircleFill } from 'react-bootstrap-icons';
 import isEmail from 'validator/es/lib/isEmail';
 
 import { handleAddUsersToProject, handleRetrieveProjectUsers } from '@/api';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useSetProjectUsers } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { useShowInfo } from '@/stores/toast-store';
 import { AccessPermission, Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
@@ -20,7 +20,7 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 
 	const setProjectUsers = useSetProjectUsers();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	async function sendInvite() {
@@ -45,7 +45,7 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 			setPermission(AccessPermission.MEMBER);
 			showInfo(t('usersInvited'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setLoading(false);
 		}

@@ -8,8 +8,7 @@ import useSWR from 'swr';
 import { handleApplicationAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
-import { ApiError } from '@/errors';
-import { useShowError } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDateFormat } from '@/stores/user-config-store';
 import { Application } from '@/types';
 
@@ -22,7 +21,7 @@ export function ApplicationAnalyticsPage({
 }) {
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const oneWeekAgo = dayjs().subtract(7, 'days').toDate();
 
@@ -40,11 +39,7 @@ export function ApplicationAnalyticsPage({
 		},
 		handleApplicationAnalytics,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 		},
 	);
 

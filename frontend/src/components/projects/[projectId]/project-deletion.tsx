@@ -5,9 +5,9 @@ import { useRef, useState } from 'react';
 import { handleDeleteProject } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDeleteProject } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { useShowInfo } from '@/stores/toast-store';
 import { Project } from '@/types';
 
 export function ProjectDeletion({ project }: { project: Project }) {
@@ -15,7 +15,7 @@ export function ProjectDeletion({ project }: { project: Project }) {
 	const t = useTranslations('projectSettings');
 	const deleteProjectHook = useDeleteProject();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	const dialogRef = useRef<HTMLDialogElement>(null);
@@ -43,7 +43,7 @@ export function ProjectDeletion({ project }: { project: Project }) {
 			router.replace(Navigation.Projects);
 			showInfo(t('projectDeleted'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			closeDeleteConfirmationPopup();
 			setLoading(false);

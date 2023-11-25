@@ -6,15 +6,14 @@ import { handleDeleteProviderKey } from '@/api/provider-keys-api';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { modelVendorToLocaleMap } from '@/constants/models';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
-import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, Project, ProviderKey } from '@/types';
 
 export function ProjectProviderKeys({ project }: { project: Project }) {
 	const t = useTranslations('providerKeys');
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const deletionDialogRef = useRef<HTMLDialogElement>(null);
 	const creationDialogRef = useRef<HTMLDialogElement>(null);
@@ -71,7 +70,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 				providerKeyId,
 			});
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setIsLoading(false);
 			setProviderKeyIdToDelete(undefined);

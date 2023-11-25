@@ -7,9 +7,8 @@ import useSWR, { useSWRConfig } from 'swr';
 import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
 import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useApiKeys, useSetAPIKeys } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 import { useDateFormat } from '@/stores/user-config-store';
 import { APIKey, Application } from '@/types';
 
@@ -22,7 +21,7 @@ export function ApplicationApiKeys({
 }) {
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const { mutate } = useSWRConfig();
 	const [loading, setLoading] = useState(false);
 
@@ -61,11 +60,7 @@ export function ApplicationApiKeys({
 		},
 		handleRetrieveAPIKeys,
 		{
-			/* c8 ignore start */
-			onError({ message }: ApiError) {
-				showError(message);
-			},
-			/* c8 ignore end */
+			onError: handleError,
 			onSuccess(apiKeys) {
 				setAPIKeys(application.id, apiKeys);
 				closeCreationPopup();
@@ -88,7 +83,7 @@ export function ApplicationApiKeys({
 			});
 			await mutate({ applicationId: application.id, projectId });
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			closeDeleteConfirmationPopup();
 			setLoading(false);

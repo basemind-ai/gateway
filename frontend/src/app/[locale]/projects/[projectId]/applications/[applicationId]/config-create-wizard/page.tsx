@@ -13,7 +13,7 @@ import { PromptConfigParametersAndPromptForm } from '@/components/projects/[proj
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { useProject, useProjects, usePromptConfigs } from '@/stores/api-store';
 import {
@@ -21,7 +21,6 @@ import {
 	WizardStage,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
-import { useShowError } from '@/stores/toast-store';
 import { ProviderKey } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
@@ -31,7 +30,7 @@ export default function PromptConfigCreateWizard({
 	params: { applicationId: string; projectId: string };
 }) {
 	const t = useTranslations('createConfigWizard');
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const router = useRouter();
 
@@ -143,7 +142,7 @@ export default function PromptConfigCreateWizard({
 					modelType={store.modelType}
 					modelVendor={store.modelVendor}
 					parameters={store.parameters}
-					handleError={showError}
+					handleError={handleError}
 				/>
 			),
 			[
@@ -194,7 +193,7 @@ export default function PromptConfigCreateWizard({
 				}),
 			);
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setIsLoading(false);
 		}

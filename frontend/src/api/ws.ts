@@ -2,6 +2,7 @@ import { wait } from 'shared/time';
 
 import { fetcher } from '@/api/fetcher';
 import { HttpMethod } from '@/constants';
+import { WebsocketError } from '@/errors';
 import {
 	ModelVendor,
 	OTP,
@@ -98,7 +99,7 @@ export async function createWebsocket<T extends ModelVendor>({
 				websocket.readyState === WebSocket.CLOSED ||
 				websocket.readyState === WebSocket.CLOSING
 			) {
-				throw new Error('websocket is closed');
+				throw new WebsocketError('websocket is closed');
 			}
 
 			while (websocket.readyState === WebSocket.CONNECTING) {

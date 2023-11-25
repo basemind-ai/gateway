@@ -127,7 +127,7 @@ describe('PromptGeneralSettings', () => {
 		expect(handleUpdatePromptConfigSpy).not.toHaveBeenCalled();
 	});
 
-	it('saves only when fields are changed and valid', async () => {
+	it('save when when fields are changed and valid', async () => {
 		render(
 			<PromptConfigGeneralSettings
 				projectId={project.id}
@@ -143,19 +143,25 @@ describe('PromptGeneralSettings', () => {
 			target: { value: 'new name' },
 		});
 
+		handleUpdatePromptConfigSpy.mockResolvedValueOnce({
+			...promptConfig,
+			name: 'new name',
+		});
+
 		const saveBtn = screen.getByTestId(
 			'prompt-general-settings-save-button',
 		);
 		fireEvent.click(saveBtn);
-		// takes care of covering the loading line
-		fireEvent.click(saveBtn);
-		expect(handleUpdatePromptConfigSpy).toHaveBeenCalledWith({
-			applicationId: application.id,
-			data: {
-				name: 'new name',
-			},
-			projectId: project.id,
-			promptConfigId: promptConfig.id,
+
+		await waitFor(() => {
+			expect(handleUpdatePromptConfigSpy).toHaveBeenCalledWith({
+				applicationId: application.id,
+				data: {
+					name: 'new name',
+				},
+				projectId: project.id,
+				promptConfigId: promptConfig.id,
+			});
 		});
 	});
 

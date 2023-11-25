@@ -5,9 +5,9 @@ import { useRef, useState } from 'react';
 import { handleDeleteApplication } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDeleteApplication } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { useShowInfo } from '@/stores/toast-store';
 import { Application } from '@/types';
 
 export function ApplicationDeletion({
@@ -24,7 +24,7 @@ export function ApplicationDeletion({
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [loading, setLoading] = useState(false);
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	function openDeleteConfirmationPopup() {
@@ -53,7 +53,7 @@ export function ApplicationDeletion({
 			router.replace(Navigation.Projects);
 			showInfo(t('applicationDeleted'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			closeDeleteConfirmationPopup();
 			setLoading(false);

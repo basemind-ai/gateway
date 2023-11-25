@@ -8,8 +8,7 @@ import useSWR from 'swr';
 import { handlePromptConfigAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
-import { ApiError } from '@/errors';
-import { useShowError } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDateFormat } from '@/stores/user-config-store';
 import { PromptConfig } from '@/types';
 
@@ -24,7 +23,7 @@ export function PromptConfigAnalyticsPage({
 }) {
 	const t = useTranslations('promptConfig');
 	const dateFormat = useDateFormat();
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const oneWeekAgo = dayjs().subtract(7, 'days').toDate();
 
@@ -43,9 +42,7 @@ export function PromptConfigAnalyticsPage({
 		},
 		handlePromptConfigAnalytics,
 		{
-			onError({ message }: ApiError) {
-				showError(message);
-			},
+			onError: handleError,
 		},
 	);
 

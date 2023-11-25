@@ -3,9 +3,8 @@ import { useState } from 'react';
 
 import { handleUpdateProject } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useUpdateProject } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 import { Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
@@ -17,7 +16,7 @@ export function ProjectGeneralSettings({ project }: { project: Project }) {
 	const [description, setDescription] = useState(project.description ?? '');
 	const [loading, setLoading] = useState(false);
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const isChanged =
 		name !== project.name || description !== project.description;
@@ -38,7 +37,7 @@ export function ProjectGeneralSettings({ project }: { project: Project }) {
 			});
 			updateProject(project.id, updatedProject);
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setLoading(false);
 		}

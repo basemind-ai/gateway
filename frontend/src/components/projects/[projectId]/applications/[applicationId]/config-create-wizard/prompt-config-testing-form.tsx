@@ -6,6 +6,7 @@ import {
 	modelTypeToLocaleMap,
 	modelVendorToLocaleMap,
 } from '@/constants/models';
+import { WebsocketError } from '@/errors';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
 	ModelParameters,
@@ -43,7 +44,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	promptConfigId,
 }: {
 	applicationId: string;
-	handleError: (error: string) => void;
+	handleError: (error: unknown) => void;
 	messages: ProviderMessageType<T>[];
 	modelType: ModelType<T>;
 	modelVendor: T;
@@ -65,7 +66,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	} = usePromptTesting({
 		applicationId,
 		handleError: () => {
-			handleError(t('runningTestError'));
+			handleError(new WebsocketError(t('runningTestError')));
 		},
 		projectId,
 	});
@@ -74,7 +75,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 		return [...acc, ...(cur.templateVariables ?? [])];
 	}, []);
 
-	const handleRunTest = () => {
+	const handleRunTest = async () => {
 		resetState();
 
 		const config = {
@@ -86,7 +87,11 @@ export function PromptConfigTesting<T extends ModelVendor>({
 			templateVariables,
 		} satisfies PromptConfigTest<T>;
 
-		void sendMessage(config);
+		try {
+			await sendMessage(config);
+		} catch (e) {
+			handleError(e);
+		}
 	};
 
 	const allExpectedVariablesHaveLength = expectedVariables.every(

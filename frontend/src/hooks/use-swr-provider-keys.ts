@@ -1,12 +1,11 @@
 import useSWR from 'swr';
 
 import { handleRetrieveProviderKeys } from '@/api/provider-keys-api';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useProviderKeys, useSetProviderKeys } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 
 export function useSwrProviderKeys({ projectId }: { projectId: string }) {
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const providerKeys = useProviderKeys();
 	const setProviderKeys = useSetProviderKeys();
@@ -17,9 +16,7 @@ export function useSwrProviderKeys({ projectId }: { projectId: string }) {
 		},
 		handleRetrieveProviderKeys,
 		{
-			onError(apiError: ApiError) {
-				showError(apiError.message);
-			},
+			onError: handleError,
 			onSuccess(data) {
 				setProviderKeys(data);
 			},

@@ -12,8 +12,8 @@ import { PromptConfigDeletion } from '@/components/projects/[projectId]/applicat
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
-import { ApiError } from '@/errors';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import {
 	useProject,
@@ -21,7 +21,6 @@ import {
 	usePromptConfig,
 	useSetPromptConfigs,
 } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 
 enum TAB_NAME {
 	OVERVIEW,
@@ -44,7 +43,7 @@ export default function PromptConfiguration({
 	useProjectBootstrap(false);
 
 	const t = useTranslations('promptConfig');
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
 	const setPromptConfigs = useSetPromptConfigs();
@@ -57,9 +56,7 @@ export default function PromptConfiguration({
 		promptConfig ? null : { applicationId, projectId },
 		handleRetrievePromptConfigs,
 		{
-			onError({ message }: ApiError) {
-				showError(message);
-			},
+			onError: handleError,
 			onSuccess(promptConfigs) {
 				setPromptConfigs(applicationId, promptConfigs);
 			},

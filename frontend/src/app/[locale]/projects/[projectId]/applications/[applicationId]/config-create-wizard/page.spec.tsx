@@ -13,6 +13,7 @@ import { afterEach, expect } from 'vitest';
 import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
+import { ApiError } from '@/errors';
 import {
 	useProviderKeys,
 	useResetState,
@@ -321,7 +322,14 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 
 		mockFetch.mockResolvedValueOnce({
-			json: () => Promise.reject(new Error('failed')),
+			json: () =>
+				Promise.reject(
+					new ApiError('failed', {
+						context: {},
+						statusCode: 500,
+						statusText: 'failed',
+					}),
+				),
 			ok: false,
 		});
 

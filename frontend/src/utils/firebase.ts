@@ -3,6 +3,7 @@ import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { Auth, browserLocalPersistence, getAuth } from 'firebase/auth';
 
 import { Navigation } from '@/constants';
+import { ConfigurationError } from '@/errors';
 
 const instanceRef: { app: FirebaseApp | null; auth: Auth | null } = {
 	app: null,
@@ -22,7 +23,9 @@ export function getFirebaseConfig(): FirebaseOptions {
 
 	for (const [key, value] of Object.entries(firebaseConfig)) {
 		if (!value) {
-			throw new Error(`Missing Firebase config value for ${key}`);
+			throw new ConfigurationError(
+				`Missing Firebase config value for ${key}`,
+			);
 		}
 	}
 

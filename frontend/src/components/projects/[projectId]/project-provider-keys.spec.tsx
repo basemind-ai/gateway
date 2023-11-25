@@ -12,6 +12,7 @@ import { expect } from 'vitest';
 
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { modelVendorToLocaleMap } from '@/constants/models';
+import { ApiError } from '@/errors';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
@@ -58,7 +59,14 @@ describe('ProjectProviderKeys', () => {
 		const toastsLength = result.current.length;
 
 		mockFetch.mockResolvedValueOnce({
-			json: () => Promise.reject('error'),
+			json: () =>
+				Promise.reject(
+					new ApiError('failed', {
+						context: {},
+						statusCode: 500,
+						statusText: 'failed',
+					}),
+				),
 			ok: false,
 		});
 
@@ -254,7 +262,14 @@ describe('ProjectProviderKeys', () => {
 		expect(deleteButtons).toHaveLength(providerKeys.length);
 
 		mockFetch.mockResolvedValueOnce({
-			json: () => Promise.reject(new Error()),
+			json: () =>
+				Promise.reject(
+					new ApiError('failed', {
+						context: {},
+						statusCode: 500,
+						statusText: 'failed',
+					}),
+				),
 			ok: false,
 		});
 

@@ -6,9 +6,9 @@ import useSWR from 'swr';
 import { handleRetrievePromptConfigs } from '@/api';
 import { ApplicationPromptConfigsTable } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs-table';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
-import { useShowError, useShowSuccess } from '@/stores/toast-store';
+import { useShowSuccess } from '@/stores/toast-store';
 import { Application } from '@/types';
 import { copyToClipboard } from '@/utils/helpers';
 import { setRouteParams } from '@/utils/navigation';
@@ -26,7 +26,7 @@ export function ApplicationPromptConfigs({
 	const setPromptConfigs = useSetPromptConfigs();
 	const promptConfigs = usePromptConfigs();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showSuccess = useShowSuccess();
 
 	const { isLoading } = useSWR(
@@ -36,9 +36,7 @@ export function ApplicationPromptConfigs({
 		},
 		handleRetrievePromptConfigs,
 		{
-			onError({ message }: ApiError) {
-				showError(message);
-			},
+			onError: handleError,
 			onSuccess(promptConfigRes) {
 				setPromptConfigs(application.id, promptConfigRes);
 			},

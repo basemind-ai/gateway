@@ -223,6 +223,7 @@ describe('ApplicationGeneralSettings', () => {
 	it('shows error when unable to fetch prompt configs', async () => {
 		const errMessage =
 			'unable to fetch prompt configs for application general';
+
 		handleRetrievePromptConfigsSpy.mockImplementationOnce(() => {
 			throw new ApiError(errMessage, {
 				statusCode: 401,

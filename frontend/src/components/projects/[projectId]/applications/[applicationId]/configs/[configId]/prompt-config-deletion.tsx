@@ -5,9 +5,9 @@ import { useRef, useState } from 'react';
 import { handleDeletePromptConfig } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useDeletePromptConfig, usePromptConfig } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { useShowInfo } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
@@ -26,7 +26,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 	const promptConfig = usePromptConfig<T>(applicationId, promptConfigId);
 	const deletePromptConfig = useDeletePromptConfig();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	const dialogRef = useRef<HTMLDialogElement>(null);
@@ -61,7 +61,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 			);
 			showInfo(t('promptDeleted'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			closeDeleteConfirmationPopup();
 			setLoading(false);

@@ -11,7 +11,7 @@ import {
 } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Dimensions } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import {
 	useProjectUsers,
 	useRemoveProjectUser,
@@ -19,7 +19,7 @@ import {
 	useUpdateProjectUser,
 	useUser,
 } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { useShowInfo } from '@/stores/toast-store';
 import { AccessPermission, Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
@@ -89,7 +89,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 	const updateProjectUser = useUpdateProjectUser();
 	const user = useUser();
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	const { isLoading } = useSWR(
@@ -98,9 +98,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 		},
 		handleRetrieveProjectUsers,
 		{
-			onError(apiError: ApiError) {
-				showError(apiError.message);
-			},
+			onError: handleError,
 
 			onSuccess(users) {
 				setProjectUsers(project.id, users);
@@ -166,7 +164,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 			removeProjectUser(project.id, removalUserId);
 			showInfo(t('userRemoved'));
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setRemovalUserId(null);
 			closeRemovalConfirmationPopup();

@@ -6,14 +6,13 @@ import useSWR from 'swr';
 import { handleRetrieveApplications, handleRetrievePromptConfigs } from '@/api';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import {
 	useApplications,
 	usePromptConfigs,
 	useSetProjectApplications,
 	useSetPromptConfigs,
 } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 import { Project } from '@/types';
 
 export function ProjectApplicationsList({ project }: { project: Project }) {
@@ -27,12 +26,10 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const { isLoading } = useSWR(project.id, handleRetrieveApplications, {
-		onError({ message }: ApiError) {
-			showError(message);
-		},
+		onError: handleError,
 		onSuccess(data) {
 			setProjectApplications(project.id, data);
 		},

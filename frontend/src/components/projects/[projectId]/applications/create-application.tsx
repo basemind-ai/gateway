@@ -5,9 +5,9 @@ import { useState } from 'react';
 import { handleCreateAPIKey, handleCreateApplication } from '@/api';
 import { CreateApiKey } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useAddApplication } from '@/stores/api-store';
-import { useShowError, useShowInfo } from '@/stores/toast-store';
+import { useShowInfo } from '@/stores/toast-store';
 import { handleChange } from '@/utils/events';
 import { setApplicationId, setProjectId } from '@/utils/navigation';
 
@@ -30,7 +30,7 @@ export function CreateApplication({
 	const [apiKey, setAPIKey] = useState<string | null>(null);
 	const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
 	const isValid =
@@ -74,7 +74,7 @@ export function CreateApplication({
 				router.push(applicationUrl);
 			}
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setLoading(false);
 			setName('');

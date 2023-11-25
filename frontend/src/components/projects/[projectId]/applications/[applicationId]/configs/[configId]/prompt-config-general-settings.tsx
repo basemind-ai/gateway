@@ -3,9 +3,8 @@ import { useCallback, useState } from 'react';
 
 import { handleUpdatePromptConfig } from '@/api';
 import { EntityNameInput } from '@/components/entity-name-input';
-import { ApiError } from '@/errors';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { usePromptConfigs, useUpdatePromptConfig } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
 import { ModelVendor, PromptConfig } from '@/types';
 
 export function PromptConfigGeneralSettings<T extends ModelVendor>({
@@ -19,7 +18,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 }) {
 	const t = useTranslations('promptConfig');
 
-	const showError = useShowError();
+	const handleError = useHandleError();
 	const updatePromptConfig = useUpdatePromptConfig();
 	const promptConfigs = usePromptConfigs();
 
@@ -51,7 +50,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 			});
 			updatePromptConfig(applicationId, updatedPromptConfig);
 		} catch (e) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setIsLoading(false);
 		}

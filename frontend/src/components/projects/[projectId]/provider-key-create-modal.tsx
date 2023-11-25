@@ -4,8 +4,7 @@ import { InfoCircle } from 'react-bootstrap-icons';
 
 import { handleCreateProviderKey } from '@/api/provider-keys-api';
 import { modelVendorToLocaleMap } from '@/constants/models';
-import { ApiError } from '@/errors';
-import { useShowError } from '@/stores/toast-store';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { ModelVendor, ProviderKey } from '@/types';
 import { handleChange } from '@/utils/events';
 
@@ -25,7 +24,7 @@ export function ProviderKeyCreateModal({
 	vendors: ModelVendor[];
 }) {
 	const t = useTranslations('providerKeys');
-	const showError = useShowError();
+	const handleError = useHandleError();
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [keyValue, setKeyValue] = useState<string>('');
@@ -46,7 +45,7 @@ export function ProviderKeyCreateModal({
 			});
 			addProviderKey(providerKey);
 		} catch (e: unknown) {
-			showError((e as ApiError).message);
+			handleError(e);
 		} finally {
 			setKeyValue('');
 			setSelectedVendor(undefined);
