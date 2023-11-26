@@ -24,14 +24,6 @@ export interface AnalyticsHandlers {
  * useAnalytics is a react hook for using analytics.
  * */
 export function useAnalytics(): AnalyticsHandlers {
-	const writeKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
-
-	if (!writeKey) {
-		throw new ConfigurationError(
-			'missing required env variable NEXT_PUBLIC_SEGMENT_WRITE_KEY',
-		);
-	}
-
 	const analyticsRef = useRef<AnalyticsSnippet | AnalyticsBrowser | null>(
 		null,
 	);
@@ -42,6 +34,14 @@ export function useAnalytics(): AnalyticsHandlers {
 
 	useEffect(() => {
 		if (!analyticsRef.current) {
+			const writeKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
+
+			if (!writeKey) {
+				throw new ConfigurationError(
+					'missing required env variable NEXT_PUBLIC_SEGMENT_WRITE_KEY',
+				);
+			}
+
 			if (window.analytics) {
 				analyticsRef.current = window.analytics;
 			} else {
