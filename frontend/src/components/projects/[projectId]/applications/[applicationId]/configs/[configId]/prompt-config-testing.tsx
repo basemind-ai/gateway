@@ -2,6 +2,7 @@ import deepEqual from 'fast-deep-equal/es6';
 import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 
+import { handleUpdatePromptConfig } from '@/api';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
@@ -36,12 +37,14 @@ export function PromptConfigTesting<T extends ModelVendor>({
 			.sort(),
 	);
 
+	const [isLoading, setIsLoading] = useState(false);
 	const [templateVariables, setTemplateVariables] = useState<
 		Record<string, string>
 	>({});
 	const [modelType, setModelType] = useState<ModelType<T>>(
 		promptConfig.modelType,
 	);
+	const [name, setName] = useState(promptConfig.name);
 	const [modelVendor, setModelVendor] = useState<T>(promptConfig.modelVendor);
 	const [messages, setMessages] = useState<ProviderMessageType<T>[]>(
 		promptConfig.providerPromptMessages,
@@ -74,6 +77,27 @@ export function PromptConfigTesting<T extends ModelVendor>({
 			),
 		[modelType, modelVendor, parameters, messages],
 	);
+
+	const updatePromptConfig = async () => {
+		setIsLoading(true);
+		try {
+			await handleUpdatePromptConfig({
+				applicationId,
+				data: {
+					modelParameters: parameters,
+					modelType,
+					modelVendor,
+					promptMessages: messages,
+				},
+				projectId,
+				promptConfigId: promptConfig.id,
+			});
+		} catch (e) {
+			handleError(e);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<div data-testid="prompt-config-test-container">
@@ -122,13 +146,31 @@ export function PromptConfigTesting<T extends ModelVendor>({
 			>
 				<div className="flex justify-end gap-2">
 					<button
-						disabled={isExpectedVariablesChanged || !isChanged}
+						disabled={
+							isExpectedVariablesChanged ||
+							!isChanged ||
+							isLoading
+						}
 						className="card-action-button btn-primary"
+						onClick={() => {
+							void updatePromptConfig;
+						}}
 					>
-						{t('update')}
+						{isLoading ? (
+							<span className="loading loading-spinner loading-xs mx-2" />
+						) : (
+							t('update')
+						)}
 					</button>
-					<button className="card-action-button btn-primary">
-						{t('clone')}
+					<button
+						className="card-action-button btn-primary"
+						disabled={isLoading}
+					>
+						{isLoading ? (
+							<span className="loading loading-spinner loading-xs mx-2" />
+						) : (
+							t('clone')
+						)}
 					</button>
 				</div>
 			</div>
