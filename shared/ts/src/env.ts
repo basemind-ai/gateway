@@ -1,5 +1,3 @@
-import { ConfigurationError } from '../../../frontend/src/errors';
-
 /**
  * The loadEnv function loads an environment variable from the process.env object,
  * and throws an error if it is not defined.
@@ -11,7 +9,7 @@ import { ConfigurationError } from '../../../frontend/src/errors';
 export function loadEnv(key: string, fallback?: string): string {
 	const value = Reflect.get(process.env, key) ?? fallback;
 	if (!value) {
-		throw new ConfigurationError(`Missing environment variable: ${key}`);
+		throw new Error(`Missing environment variable: ${key}`);
 	}
 	return value;
 }

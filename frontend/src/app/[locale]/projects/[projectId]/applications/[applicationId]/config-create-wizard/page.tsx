@@ -10,7 +10,7 @@ import { handleCreatePromptConfig } from '@/api';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
-import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
+import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -133,7 +133,7 @@ export default function PromptConfigCreateWizard({
 		),
 		[WizardStage.TEST]: useMemo(
 			() => (
-				<PromptConfigTesting
+				<PromptConfigTestingForm
 					messages={store.messages}
 					templateVariables={store.templateVariables}
 					setTemplateVariables={handleTemplateVariablesChange}

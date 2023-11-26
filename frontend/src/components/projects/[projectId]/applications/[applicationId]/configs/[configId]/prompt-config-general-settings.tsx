@@ -58,9 +58,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 
 	return (
 		<div data-testid="prompt-general-settings-container">
-			<h2 className="font-medium text-neutral-content text-xl">
-				{t('general')}
-			</h2>
+			<h2 className="card-header">{t('general')}</h2>
 			<div className="rounded-data-card">
 				<EntityNameInput
 					dataTestId="prompt-general-settings-name-input"

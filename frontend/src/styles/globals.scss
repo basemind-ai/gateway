@@ -73,6 +73,14 @@ div#__next > div {
 		}
 	}
 
+	.card-divider {
+		@apply mt-8;
+	}
+
+	.card-section-divider {
+		@apply mt-4;
+	}
+
 	.card-header {
 		@apply font-semibold text-white text-xl pl-3;
 	}
@@ -82,19 +90,19 @@ div#__next > div {
 	}
 
 	.card-action-button {
-		@apply btn py-2.5 rounded-full capitalize min-h-0 h-full leading-4;
+		@apply btn rounded-full capitalize;
 	}
 
 	.card-input {
-		@apply input input-bordered rounded bg-neutral text-neutral-content;
+		@apply input input-bordered rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
 	}
 
 	.card-textarea {
-		@apply textarea textarea-bordered rounded bg-neutral text-neutral-content;
+		@apply textarea textarea-bordered rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
 	}
 
 	.card-select {
-		@apply select select-bordered rounded bg-neutral text-neutral-content;
+		@apply select select-bordered rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
 	}
 
 	.rounded-data-card {
