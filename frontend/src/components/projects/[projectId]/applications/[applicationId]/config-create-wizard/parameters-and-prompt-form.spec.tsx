@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react';
 import en from 'public/messages/en.json';
 import { fireEvent, render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
@@ -484,7 +485,7 @@ describe('parameters-and-prompt-form components tests', () => {
 			expect(newMessageRadioInput).toBeInTheDocument();
 		});
 
-		it('should update the active message and draft message when a message is clicked', () => {
+		it('should update the active message and draft message when a message is clicked', async () => {
 			const messages = [
 				{ content: 'Message 1', role: OpenAIPromptMessageRole.System },
 				{ content: 'Message 2', role: OpenAIPromptMessageRole.User },
@@ -498,21 +499,15 @@ describe('parameters-and-prompt-form components tests', () => {
 				/>,
 			);
 
-			const message1RadioInput = screen.getByTestId(
-				`parameters-and-prompt-form-message-${0}`,
-			);
-			const message2RadioInput = screen.getByTestId(
-				`parameters-and-prompt-form-message-${1}`,
-			);
-			const newMessageRadioInput = screen.getByTestId(
+			const newMessageButton: HTMLButtonElement = screen.getByTestId(
 				'parameters-and-prompt-form-new-message',
 			);
 
-			fireEvent.click(message1RadioInput);
+			fireEvent.click(newMessageButton);
 
-			expect(message1RadioInput).toBeChecked();
-			expect(message2RadioInput).not.toBeChecked();
-			expect(newMessageRadioInput).not.toBeChecked();
+			await waitFor(() => {
+				expect(newMessageButton).toHaveClass('btn-primary');
+			});
 		});
 
 		it('should update the draft message when the user changes the role, name, or content', () => {

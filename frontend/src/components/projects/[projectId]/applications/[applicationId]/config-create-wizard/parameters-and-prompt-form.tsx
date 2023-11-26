@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+
 import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { InfoCircle } from 'react-bootstrap-icons';
@@ -5,12 +7,14 @@ import { InfoCircle } from 'react-bootstrap-icons';
 import {
 	DEFAULT_MAX_TOKENS,
 	openAIModelsMaxTokensMap,
+	openAIRoleColorMap,
 } from '@/constants/models';
 import {
 	ModelParameters,
 	ModelType,
 	ModelVendor,
 	OpenAIContentMessage,
+	OpenAIMessageRole,
 	OpenAIModelParameters,
 	OpenAIModelType,
 	OpenAIPromptMessageRole,
@@ -51,7 +55,7 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 					/>
 				)}
 			</div>
-			<div className="divider divide-accent" />
+			<div className="card-divider" />
 			<div>
 				{modelVendor === ModelVendor.OpenAI && (
 					<OpenAIPromptTemplate
@@ -64,6 +68,54 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 					/>
 				)}
 			</div>
+		</div>
+	);
+}
+
+function ParameterSlider({
+	key,
+	toolTipText,
+	labelText,
+	min,
+	max,
+	step,
+	value,
+	setter,
+}: {
+	key: string;
+	labelText: string;
+	max: number;
+	min: number;
+	setter: (value: number) => void;
+	step: number;
+	toolTipText: string;
+	value: number;
+}) {
+	return (
+		<div className="form-control" key={key}>
+			<label className="label">
+				<div
+					className="tooltip flex items-center gap-1 pr-3"
+					data-tip={toolTipText}
+					data-testid={`${key}-tooltip`}
+				>
+					<span className="label-text">{labelText}</span>
+					<InfoCircle className="w-3 h-3" />
+				</div>
+				<span className="label-text-alt">{formatNumber(value)}</span>
+			</label>
+			<input
+				type="range"
+				min={min}
+				max={max}
+				step={step}
+				value={value}
+				onChange={handleChange((value: string) => {
+					setter(Number.parseFloat(value));
+				})}
+				className="range range-xs"
+				data-testid={`create-prompt-config-dialog-model-parameter-range-${key}`}
+			/>
 		</div>
 	);
 }
@@ -167,50 +219,9 @@ export function OpenAIModelParametersForm({
 
 	return (
 		<div data-testid="openai-model-parameters-form">
-			<h2 className="pb-4">{t('modelParameters')}</h2>
-			<div className="flex flex-wrap gap-10">
-				{inputs.map(
-					({
-						key,
-						toolTipText,
-						labelText,
-						min,
-						max,
-						step,
-						value,
-						setter,
-					}) => (
-						<div className="form-control min-w-[15rem]" key={key}>
-							<label className="label">
-								<div
-									className="tooltip flex items-center gap-1"
-									data-tip={toolTipText}
-									data-testid={`${key}-tooltip`}
-								>
-									<span className="label-text">
-										{labelText}
-									</span>
-									<InfoCircle className="w-3 h-3" />
-								</div>
-								<span className="label-text-alt">
-									{formatNumber(value)}
-								</span>
-							</label>
-							<input
-								type="range"
-								min={min}
-								max={max}
-								step={step}
-								value={value}
-								onChange={handleChange((value: string) => {
-									setter(Number.parseFloat(value));
-								})}
-								className="range range-xs"
-								data-testid={`create-prompt-config-dialog-model-parameter-range-${key}`}
-							/>
-						</div>
-					),
-				)}
+			<h2 className="card-header">{t('modelParameters')}</h2>
+			<div className="rounded-data-card flex justify-between">
+				{inputs.map(ParameterSlider)}
 			</div>
 		</div>
 	);
@@ -220,6 +231,36 @@ const OPEN_AI_DRAFT_MESSAGE = {
 	content: '',
 	role: OpenAIPromptMessageRole.System,
 } satisfies OpenAIContentMessage;
+
+function MessageItem({
+	name,
+	role,
+	dataTestId,
+	className,
+	handleClick,
+}: {
+	className: string;
+	dataTestId: string;
+	handleClick: () => void;
+	name?: string;
+	role?: OpenAIMessageRole;
+}) {
+	const t = useTranslations('createConfigWizard');
+
+	return (
+		<button
+			className={`btn rounded-full ${className}`}
+			data-testid={dataTestId}
+			onClick={() => {
+				handleClick();
+			}}
+		>
+			<span className="capitalize">
+				{name || `${role} ${t('message')}`}
+			</span>
+		</button>
+	);
+}
 
 export function OpenAIPromptTemplate({
 	messages,
@@ -249,12 +290,6 @@ export function OpenAIPromptTemplate({
 		setDraftMessage({ ...draftMessage, content: value });
 	};
 
-	const handleMessageClick =
-		(index: number, message: OpenAIContentMessage) => () => {
-			setActiveMessageIndex(index);
-			setDraftMessage(message);
-		};
-
 	const handleDeleteMessage = () => {
 		const copiedMessages = [...messages];
 
@@ -279,147 +314,140 @@ export function OpenAIPromptTemplate({
 	};
 
 	return (
-		<div
-			className="flex flex-col gap-4"
-			data-testid="openai-prompt-template-form"
-		>
-			<div className="flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
-				{messages.map((message, index) => (
-					<label
-						key={message.name ?? message.role + index}
-						className={`rounded-4xl border border-0.5  py-2.5 px-4  ${
-							activeMessageIndex === index
-								? 'text-secondary border-secondary'
-								: 'border-neutral text-base-content'
-						}`}
-					>
-						<input
-							type="radio"
-							name="promptMessage"
-							value={index}
-							checked={activeMessageIndex === index}
-							onChange={handleMessageClick(index, message)}
-							className="hidden"
-							data-testid={`parameters-and-prompt-form-message-${index}`}
+		<div data-testid="openai-prompt-template-form">
+			<h2 className="card-header">{t('promptMessages')}</h2>
+			<div className="rounded-data-card flex flex-col gap-4">
+				<div className="rounded-data-card p-4 bg-neutral flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
+					{messages.map((message, index) => (
+						<MessageItem
+							key={message.name || `${message.role}${index}`}
+							role={message.role}
+							name={message.name}
+							className={
+								activeMessageIndex === index
+									? 'btn-primary'
+									: `btn-outline ${
+											openAIRoleColorMap[message.role]
+									  }`
+							}
+							dataTestId={`parameters-and-prompt-form-message-${index}`}
+							handleClick={() => {
+								setActiveMessageIndex(index);
+								setDraftMessage(message);
+							}}
 						/>
-						{message.name ?? `${message.role} message`}
-					</label>
-				))}
-				<label
-					key={messages.length}
-					className={`rounded-4xl border border-0.5  py-2.5 px-4  ${
-						activeMessageIndex === messages.length
-							? 'text-secondary border-secondary'
-							: 'border-neutral text-base-content'
-					}`}
-				>
-					<input
-						type="radio"
-						name="promptMessage"
-						value={messages.length}
-						checked={activeMessageIndex === messages.length}
-						onChange={handleMessageClick(messages.length, {
-							content: '',
-							role: OpenAIPromptMessageRole.System,
-						})}
-						data-testid="parameters-and-prompt-form-new-message"
-						className="hidden"
+					))}
+					<MessageItem
+						name={t('newMessage')}
+						dataTestId="parameters-and-prompt-form-new-message"
+						handleClick={() => {
+							setActiveMessageIndex(messages.length);
+							setDraftMessage({
+								content: '',
+								role: OpenAIPromptMessageRole.System,
+							});
+						}}
+						className={
+							activeMessageIndex === messages.length
+								? 'btn-primary'
+								: 'btn-outline'
+						}
 					/>
-					{t('newMessage')}
-				</label>
-			</div>
-			<div className="flex justify-between items-center">
-				<div className="w-full flex justify-start gap-10">
-					<div className="form-control">
-						<label
-							className="label"
-							data-testid="parameters-and-prompt-form-new-message-role-label"
-						>
-							<span className="label-text">
-								{t('messageRole')}
-							</span>
-						</label>
-						<select
-							className="select select-bordered"
-							value={draftMessage.role}
-							onChange={handleChange(handleRoleChange)}
-							defaultValue={OpenAIPromptMessageRole.System}
-							data-testid="parameters-and-prompt-form-message-role-select"
-						>
-							{Object.entries(OpenAIPromptMessageRole).map(
-								([key, value]) => (
-									<option
-										key={value}
-										id={value}
-										value={value}
-									>
-										{key.toUpperCase()}
-									</option>
-								),
-							)}
-						</select>
-					</div>
-					<div className="form-control">
-						<label
-							className="label"
-							data-testid="parameters-and-prompt-form-new-message-name-label"
-						>
-							<span className="label-text">
-								{t('messageName')}
-							</span>
-							<span className="label-text-alt">
-								{t('optional')}
-							</span>
-						</label>
-						<input
-							type="text"
-							placeholder={t('messageNameInputPlaceholder')}
-							className="input"
-							data-testid="parameters-and-prompt-form-message-name-input"
-							value={draftMessage.name}
-							onChange={handleChange(handleNameChange)}
-						/>
-					</div>
 				</div>
-				<span
-					className="text-info text-sm self-end"
-					data-testid="parameters-and-prompt-form-wrap-variable-label"
-				>
-					{t('wrapVariable')}
-				</span>
-			</div>
-			<div className="form-control">
-				<label
-					className="label"
-					data-testid="parameters-and-prompt-form-new-message-content-label"
-				>
-					<span className="label-text">{t('messageContent')}</span>
-				</label>
-				<textarea
-					className="textarea textarea-bordered"
-					placeholder={t('promptMessagePlaceholder')}
-					value={draftMessage.content}
-					onChange={handleChange(handleMessageChange)}
-					data-testid="parameters-and-prompt-form-message-textarea"
-				/>
-			</div>
-			<div className="flex justify-end gap-4">
-				<button
-					className="btn btn-outline btn-sm btn-error"
-					onClick={handleDeleteMessage}
-					data-testid="parameters-and-prompt-form-delete-message-button"
-					disabled={!messages.length}
-				>
-					{t('deleteMessage')}
-				</button>
-				<button
-					className="btn btn-sm btn-primary"
-					onClick={handleSaveMessage}
-					data-testid="parameters-and-prompt-form-save-message-button"
-					disabled={!draftMessage.content}
-				>
-					{t('saveMessage')}
-				</button>
+				<div className="flex justify-between items-center">
+					<div className="w-full flex justify-start gap-10">
+						<div className="form-control">
+							<label
+								className="label"
+								data-testid="parameters-and-prompt-form-new-message-role-label"
+							>
+								<span className="label-text">
+									{t('messageRole')}
+								</span>
+							</label>
+							<select
+								className="card-select"
+								value={draftMessage.role}
+								onChange={handleChange(handleRoleChange)}
+								data-testid="parameters-and-prompt-form-message-role-select"
+							>
+								{Object.entries(OpenAIPromptMessageRole).map(
+									([key, value]) => (
+										<option
+											key={value}
+											id={value}
+											value={value}
+										>
+											{key.toUpperCase()}
+										</option>
+									),
+								)}
+							</select>
+						</div>
+						<div className="form-control">
+							<label
+								className="label"
+								data-testid="parameters-and-prompt-form-new-message-name-label"
+							>
+								<span className="label-text">
+									{t('messageName')}
+								</span>
+								<span className="label-text-alt">
+									{t('optional')}
+								</span>
+							</label>
+							<input
+								type="text"
+								placeholder={t('messageNameInputPlaceholder')}
+								className="card-input"
+								data-testid="parameters-and-prompt-form-message-name-input"
+								value={draftMessage.name}
+								onChange={handleChange(handleNameChange)}
+							/>
+						</div>
+					</div>
+					<span
+						className="text-info text-sm self-end"
+						data-testid="parameters-and-prompt-form-wrap-variable-label"
+					>
+						{t('wrapVariable')}
+					</span>
+				</div>
+				<div className="form-control">
+					<label
+						className="label"
+						data-testid="parameters-and-prompt-form-new-message-content-label"
+					>
+						<span className="label-text">
+							{t('messageContent')}
+						</span>
+					</label>
+					<textarea
+						className="card-textarea"
+						placeholder={t('promptMessagePlaceholder')}
+						value={draftMessage.content}
+						onChange={handleChange(handleMessageChange)}
+						data-testid="parameters-and-prompt-form-message-textarea"
+					/>
+				</div>
+				<div className="join justify-end">
+					<button
+						className="btn join-item btn-sm btn-neutral"
+						onClick={handleDeleteMessage}
+						data-testid="parameters-and-prompt-form-delete-message-button"
+						disabled={!messages.length}
+					>
+						{t('deleteMessage')}
+					</button>
+					<button
+						className="btn join-item btn-sm btn-primary"
+						onClick={handleSaveMessage}
+						data-testid="parameters-and-prompt-form-save-message-button"
+						disabled={!draftMessage.content}
+					>
+						{t('saveMessage')}
+					</button>
+				</div>
 			</div>
 		</div>
 	);

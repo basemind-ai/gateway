@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { memo, useState } from 'react';
-import { Gear, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, RocketTakeoff, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
@@ -11,6 +11,7 @@ import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/app
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
+import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -85,6 +86,11 @@ export default function PromptConfiguration({
 			text: t('overview'),
 		},
 		{
+			icon: <RocketTakeoff className="w-3.5 h-3.5" />,
+			id: TAB_NAME.TESTING,
+			text: t('test'),
+		},
+		{
 			icon: <Gear className="w-3.5 h-3.5" />,
 			id: TAB_NAME.SETTINGS,
 			text: t('settings'),
@@ -103,7 +109,13 @@ export default function PromptConfiguration({
 				<PromptConfigGeneralInfo promptConfig={promptConfig} />
 			</>
 		)),
-		[TAB_NAME.TESTING]: () => null,
+		[TAB_NAME.TESTING]: memo(() => (
+			<PromptConfigTesting
+				projectId={projectId}
+				applicationId={applicationId}
+				promptConfig={promptConfig}
+			/>
+		)),
 		[TAB_NAME.SETTINGS]: memo(() => (
 			<>
 				<PromptConfigGeneralSettings
@@ -115,7 +127,7 @@ export default function PromptConfiguration({
 				<PromptConfigDeletion
 					projectId={projectId}
 					applicationId={applicationId}
-					promptConfigId={promptConfigId}
+					promptConfig={promptConfig}
 				/>
 			</>
 		)),

@@ -129,6 +129,8 @@ func StreamGRPCMessages(
 			errorMessage := err.Error()
 			finishReason := "error"
 
+			log.Debug().Err(err).Msg("received error message from channel")
+
 			payload := serialization.SerializeJSON(dto.PromptConfigTestResultDTO{
 				ErrorMessage: &errorMessage,
 				FinishReason: &finishReason,
@@ -266,6 +268,7 @@ func (h handler) OnMessage(socket *gws.Conn, message *gws.Message) {
 		)
 
 		if streamErr := StreamGRPCMessages(context.Background(), socket, data, responseChannel, errorChannel); streamErr != nil {
+			log.Error().Err(streamErr).Msg("closing socket due to upstream error")
 			socket.WriteClose(StatusWSServerError, []byte(streamErr.Error()))
 			return
 		}

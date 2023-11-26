@@ -50,25 +50,12 @@ describe('PromptDeletion', () => {
 			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
 		const rootContainer = screen.getByTestId('prompt-deletion-container');
 		expect(rootContainer).toBeInTheDocument();
-	});
-
-	it('renders null when prompt config not present', () => {
-		render(
-			<PromptConfigDeletion
-				projectId={project.id}
-				applicationId={application.id}
-				promptConfigId={''}
-			/>,
-		);
-
-		const rootContainer = screen.queryByTestId('prompt-deletion-container');
-		expect(rootContainer).not.toBeInTheDocument();
 	});
 
 	it('renders confirmation banner and deletes prompt config after entering input', async () => {
@@ -82,7 +69,7 @@ describe('PromptDeletion', () => {
 			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 
@@ -121,7 +108,7 @@ describe('PromptDeletion', () => {
 			<PromptConfigDeletion
 				projectId={project.id}
 				applicationId={application.id}
-				promptConfigId={promptConfig.id}
+				promptConfig={promptConfig}
 			/>,
 		);
 		const deleteBtn = screen.getByTestId('prompt-delete-btn');

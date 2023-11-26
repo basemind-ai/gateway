@@ -6,24 +6,23 @@ import { handleDeletePromptConfig } from '@/api';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useDeletePromptConfig, usePromptConfig } from '@/stores/api-store';
+import { useDeletePromptConfig } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
-import { ModelVendor } from '@/types';
+import { ModelVendor, PromptConfig } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
 export function PromptConfigDeletion<T extends ModelVendor>({
 	projectId,
 	applicationId,
-	promptConfigId,
+	promptConfig,
 }: {
 	applicationId: string;
 	projectId: string;
-	promptConfigId: string;
+	promptConfig: PromptConfig<T>;
 }) {
 	const router = useRouter();
 	const t = useTranslations('promptConfig');
 
-	const promptConfig = usePromptConfig<T>(applicationId, promptConfigId);
 	const deletePromptConfig = useDeletePromptConfig();
 
 	const handleError = useHandleError();
@@ -50,9 +49,9 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 			await handleDeletePromptConfig({
 				applicationId,
 				projectId,
-				promptConfigId,
+				promptConfigId: promptConfig.id,
 			});
-			deletePromptConfig(applicationId, promptConfigId);
+			deletePromptConfig(applicationId, promptConfig.id);
 			router.replace(
 				setRouteParams(Navigation.ApplicationDetail, {
 					applicationId,
@@ -66,10 +65,6 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 			closeDeleteConfirmationPopup();
 			setLoading(false);
 		}
-	}
-
-	if (!promptConfig) {
-		return null;
 	}
 
 	return (

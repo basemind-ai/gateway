@@ -142,12 +142,12 @@ importers:
             dayjs:
                 specifier: ^1.11.10
                 version: 1.11.10
-            deep-equal:
-                specifier: ^2.2.3
-                version: 2.2.3
             deepmerge-ts:
                 specifier: ^5.1.0
                 version: 5.1.0
+            fast-deep-equal:
+                specifier: ^3.1.3
+                version: 3.1.3
             firebase:
                 specifier: ^10.6.0
                 version: 10.6.0
@@ -212,9 +212,6 @@ importers:
             '@testing-library/react':
                 specifier: ^14.1.2
                 version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
-            '@types/deep-equal':
-                specifier: ^1.0.4
-                version: 1.0.4
             '@types/react':
                 specifier: 18.2.38
                 version: 18.2.38
@@ -237,8 +234,8 @@ importers:
                 specifier: 10.4.16
                 version: 10.4.16(postcss@8.4.31)
             daisyui:
-                specifier: ^4.4.7
-                version: 4.4.7(postcss@8.4.31)
+                specifier: ^4.4.9
+                version: 4.4.9(postcss@8.4.31)
             jsdom:
                 specifier: ^22.1.0
                 version: 22.1.0
@@ -5799,13 +5796,6 @@ packages:
             }
         dev: true
 
-    /@types/deep-equal@1.0.4:
-        resolution:
-            {
-                integrity: sha512-tqdiS4otQP4KmY0PR3u6KbZ5EWvhNdUoS/jc93UuK23C220lOZ/9TvjfxdPcKvqwwDVtmtSCrnr0p/2dirAxkA==,
-            }
-        dev: true
-
     /@types/eslint-scope@3.7.7:
         resolution:
             {
@@ -6861,6 +6851,7 @@ packages:
         dependencies:
             call-bind: 1.0.5
             is-array-buffer: 3.0.2
+        dev: true
 
     /array-ify@1.0.0:
         resolution:
@@ -7029,6 +7020,7 @@ packages:
                 integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==,
             }
         engines: { node: '>= 0.4' }
+        dev: true
 
     /axe-core@4.7.0:
         resolution:
@@ -7852,10 +7844,10 @@ packages:
         engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
         dev: true
 
-    /daisyui@4.4.7(postcss@8.4.31):
+    /daisyui@4.4.9(postcss@8.4.31):
         resolution:
             {
-                integrity: sha512-E+jAcaCiXmBgLePaGjH2aEoyp5kthkEO7S0db8JoWNxZ/4q5x6sgdR/+mCphKVXMJMOihGIL0Y8psqFIMxCdBg==,
+                integrity: sha512-Wqk1f3rQbiDSMfzC/ZufQQi139dY4mCMZJ/hmYIIGpCi0MFndU0wJ575tEGzi2YrCZOagsWhbOeWE7DD/B5pVw==,
             }
         engines: { node: '>=16.9.0' }
         dependencies:
@@ -8012,6 +8004,7 @@ packages:
             which-boxed-primitive: 1.0.2
             which-collection: 1.0.1
             which-typed-array: 1.1.13
+        dev: true
 
     /deep-is@0.1.4:
         resolution:
@@ -8089,6 +8082,7 @@ packages:
             define-data-property: 1.1.1
             has-property-descriptors: 1.0.1
             object-keys: 1.1.1
+        dev: true
 
     /delayed-stream@1.0.0:
         resolution:
@@ -8432,6 +8426,7 @@ packages:
             is-string: 1.0.7
             isarray: 2.0.5
             stop-iteration-iterator: 1.0.0
+        dev: true
 
     /es-iterator-helpers@1.0.15:
         resolution:
@@ -9217,7 +9212,6 @@ packages:
             {
                 integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==,
             }
-        dev: true
 
     /fast-diff@1.3.0:
         resolution:
@@ -9449,6 +9443,7 @@ packages:
             }
         dependencies:
             is-callable: 1.2.7
+        dev: true
 
     /fork-ts-checker-webpack-plugin@9.0.2(typescript@5.3.2)(webpack@5.89.0):
         resolution:
@@ -9592,6 +9587,7 @@ packages:
             {
                 integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==,
             }
+        dev: true
 
     /gensync@1.0.0-beta.2:
         resolution:
@@ -9851,6 +9847,7 @@ packages:
             {
                 integrity: sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ==,
             }
+        dev: true
 
     /has-flag@3.0.0:
         resolution:
@@ -9897,6 +9894,7 @@ packages:
         engines: { node: '>= 0.4' }
         dependencies:
             has-symbols: 1.0.3
+        dev: true
 
     /hasown@2.0.0:
         resolution:
@@ -10187,6 +10185,7 @@ packages:
             get-intrinsic: 1.2.2
             hasown: 2.0.0
             side-channel: 1.0.4
+        dev: true
 
     /interpret@3.1.1:
         resolution:
@@ -10246,6 +10245,7 @@ packages:
         dependencies:
             call-bind: 1.0.5
             has-tostringtag: 1.0.0
+        dev: true
 
     /is-array-buffer@3.0.2:
         resolution:
@@ -10256,6 +10256,7 @@ packages:
             call-bind: 1.0.5
             get-intrinsic: 1.2.2
             is-typed-array: 1.1.12
+        dev: true
 
     /is-arrayish@0.2.1:
         resolution:
@@ -10281,6 +10282,7 @@ packages:
             }
         dependencies:
             has-bigints: 1.0.2
+        dev: true
 
     /is-binary-path@2.1.0:
         resolution:
@@ -10300,6 +10302,7 @@ packages:
         dependencies:
             call-bind: 1.0.5
             has-tostringtag: 1.0.0
+        dev: true
 
     /is-buffer@1.1.6:
         resolution:
@@ -10324,6 +10327,7 @@ packages:
                 integrity: sha512-1BC0BVFhS/p0qtw6enp8e+8OD0UrK0oFLztSjNzhcKA3WDuJxxAPXzPuPtKkjEY9UUoEWlX/8fgKeu2S8i9JTA==,
             }
         engines: { node: '>= 0.4' }
+        dev: true
 
     /is-core-module@2.13.1:
         resolution:
@@ -10341,6 +10345,7 @@ packages:
         engines: { node: '>= 0.4' }
         dependencies:
             has-tostringtag: 1.0.0
+        dev: true
 
     /is-decimal@1.0.4:
         resolution:
@@ -10432,6 +10437,7 @@ packages:
             {
                 integrity: sha512-cOZFQQozTha1f4MxLFzlgKYPTyj26picdZTx82hbc/Xf4K/tZOOXSCkMvU4pKioRXGDLJRn0GM7Upe7kR721yg==,
             }
+        dev: true
 
     /is-negative-zero@2.0.2:
         resolution:
@@ -10449,6 +10455,7 @@ packages:
         engines: { node: '>= 0.4' }
         dependencies:
             has-tostringtag: 1.0.0
+        dev: true
 
     /is-number@7.0.0:
         resolution:
@@ -10507,12 +10514,14 @@ packages:
         dependencies:
             call-bind: 1.0.5
             has-tostringtag: 1.0.0
+        dev: true
 
     /is-set@2.0.2:
         resolution:
             {
                 integrity: sha512-+2cnTEZeY5z/iXGbLhPrOAaK/Mau5k5eXq9j14CpRTftq0pAJu2MwVRSZhyZWBzx3o6X795Lz6Bpb6R0GKf37g==,
             }
+        dev: true
 
     /is-shared-array-buffer@1.0.2:
         resolution:
@@ -10521,6 +10530,7 @@ packages:
             }
         dependencies:
             call-bind: 1.0.5
+        dev: true
 
     /is-stream@2.0.1:
         resolution:
@@ -10546,6 +10556,7 @@ packages:
         engines: { node: '>= 0.4' }
         dependencies:
             has-tostringtag: 1.0.0
+        dev: true
 
     /is-symbol@1.0.4:
         resolution:
@@ -10555,6 +10566,7 @@ packages:
         engines: { node: '>= 0.4' }
         dependencies:
             has-symbols: 1.0.3
+        dev: true
 
     /is-text-path@2.0.0:
         resolution:
@@ -10574,12 +10586,14 @@ packages:
         engines: { node: '>= 0.4' }
         dependencies:
             which-typed-array: 1.1.13
+        dev: true
 
     /is-weakmap@2.0.1:
         resolution:
             {
                 integrity: sha512-NSBR4kH5oVj1Uwvv970ruUkCV7O1mzgVFO4/rev2cLRda9Tm9HrL70ZPut4rOHgY0FNrUu9BCbXA2sdQ+x0chA==,
             }
+        dev: true
 
     /is-weakref@1.0.2:
         resolution:
@@ -10598,6 +10612,7 @@ packages:
         dependencies:
             call-bind: 1.0.5
             get-intrinsic: 1.2.2
+        dev: true
 
     /is-wsl@2.2.0:
         resolution:
@@ -10614,6 +10629,7 @@ packages:
             {
                 integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==,
             }
+        dev: true
 
     /isexe@2.0.0:
         resolution:
@@ -11808,6 +11824,7 @@ packages:
         dependencies:
             call-bind: 1.0.5
             define-properties: 1.2.1
+        dev: true
 
     /object-keys@1.1.1:
         resolution:
@@ -11815,6 +11832,7 @@ packages:
                 integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==,
             }
         engines: { node: '>= 0.4' }
+        dev: true
 
     /object.assign@4.1.4:
         resolution:
@@ -11827,6 +11845,7 @@ packages:
             define-properties: 1.2.1
             has-symbols: 1.0.3
             object-keys: 1.1.1
+        dev: true
 
     /object.entries@1.1.7:
         resolution:
@@ -12870,6 +12889,7 @@ packages:
             call-bind: 1.0.5
             define-properties: 1.2.1
             set-function-name: 2.0.1
+        dev: true
 
     /regexpu-core@5.3.2:
         resolution:
@@ -13226,6 +13246,7 @@ packages:
             define-data-property: 1.1.1
             functions-have-names: 1.2.3
             has-property-descriptors: 1.0.1
+        dev: true
 
     /shallow-clone@3.0.1:
         resolution:
@@ -13442,6 +13463,7 @@ packages:
         engines: { node: '>= 0.4' }
         dependencies:
             internal-slot: 1.0.6
+        dev: true
 
     /streamsearch@1.1.0:
         resolution:
@@ -14913,6 +14935,7 @@ packages:
             is-number-object: 1.0.7
             is-string: 1.0.7
             is-symbol: 1.0.4
+        dev: true
 
     /which-builtin-type@1.1.3:
         resolution:
@@ -14945,6 +14968,7 @@ packages:
             is-set: 2.0.2
             is-weakmap: 2.0.1
             is-weakset: 2.0.2
+        dev: true
 
     /which-typed-array@1.1.13:
         resolution:
@@ -14958,6 +14982,7 @@ packages:
             for-each: 0.3.3
             gopd: 1.0.1
             has-tostringtag: 1.0.0
+        dev: true
 
     /which@2.0.2:
         resolution:

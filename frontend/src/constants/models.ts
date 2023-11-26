@@ -2,6 +2,7 @@ import {
 	CohereModelType,
 	ModelType,
 	ModelVendor,
+	OpenAIMessageRole,
 	OpenAIModelType,
 } from '@/types';
 
@@ -51,3 +52,10 @@ export enum UnavailableModelVendor {
 	Cohere = 'COHERE',
 	Google = 'GOOGLE',
 }
+
+export const openAIRoleColorMap: Record<OpenAIMessageRole, string> = {
+	assistant: 'text-accent',
+	function: 'text-blue-500',
+	system: 'text-secondary',
+	user: 'text-primary',
+};

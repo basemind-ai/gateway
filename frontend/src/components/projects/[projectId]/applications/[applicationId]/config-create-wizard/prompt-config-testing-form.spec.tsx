@@ -5,7 +5,7 @@ import { expect, Mock, MockInstance } from 'vitest';
 
 import {
 	finishReasonStyle,
-	PromptConfigTesting,
+	PromptConfigTestingForm,
 } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
@@ -60,7 +60,7 @@ describe('PromptConfigTesting tests', () => {
 
 	it('should render the passed in messages', () => {
 		render(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -94,7 +94,7 @@ describe('PromptConfigTesting tests', () => {
 		] as OpenAIContentMessage[];
 
 		render(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -115,7 +115,7 @@ describe('PromptConfigTesting tests', () => {
 
 	it('passes an error handler', () => {
 		render(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -145,7 +145,7 @@ describe('PromptConfigTesting tests', () => {
 		] as OpenAIContentMessage[];
 
 		render(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -175,7 +175,7 @@ describe('PromptConfigTesting tests', () => {
 		] as OpenAIContentMessage[];
 
 		const { rerender } = render(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -203,7 +203,7 @@ describe('PromptConfigTesting tests', () => {
 		});
 
 		rerender(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -223,7 +223,7 @@ describe('PromptConfigTesting tests', () => {
 
 	it('runs the test and displays the results', async () => {
 		const { rerender } = render(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -265,7 +265,7 @@ describe('PromptConfigTesting tests', () => {
 		});
 
 		rerender(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}
@@ -299,7 +299,7 @@ describe('PromptConfigTesting tests', () => {
 		});
 
 		render(
-			<PromptConfigTesting
+			<PromptConfigTestingForm
 				applicationId={applicationId}
 				projectId={projectId}
 				modelType={modelType}

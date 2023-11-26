@@ -1,11 +1,9 @@
 import { useTranslations } from 'next-intl';
-import { PlayFill, Record, Repeat } from 'react-bootstrap-icons';
+import { ChevronRight, PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
-import { PromptContentDisplay } from '@/components/prompt-content-display';
-import {
-	modelTypeToLocaleMap,
-	modelVendorToLocaleMap,
-} from '@/constants/models';
+import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
+import { PromptTestInputs } from '@/components/prompt-display-components/prompt-test-inputs';
+import { PromptTestResultTable } from '@/components/prompt-display-components/prompt-test-result-table';
 import { WebsocketError } from '@/errors';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
@@ -15,7 +13,6 @@ import {
 	PromptConfigTest,
 	ProviderMessageType,
 } from '@/types';
-import { handleChange } from '@/utils/events';
 
 export const finishReasonStyle = (finishReason: string): string => {
 	switch (finishReason) {
@@ -31,7 +28,7 @@ export const finishReasonStyle = (finishReason: string): string => {
 	}
 };
 
-export function PromptConfigTesting<T extends ModelVendor>({
+export function PromptConfigTestingForm<T extends ModelVendor>({
 	messages,
 	templateVariables,
 	setTemplateVariables,
@@ -42,6 +39,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	modelType,
 	parameters,
 	promptConfigId,
+	showPromptTemplateDisplay = true,
 }: {
 	applicationId: string;
 	handleError: (error: unknown) => void;
@@ -52,6 +50,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	projectId: string;
 	promptConfigId?: string;
 	setTemplateVariables: (templateVariables: Record<string, string>) => void;
+	showPromptTemplateDisplay?: boolean;
 	templateVariables: Record<string, string>;
 }) {
 	const t = useTranslations('createConfigWizard');
@@ -101,38 +100,27 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	);
 
 	return (
-		<div className="flex flex-col" data-testid="prompt-config-testing-form">
-			<PromptContentDisplay
-				modelVendor={modelVendor}
-				messages={messages}
-			/>
-			{expectedVariables.length > 0 && (
-				<div>
-					<h4 className="font-medium p-4">{t('testInputs')}</h4>
-					<div
-						className="border-2 border-neutral p-4 rounded grid grid-cols-2 gap-4 min-w-[50%]"
-						data-testid="test-inputs-container"
-					>
-						{expectedVariables.map((variable) => (
-							<div key={variable} className="form-control">
-								<input
-									type="text"
-									className="input input-secondary input-sm w-96 placeholder-accent"
-									data-testid={`input-variable-input-${variable}`}
-									value={templateVariables[variable]}
-									placeholder={`{${variable}}`}
-									onChange={handleChange((value: string) => {
-										setTemplateVariables({
-											...templateVariables,
-											[variable]: value,
-										});
-									})}
-								/>
-							</div>
-						))}
-					</div>
-				</div>
+		<div
+			className="flex flex-col justify-evenly"
+			data-testid="prompt-config-testing-form"
+		>
+			{showPromptTemplateDisplay && (
+				<PromptContentDisplay
+					modelVendor={modelVendor}
+					messages={messages}
+				/>
 			)}
+			{expectedVariables.length > 0 && (
+				<>
+					<div className="card-section-divider" />
+					<PromptTestInputs
+						setTemplateVariables={setTemplateVariables}
+						templateVariables={templateVariables}
+						expectedVariables={expectedVariables}
+					/>
+				</>
+			)}
+			<div className="card-section-divider" />
 			<div className="flex justify-center items-end p-4">
 				<button
 					disabled={!allExpectedVariablesHaveLength || isRunningTest}
@@ -147,63 +135,29 @@ export function PromptConfigTesting<T extends ModelVendor>({
 					)}
 				</button>
 			</div>
-			{modelResponses.length > 0 && (
-				<div>
-					<h4 className="font-medium p-4">{t('testResults')}</h4>
-					<div
-						className="border-2 border-neutral p-4 rounded"
-						data-testid="model-response-container"
-					>
+
+			<div className="card-section-divider" />
+			<div>
+				<h2 className="card-header">{t('modelResponse')}</h2>
+				<div
+					className="rounded-data-card flex flex-col gap-2"
+					data-testid="model-response-container"
+				>
+					<ChevronRight className="h-4 w-4" />
+					<span className="text-info">
 						{modelResponses
 							.map((message) => message.content)
 							.join(' ')}
-					</div>
+					</span>
 				</div>
-			)}
-			<div className="pt-10">
-				<table className="custom-table w-full mb-5">
-					<thead>
-						<tr>
-							<th>{t('modelVendor')}</th>
-							<th>{t('modelType')}</th>
-							<th>{t('finishReason')}</th>
-							<th>{t('duration')}</th>
-							<th>{t('requestTokens')}</th>
-							<th>{t('requestTokensCost')}</th>
-							<th>{t('responseTokens')}</th>
-							<th>{t('responseTokensCost')}</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td data-testid="test-model-vendor-display">
-								{modelVendorToLocaleMap[modelVendor]}
-							</td>
-							<td data-testid="test-model-type-display">
-								{modelTypeToLocaleMap[modelType]}
-							</td>
-							<td data-testid="test-finish-reason-display">
-								{testFinishReason || 'N/A'}
-							</td>
-							<td data-testid="test-duration-display">
-								{`${Math.abs(testRecord?.durationMs ?? 0)} MS`}
-							</td>
-							<td data-testid="test-request-tokens-display">
-								{testRecord ? testRecord.requestTokens : 0}
-							</td>
-							<td data-testid="test-request-tokens-cost-display">
-								{testRecord ? testRecord.requestTokensCost : 0}
-							</td>
-							<td data-testid="test-response-tokens-display">
-								{testRecord ? testRecord.responseTokens : 0}
-							</td>
-							<td data-testid="test-response-tokens-cost-display">
-								{testRecord ? testRecord.responseTokensCost : 0}
-							</td>
-						</tr>
-					</tbody>
-				</table>
 			</div>
+			<div className="card-section-divider" />
+			<PromptTestResultTable
+				modelVendor={modelVendor}
+				modelType={modelType}
+				testFinishReason={testFinishReason}
+				testRecord={testRecord}
+			/>
 		</div>
 	);
 }
