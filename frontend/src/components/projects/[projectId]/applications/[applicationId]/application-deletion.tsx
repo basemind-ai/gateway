@@ -1,8 +1,9 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { handleDeleteApplication } from '@/api';
+import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -21,29 +22,15 @@ export function ApplicationDeletion({
 	const router = useRouter();
 
 	const deleteApplicationHook = useDeleteApplication();
-	const dialogRef = useRef<HTMLDialogElement>(null);
-	const [loading, setLoading] = useState(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
-	function openDeleteConfirmationPopup() {
-		dialogRef.current?.showModal();
-	}
-
-	function closeDeleteConfirmationPopup() {
-		dialogRef.current?.close();
-	}
-
 	async function deleteApplication() {
-		/* c8 ignore start */
-		if (loading) {
-			return null;
-		}
-		/* c8 ignore end */
-
 		try {
-			setLoading(true);
+			setIsLoading(true);
 
 			await handleDeleteApplication({
 				applicationId: application.id,
@@ -55,8 +42,9 @@ export function ApplicationDeletion({
 		} catch (e) {
 			handleError(e);
 		} finally {
-			closeDeleteConfirmationPopup();
-			setLoading(false);
+			setIsDeleteModalOpen(false);
+
+			setIsLoading(false);
 		}
 	}
 
@@ -75,30 +63,30 @@ export function ApplicationDeletion({
 				<button
 					data-testid="application-delete-btn"
 					className="card-action-button btn-error text-black"
-					onClick={openDeleteConfirmationPopup}
+					disabled={isLoading}
+					onClick={() => {
+						setIsDeleteModalOpen(true);
+					}}
 				>
 					{t('delete')}
 				</button>
-				<dialog ref={dialogRef} className="modal">
-					<div className="dialog-box">
-						<ResourceDeletionBanner
-							title={t('warningTitleDeleteApplication')}
-							description={t('warningMessageApplication')}
-							placeholder={t('deletePlaceholderApplication')}
-							resourceName={application.name}
-							onCancel={closeDeleteConfirmationPopup}
-							onConfirm={() => void deleteApplication()}
-							confirmCTA={
-								loading ? (
-									<span className="loading loading-spinner loading-xs mx-1.5" />
-								) : undefined
-							}
-						/>
-					</div>
-					<form method="dialog" className="modal-backdrop">
-						<button />
-					</form>
-				</dialog>
+				<Modal modalOpen={isDeleteModalOpen}>
+					<ResourceDeletionBanner
+						title={t('warningTitleDeleteApplication')}
+						description={t('warningMessageApplication')}
+						placeholder={t('deletePlaceholderApplication')}
+						resourceName={application.name}
+						onCancel={() => {
+							setIsDeleteModalOpen(false);
+						}}
+						onConfirm={() => void deleteApplication()}
+						confirmCTA={
+							isLoading ? (
+								<span className="loading loading-spinner loading-xs mx-1.5" />
+							) : undefined
+						}
+					/>
+				</Modal>
 			</div>
 		</div>
 	);

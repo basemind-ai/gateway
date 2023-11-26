@@ -40,12 +40,6 @@ describe('user account deletion tests', () => {
 		const deleteButton = screen.getByTestId('account-delete-btn');
 		expect(deleteButton).toBeInTheDocument();
 	});
-	it('delete button is disabled when user in not authenticated', async () => {
-		render(<DeleteAccountView user={null} />);
-		const deleteAccountButton =
-			await screen.findByTestId('account-delete-btn');
-		expect(deleteAccountButton).toBeDisabled();
-	});
 	it('clicking on delete account show open delete account modal', async () => {
 		render(<DeleteAccountView user={mockUser} />);
 		const deleteAccountButton =

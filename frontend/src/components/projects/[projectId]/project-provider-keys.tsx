@@ -1,8 +1,9 @@
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Plus, Trash } from 'react-bootstrap-icons';
 
 import { handleDeleteProviderKey } from '@/api/provider-keys-api';
+import { Modal } from '@/components/modal';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { modelVendorToLocaleMap } from '@/constants/models';
@@ -15,9 +16,8 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 
 	const handleError = useHandleError();
 
-	const deletionDialogRef = useRef<HTMLDialogElement>(null);
-	const creationDialogRef = useRef<HTMLDialogElement>(null);
-
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [providerKeyIdToDelete, setProviderKeyIdToDelete] = useState<
 		string | undefined
 	>();
@@ -39,28 +39,6 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 		(value) => !vendorsWithKeys.has(value),
 	);
 
-	const openCreateModal = () => {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		creationDialogRef.current?.showModal?.();
-	};
-
-	/* c8 ignore start */
-	const closeCreateModal = () => {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		creationDialogRef.current?.close?.();
-	};
-	/* c8 ignore end */
-
-	const openDeleteModal = () => {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		deletionDialogRef.current?.showModal?.();
-	};
-
-	const closeDeleteModal = () => {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		deletionDialogRef.current?.close?.();
-	};
-
 	const deleteProviderKey = async () => {
 		const providerKeyId = providerKeyIdToDelete!;
 		setIsLoading(true);
@@ -75,7 +53,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 			setIsLoading(false);
 			setProviderKeyIdToDelete(undefined);
 			setProviderKeys(providerKeys.filter((v) => v.id !== providerKeyId));
-			closeDeleteModal();
+			setIsDeleteModalOpen(false);
 		}
 	};
 
@@ -118,7 +96,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 										data-testid="delete-provider-key-button"
 										onClick={() => {
 											setProviderKeyIdToDelete(value.id);
-											openDeleteModal();
+											setIsDeleteModalOpen(true);
 										}}
 									>
 										<Trash className="text-red-400" />
@@ -132,7 +110,9 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 			<div className="rounded-data-card flex flex-col">
 				<button
 					data-testid="new-provider-key-btn"
-					onClick={openCreateModal}
+					onClick={() => {
+						setIsCreateModalOpen(true);
+					}}
 					disabled={!vendorsWithoutKeys.length}
 					className="flex gap-2 items-center text-secondary hover:brightness-90"
 				>
@@ -140,49 +120,43 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 					<span>{t('newProviderKey')}</span>
 				</button>
 			</div>
-			<dialog ref={creationDialogRef} className="modal">
-				<div className="dialog-box border-2 rounded p-10">
+			<Modal modalOpen={isCreateModalOpen}>
+				<div className="p-8">
 					<ProviderKeyCreateModal
 						projectId={project.id}
 						vendors={vendorsWithoutKeys}
-						closeModal={closeCreateModal}
+						closeModal={() => {
+							setIsCreateModalOpen(false);
+						}}
 						addProviderKey={(providerKey: ProviderKey) => {
 							setProviderKeys([...providerKeys, providerKey]);
 						}}
 					/>
 				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button />
-				</form>
-			</dialog>
-			<dialog ref={deletionDialogRef} className="modal">
-				<div className="dialog-box">
-					{providerKeyIdToDelete && (
-						<ResourceDeletionBanner
-							title={t('warning')}
-							description={t('deleteProviderKeyWarning')}
-							onConfirm={() => {
-								void deleteProviderKey();
-							}}
-							confirmCTA={
-								isLoading ? (
-									<span
-										className="loading loading-spinner loading-xs mx-1.5"
-										data-testid="delete-key-loader"
-									/>
-								) : undefined
-							}
-							onCancel={() => {
-								setProviderKeyIdToDelete(undefined);
-								closeDeleteModal();
-							}}
-						/>
-					)}
-				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button />
-				</form>
-			</dialog>
+			</Modal>
+			<Modal modalOpen={isDeleteModalOpen}>
+				{providerKeyIdToDelete && (
+					<ResourceDeletionBanner
+						title={t('warning')}
+						description={t('deleteProviderKeyWarning')}
+						onConfirm={() => {
+							void deleteProviderKey();
+						}}
+						confirmCTA={
+							isLoading ? (
+								<span
+									className="loading loading-spinner loading-xs mx-1.5"
+									data-testid="delete-key-loader"
+								/>
+							) : undefined
+						}
+						onCancel={() => {
+							setProviderKeyIdToDelete(undefined);
+							setIsDeleteModalOpen(false);
+						}}
+					/>
+				)}
+			</Modal>
 		</div>
 	);
 }

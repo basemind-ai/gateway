@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Eraser, Plus } from 'react-bootstrap-icons';
 import useSWR, { useSWRConfig } from 'swr';
 
 import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
+import { Modal } from '@/components/modal';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -28,8 +29,8 @@ export function ApplicationApiKeys({
 	const apiKeys = useApiKeys(application.id);
 	const setAPIKeys = useSetAPIKeys();
 
-	const deletionDialogRef = useRef<HTMLDialogElement>(null);
-	const creationDialogRef = useRef<HTMLDialogElement>(null);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [deletionAPIKey, setDeletionAPIKey] = useState<Pick<
 		APIKey,
 		'name' | 'id'
@@ -37,20 +38,20 @@ export function ApplicationApiKeys({
 
 	function openDeleteConfirmationPopup(apiKeyId: string, apiKeyName: string) {
 		setDeletionAPIKey({ id: apiKeyId, name: apiKeyName });
-		deletionDialogRef.current?.showModal();
+		setIsDeleteModalOpen(true);
 	}
 
 	function closeDeleteConfirmationPopup() {
 		setDeletionAPIKey(null);
-		deletionDialogRef.current?.close();
+		setIsDeleteModalOpen(false);
 	}
 
 	function openCreationPopup() {
-		creationDialogRef.current?.showModal();
+		setIsCreateModalOpen(true);
 	}
 
 	function closeCreationPopup() {
-		creationDialogRef.current?.close();
+		setIsCreateModalOpen(false);
 	}
 
 	const { isLoading } = useSWR(
@@ -154,46 +155,39 @@ export function ApplicationApiKeys({
 					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
 					<span>{t('newApiKey')}</span>
 				</button>
-				<dialog ref={deletionDialogRef} className="modal">
-					<div className="dialog-box">
-						{deletionAPIKey && (
-							<ResourceDeletionBanner
-								title={t('warning')}
-								description={t('warningMessageAPIKey')}
-								placeholder={t('deletePlaceholderAPIKey')}
-								resourceName={deletionAPIKey.name}
-								onCancel={closeDeleteConfirmationPopup}
-								onConfirm={() =>
-									void deleteAPIKey(deletionAPIKey.id)
-								}
-								confirmCTA={
-									loading ? (
-										<span className="loading loading-spinner loading-xs mx-1.5" />
-									) : undefined
-								}
-							/>
-						)}
-					</div>
-					<form method="dialog" className="modal-backdrop">
-						<button />
-					</form>
-				</dialog>
-				<dialog ref={creationDialogRef} className="modal">
-					<div className="dialog-box">
-						<CreateApplicationAPIKeyModal
-							projectId={projectId}
-							applicationId={application.id}
-							onCancel={closeCreationPopup}
-							onSubmit={() => {
-								closeCreationPopup();
-								void mutate({
-									applicationId: application.id,
-									projectId,
-								});
-							}}
+				<Modal modalOpen={isDeleteModalOpen}>
+					{deletionAPIKey && (
+						<ResourceDeletionBanner
+							title={t('warning')}
+							description={t('warningMessageAPIKey')}
+							placeholder={t('deletePlaceholderAPIKey')}
+							resourceName={deletionAPIKey.name}
+							onCancel={closeDeleteConfirmationPopup}
+							onConfirm={() =>
+								void deleteAPIKey(deletionAPIKey.id)
+							}
+							confirmCTA={
+								loading ? (
+									<span className="loading loading-spinner loading-xs mx-1.5" />
+								) : undefined
+							}
 						/>
-					</div>
-				</dialog>
+					)}
+				</Modal>
+				<Modal modalOpen={isCreateModalOpen}>
+					<CreateApplicationAPIKeyModal
+						projectId={projectId}
+						applicationId={application.id}
+						onCancel={closeCreationPopup}
+						onSubmit={() => {
+							closeCreationPopup();
+							void mutate({
+								applicationId: application.id,
+								projectId,
+							});
+						}}
+					/>
+				</Modal>
 			</div>
 		</div>
 	);

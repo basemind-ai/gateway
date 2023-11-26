@@ -358,6 +358,7 @@
 		"webApp": "Web App"
 	},
 	"userSettings": {
+		"accountDeletedMessage": "Account Successfully Deleted",
 		"deleteYourAccount": "Delete your account",
 		"deleteYourAccountButton": "Delete",
 		"deleteYourAccountDetails": "This act is irreversible, it will delete your account, and all of your data.",
