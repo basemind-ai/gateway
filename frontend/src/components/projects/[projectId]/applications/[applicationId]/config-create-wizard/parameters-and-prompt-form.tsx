@@ -369,7 +369,6 @@ export function OpenAIPromptTemplate({
 								className="card-select"
 								value={draftMessage.role}
 								onChange={handleChange(handleRoleChange)}
-								defaultValue={OpenAIPromptMessageRole.System}
 								data-testid="parameters-and-prompt-form-message-role-select"
 							>
 								{Object.entries(OpenAIPromptMessageRole).map(

@@ -234,8 +234,8 @@ importers:
                 specifier: 10.4.16
                 version: 10.4.16(postcss@8.4.31)
             daisyui:
-                specifier: ^4.4.7
-                version: 4.4.7(postcss@8.4.31)
+                specifier: ^4.4.9
+                version: 4.4.9(postcss@8.4.31)
             jsdom:
                 specifier: ^22.1.0
                 version: 22.1.0
@@ -7844,10 +7844,10 @@ packages:
         engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
         dev: true
 
-    /daisyui@4.4.7(postcss@8.4.31):
+    /daisyui@4.4.9(postcss@8.4.31):
         resolution:
             {
-                integrity: sha512-E+jAcaCiXmBgLePaGjH2aEoyp5kthkEO7S0db8JoWNxZ/4q5x6sgdR/+mCphKVXMJMOihGIL0Y8psqFIMxCdBg==,
+                integrity: sha512-Wqk1f3rQbiDSMfzC/ZufQQi139dY4mCMZJ/hmYIIGpCi0MFndU0wJ575tEGzi2YrCZOagsWhbOeWE7DD/B5pVw==,
             }
         engines: { node: '>=16.9.0' }
         dependencies:

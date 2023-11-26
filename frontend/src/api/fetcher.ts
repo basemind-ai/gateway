@@ -53,6 +53,7 @@ export async function fetcher<T>({
 	const response = await fetch(path, request);
 	const body =
 		response.status === 204 ? {} : ((await response.json()) as unknown);
+
 	if (!response.ok) {
 		throw new ApiError(
 			(Reflect.get(body as Record<string, any>, 'message') ??

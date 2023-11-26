@@ -273,8 +273,9 @@
 	},
 	"promptConfig": {
 		"apiCalls": "API Calls",
-		"clone": "Clone",
+		"cancel": "Cancel",
 		"configCloned": "Successfully cloned",
+		"confirm": "Confirm",
 		"createdAt": "Created",
 		"delete": "Delete",
 		"deleteModelConfigDescription": "Once a Model Configuration is deleted, all server requests sent with that key will not work.",
@@ -296,6 +297,7 @@
 		"overview": "Overview",
 		"promptDeleted": "Model Configuration Deleted",
 		"save": "Save",
+		"saveAsNew": "Save as New",
 		"settings": "Settings",
 		"status": "Status",
 		"template": "Template",
