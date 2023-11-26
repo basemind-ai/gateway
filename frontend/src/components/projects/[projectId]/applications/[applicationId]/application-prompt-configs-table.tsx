@@ -2,8 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { CheckCircle, Front, PencilFill, Search } from 'react-bootstrap-icons';
 
-import { PromptConfigPageTab } from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/configs/[promptConfigId]/page';
-import { Navigation } from '@/constants';
+import { Navigation, PromptConfigPageTab } from '@/constants';
 import {
 	modelTypeToLocaleMap,
 	modelVendorToLocaleMap,

@@ -13,6 +13,7 @@ import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/appli
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
+import { PromptConfigPageTab } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
@@ -22,14 +23,6 @@ import {
 	usePromptConfig,
 	useSetPromptConfigs,
 } from '@/stores/api-store';
-
-enum TAB_NAME {
-	OVERVIEW,
-	TESTING,
-	SETTINGS,
-}
-
-export { TAB_NAME as PromptConfigPageTab };
 
 export default function PromptConfiguration({
 	params: { projectId, applicationId, promptConfigId },
@@ -51,7 +44,9 @@ export default function PromptConfiguration({
 	const project = useProject(projectId);
 	const projects = useProjects();
 
-	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
+	const [selectedTab, setSelectedTab] = useState(
+		PromptConfigPageTab.OVERVIEW,
+	);
 
 	const { isLoading } = useSWR(
 		promptConfig ? null : { applicationId, projectId },
@@ -79,26 +74,26 @@ export default function PromptConfiguration({
 		return null;
 	}
 
-	const tabs: TabData<TAB_NAME>[] = [
+	const tabs: TabData<PromptConfigPageTab>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
-			id: TAB_NAME.OVERVIEW,
+			id: PromptConfigPageTab.OVERVIEW,
 			text: t('overview'),
 		},
 		{
 			icon: <RocketTakeoff className="w-3.5 h-3.5" />,
-			id: TAB_NAME.TESTING,
+			id: PromptConfigPageTab.TESTING,
 			text: t('test'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAME.SETTINGS,
+			id: PromptConfigPageTab.SETTINGS,
 			text: t('settings'),
 		},
 	];
 
-	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: memo(() => (
+	const tabComponents: Record<PromptConfigPageTab, React.FC> = {
+		[PromptConfigPageTab.OVERVIEW]: memo(() => (
 			<>
 				<PromptConfigAnalyticsPage
 					projectId={projectId}
@@ -109,14 +104,14 @@ export default function PromptConfiguration({
 				<PromptConfigGeneralInfo promptConfig={promptConfig} />
 			</>
 		)),
-		[TAB_NAME.TESTING]: memo(() => (
+		[PromptConfigPageTab.TESTING]: memo(() => (
 			<PromptConfigTesting
 				projectId={projectId}
 				applicationId={applicationId}
 				promptConfig={promptConfig}
 			/>
 		)),
-		[TAB_NAME.SETTINGS]: memo(() => (
+		[PromptConfigPageTab.SETTINGS]: memo(() => (
 			<>
 				<PromptConfigGeneralSettings
 					projectId={projectId}
@@ -143,7 +138,7 @@ export default function PromptConfiguration({
 				showSelect={projects.length > 1}
 			/>
 			<div className="mt-3.5 w-full mb-8">
-				<TabNavigation<TAB_NAME>
+				<TabNavigation<PromptConfigPageTab>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}

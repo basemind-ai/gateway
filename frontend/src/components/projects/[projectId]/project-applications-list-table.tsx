@@ -2,8 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { PencilFill } from 'react-bootstrap-icons';
 
-import { applicationPageTabNames } from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/page';
-import { Navigation } from '@/constants';
+import { ApplicationPageTabNames, Navigation } from '@/constants';
 import { Application, PromptConfig } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
@@ -80,7 +79,7 @@ export function ProjectApplicationsListTable({
 														applicationId,
 														projectId,
 													},
-													applicationPageTabNames.SETTINGS,
+													ApplicationPageTabNames.SETTINGS,
 												),
 											);
 										}}

@@ -13,16 +13,10 @@ import { ProjectGeneralSettings } from '@/components/projects/[projectId]/projec
 import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
+import { ProjectPageTabNames } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { useProject, useProjects } from '@/stores/api-store';
-
-enum TAB_NAME {
-	OVERVIEW,
-	MEMBERS,
-	PROVIDER_KEYS,
-	SETTINGS,
-}
 
 export default function ProjectOverview({
 	params: { projectId },
@@ -34,30 +28,32 @@ export default function ProjectOverview({
 
 	const t = useTranslations('projectOverview');
 
-	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
+	const [selectedTab, setSelectedTab] = useState(
+		ProjectPageTabNames.OVERVIEW,
+	);
 
 	const project = useProject(projectId);
 	const projects = useProjects();
 
-	const tabs: TabData<TAB_NAME>[] = [
+	const tabs: TabData<ProjectPageTabNames>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
-			id: TAB_NAME.OVERVIEW,
+			id: ProjectPageTabNames.OVERVIEW,
 			text: t('overview'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAME.MEMBERS,
+			id: ProjectPageTabNames.MEMBERS,
 			text: t('members'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAME.PROVIDER_KEYS,
+			id: ProjectPageTabNames.PROVIDER_KEYS,
 			text: t('providerKeys'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAME.SETTINGS,
+			id: ProjectPageTabNames.SETTINGS,
 			text: t('settings'),
 		},
 	];
@@ -66,14 +62,14 @@ export default function ProjectOverview({
 		return null;
 	}
 
-	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: memo(() => (
+	const tabComponents: Record<ProjectPageTabNames, React.FC> = {
+		[ProjectPageTabNames.OVERVIEW]: memo(() => (
 			<div data-testid="project-overview-tab">
 				<ProjectAnalytics project={project} />
 				<ProjectApplicationsList project={project} />
 			</div>
 		)),
-		[TAB_NAME.MEMBERS]: memo(() => (
+		[ProjectPageTabNames.MEMBERS]: memo(() => (
 			<div data-testid="project-members-tab">
 				<InviteProjectMembers project={project} />
 				<div className="mt-10">
@@ -81,12 +77,12 @@ export default function ProjectOverview({
 				</div>
 			</div>
 		)),
-		[TAB_NAME.PROVIDER_KEYS]: memo(() => (
+		[ProjectPageTabNames.PROVIDER_KEYS]: memo(() => (
 			<div data-testid="project-provider-keys-tab">
 				<ProjectProviderKeys project={project} />
 			</div>
 		)),
-		[TAB_NAME.SETTINGS]: memo(() => (
+		[ProjectPageTabNames.SETTINGS]: memo(() => (
 			<div data-testid="project-settings-tab">
 				<ProjectGeneralSettings project={project} />
 				<div className="mt-10">
@@ -113,7 +109,7 @@ export default function ProjectOverview({
 				</div>
 			)}
 			<div className="mt-3.5 w-full mb-9">
-				<TabNavigation<TAB_NAME>
+				<TabNavigation<ProjectPageTabNames>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}

@@ -18,5 +18,22 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source
+			source="LOCAL"
+			name="gcp development"
+			uuid="19a168a8-ce65-4457-852d-933e6e475f80"
+		>
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://34.141.53.52:5432/basemind</jdbc-url>
+      <jdbc-additional-properties>
+        <property
+					name="com.intellij.clouds.kubernetes.db.enabled"
+					value="false"
+				/>
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

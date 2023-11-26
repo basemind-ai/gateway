@@ -16,3 +16,22 @@ export enum Navigation {
 }
 export const DISCORD_INVITE_LINK = 'https://discord.gg/Urxchkcq';
 export const SUPPORT_EMAIL = 'support@basemind.ai';
+
+export enum PromptConfigPageTab {
+	OVERVIEW,
+	TESTING,
+	SETTINGS,
+}
+
+export enum ApplicationPageTabNames {
+	OVERVIEW,
+	API_KEYS,
+	SETTINGS,
+}
+
+export enum ProjectPageTabNames {
+	OVERVIEW,
+	MEMBERS,
+	PROVIDER_KEYS,
+	SETTINGS,
+}

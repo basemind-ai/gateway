@@ -11,17 +11,10 @@ import { ApplicationDeletion } from '@/components/projects/[projectId]/applicati
 import { ApplicationGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/application-general-settings';
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
+import { ApplicationPageTabNames } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { useApplication, useProject, useProjects } from '@/stores/api-store';
-
-enum TAB_NAME {
-	OVERVIEW,
-	API_KEYS,
-	SETTINGS,
-}
-
-export { TAB_NAME as applicationPageTabNames };
 
 export default function Application({
 	params: { projectId, applicationId },
@@ -36,22 +29,24 @@ export default function Application({
 	const project = useProject(projectId);
 	const projects = useProjects();
 
-	const [selectedTab, setSelectedTab] = useState(TAB_NAME.OVERVIEW);
+	const [selectedTab, setSelectedTab] = useState(
+		ApplicationPageTabNames.OVERVIEW,
+	);
 
-	const tabs: TabData<TAB_NAME>[] = [
+	const tabs: TabData<ApplicationPageTabNames>[] = [
 		{
 			icon: <Speedometer2 className="w-3.5 h-3.5" />,
-			id: TAB_NAME.OVERVIEW,
+			id: ApplicationPageTabNames.OVERVIEW,
 			text: t('overview'),
 		},
 		{
 			icon: <KeyFill className="w-3.5 h-3.5" />,
-			id: TAB_NAME.API_KEYS,
+			id: ApplicationPageTabNames.API_KEYS,
 			text: t('apiKeys'),
 		},
 		{
 			icon: <Gear className="w-3.5 h-3.5" />,
-			id: TAB_NAME.SETTINGS,
+			id: ApplicationPageTabNames.SETTINGS,
 			text: t('settings'),
 		},
 	];
@@ -60,8 +55,8 @@ export default function Application({
 		return null;
 	}
 
-	const tabComponents: Record<TAB_NAME, React.FC> = {
-		[TAB_NAME.OVERVIEW]: memo(() => (
+	const tabComponents: Record<ApplicationPageTabNames, React.FC> = {
+		[ApplicationPageTabNames.OVERVIEW]: memo(() => (
 			<>
 				<ApplicationAnalyticsPage
 					application={application}
@@ -73,13 +68,13 @@ export default function Application({
 				/>
 			</>
 		)),
-		[TAB_NAME.API_KEYS]: memo(() => (
+		[ApplicationPageTabNames.API_KEYS]: memo(() => (
 			<ApplicationApiKeys
 				application={application}
 				projectId={projectId}
 			/>
 		)),
-		[TAB_NAME.SETTINGS]: memo(() => (
+		[ApplicationPageTabNames.SETTINGS]: memo(() => (
 			<>
 				<ApplicationGeneralSettings
 					application={application}
@@ -110,7 +105,7 @@ export default function Application({
 				</div>
 			)}
 			<div className="mt-3.5 w-full mb-8">
-				<TabNavigation<TAB_NAME>
+				<TabNavigation<ApplicationPageTabNames>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}
