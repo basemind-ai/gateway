@@ -25,11 +25,12 @@ func New(opts Options) chi.Router {
 	if opts.Environment != "test" {
 		router.Use(chimiddleware.RealIP)
 		router.Use(cors.Handler(cors.Options{
-			AllowedOrigins: []string{"*"},
-			AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
-			AllowedHeaders: []string{"*"},
-			MaxAge:         3600,
-			Debug:          opts.Environment == "development",
+			AllowCredentials: true,
+			AllowedHeaders:   []string{"X-Request-Id", "Authorization", "Content-Type", "Accept"},
+			AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+			AllowedOrigins:   []string{"https://*", "http://*"},
+			Debug:            opts.Environment == "development",
+			MaxAge:           3600,
 		}))
 		router.Use(httplog.RequestLogger(log.With().Str("service", opts.ServiceName).Logger()))
 		router.Use(chimiddleware.Heartbeat("/health-check"))
