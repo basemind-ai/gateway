@@ -14,7 +14,7 @@ import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApplicationPageTabNames } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { useApplication, useProject, useProjects } from '@/stores/api-store';
+import { useApplication, useProject } from '@/stores/api-store';
 
 export default function Application({
 	params: { projectId, applicationId },
@@ -27,7 +27,6 @@ export default function Application({
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);
 	const project = useProject(projectId);
-	const projects = useProjects();
 
 	const [selectedTab, setSelectedTab] = useState(
 		ApplicationPageTabNames.OVERVIEW,
@@ -91,20 +90,12 @@ export default function Application({
 	const TabComponent = tabComponents[selectedTab];
 
 	return (
-		<div data-testid="application-page" className="my-8 mx-32">
-			<Navbar
-				project={project}
-				headerText={`${t('application')} / ${application.name}`}
-				showSelect={projects.length > 1}
-			/>
-			{application.description && (
-				<div className="pl-20">
-					<span className="text-sm line-clamp-1 hover:line-clamp-none">
-						{application.description}
-					</span>
-				</div>
-			)}
-			<div className="mt-3.5 w-full mb-8">
+		<div
+			data-testid="application-page"
+			className="flex flex-col min-h-screen w-full bg-base-100"
+		>
+			<Navbar activeProject={project} application={application} />
+			<div className="w-full">
 				<TabNavigation<ApplicationPageTabNames>
 					tabs={tabs}
 					selectedTab={selectedTab}
@@ -112,7 +103,9 @@ export default function Application({
 					trailingLine={true}
 				/>
 			</div>
-			<TabComponent />
+			<div className="mx-32 mt-6">
+				<TabComponent />
+			</div>
 		</div>
 	);
 }

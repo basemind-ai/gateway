@@ -36,7 +36,7 @@ describe('user settings page tests', () => {
 
 	it('should render headline', () => {
 		render(<UserSettings />);
-		const headline = screen.getByText(t('headline'));
-		expect(headline).toBeInTheDocument();
+		const headline = screen.getAllByText(t('headline'));
+		expect(headline[0]).toBeInTheDocument();
 	});
 });

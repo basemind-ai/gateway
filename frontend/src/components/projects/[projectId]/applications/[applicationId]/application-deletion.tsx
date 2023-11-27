@@ -49,7 +49,10 @@ export function ApplicationDeletion({
 	}
 
 	return (
-		<div data-testid="application-deletion-container" className="mt-8">
+		<div
+			data-testid="application-deletion-container"
+			className="card-divider"
+		>
 			<h2 className="card-header">{t('deleteApplicationTitle')}</h2>
 			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>

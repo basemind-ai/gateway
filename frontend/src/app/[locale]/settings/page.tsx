@@ -1,8 +1,8 @@
 'use client';
 import { useTranslations } from 'next-intl';
 
+import { Navbar } from '@/components/navbar';
 import { DeleteAccountView } from '@/components/settings/delete-account-view';
-import { LogoutButton } from '@/components/settings/logout-button';
 import { UserDetails } from '@/components/settings/user-details';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
@@ -11,17 +11,19 @@ export default function UserSettings() {
 	const t = useTranslations('userSettings');
 
 	return (
-		<div data-testid="user-settings-page" className="mt-6 mx-32">
-			<div className="flex flex-row justify-between">
-				<h1 className="text-2xl font-semibold text-base-content mb-10">
-					{t('headline')}
-				</h1>
-				<LogoutButton />
+		<div
+			data-testid="user-settings-page"
+			className="flex flex-col min-h-screen w-full bg-base-100"
+		>
+			<Navbar headline={t('headline')} />
+			<div className="mx-auto max-w-screen-lg container">
+				<div className="card-divider">
+					<UserDetails user={user} />
+				</div>
+				<div className="card-divider">
+					<DeleteAccountView user={user} />
+				</div>
 			</div>
-			<div className="mb-10">
-				<UserDetails user={user} />
-			</div>
-			<DeleteAccountView user={user} />
 		</div>
 	);
 }

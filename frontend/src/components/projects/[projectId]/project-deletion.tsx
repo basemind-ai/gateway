@@ -38,7 +38,7 @@ export function ProjectDeletion({ project }: { project: Project }) {
 	}
 
 	return (
-		<div data-testid="project-deletion-container" className="mt-8">
+		<div data-testid="project-deletion-container" className="card-divider">
 			<h2 className="card-header">{t('deleteProjectTitle')}</h2>
 			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>

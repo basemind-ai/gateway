@@ -18,8 +18,8 @@ import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import {
+	useApplication,
 	useProject,
-	useProjects,
 	usePromptConfig,
 	useSetPromptConfigs,
 } from '@/stores/api-store';
@@ -42,7 +42,7 @@ export default function PromptConfiguration({
 	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
 	const setPromptConfigs = useSetPromptConfigs();
 	const project = useProject(projectId);
-	const projects = useProjects();
+	const application = useApplication(projectId, applicationId);
 
 	const [selectedTab, setSelectedTab] = useState(
 		PromptConfigPageTab.OVERVIEW,
@@ -131,13 +131,16 @@ export default function PromptConfiguration({
 	const TabComponent = tabComponents[selectedTab];
 
 	return (
-		<div data-testid="prompt-page-container" className="my-8 mx-32">
+		<div
+			data-testid="prompt-page-container"
+			className="flex flex-col min-h-screen w-full bg-base-100"
+		>
 			<Navbar
-				project={project}
-				headerText={`${t('modelConfiguration')} / ${promptConfig.name}`}
-				showSelect={projects.length > 1}
+				activeProject={project}
+				application={application}
+				config={promptConfig}
 			/>
-			<div className="mt-3.5 w-full mb-8">
+			<div className="w-full">
 				<TabNavigation<PromptConfigPageTab>
 					tabs={tabs}
 					selectedTab={selectedTab}
@@ -145,7 +148,9 @@ export default function PromptConfiguration({
 					trailingLine={true}
 				/>
 			</div>
-			<TabComponent />
+			<div className="mx-auto mt-6 ">
+				<TabComponent />
+			</div>
 		</div>
 	);
 }

@@ -16,7 +16,11 @@ import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provid
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
-import { useProject, useProjects, usePromptConfigs } from '@/stores/api-store';
+import {
+	useApplication,
+	useProject,
+	usePromptConfigs,
+} from '@/stores/api-store';
 import {
 	usePromptWizardStore,
 	WizardStage,
@@ -38,7 +42,7 @@ export default function PromptConfigCreateWizard({
 	const [nameIsValid, setNameIsValid] = useState(false);
 
 	const project = useProject(projectId);
-	const projects = useProjects();
+	const application = useApplication(projectId, applicationId);
 
 	const promptConfigs = usePromptConfigs();
 
@@ -198,13 +202,7 @@ export default function PromptConfigCreateWizard({
 				</div>
 			) : (
 				<>
-					<Navbar
-						project={project!}
-						headerText={`${t('createPromptConfigTitle')} / ${
-							store.configName
-						}`}
-						showSelect={projects.length > 1}
-					/>
+					<Navbar activeProject={project} application={application} />
 					<div className="bg-base-300 transform transition-transform duration-300 ease-in-out rounded-data-card">
 						{wizardStageComponentMap[store.wizardStage]}
 						{store.wizardStage < 2 && (
