@@ -52,7 +52,7 @@ func With[T any](
 
 	retrieved, retrieveErr := fallback()
 	if retrieveErr != nil {
-		return nil, retrieveErr
+		return nil, fmt.Errorf("failed to retrieve value from Redis: %w", retrieveErr)
 	}
 
 	if setErr := client.Set(&cache.Item{
@@ -61,7 +61,7 @@ func With[T any](
 		Value: *retrieved,
 		TTL:   ttl,
 	}); setErr != nil {
-		return nil, setErr
+		return nil, fmt.Errorf("failed to set value in Redis: %w", setErr)
 	}
 
 	return retrieved, nil

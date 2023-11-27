@@ -52,6 +52,7 @@ func (APIGatewayServer) RequestPrompt(
 		RetrieveRequestConfiguration(ctx, applicationID, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
+		log.Error().Err(retrievalErr).Msg("failed to retrieve the request configuration from Redis")
 		return nil, status.Error(
 			codes.NotFound,
 			retrievalErr.Error(),
@@ -119,6 +120,7 @@ func (APIGatewayServer) RequestStreamingPrompt(
 		RetrieveRequestConfiguration(streamServer.Context(), applicationID, request.PromptConfigId),
 	)
 	if retrievalErr != nil {
+		log.Error().Err(retrievalErr).Msg("failed to retrieve the request configuration from Redis")
 		return status.Error(
 			codes.NotFound,
 			retrievalErr.Error(),

@@ -171,6 +171,7 @@ func CreateProviderAPIKeyContext(
 		},
 	)
 	if providerKeyRetrievalErr != nil {
+		log.Error().Err(providerKeyRetrievalErr).Msg("error retrieving provider key from redis")
 		return nil, status.Error(
 			codes.PermissionDenied,
 			"missing provider API-key",
@@ -197,6 +198,9 @@ func ValidateExpectedVariables(
 	}
 
 	if len(missingVariables) > 0 {
+		log.Debug().
+			Interface("missingVariables", missingVariables).
+			Msg("missing template variables")
 		return status.Errorf(
 			codes.InvalidArgument,
 			"missing template variables: %v",
