@@ -23,11 +23,6 @@ describe('ApplicationPage', () => {
 		'handleRetrieveAPIKeys',
 	);
 
-	beforeAll(() => {
-		HTMLDialogElement.prototype.showModal = vi.fn();
-		HTMLDialogElement.prototype.close = vi.fn();
-	});
-
 	it('returns null when application is not present', () => {
 		const {
 			result: { current: setProjects },

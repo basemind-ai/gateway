@@ -277,7 +277,10 @@ export default function PromptConfigCreateWizard({
 					</div>
 				</>
 			)}
-			<Modal modalOpen={isCreateProviderKeyModalOpen}>
+			<Modal
+				modalOpen={isCreateProviderKeyModalOpen}
+				dataTestId="config-create-wizard-create-provider-key-dialog"
+			>
 				<div className="p-10">
 					<ProviderKeyCreateModal
 						projectId={projectId}

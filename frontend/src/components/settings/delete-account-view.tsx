@@ -12,7 +12,7 @@ import { useHandleError } from '@/hooks/use-handle-error';
 import { useSetUser } from '@/stores/api-store';
 import { useShowSuccess } from '@/stores/toast-store';
 
-export function DeleteAccountView({ user }: { user: UserInfo }) {
+export function DeleteAccountView({ user }: { user?: UserInfo }) {
 	const t = useTranslations('userSettings');
 	const router = useRouter();
 	const setUser = useSetUser();
@@ -51,21 +51,24 @@ export function DeleteAccountView({ user }: { user: UserInfo }) {
 					setIsDeleteModalOpen(true);
 				}}
 				data-testid="account-delete-btn"
-				disabled={!user.email}
+				disabled={!user?.email}
 			>
 				{t('deleteYourAccountButton')}
 			</button>
-			<Modal modalOpen={isDeleteModalOpen}>
+			<Modal
+				modalOpen={isDeleteModalOpen}
+				dataTestId="delete-account-modal"
+			>
 				<ResourceDeletionBanner
 					title={t('warning')}
 					description={t('deleteYourAccountDetails')}
 					placeholder={t('writeYourEmail')}
-					resourceName={user.email!}
+					resourceName={user?.email ?? ''}
 					onCancel={() => {
 						setIsDeleteModalOpen(false);
 					}}
 					onConfirm={() => void deleteUserAccount()}
-					isDisabled={!user.email}
+					isDisabled={!user?.email}
 				/>
 			</Modal>
 		</DashboardCard>

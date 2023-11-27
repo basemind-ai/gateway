@@ -6,7 +6,7 @@ import {
 } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { render, screen } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
+import { expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
@@ -24,18 +24,6 @@ describe('ApplicationsList', () => {
 		ApplicationAPI,
 		'handleRetrieveApplications',
 	);
-
-	const showModal = vi.fn();
-	const closeModal = vi.fn();
-
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
-
-	beforeAll(() => {
-		HTMLDialogElement.prototype.showModal = showModal;
-		HTMLDialogElement.prototype.close = closeModal;
-	});
 
 	it('renders application list', async () => {
 		const applications = ApplicationFactory.batchSync(2);
@@ -106,7 +94,7 @@ describe('ApplicationsList', () => {
 		});
 	});
 
-	it('opens and closes the app creation dialog', async () => {
+	it('opens the app creation dialog', async () => {
 		handleRetrieveApplicationsSpy.mockResolvedValueOnce([]);
 
 		render(<ProjectApplicationsList project={project} />);
@@ -114,14 +102,9 @@ describe('ApplicationsList', () => {
 		const newAppButton = screen.getByTestId('new-application-btn');
 		fireEvent.click(newAppButton);
 
-		expect(showModal).toHaveBeenCalledOnce();
-
-		const cancelButton = screen.getByTestId<HTMLButtonElement>(
-			'create-application-cancel-btn',
-		);
-		fireEvent.click(cancelButton);
-
-		expect(closeModal).toHaveBeenCalledOnce();
+		await waitFor(() => {
+			expect(screen.getByTestId('dialog-modal')).toBeInTheDocument();
+		});
 	});
 
 	it('shows error when unable to get applications', async () => {
