@@ -15,7 +15,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"os"
 	"os/signal"
@@ -38,7 +37,7 @@ func main() {
 	logging.Configure(cfg.Environment != "production")
 
 	// FIXME: this is a temporary work-around for testing
-	connectors.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	connectors.Init(ctx)
 
 	rediscache.New(cfg.RedisURL)
 

@@ -6,7 +6,6 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"testing"
 )
@@ -27,7 +26,6 @@ func CreateClientAndService(t *testing.T) (*openai.Client, *testutils.MockOpenAI
 	)
 	client := openai.New(
 		"",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) {
 				return listener.Dial()

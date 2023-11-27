@@ -14,7 +14,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"testing"
 )
@@ -37,7 +36,6 @@ func createClientAndService(
 	)
 	client := ptestingclient.New(
 		"",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) {
 				return listener.Dial()
@@ -92,7 +90,6 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 		t.Run("dials and returns client", func(t *testing.T) {
 			client := ptestingclient.New(
 				"localhost:50051",
-				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
 			assert.NotNil(t, client)
 		})
@@ -104,7 +101,6 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 				func() {
 					ptestingclient.Init(
 						context.Background(),
-						grpc.WithTransportCredentials(insecure.NewCredentials()),
 					)
 				},
 			)
@@ -115,7 +111,6 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 				func() {
 					ptestingclient.Init(
 						context.Background(),
-						grpc.WithTransportCredentials(insecure.NewCredentials()),
 					)
 				},
 			)
@@ -127,7 +122,6 @@ func TestPromptTestingGRPCClient(t *testing.T) {
 			t.Setenv("API_GATEWAY_ADDRESS", "localhost:50051")
 			ptestingclient.Init(
 				context.Background(),
-				grpc.WithTransportCredentials(insecure.NewCredentials()),
 			)
 			assert.NotPanics(t, func() {
 				ptestingclient.GetClient()

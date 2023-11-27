@@ -19,7 +19,6 @@ import (
 	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 	"io"
 	"net"
@@ -47,7 +46,6 @@ func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 	t.Setenv("OPENAI_CONNECTOR_ADDRESS", "")
 
 	connectors.Init(context.TODO(),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) {
 				return listener.Dial()

@@ -6,6 +6,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/go-redis/cache/v9"
 	"github.com/redis/go-redis/v9"
+	"os"
 	"sync"
 	"time"
 )
@@ -25,6 +26,8 @@ func SetClient(c *cache.Cache) {
 func New(redisURL string) *cache.Cache {
 	once.Do(func() {
 		opt := exc.MustResult(redis.ParseURL(redisURL))
+
+		opt.ClientName = os.Getenv("SERVICE_NAME")
 		SetClient(cache.New(&cache.Options{
 			Redis:      redis.NewClient(opt),
 			LocalCache: cache.NewTinyLFU(1000, time.Minute),

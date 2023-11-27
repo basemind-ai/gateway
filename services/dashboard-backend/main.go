@@ -5,14 +5,11 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
-	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/basemind-ai/monorepo/shared/go/router"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
 	"os"
 	"os/signal"
@@ -39,9 +36,6 @@ func main() {
 	cfg := config.Get(ctx)
 
 	logging.Configure(cfg.Environment != "production")
-
-	// FIXME: this is a temporary work-around for testing
-	ptestingclient.Init(ctx, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	rediscache.New(cfg.RedisURL)
 
