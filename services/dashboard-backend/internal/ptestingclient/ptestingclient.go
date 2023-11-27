@@ -10,6 +10,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/jwtutils"
 	"github.com/rs/zerolog/log"
 	"github.com/sethvargo/go-envconfig"
@@ -42,7 +43,7 @@ type Client struct {
 
 // New - creates a new PromptTesting gRPC client.
 func New(serverAddress string, opts ...grpc.DialOption) *Client {
-	conn := exc.MustResult(grpc.Dial(serverAddress, opts...))
+	conn := exc.MustResult(grpcutils.NewConnection(serverAddress, opts...))
 	log.Info().Msg("initialized PromptTesting connection")
 	return &Client{GRPCServiceClient: ptesting.NewPromptTestingServiceClient(conn)}
 }

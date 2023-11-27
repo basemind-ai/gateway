@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"os"
 	"testing"
 )
 
@@ -80,4 +81,20 @@ func TestGrpcUtils(t *testing.T) {
 			assert.Contains(t, buf.String(), "panic triggered: test panic")
 		},
 	)
+
+	t.Run("NewConnection", func(t *testing.T) {
+		host := "localhost:50051"
+		t.Run("creates insecure connection when GRPC_USE_TLS is not set", func(t *testing.T) {
+			_ = os.Unsetenv("GRPC_USE_TLS")
+			conn, err := grpcutils.NewConnection(host)
+			assert.NoError(t, err)
+			assert.NotNil(t, conn)
+		})
+		t.Run("creates secure connection when GRPC_USE_TLS is set", func(t *testing.T) {
+			t.Setenv("GRPC_USE_TLS", "true")
+			conn, err := grpcutils.NewConnection(host)
+			assert.NoError(t, err)
+			assert.NotNil(t, conn)
+		})
+	})
 }

@@ -2,9 +2,14 @@ package grpcutils
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
+	"os"
 	"runtime/debug"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
@@ -109,4 +114,28 @@ func CreateGRPCServer(opts Options, serverOpts ...grpc.ServerOption) *grpc.Serve
 	grpc_health_v1.RegisterHealthServer(server, health.NewServer())
 
 	return server
+}
+
+// NewConnection creates a new grpc connection.
+// if the GRPC_USE_TLS environment variable is set, a TLS connection is used.
+// otherwise, an insecure connection is used.
+func NewConnection(host string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+	opts = append(opts, grpc.WithAuthority(host))
+
+	if os.Getenv("GRPC_USE_TLS") != "" {
+		log.Info().Msg("using TLS for gRPC connection")
+		systemRoots, err := x509.SystemCertPool()
+		if err != nil {
+			return nil, err
+		}
+		cred := credentials.NewTLS(&tls.Config{ //nolint:gosec
+			RootCAs: systemRoots,
+		})
+		opts = append(opts, grpc.WithTransportCredentials(cred))
+	} else {
+		log.Info().Msg("using insecure connection for gRPC")
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
+
+	return grpc.Dial(host, opts...)
 }
