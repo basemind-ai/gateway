@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
+import { closeMock } from 'tests/mocks';
 import {
 	fireEvent,
 	render,
@@ -27,8 +28,6 @@ describe('user account deletion tests', () => {
 		providerId: '',
 		uid: '',
 	};
-	HTMLDialogElement.prototype.showModal = vi.fn();
-	HTMLDialogElement.prototype.close = vi.fn();
 
 	it('should render headline', () => {
 		render(<DeleteAccountView user={mockUser} />);
@@ -39,12 +38,6 @@ describe('user account deletion tests', () => {
 		render(<DeleteAccountView user={mockUser} />);
 		const deleteButton = screen.getByTestId('account-delete-btn');
 		expect(deleteButton).toBeInTheDocument();
-	});
-	it('delete button is disabled when user in not authenticated', async () => {
-		render(<DeleteAccountView user={null} />);
-		const deleteAccountButton =
-			await screen.findByTestId('account-delete-btn');
-		expect(deleteAccountButton).toBeDisabled();
 	});
 	it('clicking on delete account show open delete account modal', async () => {
 		render(<DeleteAccountView user={mockUser} />);
@@ -138,7 +131,6 @@ describe('user account deletion tests', () => {
 	});
 
 	it('clicking on delete confirmation modal close button should close the modal', async () => {
-		const dialogCloseSpy = vi.spyOn(HTMLDialogElement.prototype, 'close');
 		render(<DeleteAccountView user={mockUser} />);
 		const deleteAccountButton =
 			await screen.findByTestId('account-delete-btn');
@@ -151,7 +143,7 @@ describe('user account deletion tests', () => {
 		);
 		fireEvent.click(deleteAccountModalCloseButton);
 		await waitFor(() => {
-			expect(dialogCloseSpy).toHaveBeenCalled();
+			expect(closeMock).toHaveBeenCalled();
 		});
 	});
 });

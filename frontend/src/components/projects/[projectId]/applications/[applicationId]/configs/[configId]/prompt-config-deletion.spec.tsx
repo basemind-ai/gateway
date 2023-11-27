@@ -34,11 +34,6 @@ describe('PromptDeletion', () => {
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(project.id, [application]);
 
-	beforeAll(() => {
-		HTMLDialogElement.prototype.showModal = vi.fn();
-		HTMLDialogElement.prototype.close = vi.fn();
-	});
-
 	it('renders prompt config deletion component', () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 		const {
@@ -88,8 +83,6 @@ describe('PromptDeletion', () => {
 		const deletionBannerDeleteBtn = screen.getByTestId(
 			'resource-deletion-delete-btn',
 		);
-		fireEvent.click(deletionBannerDeleteBtn);
-		// takes care of covering the loading line
 		fireEvent.click(deletionBannerDeleteBtn);
 
 		await waitFor(() => {

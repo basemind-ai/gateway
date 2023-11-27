@@ -12,11 +12,6 @@ describe('ProjectDeletion', () => {
 	const handleDeleteProjectSpy = vi.spyOn(ProjectAPI, 'handleDeleteProject');
 	const project = ProjectFactory.buildSync();
 
-	beforeAll(() => {
-		HTMLDialogElement.prototype.showModal = vi.fn();
-		HTMLDialogElement.prototype.close = vi.fn();
-	});
-
 	it('renders project deletion', async () => {
 		const {
 			result: { current: setProjects },

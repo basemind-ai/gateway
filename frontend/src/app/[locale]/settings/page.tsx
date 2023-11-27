@@ -7,7 +7,7 @@ import { UserDetails } from '@/components/settings/user-details';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
 export default function UserSettings() {
-	const user = useAuthenticatedUser();
+	const user = useAuthenticatedUser()!;
 	const t = useTranslations('userSettings');
 
 	return (

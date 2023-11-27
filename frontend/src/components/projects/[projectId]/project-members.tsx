@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Eraser } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
@@ -9,6 +9,7 @@ import {
 	handleRetrieveProjectUsers,
 	handleUpdateUserToPermission,
 } from '@/api';
+import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Dimensions } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -106,7 +107,8 @@ export function ProjectMembers({ project }: { project: Project }) {
 		},
 	);
 
-	const dialogRef = useRef<HTMLDialogElement>(null);
+	const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] =
+		useState(false);
 	const [removalUserId, setRemovalUserId] = useState<string | null>(null);
 	const [removeUserLoading, setRemoveUserLoading] = useState(false);
 
@@ -137,17 +139,9 @@ export function ProjectMembers({ project }: { project: Project }) {
 		showInfo(t('roleUpdated'));
 	}
 
-	function openRemovalConfirmationPopup() {
-		dialogRef.current?.showModal();
-	}
-
-	function closeRemovalConfirmationPopup() {
-		dialogRef.current?.close();
-	}
-
 	function markUserForRemoval(userId: string) {
 		setRemovalUserId(userId);
-		openRemovalConfirmationPopup();
+		setIsRemoveMemberModalOpen(true);
 	}
 
 	async function removeUser() {
@@ -167,7 +161,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 			handleError(e);
 		} finally {
 			setRemovalUserId(null);
-			closeRemovalConfirmationPopup();
+			setIsRemoveMemberModalOpen(false);
 			setRemoveUserLoading(false);
 		}
 	}
@@ -244,26 +238,23 @@ export function ProjectMembers({ project }: { project: Project }) {
 					</table>
 				)}
 			</div>
-			<dialog ref={dialogRef} className="modal">
-				<div className="dialog-box">
-					<ResourceDeletionBanner
-						title={t('warning')}
-						description={t('warningMessage')}
-						onCancel={closeRemovalConfirmationPopup}
-						onConfirm={() => void removeUser()}
-						confirmCTA={
-							removeUserLoading ? (
-								<span className="loading loading-spinner loading-xs mx-1.5" />
-							) : (
-								t('ok')
-							)
-						}
-					/>
-				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button />
-				</form>
-			</dialog>
+			<Modal modalOpen={isRemoveMemberModalOpen}>
+				<ResourceDeletionBanner
+					title={t('warning')}
+					description={t('warningMessage')}
+					onCancel={() => {
+						setIsRemoveMemberModalOpen(false);
+					}}
+					onConfirm={() => void removeUser()}
+					confirmCTA={
+						removeUserLoading ? (
+							<span className="loading loading-spinner loading-xs mx-1.5" />
+						) : (
+							t('ok')
+						)
+					}
+				/>
+			</Modal>
 		</div>
 	);
 }

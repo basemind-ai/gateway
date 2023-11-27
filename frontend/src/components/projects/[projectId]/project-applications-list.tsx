@@ -1,9 +1,10 @@
 import { useTranslations } from 'next-intl';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Plus } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrieveApplications, handleRetrievePromptConfigs } from '@/api';
+import { Modal } from '@/components/modal';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -23,10 +24,9 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 
 	const promptConfigs = usePromptConfigs();
 	const setPromptConfig = useSetPromptConfigs();
-
-	const dialogRef = useRef<HTMLDialogElement>(null);
-
 	const handleError = useHandleError();
+
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
 	const { isLoading } = useSWR(project.id, handleRetrieveApplications, {
 		onError: handleError,
@@ -55,14 +55,6 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 		},
 	);
 
-	const openAppCreateFlow = () => {
-		dialogRef.current?.showModal();
-	};
-
-	const closeAppCreateFlow = () => {
-		dialogRef.current?.close();
-	};
-
 	return (
 		<div data-testid="project-application-list-container" className="mt-9">
 			<h2 className="card-header">{t('applications')}</h2>
@@ -80,24 +72,23 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 				) : null}
 				<button
 					data-testid="new-application-btn"
-					onClick={openAppCreateFlow}
+					onClick={() => {
+						setIsCreateModalOpen(true);
+					}}
 					className="flex gap-2 items-center text-secondary hover:brightness-90"
 				>
 					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
 					<span>{t('newApplication')}</span>
 				</button>
 			</div>
-			<dialog ref={dialogRef} className="modal">
-				<div className="dialog-box border-0 rounded-none">
-					<CreateApplication
-						onClose={closeAppCreateFlow}
-						projectId={project.id}
-					/>
-				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button />
-				</form>
-			</dialog>
+			<Modal modalOpen={isCreateModalOpen}>
+				<CreateApplication
+					onClose={() => {
+						setIsCreateModalOpen(false);
+					}}
+					projectId={project.id}
+				/>
+			</Modal>
 		</div>
 	);
 }

@@ -5,8 +5,10 @@ export function Modal({
 	modalOpen,
 	onOpen,
 	onClose,
+	dataTestId = 'dialog-modal',
 }: {
 	children: React.ReactNode;
+	dataTestId?: string;
 	modalOpen: boolean;
 	onClose?: () => void;
 	onOpen?: () => void;
@@ -24,7 +26,7 @@ export function Modal({
 	}, [modalOpen, dialogRef.current]);
 
 	return (
-		<dialog ref={dialogRef} className="modal" data-testid="dialog-modal">
+		<dialog ref={dialogRef} className="modal" data-testid={dataTestId}>
 			<div className="dialog-box" data-testid="modal-content">
 				{children}
 			</div>

@@ -1,8 +1,9 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { handleDeletePromptConfig } from '@/api';
+import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -28,24 +29,12 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
-	const dialogRef = useRef<HTMLDialogElement>(null);
-	const [loading, setLoading] = useState(false);
-
-	function openDeleteConfirmationPopup() {
-		dialogRef.current?.showModal();
-	}
-
-	function closeDeleteConfirmationPopup() {
-		dialogRef.current?.close();
-	}
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	async function deletePrompt() {
-		if (loading) {
-			return;
-		}
-
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			await handleDeletePromptConfig({
 				applicationId,
 				projectId,
@@ -62,8 +51,8 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 		} catch (e) {
 			handleError(e);
 		} finally {
-			closeDeleteConfirmationPopup();
-			setLoading(false);
+			setIsDeleteModalOpen(false);
+			setIsLoading(false);
 		}
 	}
 
@@ -82,30 +71,31 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 				<button
 					data-testid="prompt-delete-btn"
 					className="card-action-button btn-error text-black"
-					onClick={openDeleteConfirmationPopup}
+					disabled={isLoading}
+					onClick={() => {
+						setIsDeleteModalOpen(true);
+					}}
 				>
 					{t('delete')}
 				</button>
-				<dialog ref={dialogRef} className="modal">
-					<div className="dialog-box">
-						<ResourceDeletionBanner
-							title={t('warning')}
-							description={t('deleteModelConfigDescription')}
-							placeholder={t('deletionPlaceholder')}
-							resourceName={promptConfig.name}
-							onCancel={closeDeleteConfirmationPopup}
-							onConfirm={() => void deletePrompt()}
-							confirmCTA={
-								loading ? (
-									<span className="loading loading-spinner loading-xs mx-1.5" />
-								) : undefined
-							}
-						/>
-					</div>
-					<form method="dialog" className="modal-backdrop">
-						<button />
-					</form>
-				</dialog>
+				<Modal modalOpen={isDeleteModalOpen}>
+					<ResourceDeletionBanner
+						title={t('warning')}
+						description={t('deleteModelConfigDescription')}
+						placeholder={t('deletionPlaceholder')}
+						resourceName={promptConfig.name}
+						onCancel={() => {
+							setIsDeleteModalOpen(false);
+						}}
+						isDisabled={isLoading}
+						onConfirm={() => void deletePrompt()}
+						confirmCTA={
+							isLoading ? (
+								<span className="loading loading-spinner loading-xs mx-1.5" />
+							) : undefined
+						}
+					/>
+				</Modal>
 			</div>
 		</div>
 	);

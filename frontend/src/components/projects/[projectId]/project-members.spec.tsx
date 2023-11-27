@@ -31,11 +31,6 @@ describe('ProjectMembers', () => {
 
 	const [adminUser, memberUser] = projectUsers;
 
-	beforeAll(() => {
-		HTMLDialogElement.prototype.showModal = vi.fn();
-		HTMLDialogElement.prototype.close = vi.fn();
-	});
-
 	it('renders project members', async () => {
 		const {
 			result: { current: setUser },

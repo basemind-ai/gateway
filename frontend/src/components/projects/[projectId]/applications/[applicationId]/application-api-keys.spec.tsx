@@ -17,11 +17,6 @@ describe('API Keys tests', () => {
 	const projectId = faker.string.uuid();
 	const application = ApplicationFactory.buildSync();
 
-	beforeAll(() => {
-		HTMLDialogElement.prototype.showModal = vi.fn();
-		HTMLDialogElement.prototype.close = vi.fn();
-	});
-
 	it('renders api keys component', async () => {
 		const apiKeys = await APIKeyFactory.batch(2);
 		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);

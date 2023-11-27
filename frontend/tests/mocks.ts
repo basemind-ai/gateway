@@ -3,10 +3,20 @@ import process from 'process';
 import { beforeEach } from 'vitest';
 
 // see: https://github.com/jsdom/jsdom/issues/3294
+export const showModalMock = vi.fn();
+export const showMock = vi.fn();
+export const closeMock = vi.fn();
+
 beforeAll(() => {
-	HTMLDialogElement.prototype.show = vi.fn();
-	HTMLDialogElement.prototype.showModal = vi.fn();
-	HTMLDialogElement.prototype.close = vi.fn();
+	HTMLDialogElement.prototype.show = showMock;
+	HTMLDialogElement.prototype.showModal = showModalMock;
+	HTMLDialogElement.prototype.close = closeMock;
+});
+
+beforeEach(() => {
+	showModalMock.mockReset();
+	showMock.mockReset();
+	closeMock.mockReset();
 });
 
 export const mockFetch = vi.fn().mockResolvedValue({

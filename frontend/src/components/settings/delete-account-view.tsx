@@ -1,42 +1,37 @@
 import { UserInfo } from '@firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { handleDeleteUserAccount } from '@/api';
 import { DashboardCard } from '@/components/dashboard-card';
+import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
+import { useHandleError } from '@/hooks/use-handle-error';
 import { useSetUser } from '@/stores/api-store';
+import { useShowSuccess } from '@/stores/toast-store';
 
-export function DeleteAccountView({ user }: { user: UserInfo | null }) {
+export function DeleteAccountView({ user }: { user?: UserInfo }) {
 	const t = useTranslations('userSettings');
 	const router = useRouter();
-	const dialogRef = useRef<HTMLDialogElement>(null);
 	const setUser = useSetUser();
-	const [errorMessage, setErrorMessage] = useState<string>('');
+	const handleError = useHandleError();
+	const showSuccess = useShowSuccess();
 
-	function openDeleteConfirmationPopup() {
-		dialogRef.current?.showModal();
-	}
-
-	function closeDeleteConfirmationPopup() {
-		dialogRef.current?.close();
-	}
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
 	async function deleteUserAccount() {
 		try {
-			setErrorMessage('');
 			await handleDeleteUserAccount();
-			closeDeleteConfirmationPopup();
 			setUser(null);
+			showSuccess(t('accountDeletedMessage'));
 			router.replace(Navigation.Base);
-			// 	TODO: Toast to show successful deletion
-			/* c8 ignore start */
 		} catch (e: unknown) {
-			setErrorMessage((e as Error).message);
+			handleError(e);
+		} finally {
+			setIsDeleteModalOpen(false);
 		}
-		/* c8 ignore end */
 	}
 
 	return (
@@ -52,29 +47,30 @@ export function DeleteAccountView({ user }: { user: UserInfo | null }) {
 			</div>
 			<button
 				className="btn btn-error btn-sm my-auto rounded-4xl"
-				onClick={openDeleteConfirmationPopup}
+				onClick={() => {
+					setIsDeleteModalOpen(true);
+				}}
 				data-testid="account-delete-btn"
 				disabled={!user?.email}
 			>
 				{t('deleteYourAccountButton')}
 			</button>
-			<dialog ref={dialogRef} className="modal">
-				<div className="dialog-box" data-testid="delete-account-modal">
-					<ResourceDeletionBanner
-						title={t('warning')}
-						description={t('deleteYourAccountDetails')}
-						placeholder={t('writeYourEmail')}
-						resourceName={user?.email ?? ''}
-						onCancel={closeDeleteConfirmationPopup}
-						onConfirm={() => void deleteUserAccount()}
-						isDisabled={!user?.email}
-						errorMessage={errorMessage}
-					/>
-				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button>close</button>
-				</form>
-			</dialog>
+			<Modal
+				modalOpen={isDeleteModalOpen}
+				dataTestId="delete-account-modal"
+			>
+				<ResourceDeletionBanner
+					title={t('warning')}
+					description={t('deleteYourAccountDetails')}
+					placeholder={t('writeYourEmail')}
+					resourceName={user?.email ?? ''}
+					onCancel={() => {
+						setIsDeleteModalOpen(false);
+					}}
+					onConfirm={() => void deleteUserAccount()}
+					isDisabled={!user?.email}
+				/>
+			</Modal>
 		</DashboardCard>
 	);
 }
