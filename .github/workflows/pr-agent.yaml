@@ -1,8 +1,13 @@
+name: CodiumAI PR Agent
 on:
     pull_request:
     issue_comment:
 jobs:
     pr_agent:
+        environment: development
+        env:
+            OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         runs-on: ubuntu-latest
         permissions:
             issues: write
