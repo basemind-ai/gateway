@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { memo, useState } from 'react';
-import { Gear, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, Key, People, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
@@ -41,12 +41,12 @@ export default function ProjectOverview({
 			text: t('overview'),
 		},
 		{
-			icon: <Gear className="w-3.5 h-3.5" />,
+			icon: <People className="w-3.5 h-3.5" />,
 			id: ProjectPageTabNames.MEMBERS,
 			text: t('members'),
 		},
 		{
-			icon: <Gear className="w-3.5 h-3.5" />,
+			icon: <Key className="w-3.5 h-3.5" />,
 			id: ProjectPageTabNames.PROVIDER_KEYS,
 			text: t('providerKeys'),
 		},
