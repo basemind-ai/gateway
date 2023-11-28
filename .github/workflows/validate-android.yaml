@@ -20,7 +20,8 @@ jobs:
     validate:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout
+              uses: actions/checkout@v4
             - name: Install Task
               uses: arduino/setup-task@v1
             - name: Setup Java

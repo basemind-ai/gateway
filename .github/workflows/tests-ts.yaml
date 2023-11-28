@@ -6,28 +6,18 @@ on:
         paths:
             - 'frontend/**'
             - 'gen/ts/**'
-            - 'package.json'
-            - 'pnpm-lock.yaml'
-            - 'pnpm-workspace.yaml'
             - 'services/openai-connector/**'
             - 'services/cohere-connector/**'
             - 'shared/ts/**'
-            - 'tsconfig.json'
-            - 'vitest.*'
     pull_request:
         branches:
             - main
         paths:
             - 'frontend/**'
             - 'gen/ts/**'
-            - 'package.json'
-            - 'pnpm-lock.yaml'
-            - 'pnpm-workspace.yaml'
             - 'services/openai-connector/**'
             - 'services/cohere-connector/**'
             - 'shared/ts/**'
-            - 'tsconfig.json'
-            - 'vitest.*'
 env:
     NODE_OPTIONS: '--max_old_space_size=4096'
     DEEPSOURCE_DSN: ${{secrets.DEEPSOURCE_DSN}}
