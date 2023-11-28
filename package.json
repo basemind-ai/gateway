@@ -5,7 +5,8 @@
 	"private": true,
 	"scripts": {
 		"test:coverage": "vitest run --coverage",
-		"test": "vitest"
+		"test": "vitest",
+		"build:frontend": "cd frontend && pnpm run build && cd .."
 	},
 	"devDependencies": {
 		"@bufbuild/buf": "^1.28.1",

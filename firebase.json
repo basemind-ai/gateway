@@ -4,6 +4,6 @@
 			"region": "europe-west1"
 		},
 		"ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-		"source": "."
+		"source": "frontend"
 	}
 }
