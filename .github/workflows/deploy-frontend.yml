@@ -12,6 +12,8 @@ on:
         paths:
             - 'frontend/src/**'
             - 'shared/ts/**'
+env:
+    FIREBASE_CLI_EXPERIMENTS: webframeworks
 
 jobs:
     deploy:
