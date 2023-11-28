@@ -3,9 +3,9 @@ on:
     pull_request:
         branches:
             - main
-    #        paths:
-    #            - 'frontend/src/**'
-    #            - 'shared/ts/**'
+        paths:
+            - 'frontend/src/**'
+            - 'shared/ts/**'
     push:
         branches:
             - main
