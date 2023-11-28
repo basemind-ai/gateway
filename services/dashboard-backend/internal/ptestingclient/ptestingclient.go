@@ -56,7 +56,7 @@ func Init(ctx context.Context, opts ...grpc.DialOption) {
 }
 
 // StreamPromptTest - streams a prompt test to the PromptTesting gRPC service.
-func (c *Client) StreamPromptTest(
+func (c *Client) StreamPromptTest( //nolint: revive
 	ctx context.Context,
 	projectID string,
 	applicationID string,

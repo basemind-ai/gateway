@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/api"
 	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/middleware"
+	"github.com/basemind-ai/monorepo/services/dashboard-backend/internal/ptestingclient"
 	"github.com/basemind-ai/monorepo/shared/go/config"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/logging"
@@ -43,6 +44,8 @@ func main() {
 	if connErr != nil {
 		log.Fatal().Err(connErr).Msg("failed to connect to DB")
 	}
+
+	ptestingclient.Init(ctx)
 
 	defer conn.Close()
 
