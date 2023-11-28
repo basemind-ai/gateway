@@ -14,7 +14,7 @@ export enum Navigation {
 	TOS = '/en/terms-of-service',
 	Testing = '/en/projects/:projectId/testing',
 }
-export const DISCORD_INVITE_LINK = 'https://discord.gg/Urxchkcq';
+export const DISCORD_INVITE_LINK = 'https://discord.gg/rHytT8YB';
 export const SUPPORT_EMAIL = 'support@basemind.ai';
 
 export enum PromptConfigPageTab {
