@@ -28,7 +28,9 @@ jobs:
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 21
+                  node-version: 20
+            - name: Install Firebase CLI
+              run: npm install -g firebase-tools
             - name: Install PNPM
               uses: pnpm/action-setup@v2.4.0
               id: pnpm-install
@@ -49,8 +51,6 @@ jobs:
                       ${{ runner.os }}-pnpm-store-
             - name: Install Node dependencies
               run: pnpm install -r
-            - name: build
-              run: pnpm run build:frontend
             - uses: FirebaseExtended/action-hosting-deploy@v0
               if: github.event_name != 'pull_request'
               with:
