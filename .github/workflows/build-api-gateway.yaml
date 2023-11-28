@@ -1,0 +1,17 @@
+name: 'Build (API-Gateway)'
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'gen/go/ptesting/**'
+            - 'gen/go/gateway/**'
+            - 'go.*'
+            - 'services/api-gateway/**'
+            - 'shared/go/**'
+jobs:
+    build:
+        uses: ./.github/workflows/build.yaml
+        with:
+            file_path: ./docker/Dockerfile.go-services
+            service: api-gateway

@@ -1,0 +1,15 @@
+name: 'Build (Cohere-Connector)'
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'gen/ts/cohere/**'
+            - 'services/cohere-connector/**'
+            - 'shared/ts/**'
+jobs:
+    build:
+        uses: ./.github/workflows/build.yaml
+        with:
+            file_path: ./docker/Dockerfile.ts-services
+            service: cohere-connector

@@ -1,36 +1,45 @@
 name: 'Build'
 on:
-    release:
-        types: [created]
-env:
-    GCP_OIDC_PROVIDER_NAME: github-provider
-    GCP_PROJECT_ID: basemind-ai-development
-    GCP_PROJECT_NUMBER: 78794879644
-    GCP_SERVICE_ACCOUNT_NAME: github-actions
-    GCP_WORKLOAD_IDENTITY_POOL: dev-pool
-    GCP_REGION: europe-west3
+    workflow_call:
+        inputs:
+            service:
+                required: true
+                type: string
+            file_path:
+                required: true
+                type: string
+            timeout:
+                required: false
+                type: number
+                default: 5
+            gcp_oidc_provider_name:
+                required: false
+                type: string
+                default: github-provider
+            gcp_project_id:
+                required: false
+                type: string
+                default: basemind-ai-development
+            gcp_project_number:
+                required: false
+                type: string
+                default: 78794879644
+            gcp_service_account_name:
+                required: false
+                type: string
+                default: github-actions
+            gcp_workload_identity_pool:
+                required: false
+                type: string
+                default: dev-pool
+            gcp_region:
+                required: false
+                type: string
+                default: europe-west3
 jobs:
     build:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                service:
-                    - api-gateway
-                    - dashboard-backend
-                    - openai-connector
-                    - cohere-connector
-                    - frontend
-                include:
-                    - file_path: ./docker/Dockerfile.go-services
-                      service: api-gateway
-                    - file_path: ./docker/Dockerfile.go-services
-                      service: dashboard-backend
-                    - file_path: ./docker/Dockerfile.ts-services
-                      service: openai-connector
-                    - file_path: ./docker/Dockerfile.ts-services
-                      service: cohere-connector
-                    - file_path: ./docker/Dockerfile.frontend
-                      service: frontend
+        timeout-minutes: ${{ inputs.timeout }}
         permissions:
             contents: 'read'
             id-token: 'write'
@@ -43,26 +52,27 @@ jobs:
               uses: google-github-actions/auth@v1
               with:
                   token_format: access_token
-                  workload_identity_provider: projects/${{env.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{env.GCP_WORKLOAD_IDENTITY_POOL}}/providers/${{env.GCP_OIDC_PROVIDER_NAME}}
-                  service_account: ${{env.GCP_SERVICE_ACCOUNT_NAME}}@${{env.GCP_PROJECT_ID}}.iam.gserviceaccount.com
+                  workload_identity_provider: projects/${{inputs.gcp_project_number}}/locations/global/workloadIdentityPools/${{inputs.gcp_workload_identity_pool}}/providers/${{inputs.gcp_oidc_provider_name}}
+                  service_account: ${{inputs.gcp_service_account_name}}@${{inputs.gcp_project_id}}.iam.gserviceaccount.com
             - name: Login to Artifact Registry
               uses: docker/login-action@v3
               with:
-                  registry: ${{env.GCP_REGION}}-docker.pkg.dev
+                  registry: ${{inputs.gcp_region}}-docker.pkg.dev
                   username: oauth2accesstoken
                   password: ${{ steps.auth.outputs.access_token }}
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v3
             - name: Set up Docker BuildX
               uses: docker/setup-buildx-action@v3
-            - name: Build and push
+            - name: Build and Push
               uses: docker/build-push-action@v5
               with:
                   push: true
                   context: .
-                  file: ${{matrix.file_path}}
+                  file: ${{inputs.file_path}}
                   build-args: |
-                      BUILD_TARGET=${{matrix.service}}
+                      BUILD_TARGET=${{inputs.service}}
+                      SERVICE_NAME=${{inputs.service}}
                   tags: |
-                      ${{env.GCP_REGION}}-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/basemind/${{matrix.service}}:latest
-                      ${{env.GCP_REGION}}-docker.pkg.dev/${{env.GCP_PROJECT_ID}}/basemind/${{matrix.service}}:${{github.sha}}
+                      ${{inputs.gcp_region}}-docker.pkg.dev/${{inputs.gcp_project_id}}/basemind/${{inputs.service}}:latest
+                      ${{inputs.gcp_region}}-docker.pkg.dev/${{inputs.gcp_project_id}}/basemind/${{inputs.service}}:${{github.sha}}

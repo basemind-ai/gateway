@@ -1,0 +1,15 @@
+name: 'Build (OpenAI-Connector)'
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'gen/ts/openai/**'
+            - 'services/openai-connector/**'
+            - 'shared/ts/**'
+jobs:
+    build:
+        uses: ./.github/workflows/build.yaml
+        with:
+            file_path: ./docker/Dockerfile.ts-services
+            service: openai-connector

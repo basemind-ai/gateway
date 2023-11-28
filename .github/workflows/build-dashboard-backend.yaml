@@ -1,0 +1,16 @@
+name: 'Build (Dashboard-Backend)'
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'gen/go/ptesting/**'
+            - 'go.*'
+            - 'services/dashboard-backend/**'
+            - 'shared/go/**'
+jobs:
+    build:
+        uses: ./.github/workflows/build.yaml
+        with:
+            file_path: ./docker/Dockerfile.go-services
+            service: dashboard-backend
