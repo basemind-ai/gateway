@@ -32,8 +32,8 @@ describe('ApplicationPromptConfigs', () => {
 		await screen.findByTestId('application-prompt-config-container');
 
 		for (const promptConfig of promptConfigs) {
-			const nameElement = screen.getAllByText(promptConfig.name);
-			expect(nameElement[0]).toBeInTheDocument();
+			const [nameElement] = screen.getAllByText(promptConfig.name);
+			expect(nameElement).toBeInTheDocument();
 		}
 	});
 
