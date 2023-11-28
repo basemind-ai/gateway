@@ -100,7 +100,7 @@ export default function ProjectOverview({
 			className="flex flex-col min-h-screen w-full bg-base-100"
 			data-testid="project-page"
 		>
-			<Navbar activeProject={project} />
+			<Navbar project={project} />
 			<div className="w-full">
 				<TabNavigation<ProjectPageTabNames>
 					tabs={tabs}

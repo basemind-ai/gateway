@@ -202,7 +202,7 @@ export default function PromptConfigCreateWizard({
 				</div>
 			) : (
 				<>
-					<Navbar activeProject={project} application={application} />
+					<Navbar project={project} application={application} />
 					<div className="bg-base-300 transform transition-transform duration-300 ease-in-out rounded-data-card">
 						{wizardStageComponentMap[store.wizardStage]}
 						{store.wizardStage < 2 && (

@@ -17,14 +17,14 @@ import {
 describe('Navbar tests', () => {
 	it('should show logo', () => {
 		const project = ProjectFactory.buildSync();
-		render(<Navbar activeProject={project} />);
+		render(<Navbar project={project} />);
 		const logo = screen.getByTestId('logo-image');
 		expect(logo).toBeInTheDocument();
 	});
 
 	it('should render project breadcrumbs', () => {
 		const activeProject = ProjectFactory.buildSync();
-		render(<Navbar activeProject={activeProject} />);
+		render(<Navbar project={activeProject} />);
 		const project = screen.getByTestId('project-breadcrumbs');
 		expect(project).toBeInTheDocument();
 		const application = screen.queryByTestId('application-breadcrumbs');
@@ -34,9 +34,7 @@ describe('Navbar tests', () => {
 	it('should render application breadcrumbs', () => {
 		const activeProject = ProjectFactory.buildSync();
 		const application = ApplicationFactory.buildSync();
-		render(
-			<Navbar activeProject={activeProject} application={application} />,
-		);
+		render(<Navbar project={activeProject} application={application} />);
 		const project = screen.getByTestId('project-breadcrumbs');
 		expect(project).toBeInTheDocument();
 		const app = screen.getByTestId('application-breadcrumbs');
@@ -51,7 +49,7 @@ describe('Navbar tests', () => {
 		const ActiveConfiguration = OpenAIPromptConfigFactory.buildSync();
 		render(
 			<Navbar
-				activeProject={activeProject}
+				project={activeProject}
 				application={ActiveApplication}
 				config={ActiveConfiguration}
 			/>,
@@ -70,7 +68,7 @@ describe('Navbar tests', () => {
 		const ActiveConfiguration = OpenAIPromptConfigFactory.buildSync();
 		render(
 			<Navbar
-				activeProject={activeProject}
+				project={activeProject}
 				application={ActiveApplication}
 				config={ActiveConfiguration}
 			/>,
@@ -94,7 +92,7 @@ describe('Navbar tests', () => {
 
 	it('should render support and settings menu link', () => {
 		const activeProject = ProjectFactory.buildSync();
-		render(<Navbar activeProject={activeProject} />);
+		render(<Navbar project={activeProject} />);
 		const support = screen.getByTestId('support-link');
 		expect(support).toBeInTheDocument();
 		expect(support).toHaveAttribute('href', Navigation.Support);
@@ -107,7 +105,7 @@ describe('Navbar tests', () => {
 		const { result } = renderHook(() => useSetProjects());
 		const projects = ProjectFactory.batchSync(3);
 		result.current(projects);
-		render(<Navbar activeProject={projects[0]} />);
+		render(<Navbar project={projects[0]} />);
 		const dropdown = screen.getByTestId('selected-project');
 		expect(dropdown).toBeInTheDocument();
 		fireEvent.click(dropdown);
@@ -134,7 +132,7 @@ describe('Navbar tests', () => {
 		const projects = ProjectFactory.batchSync(3);
 		useSetProjectsHook.current(projects);
 		setSelectedProjectHook.current(projects[0].id);
-		render(<Navbar activeProject={projects[0]} />);
+		render(<Navbar project={projects[0]} />);
 		const dropdown = screen.getByTestId('selected-project');
 		fireEvent.click(dropdown);
 		fireEvent.click(
@@ -147,7 +145,7 @@ describe('Navbar tests', () => {
 
 	it('picking create new project should navigate to create project screen', async () => {
 		const projects = ProjectFactory.batchSync(3);
-		render(<Navbar activeProject={projects[0]} />);
+		render(<Navbar project={projects[0]} />);
 		const dropdown = screen.getByTestId('selected-project');
 		fireEvent.click(dropdown);
 		const createNewProjectLink = screen.getByTestId(

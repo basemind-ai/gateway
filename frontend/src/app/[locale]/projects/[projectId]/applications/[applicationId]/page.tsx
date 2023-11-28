@@ -94,7 +94,7 @@ export default function Application({
 			data-testid="application-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
-			<Navbar activeProject={project} application={application} />
+			<Navbar project={project} application={application} />
 			<div className="w-full">
 				<TabNavigation<ApplicationPageTabNames>
 					tabs={tabs}

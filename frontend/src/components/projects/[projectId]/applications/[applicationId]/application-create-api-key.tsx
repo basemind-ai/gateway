@@ -75,7 +75,7 @@ export function CreateApplicationAPIKeyModal({
 					{t('createApiKeyDescription')}
 				</p>
 				{!apiKeyHash && (
-					<div className=" form-control card-divider self-start w-full">
+					<div className="form-control card-divider self-start w-full">
 						<label className="label">
 							<span className="label-text">{t('name')}</span>
 						</label>

@@ -11,15 +11,15 @@ import { Application, Project, PromptConfig } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
 export function Navbar({
-	activeProject,
+	project,
 	application,
 	config,
 	headline,
 }: {
-	activeProject?: Project;
 	application?: Application;
 	config?: PromptConfig<any>;
 	headline?: string;
+	project?: Project;
 }) {
 	const t = useTranslations('navbar');
 	const projects = useProjects();
@@ -53,7 +53,7 @@ export function Navbar({
 						</h1>
 					</>
 				)}
-				{activeProject && (
+				{project && (
 					<div className="text-md font-semibold breadcrumbs">
 						<ul>
 							<li>
@@ -61,12 +61,12 @@ export function Navbar({
 									href={setRouteParams(
 										Navigation.ProjectDetail,
 										{
-											projectId: activeProject.id,
+											projectId: project.id,
 										},
 									)}
 									data-testid="project-breadcrumbs"
 								>
-									{activeProject.name}
+									{project.name}
 								</Link>
 							</li>
 							{application && (
@@ -76,7 +76,7 @@ export function Navbar({
 											Navigation.ApplicationDetail,
 											{
 												applicationId: application.id,
-												projectId: activeProject.id,
+												projectId: project.id,
 											},
 										)}
 										data-testid="application-breadcrumbs"
@@ -92,7 +92,7 @@ export function Navbar({
 											Navigation.PromptConfigDetail,
 											{
 												applicationId: application?.id,
-												projectId: activeProject.id,
+												projectId: project.id,
 												promptConfigId: config.id,
 											},
 										)}
@@ -125,34 +125,39 @@ export function Navbar({
 							{t('support')}
 						</Link>
 					</li>
-					{activeProject && (
+					{project && (
 						<li>
 							<details className="dropdown-bottom dropdown-end">
 								<summary data-testid="selected-project">
-									{activeProject.name}
+									{project.name}
 								</summary>
 								<ul className="p-2 bg-base-300  mt-3 z-[1] shadow menu menu-sm dropdown-content rounded-box w-52">
-									{projects.map((project) => (
+									{projects.map((nonActiveproject) => (
 										<li
-											key={project.id}
+											key={nonActiveproject.id}
 											data-testid="project-select-option"
 										>
 											<Link
-												href={`/en/projects/${project.id}`}
+												href={setRouteParams(
+													Navigation.ProjectDetail,
+													{
+														projectId: project.id,
+													},
+												)}
 												onClick={() => {
 													setSelectedProject(
 														project.id,
 													);
 												}}
 												className={
-													project.id ===
-													activeProject.id
+													nonActiveproject.id ===
+													project.id
 														? 'selected'
 														: ''
 												}
-												data-testid={`project-select-link-${project.id}`}
+												data-testid={`project-select-link-${nonActiveproject.id}`}
 											>
-												{project.name}
+												{nonActiveproject.name}
 											</Link>
 										</li>
 									))}
@@ -168,7 +173,7 @@ export function Navbar({
 							</details>
 						</li>
 					)}
-					{!activeProject && headline && <LogoutButton />}
+					{!project && headline && <LogoutButton />}
 				</ul>
 			</div>
 		</div>

@@ -136,7 +136,7 @@ export default function PromptConfiguration({
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
 			<Navbar
-				activeProject={project}
+				project={project}
 				application={application}
 				config={promptConfig}
 			/>
