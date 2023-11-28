@@ -10,12 +10,37 @@ jobs:
     validate:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 21
+            - name: Install PNPM
+              uses: pnpm/action-setup@v2.4.0
+              id: pnpm-install
+              with:
+                  version: 8
+                  run_install: false
+            - name: Setup PNPM Cache
+              id: pnpm-cache
+              shell: bash
+              run: |
+                  echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+            - name: Load Cached Node Dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+            - name: Install Node dependencies
+              run: pnpm install -r
             - name: Setup Golang
               uses: actions/setup-go@v4
               with:
                   go-version: '1.21'
-            - name: Load cached Golang dependencies
+            - name: Load Cached Golang Dependencies
               id: cached-go-dependencies
               uses: actions/cache@v3
               with:
@@ -24,36 +49,15 @@ jobs:
                       ~/go/pkg/mod
                   key: go-${{ inputs.go_version }}-v1.0-${{ hashFiles('**/go.sum') }}
             - name: Install Golang dependencies
-              if: steps.cached-go-dependencies.outputs.cache-hit != 'true'
               shell: bash
               run: go get -v -t ./...
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 21
-            - name: Install pnpm
-              uses: pnpm/action-setup@v2.4.0
-              id: pnpm-install
-              with:
-                  version: 8
-            - name: Setup pnpm cache
-              id: pnpm-cache
-              run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v3
-              name: Load cached Node dependencies
-              with:
-                  path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-pnpm-store-
-            - name: Install Node dependencies
-              run: pnpm install -r
             - name: Setup Python
               uses: actions/setup-python@v4
               with:
                   python-version: '3.11'
             - name: Install Pre-Commit
               run: python -m pip install pre-commit && pre-commit install
-            - name: Load cached Pre-Commit Dependencies
+            - name: Load Cached Pre-Commit Dependencies
               id: cached-pre-commit-dependencies
               uses: actions/cache@v3
               with:

@@ -3,6 +3,12 @@ on:
     push:
         branches:
             - main
+        paths:
+            - 'gen/go/**'
+            - 'go.*'
+            - 'services/api-gateway/**'
+            - 'services/dashboard-backend/**'
+            - 'shared/go/**'
     pull_request:
         branches:
             - main
@@ -29,8 +35,6 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-              with:
-                  ref: ${{ github.event.pull_request.head.sha }}
             - name: Setup Golang
               uses: actions/setup-go@v4
               with:

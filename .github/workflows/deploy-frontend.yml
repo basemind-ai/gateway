@@ -1,0 +1,60 @@
+name: Deploy (Frontend)
+on:
+    pull_request:
+        branches:
+            - main
+    #        paths:
+    #            - 'frontend/src/**'
+    #            - 'shared/ts/**'
+    push:
+        branches:
+            - main
+        paths:
+            - 'frontend/src/**'
+            - 'shared/ts/**'
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 21
+            - name: Install PNPM
+              uses: pnpm/action-setup@v2.4.0
+              id: pnpm-install
+              with:
+                  version: 8
+                  run_install: false
+            - name: Setup PNPM Cache
+              id: pnpm-cache
+              shell: bash
+              run: |
+                  echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+            - name: Load Cached Dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+            - name: Install Node dependencies
+              run: pnpm install -r
+            - name: build
+              run: pnpm run build:frontend
+            - uses: FirebaseExtended/action-hosting-deploy@v0
+              if: github.event_name != 'pull_request'
+              with:
+                  repoToken: '${{ secrets.GITHUB_TOKEN }}'
+                  firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASEMIND_AI_DEVELOPMENT }}'
+                  channelId: live
+                  projectId: basemind-ai-development
+            - uses: FirebaseExtended/action-hosting-deploy@v0
+              if: github.event_name == 'pull_request'
+              with:
+                  repoToken: '${{ secrets.GITHUB_TOKEN }}'
+                  firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASEMIND_AI_DEVELOPMENT }}'
+                  projectId: basemind-ai-development
