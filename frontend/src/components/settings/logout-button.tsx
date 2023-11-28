@@ -5,7 +5,8 @@ import { useSetUser } from '@/stores/api-store';
 import { getFirebaseAuth } from '@/utils/firebase';
 
 export function LogoutButton() {
-	const t = useTranslations('common');
+	const t = useTranslations('navbar');
+
 	const router = useRouter();
 	const setUser = useSetUser();
 
@@ -22,7 +23,7 @@ export function LogoutButton() {
 				void handleLogout();
 			}}
 			data-testid="dashboard-logout-btn"
-			className="btn btn-sm btn-outline btn-accent"
+			className="link-accent px-2"
 		>
 			{t('logout')}
 		</button>

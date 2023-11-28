@@ -32,14 +32,14 @@ export function TabNavigation<T = string>({
 	}, []);
 
 	return (
-		<nav className="tabs">
+		<nav className="tabs tabs-bordered">
 			{tabs.map((tab) => (
 				<button
 					data-testid="tab-navigation-btn"
 					key={tab.text}
-					className={`tab tab-bordered font-medium text-neutral-content border-neutral flex flex-row gap-2 items-center h-full py-3 px-4 ${
+					className={`tab tabs-bordered text-sm text-neutral-content border-neutral flex flex-row gap-2 items-center h-full px-4 ${
 						tab.id === selectedTab
-							? 'tab-active text-secondary border-secondary'
+							? 'tab-active text-secondary border-secondary font-medium'
 							: ''
 					}`}
 					onClick={() => {
@@ -51,7 +51,7 @@ export function TabNavigation<T = string>({
 				</button>
 			))}
 			{trailingLine && (
-				<div className="tab tab-bordered flex-1 cursor-default min-w-0 border-neutral" />
+				<div className="tab tabs-bordered flex-1 cursor-default min-w-0 border-neutral" />
 			)}
 		</nav>
 	);

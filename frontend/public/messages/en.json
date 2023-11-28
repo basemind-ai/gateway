@@ -209,6 +209,12 @@
 		"warning": "Warning",
 		"warningMessage": "Your about to remove a user access from this project"
 	},
+	"navbar": {
+		"createNewProject": "Create New Project",
+		"logout": "Logout",
+		"settings": "User Settings",
+		"support": "Support"
+	},
 	"navrail": {
 		"abTesting": "A/B Testing",
 		"application": "Applications",

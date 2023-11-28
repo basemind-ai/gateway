@@ -98,7 +98,7 @@ function FormActions({
 					</button>
 				)}
 				<button
-					className="btn-sm rounded-btn btn-primary h-9"
+					className="btn btn-sm rounded-btn btn-primary h-9"
 					disabled={!allowSubmit}
 					onClick={handleSubmit}
 					data-testid="create-project-submit-button"

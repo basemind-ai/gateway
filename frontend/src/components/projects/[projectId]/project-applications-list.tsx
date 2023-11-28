@@ -56,7 +56,7 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 	);
 
 	return (
-		<div data-testid="project-application-list-container" className="mt-9">
+		<div data-testid="project-application-list-container">
 			<h2 className="card-header">{t('applications')}</h2>
 			<div className="rounded-data-card flex flex-col">
 				{applications?.length ? (

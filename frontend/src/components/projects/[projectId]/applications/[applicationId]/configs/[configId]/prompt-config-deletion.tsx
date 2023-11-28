@@ -57,7 +57,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 	}
 
 	return (
-		<div data-testid="prompt-deletion-container" className="mt-8">
+		<div data-testid="prompt-deletion-container" className="card-divider">
 			<h2 className="card-header">{t('modelConfigDeletion')}</h2>
 			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>

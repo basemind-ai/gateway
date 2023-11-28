@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { memo, useState } from 'react';
-import { Gear, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, Key, People, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
@@ -16,7 +16,7 @@ import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ProjectPageTabNames } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
-import { useProject, useProjects } from '@/stores/api-store';
+import { useProject } from '@/stores/api-store';
 
 export default function ProjectOverview({
 	params: { projectId },
@@ -33,7 +33,6 @@ export default function ProjectOverview({
 	);
 
 	const project = useProject(projectId);
-	const projects = useProjects();
 
 	const tabs: TabData<ProjectPageTabNames>[] = [
 		{
@@ -42,12 +41,12 @@ export default function ProjectOverview({
 			text: t('overview'),
 		},
 		{
-			icon: <Gear className="w-3.5 h-3.5" />,
+			icon: <People className="w-3.5 h-3.5" />,
 			id: ProjectPageTabNames.MEMBERS,
 			text: t('members'),
 		},
 		{
-			icon: <Gear className="w-3.5 h-3.5" />,
+			icon: <Key className="w-3.5 h-3.5" />,
 			id: ProjectPageTabNames.PROVIDER_KEYS,
 			text: t('providerKeys'),
 		},
@@ -66,13 +65,15 @@ export default function ProjectOverview({
 		[ProjectPageTabNames.OVERVIEW]: memo(() => (
 			<div data-testid="project-overview-tab">
 				<ProjectAnalytics project={project} />
-				<ProjectApplicationsList project={project} />
+				<div className="card-divider">
+					<ProjectApplicationsList project={project} />
+				</div>
 			</div>
 		)),
 		[ProjectPageTabNames.MEMBERS]: memo(() => (
 			<div data-testid="project-members-tab">
 				<InviteProjectMembers project={project} />
-				<div className="mt-10">
+				<div className="card-divider">
 					<ProjectMembers project={project} />
 				</div>
 			</div>
@@ -85,7 +86,7 @@ export default function ProjectOverview({
 		[ProjectPageTabNames.SETTINGS]: memo(() => (
 			<div data-testid="project-settings-tab">
 				<ProjectGeneralSettings project={project} />
-				<div className="mt-10">
+				<div className="card-divider">
 					<ProjectDeletion project={project} />
 				</div>
 			</div>
@@ -95,20 +96,12 @@ export default function ProjectOverview({
 	const TabComponent = tabComponents[selectedTab];
 
 	return (
-		<div data-testid="project-page" className="my-8 mx-32">
-			<Navbar
-				project={project}
-				headerText={`${t('project')} / ${project.name}`}
-				showSelect={projects.length > 1}
-			/>
-			{project.description && (
-				<div className="pl-20">
-					<span className="text-sm line-clamp-1 hover:line-clamp-none">
-						{project.description}
-					</span>
-				</div>
-			)}
-			<div className="mt-3.5 w-full mb-9">
+		<div
+			className="flex flex-col min-h-screen w-full bg-base-100"
+			data-testid="project-page"
+		>
+			<Navbar project={project} />
+			<div className="w-full">
 				<TabNavigation<ProjectPageTabNames>
 					tabs={tabs}
 					selectedTab={selectedTab}
@@ -116,7 +109,9 @@ export default function ProjectOverview({
 					trailingLine={true}
 				/>
 			</div>
-			<TabComponent />
+			<div className="mx-auto max-w-screen-lg card-divider container">
+				<TabComponent />
+			</div>
 		</div>
 	);
 }

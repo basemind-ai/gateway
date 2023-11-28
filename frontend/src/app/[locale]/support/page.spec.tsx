@@ -48,7 +48,7 @@ describe('Support Page Tests', () => {
 			setPersistence: vi.fn(),
 		}));
 		render(<Support />);
-		const page = screen.getByText(t('headline'));
+		const [page] = screen.getAllByText(t('headline'));
 		expect(page).toBeInTheDocument();
 	});
 });

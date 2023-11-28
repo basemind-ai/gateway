@@ -13,7 +13,7 @@ export function UserDetails({ user }: { user: UserInfo | null }) {
 				<img
 					src={user.photoURL}
 					alt={t('profilePicture')}
-					className="rounded-full w-48 h-14"
+					className="rounded-full w-14 h-14"
 				/>
 			) : (
 				<div className="rounded-full w-14 h-14 bg-neutral animate-pulse" />
