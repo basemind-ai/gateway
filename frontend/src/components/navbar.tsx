@@ -141,12 +141,13 @@ export function Navbar({
 												href={setRouteParams(
 													Navigation.ProjectDetail,
 													{
-														projectId: project.id,
+														projectId:
+															nonActiveproject.id,
 													},
 												)}
 												onClick={() => {
 													setSelectedProject(
-														project.id,
+														nonActiveproject.id,
 													);
 												}}
 												className={

@@ -1,10 +1,15 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react';
 import {
 	ApplicationFactory,
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
 } from 'tests/factories';
-import { render, renderHook } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 
 import { Navbar } from '@/components/navbar';
 import { Navigation } from '@/constants';
