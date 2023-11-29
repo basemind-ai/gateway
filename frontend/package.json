@@ -34,26 +34,15 @@
 		"zustand": "^4.4.7"
 	},
 	"devDependencies": {
-		"@svgr/webpack": "^8.1.0",
-		"@tailwindcss/forms": "^0.5.7",
-		"@tailwindcss/typography": "^0.5.10",
 		"@testing-library/dom": "^9.3.3",
 		"@testing-library/jest-dom": "^6.1.4",
 		"@testing-library/react": "^14.1.2",
-		"@types/react": "18.2.39",
-		"@types/react-dom": "18.2.17",
 		"@types/react-syntax-highlighter": "^15.5.10",
-		"@types/testing-library__jest-dom": "^6.0.0",
 		"@types/validator": "^13.11.7",
 		"@vitejs/plugin-react": "^4.2.0",
-		"autoprefixer": "10.4.16",
 		"daisyui": "^4.4.14",
 		"jsdom": "^23.0.0",
 		"mock-socket": "^9.3.1",
-		"postcss": "8.4.31",
-		"sass": "^1.69.5",
-		"tailwindcss": "3.3.5",
-		"tailwindcss-elevation": "^2.0.0",
 		"vite-plugin-magical-svg": "^1.0.3"
 	}
 }

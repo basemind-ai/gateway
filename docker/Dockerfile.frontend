@@ -4,7 +4,7 @@ RUN npm i -g pnpm
 FROM base AS install
 WORKDIR /app/
 COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
-COPY frontend/*.json frontend/*.js frontend/*.d.ts frontend/*.yaml ./frontend/
+COPY frontend/*.* ./frontend/
 RUN pnpm install -r --ignore-scripts \
     && pnpm add -D @next/swc-linux-arm64-gnu @next/swc-linux-arm64-musl -w
 
@@ -18,7 +18,6 @@ RUN pnpm run build
 
 FROM base AS app
 WORKDIR /app/
-EXPOSE 3000
 ENV PORT 3000
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED 1
