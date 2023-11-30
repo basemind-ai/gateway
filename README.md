@@ -12,6 +12,7 @@ root                        # repository root, holding all tooling configuration
 ├─── .secrets               # secret values that are gitignored
 ├─── assets                 # images used for branding
 ├─── cloud-functions        # GCP cloud functions
+├─── docs                   # documentation static site
 ├─── docker                 # docker files
 ├─── frontend               # frontend web-app
 ├─── gen                    # code generated from the protobuf schemas under `proto`
@@ -20,6 +21,7 @@ root                        # repository root, holding all tooling configuration
 ├─── proto                  # protobuf schemas
 │    ├─── gateway           # api-gateway protobuf schema
 │    ├─── openai            # openai-connector protobuf schema
+│    ├─── cohere            # cohere-connector protobuf schema
 │    └─── ptesting          # api-gateway prompt testing protobuf schema
 ├─── sdks                   # client libraries that connect to our API gateway
 │    └─── android           # android apps
@@ -28,7 +30,8 @@ root                        # repository root, holding all tooling configuration
 ├─── services               # microservices
 │   ├─── api-gateway        # api-gateway
 │   ├─── dashboard-backend  # backend for the frontend web-app
-│   └─── openai-connector   # openai-connector
+│   ├─── cohere-connector   # cohere connector
+│   └─── openai-connector   # openai connector
 ├─── shared                 # shared code
 │   ├─── go                 # golang shared packages
 │   └─── ts                 # typescript shared packages

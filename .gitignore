@@ -43,3 +43,4 @@ dist/
 local.properties
 node_modules/
 .firebase/
+.next/

@@ -36,7 +36,7 @@ export function Navbar({
 					priority
 					width={32}
 					height={32}
-					src="/images/pinecone-transparent-bg.svg"
+					src="/images/basemind-logo.svg"
 					alt="Logo"
 					data-testid="logo-image"
 				/>
