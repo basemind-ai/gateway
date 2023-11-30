@@ -1,6 +1,6 @@
 [versions]
 activityCompose = "1.8.0"
-androidGradlePlugin = "8.1.2"
+androidGradlePlugin = "8.1.4"
 androidJunitJupiterPlugin = "1.9.3.0"
 annotations = "6.0.53"
 compose = "1.6.0-alpha07"
