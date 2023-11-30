@@ -6,9 +6,10 @@ const tsWebRules = {
 };
 
 const project = [
-	'./tsconfig.json',
+	'./docs/tsconfig.json',
 	'./frontend/tsconfig.json',
 	'./services/*/tsconfig.json',
+	'./tsconfig.json',
 ];
 
 const settings = {
@@ -40,10 +41,10 @@ module.exports = {
 			rules,
 		},
 		{
-			files: ['frontend/**/*.{ts,tsx}'],
+			files: ['{frontend,docs}/**/*.{ts,tsx}'],
 			excludedFiles: [
-				'frontend/**/tests/**/*.{ts,tsx}',
-				'frontend/**/*.spec.{ts,tsx}',
+				'{frontend,docs}/**/tests/**/*.{ts,tsx}',
+				'{frontend,docs}/**/*.spec.{ts,tsx}',
 			],
 			extends: [
 				'@tool-belt/eslint-config/react',
@@ -53,8 +54,8 @@ module.exports = {
 		},
 		{
 			files: [
-				'frontend/tests/**/*.{ts,tsx}',
-				'frontend/**/*.spec.{ts,tsx}',
+				'{frontend,docs}/tests/**/*.{ts,tsx}',
+				'{frontend,docs}/**/*.spec.{ts,tsx}',
 			],
 			extends: [
 				'@tool-belt/eslint-config/react',
