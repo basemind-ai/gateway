@@ -1,5 +1,6 @@
 package com.ai.basemind.client.testapp.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -41,10 +42,10 @@ fun ConfigScreen(navController: NavController) {
                     onValueChange = { newText ->
                         apiKey = newText
                         ConfigModel.apiKey = newText.text
-                        println(ConfigModel.apiKey)
+                        Log.d("TestApp", "API Key entered")
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(text = "Enter the API Key") },
+                    placeholder = { Text(text = "Enter the Application API Key") },
                 )
                 Spacer(Modifier.height(16.dp))
 

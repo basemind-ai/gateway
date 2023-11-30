@@ -217,14 +217,6 @@ class BaseMindClientTest {
         )
     }
 
-    @Test
-    fun usesCustomAddressWhenEnvVariablesAreSpecified() {
-        environment.set(ENV_API_GATEWAY_ADDRESS, "0.0.0.0")
-        environment.set(ENV_API_GATEWAY_PORT, "5000")
-        BaseMindClient.getInstance(this.toString(), options = Options(debug = true))
-        assertTrue(systemOutStream.toString().contains("Connecting to 0.0.0.0:5000"))
-    }
-
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
     fun requestPromptMethodReturnsExpectedResponse(isDebug: Boolean) =

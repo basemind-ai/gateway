@@ -15,12 +15,9 @@ import kotlinx.coroutines.flow.catch
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
-internal const val DEFAULT_API_GATEWAY_ADDRESS = "localhost"
-internal const val DEFAULT_API_GATEWAY_HTTPS = false
-internal const val DEFAULT_API_GATEWAY_PORT = 4000
+internal const val DEFAULT_API_GATEWAY_ADDRESS = "development-gateway.basemind.ai"
+internal const val DEFAULT_API_GATEWAY_PORT = 443
 internal const val DEFAULT_TERMINATION_DELAY_S = 5L
-internal const val ENV_API_GATEWAY_ADDRESS = "BASEMIND_API_GATEWAY_ADDRESS"
-internal const val ENV_API_GATEWAY_PORT = "BASEMIND_API_GATEWAY_PORT"
 internal const val LOGGING_TAG = "BaseMindClient"
 
 @DslMarker
@@ -46,6 +43,14 @@ data class Options(
      * A logging handler function. Defaults to android's Log.d.
      */
     val debugLogger: (String, String) -> Unit = { tag, message -> Log.d(tag, message) },
+    /**
+     * The address of the basemind gateway to connect to.
+     */
+    val serverAddress: String = DEFAULT_API_GATEWAY_ADDRESS,
+    /**
+     * The server port to use.
+     */
+    val serverPort: Int = DEFAULT_API_GATEWAY_PORT,
 )
 
 /**
@@ -67,24 +72,19 @@ class BaseMindClient private constructor(
 
     private val channel =
         run {
-            val serverAddress = System.getenv(ENV_API_GATEWAY_ADDRESS) ?: DEFAULT_API_GATEWAY_ADDRESS
-            val serverPort = System.getenv(ENV_API_GATEWAY_PORT)?.toInt() ?: DEFAULT_API_GATEWAY_PORT
-
             if (options.debug) {
-                options.debugLogger(LOGGING_TAG, "Connecting to $serverAddress:$serverPort")
+                val message = "Connecting to ${options.serverAddress}:${options.serverPort}"
+                options.debugLogger(LOGGING_TAG, message)
             }
 
             /**
              * creates a gRPC channel builder instance, which allows us to set options
              */
-            val builder = ManagedChannelBuilder.forAddress(serverAddress, serverPort)
-
-            // TODO: switch to using HTTPS
-            // builder.useTransportSecurity()
-
-            builder.usePlaintext()
-
-            builder.executor(Dispatchers.IO.asExecutor()).build()
+            ManagedChannelBuilder
+                .forAddress(options.serverAddress, options.serverPort)
+                .useTransportSecurity() // we use TLS
+                .executor(Dispatchers.IO.asExecutor()) // we use the IO dispatcher for gRPC
+                .build()
         }
 
     internal var grpcStub = APIGatewayServiceGrpcKt.APIGatewayServiceCoroutineStub(channel)
@@ -105,6 +105,9 @@ class BaseMindClient private constructor(
             promptConfigId: String? = null,
             options: Options = Options(),
         ): BaseMindClient {
+            options.debugLogger(LOGGING_TAG, "creating client instance")
+            options.debugLogger(LOGGING_TAG, "apiToken: $apiToken")
+
             val key = options.hashCode() + apiToken.hashCode() + promptConfigId.hashCode()
 
             if (!instances.containsKey(key)) {
@@ -140,8 +143,9 @@ class BaseMindClient private constructor(
     private fun createMetadata(): Metadata {
         val metadata = Metadata()
 
+        options.debugLogger(LOGGING_TAG, "creating metadata")
         metadata.put(Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer $apiToken")
-
+        options.debugLogger(LOGGING_TAG, "metadata created: $apiToken")
         return metadata
     }
 

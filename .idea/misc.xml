@@ -8,7 +8,7 @@
 		version="2"
 		languageLevel="JDK_17"
 		default="true"
-		project-jdk-name="temurin-17"
+		project-jdk-name="jbr-17"
 		project-jdk-type="JavaSDK"
 	/>
 </project>

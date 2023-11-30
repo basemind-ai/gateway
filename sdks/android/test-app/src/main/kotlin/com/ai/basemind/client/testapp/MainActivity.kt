@@ -48,8 +48,7 @@ fun App(vm: MainViewModel) {
         }
         composable(route = "chat") {
             ChatScreen(
-                model =
-                ChatUiModel(
+                model = ChatUiModel(
                     messages = conversation.value,
                     addressee = ChatUiModel.Author.bot,
                 ),

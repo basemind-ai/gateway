@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     val conversation: StateFlow<List<ChatUiModel.Message>>
         get() = _conversation
+
     private val _conversation =
         MutableStateFlow(
             listOf(ChatUiModel.Message.initConv),

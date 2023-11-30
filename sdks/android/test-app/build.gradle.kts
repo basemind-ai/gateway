@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ai.basemind.client.testapp"
-        minSdk = 25
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
