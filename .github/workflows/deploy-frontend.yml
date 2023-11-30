@@ -55,25 +55,25 @@ jobs:
             - name: Create .env File
               shell: bash
               run: |
-                  echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" >> .env
-                  echo "NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}" >> .env
-                  echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" >> .env
-                  echo "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}" >> .env
-                  echo "NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID }}" >> .env
-                  echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" >> .env
-                  echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" >> .env
-                  echo "NEXT_PUBLIC_SEGMENT_WRITE_KEY=${{ secrets.NEXT_PUBLIC_SEGMENT_WRITE_KEY }}" >> .env
-                  echo "NEXT_PUBLIC_BACKEND_BASE_URL=${{ env.DEVELOPMENT_DASHBOARD_BACKEND_URL }}" >> .env
+                  echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_SEGMENT_WRITE_KEY=${{ secrets.NEXT_PUBLIC_SEGMENT_WRITE_KEY }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_BACKEND_BASE_URL=${{ env.DEVELOPMENT_DASHBOARD_BACKEND_URL }}" >> frontend/.env
             - uses: FirebaseExtended/action-hosting-deploy@v0
               if: github.event_name != 'pull_request'
               with:
-                  repoToken: '${{ secrets.GITHUB_TOKEN }}'
-                  firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASEMIND_AI_DEVELOPMENT }}'
+                  repoToken: ${{ secrets.GITHUB_TOKEN }}
+                  firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASEMIND_AI_DEVELOPMENT }}
                   channelId: live
                   projectId: basemind-ai-development
             - uses: FirebaseExtended/action-hosting-deploy@v0
               if: github.event_name == 'pull_request'
               with:
-                  repoToken: '${{ secrets.GITHUB_TOKEN }}'
-                  firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASEMIND_AI_DEVELOPMENT }}'
+                  repoToken: ${{ secrets.GITHUB_TOKEN }}
+                  firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASEMIND_AI_DEVELOPMENT }}
                   projectId: basemind-ai-development

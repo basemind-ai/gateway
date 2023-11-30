@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/BaseMind.AI.iml" filepath="$PROJECT_DIR$/.idea/modules/BaseMind.AI.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdks/android/sdk/BaseMind.AI.sdks.android.sdk.main.iml" />
     </modules>
   </component>
 </project>

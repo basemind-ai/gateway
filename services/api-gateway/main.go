@@ -36,7 +36,6 @@ func main() {
 
 	logging.Configure(cfg.Environment != "production")
 
-	// FIXME: this is a temporary work-around for testing
 	connectors.Init(ctx)
 
 	rediscache.New(cfg.RedisURL)

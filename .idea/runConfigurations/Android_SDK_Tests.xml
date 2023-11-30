@@ -15,16 +15,18 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="sdks:android:sdk:test" />
+          <option value=":sdks:android:sdk:testDebugUnitTest" />
+          <option value="--tests" />
+          <option value="&quot;ai.basemind.client.BaseMindClientTest&quot;" />
         </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
-    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess
 		>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
-    <RunAsTest>false</RunAsTest>
+    <RunAsTest>true</RunAsTest>
     <method v="2" />
   </configuration>
 </component>
