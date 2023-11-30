@@ -2,44 +2,24 @@ name: 'Build'
 on:
     workflow_call:
         inputs:
+            timeout:
+                required: false
+                type: number
+                default: 5
             service:
                 required: true
                 type: string
             file_path:
                 required: true
                 type: string
-            timeout:
-                required: false
-                type: number
-                default: 5
-            gcp_oidc_provider_name:
-                required: false
+            environment:
+                required: true
                 type: string
-                default: github-provider
-            gcp_project_id:
-                required: false
-                type: string
-                default: basemind-ai-development
-            gcp_project_number:
-                required: false
-                type: string
-                default: 78794879644
-            gcp_service_account_name:
-                required: false
-                type: string
-                default: github-actions
-            gcp_workload_identity_pool:
-                required: false
-                type: string
-                default: dev-pool
-            gcp_region:
-                required: false
-                type: string
-                default: europe-west3
 jobs:
     build:
         runs-on: ubuntu-latest
         timeout-minutes: ${{ inputs.timeout }}
+        environment: ${{ inputs.environment }}
         permissions:
             contents: 'read'
             id-token: 'write'

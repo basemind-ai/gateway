@@ -1,9 +1,8 @@
-name: Deploy (Frontend)
+name: Frontend Preview
 on:
-    push:
+    pull_request:
         branches:
-            - development
-            - production
+            - main
         paths:
             - 'frontend/src/**'
             - 'shared/ts/**'
@@ -14,4 +13,4 @@ jobs:
         secrets: inherit
         with:
             environment: ${{ github.ref_name }}
-            is_preview: false
+            is_preview: true

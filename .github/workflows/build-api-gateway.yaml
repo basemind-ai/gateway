@@ -2,7 +2,8 @@ name: 'Build (API-Gateway)'
 on:
     push:
         branches:
-            - main
+            - development
+            - production
         paths:
             - 'gen/go/ptesting/**'
             - 'gen/go/gateway/**'
@@ -11,7 +12,9 @@ on:
             - 'shared/go/**'
 jobs:
     build:
-        uses: ./.github/workflows/build.yaml
+        uses: ./.github/actions/build.yaml
+        secrets: inherit
         with:
             file_path: ./docker/Dockerfile.go-services
             service: api-gateway
+            environment: ${{ github.ref_name }}
