@@ -51,7 +51,7 @@ repos:
           - id: buf-format
           - id: buf-lint
     - repo: https://github.com/sqlfluff/sqlfluff
-      rev: 3.0.0a2
+      rev: 3.0.0a3
       hooks:
           - id: sqlfluff-fix
             exclude: 'sql/migrations'
