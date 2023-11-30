@@ -41,7 +41,7 @@
 		"@types/validator": "^13.11.7",
 		"@vitejs/plugin-react": "^4.2.0",
 		"daisyui": "^4.4.14",
-		"jsdom": "^23.0.0",
+		"jsdom": "^23.0.1",
 		"mock-socket": "^9.3.1",
 		"vite-plugin-magical-svg": "^1.0.3"
 	}
