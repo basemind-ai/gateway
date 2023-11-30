@@ -2,14 +2,18 @@ name: 'Build (OpenAI-Connector)'
 on:
     push:
         branches:
-            - main
+            - development
+            - production
         paths:
             - 'gen/ts/openai/**'
             - 'services/openai-connector/**'
             - 'shared/ts/**'
+            - 'package.json'
 jobs:
     build:
-        uses: ./.github/workflows/build.yaml
+        uses: ./.github/actions/build.yaml
+        secrets: inherit
         with:
             file_path: ./docker/Dockerfile.ts-services
             service: openai-connector
+            environment: ${{ github.ref_name }}
