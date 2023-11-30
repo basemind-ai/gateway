@@ -9,7 +9,7 @@ on:
             - 'package.json'
 jobs:
     deploy:
-        uses: ./.github/actions/deploy_firebase.yaml
+        uses: ./.github/workflows/deploy_firebase.yaml
         secrets: inherit
         with:
             environment: ${{ github.ref_name }}

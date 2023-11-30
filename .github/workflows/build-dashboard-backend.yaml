@@ -10,7 +10,7 @@ on:
             - 'shared/go/**'
 jobs:
     build:
-        uses: ./.github/actions/build.yaml
+        uses: ./.github/workflows/build.yaml
         secrets: inherit
         with:
             file_path: ./docker/Dockerfile.go-services
