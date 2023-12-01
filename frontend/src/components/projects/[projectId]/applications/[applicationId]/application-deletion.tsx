@@ -65,7 +65,7 @@ export function ApplicationDeletion({
 				</div>
 				<button
 					data-testid="application-delete-btn"
-					className="card-action-button btn-error text-black"
+					className="card-action-button btn-error text-error-content"
 					disabled={isLoading}
 					onClick={() => {
 						setIsDeleteModalOpen(true);

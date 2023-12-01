@@ -103,7 +103,7 @@ export default function Application({
 					trailingLine={true}
 				/>
 			</div>
-			<div className="mx-32 mt-6">
+			<div className="page-content-container">
 				<TabComponent />
 			</div>
 		</div>

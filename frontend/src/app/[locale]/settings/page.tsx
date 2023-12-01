@@ -16,10 +16,8 @@ export default function UserSettings() {
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
 			<Navbar headline={t('headline')} />
-			<div className="mx-auto max-w-screen-lg container">
-				<div className="card-divider">
-					<UserDetails user={user} />
-				</div>
+			<div className="page-content-container">
+				<UserDetails user={user} />
 				<div className="card-divider">
 					<DeleteAccountView user={user} />
 				</div>

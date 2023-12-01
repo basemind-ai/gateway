@@ -38,7 +38,7 @@ export function ProjectAnalytics({ project }: { project: Project }) {
 	return (
 		<div data-testid="project-analytics-container">
 			<div className="flex justify-between items-center">
-				<h2 className="card-header-right self-end">{t('status')}</h2>
+				<h2 className="card-header">{t('status')}</h2>
 				<DatePicker
 					displayFormat={dateFormat}
 					showShortcuts={true}

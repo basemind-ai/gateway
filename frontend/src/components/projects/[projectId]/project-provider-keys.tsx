@@ -59,55 +59,58 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 
 	return (
 		<div>
-			<table
-				className="custom-table mb-16"
-				data-testid="provider-keys-table"
-			>
-				<thead>
-					<tr>
-						<th data-testid="provider-keys-table-header">
-							{t('modelVendor')}
-						</th>
-						<th data-testid="provider-keys-table-header">
-							{t('createdAt')}
-						</th>
-						<th data-testid="provider-keys-table-header">
-							{t('actions')}
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{providerKeys.map((value) => (
-						<tr
-							key={value.id}
-							className="hover"
-							data-testid="provider-keys-table-row"
-						>
-							<td data-testid="key-provider-name">
-								{modelVendorToLocaleMap[value.modelVendor]}
-							</td>
-							<td data-testid="key-created-at">
-								{value.createdAt}
-							</td>
-							<td data-testid="key-actions">
-								<span className="flex justify-center">
-									<button
-										className="btn btn-ghost"
-										data-testid="delete-provider-key-button"
-										onClick={() => {
-											setProviderKeyIdToDelete(value.id);
-											setIsDeleteModalOpen(true);
-										}}
-									>
-										<Trash className="text-red-400" />
-									</button>
-								</span>
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+			<h2 className="card-header">{t('headline')}</h2>
 			<div className="rounded-data-card flex flex-col">
+				<table
+					className="custom-table mb-16"
+					data-testid="provider-keys-table"
+				>
+					<thead>
+						<tr>
+							<th data-testid="provider-keys-table-header">
+								{t('modelVendor')}
+							</th>
+							<th data-testid="provider-keys-table-header">
+								{t('createdAt')}
+							</th>
+							<th data-testid="provider-keys-table-header">
+								{t('actions')}
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{providerKeys.map((value) => (
+							<tr
+								key={value.id}
+								className="hover"
+								data-testid="provider-keys-table-row"
+							>
+								<td data-testid="key-provider-name">
+									{modelVendorToLocaleMap[value.modelVendor]}
+								</td>
+								<td data-testid="key-created-at">
+									{value.createdAt}
+								</td>
+								<td data-testid="key-actions">
+									<span className="flex justify-center">
+										<button
+											className="btn btn-ghost"
+											data-testid="delete-provider-key-button"
+											onClick={() => {
+												setProviderKeyIdToDelete(
+													value.id,
+												);
+												setIsDeleteModalOpen(true);
+											}}
+										>
+											<Trash className="text-red-400" />
+										</button>
+									</span>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
 				<button
 					data-testid="new-provider-key-btn"
 					onClick={() => {

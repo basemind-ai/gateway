@@ -54,8 +54,8 @@ export enum UnavailableModelVendor {
 }
 
 export const openAIRoleColorMap: Record<OpenAIMessageRole, string> = {
-	assistant: 'text-accent',
-	function: 'text-blue-500',
-	system: 'text-secondary',
-	user: 'text-primary',
+	assistant: 'text-warning/80',
+	function: 'text-secondary',
+	system: 'text-accent',
+	user: 'text-success/80',
 };

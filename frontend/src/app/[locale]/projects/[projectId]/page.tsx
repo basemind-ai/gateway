@@ -109,7 +109,7 @@ export default function ProjectOverview({
 					trailingLine={true}
 				/>
 			</div>
-			<div className="mx-auto max-w-screen-lg card-divider container">
+			<div className="page-content-container">
 				<TabComponent />
 			</div>
 		</div>

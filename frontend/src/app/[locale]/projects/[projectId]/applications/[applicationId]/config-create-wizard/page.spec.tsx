@@ -187,11 +187,8 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			).toBeInTheDocument();
 		});
 
-		const saveButton = screen.getByTestId(
-			'config-create-wizard-save-button',
-		);
-		expect(saveButton).toBeInTheDocument();
-		expect(saveButton).toBeDisabled();
+		expect(continueButton).toBeInTheDocument();
+		expect(continueButton).toBeDisabled();
 	});
 
 	it('allows the user to continue to the third stage if messages are not empty', async () => {
@@ -229,52 +226,6 @@ describe('PromptConfigCreateWizard Page tests', () => {
 				screen.getByTestId('prompt-config-testing-form'),
 			).toBeInTheDocument();
 		});
-	});
-
-	it('allows the user to save the config if messages are not empty and replaces the route', async () => {
-		const promptConfig = OpenAIPromptConfigFactory.buildSync();
-		mockFetch.mockResolvedValue({
-			json: () => Promise.resolve(promptConfig),
-			ok: true,
-		});
-
-		const store = getStore();
-		act(() => {
-			store.setConfigName(promptConfig.name);
-			store.setMessages(promptConfig.providerPromptMessages);
-			store.setParameters(promptConfig.modelParameters);
-			store.setModelType(promptConfig.modelType);
-			store.setModelVendor(promptConfig.modelVendor);
-		});
-		render(
-			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
-		);
-
-		const continueButton = screen.getByTestId(
-			'config-create-wizard-continue-button',
-		);
-		expect(continueButton).toBeInTheDocument();
-		fireEvent.click(continueButton);
-
-		await waitFor(() => {
-			expect(
-				screen.getByTestId('parameters-and-prompt-form-container'),
-			).toBeInTheDocument();
-		});
-
-		const saveButton = screen.getByTestId(
-			'config-create-wizard-save-button',
-		);
-		expect(saveButton).toBeInTheDocument();
-		expect(saveButton).not.toBeDisabled();
-
-		fireEvent.click(saveButton);
-
-		await waitFor(() => {
-			expect(mockFetch).toHaveBeenCalledTimes(1);
-		});
-
-		expect(routerReplaceMock).toHaveBeenCalledOnce();
 	});
 
 	it('allows the user to save the config when on the third stage and replaces the route', async () => {
@@ -343,20 +294,16 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setParameters(promptConfig.modelParameters);
 			store.setModelType(promptConfig.modelType);
 			store.setModelVendor(promptConfig.modelVendor);
+			store.setNextWizardStage();
+			store.setNextWizardStage();
 		});
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
 		);
 
-		const continueButton = screen.getByTestId(
-			'config-create-wizard-continue-button',
-		);
-		expect(continueButton).toBeInTheDocument();
-		fireEvent.click(continueButton);
-
 		await waitFor(() => {
 			expect(
-				screen.getByTestId('parameters-and-prompt-form-container'),
+				screen.getByTestId('prompt-config-testing-form'),
 			).toBeInTheDocument();
 		});
 
@@ -473,7 +420,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		expect(continueButton.length).toBeFalsy();
 	});
 
-	it('allows the user to cancel at all stages', async () => {
+	it('allows the user to cancel only on first stage', async () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 
 		const store = getStore();
@@ -495,15 +442,11 @@ describe('PromptConfigCreateWizard Page tests', () => {
 				screen.getByTestId('prompt-config-testing-form'),
 			).toBeInTheDocument();
 		});
-		const cancelButton = screen.getByTestId(
+
+		let cancelButton = screen.queryByTestId(
 			'config-create-wizard-cancel-button',
 		);
-		expect(cancelButton).toBeInTheDocument();
-		expect(cancelButton).not.toBeDisabled();
-
-		fireEvent.click(cancelButton);
-
-		expect(routerPushMock).toHaveBeenCalledOnce();
+		expect(cancelButton).toBeNull();
 
 		act(() => {
 			store.setPrevWizardStage();
@@ -515,11 +458,10 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			).toBeInTheDocument();
 		});
 
-		expect(cancelButton).not.toBeDisabled();
-
-		fireEvent.click(cancelButton);
-
-		expect(routerPushMock).toHaveBeenCalledTimes(2);
+		cancelButton = screen.queryByTestId(
+			'config-create-wizard-cancel-button',
+		);
+		expect(cancelButton).toBeNull();
 
 		act(() => {
 			store.setPrevWizardStage();
@@ -530,12 +472,12 @@ describe('PromptConfigCreateWizard Page tests', () => {
 				screen.getByTestId('base-form-container'),
 			).toBeInTheDocument();
 		});
-
+		cancelButton = screen.getByTestId('config-create-wizard-cancel-button');
 		expect(cancelButton).not.toBeDisabled();
 
 		fireEvent.click(cancelButton);
 
-		expect(routerPushMock).toHaveBeenCalledTimes(3);
+		expect(routerPushMock).toHaveBeenCalledTimes(1);
 	});
 
 	it('shows the provider key create modal when no provider key exists for the given vendor', async () => {

@@ -140,8 +140,8 @@ describe('parameters-and-prompt-form components tests', () => {
 			expect(maxTokensInput).toHaveValue(DEFAULT_MAX_TOKENS.toString());
 			expect(frequencyPenaltyInput).toHaveValue('0');
 			expect(presencePenaltyInput).toHaveValue('0');
-			expect(temperatureInput).toHaveValue('0');
-			expect(topPInput).toHaveValue('0');
+			expect(temperatureInput).toHaveValue('1');
+			expect(topPInput).toHaveValue('1');
 		});
 
 		it('should update the parameters state with the correct values when any input field is changed', () => {
@@ -299,15 +299,15 @@ describe('parameters-and-prompt-form components tests', () => {
 			expect(maxTokensInput).toHaveAttribute('step', '1');
 
 			expect(frequencyPenaltyInput).toHaveAttribute('min', '0');
-			expect(frequencyPenaltyInput).toHaveAttribute('max', '1');
+			expect(frequencyPenaltyInput).toHaveAttribute('max', '2');
 			expect(frequencyPenaltyInput).toHaveAttribute('step', '0.1');
 
 			expect(presencePenaltyInput).toHaveAttribute('min', '0');
-			expect(presencePenaltyInput).toHaveAttribute('max', '1');
+			expect(presencePenaltyInput).toHaveAttribute('max', '2');
 			expect(presencePenaltyInput).toHaveAttribute('step', '0.1');
 
 			expect(temperatureInput).toHaveAttribute('min', '0');
-			expect(temperatureInput).toHaveAttribute('max', '1');
+			expect(temperatureInput).toHaveAttribute('max', '2');
 			expect(temperatureInput).toHaveAttribute('step', '0.1');
 
 			expect(topPInput).toHaveAttribute('min', '0');
@@ -397,8 +397,8 @@ describe('parameters-and-prompt-form components tests', () => {
 			expect(maxTokensInput).toHaveValue(DEFAULT_MAX_TOKENS.toString());
 			expect(frequencyPenaltyInput).toHaveValue('0');
 			expect(presencePenaltyInput).toHaveValue('0');
-			expect(temperatureInput).toHaveValue('0');
-			expect(topPInput).toHaveValue('0');
+			expect(temperatureInput).toHaveValue('1');
+			expect(topPInput).toHaveValue('1');
 		});
 	});
 
@@ -506,7 +506,7 @@ describe('parameters-and-prompt-form components tests', () => {
 			fireEvent.click(newMessageButton);
 
 			await waitFor(() => {
-				expect(newMessageButton).toHaveClass('btn-primary');
+				expect(newMessageButton).toHaveClass('btn-secondary');
 			});
 		});
 

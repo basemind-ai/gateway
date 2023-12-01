@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Discord, Mailbox } from 'react-bootstrap-icons';
 
-import { DISCORD_INVITE_LINK, SUPPORT_EMAIL } from '@/constants';
+import { DISCORD_INVITE_LINK, Navigation, SUPPORT_EMAIL } from '@/constants';
 
 export function GetInTouch() {
 	const t = useTranslations('support');
@@ -20,15 +20,15 @@ export function GetInTouch() {
 							{t('chatWithUs')}
 						</div>
 						<button
-							className="btn"
+							className="btn flex gap-2 text-lg font-medium h-16 px-6 items-center"
 							onClick={() => {
-								router.push(DISCORD_INVITE_LINK);
+								router.push(
+									DISCORD_INVITE_LINK ?? Navigation.Base,
+								);
 							}}
 						>
-							<Discord className="icon w-10 h-10 text-discord" />
-							<span className="text-lg pl-2">
-								{t('joinOurDiscord')}
-							</span>
+							<Discord className="icon w-6 h-6 text-discord" />
+							<span className=" pl-2">{t('joinOurDiscord')}</span>
 						</button>
 					</div>
 					<div className="divider divider-horizontal " />
@@ -36,12 +36,10 @@ export function GetInTouch() {
 						<div className="text-neutral-content pl-4 text-sm">
 							{t('emailUs')}
 						</div>
-						<a className="btn" href={`mailto:${SUPPORT_EMAIL}`}>
-							<Mailbox className="icon w-10 h-10 text-discord" />
-							<span className="text-lg pl-2">
-								{SUPPORT_EMAIL}
-							</span>
-						</a>
+						<div className="flex gap-2 text-lg h-16 px-6 items-center">
+							<Mailbox className="icon w-6 h-6 text-discord" />
+							<span className=" pl-2">{SUPPORT_EMAIL}</span>
+						</div>
 					</div>
 				</div>
 			</div>

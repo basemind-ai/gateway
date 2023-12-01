@@ -16,11 +16,8 @@ export default function Support() {
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
 			<Navbar headline={t('headline')} />
-
-			<div className="mx-auto max-w-screen-lg container">
-				<div className="card-divider">
-					<GetInTouch />
-				</div>
+			<div className="page-content-container">
+				<GetInTouch />
 
 				<div className="card-divider">
 					<ContactForm isAuthenticated={!!user} />

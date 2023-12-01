@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { ChevronRight, PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
+import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
 import { PromptTestInputs } from '@/components/prompt-display-components/prompt-test-inputs';
 import { PromptTestResultTable } from '@/components/prompt-display-components/prompt-test-result-table';
@@ -110,22 +111,27 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					messages={messages}
 				/>
 			)}
-			{expectedVariables.length > 0 && (
-				<>
-					<div className="card-section-divider" />
-					<PromptTestInputs
-						setTemplateVariables={setTemplateVariables}
-						templateVariables={templateVariables}
-						expectedVariables={expectedVariables}
-					/>
-				</>
-			)}
-			<div className="card-section-divider" />
-			<div className="flex justify-center items-end p-4">
+			<CardHeaderWithTooltip
+				headerText={t('variables')}
+				tooltipText={t('variablesTooltip')}
+				dataTestId="test-inputs-header"
+			/>
+			<div className="third-level-card">
+				{expectedVariables.length > 0 && (
+					<>
+						<div className="card-section-divider" />
+						<PromptTestInputs
+							setTemplateVariables={setTemplateVariables}
+							templateVariables={templateVariables}
+							expectedVariables={expectedVariables}
+						/>
+					</>
+				)}
+				<div className="card-section-divider" />
 				<button
 					disabled={!allExpectedVariablesHaveLength || isRunningTest}
 					data-testid="run-test-button"
-					className="btn btn-primary btn-outline btn-circle btn-lg"
+					className="btn btn-primary bg-base-content text-base-100 self-end"
 					onClick={testFinishReason ? resetState : handleRunTest}
 				>
 					{testFinishReason ? (
@@ -133,14 +139,20 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					) : (
 						<PlayFill className="h-8 w-8" />
 					)}
+					Run Test
 				</button>
 			</div>
-
 			<div className="card-section-divider" />
-			<div>
-				<h2 className="card-header">{t('modelResponse')}</h2>
+			<h2 className="card-header">{t('testResults')}</h2>
+			<div className="third-level-card">
+				<PromptTestResultTable
+					modelVendor={modelVendor}
+					modelType={modelType}
+					testFinishReason={testFinishReason}
+					testRecord={testRecord}
+				/>
 				<div
-					className="rounded-data-card flex flex-col gap-2"
+					className="flex flex-col gap-2 pl-4"
 					data-testid="model-response-container"
 				>
 					<ChevronRight className="h-4 w-4" />
@@ -150,14 +162,8 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 							.join(' ')}
 					</span>
 				</div>
+				<div className="card-section-divider" />
 			</div>
-			<div className="card-section-divider" />
-			<PromptTestResultTable
-				modelVendor={modelVendor}
-				modelType={modelType}
-				testFinishReason={testFinishReason}
-				testRecord={testRecord}
-			/>
 		</div>
 	);
 }

@@ -148,7 +148,7 @@ export default function PromptConfiguration({
 					trailingLine={true}
 				/>
 			</div>
-			<div className="mx-auto mt-6 ">
+			<div className="page-content-container">
 				<TabComponent />
 			</div>
 		</div>

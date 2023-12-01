@@ -204,7 +204,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 							isExpectedVariablesChanged ||
 							isLoading
 						}
-						className="card-action-button btn-secondary"
+						className="card-action-button btn-secondary text-secondary-content"
 						data-testid="prompt-config-test-update-button"
 						onClick={() => {
 							void updatePromptConfig();
@@ -217,7 +217,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 						)}
 					</button>
 					<button
-						className="card-action-button btn-primary"
+						className="card-action-button btn-primary text-primary-content"
 						data-testid="prompt-config-test-save-as-new-button"
 						disabled={isLoading}
 						onClick={() => {
@@ -247,7 +247,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 					/>
 					<div className="flex justify-end gap-2">
 						<button
-							className="card-action-button btn-neutral"
+							className="card-action-button btn-neutral text-neutral-content"
 							data-testid="cancel-save-as-new-button"
 							disabled={isLoading}
 							onClick={() => {
@@ -258,7 +258,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 							{t('cancel')}
 						</button>
 						<button
-							className="card-action-button btn-success"
+							className="card-action-button btn-success text-success-content"
 							disabled={isLoading || !isNameValid}
 							data-testid="confirm-save-as-new-button"
 							onClick={() => {

@@ -91,7 +91,7 @@ export function ProviderKeyCreateModal({
 							value={selectedVendor}
 							defaultValue={undefined}
 							onChange={handleChange(setSelectedVendor)}
-							className="select select-bordered rounded w-full"
+							className="card-select"
 						>
 							<option value={undefined}>
 								{t('selectVendor')}
@@ -118,22 +118,22 @@ export function ProviderKeyCreateModal({
 					</label>
 					<textarea
 						data-testid="key-value-textarea"
-						className="textarea textarea-bordered rounded w-full"
+						className="card-textarea"
 						value={keyValue}
 						onChange={handleChange(setKeyValue)}
 					/>
 				</div>
 			</div>
-			<div className="flex justify-between m-2">
+			<div className="flex justify-end gap-4 m-2">
 				<button
-					className="btn btn-outline rounded"
+					className="btn btn-neutral"
 					data-testid="create-provider-key-cancel-btn"
 					onClick={handleCancel ?? closeModal}
 				>
 					{t('cancel')}
 				</button>
 				<button
-					className="btn btn-primary rounded"
+					className="btn btn-primary"
 					data-testid="create-provider-key-submit-btn"
 					disabled={isLoading || !selectedVendor || !keyValue.trim()}
 					onClick={() => {

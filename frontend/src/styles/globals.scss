@@ -82,31 +82,30 @@ div#__next > div {
 	}
 
 	.card-header {
-		@apply font-semibold text-white text-xl pl-3;
-	}
-
-	.card-header-right {
-		@apply font-semibold text-white text-xl pr-3;
+		@apply font-medium text-base-content text-lg pl-3;
 	}
 
 	.card-action-button {
-		@apply btn rounded-full capitalize;
+		@apply btn btn-sm rounded-full capitalize;
 	}
 
 	.card-input {
-		@apply input input-bordered rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
+		@apply input  rounded bg-neutral text-neutral-content max-w-md disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
 	}
 
 	.card-textarea {
-		@apply textarea textarea-bordered rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
+		@apply textarea rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
 	}
 
 	.card-select {
-		@apply select select-bordered rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
+		@apply select select-bordered rounded bg-neutral text-neutral-content max-w-md disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
 	}
 
 	.rounded-data-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-16;
+	}
+	.third-level-card {
+		@apply mt-3.5 rounded-4xl w-full bg-base-300 py-8 px-16 shadow-xl;
 	}
 
 	.analytics {
@@ -117,19 +116,10 @@ div#__next > div {
 		@apply modal-box p-0 border border-neutral max-w-[43rem];
 	}
 
-	.main-page {
-		@apply mx-8 my-32;
-
-		h1 {
-			@apply text-2xl font-semibold text-base-content;
-		}
-
-		nav {
-			@apply mt-3.5 w-full mb-8;
-		}
-	}
-
 	.custom-datepicker > div > div > div {
-		@apply bg-base-200 border-neutral #{!important};
+		@apply bg-base-200  #{!important};
+	}
+	.page-content-container {
+		@apply mx-auto max-w-screen-xl card-divider container  px-8 2xl:px-0;
 	}
 }
