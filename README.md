@@ -23,10 +23,6 @@ root                        # repository root, holding all tooling configuration
 │    ├─── openai            # openai-connector protobuf schema
 │    ├─── cohere            # cohere-connector protobuf schema
 │    └─── ptesting          # api-gateway prompt testing protobuf schema
-├─── sdks                   # client libraries that connect to our API gateway
-│    └─── android           # android apps
-│         ├─── test-app     # test application
-│         └─── sdk          # android sdk
 ├─── services               # microservices
 │   ├─── api-gateway        # api-gateway
 │   ├─── dashboard-backend  # backend for the frontend web-app
@@ -47,7 +43,6 @@ root                        # repository root, holding all tooling configuration
     - Go >= 1.21
     - Docker >= 24.0
     - Python >= 3.11
-    - Java >= 17.0
 
 2. Execute the setup task with:
 
@@ -103,11 +98,6 @@ Configuration files that should not be committed into git are stored under the `
 
 You will need to receive them from another developer and they must be communicated securely using a service such
 as [yopass](https://yopass.se/).
-
-You will need to add the following files:
-
--   `.env.frontend` - this is an ENV file for the frontend application.
--   `serviceAccountKey.json` - this is a GCP / firebase configuration file for backend applications.
 
 ### Proto Files
 

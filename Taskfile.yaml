@@ -1,93 +1,25 @@
 version: '3'
 
 tasks:
-    # project dependencies
-    install-pnpm:
-        cmds:
-            - |
-                if command -v brew &> /dev/null; then
-                    brew install pnpm
-                else
-                    npm install -g pnpm
-                fi
-        status:
-            - command -v pnpm &> /dev/null || exit 1
-    install-pre-commit:
-        cmds:
-            - |
-                if command -v brew &> /dev/null; then
-                    brew install pre-commit
-                else
-                    pip install pre-commit
-                fi
-        status:
-            - command -v pre-commit &> /dev/null || exit 1
-    install-sqlc:
-        cmds:
-            - |
-                if command -v brew &> /dev/null; then
-                    brew install sqlc
-                else
-                    go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-                fi
-        status:
-            - command -v sqlc &> /dev/null || exit 1
-    install-atlas:
-        cmds:
-            - |
-                if command -v brew &> /dev/null; then
-                  brew install ariga/tap/atlas
-                else
-                  curl -sSf https://atlasgo.sh | sh
-                fi
-        status:
-            - command -v atlas &> /dev/null || exit 1
-    install-buf:
-        cmds:
-            - |
-                if command -v brew &> /dev/null; then
-                    brew install bufbuild/buf/buf
-                else
-                    npm install -g @bufbuild/buf
-                fi
-        status:
-            - command -v buf &> /dev/null || exit 1
-    install-terraform:
-        cmds:
-            - |
-                if command -v brew &> /dev/null; then
-                    brew tap hashicorp/tap
-                    brew install hashicorp/tap/terraform
-                    brew install tflint
-                else
-                    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-                    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-                    sudo apt-get update && sudo apt-get install terraform
-                    curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-                fi
-        status:
-            - command -v terraform &> /dev/null || exit 1
+    # project management
     update-brew:
         cmds:
-            - |
-                if command -v brew &> /dev/null; then
-                    brew update;
-                    brew upgrade;
-                    brew cleanup || true;
-                fi
+            - brew update && brew upgrade && brew cleanup || true
     setup:
         desc: Setup the project dependencies
         cmds:
             - task: update-brew
-            - task: install-pnpm
-            - task: install-pre-commit
-            - task: install-sqlc
-            - task: install-atlas
-            - task: install-buf
-            - task: install-terraform
-            - pre-commit install && pre-commit install --hook-type commit-msg
+            - command -v pnpm &> /dev/null || brew install pnpm
+            - command -v pre-commit &> /dev/null || brew install pre-commit
+            - command -v sqlc &> /dev/null || brew install sqlc
+            - command -v atlas &> /dev/null || brew install ariga/tap/atlas
+            - command -v buf &> /dev/null || brew install bufbuild/buf/buf
+            - command -v terraform &> /dev/null || brew tap hashicorp/tap && brew install hashicorp/tap/terraform
+            - command -v tflint &> /dev/null || brew install tflint
+            - command -v gcloud &> /dev/null || curl https://sdk.cloud.google.com | bash
             - pnpm install -r
             - go mod download
+            - pre-commit install && pre-commit install --hook-type commit-msg && pre-commit install-hooks
     update:
         desc: Update the project dependencies
         cmds:
