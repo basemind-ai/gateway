@@ -220,7 +220,7 @@ export function OpenAIModelParametersForm({
 	return (
 		<div data-testid="openai-model-parameters-form">
 			<h2 className="card-header">{t('modelParameters')}</h2>
-			<div className="third-level-card  columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8">
+			<div className="rounded-dark-card  columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8">
 				{inputs.map(ParameterSlider)}
 			</div>
 		</div>
@@ -317,7 +317,7 @@ export function OpenAIPromptTemplate({
 	return (
 		<div data-testid="openai-prompt-template-form">
 			<h2 className="card-header">{t('promptMessages')}</h2>
-			<div className="third-level-card flex flex-col gap-4">
+			<div className="rounded-dark-card flex flex-col gap-4">
 				<div className=" p-4 flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
 					{messages.map((message, index) => (
 						<MessageItem

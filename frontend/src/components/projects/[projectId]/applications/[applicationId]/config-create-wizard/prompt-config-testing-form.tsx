@@ -116,7 +116,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 				tooltipText={t('variablesTooltip')}
 				dataTestId="test-inputs-header"
 			/>
-			<div className="third-level-card">
+			<div className="rounded-dark-card">
 				{expectedVariables.length > 0 && (
 					<>
 						<div className="card-section-divider" />
@@ -145,7 +145,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 			</button>
 			<div className="card-section-divider" />
 			<h2 className="card-header">{t('testResults')}</h2>
-			<div className="third-level-card">
+			<div className="rounded-dark-card">
 				<PromptTestResultTable
 					modelVendor={modelVendor}
 					modelType={modelType}

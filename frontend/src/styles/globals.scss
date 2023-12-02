@@ -86,7 +86,7 @@ div#__next > div {
 	}
 
 	.card-action-button {
-		@apply btn btn-sm rounded-full capitalize;
+		@apply btn btn-sm rounded-full capitalize disabled:text-neutral;
 	}
 
 	.card-input {
@@ -104,7 +104,7 @@ div#__next > div {
 	.rounded-data-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-16;
 	}
-	.third-level-card {
+	.rounded-dark-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-300 py-8 px-16 shadow-xl;
 	}
 
