@@ -23,7 +23,7 @@ export default function ProjectOverview({
 }: {
 	params: { projectId: string };
 }) {
-	useAuthenticatedUser();
+	const user = useAuthenticatedUser();
 	useProjectBootstrap();
 
 	const t = useTranslations('projectOverview');
@@ -100,16 +100,15 @@ export default function ProjectOverview({
 			className="flex flex-col min-h-screen w-full bg-base-100"
 			data-testid="project-page"
 		>
-			<Navbar project={project} />
-			<div className="w-full">
+			<div className="page-content-container">
+				<Navbar project={project} userPhotoURL={user?.photoURL} />
 				<TabNavigation<ProjectPageTabNames>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}
 					trailingLine={true}
 				/>
-			</div>
-			<div className="page-content-container">
+				<div className="card-divider" />
 				<TabComponent />
 			</div>
 		</div>

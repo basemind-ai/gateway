@@ -14,6 +14,7 @@ import { PromptConfigParametersAndPromptForm } from '@/components/projects/[proj
 import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { Navigation } from '@/constants';
+import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import {
@@ -34,6 +35,7 @@ export default function PromptConfigCreateWizard({
 }: {
 	params: { applicationId: string; projectId: string };
 }) {
+	const stepColor = 'step-secondary';
 	const t = useTranslations('createConfigWizard');
 	const handleError = useHandleError();
 
@@ -41,6 +43,7 @@ export default function PromptConfigCreateWizard({
 
 	const [nameIsValid, setNameIsValid] = useState(false);
 
+	const user = useAuthenticatedUser();
 	const project = useProject(projectId);
 	const application = useApplication(projectId, applicationId);
 
@@ -205,8 +208,38 @@ export default function PromptConfigCreateWizard({
 				</div>
 			) : (
 				<>
-					<Navbar project={project} application={application} />
 					<div className="page-content-container">
+						<Navbar
+							project={project}
+							application={application}
+							userPhotoURL={user?.photoURL}
+						/>
+						<div className="card-divider flex justify-between">
+							<h2 className="card-header">{t('createConfig')}</h2>
+							<ul className="steps z-0">
+								<li
+									className={`step ${
+										store.wizardStage ===
+											WizardStage.NAME_AND_MODEL &&
+										stepColor
+									}`}
+								/>
+
+								<li
+									className={`step ${
+										store.wizardStage ===
+											WizardStage.PARAMETERS_AND_PROMPT &&
+										stepColor
+									}`}
+								/>
+								<li
+									className={`step ${
+										store.wizardStage ===
+											WizardStage.TEST && stepColor
+									}`}
+								/>
+							</ul>
+						</div>
 						<div className="transform transition-transform duration-300 ease-in-out rounded-data-card shadow-xl">
 							{wizardStageComponentMap[store.wizardStage]}
 							<div className="divider divide-accent" />

@@ -32,14 +32,14 @@ export function TabNavigation<T = string>({
 	}, []);
 
 	return (
-		<nav className="tabs tabs-bordered">
+		<nav className="tabs tabs-boxed bg-base-100">
 			{tabs.map((tab) => (
 				<button
 					data-testid="tab-navigation-btn"
 					key={tab.text}
-					className={`tab tabs-bordered text-sm text-neutral-content border-neutral flex flex-row gap-2 items-center h-full px-4 ${
+					className={`tab text-neutral-content gap-2 hover:bg-neutral/80 ${
 						tab.id === selectedTab
-							? 'tab-active text-secondary border-secondary font-medium'
+							? 'tab-active bg-neutral text-neutral-content'
 							: ''
 					}`}
 					onClick={() => {

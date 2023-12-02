@@ -127,21 +127,22 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 						/>
 					</>
 				)}
-				<div className="card-section-divider" />
-				<button
-					disabled={!allExpectedVariablesHaveLength || isRunningTest}
-					data-testid="run-test-button"
-					className="btn btn-primary bg-base-content text-base-100 self-end"
-					onClick={testFinishReason ? resetState : handleRunTest}
-				>
-					{testFinishReason ? (
-						<Repeat className="h-8 w-8" />
-					) : (
-						<PlayFill className="h-8 w-8" />
-					)}
-					Run Test
-				</button>
 			</div>
+			<div className="card-section-divider" />
+			<div className="card-section-divider" />
+			<button
+				disabled={!allExpectedVariablesHaveLength || isRunningTest}
+				data-testid="run-test-button"
+				className="btn  btn-wide btn-primary bg-base-content text-base-100 self-center"
+				onClick={testFinishReason ? resetState : handleRunTest}
+			>
+				{testFinishReason ? (
+					<Repeat className="h-8 w-8" />
+				) : (
+					<PlayFill className="h-8 w-8" />
+				)}
+				Run Test
+			</button>
 			<div className="card-section-divider" />
 			<h2 className="card-header">{t('testResults')}</h2>
 			<div className="third-level-card">

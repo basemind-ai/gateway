@@ -7,7 +7,7 @@ import { UserDetails } from '@/components/settings/user-details';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
 export default function UserSettings() {
-	const user = useAuthenticatedUser()!;
+	const user = useAuthenticatedUser();
 	const t = useTranslations('userSettings');
 
 	return (
@@ -15,8 +15,13 @@ export default function UserSettings() {
 			data-testid="user-settings-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
-			<Navbar headline={t('headline')} />
 			<div className="page-content-container">
+				<Navbar
+					headline={t('headline')}
+					userPhotoURL={user?.photoURL}
+				/>
+				<div className="card-divider" />
+
 				<UserDetails user={user} />
 				<div className="card-divider">
 					<DeleteAccountView user={user} />

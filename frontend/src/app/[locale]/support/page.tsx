@@ -15,8 +15,12 @@ export default function Support() {
 			data-testid="support-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
-			<Navbar headline={t('headline')} />
 			<div className="page-content-container">
+				<Navbar
+					headline={t('headline')}
+					userPhotoURL={user?.photoURL}
+				/>
+				<div className="card-divider" />
 				<GetInTouch />
 
 				<div className="card-divider">

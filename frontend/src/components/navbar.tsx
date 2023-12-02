@@ -15,46 +15,49 @@ export function Navbar({
 	application,
 	config,
 	headline,
+	userPhotoURL,
 }: {
 	application?: Application;
 	config?: PromptConfig<any>;
 	headline?: string;
 	project?: Project;
+	userPhotoURL?: string | null;
 }) {
 	const t = useTranslations('navbar');
 	const projects = useProjects();
 	const setSelectedProject = useSetSelectedProject();
-	const backLink = projects[0]?.id
-		? setRouteParams(Navigation.ProjectDetail, {
-				projectId: projects[0]?.id,
-		  })
-		: Navigation.CreateProject;
+
 	return (
-		<div className="navbar" data-testid="navbar-container">
-			<div data-testid="navbar-header" className="flex-1 gap-4">
-				<Image
-					priority
-					width={32}
-					height={32}
-					src="/images/basemind-logo.svg"
-					alt="Logo"
-					data-testid="logo-image"
-				/>
+		<div className="navbar " data-testid="navbar-container">
+			<div data-testid="navbar-header" className="flex-grow gap-4">
+				<div className="avatar">
+					<div className="w-8 rounded-full">
+						<Image
+							priority
+							width={32}
+							height={32}
+							src="/images/logo.svg"
+							alt="Logo"
+							data-testid="logo-image"
+						/>
+					</div>
+				</div>
 				{headline && (
 					<>
-						<Link href={backLink}>
+						<Link
+							href={setRouteParams(Navigation.ProjectDetail, {
+								projectId: projects[0]?.id,
+							})}
+						>
 							<ArrowLeft className="w-4 h-4" />
 						</Link>
-						<h1
-							className="text-md font-semibold"
-							data-testid="headline"
-						>
+						<h1 className="text-sm" data-testid="headline">
 							{headline}
 						</h1>
 					</>
 				)}
 				{project && (
-					<div className="text-md font-semibold breadcrumbs">
+					<div className="text-sm breadcrumbs capitalize">
 						<ul>
 							<li>
 								<Link
@@ -106,9 +109,29 @@ export function Navbar({
 					</div>
 				)}
 			</div>
-
-			<div className="flex-none">
-				<ul className="menu menu-horizontal px-1">
+			<div className="dropdown dropdown-end ">
+				<div
+					tabIndex={0}
+					role="button"
+					className="avatar flex content-center "
+				>
+					<div className="w-10 rounded-full">
+						<Image
+							priority
+							width={40}
+							height={40}
+							src={
+								userPhotoURL ?? '/images/placholder-avatar.svg'
+							}
+							alt="Logo"
+							data-testid="avatar-image"
+						/>
+					</div>
+				</div>
+				<ul
+					tabIndex={0}
+					className="p-2 bg-base-300  mt-3 z-[1] shadow menu menu-sm dropdown-content rounded-box w-52"
+				>
 					<li>
 						<Link
 							href={Navigation.Settings}
@@ -125,56 +148,40 @@ export function Navbar({
 							{t('support')}
 						</Link>
 					</li>
-					{project && (
-						<li>
-							<details className="dropdown-bottom dropdown-end">
-								<summary data-testid="selected-project">
-									{project.name}
-								</summary>
-								<ul className="p-2 bg-base-300  mt-3 z-[1] shadow menu menu-sm dropdown-content rounded-box w-52">
-									{projects.map((nonActiveproject) => (
-										<li
-											key={nonActiveproject.id}
-											data-testid="project-select-option"
-										>
-											<Link
-												href={setRouteParams(
-													Navigation.ProjectDetail,
-													{
-														projectId:
-															nonActiveproject.id,
-													},
-												)}
-												onClick={() => {
-													setSelectedProject(
-														nonActiveproject.id,
-													);
-												}}
-												className={
-													nonActiveproject.id ===
-													project.id
-														? 'selected'
-														: ''
-												}
-												data-testid={`project-select-link-${nonActiveproject.id}`}
-											>
-												{nonActiveproject.name}
-											</Link>
-										</li>
-									))}
-									<li className="border-t border-neutral mt-1">
-										<Link
-											href={Navigation.CreateProject}
-											data-testid="create-new-project-link"
-										>
-											{t('createNewProject')}
-										</Link>
-									</li>
-								</ul>
-							</details>
+					<div className="border-t border-neutral mt-1">
+						{projects.map((nonActiveproject) => (
+							<li
+								key={nonActiveproject.id}
+								data-testid="project-select-option"
+							>
+								<Link
+									href={setRouteParams(
+										Navigation.ProjectDetail,
+										{
+											projectId: nonActiveproject.id,
+										},
+									)}
+									onClick={() => {
+										setSelectedProject(nonActiveproject.id);
+									}}
+									data-testid={`project-select-link-${nonActiveproject.id}`}
+								>
+									{nonActiveproject.name}
+								</Link>
+							</li>
+						))}
+						<li className="border-t border-neutral mt-1">
+							<Link
+								href={Navigation.CreateProject}
+								data-testid="create-new-project-link"
+							>
+								{t('createNewProject')}
+							</Link>
 						</li>
-					)}
-					{!project && headline && <LogoutButton />}
+						<li className="border-t border-neutral mt-1">
+							<LogoutButton />
+						</li>
+					</div>
 				</ul>
 			</div>
 		</div>
