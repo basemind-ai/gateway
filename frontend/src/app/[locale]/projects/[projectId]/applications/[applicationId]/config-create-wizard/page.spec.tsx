@@ -420,7 +420,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		expect(continueButton.length).toBeFalsy();
 	});
 
-	it('allows the user to cancel only on first stage', async () => {
+	it('allows the user to cancel only on the first stage', async () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
 
 		const store = getStore();

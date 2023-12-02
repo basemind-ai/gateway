@@ -130,7 +130,7 @@ export function Navbar({
 				</div>
 				<ul
 					tabIndex={0}
-					className="p-2 bg-base-300  mt-3 z-[1] shadow menu menu-sm dropdown-content rounded-box w-52"
+					className="p-2 bg-base-300 mt-3 z-[1] shadow menu menu-sm dropdown-content rounded-box w-52"
 				>
 					<li>
 						<Link

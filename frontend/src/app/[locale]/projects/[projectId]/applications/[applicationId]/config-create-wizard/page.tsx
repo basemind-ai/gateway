@@ -243,7 +243,7 @@ export default function PromptConfigCreateWizard({
 						<div className="transform transition-transform duration-300 ease-in-out rounded-data-card shadow-xl">
 							{wizardStageComponentMap[store.wizardStage]}
 							<div className="divider divide-accent" />
-							<div className=" items-center justify-end px-5 modal-action">
+							<div className="items-center justify-end px-5 modal-action">
 								<div className="flex justify-between gap-4">
 									{store.wizardStage === 0 && (
 										<button
