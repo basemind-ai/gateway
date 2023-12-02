@@ -11,7 +11,6 @@ repos:
       hooks:
           - id: trailing-whitespace
           - id: end-of-file-fixer
-            exclude: '.idea/modules'
           - id: check-yaml
           - id: check-added-large-files
     - repo: https://github.com/koalaman/shellcheck-precommit
@@ -26,14 +25,14 @@ repos:
       rev: 'v3.1.0'
       hooks:
           - id: prettier
-            exclude: 'go.mod|gen/ts|.idea/modules'
+            exclude: 'go.mod|gen/ts'
     - repo: https://github.com/pre-commit/mirrors-eslint
       rev: 'v8.54.0'
       hooks:
           - id: eslint
             files: \.tsx?$
             types: [file]
-            args: [--fix]
+            args: [--fix, --no-ignore]
             exclude: 'gen/ts'
     - repo: https://github.com/golangci/golangci-lint
       rev: 'v1.55.2'
