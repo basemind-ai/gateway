@@ -1,0 +1,3 @@
+[submodule "proto/gateway"]
+	path = proto/gateway
+	url = https://github.com/basemind-ai/gateway-proto

@@ -9,6 +9,8 @@ tasks:
         desc: Setup the project dependencies
         cmds:
             - task: update-brew
+            - git submodule update --init --recursive
+            - git submodule update --recursive --remote
             - command -v pnpm &> /dev/null || brew install pnpm
             - command -v pre-commit &> /dev/null || brew install pre-commit
             - command -v sqlc &> /dev/null || brew install sqlc
@@ -24,6 +26,7 @@ tasks:
         desc: Update the project dependencies
         cmds:
             - task: update-brew
+            - git submodule update --recursive --remote
             - pnpm add -g pnpm && pnpm update -r --latest
             - go mod tidy && go get -u ./... &> /dev/null
             - pre-commit autoupdate
