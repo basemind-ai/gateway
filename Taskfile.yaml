@@ -21,7 +21,7 @@ tasks:
             - command -v gcloud &> /dev/null || curl https://sdk.cloud.google.com | bash
             - pnpm install -r
             - go mod download
-#            - pre-commit install && pre-commit install --hook-type commit-msg && pre-commit install-hooks
+    #            - pre-commit install && pre-commit install --hook-type commit-msg && pre-commit install-hooks
     update:
         desc: Update the project dependencies
         cmds:

@@ -51,6 +51,7 @@
 		"basemindName": "BaseMind",
 		"cancel": "Cancel",
 		"continue": "Continue",
+		"copied": "Copied",
 		"decline": "Decline",
 		"logout": "Logout",
 		"open": "Open",
@@ -72,7 +73,6 @@
 		"optional": "optional"
 	},
 	"createConfigWizard": {
-		"runTest": "Run Test",
 		"backButtonText": "Back",
 		"cancelButtonText": "Cancel",
 		"cohere": "Cohere",
@@ -118,6 +118,7 @@
 		"requestTokensCost": "Request Tokens Cost",
 		"responseTokens": "Response Tokens",
 		"responseTokensCost": "Response Tokens Cost",
+		"runTest": "Run Test",
 		"runningTestError": "There was an error running test, try again later or contact support",
 		"saveButtonText": "Save",
 		"saveMessage": "Add Message",

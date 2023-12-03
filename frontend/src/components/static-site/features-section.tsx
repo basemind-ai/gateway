@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
-import { CodeSnippet } from '@/components/static-site/code-snippet';
+import { CodeSnippet } from '@/components/code-snippet';
 import { FeatureCard } from '@/components/static-site/feature-card';
 import { Section } from '@/components/static-site/section';
 import { Dimensions } from '@/constants';
@@ -126,7 +126,11 @@ export function FeaturesSection() {
 						description={t('featureSdkDescription')}
 						name="sdk"
 					>
-						<CodeSnippet codeText={KotlinCode} language="kotlin" />
+						<CodeSnippet
+							codeText={KotlinCode}
+							language="kotlin"
+							allowCopy={false}
+						/>
 					</FeatureCard>
 				</div>
 			</div>

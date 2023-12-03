@@ -37,7 +37,7 @@
     </data-source>
     <data-source
 			source="LOCAL"
-			name="local docker"
+			name="local"
 			uuid="58c348e1-3726-480d-9c14-fae00e88d7c8"
 		>
       <driver-ref>postgresql</driver-ref>
