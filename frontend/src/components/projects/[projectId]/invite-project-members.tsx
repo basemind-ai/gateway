@@ -165,7 +165,7 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 					<button
 						data-testid="send-invite-btn"
 						disabled={!emailsValid}
-						className="card-action-button invalid:disabled btn-primary text-primary-content"
+						className="card-action-button btn-primary text-primary-content disabled:text-neutral"
 						onClick={() => void sendInvite()}
 					>
 						{loading ? (

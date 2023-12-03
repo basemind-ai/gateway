@@ -1,11 +1,9 @@
 'use client';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import { ArrowLeft } from 'react-bootstrap-icons';
 
+import { AvatarDropdown } from '@/components/avatar-dropdown';
 import { Logo } from '@/components/logo';
-import { LogoutButton } from '@/components/settings/logout-button';
 import { Navigation } from '@/constants';
 import { useProjects, useSetSelectedProject } from '@/stores/api-store';
 import { Application, Project, PromptConfig } from '@/types';
@@ -24,12 +22,11 @@ export function Navbar({
 	project?: Project;
 	userPhotoURL?: string | null;
 }) {
-	const t = useTranslations('navbar');
 	const projects = useProjects();
 	const setSelectedProject = useSetSelectedProject();
 
 	return (
-		<div className="navbar pb-0" data-testid="navbar-container">
+		<div className="navbar pb-0 px-0" data-testid="navbar-container">
 			<div
 				data-testid="navbar-header"
 				className="flex-grow gap-4 content-baseline"
@@ -102,77 +99,11 @@ export function Navbar({
 					</div>
 				)}
 			</div>
-			<div className="dropdown dropdown-end">
-				<div tabIndex={0} role="button" className="avatar flex">
-					<div className="w-10 rounded-full">
-						<Image
-							priority
-							width={40}
-							height={40}
-							src={
-								userPhotoURL ?? '/images/placholder-avatar.svg'
-							}
-							alt="Logo"
-							data-testid="avatar-image"
-						/>
-					</div>
-				</div>
-				<ul
-					tabIndex={0}
-					className="p-2 bg-base-300 mt-3 z-[1] shadow menu menu-sm dropdown-content rounded-box w-52"
-				>
-					<li>
-						<Link
-							href={Navigation.Settings}
-							data-testid="setting-link"
-						>
-							{t('settings')}
-						</Link>
-					</li>
-					<li>
-						<Link
-							href={Navigation.Support}
-							data-testid="support-link"
-						>
-							{t('support')}
-						</Link>
-					</li>
-					<div className="border-t border-neutral mt-1">
-						{projects.map((nonActiveproject) => (
-							<li
-								key={nonActiveproject.id}
-								data-testid="project-select-option"
-							>
-								<Link
-									href={setRouteParams(
-										Navigation.ProjectDetail,
-										{
-											projectId: nonActiveproject.id,
-										},
-									)}
-									onClick={() => {
-										setSelectedProject(nonActiveproject.id);
-									}}
-									data-testid={`project-select-link-${nonActiveproject.id}`}
-								>
-									{nonActiveproject.name}
-								</Link>
-							</li>
-						))}
-						<li className="border-t border-neutral mt-1">
-							<Link
-								href={Navigation.CreateProject}
-								data-testid="create-new-project-link"
-							>
-								{t('createNewProject')}
-							</Link>
-						</li>
-						<li className="border-t border-neutral mt-1">
-							<LogoutButton />
-						</li>
-					</div>
-				</ul>
-			</div>
+			<AvatarDropdown
+				userPhotoURL={userPhotoURL ?? '/images/placholder-avatar.svg'}
+				projects={projects}
+				handleSetProject={setSelectedProject}
+			/>
 		</div>
 	);
 }

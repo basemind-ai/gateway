@@ -72,6 +72,7 @@
 		"optional": "optional"
 	},
 	"createConfigWizard": {
+		"runTest": "Run Test",
 		"backButtonText": "Back",
 		"cancelButtonText": "Cancel",
 		"cohere": "Cohere",

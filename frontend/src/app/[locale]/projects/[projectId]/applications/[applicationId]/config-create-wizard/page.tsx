@@ -30,12 +30,13 @@ import {
 import { ProviderKey } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
+const stepColor = 'step-secondary';
+const stepper = Object.values(WizardStage).filter((v) => typeof v === 'number');
 export default function PromptConfigCreateWizard({
 	params: { applicationId, projectId },
 }: {
 	params: { applicationId: string; projectId: string };
 }) {
-	const stepColor = 'step-secondary';
 	const t = useTranslations('createConfigWizard');
 	const handleError = useHandleError();
 
@@ -217,27 +218,15 @@ export default function PromptConfigCreateWizard({
 						<div className="card-divider flex justify-between">
 							<h2 className="card-header">{t('createConfig')}</h2>
 							<ul className="steps z-0">
-								<li
-									className={`step ${
-										store.wizardStage ===
-											WizardStage.NAME_AND_MODEL &&
-										stepColor
-									}`}
-								/>
-
-								<li
-									className={`step ${
-										store.wizardStage ===
-											WizardStage.PARAMETERS_AND_PROMPT &&
-										stepColor
-									}`}
-								/>
-								<li
-									className={`step ${
-										store.wizardStage ===
-											WizardStage.TEST && stepColor
-									}`}
-								/>
+								{stepper.map((stage) => (
+									<li
+										className={`step ${
+											store.wizardStage === stage &&
+											stepColor
+										}
+								}`}
+									/>
+								))}
 							</ul>
 						</div>
 						<div className="transform transition-transform duration-300 ease-in-out rounded-data-card shadow-xl">

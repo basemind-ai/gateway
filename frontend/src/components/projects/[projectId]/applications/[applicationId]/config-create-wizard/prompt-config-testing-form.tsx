@@ -141,7 +141,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 				) : (
 					<PlayFill className="h-8 w-8" />
 				)}
-				Run Test
+				{t('runTest')}
 			</button>
 			<div className="card-section-divider" />
 			<h2 className="card-header">{t('testResults')}</h2>
