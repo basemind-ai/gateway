@@ -27,7 +27,7 @@ export function Modal({
 
 	return (
 		<dialog ref={dialogRef} className="modal" data-testid={dataTestId}>
-			<div className="dialog-box" data-testid="modal-content">
+			<div className="dialog-box bg-base-300" data-testid="modal-content">
 				{children}
 			</div>
 			<form method="dialog" className="modal-backdrop">

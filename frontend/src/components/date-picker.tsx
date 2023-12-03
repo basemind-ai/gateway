@@ -21,7 +21,7 @@ export function DatePicker({
 		<div className="custom-datepicker" data-testid="datepicker">
 			<Datepicker
 				primaryColor="violet"
-				inputClassName="bg-transparent rounded relative transition-all duration-300 py-2.5 pl-4 pr-12 text-neutral-content tracking-medium font-medium text-sm placeholder-gray-400 disabled:opacity-40 disabled:cursor-not-allowed focus:border-slate-100 no-ring-color"
+				inputClassName="bg-transparent w-60 rounded relative transition-all duration-300  py-0 my-0 border-0 pl-4 pr-12 text-neutral-content tracking-medium font-medium text-sm placeholder-gray-400 disabled:opacity-40 disabled:cursor-not-allowed focus:border-slate-100 no-ring-color"
 				value={value}
 				onChange={onValueChange}
 				showShortcuts={showShortcuts}

@@ -70,7 +70,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 				</div>
 				<button
 					data-testid="prompt-delete-btn"
-					className="card-action-button btn-error text-black"
+					className="card-action-button btn-error text-error-content disabled:text-neutral"
 					disabled={isLoading}
 					onClick={() => {
 						setIsDeleteModalOpen(true);

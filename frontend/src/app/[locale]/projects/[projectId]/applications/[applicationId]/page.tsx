@@ -21,7 +21,7 @@ export default function Application({
 }: {
 	params: { applicationId: string; projectId: string };
 }) {
-	useAuthenticatedUser();
+	const user = useAuthenticatedUser();
 	useProjectBootstrap(false);
 
 	const t = useTranslations('application');
@@ -94,16 +94,19 @@ export default function Application({
 			data-testid="application-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
-			<Navbar project={project} application={application} />
-			<div className="w-full">
+			<div className="page-content-container">
+				<Navbar
+					project={project}
+					application={application}
+					userPhotoURL={user?.photoURL}
+				/>
 				<TabNavigation<ApplicationPageTabNames>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}
 					trailingLine={true}
 				/>
-			</div>
-			<div className="mx-32 mt-6">
+				<div className="card-divider" />
 				<TabComponent />
 			</div>
 		</div>

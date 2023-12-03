@@ -23,7 +23,7 @@ export function LogoutButton() {
 				void handleLogout();
 			}}
 			data-testid="dashboard-logout-btn"
-			className="link-accent px-2"
+			className="link-error px-2"
 		>
 			{t('logout')}
 		</button>

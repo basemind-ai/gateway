@@ -111,7 +111,7 @@ describe('Navbar tests', () => {
 		const projects = ProjectFactory.batchSync(3);
 		result.current(projects);
 		render(<Navbar project={projects[0]} />);
-		const dropdown = screen.getByTestId('selected-project');
+		const dropdown = screen.getByTestId('avatar-image');
 		expect(dropdown).toBeInTheDocument();
 		fireEvent.click(dropdown);
 
@@ -138,7 +138,7 @@ describe('Navbar tests', () => {
 		useSetProjectsHook.current(projects);
 		setSelectedProjectHook.current(projects[0].id);
 		render(<Navbar project={projects[0]} />);
-		const dropdown = screen.getByTestId('selected-project');
+		const dropdown = screen.getByTestId('avatar-image');
 		fireEvent.click(dropdown);
 		fireEvent.click(
 			screen.getByTestId(`project-select-link-${projects[1].id}`),
@@ -151,7 +151,7 @@ describe('Navbar tests', () => {
 	it('picking create new project should navigate to create project screen', async () => {
 		const projects = ProjectFactory.batchSync(3);
 		render(<Navbar project={projects[0]} />);
-		const dropdown = screen.getByTestId('selected-project');
+		const dropdown = screen.getByTestId('avatar-image');
 		fireEvent.click(dropdown);
 		const createNewProjectLink = screen.getByTestId(
 			'create-new-project-link',

@@ -45,9 +45,7 @@ export function ApplicationPromptConfigs({
 
 	return (
 		<div data-testid="application-prompt-config-container" className="mt-9">
-			<h2 className="font-semibold text-base-content text-xl">
-				{t('promptConfiguration')}
-			</h2>
+			<h2 className="card-header">{t('promptConfiguration')}</h2>
 			<div className="rounded-data-card">
 				{isLoading ? (
 					<div className="w-full flex mb-8">

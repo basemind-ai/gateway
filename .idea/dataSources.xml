@@ -37,13 +37,13 @@
     </data-source>
     <data-source
 			source="LOCAL"
-			name="local"
+			name="local docker"
 			uuid="58c348e1-3726-480d-9c14-fae00e88d7c8"
 		>
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/basemind</jdbc-url>
       <jdbc-additional-properties>
         <property
 					name="com.intellij.clouds.kubernetes.db.enabled"

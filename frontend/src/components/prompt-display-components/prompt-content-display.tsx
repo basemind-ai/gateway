@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 
+import { openAIRoleColorMap } from '@/constants/models';
 import { ModelVendor, OpenAIMessageRole, ProviderMessageType } from '@/types';
 import { isOpenAIContentMessage } from '@/utils/predicates';
 
@@ -9,26 +10,27 @@ const openAIRoleElementMapper: Record<
 > = {
 	assistant: ({ message }) => (
 		<span>
-			[<span className="text-accent">assistant</span>]:{' '}
-			<span className="text-info">{message}</span>
+			[
+			<span className={`${openAIRoleColorMap.assistant}`}>assistant</span>
+			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 	function: ({ message }) => (
 		<span>
-			[<span className="text-blue-500">function</span>]:{' '}
-			<span className="text-info">{message}</span>
+			[<span className={`${openAIRoleColorMap.function}`}>function</span>
+			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 	system: ({ message }) => (
 		<span>
-			[<span className="text-secondary">system</span>]:{' '}
-			<span className="text-info">{message}</span>
+			[<span className={`${openAIRoleColorMap.system}`}>system</span>]:{' '}
+			<span className="text-base-content">{message}</span>
 		</span>
 	),
 	user: ({ message }) => (
 		<span>
-			[<span className="text-primary">user</span>]:{' '}
-			<span className="text-info">{message}</span>
+			[<span className={`${openAIRoleColorMap.user}`}>user</span>]:{' '}
+			<span className="text-base-content">{message}</span>
 		</span>
 	),
 };

@@ -102,7 +102,7 @@ describe('usePromptTesting tests', () => {
 			expect(result.current.isReady).toBe(true);
 		});
 
-		const handleMessage = createWebsocketSpy.mock.calls[0][0].handleMessage;
+		const { handleMessage } = createWebsocketSpy.mock.calls[0][0];
 
 		act(() => {
 			handleMessage({ data: { content: 'test' } });
@@ -127,7 +127,7 @@ describe('usePromptTesting tests', () => {
 			expect(result.current.isReady).toBe(true);
 		});
 
-		const handleMessage = createWebsocketSpy.mock.calls[0][0].handleMessage;
+		const { handleMessage } = createWebsocketSpy.mock.calls[0][0];
 
 		act(() => {
 			handleMessage({

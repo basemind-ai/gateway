@@ -68,11 +68,10 @@ export function ProjectGeneralSettings({ project }: { project: Project }) {
 							{t('projectDescription')}
 						</span>
 					</label>
-					<input
-						type="text"
+					<textarea
 						id="project-desc"
 						data-testid="project-description-input"
-						className="card-input"
+						className="card-textarea"
 						value={description}
 						onChange={handleChange(setDescription)}
 					/>
@@ -81,7 +80,7 @@ export function ProjectGeneralSettings({ project }: { project: Project }) {
 					<button
 						data-testid="project-setting-save-btn"
 						disabled={!isChanged || !isValid}
-						className="card-action-button invalid:disabled btn-primary"
+						className="card-action-button btn-primary text-primary-content disabled:text-neutral"
 						onClick={() => void saveSettings()}
 					>
 						{isLoading ? (

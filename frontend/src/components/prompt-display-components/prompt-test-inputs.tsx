@@ -1,6 +1,3 @@
-import { useTranslations } from 'next-intl';
-
-import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { handleChange } from '@/utils/events';
 
 export function PromptTestInputs({
@@ -12,21 +9,14 @@ export function PromptTestInputs({
 	setTemplateVariables: (variables: Record<string, string>) => void;
 	templateVariables: Record<string, string>;
 }) {
-	const t = useTranslations('createConfigWizard');
-
 	return (
 		<div data-testid="test-inputs-container">
-			<CardHeaderWithTooltip
-				headerText={t('variables')}
-				tooltipText={t('variablesTooltip')}
-				dataTestId="test-inputs-header"
-			/>
-			<div className="rounded-data-card grid grid-cols-2 gap-4 min-w-[50%]">
+			<div className="grid grid-cols-2 gap-4 min-w-[50%]">
 				{expectedVariables.map((variable) => (
 					<div key={variable} className="form-control">
 						<input
 							type="text"
-							className="input input-secondary input-sm w-96 placeholder-accent"
+							className="card-textarea textarea-info bg-neutral placeholder-info"
 							data-testid={`input-variable-input-${variable}`}
 							value={templateVariables[variable]}
 							placeholder={`{${variable}}`}

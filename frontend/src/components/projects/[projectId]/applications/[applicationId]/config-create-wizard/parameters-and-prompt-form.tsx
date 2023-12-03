@@ -92,7 +92,7 @@ function ParameterSlider({
 	value: number;
 }) {
 	return (
-		<div className="form-control" key={key}>
+		<div className="form-control min-w-xs" key={key}>
 			<label className="label">
 				<div
 					className="tooltip flex items-center gap-1 pr-3"
@@ -141,9 +141,9 @@ export function OpenAIModelParametersForm({
 		existingParameters?.presencePenalty ?? 0,
 	);
 	const [temperature, setTemperature] = useState(
-		existingParameters?.temperature ?? 0,
+		existingParameters?.temperature ?? 1,
 	);
-	const [topP, setTopP] = useState(existingParameters?.topP ?? 0);
+	const [topP, setTopP] = useState(existingParameters?.topP ?? 1);
 
 	const inputs: {
 		key: string;
@@ -166,29 +166,9 @@ export function OpenAIModelParametersForm({
 			value: maxTokens,
 		},
 		{
-			key: 'frequencyPenalty',
-			labelText: t('openaiParametersFrequencyPenaltyLabel'),
-			max: 1,
-			min: 0,
-			setter: setFrequencyPenalty,
-			step: 0.1,
-			toolTipText: t('openaiParametersFrequencyPenaltyTooltip'),
-			value: frequencyPenalty,
-		},
-		{
-			key: 'presencePenalty',
-			labelText: t('openaiParametersPresencePenaltyLabel'),
-			max: 1,
-			min: 0,
-			setter: setPresencePenalty,
-			step: 0.1,
-			toolTipText: t('openaiParametersPresencePenaltyTooltip'),
-			value: presencePenalty,
-		},
-		{
 			key: 'temperature',
 			labelText: t('openaiParametersTemperatureLabel'),
-			max: 1,
+			max: 2,
 			min: 0,
 			setter: setTemperature,
 			step: 0.1,
@@ -205,6 +185,26 @@ export function OpenAIModelParametersForm({
 			toolTipText: t('openaiParametersTopPTooltip'),
 			value: topP,
 		},
+		{
+			key: 'frequencyPenalty',
+			labelText: t('openaiParametersFrequencyPenaltyLabel'),
+			max: 2,
+			min: 0,
+			setter: setFrequencyPenalty,
+			step: 0.1,
+			toolTipText: t('openaiParametersFrequencyPenaltyTooltip'),
+			value: frequencyPenalty,
+		},
+		{
+			key: 'presencePenalty',
+			labelText: t('openaiParametersPresencePenaltyLabel'),
+			max: 2,
+			min: 0,
+			setter: setPresencePenalty,
+			step: 0.1,
+			toolTipText: t('openaiParametersPresencePenaltyTooltip'),
+			value: presencePenalty,
+		},
 	];
 
 	useEffect(() => {
@@ -220,7 +220,7 @@ export function OpenAIModelParametersForm({
 	return (
 		<div data-testid="openai-model-parameters-form">
 			<h2 className="card-header">{t('modelParameters')}</h2>
-			<div className="rounded-data-card flex justify-between">
+			<div className="rounded-dark-card  columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8">
 				{inputs.map(ParameterSlider)}
 			</div>
 		</div>
@@ -229,6 +229,7 @@ export function OpenAIModelParametersForm({
 
 const OPEN_AI_DRAFT_MESSAGE = {
 	content: '',
+	name: '',
 	role: OpenAIPromptMessageRole.System,
 } satisfies OpenAIContentMessage;
 
@@ -249,7 +250,7 @@ function MessageItem({
 
 	return (
 		<button
-			className={`btn rounded-full ${className}`}
+			className={`btn btn-sm border-neutral rounded-full ${className}`}
 			data-testid={dataTestId}
 			onClick={() => {
 				handleClick();
@@ -316,8 +317,8 @@ export function OpenAIPromptTemplate({
 	return (
 		<div data-testid="openai-prompt-template-form">
 			<h2 className="card-header">{t('promptMessages')}</h2>
-			<div className="rounded-data-card flex flex-col gap-4">
-				<div className="rounded-data-card p-4 bg-neutral flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
+			<div className="rounded-dark-card flex flex-col gap-4">
+				<div className=" p-4 flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
 					{messages.map((message, index) => (
 						<MessageItem
 							key={message.name || `${message.role}${index}`}
@@ -325,10 +326,10 @@ export function OpenAIPromptTemplate({
 							name={message.name}
 							className={
 								activeMessageIndex === index
-									? 'btn-primary'
-									: `btn-outline ${
+									? 'btn-secondary'
+									: `btn-secondary btn-outline ${
 											openAIRoleColorMap[message.role]
-									  }`
+									  } hover:text-secondary-content`
 							}
 							dataTestId={`parameters-and-prompt-form-message-${index}`}
 							handleClick={() => {
@@ -344,13 +345,14 @@ export function OpenAIPromptTemplate({
 							setActiveMessageIndex(messages.length);
 							setDraftMessage({
 								content: '',
+								name: '',
 								role: OpenAIPromptMessageRole.System,
 							});
 						}}
 						className={
 							activeMessageIndex === messages.length
-								? 'btn-primary'
-								: 'btn-outline'
+								? 'btn-secondary'
+								: 'btn-secondary text-neutral-content btn-outline hover:text-secondary-content'
 						}
 					/>
 				</div>
@@ -406,12 +408,6 @@ export function OpenAIPromptTemplate({
 							/>
 						</div>
 					</div>
-					<span
-						className="text-info text-sm self-end"
-						data-testid="parameters-and-prompt-form-wrap-variable-label"
-					>
-						{t('wrapVariable')}
-					</span>
 				</div>
 				<div className="form-control">
 					<label
@@ -420,6 +416,12 @@ export function OpenAIPromptTemplate({
 					>
 						<span className="label-text">
 							{t('messageContent')}
+						</span>
+						<span
+							className="text-info label-text-alt text-sm"
+							data-testid="parameters-and-prompt-form-wrap-variable-label"
+						>
+							{t('wrapVariable')}
 						</span>
 					</label>
 					<textarea

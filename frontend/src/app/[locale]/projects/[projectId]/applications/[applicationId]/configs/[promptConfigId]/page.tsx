@@ -33,7 +33,7 @@ export default function PromptConfiguration({
 		promptConfigId: string;
 	};
 }) {
-	useAuthenticatedUser();
+	const user = useAuthenticatedUser();
 	useProjectBootstrap(false);
 
 	const t = useTranslations('promptConfig');
@@ -135,20 +135,21 @@ export default function PromptConfiguration({
 			data-testid="prompt-page-container"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
-			<Navbar
-				project={project}
-				application={application}
-				config={promptConfig}
-			/>
-			<div className="w-full">
+			<div className="page-content-container">
+				<Navbar
+					project={project}
+					application={application}
+					config={promptConfig}
+					userPhotoURL={user?.photoURL}
+				/>
 				<TabNavigation<PromptConfigPageTab>
 					tabs={tabs}
 					selectedTab={selectedTab}
 					onTabChange={setSelectedTab}
 					trailingLine={true}
 				/>
-			</div>
-			<div className="mx-auto mt-6 ">
+				<div className="card-divider" />
+
 				<TabComponent />
 			</div>
 		</div>

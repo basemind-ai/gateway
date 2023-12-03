@@ -12,7 +12,7 @@ import { useHandleError } from '@/hooks/use-handle-error';
 import { useSetUser } from '@/stores/api-store';
 import { useShowSuccess } from '@/stores/toast-store';
 
-export function DeleteAccountView({ user }: { user?: UserInfo }) {
+export function DeleteAccountView({ user }: { user: UserInfo | null }) {
 	const t = useTranslations('userSettings');
 	const router = useRouter();
 	const setUser = useSetUser();
