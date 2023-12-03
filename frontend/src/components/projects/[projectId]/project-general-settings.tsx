@@ -80,7 +80,7 @@ export function ProjectGeneralSettings({ project }: { project: Project }) {
 					<button
 						data-testid="project-setting-save-btn"
 						disabled={!isChanged || !isValid}
-						className="card-action-button invalid:disabled btn-primary text-primary-content disabled:text-neutral"
+						className="card-action-button invalid:disabled btn-primary text-primary-content"
 						onClick={() => void saveSettings()}
 					>
 						{isLoading ? (

@@ -73,7 +73,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 					<button
 						data-testid="prompt-general-settings-save-button"
 						disabled={!isNameChanged || !isNameValid || isLoading}
-						className="card-action-button invalid:disabled btn-primary text-primary-content disabled:text-neutral"
+						className="card-action-button invalid:disabled btn-primary text-primary-content"
 						onClick={() => void saveSettings()}
 					>
 						{isLoading ? (

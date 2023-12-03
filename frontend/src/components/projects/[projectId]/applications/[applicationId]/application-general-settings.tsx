@@ -201,7 +201,7 @@ export function ApplicationGeneralSettings({
 					<button
 						data-testid="application-setting-save-btn"
 						disabled={isLoading || !isNameValid || !isChanged}
-						className="card-action-button invalid:disabled btn-primary text-primary-content disabled:text-neutral"
+						className="card-action-button invalid:disabled btn-primary text-primary-content"
 						onClick={() => void saveSettings()}
 					>
 						{isLoading ? (
