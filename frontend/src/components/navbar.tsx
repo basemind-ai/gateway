@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowLeft } from 'react-bootstrap-icons';
 
+import { Logo } from '@/components/logo';
 import { LogoutButton } from '@/components/settings/logout-button';
 import { Navigation } from '@/constants';
 import { useProjects, useSetSelectedProject } from '@/stores/api-store';
@@ -28,20 +29,12 @@ export function Navbar({
 	const setSelectedProject = useSetSelectedProject();
 
 	return (
-		<div className="navbar " data-testid="navbar-container">
-			<div data-testid="navbar-header" className="flex-grow gap-4">
-				<div className="avatar">
-					<div className="w-8 rounded-full">
-						<Image
-							priority
-							width={32}
-							height={32}
-							src="/images/logo.svg"
-							alt="Logo"
-							data-testid="logo-image"
-						/>
-					</div>
-				</div>
+		<div className="navbar pb-0" data-testid="navbar-container">
+			<div
+				data-testid="navbar-header"
+				className="flex-grow gap-4 content-baseline"
+			>
+				<Logo />
 				{headline && (
 					<>
 						<Link
@@ -109,12 +102,8 @@ export function Navbar({
 					</div>
 				)}
 			</div>
-			<div className="dropdown dropdown-end ">
-				<div
-					tabIndex={0}
-					role="button"
-					className="avatar flex content-center "
-				>
+			<div className="dropdown dropdown-end">
+				<div tabIndex={0} role="button" className="avatar flex">
 					<div className="w-10 rounded-full">
 						<Image
 							priority

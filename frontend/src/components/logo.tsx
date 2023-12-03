@@ -3,15 +3,7 @@ import { useTranslations } from 'next-intl';
 
 import { Dimensions } from '@/constants';
 
-export function Logo({
-	width = Dimensions.Seven,
-	height = Dimensions.Seven,
-	textSize = 'text-2xl',
-}: {
-	height?: number;
-	textSize?: string;
-	width?: number;
-}) {
+export function Logo() {
 	const t = useTranslations('common');
 
 	return (
@@ -21,14 +13,14 @@ export function Logo({
 		>
 			<Image
 				priority
-				width={width}
-				height={height}
+				width={Dimensions.Seven}
+				height={Dimensions.Seven}
 				src="/images/basemind-logo.svg"
 				alt="Logo"
 				data-testid="logo-image"
 			/>
 			<span
-				className={`${textSize} font-bold text-primary`}
+				className="text-2xl font-bold text-primary"
 				data-testid="logo-text"
 			>
 				{t('basemindName')}
