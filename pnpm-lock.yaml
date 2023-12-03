@@ -47,8 +47,8 @@ importers:
                 specifier: 20.10.2
                 version: 20.10.2
             '@types/react':
-                specifier: 18.2.40
-                version: 18.2.40
+                specifier: 18.2.41
+                version: 18.2.41
             '@types/react-dom':
                 specifier: 18.2.17
                 version: 18.2.17
@@ -195,13 +195,10 @@ importers:
                 version: 6.1.0(firebase@10.7.0)
             next:
                 specifier: 14.0.3
-                version: 14.0.3(@babel/core@7.23.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
+                version: 14.0.3(@babel/core@7.23.5)(react-dom@18.2.0)(react@18.2.0)
             next-intl:
                 specifier: ^3.2.1
                 version: 3.2.1(next@14.0.3)(react@18.2.0)
-            next-translate-plugin:
-                specifier: ^2.6.2
-                version: 2.6.2(next-translate@2.6.2)
             react:
                 specifier: 18.2.0
                 version: 18.2.0
@@ -211,9 +208,6 @@ importers:
             react-dom:
                 specifier: 18.2.0
                 version: 18.2.0(react@18.2.0)
-            react-intl:
-                specifier: ^6.5.5
-                version: 6.5.5(react@18.2.0)(typescript@5.3.2)
             react-syntax-highlighter:
                 specifier: ^15.5.0
                 version: 15.5.0(react@18.2.0)
@@ -223,22 +217,19 @@ importers:
             swr:
                 specifier: ^2.2.4
                 version: 2.2.4(react@18.2.0)
-            unique-names-generator:
-                specifier: ^4.7.1
-                version: 4.7.1
             validator:
                 specifier: ^13.11.0
                 version: 13.11.0
             zustand:
                 specifier: ^4.4.7
-                version: 4.4.7(@types/react@18.2.40)(react@18.2.0)
+                version: 4.4.7(react@18.2.0)
         devDependencies:
             '@testing-library/dom':
                 specifier: ^9.3.3
                 version: 9.3.3
             '@testing-library/jest-dom':
                 specifier: ^6.1.5
-                version: 6.1.5(vitest@0.34.6)
+                version: 6.1.5
             '@testing-library/react':
                 specifier: ^14.1.2
                 version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
@@ -423,7 +414,7 @@ packages:
         dependencies:
             '@babel/compat-data': 7.23.5
             '@babel/helper-validator-option': 7.23.5
-            browserslist: 4.22.1
+            browserslist: 4.22.2
             lru-cache: 5.1.1
             semver: 6.3.1
 
@@ -3024,15 +3015,6 @@ packages:
             tslib: 2.6.2
         dev: false
 
-    /@formatjs/fast-memoize@2.2.0:
-        resolution:
-            {
-                integrity: sha512-hnk/nY8FyrL5YxwP9e4r9dqeM6cAbo8PeU9UjyXojZMNvVad2Z06FAVHyR3Ecw6fza+0GH7vdJgiKIVXTMbSBA==,
-            }
-        dependencies:
-            tslib: 2.6.2
-        dev: false
-
     /@formatjs/icu-messageformat-parser@2.1.0:
         resolution:
             {
@@ -3044,17 +3026,6 @@ packages:
             tslib: 2.6.2
         dev: false
 
-    /@formatjs/icu-messageformat-parser@2.7.3:
-        resolution:
-            {
-                integrity: sha512-X/jy10V9S/vW+qlplqhMUxR8wErQ0mmIYSq4mrjpjDl9mbuGcCILcI1SUYkL5nlM4PJqpc0KOS0bFkkJNPxYRw==,
-            }
-        dependencies:
-            '@formatjs/ecma402-abstract': 1.18.0
-            '@formatjs/icu-skeleton-parser': 1.7.0
-            tslib: 2.6.2
-        dev: false
-
     /@formatjs/icu-skeleton-parser@1.3.6:
         resolution:
             {
@@ -3062,38 +3033,6 @@ packages:
             }
         dependencies:
             '@formatjs/ecma402-abstract': 1.11.4
-            tslib: 2.6.2
-        dev: false
-
-    /@formatjs/icu-skeleton-parser@1.7.0:
-        resolution:
-            {
-                integrity: sha512-Cfdo/fgbZzpN/jlN/ptQVe0lRHora+8ezrEeg2RfrNjyp+YStwBy7cqDY8k5/z2LzXg6O0AdzAV91XS0zIWv+A==,
-            }
-        dependencies:
-            '@formatjs/ecma402-abstract': 1.18.0
-            tslib: 2.6.2
-        dev: false
-
-    /@formatjs/intl-displaynames@6.6.4:
-        resolution:
-            {
-                integrity: sha512-ET8KQ+L9Q0K8x1SnJQa4DNssUcbATlMopWqYvGGR8yAvw5qwAQc1fv+DshCoZNIE9pbcue0IGC4kWNAkWqlFag==,
-            }
-        dependencies:
-            '@formatjs/ecma402-abstract': 1.18.0
-            '@formatjs/intl-localematcher': 0.5.2
-            tslib: 2.6.2
-        dev: false
-
-    /@formatjs/intl-listformat@7.5.3:
-        resolution:
-            {
-                integrity: sha512-l7EOr0Yh1m8KagytukB90yw81uyzrM7amKFrgxXqphz4KeSIL0KPa68lPsdtZ+JmQB73GaDQRwLOwUKFZ1VZPQ==,
-            }
-        dependencies:
-            '@formatjs/ecma402-abstract': 1.18.0
-            '@formatjs/intl-localematcher': 0.5.2
             tslib: 2.6.2
         dev: false
 
@@ -3122,27 +3061,6 @@ packages:
             }
         dependencies:
             tslib: 2.6.2
-        dev: false
-
-    /@formatjs/intl@2.9.9(typescript@5.3.2):
-        resolution:
-            {
-                integrity: sha512-JI3CNgL2Zdg5lv9ncT2sYKqbAj2RGrCbdzaCckIxMPxn4QuHuOVvYUGmBAXVusBmfG/0sxLmMrnwnBioz+QKdA==,
-            }
-        peerDependencies:
-            typescript: '5'
-        peerDependenciesMeta:
-            typescript:
-                optional: true
-        dependencies:
-            '@formatjs/ecma402-abstract': 1.18.0
-            '@formatjs/fast-memoize': 2.2.0
-            '@formatjs/icu-messageformat-parser': 2.7.3
-            '@formatjs/intl-displaynames': 6.6.4
-            '@formatjs/intl-listformat': 7.5.3
-            intl-messageformat: 10.5.8
-            tslib: 2.6.2
-            typescript: 5.3.2
         dev: false
 
     /@grpc/grpc-js@1.9.12:
@@ -3344,7 +3262,7 @@ packages:
             react: '>=16'
         dependencies:
             '@types/mdx': 2.0.10
-            '@types/react': 18.2.40
+            '@types/react': 18.2.41
             react: 18.2.0
         dev: false
 
@@ -5607,7 +5525,7 @@ packages:
             pretty-format: 27.5.1
         dev: true
 
-    /@testing-library/jest-dom@6.1.5(vitest@0.34.6):
+    /@testing-library/jest-dom@6.1.5:
         resolution:
             {
                 integrity: sha512-3y04JLW+EceVPy2Em3VwNr95dOKqA8DhR0RJHhHKDZNYXcVXnEK7WIrpj4eYU8SVt/qYZ2aRWt/WgQ+grNES8g==,
@@ -5636,7 +5554,6 @@ packages:
             dom-accessibility-api: 0.5.16
             lodash: 4.17.21
             redent: 3.0.0
-            vitest: 0.34.6(sass@1.69.5)
         dev: true
 
     /@testing-library/react@14.1.2(react-dom@18.2.0)(react@18.2.0):
@@ -5925,16 +5842,6 @@ packages:
             '@types/unist': 3.0.2
         dev: false
 
-    /@types/hoist-non-react-statics@3.3.5:
-        resolution:
-            {
-                integrity: sha512-SbcrWzkKBw2cdwRTwQAswfpB9g9LJWfjtUeW/jvNwbhC8cpmmNYVePa+ncbUe0rGTQ7G3Ff6mYUN2VMfLVr+Sg==,
-            }
-        dependencies:
-            '@types/react': 18.2.40
-            hoist-non-react-statics: 3.3.2
-        dev: false
-
     /@types/istanbul-lib-coverage@2.0.6:
         resolution:
             {
@@ -6063,7 +5970,7 @@ packages:
                 integrity: sha512-rvrT/M7Df5eykWFxn6MYt5Pem/Dbyc1N8Y0S9Mrkw2WFCRiqUgw9P7ul2NpwsXCSM1DVdENzdG9J5SreqfAIWg==,
             }
         dependencies:
-            '@types/react': 18.2.40
+            '@types/react': 18.2.41
         dev: true
 
     /@types/react-syntax-highlighter@15.5.10:
@@ -6072,13 +5979,13 @@ packages:
                 integrity: sha512-Vf8nNkGHnjwK37b2wDs92zJSAWS2Mb57NcYHgajCNssHeTNEixvjINnXJkKdY0V0/eLrYkPP1xDKvNmYIr4HIg==,
             }
         dependencies:
-            '@types/react': 18.2.40
+            '@types/react': 18.2.41
         dev: true
 
-    /@types/react@18.2.40:
+    /@types/react@18.2.41:
         resolution:
             {
-                integrity: sha512-H+BUhb9C1zBtogDLAk+KCNRKiHDrqSwQT/0z0PVTwMFBxqg3011ByLomADtgkgMkfwj4AMOiXBReyLTUBg681g==,
+                integrity: sha512-CwOGr/PiLiNBxEBqpJ7fO3kocP/2SSuC9fpH5K7tusrg4xPSRT/193rzolYwQnTN02We/ATXKnb6GqA5w4fRxw==,
             }
         dependencies:
             '@types/prop-types': 15.7.11
@@ -6424,7 +6331,7 @@ packages:
             '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.5)
             '@types/babel__core': 7.20.5
             react-refresh: 0.14.0
-            vite: 5.0.4(@types/node@20.10.2)(sass@1.69.5)
+            vite: 5.0.4
         transitivePeerDependencies:
             - supports-color
         dev: true
@@ -7117,7 +7024,7 @@ packages:
         peerDependencies:
             postcss: ^8.1.0
         dependencies:
-            browserslist: 4.22.1
+            browserslist: 4.22.2
             caniuse-lite: 1.0.30001565
             fraction.js: 4.3.7
             normalize-range: 0.1.2
@@ -7295,10 +7202,10 @@ packages:
         dependencies:
             fill-range: 7.0.1
 
-    /browserslist@4.22.1:
+    /browserslist@4.22.2:
         resolution:
             {
-                integrity: sha512-FEVc202+2iuClEhZhrWy6ZiAcRLvNMyYcxZ8raemul1DYVOVdFsbqckWLdsixQZCpJlwe77Z3UTalE7jsjnKfQ==,
+                integrity: sha512-0UgcrvQmBDvZHFGdYUehrCNIazki7/lUP3kkoi/r3YB2amZbFM9J43ZRkJTXBUZK4gmx56+Sqk9+Vs9mwZx9+A==,
             }
         engines: { node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7 }
         hasBin: true
@@ -7306,7 +7213,7 @@ packages:
             caniuse-lite: 1.0.30001565
             electron-to-chromium: 1.4.601
             node-releases: 2.0.14
-            update-browserslist-db: 1.0.13(browserslist@4.22.1)
+            update-browserslist-db: 1.0.13(browserslist@4.22.2)
 
     /buffer-from@1.1.2:
         resolution:
@@ -7779,7 +7686,7 @@ packages:
                 integrity: sha512-cNzGqFsh3Ot+529GIXacjTJ7kegdt5fPXxCBVS1G0iaZpuo/tBz399ymceLJveQhFFZ8qThHiP3fzuoQjKN2ow==,
             }
         dependencies:
-            browserslist: 4.22.1
+            browserslist: 4.22.2
         dev: true
 
     /cose-base@1.0.3:
@@ -10851,15 +10758,6 @@ packages:
             }
         dev: false
 
-    /hoist-non-react-statics@3.3.2:
-        resolution:
-            {
-                integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==,
-            }
-        dependencies:
-            react-is: 16.13.1
-        dev: false
-
     /hosted-git-info@2.8.9:
         resolution:
             {
@@ -11111,18 +11009,6 @@ packages:
             {
                 integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==,
             }
-        dev: false
-
-    /intl-messageformat@10.5.8:
-        resolution:
-            {
-                integrity: sha512-NRf0jpBWV0vd671G5b06wNofAN8tp7WWDogMZyaU8GUAsmbouyvgwmFJI7zLjfAMpm3zK+vSwRP3jzaoIcMbaA==,
-            }
-        dependencies:
-            '@formatjs/ecma402-abstract': 1.18.0
-            '@formatjs/fast-memoize': 2.2.0
-            '@formatjs/icu-messageformat-parser': 2.7.3
-            tslib: 2.6.2
         dev: false
 
     /intl-messageformat@9.13.0:
@@ -13326,7 +13212,7 @@ packages:
         dependencies:
             '@formatjs/intl-localematcher': 0.2.32
             negotiator: 0.6.3
-            next: 14.0.3(@babel/core@7.23.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
+            next: 14.0.3(@babel/core@7.23.5)(react-dom@18.2.0)(react@18.2.0)
             react: 18.2.0
             use-intl: 3.2.1(react@18.2.0)
         dev: false
@@ -13381,32 +13267,46 @@ packages:
             react-dom: 18.2.0(react@18.2.0)
         dev: false
 
-    /next-translate-plugin@2.6.2(next-translate@2.6.2):
+    /next@14.0.3(@babel/core@7.23.5)(react-dom@18.2.0)(react@18.2.0):
         resolution:
             {
-                integrity: sha512-qfvYG//QfP7b+A/xXGP9K+bdswkAFCabguemuEqjxu+j8pRNoF+jWKmepRXRaAcn1PqFLBj6PBvYkqD1r5k5Zw==,
+                integrity: sha512-AbYdRNfImBr3XGtvnwOxq8ekVCwbFTv/UJoLwmaX89nk9i051AEY4/HAWzU0YpaTDw8IofUpmuIlvzWF13jxIw==,
             }
-        engines: { node: '>=14.15.0' }
-        requiresBuild: true
+        engines: { node: '>=18.17.0' }
+        hasBin: true
         peerDependencies:
-            next-translate: '>= 2.4.1'
+            '@opentelemetry/api': ^1.1.0
+            react: ^18.2.0
+            react-dom: ^18.2.0
+            sass: ^1.3.0
+        peerDependenciesMeta:
+            '@opentelemetry/api':
+                optional: true
+            sass:
+                optional: true
         dependencies:
-            next-translate: 2.6.2(next@14.0.3)(react@18.2.0)
-            typescript: 4.5.2
-        dev: false
-
-    /next-translate@2.6.2(next@14.0.3)(react@18.2.0):
-        resolution:
-            {
-                integrity: sha512-Dcfo2Vyw+Ds06+8BJM0RcV/lfN7R59kTY/NP+XJgSpcrFKZV6QJuKfS+K4+OHkKBdQnF3ZOT3wk1np9eZx/PEA==,
-            }
-        engines: { node: '>=16.10.0' }
-        peerDependencies:
-            next: '>= 13.2.5'
-            react: '>= 18.0.0'
-        dependencies:
-            next: 14.0.3(@babel/core@7.23.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5)
+            '@next/env': 14.0.3
+            '@swc/helpers': 0.5.2
+            busboy: 1.6.0
+            caniuse-lite: 1.0.30001565
+            postcss: 8.4.31
             react: 18.2.0
+            react-dom: 18.2.0(react@18.2.0)
+            styled-jsx: 5.1.1(@babel/core@7.23.5)(react@18.2.0)
+            watchpack: 2.4.0
+        optionalDependencies:
+            '@next/swc-darwin-arm64': 14.0.3
+            '@next/swc-darwin-x64': 14.0.3
+            '@next/swc-linux-arm64-gnu': 14.0.3
+            '@next/swc-linux-arm64-musl': 14.0.3
+            '@next/swc-linux-x64-gnu': 14.0.3
+            '@next/swc-linux-x64-musl': 14.0.3
+            '@next/swc-win32-arm64-msvc': 14.0.3
+            '@next/swc-win32-ia32-msvc': 14.0.3
+            '@next/swc-win32-x64-msvc': 14.0.3
+        transitivePeerDependencies:
+            - '@babel/core'
+            - babel-plugin-macros
         dev: false
 
     /next@14.0.3(@babel/core@7.23.5)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.5):
@@ -14219,7 +14119,7 @@ packages:
             on-exit-leak-free: 2.1.2
             pino-abstract-transport: 1.1.0
             pino-std-serializers: 6.2.2
-            process-warning: 2.3.1
+            process-warning: 2.3.2
             quick-format-unescaped: 4.0.4
             real-require: 0.2.0
             safe-stable-stringify: 2.4.3
@@ -14457,10 +14357,10 @@ packages:
         engines: { node: '>=6' }
         dev: false
 
-    /process-warning@2.3.1:
+    /process-warning@2.3.2:
         resolution:
             {
-                integrity: sha512-JjBvFEn7MwFbzUDa2SRtKJSsyO0LlER4V/FmwLMhBlXNbGgGxdyFCxIdMDLerWUycsVUyaoM9QFLvppFy4IWaQ==,
+                integrity: sha512-n9wh8tvBe5sFmsqlg+XQhaQLumwpqoAUruLwjCopgTmUBjJ/fjtBsJzKleCaIGBOMXYEhp1YfKl4d7rJ5ZKJGA==,
             }
 
     /process@0.11.10:
@@ -14625,32 +14525,6 @@ packages:
             loose-envify: 1.4.0
             react: 18.2.0
             scheduler: 0.23.0
-
-    /react-intl@6.5.5(react@18.2.0)(typescript@5.3.2):
-        resolution:
-            {
-                integrity: sha512-cI5UKvBh4tc1zxLIziHBYGMX3dhYWDEFlvUDVN6NfT2i96zTXz/zH2AmM8+2waqgOhwkFUzd+7kK1G9q7fiC2g==,
-            }
-        peerDependencies:
-            react: ^16.6.0 || 17 || 18
-            typescript: '5'
-        peerDependenciesMeta:
-            typescript:
-                optional: true
-        dependencies:
-            '@formatjs/ecma402-abstract': 1.18.0
-            '@formatjs/icu-messageformat-parser': 2.7.3
-            '@formatjs/intl': 2.9.9(typescript@5.3.2)
-            '@formatjs/intl-displaynames': 6.6.4
-            '@formatjs/intl-listformat': 7.5.3
-            '@types/hoist-non-react-statics': 3.3.5
-            '@types/react': 18.2.40
-            hoist-non-react-statics: 3.3.2
-            intl-messageformat: 10.5.8
-            react: 18.2.0
-            tslib: 2.6.2
-            typescript: 5.3.2
-        dev: false
 
     /react-is@16.13.1:
         resolution:
@@ -16545,15 +16419,6 @@ packages:
         hasBin: true
         dev: true
 
-    /typescript@4.5.2:
-        resolution:
-            {
-                integrity: sha512-5BlMof9H1yGt0P8/WF+wPNw6GfctgGjXp5hkblpyT+8rkASSmkUKMXrxR0Xg8ThVCi/JnHQiKXeBaEwCeQwMFw==,
-            }
-        engines: { node: '>=4.2.0' }
-        hasBin: true
-        dev: false
-
     /typescript@5.3.2:
         resolution:
             {
@@ -16666,14 +16531,6 @@ packages:
             is-plain-obj: 4.1.0
             trough: 2.1.0
             vfile: 5.3.7
-        dev: false
-
-    /unique-names-generator@4.7.1:
-        resolution:
-            {
-                integrity: sha512-lMx9dX+KRmG8sq6gulYYpKWZc9RlGsgBR6aoO8Qsm3qvkSJ+3rAymr+TnV8EDMrIrwuFJ4kruzMWM/OpYzPoow==,
-            }
-        engines: { node: '>=8' }
         dev: false
 
     /unist-util-find-after@5.0.0:
@@ -16883,7 +16740,7 @@ packages:
         engines: { node: '>=8' }
         dev: true
 
-    /update-browserslist-db@1.0.13(browserslist@4.22.1):
+    /update-browserslist-db@1.0.13(browserslist@4.22.2):
         resolution:
             {
                 integrity: sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg==,
@@ -16892,7 +16749,7 @@ packages:
         peerDependencies:
             browserslist: '>= 4.21.0'
         dependencies:
-            browserslist: 4.22.1
+            browserslist: 4.22.2
             escalade: 3.1.1
             picocolors: 1.0.0
 
@@ -17111,7 +16968,7 @@ packages:
         dependencies:
             magic-string: 0.30.5
             svgo: 2.8.0
-            vite: 5.0.4(@types/node@20.10.2)(sass@1.69.5)
+            vite: 5.0.4
             xml2js: 0.6.2
         dev: true
 
@@ -17132,6 +16989,44 @@ packages:
         transitivePeerDependencies:
             - supports-color
             - typescript
+        dev: true
+
+    /vite@5.0.4:
+        resolution:
+            {
+                integrity: sha512-RzAr8LSvM8lmhB4tQ5OPcBhpjOZRZjuxv9zO5UcxeoY2bd3kP3Ticd40Qma9/BqZ8JS96Ll/jeBX9u+LJZrhVg==,
+            }
+        engines: { node: ^18.0.0 || >=20.0.0 }
+        hasBin: true
+        peerDependencies:
+            '@types/node': ^18.0.0 || >=20.0.0
+            less: '*'
+            lightningcss: ^1.21.0
+            sass: '*'
+            stylus: '*'
+            sugarss: '*'
+            terser: ^5.4.0
+        peerDependenciesMeta:
+            '@types/node':
+                optional: true
+            less:
+                optional: true
+            lightningcss:
+                optional: true
+            sass:
+                optional: true
+            stylus:
+                optional: true
+            sugarss:
+                optional: true
+            terser:
+                optional: true
+        dependencies:
+            esbuild: 0.19.8
+            postcss: 8.4.32
+            rollup: 4.6.1
+        optionalDependencies:
+            fsevents: 2.3.3
         dev: true
 
     /vite@5.0.4(@types/node@20.10.2)(sass@1.69.5):
@@ -17419,7 +17314,7 @@ packages:
             '@webassemblyjs/wasm-parser': 1.11.6
             acorn: 8.11.2
             acorn-import-assertions: 1.9.0(acorn@8.11.2)
-            browserslist: 4.22.1
+            browserslist: 4.22.2
             chrome-trace-event: 1.0.3
             enhanced-resolve: 5.15.0
             es-module-lexer: 1.4.1
@@ -17766,7 +17661,7 @@ packages:
             }
         dev: false
 
-    /zustand@4.4.7(@types/react@18.2.40)(react@18.2.0):
+    /zustand@4.4.7(react@18.2.0):
         resolution:
             {
                 integrity: sha512-QFJWJMdlETcI69paJwhSMJz7PPWjVP8Sjhclxmxmxv/RYI7ZOvR5BHX+ktH0we9gTWQMxcne8q1OY8xxz604gw==,
@@ -17784,7 +17679,6 @@ packages:
             react:
                 optional: true
         dependencies:
-            '@types/react': 18.2.40
             react: 18.2.0
             use-sync-external-store: 1.2.0(react@18.2.0)
         dev: false

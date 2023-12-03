@@ -8,6 +8,7 @@ import useSWR from 'swr';
 import { handleRetrievePromptConfigs } from '@/api';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-analytics-page';
+import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-code-snippet';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
@@ -100,7 +101,9 @@ export default function PromptConfiguration({
 					applicationId={applicationId}
 					promptConfig={promptConfig}
 				/>
-				<div className="h-8" />
+				<div className="card-divider" />
+				<PromptConfigCodeSnippet />
+				<div className="card-divider" />
 				<PromptConfigGeneralInfo promptConfig={promptConfig} />
 			</>
 		)),
@@ -131,7 +134,7 @@ export default function PromptConfiguration({
 	const TabComponent = tabComponents[selectedTab];
 
 	return (
-		<div
+		<main
 			data-testid="prompt-page-container"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
@@ -152,6 +155,6 @@ export default function PromptConfiguration({
 
 				<TabComponent />
 			</div>
-		</div>
+		</main>
 	);
 }
