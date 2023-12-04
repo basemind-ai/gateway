@@ -13,13 +13,18 @@ jobs:
     set_environment:
         runs-on: ubuntu-latest
         environment: ${{ github.ref_name }}
+        outputs:
+            BACKEND_URL: ${{ steps.set_env.outputs.BACKEND_URL }}
+            GCP_PROJECT_ID: ${{ steps.set_env.outputs.GCP_PROJECT_ID }}
         steps:
             - name: Set Env Variables
+              id: set_env
               shell: bash
               run: |
-                  echo "BACKEND_URL=${{ env.BACKEND_URL }}" >> $GITHUB_ENV
-                  echo "GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }}" >> $GITHUB_ENV
+                  echo "BACKEND_URL=${{ vars.BACKEND_URL }}" >> "$GITHUB_OUTPUT"
+                  echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}" >> "$GITHUB_OUTPUT"
     deploy:
+        needs: set_environment
         permissions:
             checks: write
             contents: read
@@ -27,7 +32,7 @@ jobs:
         secrets: inherit
         uses: ./.github/workflows/deploy_firebase.yaml
         with:
-            backend_url: ${{ env.BACKEND_URL }}
+            backend_url: ${{needs.set_environment.outputs.BACKEND_URL}}
             environment: ${{ github.ref_name }}
-            gcp_project_id: ${{ env.GCP_PROJECT_ID }}
+            gcp_project_id: ${{needs.set_environment.outputs.GCP_PROJECT_ID}}
             is_preview: false
