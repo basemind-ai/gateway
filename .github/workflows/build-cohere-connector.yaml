@@ -12,7 +12,7 @@ on:
 #            - 'shared/ts/**'
 env:
     SERVICE_NAME: cohere-connector
-    FILE_PATH: ./docker/Dockerfile.go-services
+    FILE_PATH: ./docker/Dockerfile.ts-services
 jobs:
     build:
         permissions:
