@@ -3,12 +3,12 @@ on:
     push:
         branches:
             - main
-        paths:
-            - 'gen/go/ptesting/**'
-            - 'go.*'
-            - 'services/dashboard-backend/**'
-            - 'shared/go/**'
-            - '.github/workflows/build-dashboard-backend.yaml'
+#        paths:
+#            - 'gen/go/ptesting/**'
+#            - 'go.*'
+#            - 'services/dashboard-backend/**'
+#            - 'shared/go/**'
+#            - '.github/workflows/build-dashboard-backend.yaml'
 jobs:
     build:
         uses: ./.github/workflows/build.yaml

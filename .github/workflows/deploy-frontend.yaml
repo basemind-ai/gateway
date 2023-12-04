@@ -4,11 +4,11 @@ on:
         branches:
             - development
             - production
-        paths:
-            - 'frontend/src/**'
-            - 'shared/ts/**'
-            - 'package.json'
-            - '.github/workflows/deploy-frontend.yaml'
+#        paths:
+#            - 'frontend/src/**'
+#            - 'shared/ts/**'
+#            - 'package.json'
+#            - '.github/workflows/deploy-frontend.yaml'
 jobs:
     deploy:
         uses: ./.github/workflows/deploy_firebase.yaml

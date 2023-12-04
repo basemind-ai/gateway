@@ -4,6 +4,7 @@ on:
         branches:
             - main
         paths:
+            - '.github/workflows/tests-go.yaml'
             - 'gen/go/**'
             - 'go.*'
             - 'services/api-gateway/**'
@@ -12,9 +13,6 @@ on:
     pull_request:
         branches:
             - main
-        branches-ignore:
-            - development
-            - production
         paths:
             - 'gen/go/**'
             - 'go.*'

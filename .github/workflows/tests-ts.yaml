@@ -4,17 +4,16 @@ on:
         branches:
             - main
         paths:
+            - '.github/workflows/tests-ts.yaml'
             - 'frontend/**'
             - 'gen/ts/**'
-            - 'services/openai-connector/**'
+            - 'package.json'
             - 'services/cohere-connector/**'
+            - 'services/openai-connector/**'
             - 'shared/ts/**'
     pull_request:
         branches:
             - main
-        branches-ignore:
-            - development
-            - production
         paths:
             - 'frontend/**'
             - 'gen/ts/**'

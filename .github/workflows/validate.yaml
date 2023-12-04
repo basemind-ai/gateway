@@ -6,9 +6,6 @@ on:
     pull_request:
         branches:
             - main
-        branches-ignore:
-            - development
-            - production
 jobs:
     validate:
         runs-on: ubuntu-latest

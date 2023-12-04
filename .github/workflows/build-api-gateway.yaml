@@ -4,13 +4,13 @@ on:
         branches:
             - development
             - production
-        paths:
-            - 'gen/go/ptesting/**'
-            - 'gen/go/gateway/**'
-            - 'go.*'
-            - 'services/api-gateway/**'
-            - 'shared/go/**'
-            - '.github/workflows/build-api-gateway.yaml'
+#        paths:
+#            - 'gen/go/ptesting/**'
+#            - 'gen/go/gateway/**'
+#            - 'go.*'
+#            - 'services/api-gateway/**'
+#            - 'shared/go/**'
+#            - '.github/workflows/build-api-gateway.yaml'
 jobs:
     build:
         uses: ./.github/workflows/build.yaml
