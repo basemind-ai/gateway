@@ -65,6 +65,27 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="No JSON schema1">
+          <value>
+            <SchemaInfo>
+              <option name="ignoredFile" value="true" />
+              <option name="name" value="No JSON schema" />
+              <option name="relativePathToSchema" value="" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option
+											name="path"
+											value="file://$PROJECT_DIR$/.firebaserc"
+										/>
+                  </Item>
+                </list>
+              </option>
+              <option name="isIgnoredFile" value="true" />
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="Taskfile YAML Schema">
           <value>
             <SchemaInfo>

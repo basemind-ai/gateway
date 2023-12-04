@@ -15,12 +15,12 @@ env:
     FILE_PATH: ./docker/Dockerfile.ts-services
 jobs:
     build:
-        permissions:
-            contents: 'read'
-            id-token: 'write'
         runs-on: ubuntu-latest
-        timeout-minutes: 5
+        timeout-minutes: 15
         environment: ${{ github.ref_name }}
+        permissions:
+            contents: read
+            id-token: write
         steps:
             - name: Checkout
               id: checkout
