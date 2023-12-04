@@ -29,12 +29,12 @@ jobs:
               uses: google-github-actions/auth@v2
               with:
                   token_format: access_token
-                  workload_identity_provider: projects/${{env.gcp_project_number}}/locations/global/workloadIdentityPools/${{env.gcp_workload_identity_pool}}/providers/${{env.gcp_oidc_provider_name}}
-                  service_account: ${{env.gcp_service_account_name}}@${{env.gcp_project_id}}.iam.gserviceaccount.com
+                  workload_identity_provider: projects/${{secrets.gcp_project_number}}/locations/global/workloadIdentityPools/${{secrets.gcp_workload_identity_pool}}/providers/${{secrets.gcp_oidc_provider_name}}
+                  service_account: ${{secrets.gcp_service_account_name}}@${{secrets.gcp_project_id}}.iam.gserviceaccount.com
             - name: Login to Artifact Registry
               uses: docker/login-action@v3
               with:
-                  registry: ${{env.gcp_region}}-docker.pkg.dev
+                  registry: ${{secrets.gcp_region}}-docker.pkg.dev
                   username: oauth2accesstoken
                   password: ${{ steps.auth.outputs.access_token }}
             - name: Set up QEMU
@@ -51,5 +51,5 @@ jobs:
                       BUILD_TARGET=${{inputs.service}}
                       SERVICE_NAME=${{inputs.service}}
                   tags: |
-                      ${{env.gcp_region}}-docker.pkg.dev/${{env.gcp_project_id}}/basemind/${{inputs.service}}:latest
-                      ${{env.gcp_region}}-docker.pkg.dev/${{env.gcp_project_id}}/basemind/${{inputs.service}}:${{github.sha}}
+                      ${{secrets.gcp_region}}-docker.pkg.dev/${{secrets.gcp_project_id}}/basemind/${{inputs.service}}:latest
+                      ${{secrets.gcp_region}}-docker.pkg.dev/${{secrets.gcp_project_id}}/basemind/${{inputs.service}}:${{github.sha}}
