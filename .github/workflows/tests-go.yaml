@@ -12,6 +12,9 @@ on:
     pull_request:
         branches:
             - main
+        branches-ignore:
+            - development
+            - production
         paths:
             - 'gen/go/**'
             - 'go.*'

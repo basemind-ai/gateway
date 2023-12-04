@@ -18,8 +18,8 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-        timeout-minutes: ${{ env.timeout }}
-        environment: ${{ env.environment }}
+        timeout-minutes: ${{ inputs.timeout }}
+        environment: ${{ inputs.environment }}
         steps:
             - name: Checkout
               id: checkout
@@ -46,10 +46,10 @@ jobs:
               with:
                   push: true
                   context: .
-                  file: ${{env.file_path}}
+                  file: ${{inputs.file_path}}
                   build-args: |
-                      BUILD_TARGET=${{env.service}}
-                      SERVICE_NAME=${{env.service}}
+                      BUILD_TARGET=${{inputs.service}}
+                      SERVICE_NAME=${{inputs.service}}
                   tags: |
-                      ${{env.gcp_region}}-docker.pkg.dev/${{env.gcp_project_id}}/basemind/${{env.service}}:latest
-                      ${{env.gcp_region}}-docker.pkg.dev/${{env.gcp_project_id}}/basemind/${{env.service}}:${{github.sha}}
+                      ${{env.gcp_region}}-docker.pkg.dev/${{env.gcp_project_id}}/basemind/${{inputs.service}}:latest
+                      ${{env.gcp_region}}-docker.pkg.dev/${{env.gcp_project_id}}/basemind/${{inputs.service}}:${{github.sha}}
