@@ -25,11 +25,11 @@ jobs:
                   echo "GCP_SERVICE_ACCOUNT_NAME=${{ env.GCP_SERVICE_ACCOUNT_NAME }}" >> $GITHUB_ENV
                   echo "GCP_WORKLOAD_IDENTITY_POOL=${{ env.GCP_WORKLOAD_IDENTITY_POOL }}" >> $GITHUB_ENV
     build:
-        uses: ./.github/workflows/build.yaml
-        secrets: inherit
         permissions:
             contents: 'read'
             id-token: 'write'
+        secrets: inherit
+        uses: ./.github/workflows/build.yaml
         with:
             file_path: ./docker/Dockerfile.go-services
             gcp_oidc_provider_name: ${{ env.GCP_OIDC_PROVIDER_NAME }}

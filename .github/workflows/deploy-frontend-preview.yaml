@@ -18,12 +18,12 @@ jobs:
               run: |
                   echo "BACKEND_URL=${{ env.BACKEND_URL }}" >> $GITHUB_ENV
     deploy:
-        uses: ./.github/workflows/deploy_firebase.yaml
-        secrets: inherit
         permissions:
             checks: write
             contents: read
             pull-requests: write
+        secrets: inherit
+        uses: ./.github/workflows/deploy_firebase.yaml
         with:
             environment: ${{ github.ref_name }}
             is_preview: true
