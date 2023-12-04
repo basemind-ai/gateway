@@ -12,6 +12,9 @@ on:
             is_preview:
                 required: true
                 type: boolean
+            backend_url:
+                required: true
+                type: string
 env:
     FIREBASE_CLI_EXPERIMENTS: webframeworks
 jobs:
@@ -59,7 +62,7 @@ jobs:
                   echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" >> frontend/.env
                   echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" >> frontend/.env
                   echo "NEXT_PUBLIC_SEGMENT_WRITE_KEY=${{ secrets.NEXT_PUBLIC_SEGMENT_WRITE_KEY }}" >> frontend/.env
-                  echo "NEXT_PUBLIC_BACKEND_BASE_URL=${{ env.DEVELOPMENT_DASHBOARD_BACKEND_URL }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_BACKEND_BASE_URL=${{ inputs.backend_url }}" >> frontend/.env
             - uses: FirebaseExtended/action-hosting-deploy@v0
               if: ${{ inputs.is_preview == false }}
               with:

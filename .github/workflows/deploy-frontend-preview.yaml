@@ -9,6 +9,14 @@ on:
             - 'package.json'
             - '.github/workflows/deploy-frontend-preview.yaml'
 jobs:
+    set_environment:
+        runs-on: ubuntu-latest
+        environment: development
+        steps:
+            - name: Set Env Variables
+              shell: bash
+              run: |
+                  echo "BACKEND_URL=${{ env.BACKEND_URL }}" >> $GITHUB_ENV
     deploy:
         uses: ./.github/workflows/deploy_firebase.yaml
         secrets: inherit
@@ -19,3 +27,4 @@ jobs:
         with:
             environment: ${{ github.ref_name }}
             is_preview: true
+            backend_url: ${{ env.BACKEND_URL }}

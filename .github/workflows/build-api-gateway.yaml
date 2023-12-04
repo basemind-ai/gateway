@@ -11,7 +11,21 @@ on:
 #            - 'services/api-gateway/**'
 #            - 'shared/go/**'
 #            - '.github/workflows/build-api-gateway.yaml'
+
 jobs:
+    set_environment:
+        runs-on: ubuntu-latest
+        environment: ${{ github.ref_name }}
+        steps:
+            - name: Set Env Variables
+              shell: bash
+              run: |
+                  echo "GCP_OIDC_PROVIDER_NAME=${{ env.GCP_OIDC_PROVIDER_NAME }}" >> $GITHUB_ENV
+                  echo "GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }}" >> $GITHUB_ENV
+                  echo "GCP_PROJECT_NUMBER=${{ env.GCP_PROJECT_NUMBER }}" >> $GITHUB_ENV
+                  echo "GCP_REGION=${{ env.GCP_REGION }}" >> $GITHUB_ENV
+                  echo "GCP_SERVICE_ACCOUNT_NAME=${{ env.GCP_SERVICE_ACCOUNT_NAME }}" >> $GITHUB_ENV
+                  echo "GCP_WORKLOAD_IDENTITY_POOL=${{ env.GCP_WORKLOAD_IDENTITY_POOL }}" >> $GITHUB_ENV
     build:
         uses: ./.github/workflows/build.yaml
         secrets: inherit
@@ -20,5 +34,10 @@ jobs:
             id-token: 'write'
         with:
             file_path: ./docker/Dockerfile.go-services
+            gcp_oidc_provider_name: ${{ env.GCP_OIDC_PROVIDER_NAME }}
+            gcp_project_id: ${{ env.GCP_PROJECT_ID }}
+            gcp_project_number: ${{ env.GCP_PROJECT_NUMBER }}
+            gcp_region: ${{ env.GCP_REGION }}
+            gcp_service_account_name: ${{ env.GCP_SERVICE_ACCOUNT_NAME }}
+            gcp_workload_identity_pool: ${{ env.GCP_WORKLOAD_IDENTITY_POOL }}
             service: api-gateway
-            environment: ${{ github.ref_name }}
