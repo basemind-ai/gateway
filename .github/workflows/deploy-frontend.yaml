@@ -4,11 +4,11 @@ on:
         branches:
             - development
             - production
-#        paths:
-#            - '.github/workflows/deploy-frontend.yaml'
-#            - 'frontend/src/**'
-#            - 'package.json'
-#            - 'shared/ts/**'
+        paths:
+            - '.github/workflows/deploy-frontend.yaml'
+            - 'frontend/src/**'
+            - 'package.json'
+            - 'shared/ts/**'
 jobs:
     set_environment:
         runs-on: ubuntu-latest
