@@ -8,6 +8,7 @@ on:
             - main
 jobs:
     validate:
+        if: github.ref_name != 'development' && github.ref_name != 'production'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout

@@ -25,6 +25,7 @@ env:
     DEEPSOURCE_DSN: ${{secrets.DEEPSOURCE_DSN}}
 jobs:
     test:
+        if: github.ref_name != 'development' && github.ref_name != 'production'
         runs-on: ubuntu-latest
         permissions:
             contents: read
