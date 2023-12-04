@@ -5,10 +5,10 @@ on:
             - development
             - production
 #        paths:
-#            - 'frontend/src/**'
-#            - 'shared/ts/**'
-#            - 'package.json'
 #            - '.github/workflows/deploy-frontend.yaml'
+#            - 'frontend/src/**'
+#            - 'package.json'
+#            - 'shared/ts/**'
 jobs:
     set_environment:
         runs-on: ubuntu-latest
@@ -18,6 +18,7 @@ jobs:
               shell: bash
               run: |
                   echo "BACKEND_URL=${{ env.BACKEND_URL }}" >> $GITHUB_ENV
+                  echo "GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }}" >> $GITHUB_ENV
     deploy:
         permissions:
             checks: write
@@ -26,6 +27,7 @@ jobs:
         secrets: inherit
         uses: ./.github/workflows/deploy_firebase.yaml
         with:
-            environment: ${{ github.ref_name }}
-            is_preview: false
             backend_url: ${{ env.BACKEND_URL }}
+            environment: ${{ github.ref_name }}
+            gcp_project_id: ${{ env.GCP_PROJECT_ID }}
+            is_preview: false

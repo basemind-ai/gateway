@@ -5,11 +5,11 @@ on:
             - development
             - production
 #        paths:
+#            - '.github/workflows/build-dashboard-backend.yaml'
 #            - 'gen/go/ptesting/**'
 #            - 'go.*'
 #            - 'services/dashboard-backend/**'
 #            - 'shared/go/**'
-#            - '.github/workflows/build-dashboard-backend.yaml'
 jobs:
     set_environment:
         runs-on: ubuntu-latest

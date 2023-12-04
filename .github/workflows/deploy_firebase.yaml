@@ -15,6 +15,9 @@ on:
             backend_url:
                 required: true
                 type: string
+            gcp_project_id:
+                required: true
+                type: string
 env:
     FIREBASE_CLI_EXPERIMENTS: webframeworks
 jobs:
@@ -68,11 +71,11 @@ jobs:
               with:
                   repoToken: ${{ secrets.GITHUB_TOKEN }}
                   firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-                  projectId: ${{ env.GCP_PROJECT_ID }}
+                  projectId: ${{ inputs.gcp_project_id }}
                   channelId: live
             - uses: FirebaseExtended/action-hosting-deploy@v0
               if: ${{ inputs.is_preview == true }}
               with:
                   repoToken: ${{ secrets.GITHUB_TOKEN }}
                   firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-                  projectId: ${{ env.GCP_PROJECT_ID }}
+                  projectId: ${{ inputs.gcp_project_id }}

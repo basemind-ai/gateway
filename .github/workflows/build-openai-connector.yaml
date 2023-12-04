@@ -5,11 +5,11 @@ on:
             - development
             - production
 #        paths:
+#            - '.github/workflows/build-openai-connector.yaml'
 #            - 'gen/ts/openai/**'
+#            - 'package.json'
 #            - 'services/openai-connector/**'
 #            - 'shared/ts/**'
-#            - 'package.json'
-#            - '.github/workflows/build-openai-connector.yaml'
 jobs:
     set_environment:
         runs-on: ubuntu-latest

@@ -5,12 +5,12 @@ on:
             - development
             - production
 #        paths:
-#            - 'gen/go/ptesting/**'
+#            - '.github/workflows/build-api-gateway.yaml'
 #            - 'gen/go/gateway/**'
+#            - 'gen/go/ptesting/**'
 #            - 'go.*'
 #            - 'services/api-gateway/**'
 #            - 'shared/go/**'
-#            - '.github/workflows/build-api-gateway.yaml'
 
 jobs:
     set_environment:
