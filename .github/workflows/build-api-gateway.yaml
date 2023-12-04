@@ -4,13 +4,13 @@ on:
         branches:
             - development
             - production
-#        paths:
-#            - '.github/workflows/build-api-gateway.yaml'
-#            - 'gen/go/gateway/**'
-#            - 'gen/go/ptesting/**'
-#            - 'go.*'
-#            - 'services/api-gateway/**'
-#            - 'shared/go/**'
+        paths:
+            - '.github/workflows/build-api-gateway.yaml'
+            - 'gen/go/gateway/**'
+            - 'gen/go/ptesting/**'
+            - 'go.*'
+            - 'services/api-gateway/**'
+            - 'shared/go/**'
 env:
     SERVICE_NAME: api-gateway
     FILE_PATH: ./docker/Dockerfile.go-services

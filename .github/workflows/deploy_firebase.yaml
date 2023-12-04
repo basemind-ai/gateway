@@ -66,6 +66,7 @@ jobs:
                   echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" >> frontend/.env
                   echo "NEXT_PUBLIC_SEGMENT_WRITE_KEY=${{ secrets.NEXT_PUBLIC_SEGMENT_WRITE_KEY }}" >> frontend/.env
                   echo "NEXT_PUBLIC_BACKEND_BASE_URL=${{ inputs.backend_url }}" >> frontend/.env
+                  cat frontend/.env
             - uses: FirebaseExtended/action-hosting-deploy@v0
               if: ${{ inputs.is_preview == false }}
               with:

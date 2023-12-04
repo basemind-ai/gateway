@@ -4,12 +4,12 @@ on:
         branches:
             - development
             - production
-#        paths:
-#            - '.github/workflows/build-cohere-connector.yaml'
-#            - 'gen/ts/cohere/**'
-#            - 'package.json'
-#            - 'services/cohere-connector/**'
-#            - 'shared/ts/**'
+        paths:
+            - '.github/workflows/build-cohere-connector.yaml'
+            - 'gen/ts/cohere/**'
+            - 'package.json'
+            - 'services/cohere-connector/**'
+            - 'shared/ts/**'
 env:
     SERVICE_NAME: cohere-connector
     FILE_PATH: ./docker/Dockerfile.ts-services

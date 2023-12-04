@@ -4,12 +4,12 @@ on:
         branches:
             - development
             - production
-#        paths:
-#            - '.github/workflows/build-dashboard-backend.yaml'
-#            - 'gen/go/ptesting/**'
-#            - 'go.*'
-#            - 'services/dashboard-backend/**'
-#            - 'shared/go/**'
+        paths:
+            - '.github/workflows/build-dashboard-backend.yaml'
+            - 'gen/go/ptesting/**'
+            - 'go.*'
+            - 'services/dashboard-backend/**'
+            - 'shared/go/**'
 env:
     SERVICE_NAME: dashboard-backend
     FILE_PATH: ./docker/Dockerfile.go-services

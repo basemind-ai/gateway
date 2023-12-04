@@ -4,12 +4,12 @@ on:
         branches:
             - development
             - production
-#        paths:
-#            - '.github/workflows/build-openai-connector.yaml'
-#            - 'gen/ts/openai/**'
-#            - 'package.json'
-#            - 'services/openai-connector/**'
-#            - 'shared/ts/**'
+        paths:
+            - '.github/workflows/build-openai-connector.yaml'
+            - 'gen/ts/openai/**'
+            - 'package.json'
+            - 'services/openai-connector/**'
+            - 'shared/ts/**'
 env:
     SERVICE_NAME: openai-connector
     FILE_PATH: ./docker/Dockerfile.ts-services
