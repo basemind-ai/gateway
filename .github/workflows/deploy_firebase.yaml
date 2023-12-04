@@ -65,7 +65,7 @@ jobs:
               with:
                   repoToken: ${{ secrets.GITHUB_TOKEN }}
                   firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-                  projectId: ${{ env.GCP_PROJECT_I }}
+                  projectId: ${{ env.GCP_PROJECT_ID }}
                   channelId: live
             - uses: FirebaseExtended/action-hosting-deploy@v0
               if: ${{ inputs.is_preview == true }}
