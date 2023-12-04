@@ -8,10 +8,14 @@ on:
             - 'go.*'
             - 'services/dashboard-backend/**'
             - 'shared/go/**'
+            - '.github/workflows/build-dashboard-backend.yaml'
 jobs:
     build:
         uses: ./.github/workflows/build.yaml
         secrets: inherit
+        permissions:
+            contents: 'read'
+            id-token: 'write'
         with:
             file_path: ./docker/Dockerfile.go-services
             service: dashboard-backend

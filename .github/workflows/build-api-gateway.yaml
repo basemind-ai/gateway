@@ -10,10 +10,14 @@ on:
             - 'go.*'
             - 'services/api-gateway/**'
             - 'shared/go/**'
+            - '.github/workflows/build-api-gateway.yaml'
 jobs:
     build:
         uses: ./.github/workflows/build.yaml
         secrets: inherit
+        permissions:
+            contents: 'read'
+            id-token: 'write'
         with:
             file_path: ./docker/Dockerfile.go-services
             service: api-gateway

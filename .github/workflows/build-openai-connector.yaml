@@ -9,10 +9,14 @@ on:
             - 'services/openai-connector/**'
             - 'shared/ts/**'
             - 'package.json'
+            - '.github/workflows/build-openai-connector.yaml'
 jobs:
     build:
         uses: ./.github/workflows/build.yaml
         secrets: inherit
+        permissions:
+            contents: 'read'
+            id-token: 'write'
         with:
             file_path: ./docker/Dockerfile.ts-services
             service: openai-connector

@@ -1,16 +1,22 @@
-name: Frontend Preview
+name: Deploy (Frontend)
 on:
-    pull_request:
+    push:
         branches:
-            - main
+            - development
+            - production
         paths:
             - 'frontend/src/**'
             - 'shared/ts/**'
             - 'package.json'
+            - '.github/workflows/deploy-frontend.yaml'
 jobs:
     deploy:
         uses: ./.github/workflows/deploy_firebase.yaml
         secrets: inherit
+        permissions:
+            checks: write
+            contents: read
+            pull-requests: write
         with:
             environment: ${{ github.ref_name }}
-            is_preview: true
+            is_preview: false
