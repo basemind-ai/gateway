@@ -2,7 +2,8 @@ name: 'Build (Cohere-Connector)'
 on:
     push:
         branches:
-            - main
+            - development
+            - production
 #        paths:
 #            - 'gen/ts/cohere/**'
 #            - 'services/cohere-connector/**'

@@ -2,7 +2,8 @@ name: 'Build (Dashboard-Backend)'
 on:
     push:
         branches:
-            - main
+            - development
+            - production
 #        paths:
 #            - 'gen/go/ptesting/**'
 #            - 'go.*'
