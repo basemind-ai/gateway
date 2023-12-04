@@ -12,13 +12,14 @@ import { useSetUser } from '@/stores/api-store';
 import { firebaseUIConfig, getFirebaseAuth } from '@/utils/firebase';
 
 export function FirebaseLogin() {
-	const [uiRendered, setIsUIRendered] = useState(false);
-	const [isSignedIn, setIsSignedIn] = useState(false);
 	const t = useTranslations('signin');
 
 	const router = useRouter();
 	const setUser = useSetUser();
 	const { identify, track } = useAnalytics();
+
+	const [uiRendered, setIsUIRendered] = useState(false);
+	const [isSignedIn, setIsSignedIn] = useState(false);
 
 	/* firebaseui cannot be imported in SSR mode, so we have to import it only when the browser loads. */
 	useEffect(() => {
@@ -28,6 +29,7 @@ export function FirebaseLogin() {
 				setUser(auth.currentUser);
 				router.replace(Navigation.Projects);
 				identify(auth.currentUser.uid, auth.currentUser);
+
 				return null;
 			}
 
@@ -44,10 +46,12 @@ export function FirebaseLogin() {
 				callbacks: {
 					signInSuccessWithAuthResult: () => {
 						// prevent the UI from redirecting the user using a preconfigured redirect-url
-						setIsSignedIn(true);
 						setUser(auth.currentUser);
+						setIsSignedIn(true);
+
 						identify(auth.currentUser!.uid, auth.currentUser!);
 						track('user sign in');
+
 						return false;
 					},
 					uiShown: () => {

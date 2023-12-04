@@ -1,4 +1,4 @@
-import { GithubAuthProvider, GoogleAuthProvider } from '@firebase/auth';
+import { GoogleAuthProvider } from '@firebase/auth';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { Auth, browserLocalPersistence, getAuth } from 'firebase/auth';
 
@@ -57,19 +57,19 @@ export const firebaseUIConfig = {
 	privacyPolicyUrl: Navigation.PrivacyPolicy,
 	signInFlow: 'popup',
 	signInOptions: [
-		GithubAuthProvider.PROVIDER_ID,
+		// GithubAuthProvider.PROVIDER_ID,
 		GoogleAuthProvider.PROVIDER_ID,
-		{
-			buttonColor: '#00a2ed',
-			customParameters: {
-				prompt: 'consent',
-				tenant: process.env.NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID,
-			},
-			iconUrl:
-				'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
-			provider: 'microsoft.com',
-			providerName: 'Microsoft',
-		},
+		// {
+		// 	buttonColor: '#00a2ed',
+		// 	customParameters: {
+		// 		prompt: 'consent',
+		// 		tenant: process.env.NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID,
+		// 	},
+		// 	iconUrl:
+		// 		'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
+		// 	provider: 'microsoft.com',
+		// 	providerName: 'Microsoft',
+		// },
 	],
 	siteName: 'BaseMind',
 	tosUrl: Navigation.TOS,
