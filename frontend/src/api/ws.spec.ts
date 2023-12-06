@@ -19,16 +19,11 @@ import {
 } from '@/types';
 
 describe('prompt testing websocket', () => {
-	const baseURL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
-
-	afterEach(() => {
-		process.env.NEXT_PUBLIC_BACKEND_BASE_URL = baseURL;
-	});
-
 	describe('handleCreateOTP', () => {
 		it('returns an OTP', async () => {
 			const otp = { otp: 'abc' };
 			const projectId = '123';
+
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(otp),
 				ok: true,

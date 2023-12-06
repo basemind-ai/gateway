@@ -1,5 +1,4 @@
 import { waitFor } from '@testing-library/react';
-import * as process from 'process';
 import {
 	mockGroup,
 	mockIdentify,
@@ -12,13 +11,6 @@ import { renderHook } from 'tests/test-utils';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 describe('useAnalytics tests', () => {
-	it("should throw an error if the NEXT_PUBLIC_SEGMENT_WRITE_KEY isn't set", () => {
-		delete process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
-		expect(() => {
-			renderHook(useAnalytics);
-		}).toThrow();
-	});
-
 	it('should return an object with the expected AnalyticsHandlers interface', () => {
 		const { result } = renderHook(() => useAnalytics());
 

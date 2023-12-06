@@ -8,6 +8,7 @@
 **/*.tfvars.json
 **/*_override.tf
 **/*_override.tf.json
+**/.env*
 **/.terraform/
 **/override.tf
 **/override.tf.json
@@ -22,8 +23,9 @@
 *.test
 .DS_Store
 .cxx
-.env.local
+.env
 .externalNativeBuild
+.firebase/
 .gradle
 .husky/_/
 .idea/*.local.xml
@@ -35,6 +37,7 @@
 .idea/shelf
 .idea/sonarlint
 .idea/workspace.xml
+.next/
 /.secrets/*
 build/
 captures/
@@ -42,5 +45,3 @@ coverage/
 dist/
 local.properties
 node_modules/
-.firebase/
-.next/

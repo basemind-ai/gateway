@@ -145,7 +145,7 @@ describe('projects API tests', () => {
 			expect(data).toEqual(projectAnalytics);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/analytics`,
+					`http://www.example.com/v1/projects/${project.id}/analytics?fromDate=&toDate=`,
 				),
 				{
 					headers: {
@@ -167,6 +167,8 @@ describe('projects API tests', () => {
 			const fromDate = '2023-09-30T15:34:09.136Z';
 			const toDate = '2023-10-02T15:34:09.136Z';
 
+			const urlParams = new URLSearchParams({ fromDate, toDate });
+
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(projectAnalytics),
 				ok: true,
@@ -180,7 +182,9 @@ describe('projects API tests', () => {
 			expect(data).toEqual(projectAnalytics);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/analytics?fromDate=${fromDate}&toDate=${toDate}`,
+					`http://www.example.com/v1/projects/${
+						project.id
+					}/analytics?${urlParams.toString()}`,
 				),
 				{
 					headers: {

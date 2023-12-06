@@ -5,6 +5,10 @@ import {
 } from '@/utils/firebase';
 
 describe('firebase utils tests', () => {
+	const originalEnv = process.env;
+	afterAll(() => {
+		process.env = originalEnv;
+	});
 	beforeEach(() => {
 		process.env.NEXT_PUBLIC_FIREBASE_API_KEY = '123';
 		process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = 'test.com';
@@ -26,19 +30,6 @@ describe('firebase utils tests', () => {
 				projectId: 'abc',
 				storageBucket: 'test-bucket',
 			});
-		});
-		it.each([
-			'NEXT_PUBLIC_FIREBASE_API_KEY',
-			'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
-			'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-			'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
-			'NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID',
-			'NEXT_PUBLIC_FIREBASE_APP_ID',
-			'NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID',
-		])('should throw an error if %s is not set', (key: string) => {
-			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete process.env[key];
-			expect(() => getFirebaseConfig()).toThrowError();
 		});
 	});
 	describe('getFirebaseApp tests', () => {

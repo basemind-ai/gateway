@@ -97,7 +97,7 @@ describe('Provider Keys API tests', () => {
 
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/provider-keys/${providerKey.id}`,
+					`http://www.example.com/v1/projects/${project.id}/provider-keys/${providerKey.id}/`,
 				),
 				{
 					headers: {

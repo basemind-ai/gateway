@@ -19,14 +19,11 @@ beforeEach(() => {
 	closeMock.mockReset();
 });
 
-export const mockFetch = vi.fn().mockResolvedValue({
-	json: () => Promise.resolve({}),
-	ok: true,
-	status: 200,
-});
+export const mockFetch = vi.fn();
 
-const env = {
+export const mockEnv = {
 	NEXT_PUBLIC_BACKEND_BASE_URL: 'http://www.example.com',
+	NEXT_PUBLIC_DISCORD_INVITE_URL: 'https://discord.gg/abc',
 	NEXT_PUBLIC_FIREBASE_API_KEY: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_APP_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'devlingo-demo.firebaseapp.com',
@@ -35,6 +32,7 @@ const env = {
 	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'devlingo-demo',
 	NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'devlingo-demo.appspot.com',
+	NEXT_PUBLIC_FRONTEND_HOST: 'http://localhost:3000',
 	NEXT_PUBLIC_SEGMENT_WRITE_KEY: faker.string.uuid(),
 };
 
@@ -68,8 +66,14 @@ vi.mock(
 );
 
 beforeEach(() => {
+	mockFetch.mockReset();
+	mockFetch.mockResolvedValue({
+		json: () => Promise.resolve({}),
+		ok: true,
+		status: 200,
+	});
 	global.fetch = mockFetch;
-	Object.assign(process.env, env);
+	Object.assign(process.env, mockEnv);
 });
 
 export { getAuthMock, initializeAppMock };

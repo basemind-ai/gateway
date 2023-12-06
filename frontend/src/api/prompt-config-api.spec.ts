@@ -212,10 +212,12 @@ describe('prompt configs API', () => {
 				tokensCost: 10,
 				totalRequests: 1000,
 			} satisfies Analytics;
+
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(promptConfigAnalytics),
 				ok: true,
 			});
+
 			const data = await handlePromptConfigAnalytics({
 				applicationId: application.id,
 				projectId: project.id,
@@ -225,7 +227,7 @@ describe('prompt configs API', () => {
 			expect(data).toEqual(promptConfigAnalytics);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/prompt-configs/${promptConfig.id}/analytics`,
+					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/prompt-configs/${promptConfig.id}/analytics?fromDate=&toDate=`,
 				),
 				{
 					headers: {
@@ -237,6 +239,7 @@ describe('prompt configs API', () => {
 				},
 			);
 		});
+
 		it('returns prompt config analytics for a given date range', async () => {
 			const project = await ProjectFactory.build();
 			const application = await ApplicationFactory.build();
@@ -248,6 +251,8 @@ describe('prompt configs API', () => {
 
 			const fromDate = '2023-09-30T15:34:09.136Z';
 			const toDate = '2023-10-02T15:34:09.136Z';
+
+			const urlParams = new URLSearchParams({ fromDate, toDate });
 
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(promptConfigAnalytics),
@@ -264,7 +269,11 @@ describe('prompt configs API', () => {
 			expect(data).toEqual(promptConfigAnalytics);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/applications/${application.id}/prompt-configs/${promptConfig.id}/analytics?fromDate=${fromDate}&toDate=${toDate}`,
+					`http://www.example.com/v1/projects/${
+						project.id
+					}/applications/${application.id}/prompt-configs/${
+						promptConfig.id
+					}/analytics?${urlParams.toString()}`,
 				),
 				{
 					headers: {

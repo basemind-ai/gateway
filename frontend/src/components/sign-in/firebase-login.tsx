@@ -45,13 +45,13 @@ export function FirebaseLogin() {
 
 				callbacks: {
 					signInSuccessWithAuthResult: () => {
-						// prevent the UI from redirecting the user using a preconfigured redirect-url
 						setUser(auth.currentUser);
 						setIsSignedIn(true);
 
 						identify(auth.currentUser!.uid, auth.currentUser!);
 						track('user sign in');
 
+						// prevent the UI from redirecting the user using a preconfigured redirect-url
 						return false;
 					},
 					uiShown: () => {
@@ -70,19 +70,17 @@ export function FirebaseLogin() {
 
 	useEffect(() => {
 		if (uiRendered) {
-			const footer = document.querySelector('.firebaseui-card-footer');
-			const tosMessage = document.querySelector('.firebaseui-tos');
+			document
+				.querySelector('.firebaseui-card-footer')
+				?.classList.add('m-8');
 
-			if (footer) {
-				footer.classList.add('m-8');
-			}
-			if (tosMessage) {
-				tosMessage.classList.add('text-base-content');
-			}
+			document
+				.querySelector('.firebaseui-tos')
+				?.classList.add('text-base-content');
 		}
 	}, [uiRendered]);
 
-	const loading = !uiRendered || isSignedIn;
+	const isLoading = !uiRendered || isSignedIn;
 
 	return (
 		<main
@@ -90,7 +88,7 @@ export function FirebaseLogin() {
 			className="flex items-center h-full w-full justify-center"
 		>
 			<div className="  shadow transition-all duration-700 ease-in-out h-full items-center self-center">
-				{loading && <Loader />}
+				{isLoading && <Loader />}
 				{!isSignedIn && (
 					<div className="flex items-center h-full">
 						<div id="firebaseui-auth-container">

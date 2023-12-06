@@ -7,7 +7,6 @@ import {
 	GeneralFooterLinks,
 	LegalFooterLinks,
 } from '@/components/static-site/footer';
-import { DISCORD_INVITE_LINK } from '@/constants';
 
 describe('Footer', () => {
 	it('should render a footer copyright', () => {
@@ -48,11 +47,16 @@ describe('Footer', () => {
 
 	it('should render social', () => {
 		render(<Footer />);
+
 		const socialElement = screen.getByTestId('footer-social');
 		expect(socialElement).toBeInTheDocument();
+
 		const discordBtnElement = screen.getByTestId('discord-btn');
 		expect(discordBtnElement).toBeInTheDocument();
 		fireEvent.click(discordBtnElement);
-		expect(routerPushMock).toHaveBeenCalledWith(DISCORD_INVITE_LINK);
+
+		expect(routerPushMock).toHaveBeenCalledWith(
+			process.env.NEXT_PUBLIC_DISCORD_INVITE_URL,
+		);
 	});
 });

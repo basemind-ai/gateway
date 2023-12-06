@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Discord, Mailbox } from 'react-bootstrap-icons';
 
-import { DISCORD_INVITE_LINK, SUPPORT_EMAIL } from '@/constants';
+import { SUPPORT_EMAIL } from '@/constants';
 
 export function GetInTouch() {
 	const t = useTranslations('support');
@@ -22,7 +22,9 @@ export function GetInTouch() {
 						<button
 							className="btn flex gap-2 text-lg font-medium h-16 px-6 items-center"
 							onClick={() => {
-								router.push(DISCORD_INVITE_LINK);
+								router.push(
+									process.env.NEXT_PUBLIC_DISCORD_INVITE_URL!,
+								);
 							}}
 						>
 							<Discord className="icon w-6 h-6 text-discord" />

@@ -15,7 +15,6 @@ import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-p
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ProjectPageTabNames } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { useProject } from '@/stores/api-store';
 
 export default function ProjectOverview({
@@ -24,7 +23,6 @@ export default function ProjectOverview({
 	params: { projectId: string };
 }) {
 	const user = useAuthenticatedUser();
-	useProjectBootstrap();
 
 	const t = useTranslations('projectOverview');
 
