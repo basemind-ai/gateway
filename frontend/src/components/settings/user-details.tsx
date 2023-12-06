@@ -8,16 +8,12 @@ export function UserDetails({ user }: { user: UserInfo | null }) {
 	const t = useTranslations('userSettings');
 	return (
 		<DashboardCard title={t('headlineDetailsCard')}>
-			{user?.photoURL ? (
-				// eslint-disable-next-line @next/next/no-img-element
-				<img
-					src={user.photoURL}
-					alt={t('profilePicture')}
-					className="rounded-full w-14 h-14"
-				/>
-			) : (
-				<div className="rounded-full w-14 h-14 bg-neutral animate-pulse" />
-			)}
+			<img
+				src={user?.photoURL ?? '/images/placholder-avatar.svg'}
+				alt={t('profilePicture')}
+				className="rounded-full w-14 h-14"
+			/>
+
 			<UserInfoRow label={t('fullName')} value={user?.displayName} />
 			<UserInfoRow label={t('email')} value={user?.email} />
 		</DashboardCard>
