@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { fireEvent, waitFor } from '@testing-library/react';
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
-import { render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';

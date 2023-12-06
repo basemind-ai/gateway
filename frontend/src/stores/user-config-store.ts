@@ -1,3 +1,4 @@
+import { persistNSync } from 'persist-and-sync';
 import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
@@ -25,7 +26,9 @@ export const userConfigStoreStateCreator: StateCreator<UserConfigStore> = (
 	},
 });
 
-export const useUserConfigStore = create(userConfigStoreStateCreator);
+export const useUserConfigStore = create(
+	persistNSync(userConfigStoreStateCreator, { name: 'user-config-store' }),
+);
 export const useResetState = () => useUserConfigStore((s) => s.resetState);
 export const useDateFormat = () => useUserConfigStore((s) => s.dateFormat);
 export const useSetDateFormat = () =>

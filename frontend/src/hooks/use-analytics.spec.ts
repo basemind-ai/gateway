@@ -1,4 +1,3 @@
-import { waitFor } from '@testing-library/react';
 import {
 	mockGroup,
 	mockIdentify,
@@ -6,7 +5,7 @@ import {
 	mockReady,
 	mockTrack,
 } from 'tests/mocks';
-import { renderHook } from 'tests/test-utils';
+import { renderHook, waitFor } from 'tests/test-utils';
 
 import { useAnalytics } from '@/hooks/use-analytics';
 

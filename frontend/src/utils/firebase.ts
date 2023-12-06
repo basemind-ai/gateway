@@ -1,8 +1,5 @@
-import { GithubAuthProvider, GoogleAuthProvider } from '@firebase/auth';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { Auth, browserLocalPersistence, getAuth } from 'firebase/auth';
-
-import { Navigation } from '@/constants';
 
 const instanceRef: { app: FirebaseApp | null; auth: Auth | null } = {
 	app: null,
@@ -41,26 +38,3 @@ export async function getFirebaseAuth(): Promise<Auth> {
 
 	return instanceRef.auth;
 }
-export const firebaseUIConfig = {
-	popupMode: true,
-	privacyPolicyUrl:
-		process.env.NEXT_PUBLIC_FRONTEND_HOST! + Navigation.PrivacyPolicy,
-	signInFlow: 'popup',
-	signInOptions: [
-		GithubAuthProvider.PROVIDER_ID,
-		GoogleAuthProvider.PROVIDER_ID,
-		{
-			buttonColor: '#00a2ed',
-			customParameters: {
-				prompt: 'consent',
-				tenant: process.env.NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID!,
-			},
-			iconUrl:
-				'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
-			provider: 'microsoft.com',
-			providerName: 'Microsoft',
-		},
-	],
-	siteName: 'BaseMind.AI',
-	tosUrl: process.env.NEXT_PUBLIC_FRONTEND_HOST! + Navigation.TOS,
-};

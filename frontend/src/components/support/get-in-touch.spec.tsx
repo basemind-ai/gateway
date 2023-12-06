@@ -1,7 +1,6 @@
-import { fireEvent } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { routerPushMock } from 'tests/mocks';
-import { render, renderHook, screen } from 'tests/test-utils';
+import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import { GetInTouch } from '@/components/support/get-in-touch';
 

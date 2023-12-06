@@ -199,6 +199,9 @@ importers:
             next-intl:
                 specifier: ^3.2.4
                 version: 3.2.4(next@14.0.3)(react@18.2.0)
+            persist-and-sync:
+                specifier: ^1.1.1
+                version: 1.1.1(zustand@4.4.7)
             react:
                 specifier: 18.2.0
                 version: 18.2.0
@@ -14027,6 +14030,17 @@ packages:
             '@types/estree': 1.0.5
             estree-walker: 3.0.3
             is-reference: 3.0.2
+        dev: false
+
+    /persist-and-sync@1.1.1(zustand@4.4.7):
+        resolution:
+            {
+                integrity: sha512-n+/3m9dILdRNgxEwxPFyRNxAe6ajKK8kNcg3Jiy6iZ+8Q5JhZ7lahqE0oH2uB1WSuy2vZPf2go/HLOjDnkCD7w==,
+            }
+        peerDependencies:
+            zustand: ^3 || ^4
+        dependencies:
+            zustand: 4.4.7(@types/react@18.2.42)(react@18.2.0)
         dev: false
 
     /picocolors@1.0.0:

@@ -1,6 +1,5 @@
-import { fireEvent } from '@testing-library/react';
 import { routerPushMock } from 'tests/mocks';
-import { render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen } from 'tests/test-utils';
 
 import {
 	Footer,

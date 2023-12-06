@@ -1,5 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
-import { render } from 'tests/test-utils';
+import { fireEvent, render, screen } from 'tests/test-utils';
 
 import { Dropdown } from '@/components/dropdown';
 

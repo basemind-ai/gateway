@@ -1,10 +1,15 @@
-import { fireEvent } from '@testing-library/react';
 import {
 	ApplicationFactory,
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
 } from 'tests/factories';
-import { render, renderHook, screen, waitFor } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';

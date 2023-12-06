@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { fireEvent, waitFor } from '@testing-library/react';
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
-import { render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { beforeEach } from 'vitest';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';

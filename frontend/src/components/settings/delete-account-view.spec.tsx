@@ -1,4 +1,3 @@
-import { screen, waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { closeMock } from 'tests/mocks';
 import {
@@ -6,6 +5,8 @@ import {
 	render,
 	renderHook,
 	routerReplaceMock,
+	screen,
+	waitFor,
 } from 'tests/test-utils';
 
 import * as UsersAPI from '@/api/users-api';

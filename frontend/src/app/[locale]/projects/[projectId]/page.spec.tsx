@@ -1,6 +1,11 @@
-import { fireEvent } from '@testing-library/react';
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
-import { render, renderHook, screen, waitFor } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as ProjectUsersAPI from '@/api/project-users-api';

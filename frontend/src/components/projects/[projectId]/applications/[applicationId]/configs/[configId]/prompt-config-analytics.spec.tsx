@@ -1,7 +1,12 @@
-import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { OpenAIPromptConfigFactory } from 'tests/factories';
-import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';

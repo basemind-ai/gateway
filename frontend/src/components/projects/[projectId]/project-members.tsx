@@ -100,7 +100,6 @@ export function ProjectMembers({ project }: { project: Project }) {
 		handleRetrieveProjectUsers,
 		{
 			onError: handleError,
-
 			onSuccess(users) {
 				setProjectUsers(project.id, users);
 			},

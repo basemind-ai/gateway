@@ -1,5 +1,4 @@
-import { fireEvent } from '@testing-library/react';
-import { render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen } from 'tests/test-utils';
 
 import { PromptTestInputs } from '@/components/prompt-display-components/prompt-test-inputs';
 

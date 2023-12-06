@@ -1,9 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { fireEvent, waitFor } from '@testing-library/react';
 import en from 'public/messages/en.json';
 import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
-import { render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';

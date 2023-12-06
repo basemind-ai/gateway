@@ -1,6 +1,5 @@
-import { waitFor } from '@testing-library/react';
 import en from 'public/messages/en.json';
-import { fireEvent, render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import {

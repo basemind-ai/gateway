@@ -35,7 +35,6 @@ export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 		handleRetrieveProjects,
 		{
 			onError: handleError,
-
 			onSuccess(data) {
 				setProjects(data);
 			},

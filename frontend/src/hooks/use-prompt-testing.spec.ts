@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { waitFor } from '@testing-library/react';
 import { PromptTestRecordFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
-import { act, renderHook } from 'tests/test-utils';
+import { act, renderHook, waitFor } from 'tests/test-utils';
 import { beforeEach, expect, SpyInstance } from 'vitest';
 
 import * as ws from '@/api/ws';

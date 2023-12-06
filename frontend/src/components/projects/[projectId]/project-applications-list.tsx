@@ -47,6 +47,7 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 				),
 			),
 		{
+			onError: handleError,
 			onSuccess(data) {
 				data.forEach((promptConfig, index) => {
 					setPromptConfig(applications![index].id, promptConfig);

@@ -1,6 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { screen } from '@testing-library/react';
-import { render } from 'tests/test-utils';
+import { render, screen } from 'tests/test-utils';
 import { describe, it } from 'vitest';
 
 import {

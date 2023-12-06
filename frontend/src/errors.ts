@@ -5,6 +5,13 @@ export class TokenError extends Error {
 	}
 }
 
+export class PermissionError extends Error {
+	constructor(msg: string) {
+		super(msg);
+		Object.setPrototypeOf(this, PermissionError.prototype);
+	}
+}
+
 export class ConfigurationError extends Error {
 	constructor(msg: string) {
 		super(msg);

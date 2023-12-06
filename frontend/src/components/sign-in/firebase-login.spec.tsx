@@ -1,6 +1,5 @@
-import { waitFor } from '@testing-library/react';
 import locales from 'public/messages/en.json';
-import { render, routerReplaceMock, screen } from 'tests/test-utils';
+import { render, routerReplaceMock, screen, waitFor } from 'tests/test-utils';
 import { Mock } from 'vitest';
 
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';

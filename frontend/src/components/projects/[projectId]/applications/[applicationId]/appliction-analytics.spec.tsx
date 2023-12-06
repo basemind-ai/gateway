@@ -1,8 +1,13 @@
 import { faker } from '@faker-js/faker';
-import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { ApplicationFactory } from 'tests/factories';
-import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
 import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';

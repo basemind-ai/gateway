@@ -1,6 +1,6 @@
-import { fireEvent } from '@testing-library/react';
 import { ProjectFactory } from 'tests/factories';
 import {
+	fireEvent,
 	render,
 	renderHook,
 	routerReplaceMock,
