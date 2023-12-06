@@ -13,7 +13,6 @@ import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/appl
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApplicationPageTabNames } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import { useApplication, useProject } from '@/stores/api-store';
 
 export default function Application({
@@ -22,7 +21,6 @@ export default function Application({
 	params: { applicationId: string; projectId: string };
 }) {
 	const user = useAuthenticatedUser();
-	useProjectBootstrap(false);
 
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);

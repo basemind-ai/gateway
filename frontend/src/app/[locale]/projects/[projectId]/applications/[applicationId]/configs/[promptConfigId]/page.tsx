@@ -17,7 +17,6 @@ import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { PromptConfigPageTab } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useProjectBootstrap } from '@/hooks/use-project-bootstrap';
 import {
 	useApplication,
 	useProject,
@@ -35,7 +34,6 @@ export default function PromptConfiguration({
 	};
 }) {
 	const user = useAuthenticatedUser();
-	useProjectBootstrap(false);
 
 	const t = useTranslations('promptConfig');
 	const handleError = useHandleError();
