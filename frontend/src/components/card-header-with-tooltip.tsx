@@ -11,11 +11,11 @@ export function CardHeaderWithTooltip({
 }) {
 	return (
 		<div
-			className="tooltip flex items-center gap-1 pr-3"
+			className="tooltip tooltip-top flex max-w-sm items-center gap-1 pr-3"
 			data-tip={tooltipText}
 			data-testid={dataTestId}
 		>
-			<h4 className="card-header">{headerText}</h4>
+			<h2 className="card-header">{headerText}</h2>
 			<InfoCircle className="w-3 h-3" />
 		</div>
 	);

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Plus, Trash } from 'react-bootstrap-icons';
 
 import { handleDeleteProviderKey } from '@/api/provider-keys-api';
+import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { Modal } from '@/components/modal';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
@@ -59,7 +60,11 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 
 	return (
 		<div>
-			<h2 className="card-header">{t('headline')}</h2>
+			<CardHeaderWithTooltip
+				headerText={t('headline')}
+				tooltipText={t('headlineToolTip')}
+				dataTestId={t('headlineToolTip')}
+			/>
 			<div className="rounded-data-card flex flex-col">
 				<table
 					className="custom-table mb-16"

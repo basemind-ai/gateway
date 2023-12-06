@@ -257,8 +257,10 @@
 		"save": "Save",
 		"sendInvite": "Send Invite",
 		"settings": "Settings",
-		"status": "Status"
+		"status": "Status",
+		"headlineTooltip": "Manage multiple applications within each project, such as production and development. Configure each application with various AI models as needed."
 	},
+
 	"projectSettings": {
 		"cancel": "Cancel",
 		"delete": "Delete",
@@ -316,6 +318,7 @@
 		"warning": "Warning"
 	},
 	"providerKeys": {
+		"headlineToolTip": "Input your API key to use AI models from your selected provider. Charges apply as per provider's rates.",
 		"actions": "Actions",
 		"cancel": "Cancel",
 		"cohere": "Cohere",
