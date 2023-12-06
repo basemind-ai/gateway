@@ -107,7 +107,7 @@ describe('project users API tests', () => {
 			expect(data).toEqual(userAccount);
 			expect(mockFetch).toHaveBeenCalledWith(
 				new URL(
-					`http://www.example.com/v1/projects/${project.id}/users/${userAccount.id}/`,
+					`http://www.example.com/v1/projects/${project.id}/users/`,
 				),
 				{
 					body: JSON.stringify(body),

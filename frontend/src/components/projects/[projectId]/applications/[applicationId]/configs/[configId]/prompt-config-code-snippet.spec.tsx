@@ -4,6 +4,7 @@ import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/appli
 
 const writeTextMock = vi.fn();
 
+// @ts-expect-error
 navigator.clipboard = { writeText: writeTextMock };
 
 describe('PromptConfigCodeSnippet', () => {

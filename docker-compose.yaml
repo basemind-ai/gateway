@@ -75,6 +75,7 @@ services:
             - ./go.sum:/go/src/app/go.sum:cached
         environment:
             API_GATEWAY_ADDRESS: api-gateway:4000
+            CRYPTO_PASS_KEY: KJgicfWjOGNzr0Bwo9z7W1jcOLFi6Ael
             DATABASE_URL: postgresql://basemind:basemind@db:5432/basemind
             ENVIRONMENT: development
             FRONTEND_BASE_URL: http://localhost:3000
@@ -85,7 +86,6 @@ services:
             SERVER_HOST: localhost
             SERVER_PORT: 4100
             URL_SIGNING_SECRET: jeronimo
-            CRYPTO_PASS_KEY: KJgicfWjOGNzr0Bwo9z7W1jcOLFi6Ael
         command:
             [
                 'gow',
@@ -113,7 +113,7 @@ services:
             SERVER_PORT: 8000
         working_dir: /app/services/openai-connector
         command: ['pnpm', 'run', 'dev']
-        env_file: '.secrets/.env.openai-connector'
+        env_file: .secrets/.env.openai-connector
     cohere-connector:
         build:
             dockerfile: docker/Dockerfile.ts-services
@@ -134,7 +134,7 @@ services:
             SERVER_PORT: 9000
         working_dir: /app/services/cohere-connector
         command: ['pnpm', 'run', 'dev']
-        env_file: '.secrets/.env.cohere-connector'
+        env_file: .secrets/.env.cohere-connector
     frontend:
         build:
             dockerfile: docker/Dockerfile.frontend
@@ -143,14 +143,16 @@ services:
         ports:
             - '3000:3000'
         volumes:
-            - ./shared/ts/src:/app/shared/ts/src:cached
+            - ./frontend/next.config.js:/app/frontend/next.config.js:cached
             - ./frontend/public:/app/frontend/public:cached
             - ./frontend/src:/app/frontend/src:cached
+            - ./shared/ts/src:/app/shared/ts/src:cached
         environment:
             NEXT_PUBLIC_BACKEND_BASE_URL: http://localhost:4100
+            NEXT_PUBLIC_FRONTEND_HOST: http://localhost
             NODE_ENV: development
         working_dir: /app/frontend
         command: ['pnpm', 'run', 'dev']
-        env_file: '.secrets/.env.frontend'
+        env_file: .secrets/.env.frontend
 volumes:
     db:

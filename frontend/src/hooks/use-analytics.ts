@@ -3,7 +3,6 @@ import { deepmerge } from 'deepmerge-ts';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ConfigurationError } from '@/errors';
 import { useUser } from '@/stores/api-store';
 
 declare global {
@@ -27,32 +26,29 @@ export function useAnalytics(): AnalyticsHandlers {
 	const analyticsRef = useRef<AnalyticsSnippet | AnalyticsBrowser | null>(
 		null,
 	);
-	const [initialized, setInitialized] = useState(false);
 
 	const user = useUser();
 	const pathname = usePathname();
 
+	const [initialized, setInitialized] = useState(false);
+
 	useEffect(() => {
 		if (!analyticsRef.current) {
-			const writeKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
+			(async () => {
+				if (window.analytics) {
+					analyticsRef.current = window.analytics;
+					return;
+				}
+				const writeKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY!;
 
-			if (!writeKey) {
-				throw new ConfigurationError(
-					'missing required env variable NEXT_PUBLIC_SEGMENT_WRITE_KEY',
+				window.analytics = analyticsRef.current = AnalyticsBrowser.load(
+					{
+						writeKey,
+					},
 				);
-			}
 
-			if (window.analytics) {
-				analyticsRef.current = window.analytics;
-			} else {
-				(async () => {
-					const analytics = (window.analytics = AnalyticsBrowser.load(
-						{ writeKey },
-					));
-					await analytics.ready();
-					analyticsRef.current = analytics;
-				})();
-			}
+				await analyticsRef.current.ready();
+			})();
 		}
 		setInitialized(true);
 	}, []);

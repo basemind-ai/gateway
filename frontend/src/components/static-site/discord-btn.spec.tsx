@@ -4,7 +4,6 @@ import { render } from 'tests/test-utils';
 import { describe } from 'vitest';
 
 import DiscordButton from '@/components/static-site/discord-button';
-import { DISCORD_INVITE_LINK } from '@/constants';
 
 describe('discord-btn tests', () => {
 	it('should render the discord button', () => {
@@ -18,6 +17,8 @@ describe('discord-btn tests', () => {
 		const discordBtn = screen.getByTestId('discord-btn');
 		fireEvent.click(discordBtn);
 
-		expect(routerPushMock).toHaveBeenCalledWith(DISCORD_INVITE_LINK);
+		expect(routerPushMock).toHaveBeenCalledWith(
+			process.env.NEXT_PUBLIC_DISCORD_INVITE_URL!,
+		);
 	});
 });

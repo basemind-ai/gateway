@@ -15,7 +15,6 @@ describe('useHandleError tests', () => {
 	let showErrorMock: Mock;
 
 	beforeEach(() => {
-		process.env.NODE_ENV = 'test';
 		showErrorMock = vi.fn();
 		vi.spyOn(toastStore, 'useShowError').mockReturnValue(showErrorMock);
 	});
@@ -54,32 +53,38 @@ describe('useHandleError tests', () => {
 	it('should call showError with a default error message when passed any other value and env is production', () => {
 		const value = 'Test value';
 
-		process.env.NODE_ENV = 'production';
+		Reflect.set(process.env, 'NODE_ENV', 'production');
 
 		const { result } = renderHook(useHandleError);
 
 		result.current(value);
 
 		expect(showErrorMock).toHaveBeenCalledWith('Something went wrong');
+
+		Reflect.set(process.env, 'NODE_ENV', 'test');
 	});
 
 	it('should throw an UnhandledError when passed a value that is not an instance of Error and env is development', () => {
-		const value = 'Test value';
+		Reflect.set(process.env, 'NODE_ENV', 'development');
 
-		process.env.NODE_ENV = 'development';
+		const value = 'Test value';
 
 		const { result } = renderHook(useHandleError);
 
 		expect(() => result.current(value)).toThrow(UnhandledError);
+
+		Reflect.set(process.env, 'NODE_ENV', 'test');
 	});
 
 	it('should throw an UnhandledError when passed a value that is not an instance of Error and env is production', () => {
 		const error = new Error();
 
-		process.env.NODE_ENV = 'production';
+		Reflect.set(process.env, 'NODE_ENV', 'development');
 
 		const { result } = renderHook(useHandleError);
 
 		expect(() => result.current(error)).not.toThrow(TypeError);
+
+		Reflect.set(process.env, 'NODE_ENV', 'test');
 	});
 });
