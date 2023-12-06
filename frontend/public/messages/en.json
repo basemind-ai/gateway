@@ -1,5 +1,7 @@
 {
 	"application": {
+		"tooltipConfigsList": "Model configurations enable AI model calls with specific parameters and templates. Use the configuration ID in your app; otherwise, it defaults to your predefined default configuration.",
+		"tooltipAPIKeysView": "API keys authenticate your application with our servers. Use them in your mobile app exclusively with our SDK",
 		"apiCalls": "API Calls",
 		"apiKey": "API Key",
 		"apiKeyCopied": "API Key Copied",

@@ -4,6 +4,7 @@ import { Plus } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
+import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { ApplicationPromptConfigsTable } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs-table';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -45,7 +46,11 @@ export function ApplicationPromptConfigs({
 
 	return (
 		<div data-testid="application-prompt-config-container" className="mt-9">
-			<h2 className="card-header">{t('promptConfiguration')}</h2>
+			<CardHeaderWithTooltip
+				tooltipText={t('tooltipConfigsList')}
+				headerText={t('promptConfiguration')}
+				dataTestId={t('promptConfiguration')}
+			/>
 			<div className="rounded-data-card">
 				{isLoading ? (
 					<div className="w-full flex mb-8">
