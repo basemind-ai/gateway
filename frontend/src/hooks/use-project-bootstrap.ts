@@ -5,6 +5,7 @@ import { handleRetrieveApplications, handleRetrieveProjects } from '@/api';
 import { Navigation } from '@/constants';
 import {
 	useProjects,
+	useSelectedProject,
 	useSetProjectApplications,
 	useSetProjects,
 	useSetSelectedProject,
@@ -16,28 +17,32 @@ export function useProjectBootstrap(redirectToDashboard = true) {
 	const setCurrentProject = useSetSelectedProject();
 	const setProjectApplications = useSetProjectApplications();
 	const projects = useProjects();
+	const selectedProject = useSelectedProject();
 
 	useEffect(() => {
 		(async () => {
 			if (projects.length) {
 				return;
 			}
+
 			const retrievedProjects = await handleRetrieveProjects();
 			if (retrievedProjects.length === 0) {
 				router.replace(Navigation.CreateProject);
 				return null;
 			}
-			const [{ id: projectId }] = retrievedProjects;
 			setProjects(retrievedProjects);
+
+			const [{ id: projectId }] = retrievedProjects;
 			setCurrentProject(projectId);
 
-			if (redirectToDashboard) {
-				router.replace(`${Navigation.Projects}/${projectId}`);
-			}
-
-			const projectApplications =
-				await handleRetrieveApplications(projectId);
-			setProjectApplications(projectId, projectApplications);
+			const applications = await handleRetrieveApplications(projectId);
+			setProjectApplications(projectId, applications);
 		})();
 	}, []);
+
+	useEffect(() => {
+		if (selectedProject && redirectToDashboard) {
+			router.replace(`${Navigation.Projects}/${selectedProject.id}`);
+		}
+	}, [selectedProject]);
 }
