@@ -1,6 +1,6 @@
 import { ConfigurationError } from '@/errors';
 
-const expectedEnvVariables = [
+export const expectedEnvVariables = [
 	'NEXT_PUBLIC_BACKEND_BASE_URL',
 	'NEXT_PUBLIC_DISCORD_INVITE_URL',
 	'NEXT_PUBLIC_FIREBASE_API_KEY',
@@ -15,7 +15,7 @@ const expectedEnvVariables = [
 	'NEXT_PUBLIC_SEGMENT_WRITE_KEY',
 ];
 
-const validateEnv = () => {
+export const validateEnv = () => {
 	const missingVariables = expectedEnvVariables.filter(
 		(key) => !process.env[key]?.trim(),
 	);

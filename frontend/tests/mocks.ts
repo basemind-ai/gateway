@@ -21,7 +21,7 @@ beforeEach(() => {
 
 export const mockFetch = vi.fn();
 
-const env = {
+export const mockEnv = {
 	NEXT_PUBLIC_BACKEND_BASE_URL: 'http://www.example.com',
 	NEXT_PUBLIC_DISCORD_INVITE_URL: 'https://discord.gg/abc',
 	NEXT_PUBLIC_FIREBASE_API_KEY: faker.string.uuid(),
@@ -73,7 +73,7 @@ beforeEach(() => {
 		status: 200,
 	});
 	global.fetch = mockFetch;
-	Object.assign(process.env, env);
+	Object.assign(process.env, mockEnv);
 });
 
 export { getAuthMock, initializeAppMock };
