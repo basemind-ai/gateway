@@ -11,9 +11,9 @@
 	},
 	"dependencies": {
 		"@grpc/grpc-js": "^1.9.12",
-		"@protobuf-ts/runtime": "^2.9.1",
-		"@protobuf-ts/runtime-rpc": "^2.9.1",
-		"cohere-ai": "^7.4.3",
+		"@protobuf-ts/runtime": "^2.9.2",
+		"@protobuf-ts/runtime-rpc": "^2.9.2",
+		"cohere-ai": "^7.5.0",
 		"grpc-health-check": "^2.0.0",
 		"pino": "^8.16.2"
 	}
