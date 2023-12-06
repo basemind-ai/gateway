@@ -65,15 +65,16 @@ export function CreateApplicationAPIKeyModal({
 	return (
 		<div className="bg-base-300">
 			<div className="p-10 flex flex-col items-center border-b border-neutral">
-				<h1
+				<h2
 					data-testid="create-api-key-title"
 					className="text-base-content font-bold text-xl"
 				>
 					{t('createApiKey')}
-				</h1>
-				<p className="mt-2.5 font-medium ">
+				</h2>
+				<p className="mt-2.5 text-center">
 					{t('createApiKeyDescription')}
 				</p>
+				<p className="text-center">{t('createApiKeySeeItOnce')}</p>
 				{!apiKeyHash && (
 					<div className="form-control card-divider self-start w-full">
 						<label className="label">

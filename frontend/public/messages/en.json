@@ -12,8 +12,9 @@
 		"close": "Close",
 		"copiedToClipboard": "Copied to clipboard",
 		"create": "Create",
-		"createApiKey": "Create API Key",
-		"createApiKeyDescription": "Keep the API key private and use it only with our SDK. You can view it once, It's not stored on our end for security.",
+		"createApiKey": "API Key",
+		"createApiKeyDescription": "Keep the API key private and use it only with our SDK.",
+		"createApiKeySeeItOnce": "You can view it once, It's not stored on our end for security.",
 		"createApiKeyPlaceholder": "Provide a name for your new API key",
 		"createdAt": "Created at",
 		"default": "Default",
@@ -64,13 +65,14 @@
 		"applicationDescription": "Application Description",
 		"applicationDescriptionPlaceholder": "Describe the project for team mates to easily understand",
 		"applicationName": "Application Name",
-		"applicationNamePlaceholder": "For example: BaseMind or Devlingo",
+		"applicationNamePlaceholder": "For example: Production or devlingo_dev",
 		"cancel": "Cancel",
 		"create": "CREATE",
 		"createApiKey": "Create API Key",
 		"createApiKeyPlaceholder": "Provide a name for your new API key",
 		"createApplication": "Create Application",
-		"optional": "optional"
+		"optional": "optional",
+		"tooltipAPIKey": "API Keys are used to authenticate your application with our servers. You can create multiple keys."
 	},
 	"createConfigWizard": {
 		"backButtonText": "Back",

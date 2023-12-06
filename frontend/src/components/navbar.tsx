@@ -4,7 +4,7 @@ import { ArrowLeft } from 'react-bootstrap-icons';
 
 import { AvatarDropdown } from '@/components/avatar-dropdown';
 import { Logo } from '@/components/logo';
-import { Navigation } from '@/constants';
+import { defaultProfilePicture, Navigation } from '@/constants';
 import { useProjects, useSetSelectedProject } from '@/stores/api-store';
 import { Application, Project, PromptConfig } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
@@ -100,7 +100,7 @@ export function Navbar({
 				)}
 			</div>
 			<AvatarDropdown
-				userPhotoURL={userPhotoURL ?? '/images/placholder-avatar.svg'}
+				userPhotoURL={userPhotoURL ?? defaultProfilePicture}
 				projects={projects}
 				handleSetProject={setSelectedProject}
 			/>
