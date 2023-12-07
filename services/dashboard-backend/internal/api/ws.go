@@ -98,16 +98,25 @@ func CreatePayloadFromMessage(
 		FinishReason: msg.FinishReason,
 	}
 
+	isErr := *msg.FinishReason == "error"
+
+	if isErr {
+		log.Warn().Msg("stream ended due to an error. Check the api-gateway logs for more details")
+	}
+
 	if msg.PromptRequestRecordId != nil {
 		requestRecordID := exc.MustResult(db.StringToUUID(*msg.PromptRequestRecordId))
-		promptTestRecord := exc.MustResult(db.GetQueries().
+		promptTestRecord, createErr := db.GetQueries().
 			CreatePromptTestRecord(ctx, models.CreatePromptTestRecordParams{
 				PromptRequestRecordID: *requestRecordID,
 				Response:              builder.String(),
 				VariableValues:        serialization.SerializeJSON(data.TemplateVariables),
-			}))
-
-		payload.PromptTestRecordID = ptr.To(db.UUIDToString(&promptTestRecord.ID))
+			})
+		if createErr == nil {
+			payload.PromptTestRecordID = ptr.To(db.UUIDToString(&promptTestRecord.ID))
+		} else if !isErr {
+			log.Error().Err(createErr).Msg("failed to create prompt test record")
+		}
 	}
 
 	return serialization.SerializeJSON(payload)
