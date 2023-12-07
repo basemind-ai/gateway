@@ -67,7 +67,7 @@
 		"applicationDescription": "Application Description",
 		"applicationDescriptionPlaceholder": "Describe the project for team mates to easily understand",
 		"applicationName": "Application Name",
-		"applicationNamePlaceholder": "For example: Production or devlingo_dev",
+		"applicationNamePlaceholder": "For example: Production or MyApp",
 		"cancel": "Cancel",
 		"create": "CREATE",
 		"createApiKey": "Create API Key",
