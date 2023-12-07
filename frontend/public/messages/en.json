@@ -322,7 +322,7 @@
 		"warning": "Warning"
 	},
 	"providerKeys": {
-		"headlineToolTip": "Input your API key to use AI models from your selected provider. Charges apply as per provider's rates.",
+		"headlineToolTip": "Input your API key to use AI models from your selected provider. We will use your key to send your requests. Note- we keep the API keys encrypted in our database.",
 		"actions": "Actions",
 		"cancel": "Cancel",
 		"cohere": "Cohere",
