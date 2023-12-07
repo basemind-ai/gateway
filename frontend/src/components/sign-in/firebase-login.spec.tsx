@@ -1,5 +1,6 @@
 import locales from 'public/messages/en.json';
-import { render, routerReplaceMock, screen, waitFor } from 'tests/test-utils';
+import { routerReplaceMock } from 'tests/mocks';
+import { render, screen, waitFor } from 'tests/test-utils';
 import { Mock } from 'vitest';
 
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';

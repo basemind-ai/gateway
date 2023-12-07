@@ -10,26 +10,44 @@ import { useShowInfo } from '@/stores/toast-store';
 import { AccessPermission, Project } from '@/types';
 import { handleChange } from '@/utils/events';
 
+function EmailChip({
+	email,
+	onRemove,
+}: {
+	email: string;
+	onRemove: () => void;
+}) {
+	const emailValid = isEmail(email);
+
+	return (
+		<div
+			className={`flex gap-1 items-center badge ${
+				emailValid ? 'badge-info' : 'badge-error'
+			} `}
+		>
+			{email}
+			<button data-testid="remove-email-btn" onClick={onRemove}>
+				<XCircleFill className={`w-3.5 h-3.5 text-neutral`} />
+			</button>
+		</div>
+	);
+}
+
 export function InviteProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
+
+	const setProjectUsers = useSetProjectUsers();
+	const handleError = useHandleError();
+	const showInfo = useShowInfo();
 
 	const [emails, setEmails] = useState<string[]>([]);
 	const [currentEmail, setCurrentEmail] = useState('');
 	const [permission, setPermission] = useState(AccessPermission.MEMBER);
-	const [loading, setLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
-	const setProjectUsers = useSetProjectUsers();
-
-	const handleError = useHandleError();
-	const showInfo = useShowInfo();
-
-	async function sendInvite() {
-		if (loading) {
-			return;
-		}
-
+	async function sendEmailInvites() {
+		setIsLoading(true);
 		try {
-			setLoading(true);
 			await handleAddUsersToProject({
 				data: emails.map((email) => ({ email, permission })),
 				projectId: project.id,
@@ -47,56 +65,32 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 		} catch (e) {
 			handleError(e);
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	}
 
 	function addEmailToList() {
-		if (!currentEmail) {
-			return;
-		}
+		if (currentEmail && isEmail(currentEmail)) {
+			if (!emails.includes(currentEmail)) {
+				setEmails([...emails, currentEmail]);
+			}
 
-		const alreadyExists = emails.includes(currentEmail);
-		if (!alreadyExists) {
-			setEmails([...emails, currentEmail]);
+			setCurrentEmail('');
 		}
-		setCurrentEmail('');
 	}
 
-	function handleKeyDown(event: KeyboardEvent) {
+	const handleKeyDown = (event: KeyboardEvent) => {
 		if (event.key === 'Enter') {
 			addEmailToList();
 		}
-	}
+	};
 
-	function EmailChip({
-		email,
-		onRemove,
-	}: {
-		email: string;
-		onRemove: () => void;
-	}) {
-		const emailValid = isEmail(email);
-
-		return (
-			<div
-				className={`flex gap-1 items-center badge ${
-					emailValid ? 'badge-info' : 'badge-error'
-				} `}
-			>
-				{email}
-				<button data-testid="remove-email-btn" onClick={onRemove}>
-					<XCircleFill className={`w-3.5 h-3.5 text-neutral`} />
-				</button>
-			</div>
-		);
-	}
-	function removeEmail(emailToRemove: string) {
+	const removeEmail = (emailToRemove: string) => {
 		setEmails(emails.filter((email) => email !== emailToRemove));
-	}
+	};
 
 	const emailsValid =
-		!!emails.length && emails.every((email) => isEmail(email));
+		emails.length > 0 && emails.every((email) => isEmail(email));
 
 	return (
 		<div data-testid="project-invite-member">
@@ -123,7 +117,6 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 									))}
 								</div>
 							)}
-							{/*<Envelope className="absolute left-4 top-1/2 -translate-y-1/2" />*/}
 							<input
 								type="email"
 								id="email-address-input"
@@ -164,11 +157,11 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 				<div className="flex justify-end pt-6">
 					<button
 						data-testid="send-invite-btn"
-						disabled={!emailsValid}
+						disabled={!emailsValid || isLoading}
 						className="card-action-button btn-primary text-primary-content disabled:text-neutral"
-						onClick={() => void sendInvite()}
+						onClick={() => void sendEmailInvites()}
 					>
-						{loading ? (
+						{isLoading ? (
 							<span className="loading loading-spinner loading-xs mx-4" />
 						) : (
 							t('sendInvite')

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-imports */
+/* eslint-disable no-restricted-imports,import/export */
 import {
 	render,
 	renderHook,
@@ -61,15 +61,14 @@ const customRenderHook = (
 	});
 };
 
-export * from '@testing-library/dom';
-
-export { customRender as render, customRenderHook as renderHook };
-
-export { act } from '@testing-library/react';
-export { routerReplaceMock } from 'tests/mocks';
-
 export function getLocaleNamespace(
 	key: keyof typeof locales,
 ): Record<string, string> {
 	return locales[key];
 }
+
+// the order of the exports here is important - the exports from the testing-library/react override those from dom
+// and the exports of the custom render functions override the testing library ones.
+export * from '@testing-library/dom';
+export * from '@testing-library/react';
+export { customRender as render, customRenderHook as renderHook };

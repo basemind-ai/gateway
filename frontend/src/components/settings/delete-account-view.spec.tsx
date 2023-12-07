@@ -1,10 +1,9 @@
 import { useTranslations } from 'next-intl';
-import { closeMock } from 'tests/mocks';
+import { closeMock, routerReplaceMock } from 'tests/mocks';
 import {
 	fireEvent,
 	render,
 	renderHook,
-	routerReplaceMock,
 	screen,
 	waitFor,
 } from 'tests/test-utils';

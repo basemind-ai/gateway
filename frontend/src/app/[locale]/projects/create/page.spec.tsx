@@ -1,11 +1,6 @@
 import { ProjectFactory } from 'tests/factories';
-import {
-	fireEvent,
-	render,
-	renderHook,
-	routerReplaceMock,
-	screen,
-} from 'tests/test-utils';
+import { routerReplaceMock } from 'tests/mocks';
+import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/[locale]/projects/create/page';
