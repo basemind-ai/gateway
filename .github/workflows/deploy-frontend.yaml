@@ -68,6 +68,7 @@ jobs:
                   echo "NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID=${{ vars.FIREBASE_MICROSOFT_TENANT_ID }}" >> frontend/.env
                   echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}" >> frontend/.env
                   echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ vars.FIREBASE_STORAGE_BUCKET }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_FRONTEND_HOST=${{ vars.FRONTEND_HOST }}" >> frontend/.env
                   echo "NEXT_PUBLIC_SEGMENT_WRITE_KEY=${{ env.SEGMENT_WRITE_KEY }}" >> frontend/.env
             - name: Deploy to Firebase
               env:
