@@ -106,9 +106,10 @@ export function createOpenAIRequest(
 		frequency_penalty: frequencyPenalty,
 		max_tokens: !!maxTokens && maxTokens > 0 ? maxTokens : undefined,
 		messages: messages.map<ChatCompletionMessageParam>((msg) => {
-			const { content, role, ...rest } = msg;
+			const { content, role, name, ...rest } = msg;
 			return {
-				content: content ?? null,
+				content: content?.trim() ? content.trim() : null,
+				name: name?.trim() ? name.trim() : undefined,
 				role: getOpenAIMessageRole(role),
 				...rest,
 			} as ChatCompletionMessageParam;

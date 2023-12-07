@@ -138,5 +138,58 @@ describe('utils tests', () => {
 			expect(result.presence_penalty).toBeUndefined();
 			expect(result.frequency_penalty).toBeUndefined();
 		});
+
+		it('should handle empty names and whitespace names by changing them to undefined', () => {
+			const request: OpenAIPromptRequest = {
+				messages: [
+					{
+						content: 'test',
+						name: '',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+					{
+						content: 'test',
+						name: ' ',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+					{
+						content: 'test',
+						name: 'a',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+			};
+
+			const result = createOpenAIRequest(request, true);
+			expect(Reflect.get(result.messages[0], 'name')).toBeUndefined();
+			expect(Reflect.get(result.messages[1], 'name')).toBeUndefined();
+			expect(Reflect.get(result.messages[2], 'name')).toEqual('a');
+		});
+
+		it('should handle empty content and whitespace content by it to null', () => {
+			const request: OpenAIPromptRequest = {
+				messages: [
+					{
+						content: '',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+					{
+						content: ' ',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+					{
+						content: 'test',
+						role: OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_USER,
+					},
+				],
+				model: OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K,
+			};
+
+			const result = createOpenAIRequest(request, true);
+			expect(Reflect.get(result.messages[0], 'content')).toBeNull();
+			expect(Reflect.get(result.messages[1], 'content')).toBeNull();
+			expect(Reflect.get(result.messages[2], 'content')).toBe('test');
+		});
 	});
 });
