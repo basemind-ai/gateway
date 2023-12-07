@@ -3,12 +3,12 @@ import { fireEvent, render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import { AvatarDropdown } from '@/components/avatar-dropdown';
-import { Navigation } from '@/constants';
+import { defaultProfilePicture, Navigation } from '@/constants';
 
 describe('AvatarDropdown tests', () => {
 	const mockHandleSetProject = vi.fn();
 	const projects = ProjectFactory.batchSync(3);
-	const userPhotoURL = '/images/placholder-avatar.svg';
+	const userPhotoURL = defaultProfilePicture;
 
 	beforeEach(() => {
 		vi.resetAllMocks();

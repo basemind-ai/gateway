@@ -43,3 +43,4 @@ export enum Dimensions {
 	NinetySix = 384, // 24rem
 }
 export const marketingInfographic = '/images/infographic.svg';
+export const defaultProfilePicture = '/images/placholder-avatar.svg';

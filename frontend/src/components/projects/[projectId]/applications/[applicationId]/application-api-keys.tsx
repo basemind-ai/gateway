@@ -5,6 +5,7 @@ import { Eraser, Plus } from 'react-bootstrap-icons';
 import useSWR, { useSWRConfig } from 'swr';
 
 import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
+import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { Modal } from '@/components/modal';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
@@ -142,9 +143,11 @@ export function ApplicationApiKeys({
 
 	return (
 		<div data-testid="application-api-keys-container">
-			<h2 data-testid="api-keys-title" className="card-header">
-				{t('apiKeys')}
-			</h2>
+			<CardHeaderWithTooltip
+				dataTestId={t('apiKeys')}
+				headerText={t('apiKeys')}
+				tooltipText={t('tooltipAPIKeysView')}
+			/>
 			<div className="rounded-data-card">
 				{renderApiKeys()}
 				<button

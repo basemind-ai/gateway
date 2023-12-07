@@ -4,6 +4,7 @@ import { Plus } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import { handleRetrieveApplications, handleRetrievePromptConfigs } from '@/api';
+import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { Modal } from '@/components/modal';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';
@@ -58,7 +59,11 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 
 	return (
 		<div data-testid="project-application-list-container">
-			<h2 className="card-header">{t('applications')}</h2>
+			<CardHeaderWithTooltip
+				tooltipText={t('headlineTooltip')}
+				headerText={t('applications')}
+				dataTestId={t('applications')}
+			/>
 			<div className="rounded-data-card flex flex-col">
 				{applications?.length ? (
 					<ProjectApplicationsListTable

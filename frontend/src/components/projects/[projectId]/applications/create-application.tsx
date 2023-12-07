@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { InfoCircle } from 'react-bootstrap-icons';
 
 import { handleCreateAPIKey, handleCreateApplication } from '@/api';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
@@ -155,7 +156,13 @@ export function CreateApplication({
 						htmlFor="createApiKey"
 						className="text-neutral-content text-xl font-medium mt-5 flex"
 					>
-						{t('createApiKey')}
+						<div
+							className="tooltip tooltip-right flex items-center gap-1"
+							data-tip={t('tooltipAPIKey')}
+						>
+							{t('createApiKey')}
+							<InfoCircle className="w-3 h-3" />
+						</div>
 						<span className="text-sm font-medium text-neutral ml-auto">
 							{t('optional')}
 						</span>
