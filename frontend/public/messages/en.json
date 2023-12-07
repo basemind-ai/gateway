@@ -15,7 +15,7 @@
 		"copiedToClipboard": "Copied to clipboard",
 		"create": "Create",
 		"createApiKey": "API Key",
-		"createApiKeyDescription": "Keep the API key private and use it only with our SDK.",
+		"createApiKeyDescription": "Treat the API key as a password - keep it secured and private.",
 		"createApiKeySeeItOnce": "You can view it once, It's not stored on our end for security.",
 		"createApiKeyPlaceholder": "Provide a name for your new API key",
 		"createdAt": "Created at",
