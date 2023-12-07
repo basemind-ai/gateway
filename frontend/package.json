@@ -20,7 +20,7 @@
 		"firebase": "^10.7.1",
 		"firebaseui": "^6.1.0",
 		"next": "14.0.3",
-		"next-intl": "^3.2.4",
+		"next-intl": "^3.3.0",
 		"persist-and-sync": "^1.1.1",
 		"react": "18.2.0",
 		"react-bootstrap-icons": "^1.10.3",
