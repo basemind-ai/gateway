@@ -1,8 +1,7 @@
-import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { UserFactory } from 'tests/factories';
 import { getAuthMock, routerReplaceMock } from 'tests/mocks';
-import { render, renderHook, waitFor } from 'tests/test-utils';
+import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 
 import UserSettings from '@/app/[locale]/settings/page';
 import { Navigation } from '@/constants';

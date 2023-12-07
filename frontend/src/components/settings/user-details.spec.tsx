@@ -1,6 +1,5 @@
-import { screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
-import { render, renderHook } from 'tests/test-utils';
+import { render, renderHook, screen } from 'tests/test-utils';
 
 import { UserDetails } from '@/components/settings/user-details';
 

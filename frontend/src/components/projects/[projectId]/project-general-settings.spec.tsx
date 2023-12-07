@@ -1,6 +1,5 @@
-import { fireEvent } from '@testing-library/react';
 import { ProjectFactory } from 'tests/factories';
-import { render, renderHook, screen } from 'tests/test-utils';
+import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';

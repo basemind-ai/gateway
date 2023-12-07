@@ -1,7 +1,12 @@
-import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { ProjectFactory } from 'tests/factories';
-import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';

@@ -1,6 +1,11 @@
-import { fireEvent, waitFor } from '@testing-library/react';
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
-import { render, renderHook, screen } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';

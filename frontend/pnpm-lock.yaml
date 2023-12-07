@@ -79,7 +79,7 @@ devDependencies:
     '@testing-library/jest-dom':
         specifier: ^5.17.0
         version: 5.17.0
-    '@testing-library/react':
+    'tests/test-utils':
         specifier: ^14.0.0
         version: 14.0.0(react-dom@18.2.0)(react@18.2.0)
     '@testing-library/user-event':
@@ -4207,7 +4207,7 @@ packages:
             redent: 3.0.0
         dev: true
 
-    /@testing-library/react@14.0.0(react-dom@18.2.0)(react@18.2.0):
+    /tests/test-utils@14.0.0(react-dom@18.2.0)(react@18.2.0):
         resolution:
             {
                 integrity: sha512-S04gSNJbYE30TlIMLTzv6QCTzt9AqIF5y6s6SzVFILNcNvbV/jU96GeiTPillGQo+Ny64M/5PV7klNYYgv5Dfg==,

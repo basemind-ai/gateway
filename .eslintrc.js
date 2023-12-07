@@ -5,6 +5,17 @@ const tsWebRules = {
 	'@next/next/no-html-link-for-pages': 0,
 };
 
+const tsWebTestRules = {
+	...tsWebRules,
+	'no-restricted-imports': [
+		'error',
+		{
+			name: '@testing-library/react',
+			message: 'Please use tests/test-utils instead.',
+		},
+	],
+};
+
 const project = [
 	'./docs/tsconfig.json',
 	'./frontend/tsconfig.json',
@@ -62,7 +73,7 @@ module.exports = {
 				'plugin:vitest/recommended',
 			],
 			rules: {
-				...tsWebRules,
+				...tsWebTestRules,
 				'testing-library/no-wait-for-side-effects': 0,
 			},
 		},

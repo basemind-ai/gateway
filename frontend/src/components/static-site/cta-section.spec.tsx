@@ -1,6 +1,5 @@
-import { fireEvent, screen } from '@testing-library/react';
 import { routerPushMock } from 'tests/mocks';
-import { render } from 'tests/test-utils';
+import { fireEvent, render, screen } from 'tests/test-utils';
 import { describe } from 'vitest';
 
 import { CTASection } from '@/components/static-site/cta-section';

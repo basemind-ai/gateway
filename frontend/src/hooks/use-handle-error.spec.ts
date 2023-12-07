@@ -1,10 +1,12 @@
-import { renderHook, routerReplaceMock } from 'tests/test-utils';
+import { routerReplaceMock } from 'tests/mocks';
+import { renderHook } from 'tests/test-utils';
 import { beforeEach, Mock } from 'vitest';
 
 import { Navigation } from '@/constants';
 import {
 	ApiError,
 	ConfigurationError,
+	PermissionError,
 	TokenError,
 	UnhandledError,
 } from '@/errors';
@@ -29,6 +31,16 @@ describe('useHandleError tests', () => {
 
 	it('should redirect to Navigation.SignIn when passed a TokenError instance', () => {
 		const error = new TokenError('Test error');
+
+		const { result } = renderHook(useHandleError);
+
+		result.current(error);
+
+		expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.SignIn);
+	});
+
+	it('should redirect to Navigation.SignIn when passed a PermissionError instance', () => {
+		const error = new PermissionError('Test error');
 
 		const { result } = renderHook(useHandleError);
 

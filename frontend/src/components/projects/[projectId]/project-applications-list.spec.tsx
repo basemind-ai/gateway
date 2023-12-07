@@ -1,11 +1,10 @@
-import { fireEvent, waitFor } from '@testing-library/react';
 import {
 	ApplicationFactory,
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
 } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
-import { render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';

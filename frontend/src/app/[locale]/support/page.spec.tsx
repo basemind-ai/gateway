@@ -1,8 +1,7 @@
 import { UserInfo } from '@firebase/auth';
-import { waitFor } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { getAuthMock, routerReplaceMock } from 'tests/mocks';
-import { render, renderHook, screen } from 'tests/test-utils';
+import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 
 import Support from '@/app/[locale]/support/page';
 import { Navigation } from '@/constants';

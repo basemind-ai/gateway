@@ -1,7 +1,6 @@
-import { fireEvent } from '@testing-library/react';
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
-import { render, screen, waitFor } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { beforeEach, expect } from 'vitest';
 
 import * as APIKeysAPI from '@/api/api-keys-api';

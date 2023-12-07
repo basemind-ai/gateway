@@ -1,6 +1,5 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { ProjectFactory } from 'tests/factories';
-import { render } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import * as projectAPI from '@/api/projects-api';
 import * as supportAPI from '@/api/support-api';

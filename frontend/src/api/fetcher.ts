@@ -1,7 +1,12 @@
 import { deepmerge } from 'deepmerge-ts';
 
 import { HttpMethod } from '@/constants';
-import { ApiError, ConfigurationError, TokenError } from '@/errors';
+import {
+	ApiError,
+	ConfigurationError,
+	PermissionError,
+	TokenError,
+} from '@/errors';
 import { getFirebaseAuth } from '@/utils/firebase';
 
 export async function fetcher<T>({
@@ -55,6 +60,12 @@ export async function fetcher<T>({
 		response.status === 204 ? {} : ((await response.json()) as unknown);
 
 	if (!response.ok) {
+		if (response.status === 401 || response.status === 403) {
+			throw new PermissionError(
+				'user does not have permission to access this resource',
+			);
+		}
+
 		throw new ApiError(
 			(Reflect.get(body as Record<string, any>, 'message') ??
 				'An API Error Occurred') as string,

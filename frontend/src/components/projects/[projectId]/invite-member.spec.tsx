@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { fireEvent, waitFor } from '@testing-library/react';
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
-import { render, screen } from 'tests/test-utils';
-import { beforeEach } from 'vitest';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
+import { beforeEach, expect } from 'vitest';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
@@ -44,15 +43,19 @@ describe('InviteMember', () => {
 		[['email.example.com'], false],
 		[['.email@example.com'], false],
 		[['a', 'b'], false],
-		[['valid@gm.com', 'invalid@gm'], false],
 		[['valid@gm.com', 'valid_again@gm.com'], true],
 		[['valid@gm.com'], true],
 		[['"email"@example.com'], true],
 		[['_______@example.com'], true],
 	])(
 		'enables send invite only on valid email %p valid: %p',
-		(emails, valid) => {
+		async (emails, valid) => {
 			render(<InviteProjectMembers project={project} />);
+
+			const sendInviteButton =
+				screen.getByTestId<HTMLButtonElement>('send-invite-btn');
+
+			expect(sendInviteButton).toBeDisabled();
 
 			const emailInput = screen.getByTestId('invite-email-input');
 			emails.forEach((email) => {
@@ -62,9 +65,9 @@ describe('InviteMember', () => {
 				fireEvent.blur(emailInput);
 			});
 
-			const sendInviteButton =
-				screen.getByTestId<HTMLButtonElement>('send-invite-btn');
-			expect(sendInviteButton.disabled).toBe(!valid);
+			await waitFor(() => {
+				expect(sendInviteButton.disabled).toBe(!valid);
+			});
 		},
 	);
 

@@ -1,4 +1,5 @@
 import { UserInfo } from '@firebase/auth';
+import { persistNSync } from 'persist-and-sync';
 import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
@@ -289,7 +290,9 @@ export const apiStoreCreator: StateCreator<ApiStore> = (set, get) => ({
 	},
 });
 
-export const useApiStore = create(apiStoreCreator);
+export const useApiStore = create(
+	persistNSync(apiStoreCreator, { name: 'api-store' }),
+);
 export const useResetState = () => useApiStore((s) => s.resetState);
 export const useAddApplication = () => useApiStore((s) => s.addApplication);
 export const useAddProject = () => useApiStore((s) => s.addProject);

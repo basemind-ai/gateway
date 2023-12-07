@@ -1,6 +1,5 @@
-import { fireEvent, waitFor } from '@testing-library/react';
 import { APIKeyFactory } from 'tests/factories';
-import { render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import * as APIKeyAPI from '@/api/api-keys-api';

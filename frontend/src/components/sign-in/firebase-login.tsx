@@ -1,6 +1,8 @@
 'use client';
 import 'firebaseui/dist/firebaseui.css';
 
+import { GithubAuthProvider, GoogleAuthProvider } from '@firebase/auth';
+import firebaseui from 'firebaseui';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
@@ -9,13 +11,47 @@ import { Loader } from '@/components/sign-in/loader';
 import { Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useSetUser } from '@/stores/api-store';
-import { firebaseUIConfig, getFirebaseAuth } from '@/utils/firebase';
+import { useShowError } from '@/stores/toast-store';
+import { getFirebaseAuth } from '@/utils/firebase';
+
+const microsoftAuthProvider = {
+	buttonColor: '#00a2ed',
+	customParameters: {
+		prompt: 'consent',
+		tenant: process.env.NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID!,
+	},
+	iconUrl:
+		'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
+	provider: 'microsoft.com',
+	providerName: 'Microsoft',
+};
+
+const siteName = 'BaseMind.AI';
+
+const privacyPolicyUrl =
+	process.env.NEXT_PUBLIC_FRONTEND_HOST! + Navigation.PrivacyPolicy;
+
+const tosUrl = process.env.NEXT_PUBLIC_FRONTEND_HOST! + Navigation.TOS;
+
+const firebaseUIConfig = {
+	//popupMode: true,
+	privacyPolicyUrl,
+	signInFlow: 'popup',
+	signInOptions: [
+		GithubAuthProvider.PROVIDER_ID,
+		GoogleAuthProvider.PROVIDER_ID,
+		microsoftAuthProvider,
+	],
+	siteName,
+	tosUrl,
+} satisfies firebaseui.auth.Config;
 
 export function FirebaseLogin() {
 	const t = useTranslations('signin');
 
 	const router = useRouter();
 	const setUser = useSetUser();
+	const showError = useShowError();
 	const { identify, track } = useAnalytics();
 
 	const [uiRendered, setIsUIRendered] = useState(false);
@@ -24,41 +60,56 @@ export function FirebaseLogin() {
 	/* firebaseui cannot be imported in SSR mode, so we have to import it only when the browser loads. */
 	useEffect(() => {
 		(async () => {
-			const auth = await getFirebaseAuth();
-			if (auth.currentUser) {
-				setUser(auth.currentUser);
-				router.replace(Navigation.Projects);
-				identify(auth.currentUser.uid, auth.currentUser);
+			try {
+				const auth = await getFirebaseAuth();
 
-				return null;
+				if (auth.currentUser) {
+					setUser(auth.currentUser);
+					router.replace(Navigation.Projects);
+
+					identify(auth.currentUser.uid, auth.currentUser);
+					track('login');
+
+					return null;
+				}
+
+				const firebaseUI = await import('firebaseui');
+
+				const ui =
+					firebaseUI.auth.AuthUI.getInstance() ??
+					/* c8 ignore next */
+					new firebaseUI.auth.AuthUI(auth);
+
+				// noinspection JSUnusedGlobalSymbols
+				ui.start('#firebaseui-auth-container', {
+					...firebaseUIConfig,
+
+					callbacks: {
+						signInFailure(
+							error: firebaseui.auth.AuthUIError,
+						): Promise<void> | void {
+							showError(error.message);
+							setIsUIRendered(false);
+						},
+						signInSuccessWithAuthResult: () => {
+							setUser(auth.currentUser);
+							setIsSignedIn(true);
+
+							identify(auth.currentUser!.uid, auth.currentUser!);
+							track('signup');
+
+							// prevent the UI from redirecting the user using a preconfigured redirect-url
+							return false;
+						},
+						uiShown: () => {
+							setIsUIRendered(true);
+						},
+					},
+				});
+			} catch (e: unknown) {
+				showError((e as Error).message);
+				setIsUIRendered(false);
 			}
-
-			const firebaseUI = await import('firebaseui');
-			const ui =
-				firebaseUI.auth.AuthUI.getInstance() ??
-				/* c8 ignore next */
-				new firebaseUI.auth.AuthUI(auth);
-
-			// noinspection JSUnusedGlobalSymbols
-			ui.start('#firebaseui-auth-container', {
-				...firebaseUIConfig,
-
-				callbacks: {
-					signInSuccessWithAuthResult: () => {
-						setUser(auth.currentUser);
-						setIsSignedIn(true);
-
-						identify(auth.currentUser!.uid, auth.currentUser!);
-						track('user sign in');
-
-						// prevent the UI from redirecting the user using a preconfigured redirect-url
-						return false;
-					},
-					uiShown: () => {
-						setIsUIRendered(true);
-					},
-				},
-			});
 		})();
 	}, []);
 
@@ -87,7 +138,7 @@ export function FirebaseLogin() {
 			data-testid="firebase-login-container"
 			className="flex items-center h-full w-full justify-center"
 		>
-			<div className="  shadow transition-all duration-700 ease-in-out h-full items-center self-center">
+			<div className="shadow transition-all duration-700 ease-in-out h-full items-center self-center">
 				{isLoading && <Loader />}
 				{!isSignedIn && (
 					<div className="flex items-center h-full">
