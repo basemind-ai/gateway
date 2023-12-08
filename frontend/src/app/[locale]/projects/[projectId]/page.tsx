@@ -25,7 +25,6 @@ export default function ProjectOverview({
 	const user = useAuthenticatedUser();
 
 	const t = useTranslations('projectOverview');
-
 	const [selectedTab, setSelectedTab] = useState(
 		ProjectPageTabNames.OVERVIEW,
 	);

@@ -16,6 +16,7 @@ import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provid
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import {
 	useApplication,
@@ -166,6 +167,7 @@ export default function PromptConfigCreateWizard({
 		if (!hasProviderKey && store.wizardStage === 1) {
 			setIsCreateProviderKeyModalOpen(true);
 		}
+		usePageTracking(`createConfigWizard-stage${store.wizardStage}`);
 	}, [store.wizardStage]);
 
 	const handleConfigSave = async () => {

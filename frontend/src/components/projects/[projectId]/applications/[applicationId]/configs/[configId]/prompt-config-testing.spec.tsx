@@ -17,6 +17,7 @@ import { expect, SpyInstance } from 'vitest';
 
 import * as promptConfigApi from '@/api/prompt-config-api';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { OpenAIModelType, PromptConfig } from '@/types';
 
@@ -323,5 +324,15 @@ describe('PromptConfigTesting tests', () => {
 		await waitFor(() => {
 			expect(saveAsNewButton).toBeEnabled();
 		});
+	});
+	it('calls usePageTracking hook with config-testing', () => {
+		render(
+			<PromptConfigTesting
+				applicationId={application.id}
+				projectId={project.id}
+				promptConfig={promptConfig}
+			/>,
+		);
+		expect(usePageTracking).toHaveBeenCalledWith('config-testing');
 	});
 });

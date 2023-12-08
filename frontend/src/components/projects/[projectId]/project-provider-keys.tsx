@@ -9,12 +9,13 @@ import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provid
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { modelVendorToLocaleMap } from '@/constants/models';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import { ModelVendor, Project, ProviderKey } from '@/types';
 
 export function ProjectProviderKeys({ project }: { project: Project }) {
 	const t = useTranslations('providerKeys');
-
+	usePageTracking('project-provider-keys');
 	const handleError = useHandleError();
 
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

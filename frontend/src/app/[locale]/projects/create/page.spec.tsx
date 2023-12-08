@@ -1,11 +1,18 @@
 import { ProjectFactory } from 'tests/factories';
 import { routerReplaceMock } from 'tests/mocks';
-import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
 
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useSetProjects } from '@/stores/api-store';
 
 describe('ProjectCreatePage', () => {
@@ -141,6 +148,13 @@ describe('ProjectCreatePage', () => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(
 				`${Navigation.Projects}/${newProject.id}`,
 			);
+		});
+	});
+
+	it('calling usePageTracking', async () => {
+		render(<CreateProjectPage />);
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith('create-project');
 		});
 	});
 });

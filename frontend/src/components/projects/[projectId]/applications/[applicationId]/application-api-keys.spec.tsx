@@ -5,6 +5,7 @@ import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import * as APIKeysAPI from '@/api/api-keys-api';
 import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { ToastType } from '@/stores/toast-store';
 
 describe('API Keys tests', () => {
@@ -151,6 +152,20 @@ describe('API Keys tests', () => {
 		await waitFor(() => {
 			const newAPIKey = screen.getByText(apiKey.name);
 			expect(newAPIKey).toBeInTheDocument();
+		});
+	});
+
+	it('calls usePageTracking hook with applications-api-keys', async () => {
+		render(
+			<ApplicationApiKeys
+				projectId={projectId}
+				application={application}
+			/>,
+		);
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				'applications-api-keys',
+			);
 		});
 	});
 });

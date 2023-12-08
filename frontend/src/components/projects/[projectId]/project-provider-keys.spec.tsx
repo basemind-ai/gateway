@@ -13,6 +13,7 @@ import { expect } from 'vitest';
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { modelVendorToLocaleMap } from '@/constants/models';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
@@ -290,5 +291,18 @@ describe('ProjectProviderKeys', () => {
 		expect((result.current[toastsLength] as ToastMessage).type).toBe(
 			'alert-error',
 		);
+	});
+
+	it('calls useTrackingPage with project-provider-keys', async () => {
+		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(providerKeys),
+			ok: true,
+		});
+		render(<ProjectProviderKeys project={project} />);
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				'project-provider-keys',
+			);
+		});
 	});
 });

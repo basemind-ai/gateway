@@ -14,6 +14,7 @@ import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import {
 	useProviderKeys,
 	useResetState,
@@ -650,5 +651,55 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			result: { current: providerKeys },
 		} = renderHook(useProviderKeys);
 		expect(providerKeys).toHaveLength(1);
+	});
+
+	it('calls usePageTracking hook with the stage number', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.batchSync(1);
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig[0].name);
+			store.setMessages(promptConfig[0].providerPromptMessages);
+			store.setParameters(promptConfig[0].modelParameters);
+			store.setModelType(promptConfig[0].modelType);
+			store.setModelVendor(promptConfig[0].modelVendor);
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				`createConfigWizard-stage0`,
+			);
+		});
+
+		act(() => {
+			store.setNextWizardStage();
+		});
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				`createConfigWizard-stage1`,
+			);
+		});
+
+		act(() => {
+			store.setNextWizardStage();
+		});
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				`createConfigWizard-stage2`,
+			);
+		});
+
+		act(() => {
+			store.setNextWizardStage();
+		});
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				`createConfigWizard-stage3`,
+			);
+		});
 	});
 });

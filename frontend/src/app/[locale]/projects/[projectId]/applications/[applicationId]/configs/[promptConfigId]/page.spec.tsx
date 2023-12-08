@@ -15,6 +15,7 @@ import { expect } from 'vitest';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import PromptConfiguration from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/configs/[promptConfigId]/page';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import {
 	useSetProjectApplications,
 	useSetProjects,
@@ -180,5 +181,22 @@ describe('PromptConfiguration', () => {
 		expect(loading).not.toBeInTheDocument();
 
 		expect(handleRetrievePromptConfigsSpy).not.toBeCalled();
+	});
+
+	it('calls usePageTracking with config-overview', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
+		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
+		render(
+			<PromptConfiguration
+				params={{
+					applicationId,
+					projectId,
+					promptConfigId: promptConfig.id,
+				}}
+			/>,
+		);
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith('config-overview');
+		});
 	});
 });

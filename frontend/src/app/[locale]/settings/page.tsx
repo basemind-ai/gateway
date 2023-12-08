@@ -5,10 +5,12 @@ import { Navbar } from '@/components/navbar';
 import { DeleteAccountView } from '@/components/settings/delete-account-view';
 import { UserDetails } from '@/components/settings/user-details';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 
 export default function UserSettings() {
 	const user = useAuthenticatedUser();
 	const t = useTranslations('userSettings');
+	usePageTracking('user-settings');
 
 	return (
 		<div

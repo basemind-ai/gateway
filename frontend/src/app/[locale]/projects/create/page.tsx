@@ -7,6 +7,7 @@ import { handleCreateProject } from '@/api';
 import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useAddProject, useProjects } from '@/stores/api-store';
 import { handleChange } from '@/utils/events';
 
@@ -165,6 +166,7 @@ function Form({
 
 export default function CreateProjectPage() {
 	useAuthenticatedUser();
+	usePageTracking('create-project');
 	const t = useTranslations('createProject');
 	const router = useRouter();
 

@@ -6,6 +6,7 @@ import { beforeEach, expect } from 'vitest';
 import * as ProjectUsersAPI from '@/api/project-users-api';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { ToastType } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 
@@ -246,5 +247,14 @@ describe('InviteMember', () => {
 		const removeEmailButton = screen.getByTestId('remove-email-btn');
 		fireEvent.click(removeEmailButton);
 		expect(sendInviteButton.disabled).toBe(true);
+	});
+
+	it('calls usePageTracking hook with project-invite-members', async () => {
+		render(<InviteProjectMembers project={project} />);
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				'project-invite-members',
+			);
+		});
 	});
 });

@@ -9,6 +9,7 @@ import { handlePromptConfigAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useDateFormat } from '@/stores/user-config-store';
 import { PromptConfig } from '@/types';
 
@@ -21,6 +22,7 @@ export function PromptConfigAnalyticsPage({
 	projectId: string;
 	promptConfig: PromptConfig<any>;
 }) {
+	usePageTracking('config-overview');
 	const t = useTranslations('promptConfig');
 	const dateFormat = useDateFormat();
 	const handleError = useHandleError();

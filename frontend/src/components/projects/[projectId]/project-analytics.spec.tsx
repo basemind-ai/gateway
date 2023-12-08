@@ -10,6 +10,7 @@ import {
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { Analytics } from '@/types';
 
 describe('ProjectAnalytics', () => {
@@ -90,6 +91,13 @@ describe('ProjectAnalytics', () => {
 			expect(apiCalls.innerHTML).toBe(
 				updatedAnalytics.totalRequests.toString(),
 			);
+		});
+	});
+
+	it('calls usePageTracking hook with project-overview', async () => {
+		render(<ProjectAnalytics project={project} />);
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith('project-overview');
 		});
 	});
 });

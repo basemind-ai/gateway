@@ -14,6 +14,7 @@ import {
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import {
 	useSetProjectApplications,
 	useSetProjects,
@@ -136,5 +137,27 @@ describe('PromptDeletion', () => {
 
 		const errorToast = screen.getByText('unable to delete prompt config');
 		expect(errorToast.className).toContain(ToastType.ERROR);
+	});
+
+	it('calls usePageTracking hook with config-settings-deletion', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
+		const {
+			result: { current: setPromptConfigs },
+		} = renderHook(useSetPromptConfigs);
+		setPromptConfigs(application.id, [promptConfig]);
+
+		render(
+			<PromptConfigDeletion
+				projectId={project.id}
+				applicationId={application.id}
+				promptConfig={promptConfig}
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(usePageTracking).toHaveBeenCalledWith(
+				'config-settings-deletion',
+			);
+		});
 	});
 });

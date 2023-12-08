@@ -5,6 +5,7 @@ import isEmail from 'validator/es/lib/isEmail';
 
 import { handleAddUsersToProject, handleRetrieveProjectUsers } from '@/api';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useSetProjectUsers } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
 import { AccessPermission, Project } from '@/types';
@@ -35,7 +36,7 @@ function EmailChip({
 
 export function InviteProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
-
+	usePageTracking('project-invite-members');
 	const setProjectUsers = useSetProjectUsers();
 	const handleError = useHandleError();
 	const showInfo = useShowInfo();

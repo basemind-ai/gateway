@@ -5,10 +5,12 @@ import { Navbar } from '@/components/navbar';
 import { ContactForm } from '@/components/support/contact-form';
 import { GetInTouch } from '@/components/support/get-in-touch';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 
 export default function Support() {
 	const user = useAuthenticatedUser();
 	const t = useTranslations('support');
+	usePageTracking('support');
 
 	return (
 		<div

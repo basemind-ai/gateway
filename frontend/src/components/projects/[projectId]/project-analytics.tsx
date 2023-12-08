@@ -9,11 +9,14 @@ import { handleProjectAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useDateFormat } from '@/stores/user-config-store';
 import { Project } from '@/types';
 
 export function ProjectAnalytics({ project }: { project: Project }) {
 	const t = useTranslations('projectOverview');
+	usePageTracking('project-overview');
+
 	const dateFormat = useDateFormat();
 	const handleError = useHandleError();
 

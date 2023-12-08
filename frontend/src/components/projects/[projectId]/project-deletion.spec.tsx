@@ -10,6 +10,7 @@ import {
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ApiError } from '@/errors';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
@@ -87,5 +88,12 @@ describe('ProjectDeletion', () => {
 
 		const errorToast = screen.getByText('unable to delete project');
 		expect(errorToast.className).toContain(ToastType.ERROR);
+	});
+
+	it('calls usePageTracking with project-settings-deletion', () => {
+		render(<ProjectDeletion project={project} />);
+		expect(usePageTracking).toHaveBeenCalledWith(
+			'project-settings-deletion',
+		);
 	});
 });

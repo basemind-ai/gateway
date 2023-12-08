@@ -9,6 +9,7 @@ import { handleApplicationAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useDateFormat } from '@/stores/user-config-store';
 import { Application } from '@/types';
 
@@ -19,6 +20,7 @@ export function ApplicationAnalyticsPage({
 	application: Application;
 	projectId: string;
 }) {
+	usePageTracking('application-overview');
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
 	const handleError = useHandleError();
