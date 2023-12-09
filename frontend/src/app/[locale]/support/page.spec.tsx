@@ -2,10 +2,11 @@ import { UserInfo } from '@firebase/auth';
 import { useTranslations } from 'next-intl';
 import { getAuthMock, routerReplaceMock } from 'tests/mocks';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import Support from '@/app/[locale]/support/page';
 import { Navigation } from '@/constants';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { useSetUser } from '@/stores/api-store';
 
 describe('Support Page Tests', () => {
@@ -20,6 +21,14 @@ describe('Support Page Tests', () => {
 		providerId: '',
 		uid: '',
 	};
+
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi
+			.spyOn(useTrackPagePackage, 'useTrackPage')
+			.mockImplementationOnce(() => vi.fn());
+	});
+
 	it('route to sign in page when user is not authenticate', async () => {
 		// render setUser store to null
 		const { result: setResult } = renderHook(() => useSetUser());
@@ -37,7 +46,7 @@ describe('Support Page Tests', () => {
 	it('calls page tracking hook', async () => {
 		render(<Support />);
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith('support');
+			expect(useTrackPageSpy).toHaveBeenCalledWith('support');
 		});
 	});
 

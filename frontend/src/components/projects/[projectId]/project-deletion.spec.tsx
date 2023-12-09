@@ -6,17 +6,24 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ApiError } from '@/errors';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
 describe('ProjectDeletion', () => {
 	const handleDeleteProjectSpy = vi.spyOn(ProjectAPI, 'handleDeleteProject');
 	const project = ProjectFactory.buildSync();
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi
+			.spyOn(useTrackPagePackage, 'useTrackPage')
+			.mockResolvedValue();
+	});
 
 	it('renders project deletion', async () => {
 		const {
@@ -92,6 +99,8 @@ describe('ProjectDeletion', () => {
 
 	it('calls usePageTracking with project-settings-deletion', () => {
 		render(<ProjectDeletion project={project} />);
-		expect(useTrackPage).toHaveBeenCalledWith('project-settings-deletion');
+		expect(useTrackPageSpy).toHaveBeenCalledWith(
+			'project-settings-deletion',
+		);
 	});
 });

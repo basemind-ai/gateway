@@ -1,14 +1,19 @@
 import { render, waitFor } from 'tests/test-utils';
-import { describe } from 'vitest';
+import { describe, MockInstance } from 'vitest';
 
 import { TrackStaticPage } from '@/components/static-site/track-static-page';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 
 describe('track static page component', () => {
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+	});
+
 	it('calls page tracking hook', async () => {
 		render(<TrackStaticPage pageName="test" />);
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith('test');
+			expect(useTrackPageSpy).toHaveBeenCalledWith('test');
 		});
 	});
 });

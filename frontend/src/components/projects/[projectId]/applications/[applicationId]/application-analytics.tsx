@@ -13,7 +13,7 @@ import { useTrackPage } from '@/hooks/use-track-page';
 import { useDateFormat } from '@/stores/user-config-store';
 import { Application } from '@/types';
 
-export function ApplicationAnalyticsPage({
+export function ApplicationAnalytics({
 	projectId,
 	application,
 }: {

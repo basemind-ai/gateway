@@ -1,13 +1,13 @@
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
+import { beforeEach, expect, MockInstance } from 'vitest';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import * as ApplicationAPI from '@/api/applications-api';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { ApiError } from '@/errors';
-import { useTrackEvent } from '@/hooks/use-track-event';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
 import { ToastType } from '@/stores/toast-store';
 import { APIKey } from '@/types';
 
@@ -22,6 +22,12 @@ describe('CreateApplication', () => {
 	const onClose = vi.fn();
 	beforeEach(() => {
 		vi.clearAllMocks();
+	});
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValueOnce();
 	});
 
 	it('renders create application form', async () => {
@@ -253,7 +259,7 @@ describe('CreateApplication', () => {
 		);
 		fireEvent.click(submitButton);
 		await waitFor(() => {
-			expect(useTrackEvent).toHaveBeenCalledWith(
+			expect(useTrackEventSpy).toHaveBeenCalledWith(
 				'create_application',
 				application,
 			);

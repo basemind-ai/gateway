@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker';
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
+import { beforeEach, expect, MockInstance } from 'vitest';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ApiError } from '@/errors';
-import { useTrackEvent } from '@/hooks/use-track-event';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 
@@ -25,7 +25,16 @@ describe('InviteMember', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
-
+	let useTrackPageSpy: MockInstance;
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi
+			.spyOn(useTrackPagePackage, 'useTrackPage')
+			.mockResolvedValueOnce();
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValueOnce();
+	});
 	it('renders invite member', async () => {
 		render(<InviteProjectMembers project={project} />);
 
@@ -253,7 +262,9 @@ describe('InviteMember', () => {
 	it('calls usePageTracking hook with project-invite-members', async () => {
 		render(<InviteProjectMembers project={project} />);
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith('project-invite-members');
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				'project-invite-members',
+			);
 		});
 	});
 
@@ -276,7 +287,7 @@ describe('InviteMember', () => {
 			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
 		fireEvent.click(sendInviteButton);
 		await waitFor(() => {
-			expect(useTrackEvent).toHaveBeenCalledWith('invite_user', {
+			expect(useTrackEventSpy).toHaveBeenCalledWith('invite_user', {
 				email: validEmail,
 				...project,
 				permission: AccessPermission.MEMBER,

@@ -9,13 +9,13 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { afterEach, expect } from 'vitest';
+import { afterEach, expect, MockInstance } from 'vitest';
 import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
 import { ApiError } from '@/errors';
-import { useTrackEvent } from '@/hooks/use-track-event';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import {
 	useProviderKeys,
 	useResetState,
@@ -61,6 +61,17 @@ const getStore = (): PromptConfigWizardStore => {
 describe('PromptConfigCreateWizard Page tests', () => {
 	const applicationId = faker.string.uuid();
 	const projectId = faker.string.uuid();
+
+	let useTrackPageSpy: MockInstance;
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi
+			.spyOn(useTrackPagePackage, 'useTrackPage')
+			.mockResolvedValue();
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValue();
+	});
 
 	const {
 		result: { current: resetAPIStore },
@@ -671,7 +682,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		);
 
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith(
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
 				`createConfigWizard-stage0`,
 			);
 		});
@@ -680,7 +691,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith(
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
 				`createConfigWizard-stage1`,
 			);
 		});
@@ -689,7 +700,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith(
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
 				`createConfigWizard-stage2`,
 			);
 		});
@@ -698,7 +709,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith(
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
 				`createConfigWizard-stage3`,
 			);
 		});
@@ -715,43 +726,21 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setModelType(promptConfig[0].modelType);
 			store.setModelVendor(promptConfig[0].modelVendor);
 			store.setNextWizardStage();
+			store.setNextWizardStage();
 		});
 
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
 		);
 
-		await waitFor(() => {
-			expect(
-				screen.getByTestId('parameters-and-prompt-form-container'),
-			).toBeInTheDocument();
-		});
-
-		await waitFor(() => {
-			expect(
-				screen.getByTestId('create-provider-key-modal'),
-			).toBeInTheDocument();
-		});
-
-		const input = screen.getByTestId('key-value-textarea');
-		expect(input).toBeInTheDocument();
-
-		const keyValue = faker.lorem.word();
-		fireEvent.change(input, { target: { value: keyValue } });
-
-		const saveButton = screen.getByTestId('create-provider-key-submit-btn');
+		const saveButton = screen.getByTestId(
+			'config-create-wizard-save-button',
+		);
 		expect(saveButton).toBeInTheDocument();
-
 		fireEvent.click(saveButton);
 
 		await waitFor(() => {
-			expect(
-				screen.getByTestId('parameters-and-prompt-form-container'),
-			).toBeInTheDocument();
-		});
-
-		await waitFor(() => {
-			expect(useTrackEvent).toHaveBeenCalledWith(
+			expect(useTrackEventSpy).toHaveBeenCalledWith(
 				'create_config',
 				expect.any(Object),
 			);

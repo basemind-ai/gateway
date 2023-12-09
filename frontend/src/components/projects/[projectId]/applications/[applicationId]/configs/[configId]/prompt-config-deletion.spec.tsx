@@ -10,11 +10,12 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { ApiError } from '@/errors';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import {
 	useSetProjectApplications,
 	useSetProjects,
@@ -39,6 +40,11 @@ describe('PromptDeletion', () => {
 		result: { current: setProjectApplications },
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(project.id, [application]);
+
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+	});
 
 	it('renders prompt config deletion component', () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
@@ -155,7 +161,7 @@ describe('PromptDeletion', () => {
 		);
 
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith(
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
 				'config-settings-deletion',
 			);
 		});

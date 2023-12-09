@@ -7,16 +7,26 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { useTrackEvent } from '@/hooks/use-track-event';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { useSetProjects } from '@/stores/api-store';
 
 describe('ProjectCreatePage', () => {
+	let useTrackPageSpy: MockInstance;
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValueOnce();
+	});
+
 	it('should render without crashing', () => {
 		render(<CreateProjectPage />);
 		const projectsViewSetup = screen.getByTestId(
@@ -155,7 +165,7 @@ describe('ProjectCreatePage', () => {
 	it('calls usePageTracking', async () => {
 		render(<CreateProjectPage />);
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith('create-project');
+			expect(useTrackPageSpy).toHaveBeenCalledWith('create-project');
 		});
 	});
 
@@ -172,7 +182,7 @@ describe('ProjectCreatePage', () => {
 		fireEvent.change(nameInput, { target: { value: 'test' } });
 		fireEvent.click(submitButton);
 		await vi.waitFor(() => {
-			expect(useTrackEvent).toHaveBeenCalledWith(
+			expect(useTrackEventSpy).toHaveBeenCalledWith(
 				'create_project',
 				newProject,
 			);

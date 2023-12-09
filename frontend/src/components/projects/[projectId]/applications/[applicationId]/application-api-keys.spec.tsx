@@ -1,11 +1,13 @@
 import { faker } from '@faker-js/faker';
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';
 import { ApiError } from '@/errors';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 
 describe('API Keys tests', () => {
@@ -16,7 +18,11 @@ describe('API Keys tests', () => {
 	const handleCreateAPIKeySpy = vi.spyOn(APIKeysAPI, 'handleCreateAPIKey');
 	const projectId = faker.string.uuid();
 	const application = ApplicationFactory.buildSync();
-
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+		vi.spyOn(useTrackEventPackage, 'useTrackEvent').mockResolvedValueOnce();
+	});
 	it('renders api keys component', async () => {
 		const apiKeys = await APIKeyFactory.batch(2);
 		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(apiKeys);
@@ -163,7 +169,9 @@ describe('API Keys tests', () => {
 			/>,
 		);
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith('applications-api-keys');
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				'applications-api-keys',
+			);
 		});
 	});
 });

@@ -8,10 +8,11 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
-import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
-import { useTrackPage } from '@/hooks/use-track-page';
+import { ApplicationAnalytics } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { Analytics } from '@/types';
 
 describe('ApplicationAnalytics', () => {
@@ -21,6 +22,10 @@ describe('ApplicationAnalytics', () => {
 		ApplicationConfigAPI,
 		'handleApplicationAnalytics',
 	);
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+	});
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -37,7 +42,7 @@ describe('ApplicationAnalytics', () => {
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(analytics);
 
 		render(
-			<ApplicationAnalyticsPage
+			<ApplicationAnalytics
 				projectId={projectId}
 				application={application}
 			/>,
@@ -66,7 +71,7 @@ describe('ApplicationAnalytics', () => {
 		handleApplicationAnalyticsSpy.mockResolvedValueOnce(initialAnalytics);
 
 		render(
-			<ApplicationAnalyticsPage
+			<ApplicationAnalytics
 				projectId={projectId}
 				application={application}
 			/>,
@@ -97,13 +102,15 @@ describe('ApplicationAnalytics', () => {
 
 	it('calls pageTracking with application overview', async () => {
 		render(
-			<ApplicationAnalyticsPage
+			<ApplicationAnalytics
 				projectId={projectId}
 				application={application}
 			/>,
 		);
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith('application-overview');
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				'application-overview',
+			);
 		});
 	});
 });

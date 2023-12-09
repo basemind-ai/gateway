@@ -7,10 +7,11 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { Analytics } from '@/types';
 
 describe('ProjectAnalytics', () => {
@@ -23,7 +24,12 @@ describe('ProjectAnalytics', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 	});
-
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi
+			.spyOn(useTrackPagePackage, 'useTrackPage')
+			.mockResolvedValue();
+	});
 	it('renders project analytics', async () => {
 		const {
 			result: { current: t },
@@ -97,7 +103,7 @@ describe('ProjectAnalytics', () => {
 	it('calls usePageTracking hook with project-overview', async () => {
 		render(<ProjectAnalytics project={project} />);
 		await waitFor(() => {
-			expect(useTrackPage).toHaveBeenCalledWith('project-overview');
+			expect(useTrackPageSpy).toHaveBeenCalledWith('project-overview');
 		});
 	});
 });

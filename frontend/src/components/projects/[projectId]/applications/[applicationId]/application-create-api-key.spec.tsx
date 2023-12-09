@@ -1,11 +1,11 @@
 import { APIKeyFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
+import { expect, MockInstance } from 'vitest';
 
 import * as APIKeyAPI from '@/api/api-keys-api';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ApiError } from '@/errors';
-import { useTrackEvent } from '@/hooks/use-track-event';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
 import { ToastType } from '@/stores/toast-store';
 
 describe('CreateApiKey tests', () => {
@@ -14,6 +14,13 @@ describe('CreateApiKey tests', () => {
 	const applicationId = '1';
 	const onSubmit = vi.fn();
 	const onCancel = vi.fn();
+
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValueOnce();
+	});
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -216,7 +223,7 @@ describe('CreateApiKey tests', () => {
 		);
 		fireEvent.click(submitButton);
 		await waitFor(() => {
-			expect(useTrackEvent).toHaveBeenCalledWith('add_app_key', {
+			expect(useTrackEventSpy).toHaveBeenCalledWith('add_app_key', {
 				applicationId,
 				projectId,
 			});

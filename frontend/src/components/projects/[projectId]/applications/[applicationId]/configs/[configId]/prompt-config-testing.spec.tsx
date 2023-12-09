@@ -13,11 +13,12 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect, SpyInstance } from 'vitest';
+import { expect, MockInstance, SpyInstance } from 'vitest';
 
 import * as promptConfigApi from '@/api/prompt-config-api';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
-import { useTrackPage } from '@/hooks/use-track-page';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { OpenAIModelType, PromptConfig } from '@/types';
 
@@ -29,7 +30,11 @@ describe('PromptConfigTesting tests', () => {
 
 	let handleCreatePromptConfigSpy: SpyInstance;
 	let handleUpdatePromptConfigSpy: SpyInstance;
-
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+		vi.spyOn(useTrackEventPackage, 'useTrackEvent').mockResolvedValueOnce();
+	});
 	beforeEach(() => {
 		handleCreatePromptConfigSpy = vi.spyOn(
 			promptConfigApi,
@@ -333,6 +338,6 @@ describe('PromptConfigTesting tests', () => {
 				promptConfig={promptConfig}
 			/>,
 		);
-		expect(useTrackPage).toHaveBeenCalledWith('config-testing');
+		expect(useTrackPageSpy).toHaveBeenCalledWith('config-testing');
 	});
 });
