@@ -7,11 +7,13 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect } from 'vitest';
+import { expect, MockInstance } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
+import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-analytics-page';
 import { ApiError } from '@/errors';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 import { Analytics } from '@/types';
 
@@ -24,6 +26,10 @@ describe('PromptAnalyticsPage', () => {
 		PromptConfigAPI,
 		'handlePromptConfigAnalytics',
 	);
+	let useTrackPageSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+	});
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -127,5 +133,12 @@ describe('PromptAnalyticsPage', () => {
 			'unable to fetch prompt config analytics',
 		);
 		expect(errorToast.className).toContain(ToastType.ERROR);
+	});
+
+	it('calls usePageTracking', async () => {
+		render(<CreateProjectPage />);
+		await waitFor(() => {
+			expect(useTrackPageSpy).toHaveBeenCalledWith('create-project');
+		});
 	});
 });
