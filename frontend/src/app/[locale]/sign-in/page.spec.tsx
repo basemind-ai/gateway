@@ -10,7 +10,7 @@ describe('Sign-in page tests', () => {
 		expect(loginContainer).toBeInTheDocument();
 	});
 
-	it('call page tracking hook', async () => {
+	it('calls page tracking hook', async () => {
 		render(<SignIn />);
 		await waitFor(() => {
 			expect(useTrackPage).toHaveBeenCalledWith('auth');

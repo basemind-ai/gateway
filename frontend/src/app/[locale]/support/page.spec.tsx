@@ -34,7 +34,7 @@ describe('Support Page Tests', () => {
 		});
 	});
 
-	it('call page tracking hook', async () => {
+	it('calls page tracking hook', async () => {
 		render(<Support />);
 		await waitFor(() => {
 			expect(useTrackPage).toHaveBeenCalledWith('support');

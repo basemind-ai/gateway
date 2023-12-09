@@ -152,14 +152,14 @@ describe('ProjectCreatePage', () => {
 		});
 	});
 
-	it('calling usePageTracking', async () => {
+	it('calls usePageTracking', async () => {
 		render(<CreateProjectPage />);
 		await waitFor(() => {
 			expect(useTrackPage).toHaveBeenCalledWith('create-project');
 		});
 	});
 
-	it('calling useTrackEvent after successful project creation', async () => {
+	it('calls useTrackEvent after successful project creation', async () => {
 		const handleCreateProjectSpy = vi.spyOn(
 			projectsAPI,
 			'handleCreateProject',

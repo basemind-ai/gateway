@@ -1,6 +1,5 @@
-import { waitFor } from '@testing-library/react';
 import { routerPushMock } from 'tests/mocks';
-import { render, screen } from 'tests/test-utils';
+import { render, screen, waitFor } from 'tests/test-utils';
 
 import LandingPage from '@/app/[locale]/page';
 import { Navigation } from '@/constants';
@@ -37,7 +36,7 @@ describe('Landing Page', () => {
 		);
 	});
 
-	it('call page tracking hook', async () => {
+	it('calls page tracking hook', async () => {
 		render(<LandingPage />);
 		await waitFor(() => {
 			expect(useTrackPage).toHaveBeenCalledWith('landing-page');

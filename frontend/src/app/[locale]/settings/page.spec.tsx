@@ -40,7 +40,7 @@ describe('user settings page tests', () => {
 		expect(headline).toBeInTheDocument();
 	});
 
-	it('call page tracking hook', async () => {
+	it('calls page tracking hook', async () => {
 		render(<UserSettings />);
 		await waitFor(() => {
 			expect(useTrackPage).toHaveBeenCalledWith('user-settings');
