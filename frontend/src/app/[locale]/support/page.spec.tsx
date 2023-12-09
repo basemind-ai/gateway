@@ -5,7 +5,7 @@ import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 
 import Support from '@/app/[locale]/support/page';
 import { Navigation } from '@/constants';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useSetUser } from '@/stores/api-store';
 
 describe('Support Page Tests', () => {
@@ -37,7 +37,7 @@ describe('Support Page Tests', () => {
 	it('call page tracking hook', async () => {
 		render(<Support />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('support');
+			expect(useTrackPage).toHaveBeenCalledWith('support');
 		});
 	});
 

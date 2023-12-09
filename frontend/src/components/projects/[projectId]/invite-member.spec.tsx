@@ -6,7 +6,8 @@ import { beforeEach, expect } from 'vitest';
 import * as ProjectUsersAPI from '@/api/project-users-api';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackEvent } from '@/hooks/use-track-event';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 
@@ -252,9 +253,34 @@ describe('InviteMember', () => {
 	it('calls usePageTracking hook with project-invite-members', async () => {
 		render(<InviteProjectMembers project={project} />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
-				'project-invite-members',
-			);
+			expect(useTrackPage).toHaveBeenCalledWith('project-invite-members');
+		});
+	});
+
+	it('sendEmailInvites calls useTrackEvent hook with invite_user and email, permission and project', async () => {
+		render(<InviteProjectMembers project={project} />);
+		const validEmail = faker.internet.email();
+		const emailInput =
+			screen.getByTestId<HTMLInputElement>('invite-email-input');
+		fireEvent.change(emailInput, {
+			target: { value: validEmail },
+		});
+		fireEvent.blur(emailInput);
+
+		handleAddUserToProjectSpy.mockResolvedValueOnce(undefined);
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(
+			ProjectUserAccountFactory.batchSync(2),
+		);
+
+		const sendInviteButton =
+			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
+		fireEvent.click(sendInviteButton);
+		await waitFor(() => {
+			expect(useTrackEvent).toHaveBeenCalledWith('invite_user', {
+				email: validEmail,
+				...project,
+				permission: AccessPermission.MEMBER,
+			});
 		});
 	});
 });

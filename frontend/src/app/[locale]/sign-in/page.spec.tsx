@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from 'tests/test-utils';
 
 import SignIn from '@/app/[locale]/sign-in/page';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 
 describe('Sign-in page tests', () => {
 	it('renders LoginContainer', () => {
@@ -13,7 +13,7 @@ describe('Sign-in page tests', () => {
 	it('call page tracking hook', async () => {
 		render(<SignIn />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('auth');
+			expect(useTrackPage).toHaveBeenCalledWith('auth');
 		});
 	});
 });

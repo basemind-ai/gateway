@@ -5,7 +5,7 @@ import { render, renderHook, screen, waitFor } from 'tests/test-utils';
 
 import UserSettings from '@/app/[locale]/settings/page';
 import { Navigation } from '@/constants';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 
 describe('user settings page tests', () => {
 	const {
@@ -43,7 +43,7 @@ describe('user settings page tests', () => {
 	it('call page tracking hook', async () => {
 		render(<UserSettings />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('user-settings');
+			expect(useTrackPage).toHaveBeenCalledWith('user-settings');
 		});
 	});
 });

@@ -11,7 +11,7 @@ import {
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
 import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { Analytics } from '@/types';
 
 describe('ApplicationAnalytics', () => {
@@ -103,9 +103,7 @@ describe('ApplicationAnalytics', () => {
 			/>,
 		);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
-				'application-overview',
-			);
+			expect(useTrackPage).toHaveBeenCalledWith('application-overview');
 		});
 	});
 });

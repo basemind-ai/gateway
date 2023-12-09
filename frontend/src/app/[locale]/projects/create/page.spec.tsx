@@ -12,7 +12,8 @@ import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackEvent } from '@/hooks/use-track-event';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useSetProjects } from '@/stores/api-store';
 
 describe('ProjectCreatePage', () => {
@@ -154,7 +155,27 @@ describe('ProjectCreatePage', () => {
 	it('calling usePageTracking', async () => {
 		render(<CreateProjectPage />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('create-project');
+			expect(useTrackPage).toHaveBeenCalledWith('create-project');
+		});
+	});
+
+	it('calling useTrackEvent after successful project creation', async () => {
+		const handleCreateProjectSpy = vi.spyOn(
+			projectsAPI,
+			'handleCreateProject',
+		);
+		const newProject = await ProjectFactory.build();
+		handleCreateProjectSpy.mockResolvedValueOnce(newProject);
+		render(<CreateProjectPage />);
+		const submitButton = screen.getByTestId('create-project-submit-button');
+		const nameInput = screen.getByTestId('create-project-name-input');
+		fireEvent.change(nameInput, { target: { value: 'test' } });
+		fireEvent.click(submitButton);
+		await vi.waitFor(() => {
+			expect(useTrackEvent).toHaveBeenCalledWith(
+				'create_project',
+				newProject,
+			);
 		});
 	});
 });

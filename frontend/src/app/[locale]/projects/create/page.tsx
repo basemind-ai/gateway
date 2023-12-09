@@ -7,7 +7,8 @@ import { handleCreateProject } from '@/api';
 import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackEvent } from '@/hooks/use-track-event';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useAddProject, useProjects } from '@/stores/api-store';
 import { handleChange } from '@/utils/events';
 
@@ -166,7 +167,7 @@ function Form({
 
 export default function CreateProjectPage() {
 	useAuthenticatedUser();
-	usePageTracking('create-project');
+	useTrackPage('create-project');
 	const t = useTranslations('createProject');
 	const router = useRouter();
 
@@ -186,6 +187,7 @@ export default function CreateProjectPage() {
 				data: { description, name },
 			});
 			addProject(project);
+			useTrackEvent('create_project', project);
 			router.replace(`${Navigation.Projects}/${project.id}`);
 		} catch {
 			setIsError(true);

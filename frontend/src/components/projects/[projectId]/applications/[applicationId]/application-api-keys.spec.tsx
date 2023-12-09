@@ -5,7 +5,7 @@ import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import * as APIKeysAPI from '@/api/api-keys-api';
 import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 
 describe('API Keys tests', () => {
@@ -155,7 +155,7 @@ describe('API Keys tests', () => {
 		});
 	});
 
-	it('calls usePageTracking hook with applications-api-keys', async () => {
+	it('calls useTrackPage hook with applications-api-keys', async () => {
 		render(
 			<ApplicationApiKeys
 				projectId={projectId}
@@ -163,9 +163,7 @@ describe('API Keys tests', () => {
 			/>,
 		);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
-				'applications-api-keys',
-			);
+			expect(useTrackPage).toHaveBeenCalledWith('applications-api-keys');
 		});
 	});
 });

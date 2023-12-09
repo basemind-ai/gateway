@@ -15,7 +15,7 @@ import { expect } from 'vitest';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import PromptConfiguration from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/configs/[promptConfigId]/page';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import {
 	useSetProjectApplications,
 	useSetProjects,
@@ -196,7 +196,7 @@ describe('PromptConfiguration', () => {
 			/>,
 		);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('config-overview');
+			expect(useTrackPage).toHaveBeenCalledWith('config-overview');
 		});
 	});
 });

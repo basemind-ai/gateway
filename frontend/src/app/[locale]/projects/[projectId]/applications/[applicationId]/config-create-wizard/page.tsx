@@ -16,8 +16,9 @@ import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provid
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { usePageTracking } from '@/hooks/use-page-tracking';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
+import { useTrackEvent } from '@/hooks/use-track-event';
+import { useTrackPage } from '@/hooks/use-track-page';
 import {
 	useApplication,
 	useProject,
@@ -167,7 +168,7 @@ export default function PromptConfigCreateWizard({
 		if (!hasProviderKey && store.wizardStage === 1) {
 			setIsCreateProviderKeyModalOpen(true);
 		}
-		usePageTracking(`createConfigWizard-stage${store.wizardStage}`);
+		useTrackPage(`createConfigWizard-stage${store.wizardStage}`);
 	}, [store.wizardStage]);
 
 	const handleConfigSave = async () => {
@@ -184,6 +185,13 @@ export default function PromptConfigCreateWizard({
 					promptMessages: store.messages,
 				},
 				projectId,
+			});
+			useTrackEvent('create_config', {
+				messageLength: store.messages.length,
+				name: store.configName,
+				parameters: store.parameters,
+				type: store.modelType,
+				vendor: store.modelVendor,
 			});
 			store.resetState();
 			router.replace(

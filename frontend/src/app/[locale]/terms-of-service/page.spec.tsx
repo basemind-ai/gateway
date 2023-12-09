@@ -1,13 +1,13 @@
 import { render, waitFor } from 'tests/test-utils';
 
 import TermsOfServicePage from '@/app/[locale]/terms-of-service/page';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 
 describe('Terms of Service Page', () => {
 	it('call page tracking hook', async () => {
 		render(<TermsOfServicePage />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('terms-of-service');
+			expect(useTrackPage).toHaveBeenCalledWith('terms-of-service');
 		});
 	});
 });

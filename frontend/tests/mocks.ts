@@ -163,8 +163,11 @@ vi.mock(
 	},
 );
 const originalWriteKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
-vi.mock('@/hooks/use-page-tracking.ts', () => ({
-	usePageTracking: vi.fn(),
+vi.mock('@/hooks/use-track-page.ts', () => ({
+	useTrackPage: vi.fn(),
+}));
+vi.mock('@/hooks/use-track-event.ts', () => ({
+	useTrackEvent: vi.fn(),
 }));
 beforeEach(() => {
 	process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = 'test';

@@ -13,7 +13,7 @@ import { expect } from 'vitest';
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { modelVendorToLocaleMap } from '@/constants/models';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
@@ -300,9 +300,7 @@ describe('ProjectProviderKeys', () => {
 		});
 		render(<ProjectProviderKeys project={project} />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
-				'project-provider-keys',
-			);
+			expect(useTrackPage).toHaveBeenCalledWith('project-provider-keys');
 		});
 	});
 });

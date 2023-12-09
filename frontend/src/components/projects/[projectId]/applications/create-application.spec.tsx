@@ -7,6 +7,7 @@ import * as APIKeysAPI from '@/api/api-keys-api';
 import * as ApplicationAPI from '@/api/applications-api';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { ApiError } from '@/errors';
+import { useTrackEvent } from '@/hooks/use-track-event';
 import { ToastType } from '@/stores/toast-store';
 import { APIKey } from '@/types';
 
@@ -223,5 +224,39 @@ describe('CreateApplication', () => {
 			`/en/projects/${projectId}/applications/${application.id}`,
 		);
 		expect(onClose).toHaveBeenCalledOnce();
+	});
+
+	it('calls useTrackEvent when application is created with create_application and application', async () => {
+		render(<CreateApplication projectId={projectId} onClose={onClose} />);
+
+		const nameInput = screen.getByTestId<HTMLInputElement>(
+			'create-application-name-input',
+		);
+		fireEvent.change(nameInput, {
+			target: { value: 'Acme corp' },
+		});
+
+		const apiKeyInput = screen.getByTestId<HTMLInputElement>(
+			'create-application-api-key-input',
+		);
+		fireEvent.change(apiKeyInput, {
+			target: { value: 'New API key' },
+		});
+
+		const application = ApplicationFactory.buildSync();
+		const apiKey = APIKeyFactory.buildSync() as Required<APIKey>;
+		handleCreateApplicationSpy.mockResolvedValueOnce(application);
+		handleCreateAPIKeySpy.mockResolvedValueOnce(apiKey);
+
+		const submitButton = screen.getByTestId<HTMLButtonElement>(
+			'create-application-submit-btn',
+		);
+		fireEvent.click(submitButton);
+		await waitFor(() => {
+			expect(useTrackEvent).toHaveBeenCalledWith(
+				'create_application',
+				application,
+			);
+		});
 	});
 });

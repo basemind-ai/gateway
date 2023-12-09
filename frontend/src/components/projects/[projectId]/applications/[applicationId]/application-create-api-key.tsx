@@ -5,6 +5,7 @@ import { Front, KeyFill } from 'react-bootstrap-icons';
 import { handleCreateAPIKey } from '@/api';
 import { MIN_NAME_LENGTH } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { useTrackEvent } from '@/hooks/use-track-event';
 import { useShowSuccess } from '@/stores/toast-store';
 import { handleChange } from '@/utils/events';
 import { copyToClipboard } from '@/utils/helpers';
@@ -44,6 +45,7 @@ export function CreateApplicationAPIKeyModal({
 				data: { name: apiKeyName },
 				projectId,
 			});
+			useTrackEvent('add_app_key', { applicationId, projectId });
 			setAPIKeyHash(apiKey.hash);
 		} catch (e) {
 			handleError(e);

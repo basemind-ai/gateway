@@ -14,7 +14,8 @@ import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackEvent } from '@/hooks/use-track-event';
+import { useTrackPage } from '@/hooks/use-track-page';
 import {
 	useProviderKeys,
 	useResetState,
@@ -670,7 +671,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		);
 
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
+			expect(useTrackPage).toHaveBeenCalledWith(
 				`createConfigWizard-stage0`,
 			);
 		});
@@ -679,7 +680,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
+			expect(useTrackPage).toHaveBeenCalledWith(
 				`createConfigWizard-stage1`,
 			);
 		});
@@ -688,7 +689,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
+			expect(useTrackPage).toHaveBeenCalledWith(
 				`createConfigWizard-stage2`,
 			);
 		});
@@ -697,8 +698,62 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
+			expect(useTrackPage).toHaveBeenCalledWith(
 				`createConfigWizard-stage3`,
+			);
+		});
+	});
+
+	it('calls useTrackEvent when the user saves the config', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.batchSync(1);
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig[0].name);
+			store.setMessages(promptConfig[0].providerPromptMessages);
+			store.setParameters(promptConfig[0].modelParameters);
+			store.setModelType(promptConfig[0].modelType);
+			store.setModelVendor(promptConfig[0].modelVendor);
+			store.setNextWizardStage();
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('create-provider-key-modal'),
+			).toBeInTheDocument();
+		});
+
+		const input = screen.getByTestId('key-value-textarea');
+		expect(input).toBeInTheDocument();
+
+		const keyValue = faker.lorem.word();
+		fireEvent.change(input, { target: { value: keyValue } });
+
+		const saveButton = screen.getByTestId('create-provider-key-submit-btn');
+		expect(saveButton).toBeInTheDocument();
+
+		fireEvent.click(saveButton);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('parameters-and-prompt-form-container'),
+			).toBeInTheDocument();
+		});
+
+		await waitFor(() => {
+			expect(useTrackEvent).toHaveBeenCalledWith(
+				'create_config',
+				expect.any(Object),
 			);
 		});
 	});

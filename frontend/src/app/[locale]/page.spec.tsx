@@ -4,7 +4,7 @@ import { render, screen } from 'tests/test-utils';
 
 import LandingPage from '@/app/[locale]/page';
 import { Navigation } from '@/constants';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 
 describe('Landing Page', () => {
 	it('should replace the route to Sign-In when clicking the Sign-Up button', () => {
@@ -40,7 +40,7 @@ describe('Landing Page', () => {
 	it('call page tracking hook', async () => {
 		render(<LandingPage />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('landing-page');
+			expect(useTrackPage).toHaveBeenCalledWith('landing-page');
 		});
 	});
 });

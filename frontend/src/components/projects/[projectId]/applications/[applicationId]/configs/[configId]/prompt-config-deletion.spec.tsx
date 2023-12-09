@@ -14,7 +14,7 @@ import {
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import {
 	useSetProjectApplications,
 	useSetProjects,
@@ -155,7 +155,7 @@ describe('PromptDeletion', () => {
 		);
 
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith(
+			expect(useTrackPage).toHaveBeenCalledWith(
 				'config-settings-deletion',
 			);
 		});

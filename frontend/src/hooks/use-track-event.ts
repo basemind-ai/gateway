@@ -2,12 +2,15 @@ import { useEffect } from 'react';
 
 import { useAnalytics } from '@/hooks/use-analytics';
 
-export function usePageTracking(pageName: string) {
+export function useTrackEvent(
+	event: string,
+	properties: Record<string, any> = {},
+) {
 	const analytics = useAnalytics();
 
 	useEffect(() => {
 		if (analytics.initialized) {
-			analytics.page(pageName);
+			analytics.track(event, properties);
 		}
-	}, [analytics.initialized, pageName]);
+	}, [analytics.initialized, event]);
 }

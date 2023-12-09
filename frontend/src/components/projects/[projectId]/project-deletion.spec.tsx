@@ -10,7 +10,7 @@ import {
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
@@ -92,8 +92,6 @@ describe('ProjectDeletion', () => {
 
 	it('calls usePageTracking with project-settings-deletion', () => {
 		render(<ProjectDeletion project={project} />);
-		expect(usePageTracking).toHaveBeenCalledWith(
-			'project-settings-deletion',
-		);
+		expect(useTrackPage).toHaveBeenCalledWith('project-settings-deletion');
 	});
 });

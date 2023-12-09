@@ -7,6 +7,7 @@ import { handleCreateAPIKey, handleCreateApplication } from '@/api';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { useTrackEvent } from '@/hooks/use-track-event';
 import { useAddApplication } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
 import { handleChange } from '@/utils/events';
@@ -56,6 +57,7 @@ export function CreateApplication({
 				setProjectId(Navigation.ApplicationDetail, projectId),
 				application.id,
 			);
+			useTrackEvent('create_application', application);
 			setRedirectUrl(applicationUrl);
 
 			addApplication(projectId, application);

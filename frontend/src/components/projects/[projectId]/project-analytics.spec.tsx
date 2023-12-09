@@ -10,7 +10,7 @@ import {
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { Analytics } from '@/types';
 
 describe('ProjectAnalytics', () => {
@@ -97,7 +97,7 @@ describe('ProjectAnalytics', () => {
 	it('calls usePageTracking hook with project-overview', async () => {
 		render(<ProjectAnalytics project={project} />);
 		await waitFor(() => {
-			expect(usePageTracking).toHaveBeenCalledWith('project-overview');
+			expect(useTrackPage).toHaveBeenCalledWith('project-overview');
 		});
 	});
 });

@@ -1,8 +1,8 @@
 'use client';
 
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 
 export function TrackStaticPage({ pageName }: { pageName: string }) {
-	usePageTracking(pageName);
+	useTrackPage(pageName);
 	return <></>;
 }

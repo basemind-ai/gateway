@@ -10,7 +10,7 @@ import {
 import * as ApplicationAPI from '@/api/applications-api';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
 import { ApiError } from '@/errors';
-import { usePageTracking } from '@/hooks/use-page-tracking';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useSetProjectApplications, useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
@@ -120,7 +120,7 @@ describe('ApplicationDeletion tests', () => {
 				application={applications[0]}
 			/>,
 		);
-		expect(usePageTracking).toHaveBeenCalledWith(
+		expect(useTrackPage).toHaveBeenCalledWith(
 			'application-settings-deletion',
 		);
 	});
