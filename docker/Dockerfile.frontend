@@ -4,16 +4,18 @@ RUN npm i -g pnpm
 FROM base AS install
 WORKDIR /app/
 COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
-COPY frontend/*.* ./frontend/
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/tsconfig.json ./frontend/
 RUN pnpm install -r --ignore-scripts \
     && pnpm add -D @next/swc-linux-arm64-gnu @next/swc-linux-arm64-musl -w
+COPY frontend/next.config.js frontend/tailwind.config.ts ./frontend/
 
 FROM install AS build
 WORKDIR /app/
-COPY shared/ts shared/ts
+COPY shared/ts/src shared/ts/src
 COPY frontend/src frontend/src
 COPY frontend/public frontend/public
-WORKDIR /app/frontend
+
+WORKDIR /app/frontend/
 RUN pnpm run build
 
 FROM base AS app
@@ -25,10 +27,11 @@ RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 app
 
 COPY frontend/public frontend/public
-COPY --from=build --chown=app:nodejs /app/frontend/dist frontend/dist
+COPY --from=build --chown=app:nodejs /app/frontend/dist /app/frontend/dist
 
-COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
-COPY frontend/package.json frontend/pnpm-lock.yaml frontend/next.config.js frontend/tailwind.config.js ./frontend/
+COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/tsconfig.json ./frontend/
+COPY frontend/next.config.js frontend/tailwind.config.ts ./frontend/
 RUN pnpm install -r --prod
 
 WORKDIR /app/frontend
