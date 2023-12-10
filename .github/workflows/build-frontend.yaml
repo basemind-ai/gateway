@@ -1,5 +1,8 @@
 name: 'Build (Frontend)'
 on:
+    pull_request:
+        branches:
+            - main
     push:
         branches:
             - development
@@ -16,7 +19,7 @@ jobs:
     build:
         runs-on: ubuntu-latest
         timeout-minutes: 15
-        environment: ${{ github.ref_name }}
+        environment: development # ${{ github.ref_name }}
         permissions:
             contents: read
             id-token: write
