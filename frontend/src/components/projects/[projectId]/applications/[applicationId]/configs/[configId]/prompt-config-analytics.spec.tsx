@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { OpenAIPromptConfigFactory } from 'tests/factories';
+import { getAuthMock } from 'tests/mocks';
 import {
 	fireEvent,
 	render,
@@ -16,7 +17,6 @@ import { ApiError } from '@/errors';
 import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 import { Analytics } from '@/types';
-import { getAuthMock } from 'tests/mocks';
 
 describe('PromptAnalyticsPage', () => {
 	const projectId = '1';
