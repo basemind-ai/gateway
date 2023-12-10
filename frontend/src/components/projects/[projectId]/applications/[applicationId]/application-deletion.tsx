@@ -7,6 +7,7 @@ import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useDeleteApplication } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
 import { Application } from '@/types';
@@ -18,6 +19,7 @@ export function ApplicationDeletion({
 	application: Application;
 	projectId: string;
 }) {
+	useTrackPage('application-settings-deletion');
 	const t = useTranslations('application');
 	const router = useRouter();
 

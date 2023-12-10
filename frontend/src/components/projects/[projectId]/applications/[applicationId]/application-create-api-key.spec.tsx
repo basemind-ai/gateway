@@ -1,10 +1,11 @@
 import { APIKeyFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
+import { expect, MockInstance } from 'vitest';
 
 import * as APIKeyAPI from '@/api/api-keys-api';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ApiError } from '@/errors';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
 import { ToastType } from '@/stores/toast-store';
 
 describe('CreateApiKey tests', () => {
@@ -13,6 +14,13 @@ describe('CreateApiKey tests', () => {
 	const applicationId = '1';
 	const onSubmit = vi.fn();
 	const onCancel = vi.fn();
+
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValueOnce();
+	});
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -191,5 +199,34 @@ describe('CreateApiKey tests', () => {
 		const copyButton = screen.getByTestId('api-key-copy-btn');
 		fireEvent.click(copyButton);
 		expect(navigator.clipboard.writeText).toHaveBeenCalledWith(hash);
+	});
+
+	it('calls track event when API key is created', async () => {
+		render(
+			<CreateApplicationAPIKeyModal
+				projectId={projectId}
+				applicationId={applicationId}
+				onSubmit={onSubmit}
+				onCancel={onCancel}
+			/>,
+		);
+		const apiKeyNameInput = screen.getByTestId('create-api-key-input');
+		fireEvent.change(apiKeyNameInput, {
+			target: { value: 'New APIKey' },
+		});
+
+		const apiKey = { ...(await APIKeyFactory.build()), hash: 'randomHash' };
+		handleCreateAPIKeySpy.mockResolvedValueOnce(apiKey);
+
+		const submitButton = screen.getByTestId<HTMLButtonElement>(
+			'create-api-key-submit-btn',
+		);
+		fireEvent.click(submitButton);
+		await waitFor(() => {
+			expect(useTrackEventSpy).toHaveBeenCalledWith('add_app_key', {
+				applicationId,
+				projectId,
+			});
+		});
 	});
 });

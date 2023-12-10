@@ -9,16 +9,18 @@ import { handleApplicationAnalytics } from '@/api';
 import { DataCard } from '@/components/data-card';
 import { DatePicker } from '@/components/date-picker';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useDateFormat } from '@/stores/user-config-store';
 import { Application } from '@/types';
 
-export function ApplicationAnalyticsPage({
+export function ApplicationAnalytics({
 	projectId,
 	application,
 }: {
 	application: Application;
 	projectId: string;
 }) {
+	useTrackPage('application-overview');
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
 	const handleError = useHandleError();

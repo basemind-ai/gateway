@@ -9,11 +9,13 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { afterEach, expect } from 'vitest';
+import { afterEach, expect, MockInstance } from 'vitest';
 import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
 import { ApiError } from '@/errors';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import {
 	useProviderKeys,
 	useResetState,
@@ -59,6 +61,17 @@ const getStore = (): PromptConfigWizardStore => {
 describe('PromptConfigCreateWizard Page tests', () => {
 	const applicationId = faker.string.uuid();
 	const projectId = faker.string.uuid();
+
+	let useTrackPageSpy: MockInstance;
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi
+			.spyOn(useTrackPagePackage, 'useTrackPage')
+			.mockResolvedValue();
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValue();
+	});
 
 	const {
 		result: { current: resetAPIStore },
@@ -650,5 +663,87 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			result: { current: providerKeys },
 		} = renderHook(useProviderKeys);
 		expect(providerKeys).toHaveLength(1);
+	});
+
+	it('calls usePageTracking hook with the stage number', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.batchSync(1);
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig[0].name);
+			store.setMessages(promptConfig[0].providerPromptMessages);
+			store.setParameters(promptConfig[0].modelParameters);
+			store.setModelType(promptConfig[0].modelType);
+			store.setModelVendor(promptConfig[0].modelVendor);
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		await waitFor(() => {
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				`createConfigWizard-stage0`,
+			);
+		});
+
+		act(() => {
+			store.setNextWizardStage();
+		});
+		await waitFor(() => {
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				`createConfigWizard-stage1`,
+			);
+		});
+
+		act(() => {
+			store.setNextWizardStage();
+		});
+		await waitFor(() => {
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				`createConfigWizard-stage2`,
+			);
+		});
+
+		act(() => {
+			store.setNextWizardStage();
+		});
+		await waitFor(() => {
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				`createConfigWizard-stage3`,
+			);
+		});
+	});
+
+	it('calls useTrackEvent when the user saves the config', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.batchSync(1);
+
+		const store = getStore();
+		act(() => {
+			store.setConfigName(promptConfig[0].name);
+			store.setMessages(promptConfig[0].providerPromptMessages);
+			store.setParameters(promptConfig[0].modelParameters);
+			store.setModelType(promptConfig[0].modelType);
+			store.setModelVendor(promptConfig[0].modelVendor);
+			store.setNextWizardStage();
+			store.setNextWizardStage();
+		});
+
+		render(
+			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
+		);
+
+		const saveButton = screen.getByTestId(
+			'config-create-wizard-save-button',
+		);
+		expect(saveButton).toBeInTheDocument();
+		fireEvent.click(saveButton);
+
+		await waitFor(() => {
+			expect(useTrackEventSpy).toHaveBeenCalledWith(
+				'create_config',
+				expect.any(Object),
+			);
+		});
 	});
 });

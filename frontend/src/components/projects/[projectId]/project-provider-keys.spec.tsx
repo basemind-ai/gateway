@@ -8,11 +8,12 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect } from 'vitest';
+import { expect, MockInstance } from 'vitest';
 
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { modelVendorToLocaleMap } from '@/constants/models';
 import { ApiError } from '@/errors';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
 
@@ -21,6 +22,11 @@ describe('ProjectProviderKeys', () => {
 	const providerKeys = ProviderKeyFactory.batchSync(2).map((v, i) => {
 		v.modelVendor = i % 2 === 0 ? ModelVendor.OpenAI : ModelVendor.Cohere;
 		return v;
+	});
+	let useTrackPageSpy: MockInstance;
+
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
 	});
 
 	it("retrieves the project's provider keys and displays them in the table", async () => {
@@ -290,5 +296,18 @@ describe('ProjectProviderKeys', () => {
 		expect((result.current[toastsLength] as ToastMessage).type).toBe(
 			'alert-error',
 		);
+	});
+
+	it('calls useTrackingPage with project-provider-keys', async () => {
+		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(providerKeys),
+			ok: true,
+		});
+		render(<ProjectProviderKeys project={project} />);
+		await waitFor(() => {
+			expect(useTrackPageSpy).toHaveBeenCalledWith(
+				'project-provider-keys',
+			);
+		});
 	});
 });

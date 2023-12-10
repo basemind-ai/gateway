@@ -5,7 +5,7 @@ import { memo, useState } from 'react';
 import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
-import { ApplicationAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics-page';
+import { ApplicationAnalytics } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics';
 import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
 import { ApplicationGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/application-general-settings';
@@ -55,7 +55,7 @@ export default function Application({
 	const tabComponents: Record<ApplicationPageTabNames, React.FC> = {
 		[ApplicationPageTabNames.OVERVIEW]: memo(() => (
 			<>
-				<ApplicationAnalyticsPage
+				<ApplicationAnalytics
 					application={application}
 					projectId={projectId}
 				/>

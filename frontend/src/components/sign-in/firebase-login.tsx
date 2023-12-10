@@ -66,10 +66,8 @@ export function FirebaseLogin() {
 				if (auth.currentUser) {
 					setUser(auth.currentUser);
 					router.replace(Navigation.Projects);
-
 					identify(auth.currentUser.uid, auth.currentUser);
 					track('login');
-
 					return null;
 				}
 

@@ -10,11 +10,12 @@ import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { modelVendorToLocaleMap } from '@/constants/models';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { ModelVendor, Project, ProviderKey } from '@/types';
 
 export function ProjectProviderKeys({ project }: { project: Project }) {
 	const t = useTranslations('providerKeys');
-
+	useTrackPage('project-provider-keys');
 	const handleError = useHandleError();
 
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

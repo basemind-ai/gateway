@@ -7,11 +7,13 @@ import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { useDeleteProject } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
 import { Project } from '@/types';
 
 export function ProjectDeletion({ project }: { project: Project }) {
+	useTrackPage('project-settings-deletion');
 	const router = useRouter();
 	const t = useTranslations('projectSettings');
 	const deleteProjectHook = useDeleteProject();

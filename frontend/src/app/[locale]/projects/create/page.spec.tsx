@@ -1,14 +1,32 @@
 import { ProjectFactory } from 'tests/factories';
 import { routerReplaceMock } from 'tests/mocks';
-import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
+import {
+	fireEvent,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from 'tests/test-utils';
+import { MockInstance } from 'vitest';
 
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
+import * as useTrackEventPackage from '@/hooks/use-track-event';
+import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { useSetProjects } from '@/stores/api-store';
 
 describe('ProjectCreatePage', () => {
+	let useTrackPageSpy: MockInstance;
+	let useTrackEventSpy: MockInstance;
+	beforeEach(() => {
+		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
+		useTrackEventSpy = vi
+			.spyOn(useTrackEventPackage, 'useTrackEvent')
+			.mockResolvedValueOnce();
+	});
+
 	it('should render without crashing', () => {
 		render(<CreateProjectPage />);
 		const projectsViewSetup = screen.getByTestId(
@@ -140,6 +158,33 @@ describe('ProjectCreatePage', () => {
 		await vi.waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(
 				`${Navigation.Projects}/${newProject.id}`,
+			);
+		});
+	});
+
+	it('calls usePageTracking', async () => {
+		render(<CreateProjectPage />);
+		await waitFor(() => {
+			expect(useTrackPageSpy).toHaveBeenCalledWith('create-project');
+		});
+	});
+
+	it('calls useTrackEvent after successful project creation', async () => {
+		const handleCreateProjectSpy = vi.spyOn(
+			projectsAPI,
+			'handleCreateProject',
+		);
+		const newProject = await ProjectFactory.build();
+		handleCreateProjectSpy.mockResolvedValueOnce(newProject);
+		render(<CreateProjectPage />);
+		const submitButton = screen.getByTestId('create-project-submit-button');
+		const nameInput = screen.getByTestId('create-project-name-input');
+		fireEvent.change(nameInput, { target: { value: 'test' } });
+		fireEvent.click(submitButton);
+		await vi.waitFor(() => {
+			expect(useTrackEventSpy).toHaveBeenCalledWith(
+				'create_project',
+				newProject,
 			);
 		});
 	});

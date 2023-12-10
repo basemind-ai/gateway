@@ -11,6 +11,7 @@ import { PromptConfigParametersAndPromptForm } from '@/components/projects/[proj
 import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
+import { useTrackPage } from '@/hooks/use-track-page';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import {
 	ModelType,
@@ -30,7 +31,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	promptConfig: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
-
+	useTrackPage('config-testing');
 	const handleError = useHandleError();
 	const promptConfigs = usePromptConfigs();
 	const router = useRouter();

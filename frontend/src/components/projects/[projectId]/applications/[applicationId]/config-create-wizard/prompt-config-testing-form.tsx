@@ -7,6 +7,7 @@ import { PromptTestInputs } from '@/components/prompt-display-components/prompt-
 import { PromptTestResultTable } from '@/components/prompt-display-components/prompt-test-result-table';
 import { WebsocketError } from '@/errors';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
+import { useTrackEvent } from '@/hooks/use-track-event';
 import {
 	ModelParameters,
 	ModelType,
@@ -89,6 +90,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 
 		try {
 			await sendMessage(config);
+			useTrackEvent('run_config_test', config);
 		} catch (e) {
 			handleError(e);
 		}
