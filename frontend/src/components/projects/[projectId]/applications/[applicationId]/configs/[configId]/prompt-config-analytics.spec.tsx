@@ -16,6 +16,7 @@ import { ApiError } from '@/errors';
 import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 import { Analytics } from '@/types';
+import { getAuthMock } from 'tests/mocks';
 
 describe('PromptAnalyticsPage', () => {
 	const projectId = '1';
@@ -136,6 +137,10 @@ describe('PromptAnalyticsPage', () => {
 	});
 
 	it('calls usePageTracking', async () => {
+		getAuthMock.mockImplementationOnce(() => ({
+			currentUser: {},
+			setPersistence: vi.fn(),
+		}));
 		render(<CreateProjectPage />);
 		await waitFor(() => {
 			expect(useTrackPageSpy).toHaveBeenCalledWith('create-project');
