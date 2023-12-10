@@ -22,10 +22,10 @@ repos:
       hooks:
           - id: hadolint-docker
     - repo: https://github.com/pre-commit/mirrors-prettier
-      rev: 'v4.0.0-alpha.3-1'
+      rev: 'v4.0.0-alpha.4'
       hooks:
           - id: prettier
-            exclude: 'go.mod|gen/ts'
+            exclude: 'go.mod|gen/ts|tsx|ts'
     - repo: https://github.com/pre-commit/mirrors-eslint
       rev: 'v8.55.0'
       hooks:
