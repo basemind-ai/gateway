@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 	description:
 		'The all-in-one developer platform for your mobile apps AI needs. Integrate in minutes, scale to millions.',
 	keywords:
-		'Serverless AI, Prompt Management, GPT-4, Gemni, Developer Platform for AI, Kotlin, Swift, Flutter, React Native, API',
+		'BaseMind, Serverless AI, Prompt Management, GPT-4, gemini, Developer Platform for AI, Kotlin, Swift, Flutter, React Native, API',
 	openGraph: {
 		images: [
 			{
