@@ -1,1 +1,5 @@
 **/tests/
+frontend/.next/
+**/node_modules/
+**/__mocks__
+**/.env*

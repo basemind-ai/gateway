@@ -2,12 +2,12 @@ const withNextIntl = require('next-intl/plugin')();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withNextIntl({
+	output: 'standalone',
 	experimental: {
 		externalDir: true,
 		serverComponentsExternalPackages: ['react-bootstrap-icons'],
 	},
 	reactStrictMode: true,
-	distDir: 'dist',
 	images: {
 		remotePatterns: [
 			{ hostname: 'lh3.googleusercontent.com' },
