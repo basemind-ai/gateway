@@ -16,6 +16,6 @@ const createLogger = (options?: LoggerOptions) =>
 					target: 'pino-pretty',
 				},
 				...options,
-		  });
+			});
 
 export default createLogger();

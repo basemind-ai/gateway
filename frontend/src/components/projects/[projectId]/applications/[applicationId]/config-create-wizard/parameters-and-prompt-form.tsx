@@ -329,7 +329,7 @@ export function OpenAIPromptTemplate({
 									? 'btn-secondary'
 									: `btn-secondary btn-outline ${
 											openAIRoleColorMap[message.role]
-									  } hover:text-secondary-content`
+										} hover:text-secondary-content`
 							}
 							dataTestId={`parameters-and-prompt-form-message-${index}`}
 							handleClick={() => {

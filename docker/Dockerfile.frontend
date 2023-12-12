@@ -4,10 +4,9 @@ RUN npm i -g pnpm
 FROM base AS install
 WORKDIR /app/
 COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
-COPY frontend/package.json frontend/pnpm-lock.yaml frontend/tsconfig.json ./frontend/
+COPY frontend/*.* ./frontend/
 RUN pnpm install -r --ignore-scripts \
     && pnpm add -D @next/swc-linux-arm64-gnu @next/swc-linux-arm64-musl -w
-COPY frontend/next.config.js frontend/tailwind.config.ts ./frontend/
 
 FROM install AS build
 WORKDIR /app/

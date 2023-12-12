@@ -50,13 +50,13 @@ export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
 					functionArguments: ['a', 'b'],
 					name: 'myFunction',
 					role: 'function',
-			  }
+				}
 			: {
 					content: faker.lorem.sentence(),
 					name: undefined,
 					role: TypeFactory.sample(['user', 'system', 'assistant']),
 					templateVariables: [],
-			  },
+				},
 );
 
 export const OpenAIPromptConfigFactory = new TypeFactory<

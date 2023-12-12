@@ -144,6 +144,7 @@ services:
             - '3000:3000'
         volumes:
             - ./frontend/next.config.js:/app/frontend/next.config.js:cached
+            - ./frontend/tailwind.config.ts:/app/frontend/tailwind.config.ts:cached
             - ./frontend/public:/app/frontend/public:cached
             - ./frontend/src:/app/frontend/src:cached
             - ./shared/ts/src:/app/shared/ts/src:cached
@@ -151,6 +152,7 @@ services:
             NEXT_PUBLIC_BACKEND_BASE_URL: http://localhost:4100
             NEXT_PUBLIC_FRONTEND_HOST: http://localhost
             NODE_ENV: development
+            REACT_EDITOR: code
         working_dir: /app/frontend
         command: ['pnpm', 'run', 'dev']
         env_file: .secrets/.env.frontend
