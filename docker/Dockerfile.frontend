@@ -17,7 +17,7 @@ COPY frontend/public frontend/public
 WORKDIR /app/frontend/
 RUN pnpm run build
 
-FROM node:21-slim AS app
+FROM base AS app
 WORKDIR /app/
 ENV PORT 3000
 ENV NODE_ENV=production
@@ -26,9 +26,15 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 app
 
-COPY --from=build /app/frontend/public ./public
-COPY --from=build --chown=app:nodejs /app/frontend/.next/standalone ./
-COPY --from=build --chown=app:nodejs /app/frontend/.next/static ./.next/static
+COPY --from=build /app/frontend/public ./frontend/public
+COPY --from=build --chown=app:nodejs /app/frontend/.next/standalone ./frontend/
+COPY --from=build --chown=app:nodejs /app/frontend/.next/static ./frontend/.next/static
 
+COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml ./frontend/
+
+RUN pnpm install -r
+
+WORKDIR /app/frontend/
 USER app
 CMD ["node", "server.js"]
