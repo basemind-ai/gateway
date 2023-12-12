@@ -112,17 +112,17 @@ function FormActions({
 }
 
 function Form({
-	description,
+	applicationName,
 	isError,
-	name,
-	setDescription,
-	setName,
+	projectName,
+	setProjectName,
+	setApplicationName,
 }: {
-	description: string;
+	applicationName: string;
 	isError: boolean;
-	name: string;
-	setDescription: (description: string) => void;
-	setName: (name: string) => void;
+	projectName: string;
+	setApplicationName: (description: string) => void;
+	setProjectName: (name: string) => void;
 }) {
 	const t = useTranslations('createProject');
 
@@ -140,24 +140,21 @@ function Form({
 				data-testid="create-project-name-input"
 				placeholder={t('projectInputPlaceholder')}
 				className="input input-bordered w-[60%]"
-				value={name}
-				onChange={handleChange(setName)}
+				value={projectName}
+				onChange={handleChange(setProjectName)}
 			/>
 			<div className="pt-2 pb-10">
 				<label className="label text-left font-bold">
 					<span className="label-text">
-						{t('projectDescriptionInputLabel')}
-					</span>
-					<span className="label-text-alt text-xs text-base-content/30">
-						{t('optional')}
+						{t('applicationNameInputLabel')}
 					</span>
 				</label>
 				<input
 					type="text"
-					placeholder={t('projectDescriptionInputPlaceholder')}
-					className="input input-bordered w-full"
-					value={description}
-					onChange={handleChange(setDescription)}
+					placeholder={t('applicationNameInputPlaceholder')}
+					className="input w-[60%]"
+					value={applicationName}
+					onChange={handleChange(setApplicationName)}
 				/>
 			</div>
 		</div>
@@ -173,8 +170,8 @@ export default function CreateProjectPage() {
 	const addProject = useAddProject();
 	const projects = useProjects();
 
-	const [name, setName] = useState('');
-	const [description, setDescription] = useState('');
+	const [projectName, setProjectName] = useState('');
+	const [applicationName, setApplicationName] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [isError, setIsError] = useState<boolean>(false);
 
@@ -183,7 +180,7 @@ export default function CreateProjectPage() {
 		setIsError(false);
 		try {
 			const project = await handleCreateProject({
-				data: { description, name },
+				data: { name: projectName },
 			});
 			addProject(project);
 			track('created_project', project);
@@ -205,29 +202,32 @@ export default function CreateProjectPage() {
 
 	return (
 		<div
-			className="bg-base-100 flex h-full w-full"
+			className="flex flex-col min-h-screen w-full bg-base-100"
 			data-testid="create-projects-container"
 		>
-			<div className="flex flex-col pt-6 px-8 h-full w-2/12 bg-base-200 justify-between opacity-40">
-				<Logo />
-			</div>
-			<div className="w-full">
+			<div className="page-content-container">
+				<div
+					data-testid="navbar-header"
+					className="navbar flex-grow gap-4 content-baseline"
+				>
+					<Logo />
+				</div>
 				<div
 					className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 12/12  md:w-6/12 lg:w-5/12 2xl:w-4/12 bg-base-300 flex-col"
 					data-testid="create-project-view-flex-container"
 				>
 					<PageHeader title={t('title')} subTitle={t('subTitle')} />
 					<Form
-						description={description}
+						applicationName={applicationName}
 						isError={isError}
-						name={name}
-						setDescription={setDescription}
-						setName={setName}
+						projectName={projectName}
+						setApplicationName={setApplicationName}
+						setProjectName={setProjectName}
 					/>
 					<FormActions
 						isError={isError}
 						isLoading={isLoading}
-						allowSubmit={!!name}
+						allowSubmit={!!projectName || !!applicationName}
 						showCancel={!!projects.length}
 						HandleCancel={HandleCancel}
 						handleSubmit={() => {
