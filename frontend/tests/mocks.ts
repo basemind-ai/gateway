@@ -22,7 +22,7 @@ beforeEach(() => {
 export const mockFetch = vi.fn();
 
 export const mockEnv = {
-	NEXT_PUBLIC_BACKEND_BASE_URL: 'http://www.example.com',
+	NEXT_PUBLIC_BACKEND_URL: 'http://www.example.com',
 	NEXT_PUBLIC_DISCORD_INVITE_URL: 'https://discord.gg/abc',
 	NEXT_PUBLIC_FIREBASE_API_KEY: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_APP_ID: faker.string.uuid(),

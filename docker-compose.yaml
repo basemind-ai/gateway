@@ -149,7 +149,7 @@ services:
             - ./frontend/src:/app/frontend/src:cached
             - ./shared/ts/src:/app/shared/ts/src:cached
         environment:
-            NEXT_PUBLIC_BACKEND_BASE_URL: http://localhost:4100
+            NEXT_PUBLIC_BACKEND_URL: http://localhost:4100
             NEXT_PUBLIC_FRONTEND_HOST: http://localhost
             NODE_ENV: development
             REACT_EDITOR: code

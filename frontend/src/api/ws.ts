@@ -35,7 +35,7 @@ export function createWebsocketURL({
 }): string {
 	const url = new URL(
 		`v1/projects/${projectId}/applications/${applicationId}/prompt-configs/test/`,
-		process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
+		process.env.NEXT_PUBLIC_BACKEND_URL,
 	);
 
 	url.search = new URLSearchParams({ otp }).toString();

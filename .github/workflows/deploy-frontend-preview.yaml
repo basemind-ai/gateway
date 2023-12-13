@@ -54,7 +54,7 @@ jobs:
                   FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
                   SEGMENT_WRITE_KEY: ${{ secrets.SEGMENT_WRITE_KEY }}
               run: |
-                  echo "NEXT_PUBLIC_BACKEND_BASE_URL=${{ vars.BACKEND_URL }}" >> frontend/.env
+                  echo "NEXT_PUBLIC_BACKEND_URL=${{ vars.BACKEND_URL }}" >> frontend/.env
                   echo "NEXT_PUBLIC_DISCORD_INVITE_URL=${{ vars.DISCORD_INVITE_URL }}" >> frontend/.env
                   echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ env.FIREBASE_API_KEY }}" >> frontend/.env
                   echo "NEXT_PUBLIC_FIREBASE_APP_ID=${{ vars.FIREBASE_APP_ID }}" >> frontend/.env

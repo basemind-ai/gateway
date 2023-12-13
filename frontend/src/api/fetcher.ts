@@ -46,7 +46,7 @@ export async function fetcher<T>({
 
 	const path = new URL(
 		`v${version}/${url}`,
-		process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
+		process.env.NEXT_PUBLIC_BACKEND_URL,
 	);
 	const searchParams = new URLSearchParams();
 

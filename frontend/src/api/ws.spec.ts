@@ -46,7 +46,7 @@ describe('prompt testing websocket', () => {
 	});
 	describe('createWebsocketURL', () => {
 		it('returns the expected URL string', () => {
-			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://www.example.com';
+			process.env.NEXT_PUBLIC_BACKEND_URL = 'http://www.example.com';
 
 			expect(
 				createWebsocketURL({
@@ -87,7 +87,7 @@ describe('prompt testing websocket', () => {
 		it('sends the expected ping on websocket open', async () => {
 			vi.useFakeTimers({ shouldAdvanceTime: true });
 
-			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
+			process.env.NEXT_PUBLIC_BACKEND_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
 				applicationId,
@@ -122,7 +122,7 @@ describe('prompt testing websocket', () => {
 		});
 
 		it('sends the expected data', async () => {
-			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
+			process.env.NEXT_PUBLIC_BACKEND_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
 				applicationId,
@@ -159,7 +159,7 @@ describe('prompt testing websocket', () => {
 		});
 
 		it('receives the expected data', async () => {
-			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
+			process.env.NEXT_PUBLIC_BACKEND_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
 				applicationId,
@@ -198,7 +198,7 @@ describe('prompt testing websocket', () => {
 		});
 
 		it('throws an error if the websocket is closed', async () => {
-			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
+			process.env.NEXT_PUBLIC_BACKEND_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
 				applicationId,
@@ -232,7 +232,7 @@ describe('prompt testing websocket', () => {
 		});
 
 		it('closes the websocket connection', async () => {
-			process.env.NEXT_PUBLIC_BACKEND_BASE_URL = 'http://localhost:8080';
+			process.env.NEXT_PUBLIC_BACKEND_URL = 'http://localhost:8080';
 
 			const mockServerURL = createWebsocketURL({
 				applicationId,
