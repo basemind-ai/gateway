@@ -48,7 +48,7 @@ export async function coherePrompt(
 		);
 		callback(null, { content: text } satisfies CoherePromptResponse);
 	} catch (error: unknown) {
-		logger.error(error, 'error communicating with Cohere');
+		logger.error(error as Error, 'error communicating with Cohere');
 		callback(new GrpcError({ message: (error as Error).message }), null);
 	}
 }
@@ -100,7 +100,7 @@ export async function cohereStream(
 		call.write({
 			finishReason: StreamFinishReason.ERROR,
 		} satisfies CohereStreamResponse);
-		logger.error(error, 'error communicating with Cohere');
+		logger.error(error as Error, 'error communicating with Cohere');
 	} finally {
 		call.end();
 	}

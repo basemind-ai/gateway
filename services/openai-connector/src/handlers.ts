@@ -53,7 +53,7 @@ export async function openAIPrompt(
 			totalTokens: usage?.total_tokens ?? 0,
 		} satisfies OpenAIPromptResponse);
 	} catch (error: unknown) {
-		logger.error(error, 'error communicating with OpenAI');
+		logger.error(error as Error, 'error communicating with OpenAI');
 		callback(new GrpcError({ message: (error as Error).message }), null);
 	}
 }
@@ -101,7 +101,7 @@ export async function openAIStream(
 			content: '',
 			finishReason: StreamFinishReason.ERROR,
 		});
-		logger.error(error, 'error communicating with OpenAI');
+		logger.error(error as Error, 'error communicating with OpenAI');
 	} finally {
 		call.end();
 	}

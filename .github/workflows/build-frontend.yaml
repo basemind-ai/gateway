@@ -13,13 +13,6 @@ env:
     SERVICE_NAME: frontend
     FILE_PATH: ./docker/Dockerfile.frontend
     DISCORD_INVITE_URL: https://discord.gg/BzH7TQVVYy
-    FIREBASE_APP_ID: 1:78794879644:web:d8b1cd5e46180811913359
-    FIREBASE_AUTH_DOMAIN: basemind-ai-development.firebaseapp.com
-    FIREBASE_MEASUREMENT_ID: G-J9XH9ETMTC
-    FIREBASE_MESSAGE_SENDER_ID: 78794879644
-    FIREBASE_MICROSOFT_TENANT_ID: ef241226-ef98-4c54-92c4-4aa4067a467d
-    FIREBASE_PROJECT_ID: basemind-ai-development
-    FIREBASE_STORAGE_BUCKET: basemind-ai-development.appspot.com
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -39,13 +32,6 @@ jobs:
                   token_format: access_token
                   workload_identity_provider: projects/${{vars.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{vars.GCP_WORKLOAD_IDENTITY_POOL}}/providers/${{vars.GCP_OIDC_PROVIDER_NAME}}
                   service_account: ${{vars.GCP_SERVICE_ACCOUNT_NAME}}@${{vars.GCP_PROJECT_ID}}.iam.gserviceaccount.com
-            - name: Read Secrets
-              id: secrets
-              uses: google-github-actions/get-secretmanager-secrets@v1
-              with:
-                  secrets: |-
-                      firebase_api_key:${{vars.GCP_PROJECT_ID}}/FIREBASE_API_KEY
-                      segment_write_key:${{vars.GCP_PROJECT_ID}}/SEGMENT_WRITE_KEY_DEV
             - name: Login to Artifact Registry
               uses: docker/login-action@v3
               with:
@@ -63,17 +49,19 @@ jobs:
                   context: .
                   file: ${{env.FILE_PATH}}
                   build-args: |
+                      BACKEND_URL=${{vars.BACKEND_URL}}
                       BUILD_TARGET=${{env.SERVICE_NAME}}
                       DISCORD_INVITE_URL=${{env.DISCORD_INVITE_URL}}
-                      FIREBASE_API_KEY=${{ steps.secrets.outputs.firebase_api_key }}
-                      FIREBASE_APP_ID=${{env.FIREBASE_APP_ID}}
-                      FIREBASE_AUTH_DOMAIN=${{env.FIREBASE_AUTH_DOMAIN}}
-                      FIREBASE_MEASUREMENT_ID=${{env.FIREBASE_MEASUREMENT_ID}}
-                      FIREBASE_MESSAGE_SENDER_ID=${{env.FIREBASE_MESSAGE_SENDER_ID}}
-                      FIREBASE_MICROSOFT_TENANT_ID=${{env.FIREBASE_MICROSOFT_TENANT_ID}}
-                      FIREBASE_PROJECT_ID=${{env.FIREBASE_PROJECT_ID}}
-                      FIREBASE_STORAGE_BUCKET=${{env.FIREBASE_STORAGE_BUCKET}}
-                      SEGMENT_WRITE_KEY=${{ steps.secrets.outputs.segment_write_key }}
+                      FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+                      FIREBASE_APP_ID=${{vars.FIREBASE_APP_ID}}
+                      FIREBASE_AUTH_DOMAIN=${{vars.FIREBASE_AUTH_DOMAIN}}
+                      FIREBASE_MEASUREMENT_ID=${{vars.FIREBASE_MEASUREMENT_ID}}
+                      FIREBASE_MESSAGE_SENDER_ID=${{vars.FIREBASE_MESSAGE_SENDER_ID}}
+                      FIREBASE_MICROSOFT_TENANT_ID=${{vars.FIREBASE_MICROSOFT_TENANT_ID}}
+                      FIREBASE_PROJECT_ID=${{vars.FIREBASE_PROJECT_ID}}
+                      FIREBASE_STORAGE_BUCKET=${{vars.FIREBASE_STORAGE_BUCKET}}
+                      FRONTEND_HOST=${{vars.FRONTEND_HOST}}
+                      SEGMENT_WRITE_KEY=${{ secrets.SEGMENT_WRITE_KEY }}
                       SERVICE_NAME=${{env.SERVICE_NAME}}
                   tags: |
                       ${{vars.GCP_REGION}}-docker.pkg.dev/${{vars.GCP_PROJECT_ID}}/basemind/${{env.SERVICE_NAME}}:latest
