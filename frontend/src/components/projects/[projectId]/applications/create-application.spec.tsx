@@ -1,13 +1,12 @@
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
-import { routerPushMock } from 'tests/mocks';
+import { mockTrack, routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { beforeEach, expect, MockInstance } from 'vitest';
+import { expect } from 'vitest';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import * as ApplicationAPI from '@/api/applications-api';
 import { CreateApplication } from '@/components/projects/[projectId]/applications/create-application';
 import { ApiError } from '@/errors';
-import * as useTrackEventPackage from '@/hooks/use-track-event';
 import { ToastType } from '@/stores/toast-store';
 import { APIKey } from '@/types';
 
@@ -22,12 +21,6 @@ describe('CreateApplication', () => {
 	const onClose = vi.fn();
 	beforeEach(() => {
 		vi.clearAllMocks();
-	});
-	let useTrackEventSpy: MockInstance;
-	beforeEach(() => {
-		useTrackEventSpy = vi
-			.spyOn(useTrackEventPackage, 'useTrackEvent')
-			.mockResolvedValueOnce();
 	});
 
 	it('renders create application form', async () => {
@@ -232,9 +225,8 @@ describe('CreateApplication', () => {
 		expect(onClose).toHaveBeenCalledOnce();
 	});
 
-	it('calls useTrackEvent when application is created with create_application and application', async () => {
+	it('calls track when application is created with create_application and application', async () => {
 		render(<CreateApplication projectId={projectId} onClose={onClose} />);
-
 		const nameInput = screen.getByTestId<HTMLInputElement>(
 			'create-application-name-input',
 		);
@@ -259,9 +251,9 @@ describe('CreateApplication', () => {
 		);
 		fireEvent.click(submitButton);
 		await waitFor(() => {
-			expect(useTrackEventSpy).toHaveBeenCalledWith(
+			expect(mockTrack).toHaveBeenCalledWith(
 				'create_application',
-				application,
+				expect.any(Object),
 			);
 		});
 	});

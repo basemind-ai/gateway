@@ -1,16 +1,23 @@
 'use client';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 
 import { Navbar } from '@/components/navbar';
 import { DeleteAccountView } from '@/components/settings/delete-account-view';
 import { UserDetails } from '@/components/settings/user-details';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useTrackPage } from '@/hooks/use-track-page';
 
 export default function UserSettings() {
 	const user = useAuthenticatedUser();
 	const t = useTranslations('userSettings');
-	useTrackPage('user-settings');
+
+	const { initialized, page } = useAnalytics();
+	useEffect(() => {
+		if (initialized) {
+			page('user-settings');
+		}
+	}, [initialized]);
 
 	return (
 		<div

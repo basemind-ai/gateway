@@ -1,13 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
+import { mockTrack } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { beforeEach, expect, MockInstance } from 'vitest';
+import { beforeEach, expect } from 'vitest';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ApiError } from '@/errors';
-import * as useTrackEventPackage from '@/hooks/use-track-event';
-import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { ToastType } from '@/stores/toast-store';
 import { AccessPermission } from '@/types';
 
@@ -23,18 +22,9 @@ describe('InviteMember', () => {
 	);
 
 	beforeEach(() => {
-		vi.resetAllMocks();
+		// vi.resetAllMocks();
 	});
-	let useTrackPageSpy: MockInstance;
-	let useTrackEventSpy: MockInstance;
-	beforeEach(() => {
-		useTrackPageSpy = vi
-			.spyOn(useTrackPagePackage, 'useTrackPage')
-			.mockResolvedValueOnce();
-		useTrackEventSpy = vi
-			.spyOn(useTrackEventPackage, 'useTrackEvent')
-			.mockResolvedValueOnce();
-	});
+
 	it('renders invite member', async () => {
 		render(<InviteProjectMembers project={project} />);
 
@@ -133,6 +123,7 @@ describe('InviteMember', () => {
 	});
 
 	it('debounce invite button when loading', async () => {
+		vi.resetAllMocks();
 		render(<InviteProjectMembers project={project} />);
 
 		const validEmail = faker.internet.email();
@@ -259,16 +250,7 @@ describe('InviteMember', () => {
 		expect(sendInviteButton.disabled).toBe(true);
 	});
 
-	it('calls usePageTracking hook with project-invite-members', async () => {
-		render(<InviteProjectMembers project={project} />);
-		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith(
-				'project-invite-members',
-			);
-		});
-	});
-
-	it('sendEmailInvites calls useTrackEvent hook with invite_user and email, permission and project', async () => {
+	it('sendEmailInvites calls track with invite_user and email, permission and project', async () => {
 		render(<InviteProjectMembers project={project} />);
 		const validEmail = faker.internet.email();
 		const emailInput =
@@ -287,8 +269,8 @@ describe('InviteMember', () => {
 			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
 		fireEvent.click(sendInviteButton);
 		await waitFor(() => {
-			expect(useTrackEventSpy).toHaveBeenCalledWith('invite_user', {
-				email: validEmail,
+			expect(mockTrack).toHaveBeenCalledWith('invite_user', {
+				newMemberEmail: validEmail,
 				...project,
 				permission: AccessPermission.MEMBER,
 			});

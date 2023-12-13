@@ -14,11 +14,10 @@ import { PromptConfigParametersAndPromptForm } from '@/components/projects/[proj
 import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { Navigation } from '@/constants';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
-import { useTrackEvent } from '@/hooks/use-track-event';
-import { useTrackPage } from '@/hooks/use-track-page';
 import {
 	useApplication,
 	useProject,
@@ -41,9 +40,8 @@ export default function PromptConfigCreateWizard({
 }) {
 	const t = useTranslations('createConfigWizard');
 	const handleError = useHandleError();
-
 	const router = useRouter();
-
+	const { initialized, page, track } = useAnalytics();
 	const [nameIsValid, setNameIsValid] = useState(false);
 
 	const user = useAuthenticatedUser();
@@ -168,8 +166,13 @@ export default function PromptConfigCreateWizard({
 		if (!hasProviderKey && store.wizardStage === 1) {
 			setIsCreateProviderKeyModalOpen(true);
 		}
-		useTrackPage(`createConfigWizard-stage${store.wizardStage}`);
 	}, [store.wizardStage]);
+
+	useEffect(() => {
+		if (initialized) {
+			page(`createConfigWizard-stage${store.wizardStage}`);
+		}
+	}, [initialized, store.wizardStage]);
 
 	const handleConfigSave = async () => {
 		setIsLoading(true);
@@ -186,7 +189,7 @@ export default function PromptConfigCreateWizard({
 				},
 				projectId,
 			});
-			useTrackEvent('create_config', {
+			track('create_config', {
 				messageLength: store.messages.length,
 				name: store.configName,
 				parameters: store.parameters,

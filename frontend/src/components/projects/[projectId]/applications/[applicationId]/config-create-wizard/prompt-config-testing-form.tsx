@@ -6,8 +6,8 @@ import { PromptContentDisplay } from '@/components/prompt-display-components/pro
 import { PromptTestInputs } from '@/components/prompt-display-components/prompt-test-inputs';
 import { PromptTestResultTable } from '@/components/prompt-display-components/prompt-test-result-table';
 import { WebsocketError } from '@/errors';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
-import { useTrackEvent } from '@/hooks/use-track-event';
 import {
 	ModelParameters,
 	ModelType,
@@ -56,7 +56,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 	templateVariables: Record<string, string>;
 }) {
 	const t = useTranslations('createConfigWizard');
-
+	const { initialized, track } = useAnalytics();
 	const {
 		isRunningTest,
 		modelResponses,
@@ -78,7 +78,6 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 
 	const handleRunTest = async () => {
 		resetState();
-
 		const config = {
 			modelParameters: parameters,
 			modelType,
@@ -90,7 +89,9 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 
 		try {
 			await sendMessage(config);
-			useTrackEvent('run_config_test', config);
+			if (initialized) {
+				track('run_config_test', config);
+			}
 		} catch (e) {
 			handleError(e);
 		}

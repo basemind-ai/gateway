@@ -1,8 +1,15 @@
 'use client';
+import { useEffect } from 'react';
 
-import { useTrackPage } from '@/hooks/use-track-page';
+import { useAnalytics } from '@/hooks/use-analytics';
 
 export function TrackStaticPage({ pageName }: { pageName: string }) {
-	useTrackPage(pageName);
+	const { initialized, page } = useAnalytics();
+	useEffect(() => {
+		if (initialized) {
+			page(pageName);
+		}
+	}, [initialized, pageName]);
+
 	return <></>;
 }

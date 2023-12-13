@@ -4,7 +4,7 @@ import {
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
 } from 'tests/factories';
-import { routerReplaceMock } from 'tests/mocks';
+import { mockPage, mockReady, routerReplaceMock } from 'tests/mocks';
 import {
 	act,
 	fireEvent,
@@ -13,12 +13,10 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect, MockInstance, SpyInstance } from 'vitest';
+import { expect, SpyInstance } from 'vitest';
 
 import * as promptConfigApi from '@/api/prompt-config-api';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
-import * as useTrackEventPackage from '@/hooks/use-track-event';
-import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import { OpenAIModelType, PromptConfig } from '@/types';
 
@@ -30,11 +28,7 @@ describe('PromptConfigTesting tests', () => {
 
 	let handleCreatePromptConfigSpy: SpyInstance;
 	let handleUpdatePromptConfigSpy: SpyInstance;
-	let useTrackPageSpy: MockInstance;
-	beforeEach(() => {
-		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
-		vi.spyOn(useTrackEventPackage, 'useTrackEvent').mockResolvedValueOnce();
-	});
+
 	beforeEach(() => {
 		handleCreatePromptConfigSpy = vi.spyOn(
 			promptConfigApi,
@@ -72,6 +66,7 @@ describe('PromptConfigTesting tests', () => {
 			screen.getByTestId('parameters-and-prompt-form-container'),
 		).toBeInTheDocument();
 	});
+
 	it("opens the name modal when pressing 'save as new' and allows saving a new config", async () => {
 		handleCreatePromptConfigSpy.mockResolvedValueOnce(
 			OpenAIPromptConfigFactory.buildSync(),
@@ -114,6 +109,7 @@ describe('PromptConfigTesting tests', () => {
 		} = renderHook(usePromptConfigs);
 		expect(storeConfigs[application.id]!.length).toBe(4);
 	});
+
 	it("closes the name modal when pressing 'cancel'", async () => {
 		render(
 			<PromptConfigTesting
@@ -151,6 +147,7 @@ describe('PromptConfigTesting tests', () => {
 			expect(dialog.open).toBeFalsy();
 		});
 	});
+
 	it('allows updating the existing prompt config when parameters change', async () => {
 		const updatedPromptConfig = {
 			...promptConfig,
@@ -330,7 +327,7 @@ describe('PromptConfigTesting tests', () => {
 			expect(saveAsNewButton).toBeEnabled();
 		});
 	});
-	it('calls usePageTracking hook with config-testing', () => {
+	it('calls mockPage hook with config-testing', async () => {
 		render(
 			<PromptConfigTesting
 				applicationId={application.id}
@@ -338,6 +335,14 @@ describe('PromptConfigTesting tests', () => {
 				promptConfig={promptConfig}
 			/>,
 		);
-		expect(useTrackPageSpy).toHaveBeenCalledWith('config-testing');
+		await waitFor(() => {
+			expect(mockReady).toHaveBeenCalled();
+		});
+		await waitFor(() => {
+			expect(mockPage).toHaveBeenCalledWith(
+				'config_testing',
+				expect.any(Object),
+			);
+		});
 	});
 });

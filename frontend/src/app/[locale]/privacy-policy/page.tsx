@@ -4,10 +4,12 @@ import {
 } from '@/components/legal-document-view';
 import { Footer } from '@/components/static-site/footer';
 import { StaticPageHeader } from '@/components/static-site/header';
+import { TrackStaticPage } from '@/components/static-site/track-static-page';
 
 export default function PrivacyPolicyPage() {
 	return (
 		<div className="w-screen bg-base-100">
+			<TrackStaticPage pageName="privacy_policy" />
 			<div className="container w-full mx-auto">
 				<header>
 					<StaticPageHeader />

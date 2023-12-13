@@ -1,16 +1,9 @@
+import { mockPage } from 'tests/mocks';
 import { render, screen, waitFor } from 'tests/test-utils';
-import { MockInstance } from 'vitest';
 
 import SignIn from '@/app/[locale]/sign-in/page';
-import * as useTrackPagePackage from '@/hooks/use-track-page';
 
 describe('Sign-in page tests', () => {
-	let useTrackPageSpy: MockInstance;
-
-	beforeEach(() => {
-		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
-	});
-
 	it('renders LoginContainer', () => {
 		render(<SignIn />);
 		const loginContainer = screen.getByTestId('login-container');
@@ -20,7 +13,7 @@ describe('Sign-in page tests', () => {
 	it('calls page tracking hook', async () => {
 		render(<SignIn />);
 		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith('auth');
+			expect(mockPage).toHaveBeenCalledWith('auth', expect.any(Object));
 		});
 	});
 });

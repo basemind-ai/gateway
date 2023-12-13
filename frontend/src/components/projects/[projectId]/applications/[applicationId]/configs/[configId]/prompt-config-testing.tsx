@@ -1,7 +1,7 @@
 import deepEqual from 'fast-deep-equal/es6';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { handleCreatePromptConfig, handleUpdatePromptConfig } from '@/api';
 import { EntityNameInput } from '@/components/entity-name-input';
@@ -10,8 +10,8 @@ import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applicat
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { Navigation } from '@/constants';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useTrackPage } from '@/hooks/use-track-page';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
 import {
 	ModelType,
@@ -31,11 +31,11 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	promptConfig: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
-	useTrackPage('config-testing');
 	const handleError = useHandleError();
 	const promptConfigs = usePromptConfigs();
 	const router = useRouter();
 	const setPromptConfigs = useSetPromptConfigs();
+	const { initialized, page } = useAnalytics();
 
 	const initialValuesRef = useRef(structuredClone(promptConfig));
 	const expectedVariablesRef = useRef<string[]>(
@@ -152,6 +152,16 @@ export function PromptConfigTesting<T extends ModelVendor>({
 			setIsLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		if (initialized) {
+			page('config_testing', {
+				applicationId,
+				projectId,
+				promptConfigId: promptConfig.id,
+			});
+		}
+	}, [initialized]);
 
 	return (
 		<div data-testid="prompt-config-test-container">

@@ -6,8 +6,8 @@ import { InfoCircle } from 'react-bootstrap-icons';
 import { handleCreateAPIKey, handleCreateApplication } from '@/api';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useTrackEvent } from '@/hooks/use-track-event';
 import { useAddApplication } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
 import { handleChange } from '@/utils/events';
@@ -23,6 +23,7 @@ export function CreateApplication({
 	const t = useTranslations('createApplication');
 	const router = useRouter();
 	const addApplication = useAddApplication();
+	const { initialized, track } = useAnalytics();
 
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
@@ -57,7 +58,12 @@ export function CreateApplication({
 				setProjectId(Navigation.ApplicationDetail, projectId),
 				application.id,
 			);
-			useTrackEvent('create_application', application);
+			if (initialized) {
+				track('create_application', {
+					applicationId: application.id,
+					projectId,
+				});
+			}
 			setRedirectUrl(applicationUrl);
 
 			addApplication(projectId, application);

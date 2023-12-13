@@ -1,6 +1,13 @@
 import { faker } from '@faker-js/faker';
 import { OpenAIPromptConfigFactory, ProviderKeyFactory } from 'tests/factories';
-import { mockFetch, routerPushMock, routerReplaceMock } from 'tests/mocks';
+import {
+	mockFetch,
+	mockPage,
+	mockReady,
+	mockTrack,
+	routerPushMock,
+	routerReplaceMock,
+} from 'tests/mocks';
 import {
 	act,
 	fireEvent,
@@ -9,13 +16,11 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { afterEach, expect, MockInstance } from 'vitest';
+import { afterEach, expect } from 'vitest';
 import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';
 import { ApiError } from '@/errors';
-import * as useTrackEventPackage from '@/hooks/use-track-event';
-import * as useTrackPagePackage from '@/hooks/use-track-page';
 import {
 	useProviderKeys,
 	useResetState,
@@ -61,17 +66,6 @@ const getStore = (): PromptConfigWizardStore => {
 describe('PromptConfigCreateWizard Page tests', () => {
 	const applicationId = faker.string.uuid();
 	const projectId = faker.string.uuid();
-
-	let useTrackPageSpy: MockInstance;
-	let useTrackEventSpy: MockInstance;
-	beforeEach(() => {
-		useTrackPageSpy = vi
-			.spyOn(useTrackPagePackage, 'useTrackPage')
-			.mockResolvedValue();
-		useTrackEventSpy = vi
-			.spyOn(useTrackEventPackage, 'useTrackEvent')
-			.mockResolvedValue();
-	});
 
 	const {
 		result: { current: resetAPIStore },
@@ -680,10 +674,13 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
 		);
-
 		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith(
-				`createConfigWizard-stage0`,
+			expect(mockReady).toHaveBeenCalled();
+		});
+		await waitFor(() => {
+			expect(mockPage).toBeCalledWith(
+				'createConfigWizard-stage0',
+				expect.any(Object),
 			);
 		});
 
@@ -691,8 +688,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith(
+			expect(mockPage).toHaveBeenCalledWith(
 				`createConfigWizard-stage1`,
+				expect.any(Object),
 			);
 		});
 
@@ -700,8 +698,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith(
+			expect(mockPage).toHaveBeenCalledWith(
 				`createConfigWizard-stage2`,
+				expect.any(Object),
 			);
 		});
 
@@ -709,8 +708,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith(
+			expect(mockPage).toHaveBeenCalledWith(
 				`createConfigWizard-stage3`,
+				expect.any(Object),
 			);
 		});
 	});
@@ -740,7 +740,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		fireEvent.click(saveButton);
 
 		await waitFor(() => {
-			expect(useTrackEventSpy).toHaveBeenCalledWith(
+			expect(mockTrack).toHaveBeenCalledWith(
 				'create_config',
 				expect.any(Object),
 			);

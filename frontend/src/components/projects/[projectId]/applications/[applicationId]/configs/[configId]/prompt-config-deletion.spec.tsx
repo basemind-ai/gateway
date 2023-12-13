@@ -10,12 +10,10 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { MockInstance } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { ApiError } from '@/errors';
-import * as useTrackPagePackage from '@/hooks/use-track-page';
 import {
 	useSetProjectApplications,
 	useSetProjects,
@@ -40,11 +38,6 @@ describe('PromptDeletion', () => {
 		result: { current: setProjectApplications },
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(project.id, [application]);
-
-	let useTrackPageSpy: MockInstance;
-	beforeEach(() => {
-		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
-	});
 
 	it('renders prompt config deletion component', () => {
 		const promptConfig = OpenAIPromptConfigFactory.buildSync();
@@ -143,27 +136,5 @@ describe('PromptDeletion', () => {
 
 		const errorToast = screen.getByText('unable to delete prompt config');
 		expect(errorToast.className).toContain(ToastType.ERROR);
-	});
-
-	it('calls usePageTracking hook with config-settings-deletion', async () => {
-		const promptConfig = OpenAIPromptConfigFactory.buildSync();
-		const {
-			result: { current: setPromptConfigs },
-		} = renderHook(useSetPromptConfigs);
-		setPromptConfigs(application.id, [promptConfig]);
-
-		render(
-			<PromptConfigDeletion
-				projectId={project.id}
-				applicationId={application.id}
-				promptConfig={promptConfig}
-			/>,
-		);
-
-		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith(
-				'config-settings-deletion',
-			);
-		});
 	});
 });
