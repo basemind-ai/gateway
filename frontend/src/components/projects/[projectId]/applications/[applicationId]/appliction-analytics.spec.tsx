@@ -8,11 +8,9 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { MockInstance } from 'vitest';
 
 import * as ApplicationConfigAPI from '@/api/applications-api';
 import { ApplicationAnalytics } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics';
-import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { Analytics } from '@/types';
 
 describe('ApplicationAnalytics', () => {
@@ -22,10 +20,6 @@ describe('ApplicationAnalytics', () => {
 		ApplicationConfigAPI,
 		'handleApplicationAnalytics',
 	);
-	let useTrackPageSpy: MockInstance;
-	beforeEach(() => {
-		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
-	});
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -96,20 +90,6 @@ describe('ApplicationAnalytics', () => {
 		await waitFor(() => {
 			expect(apiCalls.innerHTML).toBe(
 				updatedAnalytics.totalRequests.toString(),
-			);
-		});
-	});
-
-	it('calls pageTracking with application overview', async () => {
-		render(
-			<ApplicationAnalytics
-				projectId={projectId}
-				application={application}
-			/>,
-		);
-		await waitFor(() => {
-			expect(useTrackPageSpy).toHaveBeenCalledWith(
-				'application-overview',
 			);
 		});
 	});

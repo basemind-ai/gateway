@@ -10,7 +10,6 @@ import { Modal } from '@/components/modal';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useTrackPage } from '@/hooks/use-track-page';
 import { useApiKeys, useSetAPIKeys } from '@/stores/api-store';
 import { useDateFormat } from '@/stores/user-config-store';
 import { APIKey, Application } from '@/types';
@@ -22,7 +21,6 @@ export function ApplicationApiKeys({
 	application: Application;
 	projectId: string;
 }) {
-	useTrackPage('applications-api-keys');
 	const t = useTranslations('application');
 	const dateFormat = useDateFormat();
 	const handleError = useHandleError();

@@ -46,7 +46,6 @@ export function useAnalytics(): AnalyticsHandlers {
 						writeKey,
 					},
 				);
-
 				await analyticsRef.current.ready();
 			})();
 		}

@@ -7,7 +7,6 @@ import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useTrackPage } from '@/hooks/use-track-page';
 import { useDeletePromptConfig } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
 import { ModelVendor, PromptConfig } from '@/types';
@@ -24,7 +23,6 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 }) {
 	const router = useRouter();
 	const t = useTranslations('promptConfig');
-	useTrackPage('config-settings-deletion');
 
 	const deletePromptConfig = useDeletePromptConfig();
 

@@ -6,12 +6,10 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { MockInstance } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import { ApplicationDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/application-deletion';
 import { ApiError } from '@/errors';
-import * as useTrackPagePackage from '@/hooks/use-track-page';
 import { useSetProjectApplications, useSetProjects } from '@/stores/api-store';
 import { ToastType } from '@/stores/toast-store';
 
@@ -32,10 +30,6 @@ describe('ApplicationDeletion tests', () => {
 		result: { current: setProjectApplications },
 	} = renderHook(useSetProjectApplications);
 	setProjectApplications(projects[0].id, applications);
-	let useTrackPageSpy: MockInstance;
-	beforeEach(() => {
-		useTrackPageSpy = vi.spyOn(useTrackPagePackage, 'useTrackPage');
-	});
 
 	it('renders application deletion component', () => {
 		render(
@@ -116,17 +110,5 @@ describe('ApplicationDeletion tests', () => {
 
 		const errorToast = screen.getByText('unable to delete application');
 		expect(errorToast.className).toContain(ToastType.ERROR);
-	});
-
-	it('calls usePageTracking hook with application-settings-deletion', async () => {
-		render(
-			<ApplicationDeletion
-				projectId={projects[0].id}
-				application={applications[0]}
-			/>,
-		);
-		expect(useTrackPageSpy).toHaveBeenCalledWith(
-			'application-settings-deletion',
-		);
 	});
 });

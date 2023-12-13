@@ -4,9 +4,8 @@ import { XCircleFill } from 'react-bootstrap-icons';
 import isEmail from 'validator/es/lib/isEmail';
 
 import { handleAddUsersToProject, handleRetrieveProjectUsers } from '@/api';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useTrackEvent } from '@/hooks/use-track-event';
-import { useTrackPage } from '@/hooks/use-track-page';
 import { useSetProjectUsers } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
 import { AccessPermission, Project } from '@/types';
@@ -37,10 +36,10 @@ function EmailChip({
 
 export function InviteProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
-	useTrackPage('project-invite-members');
 	const setProjectUsers = useSetProjectUsers();
 	const handleError = useHandleError();
 	const showInfo = useShowInfo();
+	const { initialized, track } = useAnalytics();
 
 	const [emails, setEmails] = useState<string[]>([]);
 	const [currentEmail, setCurrentEmail] = useState('');
@@ -55,11 +54,13 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 				projectId: project.id,
 			});
 			emails.forEach((email) => {
-				useTrackEvent('invite_user', {
-					email,
-					...project,
-					permission,
-				});
+				if (initialized) {
+					track('invite_user', {
+						newMemberEmail: email,
+						...project,
+						permission,
+					});
+				}
 			});
 
 			const projectUsers = await handleRetrieveProjectUsers({
