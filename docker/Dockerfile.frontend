@@ -61,7 +61,7 @@ COPY --from=build --chown=app:nodejs /app/frontend/.next/static ./frontend/.next
 COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
 COPY frontend/package.json frontend/pnpm-lock.yaml ./frontend/
 
-RUN pnpm install -r
+RUN pnpm install -r --prod
 
 WORKDIR /app/frontend/
 USER app
