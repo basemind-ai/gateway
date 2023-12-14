@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { Discord, Mailbox } from 'react-bootstrap-icons';
 
 import { SUPPORT_EMAIL } from '@/constants';
+import { getEnv } from '@/utils/env';
 
 export function GetInTouch() {
 	const t = useTranslations('support');
@@ -23,7 +24,7 @@ export function GetInTouch() {
 							className="btn flex gap-2 text-lg font-medium h-16 px-6 items-center"
 							onClick={() => {
 								router.push(
-									process.env.NEXT_PUBLIC_DISCORD_INVITE_URL!,
+									getEnv().NEXT_PUBLIC_DISCORD_INVITE_URL,
 								);
 							}}
 						>

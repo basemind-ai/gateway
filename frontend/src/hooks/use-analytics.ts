@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useUser } from '@/stores/api-store';
+import { getEnv } from '@/utils/env';
 
 declare global {
 	interface Window {
@@ -39,7 +40,7 @@ export function useAnalytics(): AnalyticsHandlers {
 					analyticsRef.current = window.analytics;
 					return;
 				}
-				const writeKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY!;
+				const writeKey = getEnv().NEXT_PUBLIC_SEGMENT_WRITE_KEY;
 
 				window.analytics = analyticsRef.current = AnalyticsBrowser.load(
 					{

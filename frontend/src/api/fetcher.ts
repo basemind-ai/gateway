@@ -7,6 +7,7 @@ import {
 	PermissionError,
 	TokenError,
 } from '@/errors';
+import { getEnv } from '@/utils/env';
 import { getFirebaseAuth } from '@/utils/firebase';
 
 export async function fetcher<T>({
@@ -46,7 +47,7 @@ export async function fetcher<T>({
 
 	const path = new URL(
 		`v${version}/${url}`,
-		process.env.NEXT_PUBLIC_BACKEND_URL,
+		getEnv().NEXT_PUBLIC_BACKEND_URL,
 	);
 	const searchParams = new URLSearchParams();
 

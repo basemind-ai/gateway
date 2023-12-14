@@ -9,6 +9,7 @@ import {
 	PromptConfigTest,
 	PromptConfigTestResultChunk,
 } from '@/types';
+import { getEnv } from '@/utils/env';
 
 export const WS_STATUS_OK = 1000;
 export const PING_INTERVAL = 15_000;
@@ -35,7 +36,7 @@ export function createWebsocketURL({
 }): string {
 	const url = new URL(
 		`v1/projects/${projectId}/applications/${applicationId}/prompt-configs/test/`,
-		process.env.NEXT_PUBLIC_BACKEND_URL,
+		getEnv().NEXT_PUBLIC_BACKEND_URL,
 	);
 
 	url.search = new URLSearchParams({ otp }).toString();

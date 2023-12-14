@@ -1,12 +1,17 @@
 FROM node:21-slim AS base
+WORKDIR /app/
+
 RUN npm i -g pnpm
+
+COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml tsconfig.json ./
+COPY frontend/*.* ./frontend/
 
 FROM base AS install
 WORKDIR /app/
-COPY package.json pnpm-lock.yaml tsconfig.json .npmrc pnpm-workspace.yaml ./
-COPY frontend/*.* ./frontend/
-RUN pnpm install -r --ignore-scripts \
-    && pnpm add -D @next/swc-linux-arm64-gnu @next/swc-linux-arm64-musl -w
+RUN pnpm install -r --ignore-scripts
+
+WORKDIR /app/frontend/
+RUN pnpm add -D @next/swc-linux-arm64-gnu @next/swc-linux-arm64-musl
 
 FROM install AS build
 WORKDIR /app/
@@ -37,7 +42,6 @@ ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${FIREBASE_STORAGE_BUCKET}"
 ENV NEXT_PUBLIC_FRONTEND_HOST="${FRONTEND_HOST}"
 ENV NEXT_PUBLIC_SEGMENT_WRITE_KEY="${SEGMENT_WRITE_KEY}"
 
-ENV PORT 3000
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -51,6 +55,10 @@ RUN pnpm run build
 FROM base AS app
 WORKDIR /app/
 
+ENV NODE_ENV=production
+ENV PORT 3000
+ENV NEXT_TELEMETRY_DISABLED 1
+
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 app
 
@@ -58,10 +66,7 @@ COPY --from=build /app/frontend/public ./frontend/public
 COPY --from=build --chown=app:nodejs /app/frontend/.next/standalone ./frontend/
 COPY --from=build --chown=app:nodejs /app/frontend/.next/static ./frontend/.next/static
 
-COPY package.json pnpm-lock.yaml .npmrc pnpm-workspace.yaml ./
-COPY frontend/package.json frontend/pnpm-lock.yaml ./frontend/
-
-RUN pnpm install -r --prod
+RUN pnpm install -r --ignore-scripts --prod
 
 WORKDIR /app/frontend/
 USER app
