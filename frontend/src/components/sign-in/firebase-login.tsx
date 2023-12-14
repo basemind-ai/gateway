@@ -12,13 +12,14 @@ import { Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useSetUser } from '@/stores/api-store';
 import { useShowError } from '@/stores/toast-store';
+import { getEnv } from '@/utils/env';
 import { getFirebaseAuth } from '@/utils/firebase';
 
 const microsoftAuthProvider = {
 	buttonColor: '#00a2ed',
 	customParameters: {
 		prompt: 'consent',
-		tenant: process.env.NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID!,
+		tenant: getEnv().NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID,
 	},
 	iconUrl:
 		'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
@@ -29,9 +30,9 @@ const microsoftAuthProvider = {
 const siteName = 'BaseMind.AI';
 
 const privacyPolicyUrl =
-	process.env.NEXT_PUBLIC_FRONTEND_HOST! + Navigation.PrivacyPolicy;
+	getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.PrivacyPolicy;
 
-const tosUrl = process.env.NEXT_PUBLIC_FRONTEND_HOST! + Navigation.TOS;
+const tosUrl = getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.TOS;
 
 const firebaseUIConfig = {
 	//popupMode: true,

@@ -23,6 +23,7 @@ export interface Env {
   TODO: add any new env variable to this function and the interface above
 */
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 export function getEnv(): Env {
 	const env = {
 		NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL ?? '',
@@ -49,22 +50,25 @@ export function getEnv(): Env {
 			process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY ?? '',
 	} satisfies Env;
 
-	const missingVariables = Object.entries(env).reduce<string[]>(
-		(acc, [key, value]) => {
-			if (value === '') {
-				acc.push(key);
-			}
-			return acc;
-		},
-		[],
-	);
-
-	if (missingVariables.length > 0) {
-		throw new Error(
-			`Missing required environment variables: ${missingVariables.join(
-				', ',
-			)}`,
+	if (process.env.NODE_ENV !== 'test') {
+		const missingVariables = Object.entries(env).reduce<string[]>(
+			(acc, [key, value]) => {
+				if (value === '') {
+					acc.push(key);
+				}
+				return acc;
+			},
+			[],
 		);
+
+		if (missingVariables.length > 0) {
+			throw new Error(
+				`Missing required environment variables: ${missingVariables.join(
+					', ',
+				)}`,
+			);
+		}
 	}
+
 	return env;
 }

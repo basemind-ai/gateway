@@ -5,11 +5,6 @@ import { Inter } from 'next/font/google';
 
 import { getEnv } from '@/utils/env';
 
-/* c8 ignore next */
-if (process.env.NODE_ENV !== 'test') {
-	getEnv();
-}
-
 const inter = Inter({ subsets: ['latin'] });
 const supportedLocales = ['en'];
 const metadataImage =
@@ -20,7 +15,7 @@ export const metadata: Metadata = {
 		'The all-in-one developer platform for your mobile apps AI needs. Integrate in minutes, scale to millions.',
 	keywords:
 		'BaseMind, Serverless AI, Prompt Management, GPT-4, gemini, Developer Platform for AI, Kotlin, Swift, Flutter, React Native, API',
-	metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_HOST!),
+	metadataBase: new URL(getEnv().NEXT_PUBLIC_FRONTEND_HOST),
 	openGraph: {
 		images: [
 			{

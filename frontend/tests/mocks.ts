@@ -2,6 +2,8 @@ import { faker } from '@faker-js/faker';
 import process from 'process';
 import { beforeEach } from 'vitest';
 
+import { Env } from '@/utils/env';
+
 // see: https://github.com/jsdom/jsdom/issues/3294
 export const showModalMock = vi.fn();
 export const showMock = vi.fn();
@@ -28,13 +30,13 @@ export const mockEnv = {
 	NEXT_PUBLIC_FIREBASE_APP_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'devlingo-demo.firebaseapp.com',
 	NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: faker.string.uuid(),
-	NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 12_345_678_910,
+	NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID: '12_345_678_910',
 	NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID: faker.string.uuid(),
 	NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'devlingo-demo',
 	NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'devlingo-demo.appspot.com',
 	NEXT_PUBLIC_FRONTEND_HOST: 'http://localhost:3000',
 	NEXT_PUBLIC_SEGMENT_WRITE_KEY: faker.string.uuid(),
-};
+} satisfies Env;
 
 const initializeAppMock = vi.fn().mockReturnValue({});
 const getAuthMock = vi.fn().mockImplementation(() => ({

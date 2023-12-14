@@ -1,6 +1,8 @@
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { Auth, browserLocalPersistence, getAuth } from 'firebase/auth';
 
+import { getEnv } from '@/utils/env';
+
 const instanceRef: { app: FirebaseApp | null; auth: Auth | null } = {
 	app: null,
 	auth: null,
@@ -8,13 +10,13 @@ const instanceRef: { app: FirebaseApp | null; auth: Auth | null } = {
 
 export function getFirebaseConfig(): FirebaseOptions {
 	return {
-		apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-		appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
-		authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-		measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
-		messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID!,
-		projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-		storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+		apiKey: getEnv().NEXT_PUBLIC_FIREBASE_API_KEY,
+		appId: getEnv().NEXT_PUBLIC_FIREBASE_APP_ID,
+		authDomain: getEnv().NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+		measurementId: getEnv().NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+		messagingSenderId: getEnv().NEXT_PUBLIC_FIREBASE_MESSAGE_SENDER_ID,
+		projectId: getEnv().NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+		storageBucket: getEnv().NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
 	} satisfies FirebaseOptions;
 }
 

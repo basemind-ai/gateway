@@ -11,8 +11,9 @@ describe('env utils tests', () => {
 		});
 
 		it.each(Object.keys(mockEnv))(
-			'should throw an error if %s is not set',
+			'should throw an error if %s is not set and env is not test',
 			(key: string) => {
+				Reflect.set(process.env, 'NODE_ENV', 'production');
 				Reflect.deleteProperty(process.env, key);
 
 				expect(getEnv).toThrow(
@@ -20,8 +21,10 @@ describe('env utils tests', () => {
 				);
 			},
 		);
+
 		it('should return a parsed env without throwing', () => {
-			Reflect.set(process, 'env', mockEnv);
+			Reflect.set(process.env, 'NODE_ENV', 'production');
+			Object.assign(process.env, mockEnv);
 
 			const result = getEnv();
 			for (const [key, value] of Object.entries(mockEnv)) {

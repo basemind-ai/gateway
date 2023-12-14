@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { Discord } from 'react-bootstrap-icons';
 
 import { useAnalytics } from '@/hooks/use-analytics';
+import { getEnv } from '@/utils/env';
 
 export default function DiscordButton() {
 	const router = useRouter();
@@ -13,7 +14,7 @@ export default function DiscordButton() {
 			className="hover:brightness-125"
 			onClick={() => {
 				analytics.track('discord_click', {});
-				router.push(process.env.NEXT_PUBLIC_DISCORD_INVITE_URL!);
+				router.push(getEnv().NEXT_PUBLIC_DISCORD_INVITE_URL);
 			}}
 			data-testid="discord-btn"
 		>
