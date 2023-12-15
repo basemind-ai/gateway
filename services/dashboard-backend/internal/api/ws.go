@@ -20,8 +20,10 @@ import (
 	"github.com/lxzan/gws"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"runtime"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 const (
@@ -38,19 +40,23 @@ type Socket interface {
 	WriteMessage(opcode gws.Opcode, payload []byte) error
 }
 
-// logger - logger for the websocket connection.
-// we have to create this struct to pass in zerolog.
-type logger struct{}
-
-func (logger) Error(v ...any) { // skipcq: TCV-001
-	log.Error().Msg(fmt.Sprint(v...))
+// recoveryHandler - recover from panics in the websocket.
+func recoveryHandler(_ gws.Logger) { // skipcq: TCV-001
+	if e := recover(); e != nil { //nolint: revive
+		const size = 64 << 10
+		buf := make([]byte, size)
+		buf = buf[:runtime.Stack(buf, false)]
+		msg := *(*string)(unsafe.Pointer(&buf))
+		log.Error().
+			Interface("error", e).
+			Msgf("recovered from panic in websocket: %s", msg)
+	}
 }
 
 var upgrader = gws.NewUpgrader(&handler{}, &gws.ServerOption{
 	ReadAsyncEnabled: true,
 	CompressEnabled:  true,
-	Logger:           logger{},
-	Recovery:         gws.Recovery,
+	Recovery:         recoveryHandler,
 })
 
 type RequestIDs struct {
@@ -98,17 +104,22 @@ func CreatePayloadFromMessage(
 		FinishReason: msg.FinishReason,
 	}
 
-	isErr := *msg.FinishReason == "error"
+	isErr := msg.FinishReason != nil && *msg.FinishReason == "error"
 
 	if isErr {
 		log.Warn().Msg("stream ended due to an error. Check the api-gateway logs for more details")
 	}
 
+	promptRequestRecordID := ""
 	if msg.PromptRequestRecordId != nil {
-		requestRecordID := exc.MustResult(db.StringToUUID(*msg.PromptRequestRecordId))
+		promptRequestRecordID = *msg.PromptRequestRecordId
+	}
+
+	if promptRequestRecordID != "" {
+		recordID := exc.MustResult(db.StringToUUID(promptRequestRecordID))
 		promptTestRecord, createErr := db.GetQueries().
 			CreatePromptTestRecord(ctx, models.CreatePromptTestRecordParams{
-				PromptRequestRecordID: *requestRecordID,
+				PromptRequestRecordID: *recordID,
 				Response:              builder.String(),
 				VariableValues:        serialization.SerializeJSON(data.TemplateVariables),
 			})

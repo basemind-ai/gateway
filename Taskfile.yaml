@@ -101,6 +101,7 @@ tasks:
         cmds:
             - |
                 gcloud functions deploy email-sender \
+                    --project={{.CLI_ARGS}} \
                     --gen2 \
                     --runtime=go121 \
                     --region=europe-west3    \
