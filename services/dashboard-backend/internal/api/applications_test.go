@@ -190,7 +190,7 @@ func TestApplicationsAPI(t *testing.T) { //nolint: revive
 		} {
 			t.Run(
 				fmt.Sprintf(
-					"responds with status 200 OK if the user has %s permission and retrives applications",
+					"responds with status 200 OK if the user has %s permission and retrieves applications",
 					permission,
 				),
 				func(t *testing.T) {

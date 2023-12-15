@@ -15,6 +15,6 @@
 		"@protobuf-ts/runtime-rpc": "^2.9.3",
 		"cohere-ai": "^7.6.1",
 		"grpc-health-check": "^2.0.0",
-		"pino": "^8.17.0"
+		"pino": "^8.17.1"
 	}
 }

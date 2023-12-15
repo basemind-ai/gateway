@@ -50,7 +50,7 @@ func TestSupportAPI(t *testing.T) {
 			supportRequestBody := dto.SupportRequestDTO{
 				RequestTopic: "token",
 				EmailSubject: "token problems",
-				EmailBody:    "token doesnt verify....",
+				EmailBody:    "token doesn't verify....",
 				ProjectID:    db.UUIDToString(&project.ID),
 			}
 			response, requestErr := testClient.Post(

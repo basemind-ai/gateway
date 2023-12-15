@@ -67,7 +67,7 @@ describe('Navbar tests', () => {
 		expect(config).toBeInTheDocument();
 	});
 
-	it('clicking on  breadcrumbs should navigate to relevent detail page', () => {
+	it('clicking on  breadcrumbs should navigate to relevant detail page', () => {
 		const activeProject = ProjectFactory.buildSync();
 		const ActiveApplication = ApplicationFactory.buildSync();
 		const ActiveConfiguration = OpenAIPromptConfigFactory.buildSync();
