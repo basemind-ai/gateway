@@ -7,12 +7,12 @@ import (
 	"google.golang.org/grpc"
 )
 
-// Client implements the Cohere connector gRPC client
+// Client implements the Cohere connector gRPC client.
 type Client struct {
 	client cohereconnector.CohereServiceClient
 }
 
-// New creates a new Cohere connector client
+// New creates a new Cohere connector client.
 func New(serverAddress string, opts ...grpc.DialOption) *Client {
 	conn := exc.MustResult(grpc.Dial(serverAddress, opts...))
 	log.Info().Msg("initialized Cohere connector connection")

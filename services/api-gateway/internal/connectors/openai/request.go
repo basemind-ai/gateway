@@ -3,7 +3,6 @@ package openai
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -12,16 +11,14 @@ import (
 	"time"
 )
 
+// RequestPrompt sends a prompt request to the OpenAI API connector.
 func (c *Client) RequestPrompt(
 	ctx context.Context,
 	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
 ) dto.PromptResultDTO {
 	promptRequest, createPromptRequestErr := CreatePromptRequest(
-		requestConfiguration.ApplicationID,
-		requestConfiguration.PromptConfigData.ModelType,
-		requestConfiguration.PromptConfigData.ModelParameters,
-		requestConfiguration.PromptConfigData.ProviderPromptMessages,
+		requestConfiguration,
 		templateVariables,
 	)
 	if createPromptRequestErr != nil {
@@ -44,7 +41,7 @@ func (c *Client) RequestPrompt(
 	if requestErr == nil {
 		promptResult.Content = &response.Content
 
-		tokenCountAndCost := utils.CalculateTokenCountsAndCosts(
+		tokenCountAndCost := CalculateTokenCountsAndCosts(
 			GetRequestPromptString(promptRequest.Messages),
 			response.Content,
 			requestConfiguration.ProviderModelPricing,

@@ -3,10 +3,13 @@ package openai
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/shopspring/decimal"
+	"github.com/tiktoken-go/tokenizer"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"strings"
@@ -48,18 +51,15 @@ func GetMessageRole(role string) (*openaiconnector.OpenAIMessageRole, error) {
 }
 
 func CreatePromptRequest(
-	applicationID pgtype.UUID,
-	modelType models.ModelType,
-	modelParameters *json.RawMessage,
-	promptMessages *json.RawMessage,
+	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
 ) (*openaiconnector.OpenAIPromptRequest, error) {
-	model, modelErr := GetModelType(modelType)
+	model, modelErr := GetModelType(requestConfiguration.PromptConfigData.ModelType)
 	if modelErr != nil {
 		return nil, modelErr
 	}
 
-	applicationIDString := db.UUIDToString(&applicationID)
+	applicationIDString := db.UUIDToString(&requestConfiguration.ApplicationID)
 
 	promptRequest := &openaiconnector.OpenAIPromptRequest{
 		Model:         *model,
@@ -69,31 +69,31 @@ func CreatePromptRequest(
 	}
 
 	if parametersUnmarshalErr := json.Unmarshal(
-		*modelParameters,
+		*requestConfiguration.PromptConfigData.ModelParameters,
 		promptRequest.Parameters,
 	); parametersUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
 	}
 
 	var openAIPromptMessageDTOs []*datatypes.OpenAIPromptMessageDTO
-	if messagesUnmarshalErr := json.Unmarshal(*promptMessages, &openAIPromptMessageDTOs); messagesUnmarshalErr != nil {
+	if messagesUnmarshalErr := json.Unmarshal(*requestConfiguration.PromptConfigData.ProviderPromptMessages, &openAIPromptMessageDTOs); messagesUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal prompt messages - %w", messagesUnmarshalErr)
 	}
 
-	for _, dto := range openAIPromptMessageDTOs {
-		messageRole, roleErr := GetMessageRole(dto.Role)
+	for _, dtoInstance := range openAIPromptMessageDTOs {
+		messageRole, roleErr := GetMessageRole(dtoInstance.Role)
 		if roleErr != nil {
 			return nil, roleErr
 		}
 		openAIMessage := &openaiconnector.OpenAIMessage{
 			Role: *messageRole,
-			Name: dto.Name,
+			Name: dtoInstance.Name,
 		}
-		if dto.Content != nil {
-			if dto.TemplateVariables != nil {
+		if dtoInstance.Content != nil {
+			if dtoInstance.TemplateVariables != nil {
 				parsedContent, parseErr := utils.ParseTemplateVariables(
-					*dto.Content,
-					*dto.TemplateVariables,
+					*dtoInstance.Content,
+					*dtoInstance.TemplateVariables,
 					templateVariables,
 				)
 				if parseErr != nil {
@@ -101,14 +101,14 @@ func CreatePromptRequest(
 				}
 				openAIMessage.Content = &parsedContent
 			} else {
-				openAIMessage.Content = dto.Content
+				openAIMessage.Content = dtoInstance.Content
 			}
 		}
 
-		if dto.FunctionArguments != nil {
+		if dtoInstance.FunctionArguments != nil {
 			openAIMessage.FunctionCall = &openaiconnector.OpenAIFunctionCall{
-				Name:      *dto.Name,
-				Arguments: strings.Join(*dto.FunctionArguments, ","),
+				Name:      *dtoInstance.Name,
+				Arguments: strings.Join(*dtoInstance.FunctionArguments, ","),
 			}
 		}
 
@@ -128,4 +128,60 @@ func GetRequestPromptString(messages []*openaiconnector.OpenAIMessage) string {
 	}
 
 	return strings.TrimRight(promptMessages, "\n")
+}
+
+var modelEncodingMap = map[models.ModelType]tokenizer.Encoding{
+	models.ModelTypeGpt35Turbo:    tokenizer.Cl100kBase,
+	models.ModelTypeGpt35Turbo16k: tokenizer.Cl100kBase,
+	models.ModelTypeGpt4:          tokenizer.Cl100kBase,
+	models.ModelTypeGpt432k:       tokenizer.Cl100kBase,
+}
+
+// GetStringTokenCount returns the number of tokens in a given string.
+func GetStringTokenCount(value string, modelType models.ModelType) int32 {
+	encoding := modelEncodingMap[modelType]
+	enc := exc.MustResult(tokenizer.Get(encoding))
+	ids, _, _ := enc.Encode(value)
+	return int32(len(ids))
+}
+
+type TokenCountCostResult struct {
+	InputTokenCount  int32
+	OutputTokenCount int32
+	InputTokenCost   decimal.Decimal
+	OutputTokenCost  decimal.Decimal
+}
+
+// CalculateTokenCountsAndCosts calculates the input and output tokens count and costs for a given model type / vendor.
+func CalculateTokenCountsAndCosts(
+	promptInputValue string,
+	promptOutputValue string,
+	modelPricing datatypes.ProviderModelPricingDTO,
+	modelType models.ModelType,
+) TokenCountCostResult {
+	// The unit size is the number of token per which we calculate the price. E.g. 0.002$ for 1000 tokens.
+	unitSize := decimal.NewFromInt32(modelPricing.TokenUnitSize)
+
+	// inputTokensCount is the count of tokens in the input string. Their cost is lower than that of output.
+	inputTokensCount := GetStringTokenCount(promptInputValue, modelType)
+
+	// outputTokensCount is the count of tokens in the output string. Their cost is higher than that of input.
+	outputTokensCount := GetStringTokenCount(promptOutputValue, modelType)
+
+	// priceInput is the cost of the input tokens.
+	priceInput := decimal.NewFromInt32(inputTokensCount).
+		Div(unitSize).
+		Mul(modelPricing.InputTokenPrice)
+
+	// priceOutput is the cost of the output tokens.
+	priceOutput := decimal.NewFromInt32(outputTokensCount).
+		Div(unitSize).
+		Mul(modelPricing.OutputTokenPrice)
+
+	return TokenCountCostResult{
+		InputTokenCount:  inputTokensCount,
+		OutputTokenCount: outputTokensCount,
+		InputTokenCost:   priceInput,
+		OutputTokenCost:  priceOutput,
+	}
 }
