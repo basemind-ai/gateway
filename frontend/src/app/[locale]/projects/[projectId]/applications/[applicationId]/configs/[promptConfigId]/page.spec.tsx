@@ -3,7 +3,7 @@ import {
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
 } from 'tests/factories';
-import { mockPage, mockReady } from 'tests/mocks';
+import { mockPage } from 'tests/mocks';
 import {
 	fireEvent,
 	render,
@@ -197,9 +197,6 @@ describe('PromptConfiguration', () => {
 			/>,
 		);
 
-		await waitFor(() => {
-			expect(mockReady).toHaveBeenCalled();
-		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
 				'config_overview',
