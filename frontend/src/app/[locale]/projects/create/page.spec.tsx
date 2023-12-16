@@ -31,7 +31,7 @@ describe('ProjectCreatePage', () => {
 		expect(submitButton).toBeDisabled();
 	});
 
-	it('submit is enable when projectName and application has value', () => {
+	it('submit is enable when both projectName and application have a value', () => {
 		render(<CreateProjectPage />);
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const projectNameInput = screen.getByTestId(
