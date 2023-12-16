@@ -1,4 +1,5 @@
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
+import { mockPage, mockReady } from 'tests/mocks';
 import {
 	fireEvent,
 	render,
@@ -96,5 +97,33 @@ describe('ProjectOverview', () => {
 			'project-deletion-container',
 		);
 		expect(projectDeletion).toBeInTheDocument();
+	});
+
+	it('call page analytics when initialized', async () => {
+		const {
+			result: { current: setProjects },
+		} = renderHook(useSetProjects);
+		const projects = await ProjectFactory.batch(1);
+		setProjects(projects);
+		handleRetrieveApplicationsSpy.mockReturnValueOnce(Promise.resolve([]));
+
+		render(
+			<ProjectOverview
+				params={{
+					projectId: projects[0].id,
+				}}
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(mockReady).toHaveBeenCalled();
+		});
+
+		await waitFor(() => {
+			expect(mockPage).toHaveBeenCalledWith(
+				'project_overview',
+				expect.any(Object),
+			);
+		});
 	});
 });

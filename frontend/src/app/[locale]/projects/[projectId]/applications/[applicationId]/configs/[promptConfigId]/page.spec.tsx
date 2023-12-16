@@ -3,6 +3,7 @@ import {
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
 } from 'tests/factories';
+import { mockPage, mockReady } from 'tests/mocks';
 import {
 	fireEvent,
 	render,
@@ -180,5 +181,30 @@ describe('PromptConfiguration', () => {
 		expect(loading).not.toBeInTheDocument();
 
 		expect(handleRetrievePromptConfigsSpy).not.toBeCalled();
+	});
+
+	it('calls page analytics when page is initialized', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
+		handleRetrievePromptConfigsSpy.mockResolvedValueOnce([promptConfig]);
+
+		render(
+			<PromptConfiguration
+				params={{
+					applicationId,
+					projectId,
+					promptConfigId: promptConfig.id,
+				}}
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(mockReady).toHaveBeenCalled();
+		});
+		await waitFor(() => {
+			expect(mockPage).toHaveBeenCalledWith(
+				'config_overview',
+				expect.any(Object),
+			);
+		});
 	});
 });

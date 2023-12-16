@@ -3,25 +3,31 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-import { handleCreateProject } from '@/api';
+import { handleCreateApplication, handleCreateProject } from '@/api';
+import { TooltipIcon } from '@/components/input-label-with-tooltip';
 import { Logo } from '@/components/logo';
 import { Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useAddProject, useProjects } from '@/stores/api-store';
+import {
+	useAddApplication,
+	useAddProject,
+	useProjects,
+} from '@/stores/api-store';
 import { handleChange } from '@/utils/events';
+import { setRouteParams } from '@/utils/navigation';
 
 function PageHeader({ title, subTitle }: { subTitle: string; title: string }) {
 	return (
 		<div className="pt-10 pb-6" data-testid="create-project-view-header">
 			<h1
-				className="text-center font-extrabold text-xl mb-2 h-6"
+				className="text-center font-extrabold text-xl mb-2"
 				data-testid="create-project-view-title"
 			>
 				{title}
 			</h1>
 			<span
-				className="text-center block h-6"
+				className="text-center block text-sm text-neutral-content px-10"
 				data-testid="create-project-view-sub-title"
 			>
 				{subTitle}
@@ -132,27 +138,42 @@ function Form({
 				isError ? 'border-error' : 'border-b-neutral'
 			}`}
 		>
-			<label className="label text-left font-bold">
-				<span className="label-text">{t('projectInputLabel')}</span>
-			</label>
-			<input
-				type="text"
-				data-testid="create-project-name-input"
-				placeholder={t('projectInputPlaceholder')}
-				className="input input-bordered w-[60%]"
-				value={projectName}
-				onChange={handleChange(setProjectName)}
-			/>
-			<div className="pt-2 pb-10">
-				<label className="label text-left font-bold">
-					<span className="label-text">
-						{t('applicationNameInputLabel')}
+			<div className="pb-12">
+				<label className="label text-left justify-start gap-1">
+					<span className="label-text text-neutral-content">
+						{t('projectInputLabel')}
 					</span>
+					<TooltipIcon
+						tooltip={t('projectInputTooltip')}
+						dataTestId="project-name-tooltip"
+					/>
 				</label>
 				<input
 					type="text"
+					data-testid="create-project-name-input"
+					placeholder={t('projectInputPlaceholder')}
+					className="input w-full"
+					value={projectName}
+					onChange={handleChange(setProjectName)}
+				/>
+				<label
+					htmlFor="createApiKey"
+					className="label text-left justify-start gap-1 pt-4"
+				>
+					<span className="label-text text-neutral-content">
+						{t('applicationNameInputLabel')}
+					</span>
+					<TooltipIcon
+						tooltip={t('applicationNameTooltip')}
+						dataTestId="application-name-tooltip"
+					/>
+				</label>
+
+				<input
+					data-testid="create-application-name-input"
+					type="text"
 					placeholder={t('applicationNameInputPlaceholder')}
-					className="input w-[60%]"
+					className="input w-full"
 					value={applicationName}
 					onChange={handleChange(setApplicationName)}
 				/>
@@ -168,6 +189,7 @@ export default function CreateProjectPage() {
 	const router = useRouter();
 
 	const addProject = useAddProject();
+	const addApplication = useAddApplication();
 	const projects = useProjects();
 
 	const [projectName, setProjectName] = useState('');
@@ -184,7 +206,18 @@ export default function CreateProjectPage() {
 			});
 			addProject(project);
 			track('created_project', project);
-			router.replace(`${Navigation.Projects}/${project.id}`);
+			const application = await handleCreateApplication({
+				data: { name: applicationName },
+				projectId: project.id,
+			});
+			addApplication(project.id, application);
+			track('created_application', application);
+			router.replace(
+				setRouteParams(Navigation.ConfigCreateWizard, {
+					applicationId: application.id,
+					projectId: project.id,
+				}),
+			);
 		} catch {
 			setIsError(true);
 		} finally {
@@ -197,7 +230,9 @@ export default function CreateProjectPage() {
 	};
 
 	useEffect(() => {
-		page('create_project');
+		if (initialized) {
+			page('create_project');
+		}
 	}, [initialized]);
 
 	return (
@@ -227,7 +262,7 @@ export default function CreateProjectPage() {
 					<FormActions
 						isError={isError}
 						isLoading={isLoading}
-						allowSubmit={!!projectName || !!applicationName}
+						allowSubmit={!!projectName && !!applicationName}
 						showCancel={!!projects.length}
 						HandleCancel={HandleCancel}
 						handleSubmit={() => {
