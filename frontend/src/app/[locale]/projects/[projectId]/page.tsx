@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Gear, Key, People, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
@@ -14,6 +14,7 @@ import { ProjectMembers } from '@/components/projects/[projectId]/project-member
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ProjectPageTabNames } from '@/constants';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProject } from '@/stores/api-store';
 
@@ -23,13 +24,19 @@ export default function ProjectOverview({
 	params: { projectId: string };
 }) {
 	const user = useAuthenticatedUser();
-
+	const { page, initialized } = useAnalytics();
 	const t = useTranslations('projectOverview');
 	const [selectedTab, setSelectedTab] = useState(
 		ProjectPageTabNames.OVERVIEW,
 	);
 
 	const project = useProject(projectId);
+
+	useEffect(() => {
+		if (initialized) {
+			page('project_overview');
+		}
+	}, [initialized]);
 
 	const tabs: TabData<ProjectPageTabNames>[] = [
 		{

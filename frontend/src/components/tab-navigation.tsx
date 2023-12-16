@@ -37,7 +37,7 @@ export function TabNavigation<T = string>({
 				<button
 					data-testid="tab-navigation-btn"
 					key={tab.text}
-					className={`tab text-neutral-content gap-2 hover:bg-neutral/80 ${
+					className={`tab  mr-1 text-neutral-content gap-2 hover:bg-neutral/80 ${
 						tab.id === selectedTab
 							? 'tab-active bg-neutral text-neutral-content'
 							: ''

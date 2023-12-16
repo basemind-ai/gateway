@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
@@ -12,6 +12,7 @@ import { ApplicationGeneralSettings } from '@/components/projects/[projectId]/ap
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApplicationPageTabNames } from '@/constants';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useApplication, useProject } from '@/stores/api-store';
 
@@ -21,7 +22,7 @@ export default function Application({
 	params: { applicationId: string; projectId: string };
 }) {
 	const user = useAuthenticatedUser();
-
+	const { page, initialized } = useAnalytics();
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);
 	const project = useProject(projectId);
@@ -47,6 +48,12 @@ export default function Application({
 			text: t('settings'),
 		},
 	];
+
+	useEffect(() => {
+		if (initialized) {
+			page('application_overview');
+		}
+	}, [initialized]);
 
 	if (!application || !project) {
 		return null;

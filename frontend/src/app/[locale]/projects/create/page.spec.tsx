@@ -1,4 +1,4 @@
-import { ProjectFactory } from 'tests/factories';
+import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { mockPage, mockReady, mockTrack, routerReplaceMock } from 'tests/mocks';
 import {
 	fireEvent,
@@ -8,11 +8,13 @@ import {
 	waitFor,
 } from 'tests/test-utils';
 
+import * as applicationsAPI from '@/api/applications-api';
 import * as projectsAPI from '@/api/projects-api';
 import CreateProjectPage from '@/app/[locale]/projects/create/page';
 import { Navigation } from '@/constants';
 import { ApiError } from '@/errors';
 import { useSetProjects } from '@/stores/api-store';
+import { setRouteParams } from '@/utils/navigation';
 
 describe('ProjectCreatePage', () => {
 	it('should render without crashing', () => {
@@ -23,18 +25,27 @@ describe('ProjectCreatePage', () => {
 		expect(projectsViewSetup).toBeInTheDocument();
 	});
 
-	it('disables submit when name is empty', () => {
+	it('disables submit on start', () => {
 		render(<CreateProjectPage />);
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		expect(submitButton).toBeDisabled();
 	});
 
-	it('submit is enable when name has value', () => {
+	it('submit is enable when both projectName and application have a value', () => {
 		render(<CreateProjectPage />);
 		const submitButton = screen.getByTestId('create-project-submit-button');
-		const nameInput = screen.getByTestId('create-project-name-input');
+		const projectNameInput = screen.getByTestId(
+			'create-project-name-input',
+		);
 		expect(submitButton).toBeDisabled();
-		fireEvent.change(nameInput, { target: { value: 'test' } });
+		fireEvent.change(projectNameInput, { target: { value: 'test' } });
+		expect(submitButton).toBeDisabled();
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
 		expect(submitButton).toBeEnabled();
 	});
 
@@ -55,8 +66,51 @@ describe('ProjectCreatePage', () => {
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const nameInput = screen.getByTestId('create-project-name-input');
 		fireEvent.change(nameInput, { target: { value: 'test' } });
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
 		fireEvent.click(submitButton);
 		expect(handleCreateProjectSpy).toHaveBeenCalled();
+	});
+
+	it('submit calls handleCreateApplications', async () => {
+		const handleCreateProjectSpy = vi.spyOn(
+			projectsAPI,
+			'handleCreateProject',
+		);
+
+		handleCreateProjectSpy.mockResolvedValueOnce(
+			await ProjectFactory.build(),
+		);
+		const handleCreateApplicationSpy = vi.spyOn(
+			applicationsAPI,
+			'handleCreateApplication',
+		);
+
+		handleCreateApplicationSpy.mockResolvedValueOnce(
+			await ApplicationFactory.build(),
+		);
+		const projects = await ProjectFactory.batch(1);
+		const { result } = renderHook(() => useSetProjects());
+
+		result.current(projects);
+		render(<CreateProjectPage />);
+		const submitButton = screen.getByTestId('create-project-submit-button');
+		const nameInput = screen.getByTestId('create-project-name-input');
+		fireEvent.change(nameInput, { target: { value: 'test' } });
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
+		fireEvent.click(submitButton);
+		await waitFor(() => {
+			expect(handleCreateApplicationSpy).toHaveBeenCalled();
+		});
 	});
 
 	it('submit shows loading spinner then remove', async () => {
@@ -64,12 +118,18 @@ describe('ProjectCreatePage', () => {
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const nameInput = screen.getByTestId('create-project-name-input');
 		fireEvent.change(nameInput, { target: { value: 'test' } });
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
 		fireEvent.click(submitButton);
 		const loadingSpinner = screen.getByTestId(
 			'create-project-loading-spinner',
 		);
 		expect(loadingSpinner).toBeInTheDocument();
-		await vi.waitFor(() => {
+		await waitFor(() => {
 			expect(loadingSpinner).not.toBeInTheDocument();
 		});
 	});
@@ -122,6 +182,12 @@ describe('ProjectCreatePage', () => {
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const nameInput = screen.getByTestId('create-project-name-input');
 		fireEvent.change(nameInput, { target: { value: 'test' } });
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
 		fireEvent.click(submitButton);
 		await vi.waitFor(() => {
 			const errorView = screen.getByTestId(
@@ -138,19 +204,34 @@ describe('ProjectCreatePage', () => {
 		);
 		const newProject = await ProjectFactory.build();
 		handleCreateProjectSpy.mockResolvedValueOnce(newProject);
+		const handleCreateApplicationSpy = vi.spyOn(
+			applicationsAPI,
+			'handleCreateApplication',
+		);
+		const newApplication = await ApplicationFactory.build();
+		handleCreateApplicationSpy.mockResolvedValueOnce(newApplication);
 		render(<CreateProjectPage />);
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const nameInput = screen.getByTestId('create-project-name-input');
 		fireEvent.change(nameInput, { target: { value: 'test' } });
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
 		fireEvent.click(submitButton);
 		await vi.waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(
-				`${Navigation.Projects}/${newProject.id}`,
+				setRouteParams(Navigation.ConfigCreateWizard, {
+					applicationId: newApplication.id,
+					projectId: newProject.id,
+				}),
 			);
 		});
 	});
 
-	it('calls usePageTracking', async () => {
+	it('calls page track', async () => {
 		render(<CreateProjectPage />);
 		await waitFor(() => {
 			expect(mockReady).toHaveBeenCalled();
@@ -163,7 +244,7 @@ describe('ProjectCreatePage', () => {
 		});
 	});
 
-	it('calls useTrackEvent after successful project creation', async () => {
+	it('calls track after successful project creation', async () => {
 		const handleCreateProjectSpy = vi.spyOn(
 			projectsAPI,
 			'handleCreateProject',
@@ -174,11 +255,49 @@ describe('ProjectCreatePage', () => {
 		const submitButton = screen.getByTestId('create-project-submit-button');
 		const nameInput = screen.getByTestId('create-project-name-input');
 		fireEvent.change(nameInput, { target: { value: 'test' } });
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
 		fireEvent.click(submitButton);
 		await vi.waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
 				'created_project',
 				newProject,
+			);
+		});
+	});
+
+	it('calls track after successful application creation', async () => {
+		const handleCreateProjectSpy = vi.spyOn(
+			projectsAPI,
+			'handleCreateProject',
+		);
+		const newProject = await ProjectFactory.build();
+		handleCreateProjectSpy.mockResolvedValueOnce(newProject);
+		const handleCreateApplicationSpy = vi.spyOn(
+			applicationsAPI,
+			'handleCreateApplication',
+		);
+		const newApplication = await ApplicationFactory.build();
+		handleCreateApplicationSpy.mockResolvedValueOnce(newApplication);
+		render(<CreateProjectPage />);
+		const submitButton = screen.getByTestId('create-project-submit-button');
+		const nameInput = screen.getByTestId('create-project-name-input');
+		fireEvent.change(nameInput, { target: { value: 'test' } });
+		const applicationNameInput = screen.getByTestId(
+			'create-application-name-input',
+		);
+		fireEvent.change(applicationNameInput, {
+			target: { value: 'test_app' },
+		});
+		fireEvent.click(submitButton);
+		await vi.waitFor(() => {
+			expect(mockTrack).toHaveBeenCalledWith(
+				'created_application',
+				newApplication,
 			);
 		});
 	});

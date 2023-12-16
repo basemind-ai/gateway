@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Gear, RocketTakeoff, Speedometer2 } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
@@ -15,6 +15,7 @@ import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/a
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { PromptConfigPageTab } from '@/constants';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
 import {
@@ -34,7 +35,7 @@ export default function PromptConfiguration({
 	};
 }) {
 	const user = useAuthenticatedUser();
-
+	const { page, initialized } = useAnalytics();
 	const t = useTranslations('promptConfig');
 	const handleError = useHandleError();
 
@@ -57,6 +58,12 @@ export default function PromptConfiguration({
 			},
 		},
 	);
+
+	useEffect(() => {
+		if (initialized) {
+			page('config_overview');
+		}
+	}, [initialized]);
 
 	if (isLoading) {
 		return (
