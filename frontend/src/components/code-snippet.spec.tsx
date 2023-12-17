@@ -55,7 +55,9 @@ describe('CodeSnippet', () => {
 			/>,
 		);
 
-		const copyButton = screen.getByTestId('code-snippet-code-copy-button');
+		const copyButton = screen.getByTestId(
+			`code-snippet-code-copy-button-${language}`,
+		);
 		expect(copyButton).toBeInTheDocument();
 	});
 
@@ -72,7 +74,9 @@ describe('CodeSnippet', () => {
 			/>,
 		);
 
-		const copyButton = screen.getByTestId('code-snippet-code-copy-button');
+		const copyButton = screen.getByTestId(
+			`code-snippet-code-copy-button-${language}`,
+		);
 		copyButton.click();
 
 		expect(writeTextMock).toHaveBeenCalledWith(codeText);
@@ -95,7 +99,9 @@ describe('CodeSnippet', () => {
 			result: { current },
 		} = renderHook(useToasts);
 
-		const copyButton = screen.getByTestId('code-snippet-code-copy-button');
+		const copyButton = screen.getByTestId(
+			`code-snippet-code-copy-button-${language}`,
+		);
 		copyButton.click();
 
 		await waitFor(() => {

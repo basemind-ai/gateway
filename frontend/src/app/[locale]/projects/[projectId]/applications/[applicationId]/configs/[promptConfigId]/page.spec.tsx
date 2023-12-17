@@ -68,8 +68,8 @@ describe('PromptConfiguration', () => {
 			expect(screen.getByTestId('navbar-header')).toBeInTheDocument();
 		});
 
-		const analytics = screen.getByTestId('prompt-analytics-container');
-		expect(analytics).toBeInTheDocument();
+		const codeSnippet = screen.getByTestId('prompt-code-snippet-container');
+		expect(codeSnippet).toBeInTheDocument();
 
 		const generalInfo = screen.getByTestId('prompt-general-info-container');
 		expect(generalInfo).toBeInTheDocument();

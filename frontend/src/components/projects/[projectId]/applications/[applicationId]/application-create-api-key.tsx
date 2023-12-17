@@ -68,7 +68,10 @@ export function CreateApplicationAPIKeyModal({
 	}
 
 	return (
-		<div className="bg-base-300">
+		<div
+			className="bg-base-300"
+			data-testid="create-api-key-modal-container"
+		>
 			<div className="p-10 flex flex-col items-center border-b border-neutral">
 				<h2
 					data-testid="create-api-key-title"
