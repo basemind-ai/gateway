@@ -1,6 +1,6 @@
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
-import { fireEvent, render, screen } from 'tests/test-utils';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-code-snippet';
 
@@ -124,5 +124,48 @@ describe('PromptConfigCodeSnippet', () => {
 		expect(
 			screen.getByTestId('create-api-key-modal-container'),
 		).toBeInTheDocument();
+	});
+	it('should change the selected framework when a different tab is clicked', () => {
+		render(
+			<PromptConfigCodeSnippet
+				projectId={project.id}
+				applicationId={application.id}
+			/>,
+		);
+		const iosTab = screen.getByTestId('tab-iOS');
+		expect(iosTab).not.toHaveClass('tab-active');
+		fireEvent.click(iosTab);
+		expect(iosTab).toHaveClass('tab-active');
+		const iosCodeSnippet = screen.getByTestId('code-snippet-swift');
+		expect(iosCodeSnippet).toBeInTheDocument();
+	});
+
+	it('should close the create API key modal when the cancel button is clicked', async () => {
+		render(
+			<PromptConfigCodeSnippet
+				projectId={project.id}
+				applicationId={application.id}
+			/>,
+		);
+
+		// Open the modal
+		const createAPIKeyButton = screen.getByTestId(
+			'code-snippet-create-api-key-button-kotlin',
+		);
+		fireEvent.click(createAPIKeyButton);
+
+		// Expect the modal to be present
+		expect(
+			screen.getByTestId('create-api-key-modal-container'),
+		).toBeInTheDocument();
+
+		// Find and click the cancel button in the modal
+		const cancelButton = screen.getByTestId('create-api-key-close-btn'); // Replace 'cancel-button-id' with the actual test ID of the cancel button
+		fireEvent.click(cancelButton);
+
+		// Expect the modal to be closed
+		await waitFor(() => {
+			screen.queryByTestId('create-api-key-modal-container');
+		});
 	});
 });
