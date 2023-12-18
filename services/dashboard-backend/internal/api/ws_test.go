@@ -139,7 +139,7 @@ func (s *mockSessionStorage) Range(f func(key string, value any) bool) {
 	s.Called(f)
 }
 
-func TestPromptTestingAPI(t *testing.T) {
+func TestPromptTestingAPI(t *testing.T) { //nolint: revive
 	testutils.SetTestEnv(t)
 	userAccount, _ := factories.CreateUserAccount(context.TODO())
 	project, _ := factories.CreateProject(context.TODO())

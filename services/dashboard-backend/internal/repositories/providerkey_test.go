@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func TestProviderKeyRepositoriy(t *testing.T) {
+func TestProviderKeyRepository(t *testing.T) {
 	t.Run("CreateProviderKey", func(t *testing.T) {
 		testutils.SetTestEnv(t)
 		unencryptedKey := factories.RandomString(15)

@@ -216,8 +216,8 @@ describe('CreateApplication', () => {
 		expect(apiKeyHashInput).toBeInTheDocument();
 		expect(apiKeyHashInput.value).toBe(apiKey.hash);
 
-		const closebutton = screen.getByTestId('create-api-key-close-btn');
-		fireEvent.click(closebutton);
+		const closeButton = screen.getByTestId('create-api-key-close-btn');
+		fireEvent.click(closeButton);
 
 		expect(routerPushMock).toHaveBeenCalledWith(
 			`/en/projects/${projectId}/applications/${application.id}`,

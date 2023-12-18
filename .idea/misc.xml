@@ -3,5 +3,10 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" default="true" />
+  <component
+		name="ProjectRootManager"
+		version="2"
+		languageLevel="JDK_1_6"
+		default="true"
+	/>
 </project>

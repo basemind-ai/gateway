@@ -38,7 +38,6 @@
 .idea/sonarlint
 .idea/workspace.xml
 .next/
-.next/
 /.secrets/*
 build/
 captures/

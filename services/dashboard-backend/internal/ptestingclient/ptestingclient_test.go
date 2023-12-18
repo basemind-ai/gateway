@@ -65,7 +65,7 @@ type mockStream struct {
 	mock.Mock
 }
 
-func TestPromptTestingGRPCClient(t *testing.T) {
+func TestPromptTestingGRPCClient(t *testing.T) { //nolint:revive
 	testutils.SetTestEnv(t)
 
 	project, _ := factories.CreateProject(context.TODO())

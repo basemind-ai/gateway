@@ -52,7 +52,7 @@ func TestUserAccountRepository(t *testing.T) {
 			assert.Equal(t, "123456789", userAccount.PhoneNumber)
 			assert.Equal(t, "https://example.com/photo.jpg", userAccount.PhotoUrl)
 		})
-		t.Run("should handlle pre-created account due to invitation", func(t *testing.T) {
+		t.Run("should handle pre-created account due to invitation", func(t *testing.T) {
 			userData, _ := factories.CreateUserAccount(context.TODO())
 
 			_, _ = db.GetQueries().CreateUserAccount(context.TODO(), models.CreateUserAccountParams{

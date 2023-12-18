@@ -51,6 +51,6 @@ func (handler *AuthHandler) HandleAuth(ctx context.Context) (context.Context, er
 			retrieveErr,
 		)
 	}
-	applicationIdContext := context.WithValue(ctx, ApplicationIDContextKey, ids.ApplicationID)
-	return context.WithValue(applicationIdContext, ProjectIDContextKey, ids.ProjectID), nil
+	applicationIDContext := context.WithValue(ctx, ApplicationIDContextKey, ids.ApplicationID)
+	return context.WithValue(applicationIDContext, ProjectIDContextKey, ids.ProjectID), nil
 }

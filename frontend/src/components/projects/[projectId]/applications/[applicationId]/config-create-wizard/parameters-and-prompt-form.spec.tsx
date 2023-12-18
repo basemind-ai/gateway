@@ -470,10 +470,10 @@ describe('parameters-and-prompt-form components tests', () => {
 			);
 
 			const message1RadioInput = screen.getByTestId(
-				`parameters-and-prompt-form-message-${0}`,
+				'parameters-and-prompt-form-message-0',
 			);
 			const message2RadioInput = screen.getByTestId(
-				`parameters-and-prompt-form-message-${1}`,
+				'parameters-and-prompt-form-message-1',
 			);
 			const newMessageRadioInput = screen.getByTestId(
 				'parameters-and-prompt-form-new-message',

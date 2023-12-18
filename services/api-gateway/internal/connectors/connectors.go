@@ -49,6 +49,7 @@ func GetProviderConnector(provider models.ModelVendor) ProviderConnector {
 			openaiConnectorClient,
 			"OpenAI Connector Client was not initialized",
 		)
+	case models.ModelVendorCOHERE:
 	default:
 		panic("Unknown provider")
 	}

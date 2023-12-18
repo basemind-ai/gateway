@@ -17,7 +17,6 @@ const tsWebTestRules = {
 };
 
 const project = [
-	'./docs/tsconfig.json',
 	'./frontend/tsconfig.json',
 	'./services/*/tsconfig.json',
 	'./tsconfig.json',

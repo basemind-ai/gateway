@@ -35,8 +35,8 @@ export const finishReasonMapping: Record<
  * The getCohereConnectors function takes an array of CohereConnector enums and returns
  * an array of connector objects.
  *
- * @param connector : CohereConnector[]
  * @return An array of CohereChatConnector objects
+ * @param connectors
  */
 export function getCohereConnectors(
 	connectors: CohereConnector[],

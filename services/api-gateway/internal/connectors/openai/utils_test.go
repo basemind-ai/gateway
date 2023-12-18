@@ -20,7 +20,7 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 )
 
-func TestUtils(t *testing.T) {
+func TestUtils(t *testing.T) { //nolint: revive
 	_ = factories.CreateProviderPricingModels(context.TODO())
 
 	t.Run("GetModelType", func(t *testing.T) {

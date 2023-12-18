@@ -13,7 +13,7 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect, SpyInstance } from 'vitest';
+import { expect, MockInstance } from 'vitest';
 
 import * as promptConfigApi from '@/api/prompt-config-api';
 import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
@@ -26,8 +26,8 @@ describe('PromptConfigTesting tests', () => {
 	const promptConfigs = OpenAIPromptConfigFactory.batchSync(3);
 	const promptConfig = promptConfigs[0];
 
-	let handleCreatePromptConfigSpy: SpyInstance;
-	let handleUpdatePromptConfigSpy: SpyInstance;
+	let handleCreatePromptConfigSpy: MockInstance;
+	let handleUpdatePromptConfigSpy: MockInstance;
 
 	beforeEach(() => {
 		handleCreatePromptConfigSpy = vi.spyOn(

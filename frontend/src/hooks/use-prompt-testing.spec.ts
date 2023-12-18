@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { PromptTestRecordFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 import { act, renderHook, waitFor } from 'tests/test-utils';
-import { beforeEach, expect, SpyInstance } from 'vitest';
+import { beforeEach, expect, MockInstance } from 'vitest';
 
 import * as ws from '@/api/ws';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
@@ -25,7 +25,7 @@ describe('usePromptTesting tests', () => {
 
 	const mockWebsocketHandler = { closeSocket: vi.fn(), sendMessage: vi.fn() };
 
-	let createWebsocketSpy: SpyInstance;
+	let createWebsocketSpy: MockInstance;
 	beforeEach(() => {
 		createWebsocketSpy = vi
 			.spyOn(ws, 'createWebsocket')

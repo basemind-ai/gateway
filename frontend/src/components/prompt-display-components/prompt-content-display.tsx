@@ -10,26 +10,25 @@ const openAIRoleElementMapper: Record<
 > = {
 	assistant: ({ message }) => (
 		<span>
-			[
-			<span className={`${openAIRoleColorMap.assistant}`}>assistant</span>
+			[<span className={openAIRoleColorMap.assistant}>assistant</span>
 			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 	function: ({ message }) => (
 		<span>
-			[<span className={`${openAIRoleColorMap.function}`}>function</span>
+			[<span className={openAIRoleColorMap.function}>function</span>
 			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 	system: ({ message }) => (
 		<span>
-			[<span className={`${openAIRoleColorMap.system}`}>system</span>]:{' '}
+			[<span className={openAIRoleColorMap.system}>system</span>]:{' '}
 			<span className="text-base-content">{message}</span>
 		</span>
 	),
 	user: ({ message }) => (
 		<span>
-			[<span className={`${openAIRoleColorMap.user}`}>user</span>]:{' '}
+			[<span className={openAIRoleColorMap.user}>user</span>]:{' '}
 			<span className="text-base-content">{message}</span>
 		</span>
 	),

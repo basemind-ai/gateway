@@ -48,21 +48,21 @@ export function AvatarDropdown({
 					</Link>
 				</li>
 				<div className="border-t border-neutral mt-1">
-					{projects.map((nonActiveproject) => (
+					{projects.map((inactiveProject) => (
 						<li
-							key={nonActiveproject.id}
+							key={inactiveProject.id}
 							data-testid="project-select-option"
 						>
 							<Link
 								href={setRouteParams(Navigation.ProjectDetail, {
-									projectId: nonActiveproject.id,
+									projectId: inactiveProject.id,
 								})}
 								onClick={() => {
-									handleSetProject(nonActiveproject.id);
+									handleSetProject(inactiveProject.id);
 								}}
-								data-testid={`project-select-link-${nonActiveproject.id}`}
+								data-testid={`project-select-link-${inactiveProject.id}`}
 							>
-								{nonActiveproject.name}
+								{inactiveProject.name}
 							</Link>
 						</li>
 					))}

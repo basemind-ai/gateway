@@ -24,7 +24,7 @@ export function ApplicationPromptConfigsTable({
 	const t = useTranslations('application');
 	const router = useRouter();
 
-	const pustToTab = ({
+	const pushToTab = ({
 		promptConfigId,
 		tab,
 	}: {
@@ -32,7 +32,7 @@ export function ApplicationPromptConfigsTable({
 		tab: PromptConfigPageTab;
 	}) => {
 		router.push(
-			`${setRouteParams(
+			setRouteParams(
 				Navigation.PromptConfigDetail,
 				{
 					applicationId,
@@ -40,7 +40,7 @@ export function ApplicationPromptConfigsTable({
 					promptConfigId,
 				},
 				tab as unknown as string,
-			)}`,
+			),
 		);
 	};
 
@@ -85,7 +85,7 @@ export function ApplicationPromptConfigsTable({
 									data-testid="application-prompt-configs-table-config-name-button"
 									className="btn-link"
 									onClick={() => {
-										pustToTab({
+										pushToTab({
 											promptConfigId,
 											tab: PromptConfigPageTab.OVERVIEW,
 										});
@@ -124,7 +124,7 @@ export function ApplicationPromptConfigsTable({
 								<button
 									data-testid="application-prompt-configs-table-config-test-button"
 									onClick={() => {
-										pustToTab({
+										pushToTab({
 											promptConfigId,
 											tab: PromptConfigPageTab.TESTING,
 										});
@@ -137,7 +137,7 @@ export function ApplicationPromptConfigsTable({
 								<button
 									data-testid="application-prompt-configs-table-config-edit-button"
 									onClick={() => {
-										pustToTab({
+										pushToTab({
 											promptConfigId,
 											tab: PromptConfigPageTab.SETTINGS,
 										});
