@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { handleCreateApplication, handleCreateProject } from '@/api';
 import { TooltipIcon } from '@/components/input-label-with-tooltip';
@@ -65,13 +65,19 @@ export function CreateProjectForm({
 		}
 	};
 
-	const projectNameIsValid =
-		projectName.length >= MIN_NAME_LENGTH &&
-		validateProjectName(projectName);
+	const projectNameIsValid = useMemo(
+		() =>
+			projectName.length >= MIN_NAME_LENGTH &&
+			validateProjectName(projectName),
+		[projectName, validateProjectName],
+	);
 
-	const applicationNameIsValid =
-		applicationName.length >= MIN_NAME_LENGTH &&
-		validateApplicationName(applicationName);
+	const applicationNameIsValid = useMemo(
+		() =>
+			applicationName.length >= MIN_NAME_LENGTH &&
+			validateApplicationName(applicationName),
+		[applicationName, validateApplicationName],
+	);
 
 	const showProjectValidationError = projectName && !projectNameIsValid;
 
@@ -207,7 +213,7 @@ export function CreateProjectForm({
 							!applicationNameIsValid
 						}
 						onClick={() => {
-							void handleSubmit;
+							void handleSubmit();
 						}}
 						data-testid="create-project-submit-button"
 					>

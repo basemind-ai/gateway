@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { Logo } from '@/components/logo';
 import { CreateProjectForm } from '@/components/projects/create/create-project-form';
@@ -20,9 +20,9 @@ export default function CreateProjectPage() {
 
 	const projects = useProjects();
 
-	const handleCancel = () => {
+	const handleCancel = useCallback(() => {
 		router.replace(`${Navigation.Projects}/${projects[0].id}`);
-	};
+	}, [projects]);
 
 	useEffect(() => {
 		if (initialized) {
