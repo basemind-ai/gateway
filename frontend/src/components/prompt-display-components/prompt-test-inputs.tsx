@@ -7,7 +7,7 @@ export function PromptTestInputs({
 }: {
 	expectedVariables: string[];
 	setTemplateVariables: (variables: Record<string, string>) => void;
-	templateVariables: Record<string, string>;
+	templateVariables: Record<string, string | undefined>;
 }) {
 	return (
 		<div data-testid="test-inputs-container">
@@ -18,11 +18,14 @@ export function PromptTestInputs({
 							type="text"
 							className="card-textarea textarea-info bg-neutral placeholder-info"
 							data-testid={`input-variable-input-${variable}`}
-							value={templateVariables[variable]}
+							value={templateVariables[variable] ?? ''}
 							placeholder={`{${variable}}`}
 							onChange={handleChange((value: string) => {
 								setTemplateVariables({
-									...templateVariables,
+									...(templateVariables as Record<
+										string,
+										string
+									>),
 									[variable]: value,
 								});
 							})}

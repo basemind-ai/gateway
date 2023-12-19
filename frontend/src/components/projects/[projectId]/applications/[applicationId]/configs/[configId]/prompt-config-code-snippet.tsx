@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Github, KeyFill } from 'react-bootstrap-icons';
 
 import { CodeSnippet } from '@/components/code-snippet';
@@ -44,9 +44,18 @@ const tabs: FrameworkTab[] = [
 		language: 'kotlin',
 	},
 	{ docs: docsSwift, framework: 'iOS', isActive: true, language: 'swift' },
-
-	{ framework: 'Flutter', isActive: false, language: 'dart' },
-	{ framework: 'React Native', isActive: false, language: 'typescript' },
+	{
+		docs: undefined,
+		framework: 'Flutter',
+		isActive: false,
+		language: 'dart',
+	},
+	{
+		docs: undefined,
+		framework: 'React Native',
+		isActive: false,
+		language: 'typescript',
+	},
 ];
 
 export function PromptConfigCodeSnippet({
@@ -91,9 +100,8 @@ export function PromptConfigCodeSnippet({
 				{tabs.map((tab) => {
 					const snippet = languageSnippetMap[tab.language];
 					return (
-						<>
+						<Fragment key={tab.framework}>
 							<button
-								key={tab.framework}
 								name="tabs"
 								data-testid={`tab-${tab.framework}`}
 								className={`tab [--tab-bg:bg-base-100] text-base-content rounded-b-none hover:bg-neutral ${
@@ -117,16 +125,18 @@ export function PromptConfigCodeSnippet({
 								className="tab-content rounded-data-card rounded-tl-none mt-0  w-full p-6"
 								data-testid={`tab-content-${tab.framework}-container`}
 							>
-								<div className="flex felx-row content-center">
-									<div className="flex flex-col px-8 justify-evenly text-left ">
+								<div className="flex flex-col lg:flex-row content-center">
+									<div className="flex lg:flex-col px-8 justify-evenly text-left pb-4 lg:pb-0">
 										<button
-											className="btn btn-sm btn-neutral"
+											className="btn btn-sm btn-neutral h-fit"
 											disabled={!tab.docs}
 											onClick={handleDocClick(tab)}
 											data-testid={`code-snippet-view-docs-button-${tab.language}`}
 										>
 											<Github className="w-4 h-4" />
-											{t('documentation')}{' '}
+											<span className="text-sm">
+												{t('documentation')}
+											</span>
 										</button>
 										<button
 											className="btn btn-sm btn-neutral"
@@ -136,7 +146,9 @@ export function PromptConfigCodeSnippet({
 											data-testid={`code-snippet-create-api-key-button-${tab.language}`}
 										>
 											<KeyFill className="w-4 h-4" />
-											{t('createAPIKey')}
+											<span className="text-sm">
+												{t('createAPIKey')}
+											</span>
 										</button>
 									</div>
 									<div className="flex justify-center">
@@ -150,7 +162,7 @@ export function PromptConfigCodeSnippet({
 									</div>
 								</div>
 							</div>
-						</>
+						</Fragment>
 					);
 				})}
 			</div>

@@ -248,11 +248,12 @@ export default function PromptConfigCreateWizard({
 							<ul className="steps z-0">
 								{stepper.map((stage) => (
 									<li
+										key={stage}
 										className={`step ${
 											store.wizardStage === stage &&
 											stepColor
 										}
-								}`}
+										}`}
 									/>
 								))}
 							</ul>

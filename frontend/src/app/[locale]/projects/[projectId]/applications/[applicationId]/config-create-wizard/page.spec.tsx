@@ -104,7 +104,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);
 
-		setPromptConfigs(applicationId, promptConfigs);
+		act(() => {
+			setPromptConfigs(applicationId, promptConfigs);
+		});
 
 		const store = getStore();
 		store.setConfigName(promptConfigs[0].name);
@@ -126,7 +128,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			result: { current: setPromptConfigs },
 		} = renderHook(useSetPromptConfigs);
 
-		setPromptConfigs(applicationId, promptConfigs);
+		act(() => {
+			setPromptConfigs(applicationId, promptConfigs);
+		});
 
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
@@ -152,7 +156,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 
 	it('does not allow the user to continue to the third stage if messages are empty', async () => {
 		const store = getStore();
-		store.setConfigName(faker.lorem.word());
+		act(() => {
+			store.setConfigName(faker.lorem.word());
+		});
 
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
@@ -176,7 +182,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 
 	it('does not allow the user to save the config if messages are empty', async () => {
 		const store = getStore();
-		store.setConfigName(faker.lorem.word());
+		act(() => {
+			store.setConfigName(faker.lorem.word());
+		});
 
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
