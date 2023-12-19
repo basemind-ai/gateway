@@ -200,6 +200,7 @@ export function CreateProjectForm({
 						<button
 							className="btn rounded-btn btn-neutral h-9 mr-6"
 							onClick={handleCancel}
+							disabled={isLoading}
 							data-testid="create-project-cancel-button"
 						>
 							{t('cancelButton')}

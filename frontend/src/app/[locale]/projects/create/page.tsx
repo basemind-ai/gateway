@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { Logo } from '@/components/logo';
 import { CreateProjectForm } from '@/components/projects/create/create-project-form';
@@ -29,6 +29,8 @@ export default function CreateProjectPage() {
 			page('create_project');
 		}
 	}, [initialized]);
+
+	const isInitialRef = useRef(projects.length > 0);
 
 	return (
 		<div
@@ -64,7 +66,7 @@ export default function CreateProjectPage() {
 						</span>
 					</div>
 					<CreateProjectForm
-						allowCancel={!!projects.length}
+						allowCancel={!isInitialRef}
 						handleCancel={handleCancel}
 						validateApplicationName={(value) => !!value}
 						validateProjectName={(value) => !!value}
