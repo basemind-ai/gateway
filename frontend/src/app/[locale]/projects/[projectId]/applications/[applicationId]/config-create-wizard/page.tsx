@@ -4,9 +4,11 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Record } from 'react-bootstrap-icons';
+import useSWR from 'swr';
 import { shallow } from 'zustand/shallow';
 
 import { handleCreatePromptConfig } from '@/api';
+import { handleRetrieveProviderKeys } from '@/api/provider-keys-api';
 import { Modal } from '@/components/modal';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
@@ -17,11 +19,12 @@ import { Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
 import {
 	useApplication,
 	useProject,
 	usePromptConfigs,
+	useProviderKeys,
+	useSetProviderKeys,
 } from '@/stores/api-store';
 import {
 	usePromptWizardStore,
@@ -39,22 +42,35 @@ export default function PromptConfigCreateWizard({
 	params: { applicationId: string; projectId: string };
 }) {
 	const t = useTranslations('createConfigWizard');
-	const handleError = useHandleError();
-	const router = useRouter();
-	const { initialized, page, track } = useAnalytics();
-	const [nameIsValid, setNameIsValid] = useState(false);
 
-	const user = useAuthenticatedUser();
-	const project = useProject(projectId);
 	const application = useApplication(projectId, applicationId);
-
+	const handleError = useHandleError();
+	const project = useProject(projectId);
 	const promptConfigs = usePromptConfigs();
+	const providerKeys = useProviderKeys();
+	const router = useRouter();
+	const setProviderKeys = useSetProviderKeys();
+	const user = useAuthenticatedUser();
 
+	const { initialized, page, track } = useAnalytics();
+
+	const [nameIsValid, setNameIsValid] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isCreateProviderKeyModalOpen, setIsCreateProviderKeyModalOpen] =
 		useState(false);
 
-	const { providerKeys, setProviderKeys } = useSwrProviderKeys({ projectId });
+	useSWR(
+		{
+			projectId,
+		},
+		handleRetrieveProviderKeys,
+		{
+			onError: handleError,
+			onSuccess(data) {
+				setProviderKeys(data);
+			},
+		},
+	);
 
 	const store = usePromptWizardStore(wizardStoreSelector, shallow);
 
@@ -206,7 +222,6 @@ export default function PromptConfigCreateWizard({
 			);
 		} catch (e) {
 			handleError(e);
-		} finally {
 			setIsLoading(false);
 		}
 	};
@@ -228,16 +243,17 @@ export default function PromptConfigCreateWizard({
 							application={application}
 							userPhotoURL={user?.photoURL}
 						/>
-						<div className="card-divider flex justify-between">
+						<div className="card-divider flex justify-between content-center items-center">
 							<h2 className="card-header">{t('createConfig')}</h2>
 							<ul className="steps z-0">
 								{stepper.map((stage) => (
 									<li
+										key={stage}
 										className={`step ${
 											store.wizardStage === stage &&
 											stepColor
 										}
-								}`}
+										}`}
 									/>
 								))}
 							</ul>

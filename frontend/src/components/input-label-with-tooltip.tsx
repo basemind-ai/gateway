@@ -9,7 +9,7 @@ export function TooltipIcon({
 }) {
 	return (
 		<div
-			className="tooltip tooltip-top flex max-w-sm items-center gap-1 pr-3"
+			className="tooltip tooltip-top before:whitespace-pre-wrap before:content-[attr(data-tip)]"
 			data-tip={tooltip}
 			data-testid={dataTestId}
 		>

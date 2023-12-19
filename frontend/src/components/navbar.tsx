@@ -26,7 +26,10 @@ export function Navbar({
 	const setSelectedProject = useSetSelectedProject();
 
 	return (
-		<div className="navbar pb-0 px-0" data-testid="navbar-container">
+		<div
+			className="navbar pb-0 px-0 content-center items-center"
+			data-testid="navbar-container"
+		>
 			<div
 				data-testid="navbar-header"
 				className="flex-grow gap-4 content-baseline"
