@@ -62,6 +62,11 @@
 		"signIn": "Sign-In",
 		"submit": "Submit"
 	},
+	"configCodeSnippet": {
+		"createAPIKey": "Create API Key",
+		"documentation": "Documentation",
+		"implement": "Implement"
+	},
 	"createApplication": {
 		"applicationCreated": "Application Created",
 		"applicationDescription": "Application Description",

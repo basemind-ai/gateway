@@ -35,7 +35,7 @@ export function CodeSnippet({
 			</SyntaxHighlighter>
 			{allowCopy && (
 				<button
-					data-testid="code-snippet-code-copy-button"
+					data-testid={`code-snippet-code-copy-button-${language}`}
 					className="self-start"
 					onClick={() => {
 						copyToClipboard(codeText);

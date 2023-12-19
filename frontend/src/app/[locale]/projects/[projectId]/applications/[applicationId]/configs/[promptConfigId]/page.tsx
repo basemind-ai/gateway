@@ -7,7 +7,6 @@ import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
 import { Navbar } from '@/components/navbar';
-import { PromptConfigAnalyticsPage } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-analytics-page';
 import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-code-snippet';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
@@ -101,13 +100,10 @@ export default function PromptConfiguration({
 	const tabComponents: Record<PromptConfigPageTab, React.FC> = {
 		[PromptConfigPageTab.OVERVIEW]: memo(() => (
 			<>
-				<PromptConfigAnalyticsPage
+				<PromptConfigCodeSnippet
 					projectId={projectId}
 					applicationId={applicationId}
-					promptConfig={promptConfig}
 				/>
-				<div className="card-divider" />
-				<PromptConfigCodeSnippet />
 				<div className="card-divider" />
 				<PromptConfigGeneralInfo promptConfig={promptConfig} />
 			</>
