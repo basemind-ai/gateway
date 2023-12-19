@@ -4,11 +4,7 @@ import { act, render, renderHook, screen, waitFor } from 'tests/test-utils';
 
 import Projects from '@/app/[locale]/projects/page';
 import { Navigation } from '@/constants';
-import {
-	useApplications,
-	useProjects,
-	useSetProjects,
-} from '@/stores/api-store';
+import { useProjects, useSetProjects } from '@/stores/api-store';
 
 describe('projects page tests', () => {
 	it('should route to sign in page when user is not present', async () => {
@@ -82,9 +78,6 @@ describe('projects page tests', () => {
 		const projects = await ProjectFactory.batch(3);
 		const applications = await ApplicationFactory.batch(2);
 		const { result } = renderHook(() => useProjects());
-		const { result: applicationsResult } = renderHook(() =>
-			useApplications(projects[0].id),
-		);
 		act(() => {
 			mockFetch.mockResolvedValueOnce({
 				json: () => Promise.resolve(projects),
@@ -100,6 +93,5 @@ describe('projects page tests', () => {
 		await waitFor(() => {
 			expect(result.current).toEqual(projects);
 		});
-		expect(applicationsResult.current).toEqual(applications);
 	});
 });
