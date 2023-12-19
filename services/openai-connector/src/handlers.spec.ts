@@ -69,6 +69,7 @@ describe('handlers tests', () => {
 					{
 						finish_reason: 'stop',
 						index: 0,
+						logprobs: null,
 						message: {
 							content: 'Generated response',
 							role: 'assistant',
@@ -207,6 +208,7 @@ describe('handlers tests', () => {
 					{
 						finish_reason: 'length',
 						index: 0,
+						logprobs: null,
 						message: {
 							content: 'Generated response',
 							role: 'assistant',

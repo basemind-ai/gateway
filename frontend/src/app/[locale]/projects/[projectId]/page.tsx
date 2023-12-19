@@ -3,7 +3,9 @@
 import { useTranslations } from 'next-intl';
 import { memo, useEffect, useState } from 'react';
 import { Gear, Key, People, Speedometer2 } from 'react-bootstrap-icons';
+import useSWR from 'swr';
 
+import { handleRetrieveApplications } from '@/api';
 import { Navbar } from '@/components/navbar';
 import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
@@ -16,21 +18,33 @@ import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ProjectPageTabNames } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
-import { useProject } from '@/stores/api-store';
+import { useHandleError } from '@/hooks/use-handle-error';
+import { useProject, useSetProjectApplications } from '@/stores/api-store';
 
 export default function ProjectOverview({
 	params: { projectId },
 }: {
 	params: { projectId: string };
 }) {
+	const t = useTranslations('projectOverview');
+
+	const handleError = useHandleError();
+	const setProjectApplications = useSetProjectApplications();
 	const user = useAuthenticatedUser();
 	const { page, initialized } = useAnalytics();
-	const t = useTranslations('projectOverview');
+
 	const [selectedTab, setSelectedTab] = useState(
 		ProjectPageTabNames.OVERVIEW,
 	);
 
 	const project = useProject(projectId);
+
+	useSWR(projectId, handleRetrieveApplications, {
+		onError: handleError,
+		onSuccess: (applications) => {
+			setProjectApplications(projectId, applications);
+		},
+	});
 
 	useEffect(() => {
 		if (initialized) {

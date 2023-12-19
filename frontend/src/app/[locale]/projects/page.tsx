@@ -2,48 +2,43 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import useSWR from 'swr';
 
-import { handleRetrieveApplications, handleRetrieveProjects } from '@/api';
+import { handleRetrieveProjects } from '@/api';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
+import { useHandleError } from '@/hooks/use-handle-error';
 import {
-	useProjects,
 	useSelectedProject,
-	useSetProjectApplications,
 	useSetProjects,
 	useSetSelectedProject,
 } from '@/stores/api-store';
 
 export default function Projects() {
-	useAuthenticatedUser();
+	const user = useAuthenticatedUser();
 
 	const router = useRouter();
 	const setProjects = useSetProjects();
-	const setCurrentProject = useSetSelectedProject();
-	const setProjectApplications = useSetProjectApplications();
-	const projects = useProjects();
+	const setSelectedProject = useSetSelectedProject();
 	const selectedProject = useSelectedProject();
+	const handleError = useHandleError();
 
-	useEffect(() => {
-		(async () => {
-			if (projects.length) {
-				return;
-			}
-
-			const retrievedProjects = await handleRetrieveProjects();
+	useSWR({ userId: user?.uid }, handleRetrieveProjects, {
+		onError: handleError,
+		onSuccess: (retrievedProjects) => {
 			if (retrievedProjects.length === 0) {
 				router.replace(Navigation.CreateProject);
-				return null;
+				return;
 			}
 			setProjects(retrievedProjects);
 
 			const [{ id: projectId }] = retrievedProjects;
-			setCurrentProject(projectId);
 
-			const applications = await handleRetrieveApplications(projectId);
-			setProjectApplications(projectId, applications);
-		})();
-	}, []);
+			if (!selectedProject) {
+				setSelectedProject(projectId);
+			}
+		},
+	});
 
 	useEffect(() => {
 		if (selectedProject) {
