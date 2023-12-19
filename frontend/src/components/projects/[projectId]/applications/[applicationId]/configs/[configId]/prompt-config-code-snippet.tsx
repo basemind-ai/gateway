@@ -16,7 +16,7 @@ interface FrameworkTab {
 }
 
 type supportedLanguages = 'kotlin' | 'dart' | 'typescript' | 'swift';
-// kotlin
+
 const docsKotlin =
 	'https://github.com/basemind-ai/sdk-android/tree/main?tab=readme-ov-file#basemindai-android-sdk';
 const snippetKotlin = `import ai.basemind.client.BaseMindClient
@@ -24,7 +24,6 @@ const snippetKotlin = `import ai.basemind.client.BaseMindClient
 val client = BaseMindClient.getInstance('<API_KEY>')
 `;
 
-// swift
 const docsSwift =
 	'https://github.com/basemind-ai/sdk-ios?tab=readme-ov-file#basemindai-swift-iosmacos-sdk';
 const snippetSwift = `import BaseMindClient
@@ -63,7 +62,7 @@ export function PromptConfigCodeSnippet({
 	const { initialized, track } = useAnalytics();
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-	function handleDocClick(tab: FrameworkTab) {
+	const handleDocClick = (tab: FrameworkTab) => {
 		return () => {
 			if (initialized) {
 				track('click_view_docs', {
@@ -73,14 +72,14 @@ export function PromptConfigCodeSnippet({
 			}
 			router.push(tab.docs!);
 		};
-	}
-	function openCreationPopup() {
+	};
+	const openCreationPopup = () => {
 		setIsCreateModalOpen(true);
-	}
+	};
 
-	function closeCreationPopup() {
+	const closeCreationPopup = () => {
 		setIsCreateModalOpen(false);
-	}
+	};
 
 	return (
 		<>
