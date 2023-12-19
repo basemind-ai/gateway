@@ -43,7 +43,7 @@ export default function CreateProjectPage() {
 					<Logo />
 				</div>
 				<div
-					className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 12/12  md:w-6/12 lg:w-5/12 2xl:w-4/12 bg-base-300 flex-col"
+					className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 12/12  md:w-6/12 lg:w-5/12 2xl:w-4/12 bg-base-300 flex-col rounded"
 					data-testid="create-project-view-flex-container"
 				>
 					<div
@@ -65,7 +65,9 @@ export default function CreateProjectPage() {
 					</div>
 					<CreateProjectForm
 						allowCancel={!!projects.length}
-						HandleCancel={handleCancel}
+						handleCancel={handleCancel}
+						validateApplicationName={(value) => !!value}
+						validateProjectName={(value) => !!value}
 					/>
 				</div>
 			</div>

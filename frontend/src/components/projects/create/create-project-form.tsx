@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { handleCreateApplication, handleCreateProject } from '@/api';
 import { TooltipIcon } from '@/components/input-label-with-tooltip';
 import { Spinner } from '@/components/spinner';
-import { Navigation } from '@/constants';
+import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useAddApplication, useAddProject } from '@/stores/api-store';
@@ -13,11 +13,15 @@ import { handleChange } from '@/utils/events';
 import { setRouteParams } from '@/utils/navigation';
 
 export function CreateProjectForm({
-	HandleCancel,
+	handleCancel,
 	allowCancel,
+	validateProjectName,
+	validateApplicationName,
 }: {
-	HandleCancel: () => void;
 	allowCancel: boolean;
+	handleCancel: () => void;
+	validateApplicationName: (value: string) => boolean;
+	validateProjectName: (value: string) => boolean;
 }) {
 	const t = useTranslations('createProject');
 
@@ -61,64 +65,147 @@ export function CreateProjectForm({
 		}
 	};
 
+	const projectNameIsValid =
+		projectName.length >= MIN_NAME_LENGTH &&
+		validateProjectName(projectName);
+
+	const applicationNameIsValid =
+		applicationName.length >= MIN_NAME_LENGTH &&
+		validateApplicationName(applicationName);
+
+	const showProjectValidationError = projectName && !projectNameIsValid;
+
+	const showApplicationValidationError =
+		applicationName && !applicationNameIsValid;
+
+	const createValidationError = (value: string, nameIsValid: boolean) =>
+		value.length >= MIN_NAME_LENGTH ? (
+			nameIsValid ? (
+				<br className="pt-2" data-testid="name-message-placeholder" />
+			) : (
+				<p
+					className="text-sm text-error text-center pt-2"
+					data-testid="invalid-name-message"
+				>
+					{t('invalidNameErrorMessage')}
+				</p>
+			)
+		) : (
+			<p
+				className="text-sm text-error text-center pt-2"
+				data-testid="invalid-length-message"
+			>
+				{t('invalidLengthErrorMessage', {
+					numCharacters: MIN_NAME_LENGTH,
+				})}
+			</p>
+		);
+
 	return (
 		<div data-testid="create-prject-form-container">
-			<div className={'form-control w-full border-b px-10'}>
-				<div className="pb-12">
-					<label className="label text-left justify-start gap-1">
-						<span className="label-text text-neutral-content">
-							{t('projectInputLabel')}
+			<div className="w-full border-b border-neutral px-10 pb-12">
+				<div className="form-control">
+					<label className="label">
+						<span className="flex gap-2">
+							<span className="label-text text-neutral-content">
+								{t('projectInputLabel')}
+							</span>
+							<TooltipIcon
+								tooltip={t('projectInputTooltip')}
+								dataTestId="project-name-tooltip"
+							/>
 						</span>
-						<TooltipIcon
-							tooltip={t('projectInputTooltip')}
-							dataTestId="project-name-tooltip"
-						/>
+						{!projectNameIsValid && (
+							<span
+								className="label-text-alt"
+								data-testid="label-help-text"
+							>
+								{t('nameInputAltLabel')}
+							</span>
+						)}
 					</label>
 					<input
 						type="text"
 						data-testid="create-project-name-input"
-						placeholder={t('projectInputPlaceholder')}
-						className="input w-full"
+						className={
+							showProjectValidationError
+								? 'card-input border-red-500 min-w-full'
+								: 'card-input min-w-full'
+						}
 						value={projectName}
-						onChange={handleChange(setProjectName)}
+						disabled={isLoading}
+						placeholder={t('projectInputPlaceholder')}
+						onChange={handleChange((v: string) => {
+							setProjectName(v.trim());
+						})}
 					/>
-					<label
-						htmlFor="createApiKey"
-						className="label text-left justify-start gap-1 pt-4"
-					>
-						<span className="label-text text-neutral-content">
-							{t('applicationNameInputLabel')}
+					{showProjectValidationError &&
+						createValidationError(
+							projectName,
+							validateProjectName(projectName),
+						)}
+				</div>
+				<div className="card-section-divider" />
+				<div className="form-control w-full">
+					<label className="label">
+						<span className="flex justify-start gap-2">
+							<span className="label-text text-neutral-content">
+								{t('applicationNameInputLabel')}
+							</span>
+							<TooltipIcon
+								tooltip={t('applicationNameTooltip')}
+								dataTestId="application-name-tooltip"
+							/>
 						</span>
-						<TooltipIcon
-							tooltip={t('applicationNameTooltip')}
-							dataTestId="application-name-tooltip"
-						/>
+						{!applicationNameIsValid && (
+							<span
+								className="label-text-alt"
+								data-testid="label-help-text"
+							>
+								{t('nameInputAltLabel')}
+							</span>
+						)}
 					</label>
-
 					<input
-						data-testid="create-application-name-input"
 						type="text"
-						placeholder={t('applicationNameInputPlaceholder')}
-						className="input w-full"
+						data-testid="create-application-name-input"
+						className={
+							showApplicationValidationError
+								? 'card-input border-red-500 min-w-full'
+								: 'card-input min-w-full'
+						}
 						value={applicationName}
-						onChange={handleChange(setApplicationName)}
+						disabled={isLoading}
+						placeholder={t('applicationNameInputPlaceholder')}
+						onChange={handleChange((v: string) => {
+							setApplicationName(v.trim());
+						})}
 					/>
+					{showApplicationValidationError &&
+						createValidationError(
+							applicationName,
+							validateApplicationName(applicationName),
+						)}
 				</div>
 			</div>
-			<div className="flex items-center h-20 mx-10 justify-end">
+			<div className="flex items-center p-10 justify-end">
 				<div>
 					{allowCancel && (
 						<button
-							className="btn-sm rounded-btn btn-neutral h-9 mr-6"
-							onClick={HandleCancel}
+							className="btn rounded-btn btn-neutral h-9 mr-6"
+							onClick={handleCancel}
 							data-testid="create-project-cancel-button"
 						>
 							{t('cancelButton')}
 						</button>
 					)}
 					<button
-						className="btn btn-sm rounded-btn btn-primary h-9"
-						disabled={isLoading}
+						className="btn rounded-btn btn-primary h-9"
+						disabled={
+							isLoading ||
+							!projectNameIsValid ||
+							!applicationNameIsValid
+						}
 						onClick={() => {
 							void handleSubmit;
 						}}
@@ -128,7 +215,6 @@ export function CreateProjectForm({
 					</button>
 				</div>
 			</div>
-			;
 		</div>
 	);
 }
