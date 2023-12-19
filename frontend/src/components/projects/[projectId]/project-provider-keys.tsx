@@ -1,20 +1,27 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Plus, Trash } from 'react-bootstrap-icons';
+import useSWR from 'swr';
 
-import { handleDeleteProviderKey } from '@/api/provider-keys-api';
+import {
+	handleDeleteProviderKey,
+	handleRetrieveProviderKeys,
+} from '@/api/provider-keys-api';
 import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { Modal } from '@/components/modal';
 import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { modelVendorToLocaleMap } from '@/constants/models';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useSwrProviderKeys } from '@/hooks/use-swr-provider-keys';
+import { useProviderKeys, useSetProviderKeys } from '@/stores/api-store';
 import { ModelVendor, Project, ProviderKey } from '@/types';
 
 export function ProjectProviderKeys({ project }: { project: Project }) {
 	const t = useTranslations('providerKeys');
+
 	const handleError = useHandleError();
+	const providerKeys = useProviderKeys();
+	const setProviderKeys = useSetProviderKeys();
 
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -24,13 +31,20 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 
 	const [isLoading, setIsLoading] = useState(false);
 
-	const {
-		isLoading: swrIsLoading,
-		providerKeys,
-		setProviderKeys,
-	} = useSwrProviderKeys({ projectId: project.id });
+	const { isLoading: isSWRLoading } = useSWR(
+		{
+			projectId: project.id,
+		},
+		handleRetrieveProviderKeys,
+		{
+			onError: handleError,
+			onSuccess(data) {
+				setProviderKeys(data);
+			},
+		},
+	);
 
-	if (swrIsLoading) {
+	if (isSWRLoading) {
 		return <div className="loading" data-testid="loader" />;
 	}
 

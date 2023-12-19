@@ -34,10 +34,10 @@ describe('ProjectProviderKeys', () => {
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
 
-		await wait(100);
-
-		const rows = screen.getAllByTestId('provider-keys-table-row');
-		expect(rows).toHaveLength(providerKeys.length);
+		await waitFor(() => {
+			const rows = screen.getAllByTestId('provider-keys-table-row');
+			expect(rows).toHaveLength(providerKeys.length);
+		});
 
 		const vendorCells = screen.getAllByTestId('key-provider-name');
 		expect(vendorCells).toHaveLength(providerKeys.length);
@@ -91,13 +91,15 @@ describe('ProjectProviderKeys', () => {
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
 
-		await wait(100);
+		let btn: HTMLButtonElement;
 
-		const btn = screen.getByTestId('new-provider-key-btn');
-		expect(btn).toBeInTheDocument();
-		expect(btn).toBeEnabled();
+		await waitFor(() => {
+			btn = screen.getByTestId('new-provider-key-btn');
+			expect(btn).toBeInTheDocument();
+		});
 
-		fireEvent.click(btn);
+		expect(btn!).toBeEnabled();
+		fireEvent.click(btn!);
 
 		const modal = screen.getByTestId('create-provider-key-modal');
 		expect(modal).toBeInTheDocument();
@@ -113,13 +115,15 @@ describe('ProjectProviderKeys', () => {
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
 
-		await wait(100);
+		let btn: HTMLButtonElement;
 
-		const btn = screen.getByTestId('new-provider-key-btn');
-		expect(btn).toBeInTheDocument();
-		expect(btn).toBeEnabled();
+		await waitFor(() => {
+			btn = screen.getByTestId('new-provider-key-btn');
+			expect(btn).toBeInTheDocument();
+		});
 
-		fireEvent.click(btn);
+		expect(btn!).toBeEnabled();
+		fireEvent.click(btn!);
 
 		const modal = screen.getByTestId('create-provider-key-modal');
 		expect(modal).toBeInTheDocument();
@@ -146,11 +150,14 @@ describe('ProjectProviderKeys', () => {
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
 
-		await wait(100);
+		let btn: HTMLButtonElement;
 
-		const btn = screen.getByTestId('new-provider-key-btn');
-		expect(btn).toBeInTheDocument();
-		expect(btn).toBeDisabled();
+		await waitFor(() => {
+			btn = screen.getByTestId('new-provider-key-btn');
+			expect(btn).toBeInTheDocument();
+		});
+
+		expect(btn!).toBeDisabled();
 	});
 
 	it('allows the user to delete a provider key', async () => {
@@ -164,10 +171,10 @@ describe('ProjectProviderKeys', () => {
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
 
-		await wait(100);
-
-		const rows = screen.getAllByTestId('provider-keys-table-row');
-		expect(rows).toHaveLength(providerKeys.length);
+		await waitFor(() => {
+			const rows = screen.getAllByTestId('provider-keys-table-row');
+			expect(rows).toHaveLength(providerKeys.length);
+		});
 
 		const actions = screen.getAllByTestId('key-actions');
 		expect(actions).toHaveLength(providerKeys.length);
@@ -207,10 +214,10 @@ describe('ProjectProviderKeys', () => {
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
 
-		await wait(100);
-
-		const rows = screen.getAllByTestId('provider-keys-table-row');
-		expect(rows).toHaveLength(providerKeys.length);
+		await waitFor(() => {
+			const rows = screen.getAllByTestId('provider-keys-table-row');
+			expect(rows).toHaveLength(providerKeys.length);
+		});
 
 		const actions = screen.getAllByTestId('key-actions');
 		expect(actions).toHaveLength(providerKeys.length);
@@ -248,10 +255,10 @@ describe('ProjectProviderKeys', () => {
 		const loader = screen.getByTestId('loader');
 		expect(loader).toBeInTheDocument();
 
-		await wait(100);
-
-		const rows = screen.getAllByTestId('provider-keys-table-row');
-		expect(rows).toHaveLength(providerKeys.length);
+		await waitFor(() => {
+			const rows = screen.getAllByTestId('provider-keys-table-row');
+			expect(rows).toHaveLength(providerKeys.length);
+		});
 
 		const actions = screen.getAllByTestId('key-actions');
 		expect(actions).toHaveLength(providerKeys.length);
