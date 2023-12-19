@@ -53,4 +53,5 @@ func GetProviderConnector(provider models.ModelVendor) ProviderConnector {
 	default:
 		panic("Unknown provider")
 	}
+	return nil
 }
