@@ -206,7 +206,6 @@ export default function PromptConfigCreateWizard({
 			);
 		} catch (e) {
 			handleError(e);
-		} finally {
 			setIsLoading(false);
 		}
 	};
@@ -228,7 +227,7 @@ export default function PromptConfigCreateWizard({
 							application={application}
 							userPhotoURL={user?.photoURL}
 						/>
-						<div className="card-divider flex justify-between">
+						<div className="card-divider flex justify-between content-center items-center">
 							<h2 className="card-header">{t('createConfig')}</h2>
 							<ul className="steps z-0">
 								{stepper.map((stage) => (

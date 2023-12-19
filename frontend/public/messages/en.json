@@ -91,6 +91,7 @@
 		"createPromptConfigTitle": "New Model Configuration",
 		"deleteMessage": "Remove Message",
 		"duration": "Duration",
+		"durationTooltip": "Duration: Total time for complete output. Output streams automatically, with the first response occurring almost immediately.",
 		"finishReason": "Finish Reason",
 		"message": "Message",
 		"messageContent": "Message Content",
@@ -133,6 +134,7 @@
 		"skipAndSaveButtonText": "Skip Testing and Save",
 		"testName": "Test Name",
 		"testResults": "Test Results",
+		"totalCost": "Total Cost",
 		"variables": "Variables",
 		"variablesTooltip": "Required test inputs. Please add the values for the template variables.",
 		"wrapVariable": "use '{ '} to wrap a variable"

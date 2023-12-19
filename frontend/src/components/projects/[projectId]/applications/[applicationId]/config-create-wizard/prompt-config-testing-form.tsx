@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { ChevronRight, PlayFill, Record, Repeat } from 'react-bootstrap-icons';
+import { ChevronRight, PlayFill, Record } from 'react-bootstrap-icons';
 
 import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
@@ -103,6 +103,16 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 			templateVariables[variable].length > 0,
 	);
 
+	const renderButtonIcon = () => {
+		if (isRunningTest) {
+			return <span className="loading loading-bars" />;
+		} else if (testFinishReason) {
+			return <Record className="h-6 w-6" />;
+		} else {
+			return <PlayFill className="h-6 w-6" />;
+		}
+	};
+
 	return (
 		<div
 			className="flex flex-col justify-evenly"
@@ -114,36 +124,32 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					messages={messages}
 				/>
 			)}
-			<CardHeaderWithTooltip
-				headerText={t('variables')}
-				tooltipText={t('variablesTooltip')}
-				dataTestId="test-inputs-header"
-			/>
-			<div className="rounded-dark-card">
-				{expectedVariables.length > 0 && (
-					<>
+			{expectedVariables.length && (
+				<>
+					<CardHeaderWithTooltip
+						headerText={t('variables')}
+						tooltipText={t('variablesTooltip')}
+						dataTestId="test-inputs-header"
+					/>
+					<div className="rounded-dark-card">
 						<div className="card-section-divider" />
 						<PromptTestInputs
 							setTemplateVariables={setTemplateVariables}
 							templateVariables={templateVariables}
 							expectedVariables={expectedVariables}
 						/>
-					</>
-				)}
-			</div>
+					</div>
+				</>
+			)}
 			<div className="card-section-divider" />
 			<div className="card-section-divider" />
 			<button
 				disabled={!allExpectedVariablesHaveLength || isRunningTest}
 				data-testid="run-test-button"
-				className="btn  btn-wide btn-primary bg-base-content text-base-100 self-center"
+				className="btn btn-wide btn-primary bg-base-content text-base-100 self-center"
 				onClick={testFinishReason ? resetState : handleRunTest}
 			>
-				{testFinishReason ? (
-					<Repeat className="h-8 w-8" />
-				) : (
-					<PlayFill className="h-8 w-8" />
-				)}
+				{renderButtonIcon()}
 				{t('runTest')}
 			</button>
 			<div className="card-section-divider" />
@@ -156,7 +162,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					testRecord={testRecord}
 				/>
 				<div
-					className="flex flex-col gap-2 pl-4"
+					className="flex gap-2 pl-4 content-center items-center"
 					data-testid="model-response-container"
 				>
 					<ChevronRight className="h-4 w-4" />

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import { useTranslations } from 'next-intl';
 
+import { TooltipIcon } from '@/components/input-label-with-tooltip';
 import {
 	modelTypeToLocaleMap,
 	modelVendorToLocaleMap,
@@ -39,11 +40,28 @@ export function PromptTestResultTable<T extends ModelVendor>({
 						<th>{t('modelVendor')}</th>
 						<th>{t('modelType')}</th>
 						<th>{t('finishReason')}</th>
-						<th>{t('duration')}</th>
-						<th>{t('requestTokens')}</th>
-						<th>{t('requestTokensCost')}</th>
-						<th>{t('responseTokens')}</th>
-						<th>{t('responseTokensCost')}</th>
+						<th>
+							<div className="flex gap-2 content-center justify-center">
+								{t('duration')}{' '}
+								<TooltipIcon
+									dataTestId="durationTooltip"
+									tooltip={t('durationTooltip')}
+								/>
+							</div>
+						</th>
+						<th>{t('totalCost')}</th>
+						<th className="hidden lg:table-cell">
+							{t('requestTokens')}
+						</th>
+						<th className="hidden 2xl:table-cell">
+							{t('requestTokensCost')}
+						</th>
+						<th className="hidden lg:table-cell">
+							{t('responseTokens')}
+						</th>
+						<th className="hidden 2xl:table-cell">
+							{t('responseTokensCost')}
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -58,16 +76,32 @@ export function PromptTestResultTable<T extends ModelVendor>({
 							{testFinishReason || 'N/A'}
 						</td>
 						<td data-testid="test-duration-display">{`${duration} MS`}</td>
-						<td data-testid="test-request-tokens-display">
+						<td data-testid="test-request-total-cost-display">
+							{Number(requestTokensCost) +
+								Number(responseTokensCost)}
+						</td>
+						<td
+							data-testid="test-request-tokens-display"
+							className="hidden lg:table-cell"
+						>
 							{requestTokens}
 						</td>
-						<td data-testid="test-request-tokens-cost-display">
+						<td
+							data-testid="test-request-tokens-cost-display"
+							className="hidden 2xl:table-cell"
+						>
 							{requestTokensCost}
 						</td>
-						<td data-testid="test-response-tokens-display">
+						<td
+							data-testid="test-response-tokens-display"
+							className="hidden lg:table-cell"
+						>
 							{responseTokens}
 						</td>
-						<td data-testid="test-response-tokens-cost-display">
+						<td
+							data-testid="test-response-tokens-cost-display"
+							className="hidden 2xl:table-cell"
+						>
 							{responseTokensCost}
 						</td>
 					</tr>
