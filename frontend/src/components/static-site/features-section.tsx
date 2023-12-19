@@ -37,6 +37,7 @@ export function FeaturesSection() {
 						src="/images/stats-feature.svg"
 						alt="Stats FeatureCard"
 						className="w-full z-10"
+						priority={true}
 					/>
 				</FeatureCard>
 				<FeatureCard

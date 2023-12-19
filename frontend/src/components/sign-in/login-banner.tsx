@@ -6,7 +6,10 @@ export function LoginBanner({ imageSrc }: { imageSrc: string }) {
 	const t = useTranslations('signin');
 
 	return (
-		<div data-testid="login-banner-container" className=" flex px-16 ">
+		<div
+			data-testid="login-banner-container"
+			className="flex px-16 relative"
+		>
 			<Image
 				data-testid="login-banner-splash-image"
 				fill={true}

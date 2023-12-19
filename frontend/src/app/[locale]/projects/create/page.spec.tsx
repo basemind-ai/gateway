@@ -125,9 +125,7 @@ describe('ProjectCreatePage', () => {
 			target: { value: 'test_app' },
 		});
 		fireEvent.click(submitButton);
-		const loadingSpinner = screen.getByTestId(
-			'create-project-loading-spinner',
-		);
+		const loadingSpinner = screen.getByTestId('loading-spinner');
 		expect(loadingSpinner).toBeInTheDocument();
 		await waitFor(() => {
 			expect(loadingSpinner).not.toBeInTheDocument();
