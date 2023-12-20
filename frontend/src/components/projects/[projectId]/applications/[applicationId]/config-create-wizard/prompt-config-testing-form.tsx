@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { ChevronRight, PlayFill, Record } from 'react-bootstrap-icons';
+import { ChevronRight, PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
 import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
@@ -107,7 +107,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 		if (isRunningTest) {
 			return <span className="loading loading-bars" />;
 		} else if (testFinishReason) {
-			return <Record className="h-6 w-6" />;
+			return <Repeat className="h-5 w-5" />;
 		} else {
 			return <PlayFill className="h-6 w-6" />;
 		}
