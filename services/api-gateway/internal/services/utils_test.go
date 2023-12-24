@@ -11,6 +11,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/cryptoutils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/metadata"
@@ -395,7 +396,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			streamServer := &mockGatewayServerStream{Ctx: ctx}
 			var sentMessages []dto.PromptResultDTO
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				sentMessages = append(sentMessages, result)
 				return result, len(sentMessages) == 2
 			}
@@ -424,7 +425,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			streamServer := &mockGatewayServerStream{}
 			var sentMessages []dto.PromptResultDTO
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				sentMessages = append(sentMessages, result)
 				return result, true
 			}
@@ -449,7 +450,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			streamServer := &mockGatewayServerStream{Ctx: ctx}
 			var sentMessages []dto.PromptResultDTO
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				sentMessages = append(sentMessages, result)
 				return result, len(sentMessages) == 2
 			}
@@ -477,7 +478,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			channel := make(chan dto.PromptResultDTO)
 			streamServer := &mockGatewayServerStream{Ctx: ctx}
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				return result, false
 			}
 
@@ -493,7 +494,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			channel := make(chan dto.PromptResultDTO)
 			streamServer := &mockGatewayServerStream{Ctx: ctx}
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				return result, false
 			}
 
@@ -509,7 +510,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			channel := make(chan dto.PromptResultDTO)
 			streamServer := &mockGatewayServerStream{Error: errors.New("failed to send message")}
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				return result, false
 			}
 
@@ -531,7 +532,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			streamServer := &mockGatewayServerStream{}
 			var sentMessages []dto.PromptResultDTO
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				sentMessages = append(sentMessages, result)
 				return result, false
 			}
@@ -558,7 +559,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			streamServer := &mockGatewayServerStream{Ctx: ctx}
 			var sentMessages []dto.PromptResultDTO
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				sentMessages = append(sentMessages, result)
 				return result, len(sentMessages) == 2
 			}
@@ -587,7 +588,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			streamServer := &mockGatewayServerStream{}
 			var sentMessages []dto.PromptResultDTO
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				sentMessages = append(sentMessages, result)
 				return result, true
 			}
@@ -612,7 +613,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			streamServer := &mockGatewayServerStream{}
 			var sentMessages []dto.PromptResultDTO
 
-			messageFactory := func(result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
+			messageFactory := func(_ context.Context, result dto.PromptResultDTO) (dto.PromptResultDTO, bool) {
 				sentMessages = append(sentMessages, result)
 				return result, true
 			}
@@ -634,7 +635,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 	t.Run("TestCreateAPIGatewayStreamMessage", func(t *testing.T) {
 		t.Run("returns valid response object and boolean value", func(t *testing.T) {
 			result := dto.PromptResultDTO{}
-			msg, isFinished := services.CreateAPIGatewayStreamMessage(result)
+			msg, isFinished := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
 			assert.IsType(t, &gateway.StreamingPromptResponse{}, msg)
@@ -645,7 +646,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			result := dto.PromptResultDTO{
 				Error: errors.New("an error occurred"),
 			}
-			msg, _ := services.CreateAPIGatewayStreamMessage(result)
+			msg, _ := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
 			assert.Equal(t, "error", *msg.FinishReason)
@@ -655,7 +656,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			result := dto.PromptResultDTO{
 				RequestRecord: &models.PromptRequestRecord{},
 			}
-			msg, _ := services.CreateAPIGatewayStreamMessage(result)
+			msg, _ := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
 			assert.Equal(t, "done", *msg.FinishReason)
@@ -663,7 +664,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 
 		t.Run("finish reason is nil when request record is nil", func(t *testing.T) {
 			result := dto.PromptResultDTO{}
-			msg, _ := services.CreateAPIGatewayStreamMessage(result)
+			msg, _ := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
 			assert.Nil(t, msg.FinishReason)
@@ -673,10 +674,102 @@ func TestUtils(t *testing.T) { //nolint:revive
 			result := dto.PromptResultDTO{
 				Error: errors.New("an error occurred"),
 			}
-			msg, _ := services.CreateAPIGatewayStreamMessage(result)
+			msg, _ := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
 			assert.Equal(t, "error", *msg.FinishReason)
+		})
+	})
+
+	t.Run("DeductCredit", func(t *testing.T) {
+		t.Run("should deduct credits from project based on request", func(t *testing.T) {
+			credits, err := db.NumericToDecimal(project.Credits)
+			assert.NoError(t, err)
+			assert.Equal(t, credits.String(), "1")
+
+			ctx := context.WithValue(
+				context.Background(),
+				grpcutils.ProjectIDContextKey,
+				project.ID,
+			)
+
+			services.DeductCredit(ctx, promptRequestRecord)
+
+			retrievedProject, retrievalError := db.GetQueries().RetrieveProject(ctx, project.ID)
+			assert.NoError(t, retrievalError)
+
+			retrievedCredits, _ := db.NumericToDecimal(retrievedProject.Credits)
+			assert.Equal(t, retrievedCredits.String(), "0.9999535")
+		})
+	})
+
+	t.Run("CheckProjectCredits", func(t *testing.T) {
+		t.Run("should return nil when project has enough credits", func(t *testing.T) {
+			credits, err := db.NumericToDecimal(project.Credits)
+			assert.NoError(t, err)
+			assert.Equal(t, credits.String(), "1")
+
+			ctx := context.WithValue(
+				context.Background(),
+				grpcutils.ProjectIDContextKey,
+				project.ID,
+			)
+
+			statusErr, retrievalErr := services.CheckProjectCredits(ctx, project.ID)()
+			assert.NoError(t, retrievalErr)
+			assert.Nil(t, statusErr)
+		})
+
+		t.Run("should return error when project has 0 credits", func(t *testing.T) {
+			newProject, _ := factories.CreateProject(context.TODO())
+
+			numeric, err := db.StringToNumeric("-1")
+			assert.NoError(t, err)
+
+			updateErr := db.GetQueries().
+				UpdateProjectCredits(context.TODO(), models.UpdateProjectCreditsParams{
+					ID:      newProject.ID,
+					Credits: *numeric,
+				})
+			assert.NoError(t, updateErr)
+
+			retrievedProject, retrievalErr := db.GetQueries().
+				RetrieveProject(context.Background(), newProject.ID)
+			assert.NoError(t, retrievalErr)
+
+			retrievedCredits, parseErr := db.NumericToDecimal(retrievedProject.Credits)
+			assert.NoError(t, parseErr)
+			assert.Equal(t, retrievedCredits.String(), "0")
+
+			statusErr, retrievalErr := services.CheckProjectCredits(context.TODO(), newProject.ID)()
+			assert.NoError(t, retrievalErr)
+			assert.NotNil(t, statusErr)
+		})
+
+		t.Run("should return error when project has negative credits", func(t *testing.T) {
+			newProject, _ := factories.CreateProject(context.TODO())
+
+			numeric, err := db.StringToNumeric("-1.001")
+			assert.NoError(t, err)
+
+			updateErr := db.GetQueries().
+				UpdateProjectCredits(context.TODO(), models.UpdateProjectCreditsParams{
+					ID:      newProject.ID,
+					Credits: *numeric,
+				})
+			assert.NoError(t, updateErr)
+
+			retrievedProject, retrievalErr := db.GetQueries().
+				RetrieveProject(context.Background(), newProject.ID)
+			assert.NoError(t, retrievalErr)
+
+			retrievedCredits, parseErr := db.NumericToDecimal(retrievedProject.Credits)
+			assert.NoError(t, parseErr)
+			assert.Equal(t, retrievedCredits.String(), "-0.001")
+
+			statusErr, retrievalErr := services.CheckProjectCredits(context.TODO(), newProject.ID)()
+			assert.NoError(t, retrievalErr)
+			assert.NotNil(t, statusErr)
 		})
 	})
 }

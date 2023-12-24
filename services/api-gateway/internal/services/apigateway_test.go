@@ -134,7 +134,7 @@ func TestAPIGatewayService(t *testing.T) {
 				t,
 				db.UUIDToString(&application.ID),
 			)
-
+			mockRedis.ExpectGet(db.UUIDToString(&project.ID)).RedisNil()
 			mockRedis.ExpectGet(db.UUIDToString(&application.ID)).RedisNil()
 
 			_, err := srv.RequestPrompt(createContext(application.ID), &gateway.PromptRequest{})

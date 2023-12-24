@@ -39,6 +39,12 @@ func (PromptTestingServer) TestPrompt(
 		return fmt.Errorf("failed to parse prompt config ID: %w", promptConfigIDParseErr)
 	}
 
+	if insufficientCreditsErr, retrievalErr := CheckProjectCredits(streamServer.Context(), *projectID)(); retrievalErr != nil {
+		return retrievalErr
+	} else if insufficientCreditsErr != nil {
+		return insufficientCreditsErr.Err()
+	}
+
 	modelPricing := RetrieveProviderModelPricing(
 		streamServer.Context(),
 		models.ModelType(request.ModelType),

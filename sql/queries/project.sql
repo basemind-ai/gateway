@@ -83,5 +83,5 @@ WHERE
 
 -- name: UpdateProjectCredits :exec
 UPDATE project
-SET credits = credits - $2
+SET credits = credits + $2
 WHERE id = $1;

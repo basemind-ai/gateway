@@ -40,18 +40,6 @@ func (APIGatewayServer) RequestPrompt(
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
 	}
 
-	if insufficientCreditsErr, retrievalErr := rediscache.With[status.Status](
-		ctx,
-		db.UUIDToString(&projectID),
-		&status.Status{},
-		time.Minute*5,
-		CheckProjectCredits(ctx, projectID),
-	); retrievalErr != nil {
-		return nil, retrievalErr
-	} else if insufficientCreditsErr != nil {
-		return nil, insufficientCreditsErr.Err()
-	}
-
 	cacheKey := db.UUIDToString(&applicationID)
 	if request.PromptConfigId != nil {
 		cacheKey = fmt.Sprintf("%s:%s", db.UUIDToString(&applicationID), *request.PromptConfigId)
@@ -70,6 +58,18 @@ func (APIGatewayServer) RequestPrompt(
 			codes.NotFound,
 			retrievalErr.Error(),
 		)
+	}
+
+	if insufficientCreditsErr, retrievalErr := rediscache.With[status.Status](
+		ctx,
+		db.UUIDToString(&projectID),
+		&status.Status{},
+		time.Minute*5,
+		CheckProjectCredits(ctx, projectID),
+	); retrievalErr != nil {
+		return nil, retrievalErr
+	} else if insufficientCreditsErr != nil {
+		return nil, insufficientCreditsErr.Err()
 	}
 
 	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
@@ -140,6 +140,18 @@ func (APIGatewayServer) RequestStreamingPrompt(
 			codes.NotFound,
 			retrievalErr.Error(),
 		)
+	}
+
+	if insufficientCreditsErr, retrievalErr := rediscache.With[status.Status](
+		streamServer.Context(),
+		db.UUIDToString(&projectID),
+		&status.Status{},
+		time.Minute*5,
+		CheckProjectCredits(streamServer.Context(), projectID),
+	); retrievalErr != nil {
+		return retrievalErr
+	} else if insufficientCreditsErr != nil {
+		return insufficientCreditsErr.Err()
 	}
 
 	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {

@@ -17,6 +17,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
+	"github.com/shopspring/decimal"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -160,7 +161,7 @@ func CheckProjectCredits(
 
 		decimalValue := exc.MustResult(db.NumericToDecimal(project.Credits))
 
-		if !decimalValue.IsPositive() || decimalValue.IsZero() {
+		if decimalValue.IsNegative() || decimalValue.IsZero() {
 			return status.New(
 				codes.ResourceExhausted,
 				ErrorInsufficientCredits,
@@ -311,7 +312,12 @@ func CreateAPIGatewayStreamMessage(
 func DeductCredit(
 	ctx context.Context, requestRecord *models.PromptRequestRecord,
 ) {
-	projectID := ctx.Value(grpcutils.ProjectIDContextKey).(pgtype.UUID)
+	projectID, ok := ctx.Value(grpcutils.ProjectIDContextKey).(pgtype.UUID)
+	if !ok {
+		log.Error().Msg("project id not in context")
+		return
+	}
+
 	totalCost := exc.MustResult(db.NumericToDecimal(requestRecord.RequestTokensCost)).Add(
 		*exc.MustResult(db.NumericToDecimal(requestRecord.ResponseTokensCost)),
 	)
@@ -320,7 +326,7 @@ func DeductCredit(
 		db.GetQueries().
 			UpdateProjectCredits(context.Background(), models.UpdateProjectCreditsParams{
 				ID:      projectID,
-				Credits: *exc.MustResult(db.StringToNumeric(totalCost.String())),
+				Credits: *exc.MustResult(db.StringToNumeric(totalCost.Mul(decimal.NewFromInt(-1)).String())),
 			}),
 	)
 }
