@@ -9,12 +9,15 @@ import {
 	OpenAIPromptResponse,
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
-import { StreamFinishReason } from 'shared/constants';
-import { extractProviderAPIKeyFromMetadata, GrpcError } from 'shared/grpc';
+import { extractProviderAPIKeyFromMetadata } from 'shared/grpc';
 import logger from 'shared/logger';
 
 import { createOrDefaultClient } from '@/client';
-import { createOpenAIRequest, finishReasonMap } from '@/utils';
+import {
+	createInternalGrpcError,
+	createOpenAIRequest,
+	finishReasonMap,
+} from '@/utils';
 
 /**
  * The openAIPrompt function is a gRPC handler function.
@@ -54,8 +57,8 @@ export async function openAIPrompt(
 			totalTokens: usage?.total_tokens ?? 0,
 		} satisfies OpenAIPromptResponse);
 	} catch (error: unknown) {
+		callback(createInternalGrpcError(error as Error), null);
 		logger.error(error as Error, 'error communicating with OpenAI');
-		callback(new GrpcError({ message: (error as Error).message }), null);
 	}
 }
 /**
@@ -102,12 +105,9 @@ export async function openAIStream(
 			'OpenAI streaming request completed',
 		);
 	} catch (error: unknown) {
-		call.write({
-			content: '',
-			finishReason: StreamFinishReason.ERROR,
-		});
+		call.destroy(createInternalGrpcError(error as Error));
 		logger.error(error as Error, 'error communicating with OpenAI');
-	} finally {
-		call.end();
+		return;
 	}
+	call.end();
 }

@@ -13,11 +13,11 @@ import {
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
 import { StreamFinishReason } from 'shared/constants';
-import { GrpcError } from 'shared/grpc';
 import { Mock } from 'vitest';
 
 import { getOpenAIClient } from '@/client';
 import { openAIPrompt, openAIStream } from '@/handlers';
+import { createInternalGrpcError } from '@/utils';
 
 describe('handlers tests', () => {
 	const openAPIKey = (process.env.OPEN_AI_API_KEY =
@@ -186,7 +186,11 @@ describe('handlers tests', () => {
 			});
 
 			expect(callback).toHaveBeenCalledWith(
-				new GrpcError({ message: error.message }),
+				createInternalGrpcError(
+					new Error(
+						'Error: an error has occurred communicating with OpenAI',
+					),
+				),
 				null,
 			);
 		});
@@ -252,6 +256,7 @@ describe('handlers tests', () => {
 			request: OpenAIPromptRequest,
 		): ServerWritableStream<OpenAIPromptRequest, OpenAIStreamResponse> => {
 			return {
+				destroy: vi.fn(),
 				end: vi.fn(),
 				getPath: vi.fn(),
 				metadata: new Metadata(),
@@ -409,18 +414,17 @@ describe('handlers tests', () => {
 					topP: 0.9,
 				},
 			});
-
-			completionsSpy.mockRejectedValueOnce(new Error('test error'));
+			const error = new Error('test error');
+			completionsSpy.mockRejectedValueOnce(error);
 
 			await openAIStream(call);
-			expect((call.write as Mock).mock.calls).toEqual([
-				[
-					{
-						content: '',
-						finishReason: StreamFinishReason.ERROR,
-					},
-				],
-			]);
+			expect(call.destroy as Mock).toHaveBeenCalledWith(
+				createInternalGrpcError(
+					new Error(
+						'Error: an error has occurred communicating with OpenAI',
+					),
+				),
+			);
 		});
 	});
 });

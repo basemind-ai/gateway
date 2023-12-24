@@ -168,7 +168,10 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			'config-create-wizard-continue-button',
 		);
 		expect(continueButton).toBeInTheDocument();
-		expect(continueButton).not.toBeDisabled();
+
+		await waitFor(() => {
+			expect(continueButton).not.toBeDisabled();
+		});
 
 		fireEvent.click(continueButton);
 

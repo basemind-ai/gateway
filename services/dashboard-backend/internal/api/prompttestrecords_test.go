@@ -66,8 +66,8 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 				IsStreamResponse:   true,
 				RequestTokens:      5,
 				ResponseTokens:     20,
-				RequestTokensCost:  *exc.MustResult(db.StringToNumeric("10")),
-				ResponseTokensCost: *exc.MustResult(db.StringToNumeric("50")),
+				RequestTokensCost:  *exc.MustResult(db.StringToNumeric("0.000012")),
+				ResponseTokensCost: *exc.MustResult(db.StringToNumeric("0.000062")),
 				StartTime: pgtype.Timestamptz{
 					Time:  time.Now().Add(-10 * time.Second),
 					Valid: true,

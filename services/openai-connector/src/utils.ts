@@ -1,3 +1,4 @@
+import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
 	OpenAIMessageRole,
 	OpenAIModel,
@@ -9,6 +10,7 @@ import {
 	ChatCompletionMessageParam,
 } from 'openai/src/resources/chat/completions';
 import { StreamFinishReason } from 'shared/constants';
+import { GrpcError } from 'shared/grpc';
 
 const modelMap: Record<
 	OpenAIModel,
@@ -121,4 +123,12 @@ export function createOpenAIRequest(
 		top_p: topP,
 		user: applicationId,
 	};
+}
+
+export function createInternalGrpcError(error: Error) {
+	return new GrpcError({
+		code: Status.INTERNAL,
+		details: error.message,
+		message: 'an error has occurred communicating with OpenAI',
+	});
 }
