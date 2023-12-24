@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
@@ -89,6 +90,7 @@ func (PromptTestingServer) TestPrompt(
 }
 
 func CreatePromptTestingStreamMessage(
+	ctx context.Context,
 	result dto.PromptResultDTO,
 ) (*ptesting.PromptTestingStreamingPromptResponse, bool) {
 	msg := &ptesting.PromptTestingStreamingPromptResponse{}
@@ -103,6 +105,8 @@ func CreatePromptTestingStreamMessage(
 		}
 		promptRequestRecordID := db.UUIDToString(&result.RequestRecord.ID)
 		msg.PromptRequestRecordId = &promptRequestRecordID
+
+		go DeductCredit(ctx, result.RequestRecord)
 	}
 
 	if result.Content != nil {

@@ -12,6 +12,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -146,6 +147,30 @@ func RetrieveRequestConfiguration(
 	}
 }
 
+// CheckProjectCredits checks that the project has sufficient credits.
+func CheckProjectCredits(
+	ctx context.Context,
+	projectID pgtype.UUID,
+) func() (*status.Status, error) {
+	return func() (*status.Status, error) {
+		project, projectQueryErr := db.GetQueries().RetrieveProject(ctx, projectID)
+		if projectQueryErr != nil {
+			return nil, fmt.Errorf("failed to retrieve project - %w", projectQueryErr)
+		}
+
+		decimalValue := exc.MustResult(db.NumericToDecimal(project.Credits))
+
+		if !decimalValue.IsPositive() || decimalValue.IsZero() {
+			return status.New(
+				codes.ResourceExhausted,
+				ErrorInsufficientCredits,
+			), nil
+		}
+
+		return nil, nil
+	}
+}
+
 // CreateProviderAPIKeyContext creates a context with the provider API key.
 // The provider API key is retrieved from the database, decrypted and set in the context.
 // We intentionally use the projectID to cache here - because we need to invalidate the cache if the provider api key is deleted.
@@ -216,12 +241,12 @@ func StreamFromChannel[T any](
 	ctx context.Context,
 	channel chan dto.PromptResultDTO,
 	streamServer grpc.ServerStream,
-	messageFactory func(dto.PromptResultDTO) (T, bool),
+	messageFactory func(context.Context, dto.PromptResultDTO) (T, bool),
 ) error {
 	for {
 		select {
 		case result, isOpen := <-channel:
-			msg, isFinished := messageFactory(result)
+			msg, isFinished := messageFactory(ctx, result)
 
 			if sendErr := streamServer.SendMsg(msg); sendErr != nil {
 				log.Error().Err(sendErr).Msg("failed to send message")
@@ -244,6 +269,7 @@ func StreamFromChannel[T any](
 
 // CreateAPIGatewayStreamMessage creates a stream message for the API Gateway.
 func CreateAPIGatewayStreamMessage(
+	ctx context.Context,
 	result dto.PromptResultDTO,
 ) (*gateway.StreamingPromptResponse, bool) {
 	msg := &gateway.StreamingPromptResponse{}
@@ -251,6 +277,9 @@ func CreateAPIGatewayStreamMessage(
 		reason := "error"
 		msg.FinishReason = &reason
 	}
+
+	isFinished := msg.FinishReason != nil || result.RequestRecord != nil
+
 	if result.RequestRecord != nil {
 		if msg.FinishReason == nil {
 			reason := "done"
@@ -266,11 +295,32 @@ func CreateAPIGatewayStreamMessage(
 		msg.RequestTokens = &requestTokens
 		msg.ResponseTokens = &responseTokens
 		msg.StreamDuration = &streamDuration
+
+		go DeductCredit(ctx, result.RequestRecord)
 	}
 
 	if result.Content != nil {
 		contentCopy := *result.Content
 		msg.Content = contentCopy
 	}
-	return msg, msg.FinishReason != nil
+
+	return msg, isFinished
+}
+
+// DeductCredit deducts the credit from the project.
+func DeductCredit(
+	ctx context.Context, requestRecord *models.PromptRequestRecord,
+) {
+	projectID := ctx.Value(grpcutils.ProjectIDContextKey).(pgtype.UUID)
+	totalCost := exc.MustResult(db.NumericToDecimal(requestRecord.RequestTokensCost)).Add(
+		*exc.MustResult(db.NumericToDecimal(requestRecord.ResponseTokensCost)),
+	)
+
+	exc.LogIfErr(
+		db.GetQueries().
+			UpdateProjectCredits(context.Background(), models.UpdateProjectCreditsParams{
+				ID:      projectID,
+				Credits: *exc.MustResult(db.StringToNumeric(totalCost.String())),
+			}),
+	)
 }

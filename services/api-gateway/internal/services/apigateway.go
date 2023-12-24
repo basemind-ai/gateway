@@ -19,6 +19,7 @@ import (
 const (
 	ErrorApplicationIDNotInContext = "application ID not found in context"
 	ErrorProjectIDNotInContext     = "project ID not found in context"
+	ErrorInsufficientCredits       = "insufficient credits"
 )
 
 type APIGatewayServer struct {
@@ -37,6 +38,18 @@ func (APIGatewayServer) RequestPrompt(
 	applicationID, ok := ctx.Value(grpcutils.ApplicationIDContextKey).(pgtype.UUID)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, ErrorApplicationIDNotInContext)
+	}
+
+	if insufficientCreditsErr, retrievalErr := rediscache.With[status.Status](
+		ctx,
+		db.UUIDToString(&projectID),
+		&status.Status{},
+		time.Minute*5,
+		CheckProjectCredits(ctx, projectID),
+	); retrievalErr != nil {
+		return nil, retrievalErr
+	} else if insufficientCreditsErr != nil {
+		return nil, insufficientCreditsErr.Err()
 	}
 
 	cacheKey := db.UUIDToString(&applicationID)
@@ -85,6 +98,8 @@ func (APIGatewayServer) RequestPrompt(
 		log.Error().Err(promptResult.Error).Msg("error in prompt request")
 		return nil, status.Error(codes.Internal, "error communicating with AI provider")
 	}
+
+	go DeductCredit(ctx, promptResult.RequestRecord)
 
 	return &gateway.PromptResponse{
 		Content:        *promptResult.Content,
