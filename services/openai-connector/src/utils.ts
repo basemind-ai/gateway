@@ -12,14 +12,17 @@ import {
 import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
 
-const modelMap: Record<
-	OpenAIModel,
-	'gpt-4' | 'gpt-4-32k' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k'
-> = {
+type OpenAIModels =
+	| 'gpt-4-0613'
+	| 'gpt-4-32k'
+	| 'gpt-3.5-turbo'
+	| 'gpt-3.5-turbo-16k';
+
+const modelMap: Record<OpenAIModel, OpenAIModels> = {
 	[OpenAIModel.OPEN_AI_MODEL_UNSPECIFIED]: 'gpt-3.5-turbo',
 	[OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_4K]: 'gpt-3.5-turbo',
 	[OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_16K]: 'gpt-3.5-turbo-16k',
-	[OpenAIModel.OPEN_AI_MODEL_GPT4_8K]: 'gpt-4',
+	[OpenAIModel.OPEN_AI_MODEL_GPT4_8K]: 'gpt-4-0613',
 	[OpenAIModel.OPEN_AI_MODEL_GPT4_32K]: 'gpt-4-32k',
 };
 
@@ -56,9 +59,7 @@ export const finishReasonMap: Record<OpenAIFinishReason, StreamFinishReason> = {
  * @param requestModel a member of the OpenAIModel enum
  * @return A string identifier of the OpenAI model to use
  */
-export function getOpenAIModel(
-	requestModel: OpenAIModel,
-): 'gpt-4' | 'gpt-4-32k' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' {
+export function getOpenAIModel(requestModel: OpenAIModel): OpenAIModels {
 	return modelMap[requestModel];
 }
 
