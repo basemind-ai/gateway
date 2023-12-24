@@ -24,10 +24,11 @@ export function PromptTestResultTable<T extends ModelVendor>({
 	const typeLocale = modelTypeToLocaleMap[modelType];
 	const {
 		requestTokens = 0,
-		requestTokensCost = 0,
+		requestTokensCost = '0',
 		responseTokens = 0,
-		responseTokensCost = 0,
+		responseTokensCost = '0',
 		durationMs = 0,
+		totalTokensCost = '0',
 	} = testRecord ?? {};
 
 	const duration = Math.abs(durationMs);
@@ -77,8 +78,7 @@ export function PromptTestResultTable<T extends ModelVendor>({
 						</td>
 						<td data-testid="test-duration-display">{`${duration} MS`}</td>
 						<td data-testid="test-request-total-cost-display">
-							{Number(requestTokensCost) +
-								Number(responseTokensCost)}
+							{totalTokensCost}
 						</td>
 						<td
 							data-testid="test-request-tokens-display"

@@ -76,9 +76,9 @@ export function PromptContentDisplay<T extends ModelVendor>({
 				className="rounded-data-card"
 				data-testid="prompt-content-display-messages"
 			>
-				{messageContent.map((m, i) => (
+				{messageContent.map((msg, i) => (
 					<p data-testid="message-content-paragraph" key={i}>
-						{m}
+						{msg}
 					</p>
 				))}
 			</div>

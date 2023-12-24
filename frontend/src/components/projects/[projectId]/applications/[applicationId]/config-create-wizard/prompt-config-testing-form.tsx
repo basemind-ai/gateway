@@ -124,7 +124,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					messages={messages}
 				/>
 			)}
-			{expectedVariables.length && (
+			{expectedVariables.length > 0 && (
 				<>
 					<CardHeaderWithTooltip
 						headerText={t('variables')}

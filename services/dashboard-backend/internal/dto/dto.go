@@ -132,6 +132,7 @@ type ProviderKeyDTO struct { // skipcq: TCV-001
 type PromptTestRecordDTO struct {
 	ID                     string             `json:"id"`
 	CreatedAt              time.Time          `json:"createdAt"`
+	DurationMs             int32              `json:"durationMs"`
 	ErrorLog               *string            `json:"errorLog,omitempty"`
 	FinishTime             time.Time          `json:"finishTime"`
 	ModelParameters        json.RawMessage    `json:"modelParameters"`
@@ -142,10 +143,10 @@ type PromptTestRecordDTO struct {
 	PromptResponse         string             `json:"promptResponse"`
 	ProviderPromptMessages json.RawMessage    `json:"providerPromptMessages"`
 	RequestTokens          int32              `json:"requestTokens"`
-	ResponseTokens         int32              `json:"responseTokens"`
-	StartTime              time.Time          `json:"startTime"`
-	DurationMs             int32              `json:"durationMs"`
 	RequestTokensCost      decimal.Decimal    `json:"requestTokensCost"`
+	ResponseTokens         int32              `json:"responseTokens"`
 	ResponseTokensCost     decimal.Decimal    `json:"responseTokensCost"`
+	StartTime              time.Time          `json:"startTime"`
+	TotalTokensCost        decimal.Decimal    `json:"totalTokensCost"`
 	UserInput              json.RawMessage    `json:"userInput"`
 }

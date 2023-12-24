@@ -28,6 +28,7 @@ func handleRetrievePromptTestRecords(w http.ResponseWriter, r *http.Request) {
 
 		requestTokensCost := exc.MustResult(db.NumericToDecimal(record.RequestTokensCost))
 		responseTokensCost := exc.MustResult(db.NumericToDecimal(record.ResponseTokensCost))
+		totalTokensCost := requestTokensCost.Add(*responseTokensCost)
 
 		data[i] = &dto.PromptTestRecordDTO{
 			ID:                     db.UUIDToString(ptr.To(record.ID)),
@@ -47,6 +48,7 @@ func handleRetrievePromptTestRecords(w http.ResponseWriter, r *http.Request) {
 			UserInput:              record.VariableValues,
 			RequestTokensCost:      *requestTokensCost,
 			ResponseTokensCost:     *responseTokensCost,
+			TotalTokensCost:        totalTokensCost,
 		}
 	}
 

@@ -90,12 +90,12 @@ export function usePromptTesting<T extends ModelVendor>({
 	useEffect(() => {
 		if (promptTestRecordId) {
 			(async () => {
-				const testRecord = await handleRetrievePromptTestRecordById<T>({
+				const record = await handleRetrievePromptTestRecordById<T>({
 					applicationId,
 					projectId,
 					promptTestRecordId,
 				});
-				setTestRecord(testRecord);
+				setTestRecord(record);
 			})();
 		}
 	}, [promptTestRecordId, applicationId, projectId]);

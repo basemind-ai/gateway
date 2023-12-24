@@ -136,6 +136,30 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 			assert.Empty(t, recordTwo.PromptConfigID)
 		})
 
+		t.Run("sets the totalTokensCost correctly", func(t *testing.T) {
+			response, requestErr := testClient.Get(
+				context.TODO(),
+				listEndpointURL(db.UUIDToString(&application.ID)),
+			)
+			assert.NoError(t, requestErr)
+			assert.Equal(t, http.StatusOK, response.StatusCode)
+
+			data := make([]*dto.PromptTestRecordDTO, 0)
+			deserializationErr := serialization.DeserializeJSON(response.Body, &data)
+			assert.NoError(t, deserializationErr)
+
+			assert.Len(t, data, 2)
+
+			record := data[0]
+			assert.Equal(t, record.ID, db.UUIDToString(&firstPromptTestRecord.ID))
+			assert.Equal(t, record.PromptConfigID, ptr.To(db.UUIDToString(&promptConfig.ID)))
+			assert.Equal(
+				t,
+				record.TotalTokensCost.String(),
+				record.RequestTokensCost.Add(record.ResponseTokensCost).String(),
+			)
+		})
+
 		t.Run("handles an empty list of prompt test records", func(t *testing.T) {
 			newApplication, _ := factories.CreateApplication(context.TODO(), project.ID)
 

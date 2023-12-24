@@ -161,5 +161,6 @@ export interface PromptTestRecord<T extends ModelVendor> {
 	responseTokens: number;
 	responseTokensCost: string;
 	startTime: string;
+	totalTokensCost: string;
 	userInput: Record<string, string>;
 }

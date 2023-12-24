@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import {
 	sendUnaryData,
 	ServerUnaryCall,
@@ -80,13 +81,17 @@ export async function openAIStream(
 	const startTime = Date.now();
 	try {
 		logger.debug('making OpenAI stream request');
+
 		const request = createOpenAIRequest(call.request, true);
 		const stream = await client.chat.completions.create(request);
+
 		for await (const message of stream) {
+			const choice = message.choices[0];
+
 			call.write({
-				content: message.choices[0].delta.content ?? '',
-				finishReason: message.choices[0].finish_reason
-					? finishReasonMap[message.choices[0].finish_reason]
+				content: choice?.delta?.content ?? '',
+				finishReason: choice?.finish_reason
+					? finishReasonMap[choice.finish_reason]
 					: undefined,
 			} satisfies OpenAIStreamResponse);
 		}
