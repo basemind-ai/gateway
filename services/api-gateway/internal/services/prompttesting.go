@@ -12,6 +12,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/codes"
 )
 
 type PromptTestingServer struct {
@@ -41,7 +42,7 @@ func (PromptTestingServer) TestPrompt(
 
 	if insufficientCreditsErr, retrievalErr := CheckProjectCredits(streamServer.Context(), *projectID)(); retrievalErr != nil {
 		return retrievalErr
-	} else if insufficientCreditsErr != nil {
+	} else if insufficientCreditsErr.Code() == codes.ResourceExhausted {
 		return insufficientCreditsErr.Err()
 	}
 

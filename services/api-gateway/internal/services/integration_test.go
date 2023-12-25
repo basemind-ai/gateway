@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"io"
 	"net"
 	"testing"
@@ -132,8 +133,12 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 					RedisNil()
-
 				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), exc.MustResult(cacheClient.Marshal(requestConfigurationDTO)), time.Hour/2).
+					SetVal("OK")
+
+				mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+					RedisNil()
+				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(status.Status{})), time.Minute*5).
 					SetVal("OK")
 
 				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{
@@ -160,6 +165,9 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 					SetVal(string(exc.MustResult(cacheClient.Marshal(requestConfigurationDTO))))
+
+				mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+					SetVal(string(exc.MustResult(cacheClient.Marshal(status.Status{}))))
 
 				mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
 					SetVal(string(exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{
@@ -240,8 +248,12 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 					RedisNil()
-
 				mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+					SetVal("OK")
+
+				mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+					RedisNil()
+				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(status.Status{})), time.Minute*5).
 					SetVal("OK")
 
 				mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(&models.RetrieveProviderKeyRow{

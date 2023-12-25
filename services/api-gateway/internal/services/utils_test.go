@@ -14,7 +14,9 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"testing"
 	"time"
 )
@@ -704,7 +706,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 	})
 
 	t.Run("CheckProjectCredits", func(t *testing.T) {
-		t.Run("should return nil when project has enough credits", func(t *testing.T) {
+		t.Run("should return empty status when project has enough credits", func(t *testing.T) {
 			credits, err := db.NumericToDecimal(project.Credits)
 			assert.NoError(t, err)
 			assert.Equal(t, credits.String(), "1")
@@ -717,34 +719,44 @@ func TestUtils(t *testing.T) { //nolint:revive
 
 			statusErr, retrievalErr := services.CheckProjectCredits(ctx, project.ID)()
 			assert.NoError(t, retrievalErr)
-			assert.Nil(t, statusErr)
+			assert.IsType(t, statusErr, &status.Status{})
+
+			assert.NotEqual(t, statusErr.Code(), codes.ResourceExhausted)
 		})
 
-		t.Run("should return error when project has 0 credits", func(t *testing.T) {
-			newProject, _ := factories.CreateProject(context.TODO())
+		t.Run(
+			"should return status with ResourceExhausted code when project has 0 credits",
+			func(t *testing.T) {
+				newProject, _ := factories.CreateProject(context.TODO())
 
-			numeric, err := db.StringToNumeric("-1")
-			assert.NoError(t, err)
+				numeric, err := db.StringToNumeric("-1")
+				assert.NoError(t, err)
 
-			updateErr := db.GetQueries().
-				UpdateProjectCredits(context.TODO(), models.UpdateProjectCreditsParams{
-					ID:      newProject.ID,
-					Credits: *numeric,
-				})
-			assert.NoError(t, updateErr)
+				updateErr := db.GetQueries().
+					UpdateProjectCredits(context.TODO(), models.UpdateProjectCreditsParams{
+						ID:      newProject.ID,
+						Credits: *numeric,
+					})
+				assert.NoError(t, updateErr)
 
-			retrievedProject, retrievalErr := db.GetQueries().
-				RetrieveProject(context.Background(), newProject.ID)
-			assert.NoError(t, retrievalErr)
+				retrievedProject, retrievalErr := db.GetQueries().
+					RetrieveProject(context.Background(), newProject.ID)
+				assert.NoError(t, retrievalErr)
 
-			retrievedCredits, parseErr := db.NumericToDecimal(retrievedProject.Credits)
-			assert.NoError(t, parseErr)
-			assert.Equal(t, retrievedCredits.String(), "0")
+				retrievedCredits, parseErr := db.NumericToDecimal(retrievedProject.Credits)
+				assert.NoError(t, parseErr)
+				assert.Equal(t, retrievedCredits.String(), "0")
 
-			statusErr, retrievalErr := services.CheckProjectCredits(context.TODO(), newProject.ID)()
-			assert.NoError(t, retrievalErr)
-			assert.NotNil(t, statusErr)
-		})
+				statusErr, retrievalErr := services.CheckProjectCredits(
+					context.TODO(),
+					newProject.ID,
+				)()
+				assert.NoError(t, retrievalErr)
+				assert.IsType(t, statusErr, &status.Status{})
+
+				assert.Equal(t, statusErr.Code(), codes.ResourceExhausted)
+			},
+		)
 
 		t.Run("should return error when project has negative credits", func(t *testing.T) {
 			newProject, _ := factories.CreateProject(context.TODO())
@@ -769,7 +781,9 @@ func TestUtils(t *testing.T) { //nolint:revive
 
 			statusErr, retrievalErr := services.CheckProjectCredits(context.TODO(), newProject.ID)()
 			assert.NoError(t, retrievalErr)
-			assert.NotNil(t, statusErr)
+			assert.IsType(t, statusErr, &status.Status{})
+
+			assert.Equal(t, statusErr.Code(), codes.ResourceExhausted)
 		})
 	})
 }

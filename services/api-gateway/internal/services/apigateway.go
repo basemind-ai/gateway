@@ -68,7 +68,7 @@ func (APIGatewayServer) RequestPrompt(
 		CheckProjectCredits(ctx, projectID),
 	); retrievalErr != nil {
 		return nil, retrievalErr
-	} else if insufficientCreditsErr != nil {
+	} else if insufficientCreditsErr.Code() == codes.ResourceExhausted {
 		return nil, insufficientCreditsErr.Err()
 	}
 
@@ -150,7 +150,7 @@ func (APIGatewayServer) RequestStreamingPrompt(
 		CheckProjectCredits(streamServer.Context(), projectID),
 	); retrievalErr != nil {
 		return retrievalErr
-	} else if insufficientCreditsErr != nil {
+	} else if insufficientCreditsErr.Code() == codes.ResourceExhausted {
 		return insufficientCreditsErr.Err()
 	}
 

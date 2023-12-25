@@ -156,7 +156,7 @@ func CheckProjectCredits(
 	return func() (*status.Status, error) {
 		project, projectQueryErr := db.GetQueries().RetrieveProject(ctx, projectID)
 		if projectQueryErr != nil {
-			return nil, fmt.Errorf("failed to retrieve project - %w", projectQueryErr)
+			return &status.Status{}, fmt.Errorf("failed to retrieve project - %w", projectQueryErr)
 		}
 
 		decimalValue := exc.MustResult(db.NumericToDecimal(project.Credits))
@@ -168,7 +168,7 @@ func CheckProjectCredits(
 			), nil
 		}
 
-		return nil, nil
+		return &status.Status{}, nil
 	}
 }
 

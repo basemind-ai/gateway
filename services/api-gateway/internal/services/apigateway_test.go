@@ -9,6 +9,7 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
@@ -16,6 +17,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 	"testing"
 	"time"
 )
@@ -187,6 +189,16 @@ func TestAPIGatewayService(t *testing.T) {
 			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
 				SetVal("OK")
 
+			mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(status.Status{})), time.Minute*5).
+				SetVal("OK")
+
+			mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&project.ID), expectedCacheValue, time.Minute*5).
+				RedisNil()
+
 			_, err := srv.RequestPrompt(
 				createContext(requestConfigurationDTO.ApplicationID),
 				&gateway.PromptRequest{
@@ -208,6 +220,11 @@ func TestAPIGatewayService(t *testing.T) {
 			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 				RedisNil()
 			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
+			mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(status.Status{})), time.Minute*5).
 				SetVal("OK")
 
 			_, err := srv.RequestPrompt(
@@ -294,6 +311,11 @@ func TestAPIGatewayService(t *testing.T) {
 			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
 				SetVal("OK")
 
+			mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(status.Status{})), time.Minute*5).
+				SetVal("OK")
+
 			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
 				TemplateVariables: map[string]string{"name": "John"},
 			}, mockGatewayServerStream{Ctx: createContext(requestConfigurationDTO.ApplicationID)})
@@ -312,6 +334,11 @@ func TestAPIGatewayService(t *testing.T) {
 			mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
 				RedisNil()
 			mockRedis.ExpectSet(db.UUIDToString(&requestConfigurationDTO.ApplicationID), expectedCacheValue, time.Hour/2).
+				SetVal("OK")
+
+			mockRedis.ExpectGet(db.UUIDToString(&project.ID)).
+				RedisNil()
+			mockRedis.ExpectSet(db.UUIDToString(&project.ID), exc.MustResult(cacheClient.Marshal(status.Status{})), time.Minute*5).
 				SetVal("OK")
 
 			err := srv.RequestStreamingPrompt(&gateway.PromptRequest{
