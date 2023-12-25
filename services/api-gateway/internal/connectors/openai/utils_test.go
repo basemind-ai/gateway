@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
@@ -20,7 +21,7 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 )
 
-func TestUtils(t *testing.T) { //nolint: revive
+func TestUtils(t *testing.T) {
 	_ = factories.CreateProviderPricingModels(context.TODO())
 
 	t.Run("GetModelType", func(t *testing.T) {
@@ -109,6 +110,16 @@ func TestUtils(t *testing.T) { //nolint: revive
 		templateVariables := map[string]string{"userInput": userInput}
 		content := fmt.Sprintf("This is what the user asked for: %s", userInput)
 
+		requestConfig := &dto.RequestConfigurationDTO{
+			ApplicationID: application.ID,
+			PromptConfigData: datatypes.PromptConfigDTO{
+				ModelType:                 modelType,
+				ModelParameters:           modelParameters,
+				ProviderPromptMessages:    promptMessages,
+				ExpectedTemplateVariables: expectedTemplateVariables,
+			},
+		}
+
 		t.Run("creates a prompt request correctly", func(t *testing.T) {
 			expectedPromptRequest := &openaiconnector.OpenAIPromptRequest{
 				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
@@ -127,10 +138,7 @@ func TestUtils(t *testing.T) { //nolint: revive
 			}
 
 			promptRequest, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				modelParameters,
-				promptMessages,
+				requestConfig,
 				templateVariables,
 			)
 			assert.NoError(t, err)
@@ -164,11 +172,11 @@ func TestUtils(t *testing.T) { //nolint: revive
 				},
 			}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			promptRequest, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				modelParameters,
-				ptr.To(json.RawMessage(promptMessages)),
+				&copied,
 				templateVariables,
 			)
 			assert.NoError(t, err)
@@ -182,11 +190,13 @@ func TestUtils(t *testing.T) { //nolint: revive
 			promptMessages := []byte(`[]`)
 			templateVariables := map[string]string{}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = models.ModelType(modelType)
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				models.ModelType(modelType),
-				ptr.To(json.RawMessage(modelParameters)),
-				ptr.To(json.RawMessage(promptMessages)),
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)
@@ -201,11 +211,13 @@ func TestUtils(t *testing.T) { //nolint: revive
 			promptMessages := []byte(`[{"role": "unknown"}]`)
 			templateVariables := map[string]string{}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = modelType
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				ptr.To(json.RawMessage(modelParameters)),
-				ptr.To(json.RawMessage(promptMessages)),
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)
@@ -217,11 +229,13 @@ func TestUtils(t *testing.T) { //nolint: revive
 			promptMessages := []byte(`[]`)
 			templateVariables := make(map[string]string)
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = modelType
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				ptr.To(json.RawMessage(modelParameters)),
-				ptr.To(json.RawMessage(promptMessages)),
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)
@@ -235,11 +249,13 @@ func TestUtils(t *testing.T) { //nolint: revive
 				"userInput": "Please write me a short poem about cheese.",
 			}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = modelType
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				ptr.To(json.RawMessage(modelParameters)),
-				ptr.To(json.RawMessage(promptMessages)),
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)

@@ -19,7 +19,7 @@ func TestApplicationRepository(t *testing.T) {
 	redisDB, redisMock := testutils.CreateMockRedisClient(t)
 
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 	_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 	fromDate := time.Now().AddDate(0, 0, -1)
 	toDate := fromDate.AddDate(0, 0, 2)
@@ -33,7 +33,10 @@ func TestApplicationRepository(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, applicationToDelete.ID, value.ID)
 
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), applicationToDelete.ID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(
+				context.TODO(),
+				applicationToDelete.ID,
+			)
 			promptConfigValue, err := db.
 				GetQueries().
 				RetrievePromptConfig(context.TODO(), promptConfig.ID)
@@ -68,7 +71,7 @@ func TestApplicationRepository(t *testing.T) {
 
 		t.Run("invalidates application caches", func(t *testing.T) {
 			applicationToDelete, _ := factories.CreateApplication(context.TODO(), project.ID)
-			defaultPromptConfig, _ := factories.CreatePromptConfig(
+			defaultPromptConfig, _ := factories.CreateOpenAIPromptConfig(
 				context.TODO(),
 				applicationToDelete.ID,
 			)

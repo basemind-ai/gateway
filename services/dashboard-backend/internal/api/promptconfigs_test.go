@@ -832,7 +832,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			applicationID := createApplication(t, projectID)
 
 			uuidID, _ := db.StringToUUID(applicationID)
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), *uuidID)
 			promptConfigID := db.UUIDToString(&promptConfig.ID)
 
 			response, requestErr := testClient.Patch(
@@ -850,7 +850,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				applicationID := createApplication(t, projectID)
 
 				uuidID, _ := db.StringToUUID(applicationID)
-				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)
+				promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), *uuidID)
 				promptConfigID := db.UUIDToString(&promptConfig.ID)
 
 				response, requestErr := testClient.Patch(
@@ -1220,7 +1220,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			applicationID := createApplication(t, projectID)
 
 			uuidID, _ := db.StringToUUID(applicationID)
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), *uuidID)
 			promptConfigID := db.UUIDToString(&promptConfig.ID)
 
 			name := "new name"
@@ -1240,7 +1240,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				applicationID := createApplication(t, projectID)
 
 				uuidID, _ := db.StringToUUID(applicationID)
-				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)
+				promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), *uuidID)
 				promptConfigID := db.UUIDToString(&promptConfig.ID)
 
 				name := "new name"
@@ -1441,7 +1441,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 			applicationID := createApplication(t, projectID)
 
 			uuidID, _ := db.StringToUUID(applicationID)
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), *uuidID)
 			promptConfigID := db.UUIDToString(&promptConfig.ID)
 
 			response, requestErr := testClient.Delete(
@@ -1458,7 +1458,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 				applicationID := createApplication(t, projectID)
 
 				uuidID, _ := db.StringToUUID(applicationID)
-				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)
+				promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), *uuidID)
 				promptConfigID := db.UUIDToString(&promptConfig.ID)
 
 				response, requestErr := testClient.Delete(

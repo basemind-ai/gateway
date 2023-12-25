@@ -3,7 +3,7 @@ package cohere_test
 import (
 	"context"
 	cohereconnector "github.com/basemind-ai/monorepo/gen/go/cohere/v1"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/cohere"
 	"github.com/basemind-ai/monorepo/shared/go/testutils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func CreateClientAndService(t *testing.T) (*openai.Client, *testutils.MockCohereService) {
+func CreateClientAndService(t *testing.T) (*cohere.Client, *testutils.MockCohereService) {
 	t.Helper()
 	mockService := &testutils.MockCohereService{T: t}
 	listener := testutils.CreateTestGRPCServer[cohereconnector.CohereServiceServer](
@@ -25,7 +25,7 @@ func CreateClientAndService(t *testing.T) (*openai.Client, *testutils.MockCohere
 		cohereconnector.RegisterCohereServiceServer,
 		mockService,
 	)
-	client := openai.New(
+	client := cohere.New(
 		"",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(

@@ -31,7 +31,7 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 
 	testClient := createTestClient(t, userAccount)
 
-	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 	firstPromptRequestRecord, _ := factories.CreatePromptRequestRecord(
 		context.TODO(),
 		promptConfig.ID,

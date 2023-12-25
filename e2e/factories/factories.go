@@ -99,7 +99,7 @@ func CreateApplication(ctx context.Context, projectID pgtype.UUID) (*models.Appl
 	return &application, nil
 }
 
-func CreatePromptConfig(
+func CreateOpenAIPromptConfig(
 	ctx context.Context,
 	applicationID pgtype.UUID,
 ) (*models.PromptConfig, error) {
@@ -107,7 +107,7 @@ func CreatePromptConfig(
 	userMessage := "This is what the user asked for: {userInput}"
 	templateVariables := []string{"userInput"}
 
-	modelParams := CreateModelParameters()
+	modelParameters := CreateModelParameters()
 
 	promptMessages := CreateOpenAIPromptMessages(
 		systemMessage,
@@ -119,12 +119,50 @@ func CreatePromptConfig(
 		CreatePromptConfig(ctx, models.CreatePromptConfigParams{
 			ModelType:                 models.ModelTypeGpt35Turbo,
 			ModelVendor:               models.ModelVendorOPENAI,
-			ModelParameters:           *modelParams,
+			ModelParameters:           *modelParameters,
 			ProviderPromptMessages:    *promptMessages,
 			ExpectedTemplateVariables: []string{"userInput"},
 			IsDefault:                 true,
 			ApplicationID:             applicationID,
 		})
+	if promptConfigCreateErr != nil {
+		return nil, promptConfigCreateErr
+	}
+
+	return &promptConfig, nil
+}
+
+func CreateCoherePromptConfig(
+	ctx context.Context,
+	applicationID pgtype.UUID,
+) (*models.PromptConfig, error) {
+	userMessage := "This is what the user asked for: {userInput}"
+	templateVariables := []string{"userInput"}
+
+	modelParameters := ptr.To(
+		json.RawMessage(serialization.SerializeJSON(datatypes.CohereModelParametersDTO{
+			Temperature: ptr.To(float32(1)),
+		})),
+	)
+
+	promptMessages := ptr.To(
+		json.RawMessage(serialization.SerializeJSON(datatypes.CoherePromptMessageDTO{
+			Content:           userMessage,
+			TemplateVariables: &templateVariables,
+		})),
+	)
+
+	promptConfig, promptConfigCreateErr := db.GetQueries().
+		CreatePromptConfig(ctx, models.CreatePromptConfigParams{
+			ModelType:                 models.ModelTypeCommand,
+			ModelVendor:               models.ModelVendorCOHERE,
+			ModelParameters:           *modelParameters,
+			ProviderPromptMessages:    *promptMessages,
+			ExpectedTemplateVariables: []string{"userInput"},
+			IsDefault:                 true,
+			ApplicationID:             applicationID,
+		})
+
 	if promptConfigCreateErr != nil {
 		return nil, promptConfigCreateErr
 	}
@@ -182,28 +220,66 @@ func CreateProviderPricingModels(
 ) error {
 	for _, modelType := range []struct {
 		ModelType        models.ModelType
+		ModelVendor      models.ModelVendor
 		InputTokenPrice  string
 		OutputTokenPrice string
+		TokenUnitSize    int
 	}{
 		{
 			ModelType:        models.ModelTypeGpt35Turbo,
+			ModelVendor:      models.ModelVendorOPENAI,
 			InputTokenPrice:  "0.0015",
 			OutputTokenPrice: "0.002",
+			TokenUnitSize:    1_000,
 		},
 		{
 			ModelType:        models.ModelTypeGpt35Turbo16k,
+			ModelVendor:      models.ModelVendorOPENAI,
 			InputTokenPrice:  "0.003",
 			OutputTokenPrice: "0.004",
+			TokenUnitSize:    1_000,
 		},
 		{
 			ModelType:        models.ModelTypeGpt4,
+			ModelVendor:      models.ModelVendorOPENAI,
 			InputTokenPrice:  "0.03",
 			OutputTokenPrice: "0.006",
+			TokenUnitSize:    1_000,
 		},
 		{
 			ModelType:        models.ModelTypeGpt432k,
+			ModelVendor:      models.ModelVendorOPENAI,
 			InputTokenPrice:  "0.06",
 			OutputTokenPrice: "0.012",
+			TokenUnitSize:    1_000,
+		},
+		{
+			ModelType:        models.ModelTypeCommand,
+			ModelVendor:      models.ModelVendorCOHERE,
+			InputTokenPrice:  "1.00",
+			OutputTokenPrice: "2.00",
+			TokenUnitSize:    1_000_000,
+		},
+		{
+			ModelType:        models.ModelTypeCommandNightly,
+			ModelVendor:      models.ModelVendorCOHERE,
+			InputTokenPrice:  "1.00",
+			OutputTokenPrice: "2.00",
+			TokenUnitSize:    1_000_000,
+		},
+		{
+			ModelType:        models.ModelTypeCommandLight,
+			ModelVendor:      models.ModelVendorCOHERE,
+			InputTokenPrice:  "0.30",
+			OutputTokenPrice: "0.60",
+			TokenUnitSize:    1_000_000,
+		},
+		{
+			ModelType:        models.ModelTypeCommandLightNightly,
+			ModelVendor:      models.ModelVendorCOHERE,
+			InputTokenPrice:  "0.30",
+			OutputTokenPrice: "0.60",
+			TokenUnitSize:    1_000_000,
 		},
 	} {
 		input, _ := db.StringToNumeric(modelType.InputTokenPrice)
@@ -212,11 +288,11 @@ func CreateProviderPricingModels(
 		_, err := db.GetQueries().
 			CreateProviderModelPricing(ctx, models.CreateProviderModelPricingParams{
 				ModelType:        modelType.ModelType,
-				ModelVendor:      models.ModelVendorOPENAI,
+				ModelVendor:      modelType.ModelVendor,
 				InputTokenPrice:  *input,
 				OutputTokenPrice: *output,
 				ActiveFromDate:   pgtype.Date{Time: time.Now(), Valid: true},
-				TokenUnitSize:    1000,
+				TokenUnitSize:    int32(modelType.TokenUnitSize),
 			})
 
 		if err != nil {

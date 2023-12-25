@@ -19,7 +19,7 @@ func TestRequestPrompt(t *testing.T) {
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-	promptConfig, _ := factories.CreatePromptConfig(
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(
 		context.TODO(),
 		application.ID,
 	)

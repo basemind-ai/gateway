@@ -1,10 +1,10 @@
-package openai_test
+package cohere_test
 
 import (
 	"context"
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
+	cohereconnector "github.com/basemind-ai/monorepo/gen/go/cohere/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
@@ -16,9 +16,10 @@ import (
 
 func TestRequestStream(t *testing.T) {
 	_ = factories.CreateProviderPricingModels(context.TODO())
+
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	promptConfig, _ := factories.CreateOpenAIPromptConfig(
+	promptConfig, _ := factories.CreateCoherePromptConfig(
 		context.TODO(),
 		application.ID,
 	)
@@ -54,10 +55,13 @@ func TestRequestStream(t *testing.T) {
 		channel := make(chan dto.PromptResultDTO)
 
 		finishReason := "done"
-		mockService.Stream = []*openaiconnector.OpenAIStreamResponse{
-			{Content: "1"},
-			{Content: "2"},
-			{Content: "3", FinishReason: &finishReason},
+		one := "1"
+		two := "2"
+		three := "3"
+		mockService.Stream = []*cohereconnector.CohereStreamResponse{
+			{Content: &one},
+			{Content: &two},
+			{Content: &three, FinishReason: &finishReason},
 		}
 
 		go func() {

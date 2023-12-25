@@ -72,7 +72,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 		})
 		t.Run("does not set default to true if default already exists", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			_, _ = factories.CreatePromptConfig(context.TODO(), application.ID)
+			_, _ = factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
@@ -111,7 +111,10 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 		t.Run("returns error if prompt config name collides", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			existingPromptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+			existingPromptConfig, _ := factories.CreateOpenAIPromptConfig(
+				context.TODO(),
+				application.ID,
+			)
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   existingPromptConfig.Name,
@@ -133,7 +136,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 	t.Run("UpdateApplicationDefaultPromptConfig", func(t *testing.T) {
 		t.Run("updates application default prompt config", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			_, _ = factories.CreatePromptConfig(context.TODO(), application.ID)
+			_, _ = factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
@@ -167,7 +170,10 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 		t.Run("invalidates prompt-config caches", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			defaultPromptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+			defaultPromptConfig, _ := factories.CreateOpenAIPromptConfig(
+				context.TODO(),
+				application.ID,
+			)
 
 			createPromptConfigDTO := dto.PromptConfigCreateDTO{
 				Name:                   "test",
@@ -213,7 +219,10 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			"returns error if fails to retrieve the default prompt config",
 			func(t *testing.T) {
 				application, _ := factories.CreateApplication(context.TODO(), project.ID)
-				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+				promptConfig, _ := factories.CreateOpenAIPromptConfig(
+					context.TODO(),
+					application.ID,
+				)
 
 				_ = db.GetQueries().DeletePromptConfig(context.TODO(), promptConfig.ID)
 
@@ -230,7 +239,10 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			"returns error if the passed in promptConfigID is for the app default",
 			func(t *testing.T) {
 				application, _ := factories.CreateApplication(context.TODO(), project.ID)
-				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+				promptConfig, _ := factories.CreateOpenAIPromptConfig(
+					context.TODO(),
+					application.ID,
+				)
 
 				err := repositories.UpdateApplicationDefaultPromptConfig(
 					context.TODO(),
@@ -278,7 +290,10 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			for _, testCase := range testCases {
 				t.Run(testCase.Name, func(t *testing.T) {
 					application, _ := factories.CreateApplication(context.TODO(), project.ID)
-					promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+					promptConfig, _ := factories.CreateOpenAIPromptConfig(
+						context.TODO(),
+						application.ID,
+					)
 
 					updatedPromptConfig, err := repositories.UpdatePromptConfig(
 						context.TODO(),
@@ -317,7 +332,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 		t.Run("invalidates prompt-config caches", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 
 			applicationID := db.UUIDToString(&application.ID)
 
@@ -347,7 +362,10 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 			"returns error if fails to retrieve the default prompt config",
 			func(t *testing.T) {
 				application, _ := factories.CreateApplication(context.TODO(), project.ID)
-				promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+				promptConfig, _ := factories.CreateOpenAIPromptConfig(
+					context.TODO(),
+					application.ID,
+				)
 
 				_ = db.GetQueries().DeletePromptConfig(context.TODO(), promptConfig.ID)
 
@@ -362,7 +380,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 		t.Run("returns error if failed to retrieve prompt config", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 
 			_ = db.GetQueries().DeletePromptConfig(context.TODO(), promptConfig.ID)
 
@@ -376,7 +394,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 		t.Run("returns error if failed to parse prompt messages", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 
 			badMessage := ptr.To(json.RawMessage("invalid"))
 			_, err := repositories.UpdatePromptConfig(
@@ -389,7 +407,10 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 
 		t.Run("returns error when prompt config name collides", func(t *testing.T) {
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			existingPromptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+			existingPromptConfig, _ := factories.CreateOpenAIPromptConfig(
+				context.TODO(),
+				application.ID,
+			)
 
 			promptConfig, _ := db.GetQueries().
 				CreatePromptConfig(context.TODO(), models.CreatePromptConfigParams{
@@ -416,7 +437,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 		t.Run("deletes a prompt config", func(t *testing.T) {
 			project, _ := factories.CreateProject(context.TODO())
 			application, _ := factories.CreateApplication(context.TODO(), project.ID)
-			promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+			promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 
 			repositories.DeletePromptConfig(context.TODO(), application.ID, promptConfig.ID)
 
@@ -428,7 +449,7 @@ func TestPromptConfigRepository(t *testing.T) { //nolint: revive
 	t.Run("Prompt Config Analytics", func(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
-		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+		promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 		_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)

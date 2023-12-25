@@ -65,7 +65,7 @@ func TestPromptTestingService(t *testing.T) {
 	promptMessages := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
 	project, _ := factories.CreateProject(context.Background())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	promptConfig, _ := factories.CreatePromptConfig(context.Background(), application.ID)
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(context.Background(), application.ID)
 
 	invalidUUID := "invalid-uuid"
 	promptConfigID := db.UUIDToString(&promptConfig.ID)
