@@ -66,15 +66,11 @@ func (PromptTestingServer) TestPrompt(
 		ProviderModelPricing: modelPricing,
 	}
 
-	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+	providerKeyContext := CreateProviderAPIKeyContext(
 		streamServer.Context(),
 		*projectID,
 		requestConfigurationDTO.PromptConfigData.ModelVendor,
 	)
-	if providerKeyErr != nil {
-		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
-		return providerKeyErr
-	}
 
 	log.Debug().
 		Interface("requestConfigurationDTO", requestConfigurationDTO).

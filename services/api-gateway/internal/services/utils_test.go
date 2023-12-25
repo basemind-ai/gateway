@@ -265,12 +265,11 @@ func TestUtils(t *testing.T) { //nolint:revive
 				mockRedis.ExpectSet(db.UUIDToString(&project.ID), expectedCachedValue, time.Hour/2).
 					SetVal("OK")
 
-				updatedContext, err := services.CreateProviderAPIKeyContext(
+				updatedContext := services.CreateProviderAPIKeyContext(
 					context.TODO(),
 					project.ID,
 					modelProvider,
 				)
-				assert.NoError(t, err)
 
 				md, ok := metadata.FromOutgoingContext(updatedContext)
 				assert.True(t, ok)
@@ -311,12 +310,11 @@ func TestUtils(t *testing.T) { //nolint:revive
 
 			mockRedis.ExpectGet(db.UUIDToString(&newProject.ID)).SetVal(string(expectedCachedValue))
 
-			updatedContext, err := services.CreateProviderAPIKeyContext(
+			updatedContext := services.CreateProviderAPIKeyContext(
 				context.TODO(),
 				newProject.ID,
 				modelProvider,
 			)
-			assert.NoError(t, err)
 
 			md, ok := metadata.FromOutgoingContext(updatedContext)
 			assert.True(t, ok)
@@ -330,12 +328,14 @@ func TestUtils(t *testing.T) { //nolint:revive
 		t.Run("handles error when retrieving provider key", func(t *testing.T) {
 			newProject, _ := factories.CreateProject(context.TODO())
 
-			_, err := services.CreateProviderAPIKeyContext(
+			ctx := services.CreateProviderAPIKeyContext(
 				context.TODO(),
 				newProject.ID,
 				models.ModelVendorOPENAI,
 			)
-			assert.Error(t, err)
+
+			_, ok := metadata.FromOutgoingContext(ctx)
+			assert.False(t, ok)
 		})
 	})
 

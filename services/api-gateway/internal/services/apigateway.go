@@ -77,15 +77,11 @@ func (APIGatewayServer) RequestPrompt(
 		return nil, validationError
 	}
 
-	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+	providerKeyContext := CreateProviderAPIKeyContext(
 		ctx,
 		projectID,
 		requestConfigurationDTO.PromptConfigData.ModelVendor,
 	)
-	if providerKeyErr != nil {
-		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
-		return nil, providerKeyErr
-	}
 
 	promptResult := connectors.GetProviderConnector(requestConfigurationDTO.PromptConfigData.ModelVendor).
 		RequestPrompt(
@@ -159,15 +155,11 @@ func (APIGatewayServer) RequestStreamingPrompt(
 		return validationError
 	}
 
-	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+	providerKeyContext := CreateProviderAPIKeyContext(
 		streamServer.Context(),
 		projectID,
 		requestConfigurationDTO.PromptConfigData.ModelVendor,
 	)
-	if providerKeyErr != nil {
-		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
-		return providerKeyErr
-	}
 
 	channel := make(chan dto.PromptResultDTO)
 

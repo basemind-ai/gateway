@@ -179,7 +179,7 @@ func CreateProviderAPIKeyContext(
 	ctx context.Context,
 	projectID pgtype.UUID,
 	modelVendor models.ModelVendor,
-) (context.Context, error) {
+) context.Context {
 	providerKey, providerKeyRetrievalErr := rediscache.With[models.RetrieveProviderKeyRow](
 		ctx,
 		db.UUIDToString(&projectID),
@@ -197,17 +197,15 @@ func CreateProviderAPIKeyContext(
 		},
 	)
 	if providerKeyRetrievalErr != nil {
-		log.Error().Err(providerKeyRetrievalErr).Msg("error retrieving provider key from redis")
-		return nil, status.Error(
-			codes.PermissionDenied,
-			"missing provider API-key",
-		)
+		log.Debug().Err(providerKeyRetrievalErr).Msg("provider key is not set")
+		return ctx
 	}
 
 	decryptedKey := cryptoutils.Decrypt(providerKey.EncryptedApiKey, config.Get(ctx).CryptoPassKey)
+
 	// we append the encrypted provider key to the outgoing context
 	// it will be retrieved by the connector.
-	return metadata.AppendToOutgoingContext(ctx, "X-API-Key", decryptedKey), nil
+	return metadata.AppendToOutgoingContext(ctx, "X-API-Key", decryptedKey)
 }
 
 // ValidateExpectedVariables validates that the expected template variables are present in the request.

@@ -62,7 +62,7 @@ func With[T any](
 
 	retrieved, retrieveErr := fallback()
 	if retrieveErr != nil {
-		return nil, fmt.Errorf("failed to retrieve value from Redis: %w", retrieveErr)
+		return nil, fmt.Errorf("failed to retrieve value from database: %w", retrieveErr)
 	}
 
 	if setErr := client.Set(&cache.Item{
