@@ -24,6 +24,7 @@ CREATE TABLE project
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(255) NOT NULL,
     description text NOT NULL,
+    credits decimal NOT NULL DEFAULT 1.0,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     deleted_at timestamptz NULL

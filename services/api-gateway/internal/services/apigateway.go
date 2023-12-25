@@ -19,6 +19,7 @@ import (
 const (
 	ErrorApplicationIDNotInContext = "application ID not found in context"
 	ErrorProjectIDNotInContext     = "project ID not found in context"
+	ErrorInsufficientCredits       = "insufficient credits"
 )
 
 type APIGatewayServer struct {
@@ -59,20 +60,28 @@ func (APIGatewayServer) RequestPrompt(
 		)
 	}
 
+	if insufficientCreditsErr, retrievalErr := rediscache.With[status.Status](
+		ctx,
+		db.UUIDToString(&projectID),
+		&status.Status{},
+		time.Minute*5,
+		CheckProjectCredits(ctx, projectID),
+	); retrievalErr != nil {
+		return nil, retrievalErr
+	} else if insufficientCreditsErr.Code() == codes.ResourceExhausted {
+		return nil, insufficientCreditsErr.Err()
+	}
+
 	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
 		// the validation error is already a grpc status error
 		return nil, validationError
 	}
 
-	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+	providerKeyContext := CreateProviderAPIKeyContext(
 		ctx,
 		projectID,
 		requestConfigurationDTO.PromptConfigData.ModelVendor,
 	)
-	if providerKeyErr != nil {
-		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
-		return nil, providerKeyErr
-	}
 
 	promptResult := connectors.GetProviderConnector(requestConfigurationDTO.PromptConfigData.ModelVendor).
 		RequestPrompt(
@@ -85,6 +94,8 @@ func (APIGatewayServer) RequestPrompt(
 		log.Error().Err(promptResult.Error).Msg("error in prompt request")
 		return nil, status.Error(codes.Internal, "error communicating with AI provider")
 	}
+
+	go DeductCredit(ctx, promptResult.RequestRecord)
 
 	return &gateway.PromptResponse{
 		Content:        *promptResult.Content,
@@ -127,20 +138,28 @@ func (APIGatewayServer) RequestStreamingPrompt(
 		)
 	}
 
+	if insufficientCreditsErr, retrievalErr := rediscache.With[status.Status](
+		streamServer.Context(),
+		db.UUIDToString(&projectID),
+		&status.Status{},
+		time.Minute*5,
+		CheckProjectCredits(streamServer.Context(), projectID),
+	); retrievalErr != nil {
+		return retrievalErr
+	} else if insufficientCreditsErr.Code() == codes.ResourceExhausted {
+		return insufficientCreditsErr.Err()
+	}
+
 	if validationError := ValidateExpectedVariables(request.TemplateVariables, requestConfigurationDTO.PromptConfigData.ExpectedTemplateVariables); validationError != nil {
 		// the validation error is already a grpc status error
 		return validationError
 	}
 
-	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+	providerKeyContext := CreateProviderAPIKeyContext(
 		streamServer.Context(),
 		projectID,
 		requestConfigurationDTO.PromptConfigData.ModelVendor,
 	)
-	if providerKeyErr != nil {
-		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
-		return providerKeyErr
-	}
 
 	channel := make(chan dto.PromptResultDTO)
 

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/gen/go/ptesting/v1"
@@ -11,6 +12,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/codes"
 )
 
 type PromptTestingServer struct {
@@ -38,6 +40,12 @@ func (PromptTestingServer) TestPrompt(
 		return fmt.Errorf("failed to parse prompt config ID: %w", promptConfigIDParseErr)
 	}
 
+	if insufficientCreditsErr, retrievalErr := CheckProjectCredits(streamServer.Context(), *projectID)(); retrievalErr != nil {
+		return retrievalErr
+	} else if insufficientCreditsErr.Code() == codes.ResourceExhausted {
+		return insufficientCreditsErr.Err()
+	}
+
 	modelPricing := RetrieveProviderModelPricing(
 		streamServer.Context(),
 		models.ModelType(request.ModelType),
@@ -58,15 +66,11 @@ func (PromptTestingServer) TestPrompt(
 		ProviderModelPricing: modelPricing,
 	}
 
-	providerKeyContext, providerKeyErr := CreateProviderAPIKeyContext(
+	providerKeyContext := CreateProviderAPIKeyContext(
 		streamServer.Context(),
 		*projectID,
 		requestConfigurationDTO.PromptConfigData.ModelVendor,
 	)
-	if providerKeyErr != nil {
-		log.Error().Err(providerKeyErr).Msg("error creating provider api key context")
-		return providerKeyErr
-	}
 
 	log.Debug().
 		Interface("requestConfigurationDTO", requestConfigurationDTO).
@@ -89,6 +93,7 @@ func (PromptTestingServer) TestPrompt(
 }
 
 func CreatePromptTestingStreamMessage(
+	ctx context.Context,
 	result dto.PromptResultDTO,
 ) (*ptesting.PromptTestingStreamingPromptResponse, bool) {
 	msg := &ptesting.PromptTestingStreamingPromptResponse{}
@@ -103,6 +108,8 @@ func CreatePromptTestingStreamMessage(
 		}
 		promptRequestRecordID := db.UUIDToString(&result.RequestRecord.ID)
 		msg.PromptRequestRecordId = &promptRequestRecordID
+
+		go DeductCredit(ctx, result.RequestRecord)
 	}
 
 	if result.Content != nil {

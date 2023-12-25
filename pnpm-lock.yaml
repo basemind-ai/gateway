@@ -56,8 +56,8 @@ importers:
                 specifier: ^3.6.1
                 version: 3.6.1(@typescript-eslint/parser@6.15.0)(eslint-plugin-import@2.29.1)(eslint@8.56.0)
             eslint-plugin-vitest:
-                specifier: ^0.3.18
-                version: 0.3.18(@typescript-eslint/eslint-plugin@6.15.0)(eslint@8.56.0)(typescript@5.3.3)(vitest@1.1.0)
+                specifier: ^0.3.20
+                version: 0.3.20(@typescript-eslint/eslint-plugin@6.15.0)(eslint@8.56.0)(typescript@5.3.3)(vitest@1.1.0)
             fork-ts-checker-webpack-plugin:
                 specifier: ^9.0.2
                 version: 9.0.2(typescript@5.3.3)(webpack@5.89.0)
@@ -222,8 +222,8 @@ importers:
                 specifier: ^10.4.16
                 version: 10.4.16(postcss@8.4.32)
             daisyui:
-                specifier: ^4.4.23
-                version: 4.4.23(postcss@8.4.32)
+                specifier: ^4.4.24
+                version: 4.4.24(postcss@8.4.32)
             jsdom:
                 specifier: ^23.0.1
                 version: 23.0.1
@@ -7806,10 +7806,10 @@ packages:
         engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
         dev: true
 
-    /daisyui@4.4.23(postcss@8.4.32):
+    /daisyui@4.4.24(postcss@8.4.32):
         resolution:
             {
-                integrity: sha512-IFQRGoGoAke8chxPcDqQJFldVVd51JL7b4mRA3LqsLexW/6xicZzz9X3GXdGdnYsu8QPxZN4uzQZ5fwRNYXOSg==,
+                integrity: sha512-u/B3484J08V7N0rIYymnC+SyxOjlYQL+2vyhHWV+/KC+VaUcbEF2Z3H06eCPgdTiZ0J+ml44aH7wBhIymPFQ+g==,
             }
         engines: { node: '>=16.9.0' }
         dependencies:
@@ -8910,10 +8910,10 @@ packages:
             eslint-rule-composer: 0.3.0
         dev: true
 
-    /eslint-plugin-vitest@0.3.18(@typescript-eslint/eslint-plugin@6.15.0)(eslint@8.56.0)(typescript@5.3.3)(vitest@1.1.0):
+    /eslint-plugin-vitest@0.3.20(@typescript-eslint/eslint-plugin@6.15.0)(eslint@8.56.0)(typescript@5.3.3)(vitest@1.1.0):
         resolution:
             {
-                integrity: sha512-IJzs6BpA//wkNxo5845uPIMOIp4j76MiKiagJ3hD6a2DemrktdpB7mmTjU0EeFuq14NXFoO1wN8Fwrx2VxWBRA==,
+                integrity: sha512-O05k4j9TGMOkkghj9dRgpeLDyOSiVIxQWgNDPfhYPm5ioJsehcYV/zkRLekQs+c8+RBCVXucSED3fYOyy2EoWA==,
             }
         engines: { node: ^18.0.0 || >= 20.0.0 }
         peerDependencies:

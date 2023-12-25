@@ -118,7 +118,7 @@ func TestPromptTestingService(t *testing.T) {
 	t.Run("CreatePromptTestingStreamMessage", func(t *testing.T) {
 		t.Run("should set finishReason to error of result.Error is not nil", func(t *testing.T) {
 			result := dto.PromptResultDTO{Error: assert.AnError}
-			msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+			msg, isFinished := services.CreatePromptTestingStreamMessage(context.TODO(), result)
 
 			assert.True(t, isFinished)
 			assert.Equal(t, *msg.FinishReason, "error")
@@ -131,7 +131,7 @@ func TestPromptTestingService(t *testing.T) {
 				result := dto.PromptResultDTO{RequestRecord: &models.PromptRequestRecord{
 					ID: *id,
 				}}
-				msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+				msg, isFinished := services.CreatePromptTestingStreamMessage(context.TODO(), result)
 
 				assert.True(t, isFinished)
 				assert.Equal(t, *msg.FinishReason, "done")
@@ -146,7 +146,7 @@ func TestPromptTestingService(t *testing.T) {
 				result := dto.PromptResultDTO{RequestRecord: &models.PromptRequestRecord{
 					ID: *id,
 				}, Error: assert.AnError}
-				msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+				msg, isFinished := services.CreatePromptTestingStreamMessage(context.TODO(), result)
 
 				assert.True(t, isFinished)
 				assert.Equal(t, *msg.FinishReason, "error")
@@ -157,7 +157,7 @@ func TestPromptTestingService(t *testing.T) {
 		t.Run("should set content if result.Content is not nil", func(t *testing.T) {
 			content := "content"
 			result := dto.PromptResultDTO{Content: &content}
-			msg, isFinished := services.CreatePromptTestingStreamMessage(result)
+			msg, isFinished := services.CreatePromptTestingStreamMessage(context.TODO(), result)
 
 			assert.False(t, isFinished)
 			assert.Equal(t, msg.Content, "content")

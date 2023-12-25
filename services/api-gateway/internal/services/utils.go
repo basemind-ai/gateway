@@ -12,10 +12,12 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/grpcutils"
 	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/rediscache"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
+	"github.com/shopspring/decimal"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -146,6 +148,30 @@ func RetrieveRequestConfiguration(
 	}
 }
 
+// CheckProjectCredits checks that the project has sufficient credits.
+func CheckProjectCredits(
+	ctx context.Context,
+	projectID pgtype.UUID,
+) func() (*status.Status, error) {
+	return func() (*status.Status, error) {
+		project, projectQueryErr := db.GetQueries().RetrieveProject(ctx, projectID)
+		if projectQueryErr != nil {
+			return &status.Status{}, fmt.Errorf("failed to retrieve project - %w", projectQueryErr)
+		}
+
+		decimalValue := exc.MustResult(db.NumericToDecimal(project.Credits))
+
+		if decimalValue.IsNegative() || decimalValue.IsZero() {
+			return status.New(
+				codes.ResourceExhausted,
+				ErrorInsufficientCredits,
+			), nil
+		}
+
+		return &status.Status{}, nil
+	}
+}
+
 // CreateProviderAPIKeyContext creates a context with the provider API key.
 // The provider API key is retrieved from the database, decrypted and set in the context.
 // We intentionally use the projectID to cache here - because we need to invalidate the cache if the provider api key is deleted.
@@ -153,7 +179,7 @@ func CreateProviderAPIKeyContext(
 	ctx context.Context,
 	projectID pgtype.UUID,
 	modelVendor models.ModelVendor,
-) (context.Context, error) {
+) context.Context {
 	providerKey, providerKeyRetrievalErr := rediscache.With[models.RetrieveProviderKeyRow](
 		ctx,
 		db.UUIDToString(&projectID),
@@ -171,17 +197,15 @@ func CreateProviderAPIKeyContext(
 		},
 	)
 	if providerKeyRetrievalErr != nil {
-		log.Error().Err(providerKeyRetrievalErr).Msg("error retrieving provider key from redis")
-		return nil, status.Error(
-			codes.PermissionDenied,
-			"missing provider API-key",
-		)
+		log.Debug().Err(providerKeyRetrievalErr).Msg("provider key is not set")
+		return ctx
 	}
 
 	decryptedKey := cryptoutils.Decrypt(providerKey.EncryptedApiKey, config.Get(ctx).CryptoPassKey)
+
 	// we append the encrypted provider key to the outgoing context
 	// it will be retrieved by the connector.
-	return metadata.AppendToOutgoingContext(ctx, "X-API-Key", decryptedKey), nil
+	return metadata.AppendToOutgoingContext(ctx, "X-API-Key", decryptedKey)
 }
 
 // ValidateExpectedVariables validates that the expected template variables are present in the request.
@@ -216,12 +240,12 @@ func StreamFromChannel[T any](
 	ctx context.Context,
 	channel chan dto.PromptResultDTO,
 	streamServer grpc.ServerStream,
-	messageFactory func(dto.PromptResultDTO) (T, bool),
+	messageFactory func(context.Context, dto.PromptResultDTO) (T, bool),
 ) error {
 	for {
 		select {
 		case result, isOpen := <-channel:
-			msg, isFinished := messageFactory(result)
+			msg, isFinished := messageFactory(ctx, result)
 
 			if sendErr := streamServer.SendMsg(msg); sendErr != nil {
 				log.Error().Err(sendErr).Msg("failed to send message")
@@ -244,6 +268,7 @@ func StreamFromChannel[T any](
 
 // CreateAPIGatewayStreamMessage creates a stream message for the API Gateway.
 func CreateAPIGatewayStreamMessage(
+	ctx context.Context,
 	result dto.PromptResultDTO,
 ) (*gateway.StreamingPromptResponse, bool) {
 	msg := &gateway.StreamingPromptResponse{}
@@ -251,6 +276,9 @@ func CreateAPIGatewayStreamMessage(
 		reason := "error"
 		msg.FinishReason = &reason
 	}
+
+	isFinished := msg.FinishReason != nil || result.RequestRecord != nil
+
 	if result.RequestRecord != nil {
 		if msg.FinishReason == nil {
 			reason := "done"
@@ -266,11 +294,37 @@ func CreateAPIGatewayStreamMessage(
 		msg.RequestTokens = &requestTokens
 		msg.ResponseTokens = &responseTokens
 		msg.StreamDuration = &streamDuration
+
+		go DeductCredit(ctx, result.RequestRecord)
 	}
 
 	if result.Content != nil {
 		contentCopy := *result.Content
 		msg.Content = contentCopy
 	}
-	return msg, msg.FinishReason != nil
+
+	return msg, isFinished
+}
+
+// DeductCredit deducts the credit from the project.
+func DeductCredit(
+	ctx context.Context, requestRecord *models.PromptRequestRecord,
+) {
+	projectID, ok := ctx.Value(grpcutils.ProjectIDContextKey).(pgtype.UUID)
+	if !ok {
+		log.Error().Msg("project id not in context")
+		return
+	}
+
+	totalCost := exc.MustResult(db.NumericToDecimal(requestRecord.RequestTokensCost)).Add(
+		*exc.MustResult(db.NumericToDecimal(requestRecord.ResponseTokensCost)),
+	)
+
+	exc.LogIfErr(
+		db.GetQueries().
+			UpdateProjectCredits(context.Background(), models.UpdateProjectCreditsParams{
+				ID:      projectID,
+				Credits: *exc.MustResult(db.StringToNumeric(totalCost.Mul(decimal.NewFromInt(-1)).String())),
+			}),
+	)
 }

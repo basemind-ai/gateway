@@ -26,6 +26,7 @@ SELECT
     p.id,
     p.description,
     p.name,
+    p.credits,
     p.created_at,
     p.updated_at
 FROM project AS p
@@ -37,6 +38,7 @@ SELECT
     p.description,
     p.name,
     up.permission,
+    p.credits,
     p.created_at,
     p.updated_at
 FROM project AS p
@@ -50,6 +52,7 @@ SELECT
     p.name,
     p.description,
     up.permission,
+    p.credits,
     p.created_at,
     p.updated_at
 FROM user_project AS up
@@ -77,3 +80,8 @@ LEFT JOIN prompt_request_record AS prr ON pc.id = prr.prompt_config_id
 WHERE
     p.id = $1
     AND prr.created_at BETWEEN $2 AND $3;
+
+-- name: UpdateProjectCredits :exec
+UPDATE project
+SET credits = credits + $2
+WHERE id = $1;

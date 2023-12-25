@@ -51,10 +51,13 @@ func handleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	data := make([]dto.ProjectDTO, len(projects))
 	for i, project := range projects {
 		id := project.ID
+		credits := exc.MustResult(db.NumericToDecimal(project.Credits))
+
 		data[i] = dto.ProjectDTO{
 			ID:          db.UUIDToString(&id),
 			Name:        project.Name.String,
 			Description: project.Description.String,
+			Credits:     *credits,
 			CreatedAt:   project.CreatedAt.Time,
 			UpdatedAt:   project.UpdatedAt.Time,
 			Permission:  string(project.Permission),
@@ -97,11 +100,12 @@ func handleUpdateProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedProject := exc.MustResult(db.GetQueries().UpdateProject(r.Context(), updateParams))
-
+	credits := exc.MustResult(db.NumericToDecimal(updatedProject.Credits))
 	data := &dto.ProjectDTO{
 		ID:          db.UUIDToString(&updatedProject.ID),
 		Name:        updatedProject.Name,
 		Description: updatedProject.Description,
+		Credits:     *credits,
 		CreatedAt:   updatedProject.CreatedAt.Time,
 		UpdatedAt:   updatedProject.UpdatedAt.Time,
 		Permission:  string(userProject.Permission),

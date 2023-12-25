@@ -31,6 +31,7 @@ func TestProjectRepository(t *testing.T) {
 			assert.NotEmpty(t, projectDto.ID)
 			assert.NotEmpty(t, projectDto.CreatedAt)
 			assert.NotEmpty(t, projectDto.UpdatedAt)
+			assert.Equal(t, "1", projectDto.Credits.String())
 			assert.Nil(t, projectDto.Applications)
 
 			uuidID, err := db.StringToUUID(projectDto.ID)

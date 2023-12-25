@@ -21,6 +21,7 @@ type ProjectDTO struct { // skipcq: TCV-001
 	ID           string           `json:"id,omitempty"`
 	Name         string           `json:"name"                   validate:"required"`
 	Description  string           `json:"description,omitempty"`
+	Credits      decimal.Decimal  `json:"credits"`
 	CreatedAt    time.Time        `json:"createdAt,omitempty"`
 	UpdatedAt    time.Time        `json:"updatedAt,omitempty"`
 	Permission   string           `json:"permission,omitempty"`
