@@ -40,6 +40,7 @@ func CreateProject(
 		ID:           projectID,
 		Name:         project.Name,
 		Description:  project.Description,
+		Credits:      *exc.MustResult(db.NumericToDecimal(project.Credits)),
 		CreatedAt:    project.CreatedAt.Time,
 		UpdatedAt:    project.UpdatedAt.Time,
 		Permission:   string(userProject.Permission),

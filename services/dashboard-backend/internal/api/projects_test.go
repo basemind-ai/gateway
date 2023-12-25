@@ -46,6 +46,7 @@ func TestProjectsAPI(t *testing.T) {
 			assert.Equal(t, body.Name, data.Name)
 			assert.Equal(t, body.Description, data.Description)
 			assert.Equal(t, "ADMIN", data.Permission)
+			assert.Equal(t, "1", data.Credits.String())
 		})
 
 		t.Run(
@@ -140,6 +141,7 @@ func TestProjectsAPI(t *testing.T) {
 			assert.Equal(t, projectID, data.ID)
 			assert.Equal(t, body.Name, data.Name)
 			assert.Equal(t, body.Description, data.Description)
+			assert.Equal(t, "1", data.Credits.String())
 		})
 
 		t.Run(
