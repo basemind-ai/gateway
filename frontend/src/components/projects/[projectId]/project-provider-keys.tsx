@@ -9,7 +9,7 @@ import {
 } from '@/api/provider-keys-api';
 import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { Modal } from '@/components/modal';
-import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
+import { ProjectProviderKeyCreateModal } from '@/components/projects/[projectId]/project-provider-key-create-modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 import { modelVendorToLocaleMap } from '@/constants/models';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -143,7 +143,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 			</div>
 			<Modal modalOpen={isCreateModalOpen}>
 				<div className="p-8">
-					<ProviderKeyCreateModal
+					<ProjectProviderKeyCreateModal
 						projectId={project.id}
 						vendors={vendorsWithoutKeys}
 						closeModal={() => {

@@ -4,17 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Record } from 'react-bootstrap-icons';
-import useSWR from 'swr';
 import { shallow } from 'zustand/shallow';
 
 import { handleCreatePromptConfig } from '@/api';
-import { handleRetrieveProviderKeys } from '@/api/provider-keys-api';
-import { Modal } from '@/components/modal';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
-import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
 import { Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
@@ -23,15 +19,12 @@ import {
 	useApplication,
 	useProject,
 	usePromptConfigs,
-	useProviderKeys,
-	useSetProviderKeys,
 } from '@/stores/api-store';
 import {
 	usePromptWizardStore,
 	WizardStage,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
-import { ProviderKey } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
 const stepColor = 'step-secondary';
@@ -47,30 +40,13 @@ export default function PromptConfigCreateWizard({
 	const handleError = useHandleError();
 	const project = useProject(projectId);
 	const promptConfigs = usePromptConfigs();
-	const providerKeys = useProviderKeys();
 	const router = useRouter();
-	const setProviderKeys = useSetProviderKeys();
 	const user = useAuthenticatedUser();
 
 	const { initialized, page, track } = useAnalytics();
 
 	const [nameIsValid, setNameIsValid] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const [isCreateProviderKeyModalOpen, setIsCreateProviderKeyModalOpen] =
-		useState(false);
-
-	useSWR(
-		{
-			projectId,
-		},
-		handleRetrieveProviderKeys,
-		{
-			onError: handleError,
-			onSuccess(data) {
-				setProviderKeys(data);
-			},
-		},
-	);
 
 	const store = usePromptWizardStore(wizardStoreSelector, shallow);
 
@@ -106,11 +82,6 @@ export default function PromptConfigCreateWizard({
 	const handleTemplateVariablesChange = useCallback(
 		store.setTemplateVariables,
 		[store.setTemplateVariables],
-	);
-
-	const hasProviderKey = useMemo(
-		() => providerKeys.some((p) => p.modelVendor === store.modelVendor),
-		[providerKeys, store.modelVendor],
 	);
 
 	const wizardStageComponentMap: Record<WizardStage, React.ReactElement> = {
@@ -177,12 +148,6 @@ export default function PromptConfigCreateWizard({
 			],
 		),
 	};
-
-	useEffect(() => {
-		if (!hasProviderKey && store.wizardStage === 1) {
-			setIsCreateProviderKeyModalOpen(true);
-		}
-	}, [store.wizardStage]);
 
 	useEffect(() => {
 		if (initialized) {
@@ -326,28 +291,6 @@ export default function PromptConfigCreateWizard({
 					</div>
 				</>
 			)}
-			<Modal
-				modalOpen={isCreateProviderKeyModalOpen}
-				dataTestId="config-create-wizard-create-provider-key-dialog"
-			>
-				<div className="p-10">
-					<ProviderKeyCreateModal
-						projectId={projectId}
-						vendors={[]}
-						modelVendor={store.modelVendor}
-						closeModal={() => {
-							setIsCreateProviderKeyModalOpen(false);
-						}}
-						handleCancel={() => {
-							setIsCreateProviderKeyModalOpen(false);
-							store.setPrevWizardStage();
-						}}
-						addProviderKey={(providerKey: ProviderKey) => {
-							setProviderKeys([...providerKeys, providerKey]);
-						}}
-					/>
-				</div>
-			</Modal>
 		</div>
 	);
 }

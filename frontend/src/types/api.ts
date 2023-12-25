@@ -16,6 +16,7 @@ export interface Analytics {
 
 export interface Project {
 	createdAt: string;
+	credits: string;
 	description?: string;
 	id: string;
 	name: string;

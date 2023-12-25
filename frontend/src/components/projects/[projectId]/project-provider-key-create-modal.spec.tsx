@@ -11,7 +11,7 @@ import {
 } from 'tests/test-utils';
 import { expect } from 'vitest';
 
-import { ProviderKeyCreateModal } from '@/components/projects/[projectId]/provider-key-create-modal';
+import { ProjectProviderKeyCreateModal } from '@/components/projects/[projectId]/project-provider-key-create-modal';
 import { ApiError } from '@/errors';
 import { ToastMessage, useToasts } from '@/stores/toast-store';
 import { ModelVendor } from '@/types';
@@ -33,7 +33,7 @@ describe('ProviderKeyCreateModal', () => {
 		const closeModal = vi.fn();
 
 		render(
-			<ProviderKeyCreateModal
+			<ProjectProviderKeyCreateModal
 				closeModal={closeModal}
 				projectId={projectId}
 				addProviderKey={addProviderKey}
@@ -73,7 +73,7 @@ describe('ProviderKeyCreateModal', () => {
 		const closeModal = vi.fn();
 
 		render(
-			<ProviderKeyCreateModal
+			<ProjectProviderKeyCreateModal
 				closeModal={closeModal}
 				projectId={projectId}
 				addProviderKey={addProviderKey}
@@ -109,7 +109,7 @@ describe('ProviderKeyCreateModal', () => {
 		const closeModal = vi.fn();
 
 		render(
-			<ProviderKeyCreateModal
+			<ProjectProviderKeyCreateModal
 				closeModal={closeModal}
 				projectId={projectId}
 				addProviderKey={addProviderKey}
@@ -150,7 +150,7 @@ describe('ProviderKeyCreateModal', () => {
 
 	it('should render the modal with the correct title and form inputs', () => {
 		render(
-			<ProviderKeyCreateModal
+			<ProjectProviderKeyCreateModal
 				closeModal={vi.fn()}
 				projectId={projectId}
 				addProviderKey={vi.fn()}
@@ -174,7 +174,7 @@ describe('ProviderKeyCreateModal', () => {
 
 	it('should allow the user to select a model vendor from a dropdown list', () => {
 		render(
-			<ProviderKeyCreateModal
+			<ProjectProviderKeyCreateModal
 				closeModal={vi.fn()}
 				projectId={projectId}
 				addProviderKey={vi.fn()}
@@ -195,7 +195,7 @@ describe('ProviderKeyCreateModal', () => {
 
 	it('should allow the user to input a key value in a textarea', () => {
 		render(
-			<ProviderKeyCreateModal
+			<ProjectProviderKeyCreateModal
 				closeModal={vi.fn()}
 				projectId={projectId}
 				addProviderKey={vi.fn()}

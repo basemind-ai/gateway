@@ -8,7 +8,7 @@ import { useHandleError } from '@/hooks/use-handle-error';
 import { ModelVendor, ProviderKey } from '@/types';
 import { handleChange } from '@/utils/events';
 
-export function ProviderKeyCreateModal({
+export function ProjectProviderKeyCreateModal({
 	vendors,
 	projectId,
 	closeModal,

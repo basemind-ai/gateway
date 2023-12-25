@@ -29,6 +29,7 @@ export const UserFactory = new TypeFactory<UserInfo>(() => ({
 export const ProjectFactory = new TypeFactory<Project>(() => ({
 	applications: undefined,
 	createdAt: faker.date.past().toISOString(),
+	credits: '1.0',
 	description: faker.lorem.paragraph(),
 	id: faker.string.uuid(),
 	name: faker.lorem.words(),
@@ -126,6 +127,7 @@ export const PromptTestRecordFactory = new TypeFactory<PromptTestRecord<any>>(
 		responseTokens: 10,
 		responseTokensCost: '0.00001',
 		startTime: faker.date.past().toISOString(),
+		totalTokensCost: '0.00002',
 		userInput: { userInput: 'what am I?' },
 	}),
 );
