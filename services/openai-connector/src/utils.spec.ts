@@ -23,7 +23,7 @@ describe('utils tests', () => {
 				getOpenAIModel(OpenAIModel.OPEN_AI_MODEL_GPT3_5_TURBO_16K),
 			).toBe('gpt-3.5-turbo-16k');
 			expect(getOpenAIModel(OpenAIModel.OPEN_AI_MODEL_GPT4_8K)).toBe(
-				'gpt-4',
+				'gpt-4-0613',
 			);
 			expect(getOpenAIModel(OpenAIModel.OPEN_AI_MODEL_GPT4_32K)).toBe(
 				'gpt-4-32k',
