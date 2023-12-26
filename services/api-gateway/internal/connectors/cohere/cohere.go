@@ -16,5 +16,6 @@ type Client struct {
 func New(serverAddress string, opts ...grpc.DialOption) *Client {
 	conn := exc.MustResult(grpc.Dial(serverAddress, opts...))
 	log.Info().Msg("initialized Cohere connector connection")
+
 	return &Client{client: cohereconnector.NewCohereServiceClient(conn)}
 }

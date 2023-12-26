@@ -19,6 +19,7 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 
 		t.Run("does not panic when initialized", func(t *testing.T) {
 			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
+			t.Setenv("COHERE_CONNECTOR_ADDRESS", "localhost:50052")
 
 			connectors.Init(
 				context.TODO(),
@@ -31,6 +32,7 @@ func TestGetOpenAIConnectorClientPanicsWithoutAddress(t *testing.T) {
 
 		t.Run("panics for unknown provider", func(t *testing.T) {
 			t.Setenv("OPENAI_CONNECTOR_ADDRESS", "localhost:50051")
+			t.Setenv("COHERE_CONNECTOR_ADDRESS", "localhost:50052")
 
 			connectors.Init(
 				context.TODO(),

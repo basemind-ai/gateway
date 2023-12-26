@@ -41,8 +41,7 @@ func Init(ctx context.Context, opts ...grpc.DialOption) {
 	config := &connectorConfig{}
 	exc.Must(envconfig.Process(ctx, config), "failed to process environment variables")
 
-	openaiConnectorClient = openai.New(config.OpenAIConnectorAddress, opts...)
-	cohereConnectorClient = cohere.New(config.CohereConnectorAddress, opts...)
+	openaiConnectorClient = openai.New(config.OpenAIConnectorAddress)
 }
 
 // GetProviderConnector - returns the connector for the given provider.
@@ -52,15 +51,14 @@ func GetProviderConnector(provider models.ModelVendor) ProviderConnector {
 	case models.ModelVendorOPENAI:
 		return exc.ReturnNotNil(
 			openaiConnectorClient,
-			"OpenAI Connector Client was not initialized",
+			"OpenAI-Connector client was not initialized",
 		)
 	case models.ModelVendorCOHERE:
 		return exc.ReturnNotNil(
 			cohereConnectorClient,
-			"Cohere Connector Client was not initialized",
+			"Cohere-Connector client was not initialized",
 		)
 	default:
-		panic("Unknown provider")
+		panic("unknown provider")
 	}
-	return nil
 }
