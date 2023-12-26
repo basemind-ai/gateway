@@ -279,7 +279,6 @@ export function OpenAIPromptTemplate({
 	const [draftMessage, setDraftMessage] = useState<OpenAIContentMessage>(
 		structuredClone(OPEN_AI_DRAFT_MESSAGE),
 	);
-	const [isNameValid, setIsNameValid] = useState(true);
 	const handleRoleChange = (role: OpenAIPromptMessageRole) => {
 		setDraftMessage({ ...draftMessage, role });
 	};
@@ -405,7 +404,6 @@ export function OpenAIPromptTemplate({
 								dataTestId="parameters-and-prompt-form-message-name-input"
 								placeholder={t('messageNameInputPlaceholder')}
 								isLoading={false}
-								setIsValid={setIsNameValid}
 								validateValue={(value: string) => {
 									return !messages
 										.map((message) => message.name)
@@ -451,7 +449,7 @@ export function OpenAIPromptTemplate({
 						className="btn join-item btn-sm btn-primary"
 						onClick={handleSaveMessage}
 						data-testid="parameters-and-prompt-form-save-message-button"
-						disabled={!draftMessage.content && isNameValid}
+						disabled={!draftMessage.content}
 					>
 						{t('saveMessage')}
 					</button>

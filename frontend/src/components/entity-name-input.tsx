@@ -18,7 +18,7 @@ export function EntityNameInput({
 	isLoading: boolean;
 	placeholder?: string;
 	setIsChanged?: (isValid: boolean) => void;
-	setIsValid: (isValid: boolean) => void;
+	setIsValid?: (isValid: boolean) => void;
 	setValue: (value: string) => void;
 	validateValue: (value: string) => boolean;
 	value: string;
@@ -30,7 +30,9 @@ export function EntityNameInput({
 	const isLengthValid = value.trim().length >= MIN_NAME_LENGTH;
 
 	useEffect(() => {
-		setIsValid(isLengthValid && isNameValid);
+		if (setIsValid) {
+			setIsValid(isLengthValid && isNameValid);
+		}
 	}, [isLengthValid, isNameValid]);
 
 	useEffect(() => {
