@@ -1,6 +1,7 @@
 import { CohereModel, CoherePromptRequest } from 'gen/cohere/v1/cohere';
+import { StreamFinishReason } from 'shared/constants';
 
-import { createCohereRequest } from '@/utils';
+import { createCohereRequest, getFinishReason } from '@/utils';
 
 describe('utils tests', () => {
 	describe('createCohereRequest', () => {
@@ -91,6 +92,27 @@ describe('utils tests', () => {
 				prompt: 'hello world',
 				temperature: 0.5,
 			});
+		});
+	});
+
+	describe('getFinishReason', () => {
+		it('returns the correct finish reason for a complete event', () => {
+			expect(getFinishReason('COMPLETE')).toEqual(
+				StreamFinishReason.DONE,
+			);
+		});
+		it('returns the correct finish reason for an error limit event', () => {
+			expect(getFinishReason('MAX_TOKENS')).toEqual(
+				StreamFinishReason.LIMIT,
+			);
+		});
+		it('returns the correct finish reason for an error event', () => {
+			expect(getFinishReason('ERROR')).toEqual(StreamFinishReason.ERROR);
+		});
+		it('returns the correct finish reason for an error toxic event', () => {
+			expect(getFinishReason('ERROR_TOXIC')).toEqual(
+				StreamFinishReason.ERROR,
+			);
 		});
 	});
 });

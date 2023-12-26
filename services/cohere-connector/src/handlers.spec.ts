@@ -5,6 +5,7 @@ import {
 	ServerUnaryCall,
 	ServerWritableStream,
 } from '@grpc/grpc-js';
+import * as cohere from 'cohere-ai';
 import {
 	CohereModel,
 	CoherePromptRequest,
@@ -15,7 +16,6 @@ import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
 import { Mock, MockInstance } from 'vitest';
 
-import { getCohereClient } from '@/client';
 import { coherePrompt, cohereStream } from '@/handlers';
 
 describe('handlers tests', () => {
@@ -26,10 +26,9 @@ describe('handlers tests', () => {
 		process.env.COHERE_API_KEY = openAPIKey;
 	});
 
-	const client = getCohereClient();
-
 	describe('coherePrompt', () => {
-		const generateSpy = vi.spyOn(client, 'generate');
+		// @ts-expect-error - MockInstance is not typed correctly
+		const generateSpy = vi.spyOn(cohere, 'generate');
 
 		const makeMockUnaryCall = (
 			request: CoherePromptRequest,
@@ -55,6 +54,7 @@ describe('handlers tests', () => {
 			const callback: sendUnaryData<CoherePromptResponse> = vi.fn();
 
 			generateSpy.mockResolvedValueOnce({
+				// @ts-expect-error - MockInstance is not typed correctly
 				generations: [{ id: 'def', text: 'Generated response' }],
 				id: 'abc',
 			});
@@ -232,7 +232,7 @@ describe('handlers tests', () => {
 			]);
 		});
 
-		it('should handle errors', async () => {
+		it.each([''])('should handle errors', async () => {
 			const call = makeServerWritableStream({
 				message: 'test',
 				model: CohereModel.COMMAND,

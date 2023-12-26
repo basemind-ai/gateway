@@ -8,7 +8,6 @@ import {
 	CoherePromptResponse,
 	CohereStreamResponse,
 } from 'gen/cohere/v1/cohere';
-import { StreamFinishReason } from 'shared/constants';
 import {
 	createInternalGrpcError,
 	extractProviderAPIKeyFromMetadata,
@@ -17,7 +16,7 @@ import {
 import logger from 'shared/logger';
 
 import { createOrDefaultClient } from '@/client';
-import { createCohereRequest } from '@/utils';
+import { createCohereRequest, getFinishReason } from '@/utils';
 
 /**
  * The coherePrompt function is a gRPC handler function.
@@ -90,19 +89,9 @@ export async function cohereStream(
 			text: content,
 		} of stream) {
 			if (isFinished) {
-				if (finishReason === 'COMPLETE') {
-					call.write({
-						finishReason: StreamFinishReason.DONE,
-					});
-				} else if (finishReason === 'MAX_TOKENS') {
-					call.write({
-						finishReason: StreamFinishReason.LIMIT,
-					});
-				} else {
-					call.write({
-						finishReason: StreamFinishReason.ERROR,
-					});
-				}
+				call.write({
+					finishReason: getFinishReason(finishReason!),
+				});
 				continue;
 			}
 			call.write({ content });

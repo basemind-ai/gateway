@@ -60,3 +60,22 @@ export function readChunks<T extends Record<string, any>>(
 		},
 	};
 }
+
+/**
+ *
+ * @param finishReason the stream finish reason from Cohere
+ *
+ * @return A StreamFinishReason
+ */
+
+export function getFinishReason(
+	finishReason: 'COMPLETE' | 'MAX_TOKENS' | 'ERROR' | 'ERROR_TOXIC',
+) {
+	if (finishReason === 'COMPLETE') {
+		return StreamFinishReason.DONE;
+	} else if (finishReason === 'MAX_TOKENS') {
+		return StreamFinishReason.LIMIT;
+	} else {
+		return StreamFinishReason.ERROR;
+	}
+}
