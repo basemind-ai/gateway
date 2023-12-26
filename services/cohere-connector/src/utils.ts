@@ -1,15 +1,6 @@
-import {
-	ChatConnector as CohereChatConnector,
-	ChatRequest,
-	ChatStreamRequest,
-} from 'cohere-ai/api';
+import { GenerateRequest } from 'cohere-ai/api/client/requests/GenerateRequest';
 import { ChatStreamEndEventFinishReason } from 'cohere-ai/api/types/ChatStreamEndEventFinishReason';
-import {
-	CohereConnector,
-	CohereConnectorType,
-	CohereModel,
-	CoherePromptRequest,
-} from 'gen/cohere/v1/cohere';
+import { CohereModel, CoherePromptRequest } from 'gen/cohere/v1/cohere';
 import { StreamFinishReason } from 'shared/constants';
 
 export const modelMapping: Record<CohereModel, string> = {
@@ -32,51 +23,40 @@ export const finishReasonMapping: Record<
 };
 
 /**
- * The getCohereConnectors function takes an array of CohereConnector enums and returns
- * an array of connector objects.
- *
- * @return An array of CohereChatConnector objects
- * @param connectors
- */
-export function getCohereConnectors(
-	connectors: CohereConnector[],
-): CohereChatConnector[] {
-	const result: CohereChatConnector[] = [];
-	for (const { id, options } of connectors) {
-		if (id === CohereConnectorType.UNSPECIFIED) {
-			continue;
-		}
-		result.push({
-			id: id === CohereConnectorType.WEB_SEARCH ? 'web-search' : 'id',
-			options,
-		});
-	}
-
-	return result;
-}
-
-/**
- * The createCohereRequest function takes a CoherePromptRequest and returns a ChatRequest or
- * ChatStreamRequest.
+ * The createCohereRequest function takes a CoherePromptRequest and returns a Cohere client.CoherePromptRequest
  *
  * @param grpcRequest CoherePromptRequest
- * @return A ChatRequest or a ChatStreamRequest
+ * @param stream boolean
+ *
+ * @return A CoherePromptRequest
  */
 export function createCohereRequest(
 	grpcRequest: CoherePromptRequest,
-): ChatRequest | ChatStreamRequest {
+): GenerateRequest {
 	return {
-		connectors:
-			Array.isArray(grpcRequest.parameters?.connectors) &&
-			grpcRequest.parameters.connectors.length
-				? getCohereConnectors(grpcRequest.parameters.connectors)
-				: undefined,
-		conversationId: grpcRequest.conversationId,
-		message: grpcRequest.message,
 		model: modelMapping[grpcRequest.model],
-		temperature:
-			typeof grpcRequest.parameters?.temperature === 'number'
-				? grpcRequest.parameters.temperature
-				: undefined,
-	} satisfies ChatRequest | ChatStreamRequest;
+		prompt: grpcRequest.message,
+		...grpcRequest.parameters,
+	} satisfies GenerateRequest;
+}
+
+/*
+ * The readChunks function takes a ReadableStreamDefaultReader and returns an AsyncIterableIterator that yields values
+ * from the stream.
+ * */
+export function readChunks<T extends Record<string, any>>(
+	reader: ReadableStreamDefaultReader<Uint8Array>,
+) {
+	const decoder = new TextDecoder();
+
+	return {
+		async *[Symbol.asyncIterator]() {
+			let readResult = await reader.read();
+
+			while (!readResult.done) {
+				yield JSON.parse(decoder.decode(readResult.value)) as T;
+				readResult = await reader.read();
+			}
+		},
+	};
 }

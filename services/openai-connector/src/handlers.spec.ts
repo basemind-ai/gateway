@@ -13,11 +13,11 @@ import {
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
 import { StreamFinishReason } from 'shared/constants';
+import { createInternalGrpcError } from 'shared/grpc';
 import { Mock } from 'vitest';
 
 import { getOpenAIClient } from '@/client';
 import { openAIPrompt, openAIStream } from '@/handlers';
-import { createInternalGrpcError } from '@/utils';
 
 describe('handlers tests', () => {
 	const openAPIKey = (process.env.OPEN_AI_API_KEY =

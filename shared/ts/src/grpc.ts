@@ -119,3 +119,14 @@ export function extractProviderAPIKeyFromMetadata(
 	const md = call.metadata.get('X-API-Key');
 	return md.length ? (md[0] as string) : undefined;
 }
+
+/**
+ * Creates an internal gRPC error from the given error.
+ * */
+export function createInternalGrpcError(error: Error): GrpcError {
+	return new GrpcError({
+		code: Status.INTERNAL,
+		details: error.message,
+		message: 'an error has occurred communicating with the provider',
+	});
+}

@@ -5,8 +5,8 @@ import { expect } from 'vitest';
 import {
 	OpenAIModelParametersForm,
 	OpenAIPromptTemplate,
-	PromptConfigParametersAndPromptForm,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
+} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-model-parameters-form';
+import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import {
 	DEFAULT_MAX_TOKENS,
 	openAIModelsMaxTokensMap,

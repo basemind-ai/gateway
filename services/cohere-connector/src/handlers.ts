@@ -9,14 +9,18 @@ import {
 	CohereStreamResponse,
 } from 'gen/cohere/v1/cohere';
 import { StreamFinishReason } from 'shared/constants';
-import { extractProviderAPIKeyFromMetadata, GrpcError } from 'shared/grpc';
+import {
+	createInternalGrpcError,
+	extractProviderAPIKeyFromMetadata,
+	GrpcError,
+} from 'shared/grpc';
 import logger from 'shared/logger';
 
 import { createOrDefaultClient } from '@/client';
-import { createCohereRequest, finishReasonMapping } from '@/utils';
+import { createCohereRequest } from '@/utils';
 
 /**
- * The openAIPrompt function is a gRPC handler function.
+ * The coherePrompt function is a gRPC handler function.
  *
  * @param call ServerUnaryCall object, including the request and metadata
  * @param callback sendUnaryData handler, allowing sending a response back to the client.
@@ -37,16 +41,18 @@ export async function coherePrompt(
 	try {
 		logger.debug('making Cohere prompt request');
 		const startTime = Date.now();
-		const { text, generationId } = await client.chat(
+		const { generations } = await client.generate(
 			createCohereRequest(call.request),
 		);
 		const finishTime = Date.now();
 
 		logger.debug(
-			{ finishTime, generationId, startTime, text },
+			{ finishTime, generations, startTime },
 			'Cohere request completed',
 		);
-		callback(null, { content: text } satisfies CoherePromptResponse);
+		callback(null, {
+			content: generations[0]?.text ?? '',
+		} satisfies CoherePromptResponse);
 	} catch (error: unknown) {
 		logger.error(error as Error, 'error communicating with Cohere');
 		callback(new GrpcError({ message: (error as Error).message }), null);
@@ -73,22 +79,33 @@ export async function cohereStream(
 
 	const startTime = Date.now();
 	try {
-		logger.debug('making OpenAI stream request');
-		const stream = await client.chatStream(
+		logger.debug('making Cohere stream request');
+		const stream = await client.generateStream(
 			createCohereRequest(call.request),
 		);
-		for await (const message of stream) {
-			if (message.eventType === 'text-generation') {
-				call.write({
-					content: message.text,
-				} satisfies CohereStreamResponse);
+
+		for await (const {
+			is_finished: isFinished,
+			finish_reason: finishReason,
+			text: content,
+		} of stream) {
+			if (isFinished) {
+				if (finishReason === 'COMPLETE') {
+					call.write({
+						finishReason: StreamFinishReason.DONE,
+					});
+				} else if (finishReason === 'MAX_TOKENS') {
+					call.write({
+						finishReason: StreamFinishReason.LIMIT,
+					});
+				} else {
+					call.write({
+						finishReason: StreamFinishReason.ERROR,
+					});
+				}
 				continue;
 			}
-			if (message.eventType === 'stream-end') {
-				call.write({
-					finishReason: finishReasonMapping[message.finishReason],
-				} satisfies CohereStreamResponse);
-			}
+			call.write({ content });
 		}
 
 		const finishTime = Date.now();
@@ -97,11 +114,9 @@ export async function cohereStream(
 			'Cohere streaming request completed',
 		);
 	} catch (error: unknown) {
-		call.write({
-			finishReason: StreamFinishReason.ERROR,
-		} satisfies CohereStreamResponse);
+		call.destroy(createInternalGrpcError(error as Error));
 		logger.error(error as Error, 'error communicating with Cohere');
-	} finally {
-		call.end();
+		return;
 	}
+	call.end();
 }

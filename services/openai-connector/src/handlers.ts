@@ -9,15 +9,14 @@ import {
 	OpenAIPromptResponse,
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
-import { extractProviderAPIKeyFromMetadata } from 'shared/grpc';
+import {
+	createInternalGrpcError,
+	extractProviderAPIKeyFromMetadata,
+} from 'shared/grpc';
 import logger from 'shared/logger';
 
 import { createOrDefaultClient } from '@/client';
-import {
-	createInternalGrpcError,
-	createOpenAIRequest,
-	finishReasonMap,
-} from '@/utils';
+import { createOpenAIRequest, finishReasonMap } from '@/utils';
 
 /**
  * The openAIPrompt function is a gRPC handler function.

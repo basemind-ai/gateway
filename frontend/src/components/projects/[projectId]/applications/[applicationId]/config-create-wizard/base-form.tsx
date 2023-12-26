@@ -37,6 +37,44 @@ export function PromptConfigBaseForm({
 		return Object.values(modelVendorTypeMap[modelVendor]) as string[];
 	}, [modelVendor]);
 
+	const activeModelVendor = useMemo(
+		() =>
+			Object.entries(ModelVendor)
+				.filter(([, value]) =>
+					[ModelVendor.OpenAI, ModelVendor.Cohere].includes(value),
+				)
+				.map(([key, value]) => {
+					return (
+						<option key={key} value={value}>
+							{key}
+						</option>
+					);
+				}),
+		[],
+	);
+
+	const invalidModelVendors = useMemo(
+		() =>
+			Object.entries(UnavailableModelVendor).map(([key, value]) => (
+				<option disabled key={value} value={value}>
+					{key}
+				</option>
+			)),
+		[],
+	);
+
+	const choices = useMemo(
+		() =>
+			modelChoices.map((modelChoice) => {
+				return (
+					<option key={modelChoice} value={modelChoice}>
+						{modelTypeToLocaleMap[modelChoice as ModelType<any>]}
+					</option>
+				);
+			}),
+		[modelChoices],
+	);
+
 	return (
 		<div data-testid="base-form-container">
 			{showConfigNameInput && (
@@ -73,27 +111,10 @@ export function PromptConfigBaseForm({
 							className="card-select w-full"
 							value={modelVendor}
 							onChange={handleChange(setVendor)}
-							disabled={true}
 							data-testid="create-prompt-base-form-vendor-select"
 						>
-							{Object.entries(ModelVendor)
-								.filter(
-									([, value]) => value === ModelVendor.OpenAI,
-								)
-								.map(([key, value]) => {
-									return (
-										<option key={key} value={value}>
-											{key}
-										</option>
-									);
-								})}
-							{Object.entries(UnavailableModelVendor).map(
-								([key, value]) => (
-									<option disabled key={value} value={value}>
-										{key}
-									</option>
-								),
-							)}
+							{activeModelVendor}
+							{invalidModelVendors}
 						</select>
 					</div>
 					<div className="form-control">
@@ -108,20 +129,7 @@ export function PromptConfigBaseForm({
 							onChange={handleChange(setModelType)}
 							data-testid="create-prompt-base-form-model-select"
 						>
-							{modelChoices.map((modelChoice) => {
-								return (
-									<option
-										key={modelChoice}
-										value={modelChoice}
-									>
-										{
-											modelTypeToLocaleMap[
-												modelChoice as ModelType<any>
-											]
-										}
-									</option>
-								);
-							})}
+							{choices}
 						</select>
 					</div>
 				</div>

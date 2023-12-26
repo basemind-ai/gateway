@@ -5,20 +5,18 @@ import {
 	ServerUnaryCall,
 	ServerWritableStream,
 } from '@grpc/grpc-js';
-import { StreamedChatResponse } from 'cohere-ai/api';
 import {
 	CohereModel,
 	CoherePromptRequest,
 	CoherePromptResponse,
 	CohereStreamResponse,
 } from 'gen/cohere/v1/cohere';
+import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
-import { Mock } from 'vitest';
+import { Mock, MockInstance } from 'vitest';
 
 import { getCohereClient } from '@/client';
 import { coherePrompt, cohereStream } from '@/handlers';
-import StreamEnd = StreamedChatResponse.StreamEnd;
-import { StreamFinishReason } from 'shared/constants';
 
 describe('handlers tests', () => {
 	const openAPIKey = (process.env.COHERE_API_KEY =
@@ -31,7 +29,7 @@ describe('handlers tests', () => {
 	const client = getCohereClient();
 
 	describe('coherePrompt', () => {
-		const chatSpy = vi.spyOn(client, 'chat');
+		const generateSpy = vi.spyOn(client, 'generate');
 
 		const makeMockUnaryCall = (
 			request: CoherePromptRequest,
@@ -48,27 +46,23 @@ describe('handlers tests', () => {
 
 		it('should successfully complete an Cohere prompt request and send the expected response', async () => {
 			const call = makeMockUnaryCall({
-				conversationId: '123',
 				message: 'test',
 				model: CohereModel.COMMAND,
 				parameters: {
-					connectors: [],
 					temperature: 0.8,
 				},
 			});
 			const callback: sendUnaryData<CoherePromptResponse> = vi.fn();
 
-			chatSpy.mockResolvedValueOnce({
-				generationId: '123',
-				text: 'Generated response',
+			generateSpy.mockResolvedValueOnce({
+				generations: [{ id: 'def', text: 'Generated response' }],
+				id: 'abc',
 			});
 
 			await coherePrompt(call, callback);
-			expect(chatSpy).toHaveBeenCalledWith({
-				connectors: undefined,
-				conversationId: '123',
-				message: 'test',
+			expect(generateSpy).toHaveBeenCalledWith({
 				model: 'command',
+				prompt: 'test',
 				temperature: 0.8,
 			});
 
@@ -79,25 +73,21 @@ describe('handlers tests', () => {
 
 		it('should send a GrpcError when an error occurs during the Cohere prompt request', async () => {
 			const call = makeMockUnaryCall({
-				conversationId: '123',
 				message: 'test',
 				model: CohereModel.COMMAND,
 				parameters: {
-					connectors: [],
 					temperature: 0.8,
 				},
 			});
 			const callback: sendUnaryData<CoherePromptResponse> = vi.fn();
 
 			const error = new Error('Cohere error');
-			chatSpy.mockRejectedValueOnce(error);
+			generateSpy.mockRejectedValueOnce(error);
 
 			await coherePrompt(call, callback);
-			expect(chatSpy).toHaveBeenCalledWith({
-				connectors: undefined,
-				conversationId: '123',
-				message: 'test',
+			expect(generateSpy).toHaveBeenCalledWith({
 				model: 'command',
+				prompt: 'test',
 				temperature: 0.8,
 			});
 
@@ -109,12 +99,17 @@ describe('handlers tests', () => {
 	});
 
 	describe('cohereStream', () => {
-		const chatStreamSpy = vi.spyOn(client, 'chatStream');
+		global.fetch = vi.fn().mockResolvedValue({
+			body: {
+				getReader: vi.fn().mockReturnValue(createStreamReader()),
+			},
+		});
 
 		const makeServerWritableStream = (
 			request: CoherePromptRequest,
 		): ServerWritableStream<CoherePromptRequest, CohereStreamResponse> => {
 			return {
+				destroy: vi.fn(),
 				end: vi.fn(),
 				getPath: vi.fn(),
 				metadata: new Metadata(),
@@ -126,10 +121,16 @@ describe('handlers tests', () => {
 			>;
 		};
 
-		function createReadableStream(): AsyncIterableIterator<any> {
+		function createStreamReader(): ReadableStreamDefaultReader {
 			let count = 0;
+			const encoder = new TextEncoder();
+
 			return {
-				async next() {
+				cancel(): Promise<void> {
+					return Promise.resolve(undefined);
+				},
+				closed: Promise.resolve(undefined),
+				async read() {
 					if (count === 11) {
 						return { done: true, value: undefined };
 					}
@@ -137,43 +138,38 @@ describe('handlers tests', () => {
 						count++;
 						return {
 							done: false,
-							value: {
-								eventType: 'stream-end',
-								finishReason: 'COMPLETE',
-								response: {
-									generationId: '100',
-									text: '',
-								},
-							} satisfies StreamEnd,
+							value: encoder.encode(
+								JSON.stringify({
+									finish_reason: 'COMPLETE',
+									is_finished: true,
+								}),
+							),
 						};
 					}
 					const value = {
-						eventType: 'text-generation',
+						is_finished: false,
 						text: `${count}`,
 					};
 					count++;
-					return { done: false, value };
+					return {
+						done: false,
+						value: encoder.encode(JSON.stringify(value)),
+					};
 				},
-				async return() {
-					return { done: true, value: undefined };
-				},
-				[Symbol.asyncIterator]() {
-					return this;
+				releaseLock(): void {
+					return;
 				},
 			};
 		}
 
 		it('should successfully create an Cohere stream request and write the response to the call', async () => {
 			const call = makeServerWritableStream({
-				conversationId: '123',
 				message: 'test',
 				model: CohereModel.COMMAND,
 				parameters: {
-					connectors: [],
 					temperature: 0.8,
 				},
 			});
-			chatStreamSpy.mockResolvedValueOnce(createReadableStream() as any);
 
 			await cohereStream(call);
 
@@ -238,25 +234,19 @@ describe('handlers tests', () => {
 
 		it('should handle errors', async () => {
 			const call = makeServerWritableStream({
-				conversationId: '123',
 				message: 'test',
 				model: CohereModel.COMMAND,
 				parameters: {
-					connectors: [],
 					temperature: 0.8,
 				},
 			});
 
-			chatStreamSpy.mockRejectedValueOnce(new Error('test error'));
+			(global.fetch as unknown as MockInstance).mockRejectedValueOnce(
+				new Error('test error'),
+			);
 
 			await cohereStream(call);
-			expect((call.write as Mock).mock.calls).toEqual([
-				[
-					{
-						finishReason: StreamFinishReason.ERROR,
-					},
-				],
-			]);
+			expect(call.destroy as Mock).toHaveBeenCalled();
 		});
 	});
 });
