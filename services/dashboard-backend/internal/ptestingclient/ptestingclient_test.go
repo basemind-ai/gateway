@@ -70,7 +70,7 @@ func TestPromptTestingGRPCClient(t *testing.T) { //nolint:revive
 
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 	promptRequestRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 	projectID := db.UUIDToString(&project.ID)

@@ -122,7 +122,7 @@ func TestProjectRepository(t *testing.T) {
 	t.Run("Project Analytics", func(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
-		promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+		promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 		_, _ = factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 
 		fromDate := time.Now().AddDate(0, 0, -1)

@@ -3,10 +3,11 @@ package openai
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/shopspring/decimal"
 	"github.com/tiktoken-go/tokenizer"
 	"google.golang.org/grpc/codes"
@@ -49,41 +50,16 @@ func GetMessageRole(role string) (*openaiconnector.OpenAIMessageRole, error) {
 	}
 }
 
-func ParseTemplateVariables(
-	content string,
-	expectedVariables []string,
-	templateVariables map[string]string,
-) (string, error) {
-	for _, expectedVariable := range expectedVariables {
-		value, ok := templateVariables[expectedVariable]
-
-		if !ok {
-			return "", status.Errorf(
-				codes.InvalidArgument,
-				"missing template variable {%s}",
-				expectedVariable,
-			)
-		}
-
-		content = strings.ReplaceAll(content, fmt.Sprintf("{%s}", expectedVariable), value)
-	}
-
-	return content, nil
-}
-
 func CreatePromptRequest(
-	applicationID pgtype.UUID,
-	modelType models.ModelType,
-	modelParameters *json.RawMessage,
-	promptMessages *json.RawMessage,
+	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
 ) (*openaiconnector.OpenAIPromptRequest, error) {
-	model, modelErr := GetModelType(modelType)
+	model, modelErr := GetModelType(requestConfiguration.PromptConfigData.ModelType)
 	if modelErr != nil {
 		return nil, modelErr
 	}
 
-	applicationIDString := db.UUIDToString(&applicationID)
+	applicationIDString := db.UUIDToString(&requestConfiguration.ApplicationID)
 
 	promptRequest := &openaiconnector.OpenAIPromptRequest{
 		Model:         *model,
@@ -93,31 +69,31 @@ func CreatePromptRequest(
 	}
 
 	if parametersUnmarshalErr := json.Unmarshal(
-		*modelParameters,
+		*requestConfiguration.PromptConfigData.ModelParameters,
 		promptRequest.Parameters,
 	); parametersUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
 	}
 
 	var openAIPromptMessageDTOs []*datatypes.OpenAIPromptMessageDTO
-	if messagesUnmarshalErr := json.Unmarshal(*promptMessages, &openAIPromptMessageDTOs); messagesUnmarshalErr != nil {
+	if messagesUnmarshalErr := json.Unmarshal(*requestConfiguration.PromptConfigData.ProviderPromptMessages, &openAIPromptMessageDTOs); messagesUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal prompt messages - %w", messagesUnmarshalErr)
 	}
 
-	for _, dto := range openAIPromptMessageDTOs {
-		messageRole, roleErr := GetMessageRole(dto.Role)
+	for _, dtoInstance := range openAIPromptMessageDTOs {
+		messageRole, roleErr := GetMessageRole(dtoInstance.Role)
 		if roleErr != nil {
 			return nil, roleErr
 		}
 		openAIMessage := &openaiconnector.OpenAIMessage{
 			Role: *messageRole,
-			Name: dto.Name,
+			Name: dtoInstance.Name,
 		}
-		if dto.Content != nil {
-			if dto.TemplateVariables != nil {
-				parsedContent, parseErr := ParseTemplateVariables(
-					*dto.Content,
-					*dto.TemplateVariables,
+		if dtoInstance.Content != nil {
+			if dtoInstance.TemplateVariables != nil {
+				parsedContent, parseErr := utils.ParseTemplateVariables(
+					*dtoInstance.Content,
+					*dtoInstance.TemplateVariables,
 					templateVariables,
 				)
 				if parseErr != nil {
@@ -125,14 +101,14 @@ func CreatePromptRequest(
 				}
 				openAIMessage.Content = &parsedContent
 			} else {
-				openAIMessage.Content = dto.Content
+				openAIMessage.Content = dtoInstance.Content
 			}
 		}
 
-		if dto.FunctionArguments != nil {
+		if dtoInstance.FunctionArguments != nil {
 			openAIMessage.FunctionCall = &openaiconnector.OpenAIFunctionCall{
-				Name:      *dto.Name,
-				Arguments: strings.Join(*dto.FunctionArguments, ","),
+				Name:      *dtoInstance.Name,
+				Arguments: strings.Join(*dtoInstance.FunctionArguments, ","),
 			}
 		}
 

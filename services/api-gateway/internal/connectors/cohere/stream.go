@@ -1,8 +1,8 @@
-package openai
+package cohere
 
 import (
 	"context"
-	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
+	cohereconnector "github.com/basemind-ai/monorepo/gen/go/cohere/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
@@ -13,7 +13,15 @@ import (
 	"time"
 )
 
-func parseMessage(msg *openaiconnector.OpenAIStreamResponse) string { return msg.Content }
+func parseMessage(msg *cohereconnector.CohereStreamResponse) string {
+	content := ""
+
+	if msg != nil {
+		content = *msg.Content
+	}
+
+	return content
+}
 
 func (c *Client) RequestStream(
 	ctx context.Context,
@@ -45,11 +53,12 @@ func (c *Client) RequestStream(
 	}
 	finalResult := &dto.PromptResultDTO{}
 
-	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
+	stream, streamErr := c.client.CohereStream(ctx, promptRequest)
 	finalResult.Error = streamErr
 
 	if streamErr == nil {
-		promptContent := utils.StreamFromClient[openaiconnector.OpenAIStreamResponse](
+		// TODO: implement token cost, until then result is unused
+		_ = utils.StreamFromClient[cohereconnector.CohereStreamResponse](
 			channel,
 			finalResult,
 			recordParams,
@@ -57,24 +66,11 @@ func (c *Client) RequestStream(
 			stream,
 			parseMessage,
 		)
-		tokenCountAndCost := CalculateTokenCountsAndCosts(
-			GetRequestPromptString(promptRequest.Messages),
-			promptContent,
-			requestConfiguration.ProviderModelPricing,
-			requestConfiguration.PromptConfigData.ModelType,
-		)
-		recordParams.RequestTokens = tokenCountAndCost.InputTokenCount
-		recordParams.ResponseTokens = tokenCountAndCost.OutputTokenCount
 
-		requestTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.InputTokenCost.String()),
-		)
-		recordParams.RequestTokensCost = *requestTokenCost
-
-		responseTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.OutputTokenCost.String()),
-		)
-		recordParams.ResponseTokensCost = *responseTokenCost
+		recordParams.RequestTokens = 0                                               // TODO: implement token cost
+		recordParams.ResponseTokens = 0                                              // TODO: implement token cost
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric("0.0"))  // TODO: implement token cost
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric("0.0")) // TODO: implement token cost
 	}
 
 	if finalResult.Error != nil {

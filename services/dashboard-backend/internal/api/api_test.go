@@ -89,7 +89,7 @@ func createPromptRequestRecord(t *testing.T, promptConfigID string) {
 func createPromptConfig(t *testing.T, applicationID string) string {
 	t.Helper()
 	uuidID, _ := db.StringToUUID(applicationID)
-	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), *uuidID)
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), *uuidID)
 	promptConfigID := db.UUIDToString(&promptConfig.ID)
 	return promptConfigID
 }

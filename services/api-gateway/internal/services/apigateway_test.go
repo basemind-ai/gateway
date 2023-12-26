@@ -28,7 +28,7 @@ func createRequestConfigurationDTO(
 ) dto.RequestConfigurationDTO {
 	t.Helper()
 	application, _ := factories.CreateApplication(context.TODO(), projectID)
-	promptConfig, _ := factories.CreatePromptConfig(
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(
 		context.TODO(),
 		application.ID,
 	)

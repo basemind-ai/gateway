@@ -2,6 +2,7 @@ package connectors
 
 import (
 	"context"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/cohere"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
@@ -12,10 +13,12 @@ import (
 
 var (
 	openaiConnectorClient *openai.Client
+	cohereConnectorClient *cohere.Client
 )
 
 type connectorConfig struct {
 	OpenAIConnectorAddress string `env:"OPENAI_CONNECTOR_ADDRESS,required"`
+	CohereConnectorAddress string `env:"COHERE_CONNECTOR_ADDRESS,required"`
 }
 
 // ProviderConnector - an interface that must be implemented by all connectors.
@@ -37,7 +40,8 @@ type ProviderConnector interface {
 func Init(ctx context.Context, opts ...grpc.DialOption) {
 	config := &connectorConfig{}
 	exc.Must(envconfig.Process(ctx, config), "failed to process environment variables")
-	openaiConnectorClient = openai.New(config.OpenAIConnectorAddress, opts...)
+
+	openaiConnectorClient = openai.New(config.OpenAIConnectorAddress)
 }
 
 // GetProviderConnector - returns the connector for the given provider.
@@ -47,11 +51,14 @@ func GetProviderConnector(provider models.ModelVendor) ProviderConnector {
 	case models.ModelVendorOPENAI:
 		return exc.ReturnNotNil(
 			openaiConnectorClient,
-			"OpenAI Connector Client was not initialized",
+			"OpenAI-Connector client was not initialized",
 		)
 	case models.ModelVendorCOHERE:
+		return exc.ReturnNotNil(
+			cohereConnectorClient,
+			"Cohere-Connector client was not initialized",
+		)
 	default:
-		panic("Unknown provider")
+		panic("unknown provider")
 	}
-	return nil
 }

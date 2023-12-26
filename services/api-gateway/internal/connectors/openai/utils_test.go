@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
@@ -20,7 +21,7 @@ import (
 	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
 )
 
-func TestUtils(t *testing.T) { //nolint: revive
+func TestUtils(t *testing.T) {
 	_ = factories.CreateProviderPricingModels(context.TODO())
 
 	t.Run("GetModelType", func(t *testing.T) {
@@ -77,67 +78,6 @@ func TestUtils(t *testing.T) { //nolint: revive
 		})
 	})
 
-	t.Run("ParseTemplateVariables", func(t *testing.T) {
-		t.Run("replaces all expected variables", func(t *testing.T) {
-			content := "Hello {name}, your age is {age}. How are you {name}?"
-			expectedVariables := []string{"name", "age"}
-			templateVariables := map[string]string{"name": "John", "age": "30"}
-
-			result, err := openai.ParseTemplateVariables(
-				content,
-				expectedVariables,
-				templateVariables,
-			)
-			assert.NoError(t, err)
-
-			expected := "Hello John, your age is 30. How are you John?"
-			assert.Equal(t, expected, result)
-		})
-		t.Run(
-			"returns the content string with no errors when there are no expected variables",
-			func(t *testing.T) {
-				content := "Hello {name}, your age is {age}. How are you {name}?"
-				expectedVariables := make([]string, 0)
-				templateVariables := map[string]string{"name": "John", "age": "30"}
-
-				result, err := openai.ParseTemplateVariables(
-					content,
-					expectedVariables,
-					templateVariables,
-				)
-				assert.NoError(t, err)
-
-				assert.Equal(t, content, result)
-			},
-		)
-		t.Run("returns an error when an expected variable is missing", func(t *testing.T) {
-			content := "Hello {name}, your age is {age}."
-			expectedVariables := []string{"name", "age"}
-			templateVariables := map[string]string{"name": "John"}
-
-			_, err := openai.ParseTemplateVariables(content, expectedVariables, templateVariables)
-			assert.Error(t, err)
-
-			expectedError := "missing template variable {age}"
-			assert.Contains(t, err.Error(), expectedError)
-		})
-		t.Run("handles empty template variable", func(t *testing.T) {
-			content := "Hello {name}, how are you?"
-			expectedVariables := []string{"name"}
-			templateVariables := map[string]string{"name": ""}
-
-			result, err := openai.ParseTemplateVariables(
-				content,
-				expectedVariables,
-				templateVariables,
-			)
-			assert.NoError(t, err)
-
-			expected := "Hello , how are you?"
-			assert.Equal(t, expected, result)
-		})
-	})
-
 	t.Run("CreatePromptRequest", func(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
@@ -170,6 +110,16 @@ func TestUtils(t *testing.T) { //nolint: revive
 		templateVariables := map[string]string{"userInput": userInput}
 		content := fmt.Sprintf("This is what the user asked for: %s", userInput)
 
+		requestConfig := &dto.RequestConfigurationDTO{
+			ApplicationID: application.ID,
+			PromptConfigData: datatypes.PromptConfigDTO{
+				ModelType:                 modelType,
+				ModelParameters:           modelParameters,
+				ProviderPromptMessages:    promptMessages,
+				ExpectedTemplateVariables: expectedTemplateVariables,
+			},
+		}
+
 		t.Run("creates a prompt request correctly", func(t *testing.T) {
 			expectedPromptRequest := &openaiconnector.OpenAIPromptRequest{
 				Model:         openaiconnector.OpenAIModel_OPEN_AI_MODEL_GPT3_5_TURBO_4K,
@@ -188,10 +138,7 @@ func TestUtils(t *testing.T) { //nolint: revive
 			}
 
 			promptRequest, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				modelParameters,
-				promptMessages,
+				requestConfig,
 				templateVariables,
 			)
 			assert.NoError(t, err)
@@ -201,13 +148,11 @@ func TestUtils(t *testing.T) { //nolint: revive
 
 		t.Run("handles function message correctly", func(t *testing.T) {
 			functionName := "sum"
-			promptMessages := ptr.To(
-				json.RawMessage(serialization.SerializeJSON([]*datatypes.OpenAIPromptMessageDTO{{
-					Role:              "function",
-					Name:              &functionName,
-					FunctionArguments: &[]string{"value1", "value2"},
-				}})),
-			)
+			promptMessages := serialization.SerializeJSON([]*datatypes.OpenAIPromptMessageDTO{{
+				Role:              "function",
+				Name:              &functionName,
+				FunctionArguments: &[]string{"value1", "value2"},
+			}})
 
 			functionCall := openaiconnector.OpenAIFunctionCall{
 				Arguments: "value1,value2",
@@ -227,11 +172,11 @@ func TestUtils(t *testing.T) { //nolint: revive
 				},
 			}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			promptRequest, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				modelParameters,
-				promptMessages,
+				&copied,
 				templateVariables,
 			)
 			assert.NoError(t, err)
@@ -241,15 +186,17 @@ func TestUtils(t *testing.T) { //nolint: revive
 
 		t.Run("returns error for unknown model type", func(t *testing.T) {
 			modelType := "unknown"
-			modelParameters := ptr.To(json.RawMessage(`{}`))
-			promptMessages := ptr.To(json.RawMessage(`[]`))
+			modelParameters := []byte(`{}`)
+			promptMessages := []byte(`[]`)
 			templateVariables := map[string]string{}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = models.ModelType(modelType)
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				models.ModelType(modelType),
-				modelParameters,
-				promptMessages,
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)
@@ -260,15 +207,17 @@ func TestUtils(t *testing.T) { //nolint: revive
 
 		t.Run("returns error for unknown message role", func(t *testing.T) {
 			modelType := models.ModelTypeGpt35Turbo
-			modelParameters := ptr.To(json.RawMessage(`{}`))
-			promptMessages := ptr.To(json.RawMessage(`[{"role": "unknown"}]`))
+			modelParameters := []byte(`{}`)
+			promptMessages := []byte(`[{"role": "unknown"}]`)
 			templateVariables := map[string]string{}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = modelType
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				modelParameters,
-				promptMessages,
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)
@@ -276,15 +225,17 @@ func TestUtils(t *testing.T) { //nolint: revive
 
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {
 			modelType := models.ModelTypeGpt35Turbo
-			modelParameters := ptr.To(json.RawMessage(`invalid_json`))
-			promptMessages := ptr.To(json.RawMessage(`[]`))
+			modelParameters := []byte(`invalid_json`)
+			promptMessages := []byte(`[]`)
 			templateVariables := make(map[string]string)
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = modelType
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				modelParameters,
-				promptMessages,
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)
@@ -292,17 +243,19 @@ func TestUtils(t *testing.T) { //nolint: revive
 
 		t.Run("returns error if prompt messages is invalid json", func(t *testing.T) {
 			modelType := models.ModelTypeGpt35Turbo
-			modelParameters := ptr.To(json.RawMessage(`{"temperature": 0.8}`))
-			promptMessages := ptr.To(json.RawMessage(`invalid_json`))
+			modelParameters := []byte(`{"temperature": 0.8}`)
+			promptMessages := []byte(`invalid_json`)
 			templateVariables := map[string]string{
 				"userInput": "Please write me a short poem about cheese.",
 			}
 
+			copied := *requestConfig
+			copied.PromptConfigData.ModelType = modelType
+			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
+			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
+
 			_, err := openai.CreatePromptRequest(
-				application.ID,
-				modelType,
-				modelParameters,
-				promptMessages,
+				&copied,
 				templateVariables,
 			)
 			assert.Error(t, err)
@@ -350,7 +303,6 @@ func TestUtils(t *testing.T) { //nolint: revive
 			)
 		})
 	})
-
 	t.Run("GetStringTokenCount", func(t *testing.T) {
 		testCases := []struct {
 			input    string

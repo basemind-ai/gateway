@@ -38,7 +38,7 @@ var seedCommand = &cobra.Command{
 		}
 		log.Info().Interface("application", application).Msg("created application")
 
-		promptConfig, promptConfigCreateErr := factories.CreatePromptConfig(
+		promptConfig, promptConfigCreateErr := factories.CreateOpenAIPromptConfig(
 			cmd.Context(),
 			application.ID,
 		)

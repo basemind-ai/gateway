@@ -149,7 +149,7 @@ func TestPromptTestingAPI(t *testing.T) { //nolint: revive
 		ProjectID:  project.ID,
 		Permission: models.AccessPermissionTypeADMIN,
 	})
-	promptConfig, _ := factories.CreatePromptConfig(context.TODO(), application.ID)
+	promptConfig, _ := factories.CreateOpenAIPromptConfig(context.TODO(), application.ID)
 	promptRequestRecord, _ := factories.CreatePromptRequestRecord(context.TODO(), promptConfig.ID)
 	templateVariables := map[string]string{"userInput": "test"}
 

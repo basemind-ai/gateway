@@ -1,4 +1,4 @@
-package openai
+package cohere
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// RequestPrompt sends a prompt request to the OpenAI API connector.
+// RequestPrompt sends a prompt request to the Cohere API connector.
 func (c *Client) RequestPrompt(
 	ctx context.Context,
 	requestConfiguration *dto.RequestConfigurationDTO,
@@ -35,30 +35,16 @@ func (c *Client) RequestPrompt(
 	}
 	promptResult := dto.PromptResultDTO{}
 
-	response, requestErr := c.client.OpenAIPrompt(ctx, promptRequest)
+	response, requestErr := c.client.CoherePrompt(ctx, promptRequest)
 	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 	if requestErr == nil {
-		promptResult.Content = &response.Content
+		promptResult.Content = response.Content
 
-		tokenCountAndCost := CalculateTokenCountsAndCosts(
-			GetRequestPromptString(promptRequest.Messages),
-			response.Content,
-			requestConfiguration.ProviderModelPricing,
-			requestConfiguration.PromptConfigData.ModelType,
-		)
-		recordParams.RequestTokens = tokenCountAndCost.InputTokenCount
-		recordParams.ResponseTokens = tokenCountAndCost.OutputTokenCount
-
-		requestTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.InputTokenCost.String()),
-		)
-		recordParams.RequestTokensCost = *requestTokenCost
-
-		responseTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.OutputTokenCost.String()),
-		)
-		recordParams.ResponseTokensCost = *responseTokenCost
+		recordParams.RequestTokens = 0                                               // TODO: implement token cost
+		recordParams.ResponseTokens = 0                                              // TODO: implement token cost
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric("0.0"))  // TODO: implement token cost
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric("0.0")) // TODO: implement token cost
 	} else {
 		log.Debug().Err(requestErr).Msg("request error")
 		promptResult.Error = requestErr

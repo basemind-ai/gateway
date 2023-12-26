@@ -17,5 +17,6 @@ type Client struct {
 func New(serverAddress string, opts ...grpc.DialOption) *Client {
 	conn := exc.MustResult(grpcutils.NewConnection(serverAddress, opts...))
 	log.Info().Msg("initialized OpenAI connector connection")
+
 	return &Client{client: openaiconnector.NewOpenAIServiceClient(conn)}
 }

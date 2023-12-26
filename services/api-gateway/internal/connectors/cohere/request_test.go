@@ -1,10 +1,10 @@
-package openai_test
+package cohere_test
 
 import (
 	"context"
 	"encoding/json"
 	"github.com/basemind-ai/monorepo/e2e/factories"
-	openaiconnector "github.com/basemind-ai/monorepo/gen/go/openai/v1"
+	cohereconnector "github.com/basemind-ai/monorepo/gen/go/cohere/v1"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
@@ -14,11 +14,13 @@ import (
 	"testing"
 )
 
-func TestRequestStream(t *testing.T) {
+func TestRequestPrompt(t *testing.T) {
 	_ = factories.CreateProviderPricingModels(context.TODO())
+
 	project, _ := factories.CreateProject(context.TODO())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)
-	promptConfig, _ := factories.CreateOpenAIPromptConfig(
+
+	promptConfig, _ := factories.CreateCoherePromptConfig(
 		context.TODO(),
 		application.ID,
 	)
@@ -48,95 +50,58 @@ func TestRequestStream(t *testing.T) {
 	}
 
 	templateVariables := map[string]string{"userInput": "abc"}
-	t.Run("handles a stream response", func(t *testing.T) {
+	expectedParsedContent := "This is what the user asked for: abc"
+
+	floatValue := float32(1)
+	expectedModelParameters := &cohereconnector.CohereModelParameters{
+		Temperature: &floatValue,
+	}
+	t.Run("returns a prompt response", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)
 
-		channel := make(chan dto.PromptResultDTO)
+		content := "Response content"
 
-		finishReason := "done"
-		mockService.Stream = []*openaiconnector.OpenAIStreamResponse{
-			{Content: "1"},
-			{Content: "2"},
-			{Content: "3", FinishReason: &finishReason},
+		mockService.Response = &cohereconnector.CoherePromptResponse{
+			Content: &content,
 		}
 
-		go func() {
-			client.RequestStream(
-				context.TODO(),
-				requestConfigurationDTO,
-				templateVariables,
-				channel,
-			)
-		}()
-
-		chunks := make([]dto.PromptResultDTO, 0)
-
-		for chunk := range channel {
-			chunks = append(chunks, chunk)
+		mockService.ExpectedRequest = &cohereconnector.CoherePromptRequest{
+			Model:      cohereconnector.CohereModel_COHERE_MODEL_COMMAND,
+			Parameters: expectedModelParameters,
+			Message:    expectedParsedContent,
 		}
 
-		assert.Len(t, chunks, 4)
-		assert.Equal(t, "1", *chunks[0].Content)
-		assert.Nil(t, chunks[0].RequestRecord)
-		assert.Nil(t, chunks[0].Error)
-		assert.Equal(t, "2", *chunks[1].Content)
-		assert.Nil(t, chunks[1].RequestRecord)
-		assert.Nil(t, chunks[1].Error)
-		assert.Equal(t, "3", *chunks[2].Content)
-		assert.Nil(t, chunks[2].RequestRecord)
-		assert.Nil(t, chunks[2].Error)
-		assert.Nil(t, chunks[3].Content)
-		assert.Nil(t, chunks[3].Error)
-		assert.NotNil(t, chunks[3].RequestRecord)
+		result := client.RequestPrompt(
+			context.TODO(),
+			requestConfigurationDTO,
+			templateVariables,
+		)
+		assert.NoError(t, result.Error)
+		assert.Equal(t, "Response content", *result.Content)
+		assert.NotNil(t, result.RequestRecord)
 	})
 
 	t.Run("returns an error if the request fails", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)
 
-		channel := make(chan dto.PromptResultDTO)
-
 		mockService.Error = assert.AnError
 
-		go func() {
-			client.RequestStream(
-				context.TODO(),
-				requestConfigurationDTO,
-				templateVariables,
-				channel,
-			)
-		}()
-
-		var result dto.PromptResultDTO
-
-		for value := range channel {
-			result = value
-		}
+		result := client.RequestPrompt(
+			context.TODO(),
+			requestConfigurationDTO,
+			templateVariables,
+		)
 		assert.Error(t, result.Error)
-		assert.NotNil(t, result.RequestRecord)
 	})
 
-	t.Run("returns an error when a template variable is missing", func(t *testing.T) {
-		client, mockService := CreateClientAndService(t)
+	t.Run("returns an error if a prompt variable is missing", func(t *testing.T) {
+		client, _ := CreateClientAndService(t)
 
-		channel := make(chan dto.PromptResultDTO)
-
-		mockService.Error = assert.AnError
-
-		go func() {
-			client.RequestStream(
-				context.TODO(),
-				requestConfigurationDTO,
-				map[string]string{},
-				channel,
-			)
-		}()
-
-		var result dto.PromptResultDTO
-
-		for value := range channel {
-			result = value
-		}
+		result := client.RequestPrompt(
+			context.TODO(),
+			requestConfigurationDTO,
+			map[string]string{},
+		)
 		assert.Errorf(t, result.Error, "missing template variable {userInput}")
-		assert.Nil(t, result.RequestRecord)
 	})
 }
