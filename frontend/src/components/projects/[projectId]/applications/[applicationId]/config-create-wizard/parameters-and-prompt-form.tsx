@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { InfoCircle } from 'react-bootstrap-icons';
 
+import { EntityNameInput } from '@/components/entity-name-input';
 import {
 	DEFAULT_MAX_TOKENS,
 	openAIModelsMaxTokensMap,
@@ -278,7 +279,7 @@ export function OpenAIPromptTemplate({
 	const [draftMessage, setDraftMessage] = useState<OpenAIContentMessage>(
 		structuredClone(OPEN_AI_DRAFT_MESSAGE),
 	);
-
+	const [isNameValid, setIsNameValid] = useState(true);
 	const handleRoleChange = (role: OpenAIPromptMessageRole) => {
 		setDraftMessage({ ...draftMessage, role });
 	};
@@ -398,13 +399,18 @@ export function OpenAIPromptTemplate({
 									{t('optional')}
 								</span>
 							</label>
-							<input
-								type="text"
+							<EntityNameInput
+								value={draftMessage.name ?? ''}
+								setValue={handleNameChange}
+								dataTestId="parameters-and-prompt-form-message-name-input"
 								placeholder={t('messageNameInputPlaceholder')}
-								className="card-input"
-								data-testid="parameters-and-prompt-form-message-name-input"
-								value={draftMessage.name}
-								onChange={handleChange(handleNameChange)}
+								isLoading={false}
+								setIsValid={setIsNameValid}
+								validateValue={(value: string) => {
+									return !messages
+										.map((message) => message.name)
+										.includes(value);
+								}}
 							/>
 						</div>
 					</div>
@@ -445,7 +451,7 @@ export function OpenAIPromptTemplate({
 						className="btn join-item btn-sm btn-primary"
 						onClick={handleSaveMessage}
 						data-testid="parameters-and-prompt-form-save-message-button"
-						disabled={!draftMessage.content}
+						disabled={!draftMessage.content && isNameValid}
 					>
 						{t('saveMessage')}
 					</button>

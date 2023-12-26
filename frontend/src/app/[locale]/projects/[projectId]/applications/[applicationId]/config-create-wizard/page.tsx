@@ -135,6 +135,7 @@ export default function PromptConfigCreateWizard({
 					setTemplateVariables={handleTemplateVariablesChange}
 					applicationId={applicationId}
 					projectId={projectId}
+					projectCredits={project?.credits}
 					modelType={store.modelType}
 					modelVendor={store.modelVendor}
 					parameters={store.parameters}

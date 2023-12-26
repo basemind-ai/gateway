@@ -28,7 +28,6 @@ export function PromptTestResultTable<T extends ModelVendor>({
 		responseTokens = 0,
 		responseTokensCost = '0',
 		durationMs = 0,
-		totalTokensCost = '0',
 	} = testRecord ?? {};
 
 	const duration = Math.abs(durationMs);
@@ -50,17 +49,16 @@ export function PromptTestResultTable<T extends ModelVendor>({
 								/>
 							</div>
 						</th>
-						<th>{t('totalCost')}</th>
 						<th className="hidden lg:table-cell">
 							{t('requestTokens')}
 						</th>
-						<th className="hidden 2xl:table-cell">
+						<th className="hidden md:table-cell">
 							{t('requestTokensCost')}
 						</th>
 						<th className="hidden lg:table-cell">
 							{t('responseTokens')}
 						</th>
-						<th className="hidden 2xl:table-cell">
+						<th className="hidden md:table-cell">
 							{t('responseTokensCost')}
 						</th>
 					</tr>
@@ -77,9 +75,6 @@ export function PromptTestResultTable<T extends ModelVendor>({
 							{testFinishReason || 'N/A'}
 						</td>
 						<td data-testid="test-duration-display">{`${duration} MS`}</td>
-						<td data-testid="test-request-total-cost-display">
-							{totalTokensCost}
-						</td>
 						<td
 							data-testid="test-request-tokens-display"
 							className="hidden lg:table-cell"
@@ -88,7 +83,7 @@ export function PromptTestResultTable<T extends ModelVendor>({
 						</td>
 						<td
 							data-testid="test-request-tokens-cost-display"
-							className="hidden 2xl:table-cell"
+							className="hidden md:table-cell"
 						>
 							{requestTokensCost}
 						</td>
@@ -100,7 +95,7 @@ export function PromptTestResultTable<T extends ModelVendor>({
 						</td>
 						<td
 							data-testid="test-response-tokens-cost-display"
-							className="hidden 2xl:table-cell"
+							className="hidden md:table-cell"
 						>
 							{responseTokensCost}
 						</td>

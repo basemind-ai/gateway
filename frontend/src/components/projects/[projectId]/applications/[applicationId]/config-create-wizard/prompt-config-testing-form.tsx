@@ -35,6 +35,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 	templateVariables,
 	setTemplateVariables,
 	projectId,
+	projectCredits,
 	applicationId,
 	handleError,
 	modelVendor,
@@ -49,6 +50,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 	modelType: ModelType<T>;
 	modelVendor: T;
 	parameters: ModelParameters<T>;
+	projectCredits?: string;
 	projectId: string;
 	promptConfigId?: string;
 	setTemplateVariables: (templateVariables: Record<string, string>) => void;
@@ -142,7 +144,6 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 				</>
 			)}
 			<div className="card-section-divider" />
-			<div className="card-section-divider" />
 			<button
 				disabled={!allExpectedVariablesHaveLength || isRunningTest}
 				data-testid="run-test-button"
@@ -152,6 +153,12 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 				{renderButtonIcon()}
 				{t('runTest')}
 			</button>
+
+			{projectCredits && (
+				<span className="text-neutral-content text-sm text-center pt-2">
+					{`${t('credits') + projectCredits}$`}
+				</span>
+			)}
 			<div className="card-section-divider" />
 			<h2 className="card-header">{t('testResults')}</h2>
 			<div className="rounded-dark-card">

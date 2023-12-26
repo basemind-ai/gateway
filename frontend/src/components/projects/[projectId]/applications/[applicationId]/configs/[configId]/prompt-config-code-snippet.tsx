@@ -29,8 +29,14 @@ const docsSwift =
 const snippetSwift = `import BaseMindClient
 
 let client = BaseMindClient(apiKey: "<MyApiKey>")`;
+
+const docsFlutter = 'https://pub.dev/packages/basemind';
+const snippetDart = `import 'package:basemind/client.dart';
+
+final client = BaseMindClient('<API_KEY>');`;
+
 const languageSnippetMap: Record<supportedLanguages, string | null> = {
-	dart: null,
+	dart: snippetDart,
 	kotlin: snippetKotlin,
 	swift: snippetSwift,
 	typescript: null,
@@ -45,9 +51,9 @@ const tabs: FrameworkTab[] = [
 	},
 	{ docs: docsSwift, framework: 'iOS', isActive: true, language: 'swift' },
 	{
-		docs: undefined,
+		docs: docsFlutter,
 		framework: 'Flutter',
-		isActive: false,
+		isActive: true,
 		language: 'dart',
 	},
 	{

@@ -44,9 +44,9 @@ describe('PromptConfigCodeSnippet', () => {
 				applicationId={application.id}
 			/>,
 		);
-		const flutterTab = screen.getByTestId('tab-Flutter');
+		const reactTab = screen.getByTestId('tab-React Native');
 
-		expect(flutterTab).toBeDisabled();
+		expect(reactTab).toBeDisabled();
 	});
 
 	it('should not display the code snippet when the language is not supported', () => {
