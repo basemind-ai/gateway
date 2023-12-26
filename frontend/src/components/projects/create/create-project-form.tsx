@@ -154,7 +154,7 @@ export function CreateProjectForm({
 				<div className="card-section-divider" />
 				<div className="form-control w-full">
 					<label className="label">
-						<span className="flex justify-start gap-2">
+						<span className="flex justify-start gap-2 text-base-content">
 							<span className="label-text text-neutral-content">
 								{t('applicationNameInputLabel')}
 							</span>

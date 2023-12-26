@@ -42,10 +42,10 @@ export function ProjectDeletion({ project }: { project: Project }) {
 			<h2 className="card-header">{t('deleteProjectTitle')}</h2>
 			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
 				<div>
-					<h6 className="font-medium ">
+					<h6 className="text-base-content font-medium ">
 						{t('deleteProjectSubtitle')}
 					</h6>
-					<p className="font-light text-sm mt-2.5">
+					<p className="text-base-content font-light text-sm mt-2.5">
 						{t('deleteProjectWarning')}
 					</p>
 				</div>
@@ -72,7 +72,7 @@ export function ProjectDeletion({ project }: { project: Project }) {
 						onConfirm={() => void deleteProject()}
 						confirmCTA={
 							isLoading ? (
-								<span className="loading loading-spinner loading-xs mx-1.5" />
+								<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
 							) : undefined
 						}
 					/>

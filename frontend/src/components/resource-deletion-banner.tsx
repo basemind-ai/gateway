@@ -47,7 +47,7 @@ export function ResourceDeletionBanner({
 				</h1>
 				<p
 					data-testid="resource-deletion-description"
-					className="mt-2.5 text-lg"
+					className="text-base-content mt-2.5 text-lg"
 				>
 					{description}
 				</p>

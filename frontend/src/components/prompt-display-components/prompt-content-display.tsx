@@ -77,7 +77,11 @@ export function PromptContentDisplay<T extends ModelVendor>({
 				data-testid="prompt-content-display-messages"
 			>
 				{messageContent.map((msg, i) => (
-					<p data-testid="message-content-paragraph" key={i}>
+					<p
+						className="text-base-content"
+						data-testid="message-content-paragraph"
+						key={i}
+					>
 						{msg}
 					</p>
 				))}

@@ -68,13 +68,13 @@ export function ProjectProviderKeyCreateModal({
 			<div className="flex flex-col justify-evenly">
 				{modelVendor ? (
 					<div>
-						<p className="p-4 text-sm">
+						<p className="text-base-content p-4 text-sm">
 							{t('providerKeyIsRequiredMessage', {
 								modelVendor:
 									modelVendorToLocaleMap[modelVendor],
 							})}
 						</p>
-						<p className="px-4 text-xs flex gap-2">
+						<p className="text-base-content px-4 text-xs flex gap-2">
 							<InfoCircle className="w-4 h-4" />
 							<span>{t('keyIsEncryptedMessage')}</span>
 						</p>
@@ -142,7 +142,7 @@ export function ProjectProviderKeyCreateModal({
 				>
 					{isLoading ? (
 						<span
-							className="loading loading-spinner"
+							className="loading loading-spinner text-base-content"
 							data-testid="spinner"
 						/>
 					) : (

@@ -59,7 +59,7 @@ export function ApplicationDeletion({
 					<h6 className="font-medium ">
 						{t('deleteApplicationSubtitle')}
 					</h6>
-					<p className="font-light text-sm mt-2.5">
+					<p className="text-base-content font-light text-sm mt-2.5">
 						{t('deleteApplicationWarning')}
 					</p>
 				</div>
@@ -85,7 +85,7 @@ export function ApplicationDeletion({
 						onConfirm={() => void deleteApplication()}
 						confirmCTA={
 							isLoading ? (
-								<span className="loading loading-spinner loading-xs mx-1.5" />
+								<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
 							) : undefined
 						}
 					/>

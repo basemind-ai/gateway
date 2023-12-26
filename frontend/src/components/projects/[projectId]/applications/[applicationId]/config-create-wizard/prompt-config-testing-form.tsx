@@ -105,7 +105,9 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 
 	const renderButtonIcon = () => {
 		if (isRunningTest) {
-			return <span className="loading loading-bars" />;
+			return (
+				<span className="loading loading-bars text-neutral-content" />
+			);
 		} else if (testFinishReason) {
 			return <Repeat className="h-5 w-5" />;
 		} else {

@@ -44,13 +44,16 @@ export function Navbar({
 						>
 							<ArrowLeft className="w-4 h-4" />
 						</Link>
-						<h1 className="text-sm" data-testid="headline">
+						<h1
+							className="text-sm text-base-content"
+							data-testid="headline"
+						>
 							{headline}
 						</h1>
 					</>
 				)}
 				{project && (
-					<div className="text-sm breadcrumbs capitalize">
+					<div className="text-sm text-base-content breadcrumbs capitalize">
 						<ul>
 							<li>
 								<Link

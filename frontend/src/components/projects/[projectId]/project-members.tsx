@@ -46,7 +46,7 @@ function UserCard({
 			/>
 			<div>
 				<p className="font-semibold text-base-content">{displayName}</p>
-				<p className="text-neutral font-medium">{email}</p>
+				<p className="text-neutral-content font-medium">{email}</p>
 			</div>
 		</div>
 	);
@@ -247,7 +247,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 					onConfirm={() => void removeUser()}
 					confirmCTA={
 						removeUserLoading ? (
-							<span className="loading loading-spinner loading-xs mx-1.5" />
+							<span className="loading loading-spinner text-base-content loading-xs mx-1.5" />
 						) : (
 							t('ok')
 						)

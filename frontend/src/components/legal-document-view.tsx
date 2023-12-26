@@ -21,6 +21,7 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
 					{document.openingParagraphs.map(
 						(openingParagraph, indexOpening) => (
 							<p
+								className="text-base-content"
 								key={`${openingParagraph.slice(
 									0,
 									10,
@@ -32,11 +33,15 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
 					)}
 					{document.Paragraphs.map((section, sectionIndex) => (
 						<>
-							<h2 key={section.title + sectionIndex}>
+							<h2
+								className="text-base-content"
+								key={section.title + sectionIndex}
+							>
 								{section.title}
 							</h2>
 							{section.content.map((paragraph, indexSection) => (
 								<p
+									className="text-base-content"
 									key={`${paragraph.slice(
 										0,
 										10,

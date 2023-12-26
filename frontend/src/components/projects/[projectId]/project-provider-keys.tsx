@@ -166,7 +166,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 						confirmCTA={
 							isLoading ? (
 								<span
-									className="loading loading-spinner loading-xs mx-1.5"
+									className="loading loading-spinner loading-xs mx-1.5 text-base-content"
 									data-testid="delete-key-loader"
 								/>
 							) : undefined

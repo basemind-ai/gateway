@@ -18,8 +18,11 @@ function GridCell({
 }) {
 	return (
 		<div className="p-2">
-			<label className="text-sm">{header}</label>
-			<p data-testid={dataTestId} className="text-sm font-semibold">
+			<label className="text-neutral-content text-sm">{header}</label>
+			<p
+				data-testid={dataTestId}
+				className="text-neutral-content text-sm font-semibold"
+			>
 				{content}
 			</p>
 		</div>

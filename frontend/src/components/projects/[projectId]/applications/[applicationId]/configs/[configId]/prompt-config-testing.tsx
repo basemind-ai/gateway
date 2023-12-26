@@ -222,7 +222,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 						}}
 					>
 						{isLoading ? (
-							<span className="loading loading-spinner loading-xs mx-2" />
+							<span className="loading loading-spinner loading-xs mx-2 text-base-content" />
 						) : (
 							t('update')
 						)}
@@ -236,7 +236,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 						}}
 					>
 						{isLoading ? (
-							<span className="loading loading-spinner loading-xs mx-2" />
+							<span className="loading loading-spinner loading-xs mx-2 text-base-content" />
 						) : (
 							t('saveAsNew')
 						)}
@@ -278,7 +278,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 							}}
 						>
 							{isLoading ? (
-								<span className="loading loading-spinner loading-xs mx-2" />
+								<span className="loading loading-spinner loading-xs mx-2 text-base-content" />
 							) : (
 								t('confirm')
 							)}

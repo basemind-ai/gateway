@@ -79,10 +79,12 @@ export function CreateApplicationAPIKeyModal({
 				>
 					{t('createApiKey')}
 				</h2>
-				<p className="mt-2.5 text-center">
+				<p className="text-base-content mt-2.5 text-center">
 					{t('createApiKeyDescription')}
 				</p>
-				<p className="text-center">{t('createApiKeySeeItOnce')}</p>
+				<p className="text-base-content text-center">
+					{t('createApiKeySeeItOnce')}
+				</p>
 				{!apiKeyHash && (
 					<div className="form-control card-divider self-start w-full">
 						<label className="label">
@@ -148,7 +150,7 @@ export function CreateApplicationAPIKeyModal({
 						}`}
 					>
 						{loading ? (
-							<span className="loading loading-spinner loading-xs mx-1.5" />
+							<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
 						) : (
 							t('create')
 						)}

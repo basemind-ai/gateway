@@ -53,7 +53,7 @@ export default function CreateProjectPage() {
 						data-testid="create-project-view-header"
 					>
 						<h1
-							className="text-center font-extrabold text-xl mb-2"
+							className="text-base-content text-center font-bold text-xl mb-2"
 							data-testid="create-project-view-title"
 						>
 							{t('title')}

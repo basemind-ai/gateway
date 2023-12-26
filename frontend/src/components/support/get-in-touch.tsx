@@ -29,7 +29,9 @@ export function GetInTouch() {
 							}}
 						>
 							<Discord className="icon w-6 h-6 text-discord" />
-							<span className=" pl-2">{t('joinOurDiscord')}</span>
+							<span className="text-base-content pl-2">
+								{t('joinOurDiscord')}
+							</span>
 						</button>
 					</div>
 					<div className="divider divider-horizontal " />
@@ -39,7 +41,9 @@ export function GetInTouch() {
 						</div>
 						<div className="flex gap-2 text-lg h-16 px-6 items-center">
 							<Mailbox className="icon w-6 h-6 text-discord" />
-							<span className=" pl-2">{SUPPORT_EMAIL}</span>
+							<span className="text-base-content pl-2">
+								{SUPPORT_EMAIL}
+							</span>
 						</div>
 					</div>
 				</div>
