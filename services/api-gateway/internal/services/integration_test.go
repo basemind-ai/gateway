@@ -37,6 +37,10 @@ const JWTSecret = "ABC123"
 
 func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 	t.Helper()
+
+	t.Setenv("OPENAI_CONNECTOR_ADDRESS", "")
+	t.Setenv("COHERE_CONNECTOR_ADDRESS", "")
+
 	mockService := &testutils.MockOpenAIService{T: t}
 	listener := testutils.CreateTestGRPCServer[openaiconnector.OpenAIServiceServer](
 		t,
@@ -44,9 +48,8 @@ func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 		mockService,
 	)
 
-	t.Setenv("OPENAI_CONNECTOR_ADDRESS", "")
-
-	connectors.Init(context.TODO(),
+	connectors.Init(
+		context.TODO(),
 		grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) {
 				return listener.Dial()
@@ -84,7 +87,7 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 	project, _ := factories.CreateProject(context.Background())
 
-	modelParameters := factories.CreateModelParameters()
+	modelParameters := factories.CreateOpenAIModelParameters()
 	promptMessages := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
 	_ = factories.CreateProviderPricingModels(context.Background())
 	requestConfigurationDTO := createRequestConfigurationDTO(t, project.ID)

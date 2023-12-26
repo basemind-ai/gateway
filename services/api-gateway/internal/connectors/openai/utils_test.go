@@ -82,8 +82,8 @@ func TestUtils(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-		floatValue := float32(1)
-		uintValue := uint32(1)
+		floatValue := float32(0)
+		uintValue := uint32(0)
 
 		expectedModelParameters := &openaiconnector.OpenAIModelParameters{
 			Temperature:      &floatValue,
@@ -99,7 +99,7 @@ func TestUtils(t *testing.T) {
 		applicationID := db.UUIDToString(&application.ID)
 		modelType := models.ModelTypeGpt35Turbo
 
-		modelParameters := factories.CreateModelParameters()
+		modelParameters := factories.CreateOpenAIModelParameters()
 		promptMessages := factories.CreateOpenAIPromptMessages(
 			systemMessage,
 			userMessage,

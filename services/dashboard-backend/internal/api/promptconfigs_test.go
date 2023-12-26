@@ -39,7 +39,7 @@ func TestPromptConfigAPI(t *testing.T) { //nolint: revive
 		&templateVariables,
 	)
 
-	modelParameters := factories.CreateModelParameters()
+	modelParameters := factories.CreateOpenAIModelParameters()
 
 	fmtListEndpoint := func(projectID string, applicationID string) string {
 		return fmt.Sprintf(

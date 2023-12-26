@@ -8,6 +8,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/shopspring/decimal"
 	"github.com/tiktoken-go/tokenizer"
 	"google.golang.org/grpc/codes"
@@ -50,6 +51,42 @@ func GetMessageRole(role string) (*openaiconnector.OpenAIMessageRole, error) {
 	}
 }
 
+func parseParameters(
+	rawParameters *json.RawMessage,
+	connectorParameters *openaiconnector.OpenAIModelParameters,
+) error {
+	if rawParameters == nil {
+		return nil
+	}
+
+	modelParameters := &datatypes.OpenAIModelParametersDTO{}
+	if parametersUnmarshalErr := json.Unmarshal(*rawParameters, modelParameters); parametersUnmarshalErr != nil {
+		return fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
+	}
+
+	if modelParameters.MaxTokens != nil {
+		connectorParameters.MaxTokens = ptr.To(uint32(*modelParameters.MaxTokens))
+	}
+
+	if modelParameters.Temperature != nil {
+		connectorParameters.Temperature = modelParameters.Temperature
+	}
+
+	if modelParameters.TopP != nil {
+		connectorParameters.TopP = modelParameters.TopP
+	}
+
+	if modelParameters.FrequencyPenalty != nil {
+		connectorParameters.FrequencyPenalty = modelParameters.FrequencyPenalty
+	}
+
+	if modelParameters.PresencePenalty != nil {
+		connectorParameters.PresencePenalty = modelParameters.PresencePenalty
+	}
+
+	return nil
+}
+
 func CreatePromptRequest(
 	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
@@ -61,18 +98,16 @@ func CreatePromptRequest(
 
 	applicationIDString := db.UUIDToString(&requestConfiguration.ApplicationID)
 
+	modelParameters := &openaiconnector.OpenAIModelParameters{}
+	if parametersParseErr := parseParameters(requestConfiguration.PromptConfigData.ModelParameters, modelParameters); parametersParseErr != nil {
+		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersParseErr)
+	}
+
 	promptRequest := &openaiconnector.OpenAIPromptRequest{
 		Model:         *model,
 		ApplicationId: &applicationIDString,
-		Parameters:    &openaiconnector.OpenAIModelParameters{},
+		Parameters:    modelParameters,
 		Messages:      []*openaiconnector.OpenAIMessage{},
-	}
-
-	if parametersUnmarshalErr := json.Unmarshal(
-		*requestConfiguration.PromptConfigData.ModelParameters,
-		promptRequest.Parameters,
-	); parametersUnmarshalErr != nil {
-		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
 	}
 
 	var openAIPromptMessageDTOs []*datatypes.OpenAIPromptMessageDTO

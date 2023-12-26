@@ -33,16 +33,14 @@ type CoherePromptMessageDTO struct { // skipcq: TCV-001
 	TemplateVariables *[]string `json:"templateVariables,omitempty"`
 }
 
-// CohereConnectorDTO - DTO for a Cohere RAG connector.
-type CohereConnectorDTO struct { // skipcq: TCV-001
-	ID      string         `json:"id"      validate:"required"`
-	Options map[string]any `json:"options" validate:"required"`
-}
-
 // CohereModelParametersDTO - DTO for serializing and storing Cohere model parameters.
 type CohereModelParametersDTO struct { // skipcq: TCV-001
-	Temperature *float32              `json:"temperature,omitempty"`
-	Connectors  *[]CohereConnectorDTO `json:"connectors,omitempty"`
+	Temperature      *float32 `json:"temperature,omitempty"`
+	K                *uint32  `json:"k,omitempty"`
+	P                *float32 `json:"p,omitempty"`
+	FrequencyPenalty *float32 `json:"frequencyPenalty,omitempty"`
+	PresencePenalty  *float32 `json:"presencePenalty,omitempty"`
+	MaxTokens        *int32   `json:"maxTokens,omitempty"`
 }
 
 // PromptConfigDTO - DTO for serializing a prompt config.

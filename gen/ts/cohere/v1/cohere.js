@@ -75,7 +75,7 @@ class CohereModelParameters$Type extends MessageType {
     constructor() {
         super("cohere.v1.CohereModelParameters", [
             { no: 1, name: "temperature", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 2, name: "k", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 2, name: "k", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 3, name: "p", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
             { no: 4, name: "frequency_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
             { no: 5, name: "presence_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },

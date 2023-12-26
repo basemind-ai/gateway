@@ -61,7 +61,7 @@ func createPromptTestingServiceClient(t *testing.T) ptesting.PromptTestingServic
 
 func TestPromptTestingService(t *testing.T) {
 	srv := services.PromptTestingServer{}
-	modelParameters := factories.CreateModelParameters()
+	modelParameters := factories.CreateOpenAIModelParameters()
 	promptMessages := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
 	project, _ := factories.CreateProject(context.Background())
 	application, _ := factories.CreateApplication(context.TODO(), project.ID)

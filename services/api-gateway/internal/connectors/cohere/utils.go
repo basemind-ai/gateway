@@ -7,8 +7,8 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 )
 
 var ModelTypeMap = map[models.ModelType]cohereconnector.CohereModel{
@@ -27,6 +27,46 @@ func GetModelType(modelType models.ModelType) (*cohereconnector.CohereModel, err
 	return &value, nil
 }
 
+func parseParameters(
+	rawParameters *json.RawMessage,
+	connectorParameters *cohereconnector.CohereModelParameters,
+) error {
+	if rawParameters == nil {
+		return nil
+	}
+
+	modelParameters := &datatypes.CohereModelParametersDTO{}
+	if parametersUnmarshalErr := json.Unmarshal(*rawParameters, modelParameters); parametersUnmarshalErr != nil {
+		return fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
+	}
+
+	if modelParameters.MaxTokens != nil {
+		connectorParameters.MaxTokens = ptr.To(uint32(*modelParameters.MaxTokens))
+	}
+
+	if modelParameters.Temperature != nil {
+		connectorParameters.Temperature = modelParameters.Temperature
+	}
+
+	if modelParameters.K != nil {
+		connectorParameters.K = modelParameters.K
+	}
+
+	if modelParameters.P != nil {
+		connectorParameters.P = modelParameters.P
+	}
+
+	if modelParameters.FrequencyPenalty != nil {
+		connectorParameters.FrequencyPenalty = modelParameters.FrequencyPenalty
+	}
+
+	if modelParameters.PresencePenalty != nil {
+		connectorParameters.PresencePenalty = modelParameters.PresencePenalty
+	}
+
+	return nil
+}
+
 func CreatePromptRequest(
 	requestConfiguration *dto.RequestConfigurationDTO,
 	templateVariables map[string]string,
@@ -36,12 +76,14 @@ func CreatePromptRequest(
 		return nil, modelErr
 	}
 
-	applicationID := db.UUIDToString(&requestConfiguration.ApplicationID)
+	modelParameters := &cohereconnector.CohereModelParameters{}
+	if parametersParseErr := parseParameters(requestConfiguration.PromptConfigData.ModelParameters, modelParameters); parametersParseErr != nil {
+		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersParseErr)
+	}
 
 	promptRequest := &cohereconnector.CoherePromptRequest{
-		Model:          *model,
-		Parameters:     &cohereconnector.CohereModelParameters{},
-		ConversationId: &applicationID,
+		Model:      *model,
+		Parameters: modelParameters,
 	}
 
 	if parametersUnmarshalErr := json.Unmarshal(

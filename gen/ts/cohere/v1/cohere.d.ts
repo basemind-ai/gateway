@@ -21,7 +21,7 @@ export interface CohereModelParameters {
      * Ensures only the top k most likely tokens are considered for generation at each step.
      * Defaults to 0, min value of 0, max value of 500.
      *
-     * @generated from protobuf field: optional float k = 2;
+     * @generated from protobuf field: optional uint32 k = 2;
      */
     k?: number;
     /**

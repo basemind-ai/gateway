@@ -40,13 +40,16 @@ func CreateOpenAIPromptMessages(
 	return ptr.To(json.RawMessage(serialization.SerializeJSON(msgs)))
 }
 
-func CreateModelParameters() *json.RawMessage {
-	modelParameters := serialization.SerializeJSON(map[string]float32{
-		"temperature":       1,
-		"top_p":             1,
-		"max_tokens":        1,
-		"presence_penalty":  1,
-		"frequency_penalty": 1,
+func CreateOpenAIModelParameters() *json.RawMessage {
+	floatValue := float32(0)
+	intValue := int32(0)
+
+	modelParameters := serialization.SerializeJSON(datatypes.OpenAIModelParametersDTO{
+		Temperature:      &floatValue,
+		TopP:             &floatValue,
+		MaxTokens:        &intValue,
+		FrequencyPenalty: &floatValue,
+		PresencePenalty:  &floatValue,
 	})
 
 	return ptr.To(json.RawMessage(modelParameters))
@@ -107,7 +110,7 @@ func CreateOpenAIPromptConfig(
 	userMessage := "This is what the user asked for: {userInput}"
 	templateVariables := []string{"userInput"}
 
-	modelParameters := CreateModelParameters()
+	modelParameters := CreateOpenAIModelParameters()
 
 	promptMessages := CreateOpenAIPromptMessages(
 		systemMessage,
@@ -132,6 +135,22 @@ func CreateOpenAIPromptConfig(
 	return &promptConfig, nil
 }
 
+func CreateCohereModelParameters() *json.RawMessage {
+	floatValue := float32(0)
+	uintValue := uint32(0)
+	intValue := int32(0)
+
+	modelParameters := serialization.SerializeJSON(datatypes.CohereModelParametersDTO{
+		Temperature:      &floatValue,
+		K:                &uintValue,
+		P:                &floatValue,
+		FrequencyPenalty: &floatValue,
+		PresencePenalty:  &floatValue,
+		MaxTokens:        &intValue,
+	})
+	return ptr.To(json.RawMessage(modelParameters))
+}
+
 func CreateCoherePromptConfig(
 	ctx context.Context,
 	applicationID pgtype.UUID,
@@ -139,11 +158,7 @@ func CreateCoherePromptConfig(
 	userMessage := "This is what the user asked for: {userInput}"
 	templateVariables := []string{"userInput"}
 
-	modelParameters := ptr.To(
-		json.RawMessage(serialization.SerializeJSON(datatypes.CohereModelParametersDTO{
-			Temperature: ptr.To(float32(1)),
-		})),
-	)
+	modelParameters := CreateCohereModelParameters()
 
 	promptMessages := ptr.To(
 		json.RawMessage(serialization.SerializeJSON(datatypes.CoherePromptMessageDTO{
