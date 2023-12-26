@@ -101,7 +101,9 @@ export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 				</div>
 				<div className="form-control">
 					<label className="label">
-						<span className="label-text">{t('emailSubject')}</span>
+						<span className="label-text text-base-content">
+							{t('emailSubject')}
+						</span>
 					</label>
 					<input
 						placeholder={t('emailSubjectPlaceholder')}
@@ -114,7 +116,9 @@ export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 				</div>
 				<div className="form-control">
 					<label className="label">
-						<span className="label-text">{t('emailBody')}</span>
+						<span className="label-text text-base-content">
+							{t('emailBody')}
+						</span>
 					</label>
 					<textarea
 						placeholder={t('emailBodyPlaceholder')}
@@ -138,7 +142,7 @@ export function ContactForm({ isAuthenticated }: { isAuthenticated: boolean }) {
 					onClick={handleButtonClick}
 				>
 					{isSubmitting ? (
-						<span className="loading loading-spinner" />
+						<span className="loading loading-spinner text-base-content" />
 					) : (
 						t('submit')
 					)}

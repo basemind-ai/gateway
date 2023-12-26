@@ -13,7 +13,7 @@ export function TooltipIcon({
 			data-tip={tooltip}
 			data-testid={dataTestId}
 		>
-			<InfoCircle className="w-3 h-3" />
+			<InfoCircle className="w-3 h-3 text-base-content" />
 		</div>
 	);
 }

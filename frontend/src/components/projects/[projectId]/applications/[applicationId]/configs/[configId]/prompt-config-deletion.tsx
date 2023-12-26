@@ -64,7 +64,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 					<h6 className="font-medium ">
 						{t('deleteModelConfigTitle')}
 					</h6>
-					<p className="font-light text-sm mt-2.5">
+					<p className="text-base-content font-light text-sm mt-2.5">
 						{t('deleteModelConfigDescription')}
 					</p>
 				</div>
@@ -91,7 +91,7 @@ export function PromptConfigDeletion<T extends ModelVendor>({
 						onConfirm={() => void deletePrompt()}
 						confirmCTA={
 							isLoading ? (
-								<span className="loading loading-spinner loading-xs mx-1.5" />
+								<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
 							) : undefined
 						}
 					/>

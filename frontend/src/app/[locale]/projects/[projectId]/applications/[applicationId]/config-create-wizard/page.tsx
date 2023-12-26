@@ -198,7 +198,7 @@ export default function PromptConfigCreateWizard({
 		>
 			{isLoading ? (
 				<div className="flex flex-col justify-center items-center h-full right-0 left-0 top-0 bottom-0 absolute m-auto">
-					<div className="loading loading-spinner loading-lg align-middle" />
+					<div className="loading loading-spinner loading-lg align-middle text-primary" />
 				</div>
 			) : (
 				<>

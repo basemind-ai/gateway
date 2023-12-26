@@ -52,7 +52,7 @@ export default function Projects() {
 			data-testid="projects-view-loading"
 		>
 			<div className="flex justify-around w-full">
-				<div className="loading loading-spinner loading-lg" />
+				<div className="loading loading-spinner loading-lg text-primary" />
 			</div>
 		</div>
 	);

@@ -30,7 +30,7 @@ export function DataCard({
 					{loading && (
 						<span
 							data-testid="data-card-loader"
-							className="loading loading-spinner text-primary"
+							className="loading loading-spinner text-primary text-base-content"
 						/>
 					)}
 				</h1>

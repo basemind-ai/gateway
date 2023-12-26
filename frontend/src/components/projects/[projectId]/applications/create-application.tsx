@@ -116,9 +116,9 @@ export function CreateApplication({
 	return (
 		<div data-testid="create-application-container" className="bg-base-300">
 			<main className="p-10 pb-20 flex flex-col border-b border-neutral">
-				<h1 className="font-bold text-xl text-base-content text-center">
+				<h2 className="font-bold text-xl text-base-content text-center">
 					{t('createApplication')}
-				</h1>
+				</h2>
 
 				<div className="mt-14">
 					<label
@@ -201,7 +201,7 @@ export function CreateApplication({
 					className="btn btn-primary capitalize"
 				>
 					{loading ? (
-						<span className="loading loading-spinner loading-xs mx-14" />
+						<span className="loading loading-spinner loading-xs mx-14 text-base-content" />
 					) : (
 						t('createApplication')
 					)}

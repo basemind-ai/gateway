@@ -70,7 +70,7 @@ export default function PromptConfiguration({
 				data-testid="prompt-config-page-loading"
 				className="h-full w-full flex items-center justify-center"
 			>
-				<span className="loading loading-spinner loading-md" />
+				<span className="loading loading-spinner loading-md text-base-content" />
 			</div>
 		);
 	}

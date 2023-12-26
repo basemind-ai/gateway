@@ -171,7 +171,7 @@ export function ApplicationApiKeys({
 							}
 							confirmCTA={
 								loading ? (
-									<span className="loading loading-spinner loading-xs mx-1.5" />
+									<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
 								) : undefined
 							}
 						/>

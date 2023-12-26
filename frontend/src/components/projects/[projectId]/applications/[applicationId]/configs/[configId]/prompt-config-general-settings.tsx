@@ -77,7 +77,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 						onClick={() => void saveSettings()}
 					>
 						{isLoading ? (
-							<span className="loading loading-spinner loading-sm mx-2" />
+							<span className="loading loading-spinner loading-sm mx-2 text-base-content" />
 						) : (
 							t('save')
 						)}

@@ -172,7 +172,7 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 						onClick={() => void sendEmailInvites()}
 					>
 						{isLoading ? (
-							<span className="loading loading-spinner loading-xs mx-4" />
+							<span className="loading loading-spinner loading-xs mx-4 text-base-content" />
 						) : (
 							t('sendInvite')
 						)}

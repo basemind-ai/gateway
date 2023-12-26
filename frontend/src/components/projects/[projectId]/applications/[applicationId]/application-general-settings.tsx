@@ -205,7 +205,7 @@ export function ApplicationGeneralSettings({
 						onClick={() => void saveSettings()}
 					>
 						{isLoading ? (
-							<span className="loading loading-spinner loading-xs mx-2" />
+							<span className="loading loading-spinner loading-xs mx-2 text-base-content" />
 						) : (
 							t('save')
 						)}
