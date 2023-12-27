@@ -3,6 +3,7 @@ import {
 	ServerUnaryCall,
 	ServerWritableStream,
 } from '@grpc/grpc-js';
+import { Generation } from 'cohere-ai/api';
 import {
 	CoherePromptRequest,
 	CoherePromptResponse,
@@ -17,6 +18,9 @@ import logger from 'shared/logger';
 
 import { createOrDefaultClient } from '@/client';
 import { createCohereRequest, getFinishReason } from '@/utils';
+
+const COMMUNICATION_ERROR_MESSAGE = 'error communicating with Cohere';
+const DECODER = new TextDecoder();
 
 /**
  * The coherePrompt function is a gRPC handler function.
@@ -53,7 +57,7 @@ export async function coherePrompt(
 			content: generations[0]?.text ?? '',
 		} satisfies CoherePromptResponse);
 	} catch (error: unknown) {
-		logger.error(error as Error, 'error communicating with Cohere');
+		logger.error(error as Error, COMMUNICATION_ERROR_MESSAGE);
 		callback(new GrpcError({ message: (error as Error).message }), null);
 	}
 }
@@ -83,29 +87,46 @@ export async function cohereStream(
 			createCohereRequest(call.request),
 		);
 
-		for await (const {
-			is_finished: isFinished,
-			finish_reason: finishReason,
-			text: content,
-		} of stream) {
+		stream.on('error', (error: Error) => {
+			call.destroy(createInternalGrpcError(error));
+			logger.error(error, COMMUNICATION_ERROR_MESSAGE);
+		});
+
+		stream.on('data', (data: Uint8Array) => {
+			const {
+				is_finished: isFinished,
+				finish_reason: finishReason,
+				text: content,
+			} = JSON.parse(DECODER.decode(data)) as {
+				finish_reason?:
+					| 'COMPLETE'
+					| 'MAX_TOKENS'
+					| 'ERROR'
+					| 'ERROR_TOXIC';
+				is_finished: boolean;
+				response?: Generation;
+				text: string;
+			};
 			if (isFinished) {
+				const finishTime = Date.now();
+				logger.debug(
+					{ finishTime, startTime },
+					'Cohere streaming request completed',
+				);
 				call.write({
 					finishReason: getFinishReason(finishReason!),
 				});
-				continue;
+			} else {
+				logger.debug('writing Cohere stream response', content);
+				call.write({ content });
 			}
-			call.write({ content });
-		}
-
-		const finishTime = Date.now();
-		logger.debug(
-			{ finishTime, startTime },
-			'Cohere streaming request completed',
-		);
+		});
+		stream.on('end', () => {
+			logger.debug('Cohere stream ended, closing');
+			call.end();
+		});
 	} catch (error: unknown) {
+		logger.error(error as Error, COMMUNICATION_ERROR_MESSAGE);
 		call.destroy(createInternalGrpcError(error as Error));
-		logger.error(error as Error, 'error communicating with Cohere');
-		return;
 	}
-	call.end();
 }

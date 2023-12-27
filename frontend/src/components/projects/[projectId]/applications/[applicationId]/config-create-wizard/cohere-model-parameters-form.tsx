@@ -11,6 +11,7 @@ import {
 	ProviderMessageType,
 } from '@/types';
 import { handleChange } from '@/utils/events';
+import { extractTemplateVariables } from '@/utils/models';
 
 const COHERE_MAX_TOKENS = 4096;
 
@@ -141,6 +142,15 @@ export function CoherePromptTemplate({
 }) {
 	const t = useTranslations('createConfigWizard');
 
+	const handleSetMessages = (message: string) => {
+		setMessages([
+			{
+				message,
+				templateVariables: extractTemplateVariables(message),
+			} satisfies CoherePromptMessage,
+		]);
+	};
+
 	return (
 		<div data-testid="cohere-prompt-template-form">
 			<h2 className="card-header">{t('promptTemplate')}</h2>
@@ -161,13 +171,7 @@ export function CoherePromptTemplate({
 					className="card-textarea"
 					placeholder={t('promptMessagePlaceholder')}
 					value={messages[0]?.message ?? ''}
-					onChange={handleChange((message: string) => {
-						setMessages([
-							{
-								message,
-							} satisfies CoherePromptMessage,
-						]);
-					})}
+					onChange={handleChange(handleSetMessages)}
 					data-testid="parameters-and-prompt-form-message-textarea"
 				/>
 			</div>

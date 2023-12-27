@@ -26,7 +26,6 @@ export const finishReasonMapping: Record<
  * The createCohereRequest function takes a CoherePromptRequest and returns a Cohere client.CoherePromptRequest
  *
  * @param grpcRequest CoherePromptRequest
- * @param stream boolean
  *
  * @return A CoherePromptRequest
  */
@@ -38,27 +37,6 @@ export function createCohereRequest(
 		prompt: grpcRequest.message,
 		...grpcRequest.parameters,
 	} satisfies GenerateRequest;
-}
-
-/*
- * The readChunks function takes a ReadableStreamDefaultReader and returns an AsyncIterableIterator that yields values
- * from the stream.
- * */
-export function readChunks<T extends Record<string, any>>(
-	reader: ReadableStreamDefaultReader<Uint8Array>,
-) {
-	const decoder = new TextDecoder();
-
-	return {
-		async *[Symbol.asyncIterator]() {
-			let readResult = await reader.read();
-
-			while (!readResult.done) {
-				yield JSON.parse(decoder.decode(readResult.value)) as T;
-				readResult = await reader.read();
-			}
-		},
-	};
 }
 
 /**

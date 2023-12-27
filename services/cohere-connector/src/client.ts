@@ -1,9 +1,9 @@
+import { PassThrough } from 'node:stream';
+
 import { CohereClient } from 'cohere-ai';
-import { Generation } from 'cohere-ai/api';
 import { GenerateRequest } from 'cohere-ai/api/client/requests/GenerateRequest';
 import { loadEnv } from 'shared/env';
-
-import { readChunks } from '@/utils';
+import logger from 'shared/logger';
 
 const ref: { instance: BasemindCohereClient | null } = { instance: null };
 
@@ -45,14 +45,14 @@ class BasemindCohereClient {
 		};
 
 		const response = await fetch(url, options);
-		const reader = response.body!.getReader();
 
-		return readChunks<{
-			finish_reason?: 'COMPLETE' | 'MAX_TOKENS' | 'ERROR' | 'ERROR_TOXIC';
-			is_finished: boolean;
-			response?: Generation;
-			text: string;
-		}>(reader);
+		if (!response.ok || response.status !== 200 || !response.body) {
+			const message = await response.text();
+			logger.error(`received non-200 response: ${message}`);
+			throw new Error(`received error response from cohere: ${message}`);
+		}
+
+		return response.body as unknown as PassThrough;
 	}
 }
 

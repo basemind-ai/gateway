@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { EntityNameInput } from '@/components/entity-name-input';
 import {
@@ -7,7 +7,12 @@ import {
 	modelVendorTypeMap,
 	UnavailableModelVendor,
 } from '@/constants/models';
-import { ModelType, ModelVendor } from '@/types';
+import {
+	CohereModelType,
+	ModelType,
+	ModelVendor,
+	OpenAIModelType,
+} from '@/types';
 import { handleChange } from '@/utils/events';
 
 export function PromptConfigBaseForm({
@@ -58,6 +63,25 @@ export function PromptConfigBaseForm({
 			)),
 		[],
 	);
+
+	useEffect(() => {
+		if (
+			modelVendor === ModelVendor.Cohere &&
+			!Object.values(CohereModelType).includes(
+				modelType as CohereModelType,
+			)
+		) {
+			setModelType(CohereModelType.Command);
+		}
+		if (
+			modelVendor === ModelVendor.OpenAI &&
+			!Object.values(OpenAIModelType).includes(
+				modelType as OpenAIModelType,
+			)
+		) {
+			setModelType(OpenAIModelType.Gpt35Turbo);
+		}
+	}, [modelVendor]);
 
 	return (
 		<div data-testid="base-form-container">

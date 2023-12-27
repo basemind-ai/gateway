@@ -93,14 +93,20 @@ func CreatePromptRequest(
 		return nil, fmt.Errorf("failed to unmarshal model parameters - %w", parametersUnmarshalErr)
 	}
 
-	cohereMessageDTO := datatypes.CoherePromptMessageDTO{}
-	if messageUnmarshalErr := json.Unmarshal(*requestConfiguration.PromptConfigData.ProviderPromptMessages, &cohereMessageDTO); messageUnmarshalErr != nil {
+	var messages []*datatypes.CoherePromptMessageDTO
+	if messageUnmarshalErr := json.Unmarshal(*requestConfiguration.PromptConfigData.ProviderPromptMessages, &messages); messageUnmarshalErr != nil {
 		return nil, fmt.Errorf("failed to unmarshal prompt message - %w", messageUnmarshalErr)
 	}
 
+	if len(messages) == 0 {
+		return nil, fmt.Errorf("no prompt messages provided")
+	}
+
+	cohereMessageDTO := messages[0]
+
 	message, parseErr := utils.ParseTemplateVariables(
 		cohereMessageDTO.Message,
-		*cohereMessageDTO.TemplateVariables,
+		ptr.Deref(cohereMessageDTO.TemplateVariables, []string{}),
 		templateVariables,
 	)
 	if parseErr != nil {
