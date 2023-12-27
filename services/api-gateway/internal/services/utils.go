@@ -88,6 +88,10 @@ func RetrieveProviderModelPricing(
 	modelType models.ModelType,
 	modelVendor models.ModelVendor,
 ) datatypes.ProviderModelPricingDTO {
+	log.Debug().
+		Str("modelType", string(modelType)).
+		Str("modelVendor", string(modelVendor)).
+		Msg("retrieving provider model pricing")
 	providerModelPricing := exc.MustResult(db.GetQueries().
 		RetrieveActiveProviderModelPricing(ctx, models.RetrieveActiveProviderModelPricingParams{
 			ModelType:   modelType,

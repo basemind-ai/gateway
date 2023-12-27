@@ -32,7 +32,7 @@ type ProjectDTO struct { // skipcq: TCV-001
 type PromptConfigCreateDTO struct { // skipcq: TCV-001
 	Name                   string             `json:"name"            validate:"required"`
 	ModelParameters        *json.RawMessage   `json:"modelParameters" validate:"required"`
-	ModelType              models.ModelType   `json:"modelType"       validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelType              models.ModelType   `json:"modelType"       validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k command command-light command-nightly command-light-nightly"`
 	ModelVendor            models.ModelVendor `json:"modelVendor"     validate:"oneof=OPEN_AI COHERE"`
 	ProviderPromptMessages *json.RawMessage   `json:"promptMessages"  validate:"required"`
 	IsTest                 bool               `json:"isTest"`
@@ -42,7 +42,7 @@ type PromptConfigCreateDTO struct { // skipcq: TCV-001
 type PromptConfigUpdateDTO struct { // skipcq: TCV-001
 	Name                   *string             `json:"name,omitempty"            validate:"omitempty,required"`
 	ModelParameters        *json.RawMessage    `json:"modelParameters,omitempty" validate:"omitempty,required"`
-	ModelType              *models.ModelType   `json:"modelType,omitempty"       validate:"omitempty,oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelType              *models.ModelType   `json:"modelType,omitempty"       validate:"omitempty,oneof=oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k command command-light command-nightly command-light-nightly"`
 	ModelVendor            *models.ModelVendor `json:"modelVendor,omitempty"     validate:"omitempty,oneof=OPEN_AI COHERE"`
 	ProviderPromptMessages *json.RawMessage    `json:"promptMessages,omitempty"  validate:"omitempty,required"`
 }
@@ -88,7 +88,7 @@ type AnalyticsDTO struct { // skipcq: TCV-001
 // PromptConfigTestDTO - DTO for requesting a prompt config test.
 type PromptConfigTestDTO struct { // skipcq: TCV-001
 	ModelParameters        *json.RawMessage   `json:"modelParameters,omitempty"   validate:"omitempty,required"`
-	ModelType              models.ModelType   `json:"modelType"                   validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelType              models.ModelType   `json:"modelType"                   validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k command command-light command-nightly command-light-nightly"`
 	ModelVendor            models.ModelVendor `json:"modelVendor"                 validate:"oneof=OPEN_AI COHERE"`
 	ProviderPromptMessages *json.RawMessage   `json:"promptMessages,omitempty"    validate:"omitempty,required"`
 	TemplateVariables      map[string]string  `json:"templateVariables,omitempty"`

@@ -99,7 +99,7 @@ func CreatePromptRequest(
 	}
 
 	message, parseErr := utils.ParseTemplateVariables(
-		cohereMessageDTO.Content,
+		cohereMessageDTO.Message,
 		*cohereMessageDTO.TemplateVariables,
 		templateVariables,
 	)

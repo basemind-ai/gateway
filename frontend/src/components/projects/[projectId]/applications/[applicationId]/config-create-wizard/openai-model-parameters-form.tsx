@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-import { ParameterSlider } from '@/components/prompt-display-components/config-create-wizard/parameter-slider';
+import { ParameterSlider } from '@/components/prompt-display-components/parameter-slider';
 import {
 	DEFAULT_MAX_TOKENS,
 	openAIModelsMaxTokensMap,
@@ -25,7 +25,7 @@ export function OpenAIModelParametersForm({
 }: {
 	existingParameters?: ModelParameters<ModelVendor.OpenAI>;
 	modelType: OpenAIModelType;
-	setParameters: (parameters: ModelParameters<any>) => void;
+	setParameters: (parameters: ModelParameters<ModelVendor.OpenAI>) => void;
 }) {
 	const t = useTranslations('createConfigWizard');
 
@@ -39,9 +39,9 @@ export function OpenAIModelParametersForm({
 		existingParameters?.presencePenalty ?? 0,
 	);
 	const [temperature, setTemperature] = useState(
-		existingParameters?.temperature ?? 1,
+		existingParameters?.temperature ?? 0,
 	);
-	const [topP, setTopP] = useState(existingParameters?.topP ?? 1);
+	const [topP, setTopP] = useState(existingParameters?.topP ?? 0);
 
 	const inputs: {
 		key: string;

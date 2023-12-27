@@ -38,8 +38,11 @@ export interface CohereConnector {
 }
 
 export interface CohereModelParameters {
-	// todo: add support for connectors when we add the backend.
-	// connectors: CohereConnector[];
+	frequencyPenalty?: number;
+	k?: number;
+	maxTokens?: number;
+	p?: number;
+	presencePenalty?: number;
 	temperature?: number;
 }
 

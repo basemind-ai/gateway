@@ -72,7 +72,7 @@ func TestUtils(t *testing.T) {
 				ModelParameters: factories.CreateCohereModelParameters(),
 				ProviderPromptMessages: ptr.To(
 					json.RawMessage(serialization.SerializeJSON(datatypes.CoherePromptMessageDTO{
-						Content:           promptMessage,
+						Message:           promptMessage,
 						TemplateVariables: &expectedTemplateVariables,
 					})),
 				),

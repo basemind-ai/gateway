@@ -33,10 +33,6 @@ export function PromptConfigBaseForm({
 }) {
 	const t = useTranslations('createConfigWizard');
 
-	const modelChoices = useMemo(() => {
-		return Object.values(modelVendorTypeMap[modelVendor]) as string[];
-	}, [modelVendor]);
-
 	const activeModelVendor = useMemo(
 		() =>
 			Object.entries(ModelVendor)
@@ -61,18 +57,6 @@ export function PromptConfigBaseForm({
 				</option>
 			)),
 		[],
-	);
-
-	const choices = useMemo(
-		() =>
-			modelChoices.map((modelChoice) => {
-				return (
-					<option key={modelChoice} value={modelChoice}>
-						{modelTypeToLocaleMap[modelChoice as ModelType<any>]}
-					</option>
-				);
-			}),
-		[modelChoices],
 	);
 
 	return (
@@ -129,7 +113,22 @@ export function PromptConfigBaseForm({
 							onChange={handleChange(setModelType)}
 							data-testid="create-prompt-base-form-model-select"
 						>
-							{choices}
+							{Object.values(modelVendorTypeMap[modelVendor]).map(
+								(modelChoice: string) => {
+									return (
+										<option
+											key={modelChoice}
+											value={modelChoice}
+										>
+											{
+												modelTypeToLocaleMap[
+													modelChoice as ModelType<any>
+												]
+											}
+										</option>
+									);
+								},
+							)}
 						</select>
 					</div>
 				</div>

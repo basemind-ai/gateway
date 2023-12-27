@@ -29,7 +29,7 @@ type OpenAIModelParametersDTO struct { // skipcq: TCV-001
 
 // CoherePromptMessageDTO - DTO for serializing and storing a Cohere prompt message.
 type CoherePromptMessageDTO struct { // skipcq: TCV-001
-	Content           string    `json:"content"                     validate:"required"`
+	Message           string    `json:"message"                     validate:"required"`
 	TemplateVariables *[]string `json:"templateVariables,omitempty"`
 }
 
@@ -48,7 +48,7 @@ type PromptConfigDTO struct { // skipcq: TCV-001
 	ID                        string             `json:"id"`
 	Name                      string             `json:"name"                      validate:"required"`
 	ModelParameters           *json.RawMessage   `json:"modelParameters"           validate:"required"`
-	ModelType                 models.ModelType   `json:"modelType"                 validate:"oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k"`
+	ModelType                 models.ModelType   `json:"modelType"                 validate:"oneof=oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k command command-light command-nightly command-light-nightly"`
 	ModelVendor               models.ModelVendor `json:"modelVendor"               validate:"oneof=OPEN_AI COHERE"`
 	ProviderPromptMessages    *json.RawMessage   `json:"providerPromptMessages"    validate:"required"`
 	ExpectedTemplateVariables []string           `json:"expectedTemplateVariables"`

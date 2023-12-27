@@ -4,6 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+	// @ts-expect-error plugin has errors
 	plugins: [tsconfigPaths(), react(), magicalSvg({ target: 'react' })],
 	test: {
 		css: true,

@@ -162,7 +162,7 @@ func CreateCoherePromptConfig(
 
 	promptMessages := ptr.To(
 		json.RawMessage(serialization.SerializeJSON(datatypes.CoherePromptMessageDTO{
-			Content:           userMessage,
+			Message:           userMessage,
 			TemplateVariables: &templateVariables,
 		})),
 	)

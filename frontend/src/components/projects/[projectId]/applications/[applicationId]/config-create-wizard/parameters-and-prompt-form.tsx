@@ -1,11 +1,17 @@
 import { useMemo } from 'react';
 
-import { CohereParametersForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-model-parameters-form';
+import {
+	CohereModelParametersForm,
+	CoherePromptTemplate,
+} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-model-parameters-form';
 import {
 	OpenAIModelParametersForm,
 	OpenAIPromptTemplate,
 } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-model-parameters-form';
 import {
+	CohereModelParameters,
+	CohereModelType,
+	CoherePromptMessage,
 	ModelParameters,
 	ModelType,
 	ModelVendor,
@@ -33,11 +39,11 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 	const parametersForm = useMemo(() => {
 		if (modelVendor === ModelVendor.Cohere) {
 			return (
-				<CohereParametersForm
-					modelType={modelType as OpenAIModelType}
+				<CohereModelParametersForm
+					modelType={modelType as CohereModelType}
 					setParameters={setParameters}
 					existingParameters={
-						existingParameters as OpenAIModelParameters
+						existingParameters as CohereModelParameters
 					}
 				/>
 			);
@@ -59,7 +65,16 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 			<div>{parametersForm}</div>
 			<div className="card-divider" />
 			<div>
-				{modelVendor === ModelVendor.OpenAI && (
+				{modelVendor === ModelVendor.Cohere ? (
+					<CoherePromptTemplate
+						messages={(messages ?? []) as CoherePromptMessage[]}
+						setMessages={
+							setMessages as (
+								messages: CoherePromptMessage[],
+							) => void
+						}
+					/>
+				) : (
 					<OpenAIPromptTemplate
 						messages={(messages ?? []) as OpenAIContentMessage[]}
 						setMessages={
