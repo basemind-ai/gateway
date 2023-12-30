@@ -23,6 +23,17 @@ export const finishReasonMapping: Record<
 };
 
 /**
+ * The getModel function takes a CohereModel and returns a string
+ *
+ * @param model CohereModel
+ *
+ * @return A string
+ */
+export function getModel(model: CoherePromptRequest['model']): string {
+	return modelMapping[model];
+}
+
+/**
  * The createCohereRequest function takes a CoherePromptRequest and returns a Cohere client.CoherePromptRequest
  *
  * @param grpcRequest CoherePromptRequest
@@ -33,7 +44,7 @@ export function createCohereRequest(
 	grpcRequest: CoherePromptRequest,
 ): GenerateRequest {
 	return {
-		model: modelMapping[grpcRequest.model],
+		model: getModel(grpcRequest.model),
 		prompt: grpcRequest.message,
 		...grpcRequest.parameters,
 	} satisfies GenerateRequest;

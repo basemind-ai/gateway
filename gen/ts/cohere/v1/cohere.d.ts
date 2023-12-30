@@ -98,15 +98,15 @@ export interface CoherePromptResponse {
     /**
      * Count of the request tokens, as returned by the Cohere /tokenize endpoint
      *
-     * @generated from protobuf field: optional uint32 request_tokens_count = 2;
+     * @generated from protobuf field: uint32 request_tokens_count = 2;
      */
-    requestTokensCount?: number;
+    requestTokensCount: number;
     /**
      * Count of the response tokens, as returned by the Cohere /tokenize endpoint
      *
-     * @generated from protobuf field: optional uint32 response_tokens_count = 3;
+     * @generated from protobuf field: uint32 response_tokens_count = 3;
      */
-    responseTokensCount?: number;
+    responseTokensCount: number;
 }
 /**
  * The CohereStreamResponse contains the data that is streamed from the Cohere API.

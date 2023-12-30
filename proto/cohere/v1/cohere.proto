@@ -81,9 +81,9 @@ message CoherePromptResponse {
   // Prompt Content
   optional string content = 1;
   // Count of the request tokens, as returned by the Cohere /tokenize endpoint
-  optional uint32 request_tokens_count = 2;
+  uint32 request_tokens_count = 2;
   // Count of the response tokens, as returned by the Cohere /tokenize endpoint
-  optional uint32 response_tokens_count = 3;
+  uint32 response_tokens_count = 3;
 }
 
 // The CohereStreamResponse contains the data that is streamed from the Cohere API.

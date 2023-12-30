@@ -1,11 +1,13 @@
 /* eslint-disable unicorn/consistent-function-scoping */
+
+import { PassThrough } from 'node:stream';
+
 import {
 	Metadata,
 	sendUnaryData,
 	ServerUnaryCall,
 	ServerWritableStream,
 } from '@grpc/grpc-js';
-import * as cohere from 'cohere-ai';
 import {
 	CohereModel,
 	CoherePromptRequest,
@@ -14,9 +16,30 @@ import {
 } from 'gen/cohere/v1/cohere';
 import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
-import { Mock, MockInstance } from 'vitest';
+import { wait } from 'shared/time';
+import { beforeEach, Mock, MockInstance } from 'vitest';
 
 import { coherePrompt, cohereStream } from '@/handlers';
+
+const mockGenerate = vi.fn();
+const mockTokenize = vi.fn();
+
+vi.mock(
+	'cohere-ai',
+	async (importOriginal: () => Promise<Record<string, any>>) => {
+		const { CohereClient, ...original } = await importOriginal();
+
+		class MockCohereClient extends CohereClient {
+			generate = mockGenerate;
+			tokenize = mockTokenize;
+		}
+
+		return {
+			...original,
+			CohereClient: MockCohereClient,
+		};
+	},
+);
 
 describe('handlers tests', () => {
 	const openAPIKey = (process.env.COHERE_API_KEY =
@@ -26,9 +49,17 @@ describe('handlers tests', () => {
 		process.env.COHERE_API_KEY = openAPIKey;
 	});
 
+	beforeEach(() => {
+		mockGenerate.mockReset();
+		mockTokenize.mockReset();
+
+		mockTokenize.mockImplementation(() =>
+			Promise.resolve({ tokens: ['te', 'st'] }),
+		);
+	});
+
 	describe('coherePrompt', () => {
-		// @ts-expect-error - MockInstance is not typed correctly
-		const generateSpy = vi.spyOn(cohere, 'generate');
+		mockTokenize.mockResolvedValue({ tokens: ['te', 'st'] } as any);
 
 		const makeMockUnaryCall = (
 			request: CoherePromptRequest,
@@ -53,21 +84,34 @@ describe('handlers tests', () => {
 			});
 			const callback: sendUnaryData<CoherePromptResponse> = vi.fn();
 
-			generateSpy.mockResolvedValueOnce({
-				// @ts-expect-error - MockInstance is not typed correctly
+			mockGenerate.mockResolvedValueOnce({
 				generations: [{ id: 'def', text: 'Generated response' }],
 				id: 'abc',
 			});
 
 			await coherePrompt(call, callback);
-			expect(generateSpy).toHaveBeenCalledWith({
+			expect(mockGenerate).toHaveBeenCalledWith({
 				model: 'command',
 				prompt: 'test',
 				temperature: 0.8,
 			});
 
+			expect(mockTokenize).toHaveBeenCalledTimes(2);
+
+			expect(mockTokenize).toHaveBeenNthCalledWith(1, {
+				model: 'command',
+				text: 'test',
+			});
+
+			expect(mockTokenize).toHaveBeenNthCalledWith(2, {
+				model: 'command',
+				text: 'Generated response',
+			});
+
 			expect(callback).toHaveBeenCalledWith(null, {
 				content: 'Generated response',
+				requestTokensCount: 2,
+				responseTokensCount: 2,
 			});
 		});
 
@@ -82,10 +126,10 @@ describe('handlers tests', () => {
 			const callback: sendUnaryData<CoherePromptResponse> = vi.fn();
 
 			const error = new Error('Cohere error');
-			generateSpy.mockRejectedValueOnce(error);
+			mockGenerate.mockRejectedValueOnce(error);
 
 			await coherePrompt(call, callback);
-			expect(generateSpy).toHaveBeenCalledWith({
+			expect(mockGenerate).toHaveBeenCalledWith({
 				model: 'command',
 				prompt: 'test',
 				temperature: 0.8,
@@ -99,10 +143,12 @@ describe('handlers tests', () => {
 	});
 
 	describe('cohereStream', () => {
+		const stream = new PassThrough();
+
 		global.fetch = vi.fn().mockResolvedValue({
-			body: {
-				getReader: vi.fn().mockReturnValue(createStreamReader()),
-			},
+			body: stream,
+			ok: true,
+			status: 200,
 		});
 
 		const makeServerWritableStream = (
@@ -121,47 +167,6 @@ describe('handlers tests', () => {
 			>;
 		};
 
-		function createStreamReader(): ReadableStreamDefaultReader {
-			let count = 0;
-			const encoder = new TextEncoder();
-
-			return {
-				cancel(): Promise<void> {
-					return Promise.resolve(undefined);
-				},
-				closed: Promise.resolve(undefined),
-				async read() {
-					if (count === 11) {
-						return { done: true, value: undefined };
-					}
-					if (count === 10) {
-						count++;
-						return {
-							done: false,
-							value: encoder.encode(
-								JSON.stringify({
-									finish_reason: 'COMPLETE',
-									is_finished: true,
-								}),
-							),
-						};
-					}
-					const value = {
-						is_finished: false,
-						text: `${count}`,
-					};
-					count++;
-					return {
-						done: false,
-						value: encoder.encode(JSON.stringify(value)),
-					};
-				},
-				releaseLock(): void {
-					return;
-				},
-			};
-		}
-
 		it('should successfully create an Cohere stream request and write the response to the call', async () => {
 			const call = makeServerWritableStream({
 				message: 'test',
@@ -171,7 +176,34 @@ describe('handlers tests', () => {
 				},
 			});
 
+			const encoder = new TextEncoder();
+
+			for (let i = 0; i < 11; i++) {
+				if (i === 10) {
+					stream.end(
+						encoder.encode(
+							JSON.stringify({
+								finish_reason: 'COMPLETE',
+								is_finished: true,
+							}),
+						),
+					);
+				} else {
+					stream.push(
+						encoder.encode(
+							JSON.stringify({
+								text: i.toString(),
+							}),
+						),
+					);
+				}
+			}
+
 			await cohereStream(call);
+
+			await wait(2000);
+
+			expect(call.write).toHaveBeenCalled();
 
 			expect((call.write as Mock).mock.calls).toEqual([
 				[
@@ -227,9 +259,21 @@ describe('handlers tests', () => {
 				[
 					{
 						finishReason: StreamFinishReason.DONE,
+						requestTokensCount: 2,
+						responseTokensCount: 2,
 					},
 				],
 			]);
+
+			expect(mockTokenize).toHaveBeenNthCalledWith(1, {
+				model: 'command',
+				text: 'test',
+			});
+
+			expect(mockTokenize).toHaveBeenNthCalledWith(2, {
+				model: 'command',
+				text: '0123456789',
+			});
 		});
 
 		it.each([''])('should handle errors', async () => {

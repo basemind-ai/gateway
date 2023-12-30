@@ -10,12 +10,17 @@ const ref: { instance: BasemindCohereClient | null } = { instance: null };
 /*
  * The client class wraps the Cohere client because the Cohere client doesn't support streaming for the time being.
  * */
-class BasemindCohereClient {
+export class BasemindCohereClient {
 	private readonly token: string;
 	private readonly client: CohereClient;
 	constructor({ token, ...rest }: { token: string } & CohereClient.Options) {
 		this.token = token;
 		this.client = new CohereClient({ token, ...rest });
+	}
+
+	async tokenize(text: string, model: string): Promise<number> {
+		const result = await this.client.tokenize({ model, text });
+		return result.tokens.length;
 	}
 
 	/**
