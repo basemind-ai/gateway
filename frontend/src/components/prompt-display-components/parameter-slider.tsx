@@ -45,7 +45,7 @@ export function ParameterSlider({
 					setter(Number.parseFloat(value));
 				})}
 				className="range range-xs"
-				data-testid={`create-prompt-config-dialog-model-parameter-range-${key}`}
+				data-testid={`parameter-slider-${key}`}
 			/>
 		</div>
 	);

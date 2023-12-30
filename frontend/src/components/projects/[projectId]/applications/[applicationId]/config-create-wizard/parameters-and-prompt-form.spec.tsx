@@ -5,7 +5,7 @@ import { expect } from 'vitest';
 import {
 	OpenAIModelParametersForm,
 	OpenAIPromptTemplate,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-model-parameters-form';
+} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-form-components';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import {
 	DEFAULT_MAX_TOKENS,
@@ -48,10 +48,10 @@ describe('parameters-and-prompt-form components tests', () => {
 			);
 
 			const maxTokensInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-maxTokens',
+				'parameter-slider-maxTokens',
 			);
 			const frequencyPenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-frequencyPenalty',
+				'parameter-slider-frequencyPenalty',
 			);
 
 			fireEvent.change(maxTokensInput, { target: { value: '200' } });
@@ -121,20 +121,18 @@ describe('parameters-and-prompt-form components tests', () => {
 			);
 
 			const maxTokensInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-maxTokens',
+				'parameter-slider-maxTokens',
 			);
 			const frequencyPenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-frequencyPenalty',
+				'parameter-slider-frequencyPenalty',
 			);
 			const presencePenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-presencePenalty',
+				'parameter-slider-presencePenalty',
 			);
 			const temperatureInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-temperature',
+				'parameter-slider-temperature',
 			);
-			const topPInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-topP',
-			);
+			const topPInput = screen.getByTestId('parameter-slider-topP');
 
 			expect(maxTokensInput).toHaveValue(DEFAULT_MAX_TOKENS.toString());
 			expect(frequencyPenaltyInput).toHaveValue('0');
@@ -153,20 +151,18 @@ describe('parameters-and-prompt-form components tests', () => {
 			);
 
 			const maxTokensInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-maxTokens',
+				'parameter-slider-maxTokens',
 			);
 			const frequencyPenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-frequencyPenalty',
+				'parameter-slider-frequencyPenalty',
 			);
 			const presencePenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-presencePenalty',
+				'parameter-slider-presencePenalty',
 			);
 			const temperatureInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-temperature',
+				'parameter-slider-temperature',
 			);
-			const topPInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-topP',
-			);
+			const topPInput = screen.getByTestId('parameter-slider-topP');
 
 			fireEvent.change(maxTokensInput, { target: { value: 100 } });
 			fireEvent.change(frequencyPenaltyInput, { target: { value: 0.5 } });
@@ -275,20 +271,18 @@ describe('parameters-and-prompt-form components tests', () => {
 			);
 
 			const maxTokensInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-maxTokens',
+				'parameter-slider-maxTokens',
 			);
 			const frequencyPenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-frequencyPenalty',
+				'parameter-slider-frequencyPenalty',
 			);
 			const presencePenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-presencePenalty',
+				'parameter-slider-presencePenalty',
 			);
 			const temperatureInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-temperature',
+				'parameter-slider-temperature',
 			);
-			const topPInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-topP',
-			);
+			const topPInput = screen.getByTestId('parameter-slider-topP');
 
 			expect(maxTokensInput).toHaveAttribute('min', '1');
 			expect(maxTokensInput).toHaveAttribute(
@@ -331,20 +325,18 @@ describe('parameters-and-prompt-form components tests', () => {
 			);
 
 			const maxTokensInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-maxTokens',
+				'parameter-slider-maxTokens',
 			);
 			const frequencyPenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-frequencyPenalty',
+				'parameter-slider-frequencyPenalty',
 			);
 			const presencePenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-presencePenalty',
+				'parameter-slider-presencePenalty',
 			);
 			const temperatureInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-temperature',
+				'parameter-slider-temperature',
 			);
-			const topPInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-topP',
-			);
+			const topPInput = screen.getByTestId('parameter-slider-topP');
 
 			expect(maxTokensInput).toHaveValue(
 				existingParameters.maxTokens.toString(),
@@ -378,20 +370,18 @@ describe('parameters-and-prompt-form components tests', () => {
 			);
 
 			const maxTokensInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-maxTokens',
+				'parameter-slider-maxTokens',
 			);
 			const frequencyPenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-frequencyPenalty',
+				'parameter-slider-frequencyPenalty',
 			);
 			const presencePenaltyInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-presencePenalty',
+				'parameter-slider-presencePenalty',
 			);
 			const temperatureInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-temperature',
+				'parameter-slider-temperature',
 			);
-			const topPInput = screen.getByTestId(
-				'create-prompt-config-dialog-model-parameter-range-topP',
-			);
+			const topPInput = screen.getByTestId('parameter-slider-topP');
 
 			expect(maxTokensInput).toHaveValue(DEFAULT_MAX_TOKENS.toString());
 			expect(frequencyPenaltyInput).toHaveValue('0');

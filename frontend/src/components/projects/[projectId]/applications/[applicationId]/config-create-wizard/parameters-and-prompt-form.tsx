@@ -3,11 +3,11 @@ import { useMemo } from 'react';
 import {
 	CohereModelParametersForm,
 	CoherePromptTemplate,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-model-parameters-form';
+} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-form-components';
 import {
 	OpenAIModelParametersForm,
 	OpenAIPromptTemplate,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-model-parameters-form';
+} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-form-components';
 import {
 	CohereModelParameters,
 	CohereModelType,

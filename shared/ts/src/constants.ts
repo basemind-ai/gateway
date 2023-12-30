@@ -1,3 +1,4 @@
+/* c8 ignore next */
 export enum StreamFinishReason {
 	// Stream is done and finished without issues
 	DONE = 'done',

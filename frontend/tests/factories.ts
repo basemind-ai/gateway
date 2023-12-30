@@ -6,6 +6,7 @@ import {
 	AccessPermission,
 	APIKey,
 	Application,
+	CohereModelParameters,
 	CoherePromptMessage,
 	ModelVendor,
 	OpenAIModelType,
@@ -44,6 +45,7 @@ export const ApplicationFactory = new TypeFactory<Application>(() => ({
 	name: faker.lorem.words(),
 	updatedAt: faker.date.past().toISOString(),
 }));
+
 export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
 	(i) =>
 		i % 4 === 0
@@ -81,6 +83,16 @@ export const CohereMessageFactory = new TypeFactory<CoherePromptMessage>(
 		templateVariables: [],
 	}),
 );
+
+export const CoherePromptParametersFactory =
+	new TypeFactory<CohereModelParameters>(() => ({
+		frequencyPenalty: faker.number.int({ max: 100, min: 0 }),
+		k: faker.number.int({ max: 500, min: 0 }),
+		maxTokens: faker.number.float({ max: 4096, min: 1 }),
+		p: faker.number.float({ max: 0.99, min: 0 }),
+		presencePenalty: faker.number.float({ max: 1, min: 0 }),
+		temperature: faker.number.float({ max: 1, min: 0 }),
+	}));
 
 export const APIKeyFactory = new TypeFactory<APIKey>(() => ({
 	createdAt: faker.date.past().toISOString(),

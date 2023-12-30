@@ -124,9 +124,17 @@ export function CohereModelParametersForm({
 	}, [maxTokens, frequencyPenalty, presencePenalty, temperature, p, k]);
 
 	return (
-		<div data-testid="cohere-model-parameters-form">
-			<h2 className="card-header">{t('modelParameters')}</h2>
-			<div className="rounded-dark-card columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8">
+		<div data-testid="cohere-model-parameters-form-container">
+			<h2
+				className="card-header"
+				data-testid="cohere-model-parameters-form-header"
+			>
+				{t('modelParameters')}
+			</h2>
+			<div
+				className="rounded-dark-card columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8"
+				data-testid="cohere-model-parameters-form-inputs-container"
+			>
 				{inputs.map(ParameterSlider)}
 			</div>
 		</div>
@@ -152,17 +160,30 @@ export function CoherePromptTemplate({
 	};
 
 	return (
-		<div data-testid="cohere-prompt-template-form">
-			<h2 className="card-header">{t('promptTemplate')}</h2>
-			<div className="form-control">
+		<div data-testid="cohere-prompt-template-form-container">
+			<h2
+				className="card-header"
+				data-testid="cohere-prompt-template-form-header"
+			>
+				{t('promptTemplate')}
+			</h2>
+			<div
+				className="form-control"
+				data-testid="cohere-prompt-template-form"
+			>
 				<label
 					className="label"
-					data-testid="parameters-and-prompt-form-new-message-content-label"
+					data-testid="cohere-prompt-template-form-label"
 				>
-					<span className="label-text">{t('messageContent')}</span>
+					<span
+						className="label-text"
+						data-testid="cohere-prompt-template-form-label-text"
+					>
+						{t('messageContent')}
+					</span>
 					<span
 						className="text-info label-text-alt text-sm"
-						data-testid="parameters-and-prompt-form-wrap-variable-label"
+						data-testid="cohere-prompt-template-form-label-alt-text"
 					>
 						{t('wrapVariable')}
 					</span>
@@ -172,7 +193,7 @@ export function CoherePromptTemplate({
 					placeholder={t('promptMessagePlaceholder')}
 					value={messages[0]?.message ?? ''}
 					onChange={handleChange(handleSetMessages)}
-					data-testid="parameters-and-prompt-form-message-textarea"
+					data-testid="cohere-prompt-template-form-textarea"
 				/>
 			</div>
 		</div>

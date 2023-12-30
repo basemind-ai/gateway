@@ -54,6 +54,7 @@ export function createServer<
 		// of TLS.
 		ServerCredentials.createInsecure(),
 		(error: Error | null) => {
+			/* c8 ignore next */
 			if (error) {
 				logger.error('Server failed to start');
 				throw error;

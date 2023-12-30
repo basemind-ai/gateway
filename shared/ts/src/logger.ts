@@ -1,13 +1,12 @@
 import { LoggerOptions, pino } from 'pino';
-
-export /**
+/**
  * The createLogger function creates a logger instance.
  *
  * @param options pino logger options
  *
  * @return A logger instance
  */
-const createLogger = (options?: LoggerOptions) =>
+export const createLogger = (options?: LoggerOptions) =>
 	process.env.NODE_ENV === 'production'
 		? pino({ level: 'info', ...options })
 		: pino({
