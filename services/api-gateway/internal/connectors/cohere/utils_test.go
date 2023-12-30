@@ -71,10 +71,10 @@ func TestUtils(t *testing.T) {
 				ModelVendor:     models.ModelVendorCOHERE,
 				ModelParameters: factories.CreateCohereModelParameters(),
 				ProviderPromptMessages: ptr.To(
-					json.RawMessage(serialization.SerializeJSON(datatypes.CoherePromptMessageDTO{
+					json.RawMessage(serialization.SerializeJSON([]datatypes.CoherePromptMessageDTO{{
 						Message:           promptMessage,
 						TemplateVariables: &expectedTemplateVariables,
-					})),
+					}})),
 				),
 				ExpectedTemplateVariables: expectedTemplateVariables,
 			},
@@ -115,24 +115,6 @@ func TestUtils(t *testing.T) {
 
 			expectedError := "unknown model type {unknown}"
 			assert.Equal(t, expectedError, err.Error())
-		})
-
-		t.Run("returns error for unknown message role", func(t *testing.T) {
-			modelType := models.ModelTypeCommand
-			modelParameters := []byte(`{}`)
-			promptMessages := []byte(`[{"role": "unknown"}]`)
-			templateVariables := map[string]string{}
-
-			copied := *requestConfig
-			copied.PromptConfigData.ModelType = modelType
-			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
-			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
-
-			_, err := cohere.CreatePromptRequest(
-				&copied,
-				templateVariables,
-			)
-			assert.Error(t, err)
 		})
 
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {

@@ -42,7 +42,7 @@ type PromptConfigCreateDTO struct { // skipcq: TCV-001
 type PromptConfigUpdateDTO struct { // skipcq: TCV-001
 	Name                   *string             `json:"name,omitempty"            validate:"omitempty,required"`
 	ModelParameters        *json.RawMessage    `json:"modelParameters,omitempty" validate:"omitempty,required"`
-	ModelType              *models.ModelType   `json:"modelType,omitempty"       validate:"omitempty,oneof=oneof=gpt-3.5-turbo gpt-3.5-turbo-16k gpt-4 gpt-4-32k command command-light command-nightly command-light-nightly"`
+	ModelType              *models.ModelType   `json:"modelType,omitempty"       validate:"omitempty,required"`
 	ModelVendor            *models.ModelVendor `json:"modelVendor,omitempty"     validate:"omitempty,oneof=OPEN_AI COHERE"`
 	ProviderPromptMessages *json.RawMessage    `json:"promptMessages,omitempty"  validate:"omitempty,required"`
 }

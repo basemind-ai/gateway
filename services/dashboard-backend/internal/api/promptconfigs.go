@@ -111,6 +111,9 @@ func handleUpdatePromptConfig(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(
 			updatePromptConfigErr.Error(),
 			"duplicate key value violates unique constraint",
+		) || strings.Contains(
+			updatePromptConfigErr.Error(),
+			"unsupported model type",
 		) {
 			apiErr = apierror.BadRequest(updatePromptConfigErr.Error())
 		}

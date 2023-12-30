@@ -161,10 +161,10 @@ func CreateCoherePromptConfig(
 	modelParameters := CreateCohereModelParameters()
 
 	promptMessages := ptr.To(
-		json.RawMessage(serialization.SerializeJSON(datatypes.CoherePromptMessageDTO{
+		json.RawMessage(serialization.SerializeJSON([]datatypes.CoherePromptMessageDTO{{
 			Message:           userMessage,
 			TemplateVariables: &templateVariables,
-		})),
+		}})),
 	)
 
 	promptConfig, promptConfigCreateErr := db.GetQueries().
