@@ -155,6 +155,7 @@ export function OpenAIMessageItem({
 			}}
 		>
 			<span className="capitalize">
+				{/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
 				{name || `${role} ${t('message')}`}
 			</span>
 		</button>
@@ -219,7 +220,10 @@ export function OpenAIPromptTemplate({
 				<div className=" p-4 flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
 					{messages.map((message, index) => (
 						<OpenAIMessageItem
-							key={message.name || `${message.role}${index}`}
+							key={
+								/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */
+								message.name || `${message.role}${index}`
+							}
 							role={message.role}
 							name={message.name}
 							className={

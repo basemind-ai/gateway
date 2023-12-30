@@ -139,8 +139,8 @@ describe('parameters-and-prompt-form components tests', () => {
 			expect(maxTokensInput).toHaveValue(DEFAULT_MAX_TOKENS.toString());
 			expect(frequencyPenaltyInput).toHaveValue('0');
 			expect(presencePenaltyInput).toHaveValue('0');
-			expect(temperatureInput).toHaveValue('1');
-			expect(topPInput).toHaveValue('1');
+			expect(temperatureInput).toHaveValue('0');
+			expect(topPInput).toHaveValue('0');
 		});
 
 		it('should update the parameters state with the correct values when any input field is changed', () => {
@@ -396,8 +396,8 @@ describe('parameters-and-prompt-form components tests', () => {
 			expect(maxTokensInput).toHaveValue(DEFAULT_MAX_TOKENS.toString());
 			expect(frequencyPenaltyInput).toHaveValue('0');
 			expect(presencePenaltyInput).toHaveValue('0');
-			expect(temperatureInput).toHaveValue('1');
-			expect(topPInput).toHaveValue('1');
+			expect(temperatureInput).toHaveValue('0');
+			expect(topPInput).toHaveValue('0');
 		});
 	});
 
