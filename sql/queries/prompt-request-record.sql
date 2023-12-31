@@ -12,7 +12,8 @@ INSERT INTO prompt_request_record (
     duration_ms,
     prompt_config_id,
     provider_model_pricing_id,
-    error_log
+    error_log,
+    finish_reason
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 RETURNING *;

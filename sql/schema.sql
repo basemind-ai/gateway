@@ -125,6 +125,13 @@ CREATE INDEX idx_provider_model_pricing_active_to_date ON provider_model_pricing
 CREATE INDEX idx_provider_model_pricing_model_type ON provider_model_pricing (model_type);
 CREATE INDEX idx_provider_model_pricing_model_vendor ON provider_model_pricing (model_vendor);
 
+-- prompt-finish-reason
+CREATE TYPE prompt_finish_reason AS ENUM (
+    'DONE',
+    'ERROR',
+    'LIMIT'
+);
+
 -- prompt-request-record
 CREATE TABLE prompt_request_record
 (
@@ -136,6 +143,7 @@ CREATE TABLE prompt_request_record
     response_tokens_cost numeric NOT NULL,
     start_time timestamptz NOT NULL,
     finish_time timestamptz NOT NULL,
+    finish_reason prompt_finish_reason NOT NULL DEFAULT 'DONE',
     duration_ms int NULL,
     prompt_config_id uuid NULL,
     error_log text NULL,

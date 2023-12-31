@@ -4,27 +4,42 @@ import (
 	"errors"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
-	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"io"
-	"strings"
 	"time"
 )
 
+// Stream is an interface for a gRPC stream.
 type Stream[T any] interface {
 	Recv() (*T, error)
 }
 
+// StreamMessage is a generic data type used to encapsulate the result of a streaming response from a connector.
+type StreamMessage struct {
+	Content            *string
+	FinishReason       *string
+	RequestTokenCount  *uint32
+	ResponseTokenCount *uint32
+}
+
+type StreamFinishResult struct {
+	FinishReason       models.PromptFinishReason
+	RequestTokenCount  uint32
+	ResponseTokenCount uint32
+}
+
+// StreamFromClient is a generic function that handles the streaming response from an LLM API.
 func StreamFromClient[T any]( //nolint: revive
 	channel chan<- dto.PromptResultDTO,
-	promptResult *dto.PromptResultDTO,
+	finalResult *dto.PromptResultDTO,
 	recordParams *models.CreatePromptRequestRecordParams,
 	startTime time.Time,
 	stream Stream[T],
-	parseMessage func(*T) string,
-) string {
-	var builder strings.Builder
+	parseMessage func(*T) *StreamMessage,
+) *StreamFinishResult {
+	var streamResult *StreamFinishResult
 
 	for {
 		msg, receiveErr := stream.Recv()
@@ -34,7 +49,7 @@ func StreamFromClient[T any]( //nolint: revive
 
 			if !errors.Is(receiveErr, io.EOF) {
 				log.Debug().Err(receiveErr).Msg("received stream error")
-				promptResult.Error = receiveErr
+				finalResult.Error = receiveErr
 			}
 
 			break
@@ -45,11 +60,21 @@ func StreamFromClient[T any]( //nolint: revive
 			recordParams.DurationMs = pgtype.Int4{Int32: duration, Valid: true}
 		}
 
-		content := parseMessage(msg)
+		parsedMessage := parseMessage(msg)
 
-		exc.LogIfErr(exc.ReturnAnyErr(builder.WriteString(content)))
-		channel <- dto.PromptResultDTO{Content: &content}
+		channel <- dto.PromptResultDTO{
+			Content: parsedMessage.Content,
+		}
+
+		if parsedMessage.FinishReason != nil {
+			streamResult = &StreamFinishResult{
+				FinishReason:       models.PromptFinishReason(*parsedMessage.FinishReason),
+				RequestTokenCount:  ptr.Deref(parsedMessage.RequestTokenCount, 0),
+				ResponseTokenCount: ptr.Deref(parsedMessage.ResponseTokenCount, 0),
+			}
+			break
+		}
 	}
 
-	return builder.String()
+	return streamResult
 }

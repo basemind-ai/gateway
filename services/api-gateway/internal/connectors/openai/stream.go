@@ -13,7 +13,14 @@ import (
 	"time"
 )
 
-func parseMessage(msg *openaiconnector.OpenAIStreamResponse) string { return msg.Content }
+func parseMessage(msg *openaiconnector.OpenAIStreamResponse) *utils.StreamMessage {
+	return &utils.StreamMessage{
+		Content:            &msg.Content,
+		FinishReason:       msg.FinishReason,
+		RequestTokenCount:  msg.RequestTokensCount,
+		ResponseTokenCount: msg.ResponseTokensCount,
+	}
+}
 
 func (c *Client) RequestStream(
 	ctx context.Context,
@@ -49,7 +56,7 @@ func (c *Client) RequestStream(
 	finalResult.Error = streamErr
 
 	if streamErr == nil {
-		promptContent := utils.StreamFromClient[openaiconnector.OpenAIStreamResponse](
+		streamFinish := utils.StreamFromClient[openaiconnector.OpenAIStreamResponse](
 			channel,
 			finalResult,
 			recordParams,
@@ -57,24 +64,19 @@ func (c *Client) RequestStream(
 			stream,
 			parseMessage,
 		)
-		tokenCountAndCost := CalculateTokenCountsAndCosts(
-			GetRequestPromptString(promptRequest.Messages),
-			promptContent,
+
+		recordParams.FinishReason = streamFinish.FinishReason
+
+		recordParams.RequestTokens = int32(streamFinish.RequestTokenCount)
+		recordParams.ResponseTokens = int32(streamFinish.ResponseTokenCount)
+
+		costs := utils.CalculateCosts(
+			recordParams.RequestTokens,
+			recordParams.ResponseTokens,
 			requestConfiguration.ProviderModelPricing,
-			requestConfiguration.PromptConfigData.ModelType,
 		)
-		recordParams.RequestTokens = tokenCountAndCost.RequestTokenCount
-		recordParams.ResponseTokens = tokenCountAndCost.ResponseTokenCount
-
-		requestTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.RequestTokenCost.String()),
-		)
-		recordParams.RequestTokensCost = *requestTokenCost
-
-		responseTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.ResponseTokenCost.String()),
-		)
-		recordParams.ResponseTokensCost = *responseTokenCost
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
 	}
 
 	if finalResult.Error != nil {

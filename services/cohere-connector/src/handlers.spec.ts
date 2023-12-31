@@ -110,6 +110,7 @@ describe('handlers tests', () => {
 
 			expect(callback).toHaveBeenCalledWith(null, {
 				content: 'Generated response',
+				finishReason: StreamFinishReason.DONE,
 				requestTokensCount: 2,
 				responseTokensCount: 2,
 			});

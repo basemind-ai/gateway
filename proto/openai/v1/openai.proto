@@ -90,12 +90,12 @@ message OpenAIPromptRequest {
 message OpenAIPromptResponse {
   // Prompt Content
   string content = 1;
-  // Number of tokens used for the prompt
-  uint32 prompt_tokens = 2;
-  // Number of tokens used to generate the completion
-  uint32 completion_tokens = 3;
-  // Total number of tokens used to generate the response
-  uint32 total_tokens = 4;
+  // Count of the request tokens, as returned by the Cohere /tokenize endpoint
+  uint32 request_tokens_count = 2;
+  // Count of the response tokens, as returned by the Cohere /tokenize endpoint
+  uint32 response_tokens_count = 3;
+  // Finish reason
+  string finish_reason = 4;
 }
 
 // An OpenAI Streaming Response Message
@@ -104,4 +104,8 @@ message OpenAIStreamResponse {
   string content = 1;
   // Finish reason, if this is the last message
   optional string finish_reason = 2;
+  // Count of the request tokens, as returned by the Cohere /tokenize endpoint
+  optional uint32 request_tokens_count = 3;
+  // Count of the response tokens, as returned by the Cohere /tokenize endpoint
+  optional uint32 response_tokens_count = 4;
 }

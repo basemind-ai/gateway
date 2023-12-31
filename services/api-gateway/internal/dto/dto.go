@@ -9,8 +9,9 @@ import (
 // PromptResultDTO is a data type used to encapsulate the result of a prompt request.
 type PromptResultDTO struct { // skipcq: TCV-001
 	Content       *string
-	RequestRecord *models.PromptRequestRecord
 	Error         error
+	FinishReason  *string
+	RequestRecord *models.PromptRequestRecord
 }
 
 // RequestConfigurationDTO is a data type used encapsulate the current application prompt configuration.

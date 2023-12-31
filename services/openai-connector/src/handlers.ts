@@ -16,7 +16,13 @@ import {
 import logger from 'shared/logger';
 
 import { createOrDefaultClient } from '@/client';
-import { createOpenAIRequest, finishReasonMap } from '@/utils';
+import {
+	createOpenAIRequest,
+	getFinishReason,
+	getOpenAIModel,
+	getTokenCount,
+	OpenAIFinishReason,
+} from '@/utils';
 
 /**
  * The openAIPrompt function is a gRPC handler function.
@@ -49,11 +55,26 @@ export async function openAIPrompt(
 			{ choices, finishTime, startTime },
 			'OpenAI request completed',
 		);
+
+		const promptResponseContent = choices[0]?.message.content ?? '';
+		const requestTokensCount =
+			usage?.prompt_tokens ??
+			getTokenCount(
+				call.request.messages.map((m) => m.content ?? '').join(''),
+				getOpenAIModel(call.request.model),
+			);
+		const responseTokensCount =
+			usage?.completion_tokens ??
+			getTokenCount(
+				promptResponseContent,
+				getOpenAIModel(call.request.model),
+			);
+
 		callback(null, {
-			completionTokens: usage?.completion_tokens ?? 0,
-			content: choices[0]?.message.content ?? '',
-			promptTokens: usage?.prompt_tokens ?? 0,
-			totalTokens: usage?.total_tokens ?? 0,
+			content: promptResponseContent,
+			finishReason: getFinishReason(choices[0]?.finish_reason),
+			requestTokensCount,
+			responseTokensCount,
 		} satisfies OpenAIPromptResponse);
 	} catch (error: unknown) {
 		callback(createInternalGrpcError(error as Error), null);
@@ -87,16 +108,34 @@ export async function openAIStream(
 		const request = createOpenAIRequest(call.request, true);
 		const stream = await client.chat.completions.create(request);
 
+		let responseContent = '';
+		let finishReason: OpenAIFinishReason | undefined;
+
 		for await (const message of stream) {
 			const choice = message.choices[0];
 
+			const content = choice?.delta?.content ?? '';
+
+			responseContent += content;
+			finishReason = choice?.finish_reason ?? undefined;
+
 			call.write({
-				content: choice?.delta?.content ?? '',
-				finishReason: choice?.finish_reason
-					? finishReasonMap[choice.finish_reason]
-					: undefined,
+				content,
 			} satisfies OpenAIStreamResponse);
 		}
+
+		call.end({
+			content: '',
+			finishReason: getFinishReason(finishReason),
+			requestTokensCount: getTokenCount(
+				call.request.messages.map((m) => m.content ?? '').join(''),
+				getOpenAIModel(call.request.model),
+			),
+			responseTokensCount: getTokenCount(
+				responseContent,
+				getOpenAIModel(call.request.model),
+			),
+		});
 
 		const finishTime = Date.now();
 		logger.debug(

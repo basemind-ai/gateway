@@ -79,11 +79,13 @@ message CoherePromptRequest {
 // The CoherePromptResponse contains the data that is returned from the Cohere API.
 message CoherePromptResponse {
   // Prompt Content
-  optional string content = 1;
+  string content = 1;
+  // Finish reason, if this is the last message
+  string finish_reason = 2;
   // Count of the request tokens, as returned by the Cohere /tokenize endpoint
-  uint32 request_tokens_count = 2;
+  uint32 request_tokens_count = 3;
   // Count of the response tokens, as returned by the Cohere /tokenize endpoint
-  uint32 response_tokens_count = 3;
+  uint32 response_tokens_count = 4;
 }
 
 // The CohereStreamResponse contains the data that is streamed from the Cohere API.

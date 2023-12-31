@@ -13,14 +13,13 @@ import (
 	"time"
 )
 
-func parseMessage(msg *cohereconnector.CohereStreamResponse) string {
-	content := ""
-
-	if msg != nil {
-		content = *msg.Content
+func parseMessage(msg *cohereconnector.CohereStreamResponse) *utils.StreamMessage {
+	return &utils.StreamMessage{
+		Content:            msg.Content,
+		FinishReason:       msg.FinishReason,
+		RequestTokenCount:  msg.RequestTokensCount,
+		ResponseTokenCount: msg.ResponseTokensCount,
 	}
-
-	return content
 }
 
 func (c *Client) RequestStream(
@@ -57,8 +56,7 @@ func (c *Client) RequestStream(
 	finalResult.Error = streamErr
 
 	if streamErr == nil {
-		// TODO: implement token cost, until then result is unused
-		_ = utils.StreamFromClient[cohereconnector.CohereStreamResponse](
+		streamFinish := utils.StreamFromClient[cohereconnector.CohereStreamResponse](
 			channel,
 			finalResult,
 			recordParams,
@@ -67,10 +65,18 @@ func (c *Client) RequestStream(
 			parseMessage,
 		)
 
-		recordParams.RequestTokens = int32(response.RequestTokensCount)
-		recordParams.ResponseTokens = int32(response.ResponseTokensCount)
-		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric("0.0"))  // TODO: implement token cost
-		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric("0.0")) // TODO: implement token cost
+		recordParams.FinishReason = streamFinish.FinishReason
+
+		recordParams.RequestTokens = int32(streamFinish.RequestTokenCount)
+		recordParams.ResponseTokens = int32(streamFinish.ResponseTokenCount)
+
+		costs := utils.CalculateCosts(
+			recordParams.RequestTokens,
+			recordParams.ResponseTokens,
+			requestConfiguration.ProviderModelPricing,
+		)
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
 	}
 
 	if finalResult.Error != nil {

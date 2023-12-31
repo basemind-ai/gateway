@@ -3,6 +3,7 @@ package cohere
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -39,12 +40,13 @@ func (c *Client) RequestPrompt(
 	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 	if requestErr == nil {
-		promptResult.Content = response.Content
+		promptResult.Content = &response.Content
+		recordParams.FinishReason = models.PromptFinishReason(response.FinishReason)
 
 		recordParams.RequestTokens = int32(response.RequestTokensCount)
 		recordParams.ResponseTokens = int32(response.ResponseTokensCount)
 
-		costs := CalculateCosts(
+		costs := utils.CalculateCosts(
 			recordParams.RequestTokens,
 			recordParams.ResponseTokens,
 			requestConfiguration.ProviderModelPricing,

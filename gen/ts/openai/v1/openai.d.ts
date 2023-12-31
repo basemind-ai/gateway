@@ -133,23 +133,23 @@ export interface OpenAIPromptResponse {
      */
     content: string;
     /**
-     * Number of tokens used for the prompt
+     * Count of the request tokens, as returned by the Cohere /tokenize endpoint
      *
-     * @generated from protobuf field: uint32 prompt_tokens = 2;
+     * @generated from protobuf field: uint32 request_tokens_count = 2;
      */
-    promptTokens: number;
+    requestTokensCount: number;
     /**
-     * Number of tokens used to generate the completion
+     * Count of the response tokens, as returned by the Cohere /tokenize endpoint
      *
-     * @generated from protobuf field: uint32 completion_tokens = 3;
+     * @generated from protobuf field: uint32 response_tokens_count = 3;
      */
-    completionTokens: number;
+    responseTokensCount: number;
     /**
-     * Total number of tokens used to generate the response
+     * Finish reason
      *
-     * @generated from protobuf field: uint32 total_tokens = 4;
+     * @generated from protobuf field: string finish_reason = 4;
      */
-    totalTokens: number;
+    finishReason: string;
 }
 /**
  * An OpenAI Streaming Response Message
@@ -169,6 +169,18 @@ export interface OpenAIStreamResponse {
      * @generated from protobuf field: optional string finish_reason = 2;
      */
     finishReason?: string;
+    /**
+     * Count of the request tokens, as returned by the Cohere /tokenize endpoint
+     *
+     * @generated from protobuf field: optional uint32 request_tokens_count = 3;
+     */
+    requestTokensCount?: number;
+    /**
+     * Count of the response tokens, as returned by the Cohere /tokenize endpoint
+     *
+     * @generated from protobuf field: optional uint32 response_tokens_count = 4;
+     */
+    responseTokensCount?: number;
 }
 /**
  * Type of OpenAI Model

@@ -68,10 +68,10 @@ func TestRequestPrompt(t *testing.T) {
 		client, mockService := CreateClientAndService(t)
 
 		mockService.Response = &openaiconnector.OpenAIPromptResponse{
-			Content:          "Response content",
-			CompletionTokens: 2,
-			TotalTokens:      2,
-			PromptTokens:     2,
+			Content:             "Response content",
+			ResponseTokensCount: 2,
+			RequestTokensCount:  2,
+			FinishReason:        "DONE",
 		}
 
 		systemMessage := "You are a helpful chat bot."

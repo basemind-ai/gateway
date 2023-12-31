@@ -143,6 +143,49 @@ func (ns NullModelVendor) Value() (driver.Value, error) {
 	return string(ns.ModelVendor), nil
 }
 
+type PromptFinishReason string
+
+const (
+	PromptFinishReasonDONE  PromptFinishReason = "DONE"
+	PromptFinishReasonERROR PromptFinishReason = "ERROR"
+	PromptFinishReasonLIMIT PromptFinishReason = "LIMIT"
+)
+
+func (e *PromptFinishReason) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PromptFinishReason(s)
+	case string:
+		*e = PromptFinishReason(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PromptFinishReason: %T", src)
+	}
+	return nil
+}
+
+type NullPromptFinishReason struct {
+	PromptFinishReason PromptFinishReason `json:"promptFinishReason"`
+	Valid              bool               `json:"valid"` // Valid is true if PromptFinishReason is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPromptFinishReason) Scan(value interface{}) error {
+	if value == nil {
+		ns.PromptFinishReason, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PromptFinishReason.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPromptFinishReason) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PromptFinishReason), nil
+}
+
 type ApiKey struct {
 	ID            pgtype.UUID        `json:"id"`
 	Name          string             `json:"name"`
@@ -197,6 +240,7 @@ type PromptRequestRecord struct {
 	ResponseTokensCost     pgtype.Numeric     `json:"responseTokensCost"`
 	StartTime              pgtype.Timestamptz `json:"startTime"`
 	FinishTime             pgtype.Timestamptz `json:"finishTime"`
+	FinishReason           PromptFinishReason `json:"finishReason"`
 	DurationMs             pgtype.Int4        `json:"durationMs"`
 	PromptConfigID         pgtype.UUID        `json:"promptConfigId"`
 	ErrorLog               pgtype.Text        `json:"errorLog"`

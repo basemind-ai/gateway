@@ -92,19 +92,25 @@ export interface CoherePromptResponse {
     /**
      * Prompt Content
      *
-     * @generated from protobuf field: optional string content = 1;
+     * @generated from protobuf field: string content = 1;
      */
-    content?: string;
+    content: string;
+    /**
+     * Finish reason, if this is the last message
+     *
+     * @generated from protobuf field: string finish_reason = 2;
+     */
+    finishReason: string;
     /**
      * Count of the request tokens, as returned by the Cohere /tokenize endpoint
      *
-     * @generated from protobuf field: uint32 request_tokens_count = 2;
+     * @generated from protobuf field: uint32 request_tokens_count = 3;
      */
     requestTokensCount: number;
     /**
      * Count of the response tokens, as returned by the Cohere /tokenize endpoint
      *
-     * @generated from protobuf field: uint32 response_tokens_count = 3;
+     * @generated from protobuf field: uint32 response_tokens_count = 4;
      */
     responseTokensCount: number;
 }

@@ -105,9 +105,10 @@ export const CoherePromptRequest = new CoherePromptRequest$Type();
 class CoherePromptResponse$Type extends MessageType {
     constructor() {
         super("cohere.v1.CoherePromptResponse", [
-            { no: 1, name: "content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "request_tokens_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 3, name: "response_tokens_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+            { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "finish_reason", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "request_tokens_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "response_tokens_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
 }

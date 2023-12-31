@@ -113,6 +113,7 @@ export async function coherePrompt(
 		);
 		callback(null, {
 			content: response,
+			finishReason: getFinishReason('COMPLETE'),
 			requestTokensCount,
 			responseTokensCount,
 		} satisfies CoherePromptResponse);

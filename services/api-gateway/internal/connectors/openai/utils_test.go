@@ -6,12 +6,10 @@ import (
 	"fmt"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/openai"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
-	"github.com/basemind-ai/monorepo/services/api-gateway/internal/services"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
-	"github.com/shopspring/decimal"
 	"testing"
 
 	"github.com/basemind-ai/monorepo/e2e/factories"
@@ -302,94 +300,5 @@ func TestUtils(t *testing.T) {
 				reqPromptString,
 			)
 		})
-	})
-	t.Run("GetStringTokenCount", func(t *testing.T) {
-		testCases := []struct {
-			input    string
-			expected int32
-		}{
-			{
-				input:    "Hello world!",
-				expected: 3,
-			},
-			{
-				input:    "",
-				expected: 0,
-			},
-			{
-				input:    "Goodbye world!",
-				expected: 4,
-			},
-		}
-
-		for _, testCase := range testCases {
-			t.Run(fmt.Sprintf("Test: '%d' token count", testCase.expected), func(t *testing.T) {
-				count := openai.GetStringTokenCount(testCase.input, models.ModelTypeGpt35Turbo)
-				assert.Equal(t, testCase.expected, count)
-			})
-		}
-	})
-
-	t.Run("CalculateTokenCountsAndCosts", func(t *testing.T) {
-		promptInputValue := "you are a helpful chatbot."
-		promptOutputValue := "trees are green, sky is blue, i am a machine, and so are you."
-		expectedInputTokenCount := int32(7)
-		expectedOutputTokenCount := int32(18)
-		testCases := []struct {
-			modelType               models.ModelType
-			expectedInputTokenCost  decimal.Decimal
-			expectedOutputTokenCost decimal.Decimal
-		}{
-			{
-				modelType:               models.ModelTypeGpt35Turbo,
-				expectedInputTokenCost:  decimal.RequireFromString("0.0000105"),
-				expectedOutputTokenCost: decimal.RequireFromString("0.000036"),
-			},
-			{
-				modelType:               models.ModelTypeGpt35Turbo16k,
-				expectedInputTokenCost:  decimal.RequireFromString("0.000021"),
-				expectedOutputTokenCost: decimal.RequireFromString("0.000072"),
-			},
-			{
-				modelType:               models.ModelTypeGpt4,
-				expectedInputTokenCost:  decimal.RequireFromString("0.00021"),
-				expectedOutputTokenCost: decimal.RequireFromString("0.000108"),
-			},
-			{
-				modelType:               models.ModelTypeGpt432k,
-				expectedInputTokenCost:  decimal.RequireFromString("0.00042"),
-				expectedOutputTokenCost: decimal.RequireFromString("0.000216"),
-			},
-		}
-
-		for _, testCase := range testCases {
-			t.Run(fmt.Sprintf("Test: '%s'", testCase.modelType), func(t *testing.T) {
-				modelPricingDTO := services.RetrieveProviderModelPricing(
-					context.TODO(),
-					testCase.modelType,
-					models.ModelVendorOPENAI,
-				)
-
-				result := openai.CalculateTokenCountsAndCosts(
-					promptInputValue,
-					promptOutputValue,
-					modelPricingDTO,
-					testCase.modelType,
-				)
-
-				assert.Equal(t, expectedInputTokenCount, result.RequestTokenCount)
-				assert.Equal(t, expectedOutputTokenCount, result.ResponseTokenCount)
-				assert.Equal(
-					t,
-					testCase.expectedInputTokenCost.String(),
-					result.RequestTokenCost.String(),
-				)
-				assert.Equal(
-					t,
-					testCase.expectedOutputTokenCost.String(),
-					result.ResponseTokenCost.String(),
-				)
-			})
-		}
 	})
 }
