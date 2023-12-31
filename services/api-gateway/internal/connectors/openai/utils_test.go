@@ -377,17 +377,17 @@ func TestUtils(t *testing.T) {
 					testCase.modelType,
 				)
 
-				assert.Equal(t, expectedInputTokenCount, result.InputTokenCount)
-				assert.Equal(t, expectedOutputTokenCount, result.OutputTokenCount)
+				assert.Equal(t, expectedInputTokenCount, result.RequestTokenCount)
+				assert.Equal(t, expectedOutputTokenCount, result.ResponseTokenCount)
 				assert.Equal(
 					t,
 					testCase.expectedInputTokenCost.String(),
-					result.InputTokenCost.String(),
+					result.RequestTokenCost.String(),
 				)
 				assert.Equal(
 					t,
 					testCase.expectedOutputTokenCost.String(),
-					result.OutputTokenCost.String(),
+					result.ResponseTokenCost.String(),
 				)
 			})
 		}

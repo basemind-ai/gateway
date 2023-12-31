@@ -181,42 +181,42 @@ func GetStringTokenCount(value string, modelType models.ModelType) int32 {
 }
 
 type TokenCountCostResult struct {
-	InputTokenCount  int32
-	OutputTokenCount int32
-	InputTokenCost   decimal.Decimal
-	OutputTokenCost  decimal.Decimal
+	RequestTokenCount  int32
+	ResponseTokenCount int32
+	RequestTokenCost   decimal.Decimal
+	ResponseTokenCost  decimal.Decimal
 }
 
-// CalculateTokenCountsAndCosts calculates the input and output tokens count and costs for a given model type / vendor.
+// CalculateTokenCountsAndCosts calculates the request and response tokens count and costs for a given model type / vendor.
 func CalculateTokenCountsAndCosts(
-	promptInputValue string,
-	promptOutputValue string,
+	promptRequestValue string,
+	promptResponseValue string,
 	modelPricing datatypes.ProviderModelPricingDTO,
 	modelType models.ModelType,
 ) TokenCountCostResult {
 	// The unit size is the number of token per which we calculate the price. E.g. 0.002$ for 1000 tokens.
 	unitSize := decimal.NewFromInt32(modelPricing.TokenUnitSize)
 
-	// inputTokensCount is the count of tokens in the input string. Their cost is lower than that of output.
-	inputTokensCount := GetStringTokenCount(promptInputValue, modelType)
+	// requestTokensCount is the count of tokens in the request string. Their cost is lower than that of response.
+	requestTokensCount := GetStringTokenCount(promptRequestValue, modelType)
 
-	// outputTokensCount is the count of tokens in the output string. Their cost is higher than that of input.
-	outputTokensCount := GetStringTokenCount(promptOutputValue, modelType)
+	// responseTokensCount is the count of tokens in the response string. Their cost is higher than that of request.
+	responseTokensCount := GetStringTokenCount(promptResponseValue, modelType)
 
-	// priceInput is the cost of the input tokens.
-	priceInput := decimal.NewFromInt32(inputTokensCount).
+	// priceRequest is the cost of the request tokens.
+	priceRequest := decimal.NewFromInt32(requestTokensCount).
 		Div(unitSize).
 		Mul(modelPricing.InputTokenPrice)
 
-	// priceOutput is the cost of the output tokens.
-	priceOutput := decimal.NewFromInt32(outputTokensCount).
+	// priceResponse is the cost of the response tokens.
+	priceResponse := decimal.NewFromInt32(responseTokensCount).
 		Div(unitSize).
 		Mul(modelPricing.OutputTokenPrice)
 
 	return TokenCountCostResult{
-		InputTokenCount:  inputTokensCount,
-		OutputTokenCount: outputTokensCount,
-		InputTokenCost:   priceInput,
-		OutputTokenCost:  priceOutput,
+		RequestTokenCount:  requestTokensCount,
+		ResponseTokenCount: responseTokensCount,
+		RequestTokenCost:   priceRequest,
+		ResponseTokenCost:  priceResponse,
 	}
 }

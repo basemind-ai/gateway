@@ -67,8 +67,8 @@ func (c *Client) RequestStream(
 			parseMessage,
 		)
 
-		recordParams.RequestTokens = 0                                               // TODO: implement token cost
-		recordParams.ResponseTokens = 0                                              // TODO: implement token cost
+		recordParams.RequestTokens = int32(response.RequestTokensCount)
+		recordParams.ResponseTokens = int32(response.ResponseTokensCount)
 		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric("0.0"))  // TODO: implement token cost
 		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric("0.0")) // TODO: implement token cost
 	}

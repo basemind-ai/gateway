@@ -41,10 +41,16 @@ func (c *Client) RequestPrompt(
 	if requestErr == nil {
 		promptResult.Content = response.Content
 
-		recordParams.RequestTokens = 0                                               // TODO: implement token cost
-		recordParams.ResponseTokens = 0                                              // TODO: implement token cost
-		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric("0.0"))  // TODO: implement token cost
-		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric("0.0")) // TODO: implement token cost
+		recordParams.RequestTokens = int32(response.RequestTokensCount)
+		recordParams.ResponseTokens = int32(response.ResponseTokensCount)
+
+		costs := CalculateCosts(
+			recordParams.RequestTokens,
+			recordParams.ResponseTokens,
+			requestConfiguration.ProviderModelPricing,
+		)
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
 	} else {
 		log.Debug().Err(requestErr).Msg("request error")
 		promptResult.Error = requestErr

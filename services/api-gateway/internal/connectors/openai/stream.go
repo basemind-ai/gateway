@@ -63,16 +63,16 @@ func (c *Client) RequestStream(
 			requestConfiguration.ProviderModelPricing,
 			requestConfiguration.PromptConfigData.ModelType,
 		)
-		recordParams.RequestTokens = tokenCountAndCost.InputTokenCount
-		recordParams.ResponseTokens = tokenCountAndCost.OutputTokenCount
+		recordParams.RequestTokens = tokenCountAndCost.RequestTokenCount
+		recordParams.ResponseTokens = tokenCountAndCost.ResponseTokenCount
 
 		requestTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.InputTokenCost.String()),
+			db.StringToNumeric(tokenCountAndCost.RequestTokenCost.String()),
 		)
 		recordParams.RequestTokensCost = *requestTokenCost
 
 		responseTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.OutputTokenCost.String()),
+			db.StringToNumeric(tokenCountAndCost.ResponseTokenCost.String()),
 		)
 		recordParams.ResponseTokensCost = *responseTokenCost
 	}
