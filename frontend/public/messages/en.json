@@ -366,10 +366,11 @@
 		"warning": "Warning"
 	},
 	"signin": {
-		"authHeader": "Welcome to",
-		"authSubtitle": "Integrate in minutes, scale to millions",
+		"and": "and",
 		"bannerTitle": "Sign In",
-		"basemind": "BaseMind"
+		"privacyPolicy": "Privacy Policy",
+		"tos": "Terms of Service",
+		"userAgreementMessage": "By continuing you are agreeing to our"
 	},
 	"support": {
 		"api": "API",

@@ -145,6 +145,7 @@ export const mockTrack = vi.fn();
 export const mockIdentify = vi.fn();
 export const mockPage = vi.fn();
 export const mockGroup = vi.fn();
+
 vi.mock(
 	'@segment/analytics-next',
 	async (importOriginal: () => Promise<Record<string, any>>) => {
@@ -164,12 +165,10 @@ vi.mock(
 		};
 	},
 );
-const originalWriteKey = process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY;
-
 beforeEach(() => {
+	mockTrack.mockReset();
+	mockIdentify.mockReset();
+	mockPage.mockReset();
+	mockGroup.mockReset();
 	process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = 'test';
-});
-
-afterAll(() => {
-	process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = originalWriteKey;
 });
