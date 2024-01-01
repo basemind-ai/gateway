@@ -5,7 +5,6 @@
 		type="GoTestRunConfiguration"
 		factoryName="Go Test"
 	>
-    <module name="BaseMind.AI" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />
     <package
