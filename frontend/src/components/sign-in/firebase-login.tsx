@@ -1,13 +1,15 @@
-'use client';
 import 'firebaseui/dist/firebaseui.css';
 
-import { GithubAuthProvider, GoogleAuthProvider } from '@firebase/auth';
+import {
+	EmailAuthProvider,
+	GithubAuthProvider,
+	GoogleAuthProvider,
+} from '@firebase/auth';
 import firebaseui from 'firebaseui';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
-import { Loader } from '@/components/sign-in/loader';
 import { Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useSetUser } from '@/stores/api-store';
@@ -35,10 +37,9 @@ const privacyPolicyUrl =
 const tosUrl = getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.TOS;
 
 const firebaseUIConfig = {
-	//popupMode: true,
 	privacyPolicyUrl,
-	signInFlow: 'popup',
 	signInOptions: [
+		EmailAuthProvider.PROVIDER_ID,
 		GithubAuthProvider.PROVIDER_ID,
 		GoogleAuthProvider.PROVIDER_ID,
 		microsoftAuthProvider,
@@ -47,7 +48,13 @@ const firebaseUIConfig = {
 	tosUrl,
 } satisfies firebaseui.auth.Config;
 
-export function FirebaseLogin() {
+export function FirebaseLogin({
+	setLoading,
+	isInitialized,
+}: {
+	isInitialized: boolean;
+	setLoading: (value: boolean) => void;
+}) {
 	const t = useTranslations('signin');
 
 	const router = useRouter();
@@ -60,57 +67,66 @@ export function FirebaseLogin() {
 
 	/* firebaseui cannot be imported in SSR mode, so we have to import it only when the browser loads. */
 	useEffect(() => {
-		(async () => {
-			try {
-				const auth = await getFirebaseAuth();
+		if (isInitialized) {
+			(async () => {
+				setLoading(true);
+				try {
+					const auth = await getFirebaseAuth();
 
-				if (auth.currentUser) {
-					setUser(auth.currentUser);
-					router.replace(Navigation.Projects);
-					identify(auth.currentUser.uid, auth.currentUser);
-					track('login');
-					return null;
+					if (auth.currentUser) {
+						setUser(auth.currentUser);
+						router.replace(Navigation.Projects);
+						identify(auth.currentUser.uid, auth.currentUser);
+						track('login');
+						return null;
+					}
+
+					const firebaseUI = await import('firebaseui');
+
+					const ui =
+						firebaseUI.auth.AuthUI.getInstance() ??
+						/* c8 ignore next */
+						new firebaseUI.auth.AuthUI(auth);
+					// noinspection JSUnusedGlobalSymbols
+					ui.start('#firebaseui-auth-container', {
+						...firebaseUIConfig,
+
+						callbacks: {
+							signInFailure(
+								error: firebaseui.auth.AuthUIError,
+							): Promise<void> | void {
+								setLoading(false);
+								showError(error.message);
+								setIsUIRendered(false);
+							},
+							signInSuccessWithAuthResult: (result) => {
+								console.log('authResult', result);
+								setUser(auth.currentUser);
+								setIsSignedIn(true);
+
+								identify(
+									auth.currentUser!.uid,
+									auth.currentUser!,
+								);
+								track('signup');
+
+								// prevent the UI from redirecting the user using a preconfigured redirect-url
+								return false;
+							},
+							uiShown: () => {
+								setLoading(false);
+								setIsUIRendered(true);
+							},
+						},
+					});
+				} catch (e: unknown) {
+					setLoading(false);
+					showError((e as Error).message);
+					setIsUIRendered(false);
 				}
-
-				const firebaseUI = await import('firebaseui');
-
-				const ui =
-					firebaseUI.auth.AuthUI.getInstance() ??
-					/* c8 ignore next */
-					new firebaseUI.auth.AuthUI(auth);
-
-				// noinspection JSUnusedGlobalSymbols
-				ui.start('#firebaseui-auth-container', {
-					...firebaseUIConfig,
-
-					callbacks: {
-						signInFailure(
-							error: firebaseui.auth.AuthUIError,
-						): Promise<void> | void {
-							showError(error.message);
-							setIsUIRendered(false);
-						},
-						signInSuccessWithAuthResult: () => {
-							setUser(auth.currentUser);
-							setIsSignedIn(true);
-
-							identify(auth.currentUser!.uid, auth.currentUser!);
-							track('signup');
-
-							// prevent the UI from redirecting the user using a preconfigured redirect-url
-							return false;
-						},
-						uiShown: () => {
-							setIsUIRendered(true);
-						},
-					},
-				});
-			} catch (e: unknown) {
-				showError((e as Error).message);
-				setIsUIRendered(false);
-			}
-		})();
-	}, []);
+			})();
+		}
+	}, [isInitialized]);
 
 	useEffect(() => {
 		if (isSignedIn) {
@@ -130,36 +146,31 @@ export function FirebaseLogin() {
 		}
 	}, [uiRendered]);
 
-	const isLoading = !uiRendered || isSignedIn;
-
 	return (
-		<main
+		<div
 			data-testid="firebase-login-container"
 			className="flex items-center h-full w-full justify-center"
 		>
 			<div className="shadow transition-all duration-700 ease-in-out h-full items-center self-center">
-				{isLoading && <Loader />}
-				{!isSignedIn && (
-					<div className="flex items-center h-full">
-						<div id="firebaseui-auth-container">
-							<div
-								data-testid="firebase-login-greeting-container"
-								className={`m-8 ${uiRendered ? '' : 'hidden'}`}
-							>
-								<h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold text-center text-base-content mb-2.5">
-									{t('authHeader')}{' '}
-									<span className="text-primary">
-										{t('basemind')}
-									</span>
-								</h1>
-								<p className="text-center text-base-content md:text-lg font-medium mt-3">
-									<span>{t('authSubtitle')} </span>
-								</p>
-							</div>
+				<div className="flex items-center h-full">
+					<div id="firebaseui-auth-container">
+						<div
+							data-testid="firebase-login-greeting-container"
+							className={`m-8 ${uiRendered ? '' : 'hidden'}`}
+						>
+							<h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold text-center text-base-content mb-2.5">
+								{t('authHeader')}{' '}
+								<span className="text-primary">
+									{t('basemind')}
+								</span>
+							</h1>
+							<p className="text-center text-base-content md:text-lg font-medium mt-3">
+								<span>{t('authSubtitle')} </span>
+							</p>
 						</div>
 					</div>
-				)}
+				</div>
 			</div>
-		</main>
+		</div>
 	);
 }

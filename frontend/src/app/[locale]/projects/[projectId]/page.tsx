@@ -114,7 +114,7 @@ export default function ProjectOverview({
 	const TabComponent = tabComponents[selectedTab];
 
 	return (
-		<div
+		<main
 			className="flex flex-col min-h-screen w-full bg-base-100"
 			data-testid="project-page"
 		>
@@ -129,6 +129,6 @@ export default function ProjectOverview({
 				<div className="card-divider" />
 				<TabComponent />
 			</div>
-		</div>
+		</main>
 	);
 }

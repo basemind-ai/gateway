@@ -18,7 +18,7 @@ describe('FirebaseLogin tests', () => {
 				currentUser: { displayName: 'test' },
 			};
 		});
-		render(<FirebaseLogin />);
+		render(<FirebaseLogin setLoading={vi.fn()} />);
 
 		await waitFor(() => {
 			const loader = screen.getByTestId('loader-anim');
@@ -33,7 +33,7 @@ describe('FirebaseLogin tests', () => {
 			};
 		});
 
-		render(<FirebaseLogin />);
+		render(<FirebaseLogin setLoading={vi.fn()} />);
 
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);
@@ -64,7 +64,7 @@ describe('FirebaseLogin tests', () => {
 			},
 		}));
 
-		render(<FirebaseLogin />);
+		render(<FirebaseLogin setLoading={vi.fn()} />);
 
 		await waitFor(() => {
 			expect(authGetInstanceMock).toHaveBeenCalled();
@@ -111,7 +111,7 @@ describe('FirebaseLogin tests', () => {
 			},
 		}));
 
-		render(<FirebaseLogin />);
+		render(<FirebaseLogin setLoading={vi.fn()} />);
 
 		await waitFor(() => {
 			expect(authGetInstanceMock).toHaveBeenCalled();
@@ -157,7 +157,7 @@ describe('FirebaseLogin tests', () => {
 
 		vi.spyOn(document, 'querySelector').mockReturnValue(mockElement as any);
 
-		render(<FirebaseLogin />);
+		render(<FirebaseLogin setLoading={vi.fn()} />);
 
 		await waitFor(() => {
 			expect(addClassMock).toHaveBeenCalledWith('m-8');

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Record } from 'react-bootstrap-icons';
+import { Oval } from 'react-loading-icons';
 import { shallow } from 'zustand/shallow';
 
 import { handleCreatePromptConfig } from '@/api';
@@ -193,14 +194,12 @@ export default function PromptConfigCreateWizard({
 	};
 
 	return (
-		<div
+		<main
 			data-testid="config-create-wizard-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
 			{isLoading ? (
-				<div className="flex flex-col justify-center items-center h-full right-0 left-0 top-0 bottom-0 absolute m-auto">
-					<div className="loading loading-spinner loading-lg align-middle text-primary" />
-				</div>
+				<Oval height="50vh" width="50vw" className="m-auto" />
 			) : (
 				<>
 					<div className="page-content-container">
@@ -233,6 +232,7 @@ export default function PromptConfigCreateWizard({
 										<button
 											data-testid="config-create-wizard-cancel-button"
 											onClick={() => {
+												setIsLoading(true);
 												store.resetState();
 												router.push(
 													setRouteParams(
@@ -293,6 +293,6 @@ export default function PromptConfigCreateWizard({
 					</div>
 				</>
 			)}
-		</div>
+		</main>
 	);
 }

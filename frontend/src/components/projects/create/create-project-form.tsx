@@ -1,10 +1,10 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
+import { Oval } from 'react-loading-icons';
 
 import { handleCreateApplication, handleCreateProject } from '@/api';
 import { TooltipIcon } from '@/components/input-label-with-tooltip';
-import { Spinner } from '@/components/spinner';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -17,9 +17,13 @@ export function CreateProjectForm({
 	allowCancel,
 	validateProjectName,
 	validateApplicationName,
+	setLoading,
+	isLoading,
 }: {
 	allowCancel: boolean;
 	handleCancel: () => void;
+	isLoading: boolean;
+	setLoading: (value: boolean) => void;
 	validateApplicationName: (value: string) => boolean;
 	validateProjectName: (value: string) => boolean;
 }) {
@@ -32,12 +36,11 @@ export function CreateProjectForm({
 
 	const { track } = useAnalytics();
 
-	const [isLoading, setIsLoading] = useState(false);
 	const [applicationName, setApplicationName] = useState('');
 	const [projectName, setProjectName] = useState('');
 
 	const handleSubmit = async () => {
-		setIsLoading(true);
+		setLoading(true);
 		try {
 			const project = await handleCreateProject({
 				data: { name: projectName },
@@ -59,9 +62,8 @@ export function CreateProjectForm({
 				}),
 			);
 		} catch (e) {
+			setLoading(false);
 			handleError(e);
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
@@ -218,7 +220,11 @@ export function CreateProjectForm({
 						}}
 						data-testid="create-project-submit-button"
 					>
-						{isLoading ? <Spinner /> : t('submitButton')}
+						{isLoading ? (
+							<Oval className="m-auto" />
+						) : (
+							t('submitButton')
+						)}
 					</button>
 				</div>
 			</div>
