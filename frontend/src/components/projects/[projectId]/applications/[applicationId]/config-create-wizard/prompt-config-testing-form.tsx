@@ -178,7 +178,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					<span className="text-info">
 						{modelResponses
 							.map((message) => message.content)
-							.join(' ')}
+							.join('')}
 					</span>
 				</div>
 				<div className="card-section-divider" />

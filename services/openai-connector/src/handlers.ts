@@ -147,5 +147,4 @@ export async function openAIStream(
 		logger.error(error as Error, 'error communicating with OpenAI');
 		return;
 	}
-	call.end();
 }
