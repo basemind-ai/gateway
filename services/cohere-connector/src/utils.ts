@@ -56,7 +56,6 @@ export function createCohereRequest(
  *
  * @return A StreamFinishReason
  */
-
 export function getFinishReason(
 	finishReason: 'COMPLETE' | 'MAX_TOKENS' | 'ERROR' | 'ERROR_TOXIC',
 ) {

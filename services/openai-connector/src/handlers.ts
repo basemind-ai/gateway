@@ -119,9 +119,9 @@ export async function openAIStream(
 			responseContent += content;
 			finishReason = choice?.finish_reason ?? undefined;
 
-			call.write({
-				content,
-			} satisfies OpenAIStreamResponse);
+			if (content) {
+				call.write({ content } satisfies OpenAIStreamResponse);
+			}
 		}
 
 		call.end({

@@ -44,15 +44,26 @@ func StreamFromClient[T any]( //nolint: revive
 	for {
 		msg, receiveErr := stream.Recv()
 
-		if receiveErr != nil {
-			recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
+		isFinished := false
 
+		parsedMessage := parseMessage(msg)
+		if parsedMessage.FinishReason != nil {
+			streamResult = &StreamFinishResult{
+				FinishReason:       models.PromptFinishReason(*parsedMessage.FinishReason),
+				RequestTokenCount:  ptr.Deref(parsedMessage.RequestTokenCount, 0),
+				ResponseTokenCount: ptr.Deref(parsedMessage.ResponseTokenCount, 0),
+			}
+
+			isFinished = true
+		}
+
+		if receiveErr != nil {
 			if !errors.Is(receiveErr, io.EOF) {
 				log.Debug().Err(receiveErr).Msg("received stream error")
 				finalResult.Error = receiveErr
 			}
 
-			break
+			isFinished = true
 		}
 
 		if recordParams.DurationMs.Int32 == 0 {
@@ -60,21 +71,16 @@ func StreamFromClient[T any]( //nolint: revive
 			recordParams.DurationMs = pgtype.Int4{Int32: duration, Valid: true}
 		}
 
-		parsedMessage := parseMessage(msg)
+		if isFinished {
+			break
+		}
 
 		channel <- dto.PromptResultDTO{
 			Content: parsedMessage.Content,
 		}
-
-		if parsedMessage.FinishReason != nil {
-			streamResult = &StreamFinishResult{
-				FinishReason:       models.PromptFinishReason(*parsedMessage.FinishReason),
-				RequestTokenCount:  ptr.Deref(parsedMessage.RequestTokenCount, 0),
-				ResponseTokenCount: ptr.Deref(parsedMessage.ResponseTokenCount, 0),
-			}
-			break
-		}
 	}
+
+	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 	return streamResult
 }

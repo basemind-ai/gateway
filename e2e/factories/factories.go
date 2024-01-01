@@ -201,6 +201,7 @@ func CreatePromptRequestRecord(
 			ResponseTokens:     18,
 			RequestTokensCost:  *requestTokenCost,
 			ResponseTokensCost: *responseTokenCost,
+			FinishReason:       models.PromptFinishReasonDONE,
 			StartTime:          pgtype.Timestamptz{Time: promptStartTime, Valid: true},
 			FinishTime:         pgtype.Timestamptz{Time: promptFinishTime, Valid: true},
 			DurationMs:         pgtype.Int4{Int32: 0, Valid: true},

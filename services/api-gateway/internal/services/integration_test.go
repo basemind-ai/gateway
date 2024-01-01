@@ -131,7 +131,10 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				expectedResponseContent := "Response content"
 
 				openaiService.Response = &openaiconnector.OpenAIPromptResponse{
-					Content: expectedResponseContent,
+					Content:             expectedResponseContent,
+					FinishReason:        "DONE",
+					RequestTokensCount:  10,
+					ResponseTokensCount: 20,
 				}
 
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
@@ -238,12 +241,21 @@ func TestIntegration(t *testing.T) { //nolint: revive
 					db.UUIDToString(&requestConfigurationDTO.ApplicationID),
 				)
 
-				finishReason := "done"
+				finishReason := "DONE"
+				tokens := uint32(10)
 
 				openaiService.Stream = []*openaiconnector.OpenAIStreamResponse{
 					{Content: "1"},
 					{Content: "2"},
-					{Content: "3", FinishReason: &finishReason},
+					{
+						Content: "3",
+					},
+					{
+						Content:             "",
+						FinishReason:        &finishReason,
+						RequestTokensCount:  &tokens,
+						ResponseTokensCount: &tokens,
+					},
 				}
 
 				expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
@@ -298,9 +310,9 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				assert.Equal(t, "1", chunks[0].Content)
 				assert.Equal(t, "2", chunks[1].Content)
 				assert.Equal(t, "3", chunks[2].Content)
-				assert.Equal(t, "done", *chunks[3].FinishReason)
-				assert.Equal(t, 1, int(*chunks[3].ResponseTokens))
-				assert.Equal(t, 16, int(*chunks[3].RequestTokens))
+				assert.Equal(t, "DONE", *chunks[3].FinishReason)
+				assert.Equal(t, 10, int(*chunks[3].ResponseTokens))
+				assert.Equal(t, 10, int(*chunks[3].RequestTokens))
 			})
 		})
 	})
@@ -312,12 +324,21 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 				client := createPromptTestingServiceClient(t)
 
-				finishReason := "done"
+				finishReason := "DONE"
+				tokens := uint32(10)
 
 				openaiService.Stream = []*openaiconnector.OpenAIStreamResponse{
 					{Content: "1"},
 					{Content: "2"},
-					{Content: "3", FinishReason: &finishReason},
+					{
+						Content: "3",
+					},
+					{
+						Content:             "",
+						FinishReason:        &finishReason,
+						RequestTokensCount:  &tokens,
+						ResponseTokensCount: &tokens,
+					},
 				}
 
 				outgoingContext := metadata.AppendToOutgoingContext(

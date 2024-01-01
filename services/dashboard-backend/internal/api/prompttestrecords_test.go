@@ -68,6 +68,7 @@ func TestPromptTestRecordsAPI(t *testing.T) {
 				ResponseTokens:     20,
 				RequestTokensCost:  *exc.MustResult(db.StringToNumeric("0.000012")),
 				ResponseTokensCost: *exc.MustResult(db.StringToNumeric("0.000062")),
+				FinishReason:       models.PromptFinishReasonDONE,
 				StartTime: pgtype.Timestamptz{
 					Time:  time.Now().Add(-10 * time.Second),
 					Valid: true,

@@ -276,18 +276,20 @@ func CreateAPIGatewayStreamMessage(
 	result dto.PromptResultDTO,
 ) (*gateway.StreamingPromptResponse, bool) {
 	msg := &gateway.StreamingPromptResponse{}
+
+	isFinished := false
+
 	if result.Error != nil {
-		reason := "error"
+		isFinished = true
+		reason := "ERROR"
+		msg.FinishReason = &reason
+	} else if result.RequestRecord != nil {
+		isFinished = true
+		reason := string(result.RequestRecord.FinishReason)
 		msg.FinishReason = &reason
 	}
 
-	isFinished := msg.FinishReason != nil || result.RequestRecord != nil
-
 	if result.RequestRecord != nil {
-		if msg.FinishReason == nil {
-			reason := "done"
-			msg.FinishReason = &reason
-		}
 		requestTokens := uint32(result.RequestRecord.RequestTokens)
 		responseTokens := uint32(result.RequestRecord.ResponseTokens)
 		streamDuration := uint32(
@@ -302,9 +304,8 @@ func CreateAPIGatewayStreamMessage(
 		go DeductCredit(ctx, result.RequestRecord)
 	}
 
-	if result.Content != nil {
-		contentCopy := *result.Content
-		msg.Content = contentCopy
+	if content := ptr.Deref(result.Content, ""); len(content) > 0 {
+		msg.Content = content
 	}
 
 	return msg, isFinished
@@ -320,15 +321,15 @@ func DeductCredit(
 		return
 	}
 
-	totalCost := exc.MustResult(db.NumericToDecimal(requestRecord.RequestTokensCost)).Add(
-		*exc.MustResult(db.NumericToDecimal(requestRecord.ResponseTokensCost)),
-	)
+	requestCost := *exc.MustResult(db.NumericToDecimal(requestRecord.RequestTokensCost))
+	responseCost := exc.MustResult(db.NumericToDecimal(requestRecord.ResponseTokensCost))
+	totalCost := responseCost.Add(requestCost).Mul(decimal.NewFromInt(-1))
 
 	exc.LogIfErr(
 		db.GetQueries().
 			UpdateProjectCredits(context.Background(), models.UpdateProjectCreditsParams{
 				ID:      projectID,
-				Credits: *exc.MustResult(db.StringToNumeric(totalCost.Mul(decimal.NewFromInt(-1)).String())),
+				Credits: *exc.MustResult(db.StringToNumeric(totalCost.String())),
 			}),
 	)
 }

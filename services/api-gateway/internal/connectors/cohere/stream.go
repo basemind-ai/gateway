@@ -14,6 +14,13 @@ import (
 )
 
 func parseMessage(msg *cohereconnector.CohereStreamResponse) *utils.StreamMessage {
+	errorFinish := "ERROR"
+	if msg == nil {
+		return &utils.StreamMessage{
+			FinishReason: &errorFinish,
+		}
+	}
+
 	return &utils.StreamMessage{
 		Content:            msg.Content,
 		FinishReason:       msg.FinishReason,
@@ -55,7 +62,7 @@ func (c *Client) RequestStream(
 	stream, streamErr := c.client.CohereStream(ctx, promptRequest)
 	finalResult.Error = streamErr
 
-	if streamErr == nil {
+	if finalResult.Error == nil {
 		streamFinish := utils.StreamFromClient[cohereconnector.CohereStreamResponse](
 			channel,
 			finalResult,
@@ -83,15 +90,11 @@ func (c *Client) RequestStream(
 		recordParams.ErrorLog = pgtype.Text{String: finalResult.Error.Error(), Valid: true}
 	}
 
-	promptRecord, createRequestRecordErr := db.GetQueries().
+	promptRecord := exc.MustResult(db.GetQueries().
 		CreatePromptRequestRecord(
 			ctx,
 			*recordParams,
-		)
-
-	if finalResult.Error == nil {
-		finalResult.Error = createRequestRecordErr
-	}
+		))
 
 	finalResult.RequestRecord = &promptRecord
 

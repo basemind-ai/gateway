@@ -10,7 +10,6 @@ import (
 type PromptResultDTO struct { // skipcq: TCV-001
 	Content       *string
 	Error         error
-	FinishReason  *string
 	RequestRecord *models.PromptRequestRecord
 }
 

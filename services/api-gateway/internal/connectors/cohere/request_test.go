@@ -70,7 +70,10 @@ func TestRequestPrompt(t *testing.T) {
 		content := "Response content"
 
 		mockService.Response = &cohereconnector.CoherePromptResponse{
-			Content: &content,
+			Content:             content,
+			FinishReason:        "DONE",
+			RequestTokensCount:  10,
+			ResponseTokensCount: 10,
 		}
 
 		mockService.ExpectedRequest = &cohereconnector.CoherePromptRequest{
