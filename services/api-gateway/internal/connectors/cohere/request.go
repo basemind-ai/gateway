@@ -3,6 +3,7 @@ package cohere
 import (
 	"context"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
+	"github.com/basemind-ai/monorepo/services/api-gateway/internal/utils"
 	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
@@ -39,12 +40,19 @@ func (c *Client) RequestPrompt(
 	recordParams.FinishTime = pgtype.Timestamptz{Time: time.Now(), Valid: true}
 
 	if requestErr == nil {
-		promptResult.Content = response.Content
+		promptResult.Content = &response.Content
+		recordParams.FinishReason = models.PromptFinishReason(response.FinishReason)
 
-		recordParams.RequestTokens = 0                                               // TODO: implement token cost
-		recordParams.ResponseTokens = 0                                              // TODO: implement token cost
-		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric("0.0"))  // TODO: implement token cost
-		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric("0.0")) // TODO: implement token cost
+		recordParams.RequestTokens = int32(response.RequestTokensCount)
+		recordParams.ResponseTokens = int32(response.ResponseTokensCount)
+
+		costs := utils.CalculateCosts(
+			recordParams.RequestTokens,
+			recordParams.ResponseTokens,
+			requestConfiguration.ProviderModelPricing,
+		)
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
 	} else {
 		log.Debug().Err(requestErr).Msg("request error")
 		promptResult.Error = requestErr

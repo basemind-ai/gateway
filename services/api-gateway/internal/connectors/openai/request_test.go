@@ -53,8 +53,9 @@ func TestRequestPrompt(t *testing.T) {
 	templateVariables := map[string]string{"userInput": "abc"}
 	expectedParsedContent := "This is what the user asked for: abc"
 
-	floatValue := float32(1)
-	uintValue := uint32(1)
+	floatValue := float32(0)
+	uintValue := uint32(0)
+
 	expectedModelParameters := &openaiconnector.OpenAIModelParameters{
 		Temperature:      &floatValue,
 		TopP:             &floatValue,
@@ -62,14 +63,15 @@ func TestRequestPrompt(t *testing.T) {
 		PresencePenalty:  &floatValue,
 		FrequencyPenalty: &floatValue,
 	}
+
 	t.Run("returns a prompt response", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)
 
 		mockService.Response = &openaiconnector.OpenAIPromptResponse{
-			Content:          "Response content",
-			CompletionTokens: 2,
-			TotalTokens:      2,
-			PromptTokens:     2,
+			Content:             "Response content",
+			ResponseTokensCount: 2,
+			RequestTokensCount:  2,
+			FinishReason:        "DONE",
 		}
 
 		systemMessage := "You are a helpful chat bot."

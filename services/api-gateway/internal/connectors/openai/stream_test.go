@@ -53,11 +53,20 @@ func TestRequestStream(t *testing.T) {
 
 		channel := make(chan dto.PromptResultDTO)
 
-		finishReason := "done"
+		finishReason := "DONE"
+		tokens := uint32(10)
 		mockService.Stream = []*openaiconnector.OpenAIStreamResponse{
 			{Content: "1"},
 			{Content: "2"},
-			{Content: "3", FinishReason: &finishReason},
+			{
+				Content: "3",
+			},
+			{
+				Content:             "",
+				FinishReason:        &finishReason,
+				RequestTokensCount:  &tokens,
+				ResponseTokensCount: &tokens,
+			},
 		}
 
 		go func() {
@@ -88,6 +97,7 @@ func TestRequestStream(t *testing.T) {
 		assert.Nil(t, chunks[3].Content)
 		assert.Nil(t, chunks[3].Error)
 		assert.NotNil(t, chunks[3].RequestRecord)
+		assert.NotNil(t, chunks[3].RequestRecord.FinishReason)
 	})
 
 	t.Run("returns an error if the request fails", func(t *testing.T) {

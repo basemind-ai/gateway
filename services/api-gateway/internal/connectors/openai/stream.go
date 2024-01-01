@@ -13,7 +13,21 @@ import (
 	"time"
 )
 
-func parseMessage(msg *openaiconnector.OpenAIStreamResponse) string { return msg.Content }
+func parseMessage(msg *openaiconnector.OpenAIStreamResponse) *utils.StreamMessage {
+	errorFinish := "ERROR"
+	if msg == nil {
+		return &utils.StreamMessage{
+			FinishReason: &errorFinish,
+		}
+	}
+
+	return &utils.StreamMessage{
+		Content:            &msg.Content,
+		FinishReason:       msg.FinishReason,
+		RequestTokenCount:  msg.RequestTokensCount,
+		ResponseTokenCount: msg.ResponseTokensCount,
+	}
+}
 
 func (c *Client) RequestStream(
 	ctx context.Context,
@@ -48,8 +62,8 @@ func (c *Client) RequestStream(
 	stream, streamErr := c.client.OpenAIStream(ctx, promptRequest)
 	finalResult.Error = streamErr
 
-	if streamErr == nil {
-		promptContent := utils.StreamFromClient[openaiconnector.OpenAIStreamResponse](
+	if finalResult.Error == nil {
+		streamFinish := utils.StreamFromClient[openaiconnector.OpenAIStreamResponse](
 			channel,
 			finalResult,
 			recordParams,
@@ -57,39 +71,30 @@ func (c *Client) RequestStream(
 			stream,
 			parseMessage,
 		)
-		tokenCountAndCost := CalculateTokenCountsAndCosts(
-			GetRequestPromptString(promptRequest.Messages),
-			promptContent,
+
+		recordParams.FinishReason = streamFinish.FinishReason
+
+		recordParams.RequestTokens = int32(streamFinish.RequestTokenCount)
+		recordParams.ResponseTokens = int32(streamFinish.ResponseTokenCount)
+
+		costs := utils.CalculateCosts(
+			recordParams.RequestTokens,
+			recordParams.ResponseTokens,
 			requestConfiguration.ProviderModelPricing,
-			requestConfiguration.PromptConfigData.ModelType,
 		)
-		recordParams.RequestTokens = tokenCountAndCost.InputTokenCount
-		recordParams.ResponseTokens = tokenCountAndCost.OutputTokenCount
-
-		requestTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.InputTokenCost.String()),
-		)
-		recordParams.RequestTokensCost = *requestTokenCost
-
-		responseTokenCost := exc.MustResult(
-			db.StringToNumeric(tokenCountAndCost.OutputTokenCost.String()),
-		)
-		recordParams.ResponseTokensCost = *responseTokenCost
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
 	}
 
 	if finalResult.Error != nil {
 		recordParams.ErrorLog = pgtype.Text{String: finalResult.Error.Error(), Valid: true}
 	}
 
-	promptRecord, createRequestRecordErr := db.GetQueries().
+	promptRecord := exc.MustResult(db.GetQueries().
 		CreatePromptRequestRecord(
 			ctx,
 			*recordParams,
-		)
-
-	if finalResult.Error == nil {
-		finalResult.Error = createRequestRecordErr
-	}
+		))
 
 	finalResult.RequestRecord = &promptRecord
 

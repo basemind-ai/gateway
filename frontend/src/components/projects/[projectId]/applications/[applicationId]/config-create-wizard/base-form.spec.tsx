@@ -175,8 +175,9 @@ describe('PromptConfigBaseForm', () => {
 		expect(setConfigName).toHaveBeenCalledWith('New Config');
 	});
 
-	it('should display the model vendor select field as disabled', () => {
+	it('should display and allow selection of model vendor', () => {
 		const modelVendor = ModelVendor.OpenAI;
+		const setVendor = vi.fn();
 		render(
 			<PromptConfigBaseForm
 				validateConfigName={vi.fn()}
@@ -186,7 +187,7 @@ describe('PromptConfigBaseForm', () => {
 				modelVendor={modelVendor}
 				setConfigName={vi.fn()}
 				setModelType={vi.fn()}
-				setVendor={vi.fn()}
+				setVendor={setVendor}
 			/>,
 		);
 		const select: HTMLInputElement = screen.getByTestId(
@@ -194,7 +195,8 @@ describe('PromptConfigBaseForm', () => {
 		);
 		expect(select).toBeInTheDocument();
 		expect(select.value).toBe(modelVendor);
-		expect(select.disabled).toBe(true);
+		fireEvent.change(select, { target: { value: ModelVendor.Cohere } });
+		expect(setVendor).toHaveBeenCalledWith(ModelVendor.Cohere);
 	});
 
 	it('should display and allow editing of the model type select field based on the selected model vendor', () => {

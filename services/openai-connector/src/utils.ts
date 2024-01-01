@@ -1,4 +1,3 @@
-import { Status } from '@grpc/grpc-js/build/src/constants';
 import {
 	OpenAIMessageRole,
 	OpenAIModel,
@@ -10,7 +9,7 @@ import {
 	ChatCompletionMessageParam,
 } from 'openai/src/resources/chat/completions';
 import { StreamFinishReason } from 'shared/constants';
-import { GrpcError } from 'shared/grpc';
+import { encoding_for_model as encodingForModel } from 'tiktoken';
 
 type OpenAIModels =
 	| 'gpt-4-0613'
@@ -37,7 +36,7 @@ const messageRoleMap: Record<
 	[OpenAIMessageRole.OPEN_AI_MESSAGE_ROLE_FUNCTION]: 'function',
 };
 
-type OpenAIFinishReason =
+export type OpenAIFinishReason =
 	| 'stop'
 	| 'length'
 	| 'tool_calls'
@@ -51,6 +50,15 @@ export const finishReasonMap: Record<OpenAIFinishReason, StreamFinishReason> = {
 	stop: StreamFinishReason.DONE,
 	tool_calls: StreamFinishReason.DONE,
 };
+
+/*
+ * Get the finish reason from the OpenAI response
+ * */
+export function getFinishReason(
+	finishReason?: OpenAIFinishReason,
+): StreamFinishReason {
+	return finishReasonMap[finishReason ?? 'stop'];
+}
 
 /**
  * The getOpenAIModel function takes in a string that represents the OpenAI model
@@ -126,10 +134,10 @@ export function createOpenAIRequest(
 	};
 }
 
-export function createInternalGrpcError(error: Error) {
-	return new GrpcError({
-		code: Status.INTERNAL,
-		details: error.message,
-		message: 'an error has occurred communicating with OpenAI',
-	});
+/*
+ * Helper function to count the OpenAI tokens in a given string.
+ * */
+export function getTokenCount(text: string, model: OpenAIModels): number {
+	const encoding = encodingForModel(model);
+	return encoding.encode(text).length;
 }

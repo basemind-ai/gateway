@@ -233,6 +233,7 @@ export default function PromptConfigCreateWizard({
 										<button
 											data-testid="config-create-wizard-cancel-button"
 											onClick={() => {
+												store.resetState();
 												router.push(
 													setRouteParams(
 														Navigation.ApplicationDetail,

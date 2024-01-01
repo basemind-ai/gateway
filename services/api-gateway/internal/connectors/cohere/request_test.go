@@ -52,17 +52,28 @@ func TestRequestPrompt(t *testing.T) {
 	templateVariables := map[string]string{"userInput": "abc"}
 	expectedParsedContent := "This is what the user asked for: abc"
 
-	floatValue := float32(1)
+	floatValue := float32(0)
+	uintValue := uint32(0)
+
 	expectedModelParameters := &cohereconnector.CohereModelParameters{
-		Temperature: &floatValue,
+		Temperature:      &floatValue,
+		K:                &uintValue,
+		P:                &floatValue,
+		FrequencyPenalty: &floatValue,
+		PresencePenalty:  &floatValue,
+		MaxTokens:        &uintValue,
 	}
+
 	t.Run("returns a prompt response", func(t *testing.T) {
 		client, mockService := CreateClientAndService(t)
 
 		content := "Response content"
 
 		mockService.Response = &cohereconnector.CoherePromptResponse{
-			Content: &content,
+			Content:             content,
+			FinishReason:        "DONE",
+			RequestTokensCount:  10,
+			ResponseTokensCount: 10,
 		}
 
 		mockService.ExpectedRequest = &cohereconnector.CoherePromptRequest{

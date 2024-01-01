@@ -7,7 +7,6 @@ import (
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/connectors/cohere"
 	"github.com/basemind-ai/monorepo/services/api-gateway/internal/dto"
 	"github.com/basemind-ai/monorepo/shared/go/datatypes"
-	"github.com/basemind-ai/monorepo/shared/go/db"
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/ptr"
 	"github.com/basemind-ai/monorepo/shared/go/serialization"
@@ -43,10 +42,16 @@ func TestUtils(t *testing.T) {
 		project, _ := factories.CreateProject(context.TODO())
 		application, _ := factories.CreateApplication(context.TODO(), project.ID)
 
-		floatValue := float32(1)
+		floatValue := float32(0)
+		uintValue := uint32(0)
 
 		expectedModelParameters := &cohereconnector.CohereModelParameters{
-			Temperature: &floatValue,
+			Temperature:      &floatValue,
+			K:                &uintValue,
+			P:                &floatValue,
+			FrequencyPenalty: &floatValue,
+			PresencePenalty:  &floatValue,
+			MaxTokens:        &uintValue,
 		}
 
 		promptMessage := "This is what the user asked for: {userInput}"
@@ -59,24 +64,17 @@ func TestUtils(t *testing.T) {
 
 		expectedPromptMessage := fmt.Sprintf("This is what the user asked for: %s", userInput)
 
-		applicationID := db.UUIDToString(&application.ID)
-
 		requestConfig := &dto.RequestConfigurationDTO{
 			ApplicationID: application.ID,
 			PromptConfigData: datatypes.PromptConfigDTO{
-				ModelType:   modelType,
-				ModelVendor: models.ModelVendorCOHERE,
-				ModelParameters: ptr.To(
-					json.RawMessage(serialization.SerializeJSON(datatypes.CohereModelParametersDTO{
-						Temperature: &floatValue,
-						Connectors:  nil,
-					})),
-				),
+				ModelType:       modelType,
+				ModelVendor:     models.ModelVendorCOHERE,
+				ModelParameters: factories.CreateCohereModelParameters(),
 				ProviderPromptMessages: ptr.To(
-					json.RawMessage(serialization.SerializeJSON(datatypes.CoherePromptMessageDTO{
-						Content:           promptMessage,
+					json.RawMessage(serialization.SerializeJSON([]datatypes.CoherePromptMessageDTO{{
+						Message:           promptMessage,
 						TemplateVariables: &expectedTemplateVariables,
-					})),
+					}})),
 				),
 				ExpectedTemplateVariables: expectedTemplateVariables,
 			},
@@ -84,10 +82,9 @@ func TestUtils(t *testing.T) {
 
 		t.Run("creates a prompt request correctly", func(t *testing.T) {
 			expectedPromptRequest := &cohereconnector.CoherePromptRequest{
-				Model:          cohereconnector.CohereModel_COHERE_MODEL_COMMAND,
-				Parameters:     expectedModelParameters,
-				Message:        expectedPromptMessage,
-				ConversationId: &applicationID,
+				Model:      cohereconnector.CohereModel_COHERE_MODEL_COMMAND,
+				Parameters: expectedModelParameters,
+				Message:    expectedPromptMessage,
 			}
 
 			promptRequest, err := cohere.CreatePromptRequest(
@@ -118,24 +115,6 @@ func TestUtils(t *testing.T) {
 
 			expectedError := "unknown model type {unknown}"
 			assert.Equal(t, expectedError, err.Error())
-		})
-
-		t.Run("returns error for unknown message role", func(t *testing.T) {
-			modelType := models.ModelTypeCommand
-			modelParameters := []byte(`{}`)
-			promptMessages := []byte(`[{"role": "unknown"}]`)
-			templateVariables := map[string]string{}
-
-			copied := *requestConfig
-			copied.PromptConfigData.ModelType = modelType
-			copied.PromptConfigData.ModelParameters = ptr.To(json.RawMessage(modelParameters))
-			copied.PromptConfigData.ProviderPromptMessages = ptr.To(json.RawMessage(promptMessages))
-
-			_, err := cohere.CreatePromptRequest(
-				&copied,
-				templateVariables,
-			)
-			assert.Error(t, err)
 		})
 
 		t.Run("returns error if model parameters is invalid json", func(t *testing.T) {

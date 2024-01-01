@@ -13,11 +13,11 @@ import {
 	OpenAIStreamResponse,
 } from 'gen/openai/v1/openai';
 import { StreamFinishReason } from 'shared/constants';
+import { createInternalGrpcError } from 'shared/grpc';
 import { Mock } from 'vitest';
 
 import { getOpenAIClient } from '@/client';
 import { openAIPrompt, openAIStream } from '@/handlers';
-import { createInternalGrpcError } from '@/utils';
 
 describe('handlers tests', () => {
 	const openAPIKey = (process.env.OPEN_AI_API_KEY =
@@ -106,10 +106,10 @@ describe('handlers tests', () => {
 			});
 
 			expect(callback).toHaveBeenCalledWith(null, {
-				completionTokens: 20,
 				content: 'Generated response',
-				promptTokens: 10,
-				totalTokens: 30,
+				finishReason: StreamFinishReason.DONE,
+				requestTokensCount: 10,
+				responseTokensCount: 20,
 			});
 		});
 
@@ -151,10 +151,10 @@ describe('handlers tests', () => {
 			});
 
 			expect(callback).toHaveBeenCalledWith(null, {
-				completionTokens: 0,
 				content: '',
-				promptTokens: 10,
-				totalTokens: 10,
+				finishReason: StreamFinishReason.DONE,
+				requestTokensCount: 10,
+				responseTokensCount: 0,
 			});
 		});
 
@@ -243,10 +243,10 @@ describe('handlers tests', () => {
 			});
 
 			expect(callback).toHaveBeenCalledWith(null, {
-				completionTokens: 20,
 				content: 'Generated response',
-				promptTokens: 10,
-				totalTokens: 30,
+				finishReason: StreamFinishReason.LIMIT,
+				requestTokensCount: 10,
+				responseTokensCount: 20,
 			});
 		});
 	});
@@ -330,70 +330,61 @@ describe('handlers tests', () => {
 				[
 					{
 						content: '0',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '1',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '2',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '3',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '4',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '5',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '6',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '7',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '8',
-						finishReason: undefined,
 					},
 				],
 				[
 					{
 						content: '9',
-						finishReason: undefined,
-					},
-				],
-				[
-					{
-						content: '',
-						finishReason: StreamFinishReason.DONE,
 					},
 				],
 			]);
+
+			expect(call.end).toHaveBeenCalledWith({
+				content: '',
+				finishReason: StreamFinishReason.DONE,
+				requestTokensCount: 1,
+				responseTokensCount: 4,
+			});
 		});
 
 		it('should handle errors', async () => {

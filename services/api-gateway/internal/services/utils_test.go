@@ -644,24 +644,26 @@ func TestUtils(t *testing.T) { //nolint:revive
 			assert.False(t, isFinished)
 		})
 
-		t.Run("set finish reason to error", func(t *testing.T) {
+		t.Run("set finish reason to ERROR", func(t *testing.T) {
 			result := dto.PromptResultDTO{
 				Error: errors.New("an error occurred"),
 			}
 			msg, _ := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
-			assert.Equal(t, "error", *msg.FinishReason)
+			assert.Equal(t, "ERROR", *msg.FinishReason)
 		})
 
-		t.Run("set finish reason to done", func(t *testing.T) {
+		t.Run("set finish reason to request record reason", func(t *testing.T) {
 			result := dto.PromptResultDTO{
-				RequestRecord: &models.PromptRequestRecord{},
+				RequestRecord: &models.PromptRequestRecord{
+					FinishReason: models.PromptFinishReasonDONE,
+				},
 			}
 			msg, _ := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
-			assert.Equal(t, "done", *msg.FinishReason)
+			assert.Equal(t, "DONE", *msg.FinishReason)
 		})
 
 		t.Run("finish reason is nil when request record is nil", func(t *testing.T) {
@@ -679,7 +681,7 @@ func TestUtils(t *testing.T) { //nolint:revive
 			msg, _ := services.CreateAPIGatewayStreamMessage(context.TODO(), result)
 
 			assert.NotNil(t, msg)
-			assert.Equal(t, "error", *msg.FinishReason)
+			assert.Equal(t, "ERROR", *msg.FinishReason)
 		})
 	})
 

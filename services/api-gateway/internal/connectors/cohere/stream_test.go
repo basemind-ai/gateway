@@ -54,14 +54,25 @@ func TestRequestStream(t *testing.T) {
 
 		channel := make(chan dto.PromptResultDTO)
 
-		finishReason := "done"
+		finishReason := "DONE"
+		tokens := uint32(10)
+
 		one := "1"
 		two := "2"
 		three := "3"
+		empty := ""
 		mockService.Stream = []*cohereconnector.CohereStreamResponse{
 			{Content: &one},
 			{Content: &two},
-			{Content: &three, FinishReason: &finishReason},
+			{
+				Content: &three,
+			},
+			{
+				Content:             &empty,
+				FinishReason:        &finishReason,
+				RequestTokensCount:  &tokens,
+				ResponseTokensCount: &tokens,
+			},
 		}
 
 		go func() {

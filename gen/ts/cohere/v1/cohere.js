@@ -6,7 +6,6 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Any } from "../../google/protobuf/any";
 /**
  * Type of Cohere Model
  *
@@ -72,24 +71,15 @@ export var CohereConnectorType;
     CohereConnectorType[CohereConnectorType["ID"] = 2] = "ID";
 })(CohereConnectorType || (CohereConnectorType = {}));
 // @generated message type with reflection information, may provide speed optimized methods
-class CohereConnector$Type extends MessageType {
-    constructor() {
-        super("cohere.v1.CohereConnector", [
-            { no: 1, name: "id", kind: "enum", T: () => ["cohere.v1.CohereConnectorType", CohereConnectorType, "COHERE_CONNECTOR_TYPE_"] },
-            { no: 2, name: "options", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Any } }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message cohere.v1.CohereConnector
- */
-export const CohereConnector = new CohereConnector$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class CohereModelParameters$Type extends MessageType {
     constructor() {
         super("cohere.v1.CohereModelParameters", [
             { no: 1, name: "temperature", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 2, name: "connectors", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CohereConnector }
+            { no: 2, name: "k", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 3, name: "p", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 4, name: "frequency_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 5, name: "presence_penalty", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 6, name: "max_tokens", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
 }
@@ -103,8 +93,7 @@ class CoherePromptRequest$Type extends MessageType {
         super("cohere.v1.CoherePromptRequest", [
             { no: 1, name: "model", kind: "enum", T: () => ["cohere.v1.CohereModel", CohereModel, "COHERE_MODEL_"] },
             { no: 2, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "parameters", kind: "message", T: () => CohereModelParameters },
-            { no: 4, name: "conversation_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "parameters", kind: "message", T: () => CohereModelParameters }
         ]);
     }
 }
@@ -116,7 +105,10 @@ export const CoherePromptRequest = new CoherePromptRequest$Type();
 class CoherePromptResponse$Type extends MessageType {
     constructor() {
         super("cohere.v1.CoherePromptResponse", [
-            { no: 1, name: "content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "finish_reason", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "request_tokens_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "response_tokens_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
 }
@@ -129,7 +121,9 @@ class CohereStreamResponse$Type extends MessageType {
     constructor() {
         super("cohere.v1.CohereStreamResponse", [
             { no: 1, name: "content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "finish_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "finish_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "request_tokens_count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "response_tokens_count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
 }

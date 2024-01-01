@@ -36,6 +36,11 @@ func CreatePromptConfig(
 		GetQueries().
 		CheckDefaultPromptConfigExists(ctx, applicationID))
 
+	if invalidVendorOrModelErr := models.ValidateModelType(createPromptConfigDTO.ModelVendor, createPromptConfigDTO.ModelType); invalidVendorOrModelErr != nil {
+		log.Error().Err(invalidVendorOrModelErr).Msg("invalid vendor or model")
+		return nil, fmt.Errorf("invalid vendor or model - %w", invalidVendorOrModelErr)
+	}
+
 	// we automatically set the first created prompt config as the default.
 	// we know this is the first prompt config for the application, because there must always be a default config.
 	promptConfig, createErr := db.
@@ -154,10 +159,9 @@ func UpdatePromptConfig(
 	if updatePromptConfigDTO.Name != nil {
 		updateParams.Name = strings.TrimSpace(*updatePromptConfigDTO.Name)
 	}
-	// TODO: enable this when we add more vendors
-	// if updatePromptConfigDTO.ModelVendor != nil {
-	//	updateParams.ModelVendor = *updatePromptConfigDTO.ModelVendor
-	//}
+	if updatePromptConfigDTO.ModelVendor != nil {
+		updateParams.ModelVendor = *updatePromptConfigDTO.ModelVendor
+	}
 	if updatePromptConfigDTO.ModelType != nil {
 		updateParams.ModelType = *updatePromptConfigDTO.ModelType
 	}
@@ -175,6 +179,11 @@ func UpdatePromptConfig(
 
 		updateParams.ProviderPromptMessages = *providerMessages
 		updateParams.ExpectedTemplateVariables = expectedTemplateVariables
+	}
+
+	if invalidVendorOrModelErr := models.ValidateModelType(updateParams.ModelVendor, updateParams.ModelType); invalidVendorOrModelErr != nil {
+		log.Error().Err(invalidVendorOrModelErr).Msg("invalid vendor or model")
+		return nil, fmt.Errorf("invalid vendor or model - %w", invalidVendorOrModelErr)
 	}
 
 	updatedPromptConfig, updateErr := db.GetQueries().UpdatePromptConfig(ctx, updateParams)

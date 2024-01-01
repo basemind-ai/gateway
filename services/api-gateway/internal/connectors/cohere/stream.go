@@ -13,14 +13,20 @@ import (
 	"time"
 )
 
-func parseMessage(msg *cohereconnector.CohereStreamResponse) string {
-	content := ""
-
-	if msg != nil {
-		content = *msg.Content
+func parseMessage(msg *cohereconnector.CohereStreamResponse) *utils.StreamMessage {
+	errorFinish := "ERROR"
+	if msg == nil {
+		return &utils.StreamMessage{
+			FinishReason: &errorFinish,
+		}
 	}
 
-	return content
+	return &utils.StreamMessage{
+		Content:            msg.Content,
+		FinishReason:       msg.FinishReason,
+		RequestTokenCount:  msg.RequestTokensCount,
+		ResponseTokenCount: msg.ResponseTokensCount,
+	}
 }
 
 func (c *Client) RequestStream(
@@ -56,9 +62,8 @@ func (c *Client) RequestStream(
 	stream, streamErr := c.client.CohereStream(ctx, promptRequest)
 	finalResult.Error = streamErr
 
-	if streamErr == nil {
-		// TODO: implement token cost, until then result is unused
-		_ = utils.StreamFromClient[cohereconnector.CohereStreamResponse](
+	if finalResult.Error == nil {
+		streamFinish := utils.StreamFromClient[cohereconnector.CohereStreamResponse](
 			channel,
 			finalResult,
 			recordParams,
@@ -67,25 +72,29 @@ func (c *Client) RequestStream(
 			parseMessage,
 		)
 
-		recordParams.RequestTokens = 0                                               // TODO: implement token cost
-		recordParams.ResponseTokens = 0                                              // TODO: implement token cost
-		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric("0.0"))  // TODO: implement token cost
-		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric("0.0")) // TODO: implement token cost
+		recordParams.FinishReason = streamFinish.FinishReason
+
+		recordParams.RequestTokens = int32(streamFinish.RequestTokenCount)
+		recordParams.ResponseTokens = int32(streamFinish.ResponseTokenCount)
+
+		costs := utils.CalculateCosts(
+			recordParams.RequestTokens,
+			recordParams.ResponseTokens,
+			requestConfiguration.ProviderModelPricing,
+		)
+		recordParams.RequestTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
+		recordParams.ResponseTokensCost = *exc.MustResult(db.StringToNumeric(costs.RequestTokenCost.String()))
 	}
 
 	if finalResult.Error != nil {
 		recordParams.ErrorLog = pgtype.Text{String: finalResult.Error.Error(), Valid: true}
 	}
 
-	promptRecord, createRequestRecordErr := db.GetQueries().
+	promptRecord := exc.MustResult(db.GetQueries().
 		CreatePromptRequestRecord(
 			ctx,
 			*recordParams,
-		)
-
-	if finalResult.Error == nil {
-		finalResult.Error = createRequestRecordErr
-	}
+		))
 
 	finalResult.RequestRecord = &promptRecord
 

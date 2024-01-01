@@ -37,6 +37,10 @@ const JWTSecret = "ABC123"
 
 func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 	t.Helper()
+
+	t.Setenv("OPENAI_CONNECTOR_ADDRESS", "")
+	t.Setenv("COHERE_CONNECTOR_ADDRESS", "")
+
 	mockService := &testutils.MockOpenAIService{T: t}
 	listener := testutils.CreateTestGRPCServer[openaiconnector.OpenAIServiceServer](
 		t,
@@ -44,9 +48,8 @@ func createOpenAIService(t *testing.T) *testutils.MockOpenAIService {
 		mockService,
 	)
 
-	t.Setenv("OPENAI_CONNECTOR_ADDRESS", "")
-
-	connectors.Init(context.TODO(),
+	connectors.Init(
+		context.TODO(),
 		grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) {
 				return listener.Dial()
@@ -84,7 +87,7 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 	project, _ := factories.CreateProject(context.Background())
 
-	modelParameters := factories.CreateModelParameters()
+	modelParameters := factories.CreateOpenAIModelParameters()
 	promptMessages := factories.CreateOpenAIPromptMessages("you are a bot", "{userInput}", nil)
 	_ = factories.CreateProviderPricingModels(context.Background())
 	requestConfigurationDTO := createRequestConfigurationDTO(t, project.ID)
@@ -128,7 +131,10 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				expectedResponseContent := "Response content"
 
 				openaiService.Response = &openaiconnector.OpenAIPromptResponse{
-					Content: expectedResponseContent,
+					Content:             expectedResponseContent,
+					FinishReason:        "DONE",
+					RequestTokensCount:  10,
+					ResponseTokensCount: 20,
 				}
 
 				mockRedis.ExpectGet(db.UUIDToString(&requestConfigurationDTO.ApplicationID)).
@@ -235,12 +241,21 @@ func TestIntegration(t *testing.T) { //nolint: revive
 					db.UUIDToString(&requestConfigurationDTO.ApplicationID),
 				)
 
-				finishReason := "done"
+				finishReason := "DONE"
+				tokens := uint32(10)
 
 				openaiService.Stream = []*openaiconnector.OpenAIStreamResponse{
 					{Content: "1"},
 					{Content: "2"},
-					{Content: "3", FinishReason: &finishReason},
+					{
+						Content: "3",
+					},
+					{
+						Content:             "",
+						FinishReason:        &finishReason,
+						RequestTokensCount:  &tokens,
+						ResponseTokensCount: &tokens,
+					},
 				}
 
 				expectedCacheValue, marshalErr := cacheClient.Marshal(requestConfigurationDTO)
@@ -295,9 +310,9 @@ func TestIntegration(t *testing.T) { //nolint: revive
 				assert.Equal(t, "1", chunks[0].Content)
 				assert.Equal(t, "2", chunks[1].Content)
 				assert.Equal(t, "3", chunks[2].Content)
-				assert.Equal(t, "done", *chunks[3].FinishReason)
-				assert.Equal(t, 1, int(*chunks[3].ResponseTokens))
-				assert.Equal(t, 16, int(*chunks[3].RequestTokens))
+				assert.Equal(t, "DONE", *chunks[3].FinishReason)
+				assert.Equal(t, 10, int(*chunks[3].ResponseTokens))
+				assert.Equal(t, 10, int(*chunks[3].RequestTokens))
 			})
 		})
 	})
@@ -309,12 +324,21 @@ func TestIntegration(t *testing.T) { //nolint: revive
 
 				client := createPromptTestingServiceClient(t)
 
-				finishReason := "done"
+				finishReason := "DONE"
+				tokens := uint32(10)
 
 				openaiService.Stream = []*openaiconnector.OpenAIStreamResponse{
 					{Content: "1"},
 					{Content: "2"},
-					{Content: "3", FinishReason: &finishReason},
+					{
+						Content: "3",
+					},
+					{
+						Content:             "",
+						FinishReason:        &finishReason,
+						RequestTokensCount:  &tokens,
+						ResponseTokensCount: &tokens,
+					},
 				}
 
 				outgoingContext := metadata.AppendToOutgoingContext(

@@ -41,7 +41,8 @@ func Init(ctx context.Context, opts ...grpc.DialOption) {
 	config := &connectorConfig{}
 	exc.Must(envconfig.Process(ctx, config), "failed to process environment variables")
 
-	openaiConnectorClient = openai.New(config.OpenAIConnectorAddress)
+	openaiConnectorClient = openai.New(config.OpenAIConnectorAddress, opts...)
+	cohereConnectorClient = cohere.New(config.CohereConnectorAddress, opts...)
 }
 
 // GetProviderConnector - returns the connector for the given provider.

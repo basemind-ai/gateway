@@ -1,15 +1,6 @@
-import {
-	ChatConnector as CohereChatConnector,
-	ChatRequest,
-	ChatStreamRequest,
-} from 'cohere-ai/api';
+import { GenerateRequest } from 'cohere-ai/api/client/requests/GenerateRequest';
 import { ChatStreamEndEventFinishReason } from 'cohere-ai/api/types/ChatStreamEndEventFinishReason';
-import {
-	CohereConnector,
-	CohereConnectorType,
-	CohereModel,
-	CoherePromptRequest,
-} from 'gen/cohere/v1/cohere';
+import { CohereModel, CoherePromptRequest } from 'gen/cohere/v1/cohere';
 import { StreamFinishReason } from 'shared/constants';
 
 export const modelMapping: Record<CohereModel, string> = {
@@ -32,51 +23,47 @@ export const finishReasonMapping: Record<
 };
 
 /**
- * The getCohereConnectors function takes an array of CohereConnector enums and returns
- * an array of connector objects.
+ * The getModel function takes a CohereModel and returns a string
  *
- * @return An array of CohereChatConnector objects
- * @param connectors
+ * @param model CohereModel
+ *
+ * @return A string
  */
-export function getCohereConnectors(
-	connectors: CohereConnector[],
-): CohereChatConnector[] {
-	const result: CohereChatConnector[] = [];
-	for (const { id, options } of connectors) {
-		if (id === CohereConnectorType.UNSPECIFIED) {
-			continue;
-		}
-		result.push({
-			id: id === CohereConnectorType.WEB_SEARCH ? 'web-search' : 'id',
-			options,
-		});
-	}
-
-	return result;
+export function getModel(model: CoherePromptRequest['model']): string {
+	return modelMapping[model];
 }
 
 /**
- * The createCohereRequest function takes a CoherePromptRequest and returns a ChatRequest or
- * ChatStreamRequest.
+ * The createCohereRequest function takes a CoherePromptRequest and returns a Cohere client.CoherePromptRequest
  *
  * @param grpcRequest CoherePromptRequest
- * @return A ChatRequest or a ChatStreamRequest
+ *
+ * @return A CoherePromptRequest
  */
 export function createCohereRequest(
 	grpcRequest: CoherePromptRequest,
-): ChatRequest | ChatStreamRequest {
+): GenerateRequest {
 	return {
-		connectors:
-			Array.isArray(grpcRequest.parameters?.connectors) &&
-			grpcRequest.parameters.connectors.length
-				? getCohereConnectors(grpcRequest.parameters.connectors)
-				: undefined,
-		conversationId: grpcRequest.conversationId,
-		message: grpcRequest.message,
-		model: modelMapping[grpcRequest.model],
-		temperature:
-			typeof grpcRequest.parameters?.temperature === 'number'
-				? grpcRequest.parameters.temperature
-				: undefined,
-	} satisfies ChatRequest | ChatStreamRequest;
+		model: getModel(grpcRequest.model),
+		prompt: grpcRequest.message,
+		...grpcRequest.parameters,
+	} satisfies GenerateRequest;
+}
+
+/**
+ *
+ * @param finishReason the stream finish reason from Cohere
+ *
+ * @return A StreamFinishReason
+ */
+export function getFinishReason(
+	finishReason: 'COMPLETE' | 'MAX_TOKENS' | 'ERROR' | 'ERROR_TOXIC',
+) {
+	if (finishReason === 'COMPLETE') {
+		return StreamFinishReason.DONE;
+	} else if (finishReason === 'MAX_TOKENS') {
+		return StreamFinishReason.LIMIT;
+	} else {
+		return StreamFinishReason.ERROR;
+	}
 }

@@ -15,6 +15,7 @@ var (
 	curlyBracesRegex = regexp.MustCompile(`\{([^}]+)\}`)
 	vendorParsers    = map[models.ModelVendor]func(message *json.RawMessage) ([]string, *json.RawMessage, error){
 		models.ModelVendorOPENAI: parseOpenAIMessages,
+		models.ModelVendorCOHERE: parseCohereMessage,
 	}
 	validate = validator.New(validator.WithRequiredStructEnabled())
 )
@@ -30,6 +31,10 @@ func parseOpenAIMessages( //nolint: revive
 
 	if jsonErr := json.Unmarshal(*promptMessages, &openAIPromptMessages); jsonErr != nil {
 		return nil, nil, fmt.Errorf("failed to unmarshal prompt messages - %w", jsonErr)
+	}
+
+	if len(openAIPromptMessages) == 0 {
+		return nil, nil, fmt.Errorf("prompt messages are empty")
 	}
 
 	expectedVariables := make([]string, 0)
@@ -58,6 +63,48 @@ func parseOpenAIMessages( //nolint: revive
 	marshalledMessages := ptr.To(json.RawMessage(serialization.SerializeJSON(openAIPromptMessages)))
 
 	return expectedVariables, marshalledMessages, nil
+}
+
+func parseCohereMessage(
+	promptMessages *json.RawMessage,
+) ([]string, *json.RawMessage, error) {
+	var coherePromptMessages []*datatypes.CoherePromptMessageDTO
+
+	if promptMessages == nil {
+		return nil, nil, fmt.Errorf("prompt messages are nil")
+	}
+
+	if jsonErr := json.Unmarshal(*promptMessages, &coherePromptMessages); jsonErr != nil {
+		return nil, nil, fmt.Errorf("failed to unmarshal prompt messages - %w", jsonErr)
+	}
+
+	if len(coherePromptMessages) == 0 {
+		return nil, nil, fmt.Errorf("prompt messages are empty")
+	}
+
+	expectedVariables := make([]string, 0)
+	expectedVariablesMap := make(map[string]struct{})
+
+	promptMessage := coherePromptMessages[0]
+	if validationErr := validate.Struct(promptMessage); validationErr != nil {
+		return nil, nil, fmt.Errorf("prompt meesage failed validation - %w", validationErr)
+	}
+
+	templateVariables := make([]string, 0)
+	for _, match := range curlyBracesRegex.FindAllStringSubmatch(promptMessage.Message, -1) {
+		if _, exists := expectedVariablesMap[match[1]]; !exists {
+			expectedVariablesMap[match[1]] = struct{}{}
+			expectedVariables = append(expectedVariables, match[1])
+		}
+		templateVariables = append(templateVariables, match[1])
+	}
+	if len(templateVariables) > 0 {
+		promptMessage.TemplateVariables = &templateVariables
+	}
+
+	marshalledMessage := ptr.To(json.RawMessage(serialization.SerializeJSON(promptMessage)))
+
+	return expectedVariables, marshalledMessage, nil
 }
 
 func ParsePromptMessages( //nolint: revive

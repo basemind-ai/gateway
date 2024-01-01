@@ -180,9 +180,7 @@ describe('PromptConfigTesting tests', () => {
 		);
 		expect(updateButton).toBeInTheDocument();
 
-		const slider = screen.getByTestId(
-			'create-prompt-config-dialog-model-parameter-range-maxTokens',
-		);
+		const slider = screen.getByTestId('parameter-slider-maxTokens');
 		fireEvent.change(slider, { target: { value: 100 } });
 
 		handleUpdatePromptConfigSpy.mockResolvedValueOnce(updatedPromptConfig);

@@ -2,49 +2,61 @@
 // @generated from protobuf file "cohere/v1/cohere.proto" (package "cohere.v1", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Any } from "../../google/protobuf/any";
-/**
- * Cohere RAG Connector
- *
- * @generated from protobuf message cohere.v1.CohereConnector
- */
-export interface CohereConnector {
-    /**
-     * Cohere Connector type
-     *
-     * @generated from protobuf field: cohere.v1.CohereConnectorType id = 1;
-     */
-    id: CohereConnectorType;
-    /**
-     * Cohere Connector options
-     *
-     * @generated from protobuf field: map<string, google.protobuf.Any> options = 2;
-     */
-    options: {
-        [key: string]: Any;
-    };
-}
 /**
  * Cohere API Request parameters
+ *
+ * see: https://docs.cohere.com/reference/generate
  *
  * @generated from protobuf message cohere.v1.CohereModelParameters
  */
 export interface CohereModelParameters {
     /**
-     * Temperature Sampling.
-     * Should be a non-negative float (0-1.0) that tunes the degree of randomness in generation. Lower temperatures mean
-     * less random generations, and higher temperatures mean more random generations.
+     * Temperature Sampling: Should be a non-negative float (0-5.0) that tunes the degree of randomness in generation.
+     * Lower temperatures mean less random generations.
      *
      * @generated from protobuf field: optional float temperature = 1;
      */
     temperature?: number;
     /**
-     * RAG connectors to use, when specified, the model's reply will be enriched with information found by querying each
-     * of the connectors.
+     * Ensures only the top k most likely tokens are considered for generation at each step.
+     * Defaults to 0, min value of 0, max value of 500.
      *
-     * @generated from protobuf field: repeated cohere.v1.CohereConnector connectors = 2;
+     * @generated from protobuf field: optional uint32 k = 2;
      */
-    connectors: CohereConnector[];
+    k?: number;
+    /**
+     * Ensures that only the most likely tokens, with total probability mass of p, are considered for generation at each step.
+     * If both k and p are enabled, p acts after k.
+     *
+     * @generated from protobuf field: optional float p = 3;
+     */
+    p?: number;
+    /**
+     * Used to reduce repetitiveness of generated tokens. The higher the value, the stronger a penalty is applied to
+     * previously present tokens, proportional to how many times they have already appeared in the
+     * prompt or prior generation.
+     *
+     * @generated from protobuf field: optional float frequency_penalty = 4;
+     */
+    frequencyPenalty?: number;
+    /**
+     * Defaults to 0.0, min value of 0.0, max value of 1.0. Can be used to reduce repetitiveness of generated tokens.
+     * Similar to frequency_penalty, except that this penalty is applied equally to all tokens that have already appeared,
+     * regardless of their exact frequencies.
+     *
+     * @generated from protobuf field: optional float presence_penalty = 5;
+     */
+    presencePenalty?: number;
+    /**
+     * The maximum number of tokens the model will generate as part of the response.
+     *
+     * Note: Setting a low value may
+     * result in incomplete generations. This parameter is off by default, and if it's not specified, the model will
+     * continue generating until it emits an EOS completion token.
+     *
+     * @generated from protobuf field: optional uint32 max_tokens = 6;
+     */
+    maxTokens?: number;
 }
 /**
  *  The CoherePromptRequest contains the data that will be sent to the Cohere API.
@@ -70,14 +82,6 @@ export interface CoherePromptRequest {
      * @generated from protobuf field: cohere.v1.CohereModelParameters parameters = 3;
      */
     parameters?: CohereModelParameters;
-    /**
-     * An identifier for the conversation chain. Conversations can be resumed by providing the conversation's identifier.
-     * The contents of `message` and the model's response will be stored as part of this conversation.
-     * If a conversation with this id does not already exist, a new conversation will be created.
-     *
-     * @generated from protobuf field: optional string conversation_id = 4;
-     */
-    conversationId?: string;
 }
 /**
  * The CoherePromptResponse contains the data that is returned from the Cohere API.
@@ -88,9 +92,27 @@ export interface CoherePromptResponse {
     /**
      * Prompt Content
      *
-     * @generated from protobuf field: optional string content = 1;
+     * @generated from protobuf field: string content = 1;
      */
-    content?: string;
+    content: string;
+    /**
+     * Finish reason, if this is the last message
+     *
+     * @generated from protobuf field: string finish_reason = 2;
+     */
+    finishReason: string;
+    /**
+     * Count of the request tokens, as returned by the Cohere /tokenize endpoint
+     *
+     * @generated from protobuf field: uint32 request_tokens_count = 3;
+     */
+    requestTokensCount: number;
+    /**
+     * Count of the response tokens, as returned by the Cohere /tokenize endpoint
+     *
+     * @generated from protobuf field: uint32 response_tokens_count = 4;
+     */
+    responseTokensCount: number;
 }
 /**
  * The CohereStreamResponse contains the data that is streamed from the Cohere API.
@@ -110,6 +132,18 @@ export interface CohereStreamResponse {
      * @generated from protobuf field: optional string finish_reason = 2;
      */
     finishReason?: string;
+    /**
+     * Count of the request tokens, as returned by the Cohere /tokenize endpoint
+     *
+     * @generated from protobuf field: optional uint32 request_tokens_count = 3;
+     */
+    requestTokensCount?: number;
+    /**
+     * Count of the response tokens, as returned by the Cohere /tokenize endpoint
+     *
+     * @generated from protobuf field: optional uint32 response_tokens_count = 4;
+     */
+    responseTokensCount?: number;
 }
 /**
  * Type of Cohere Model
@@ -173,13 +207,6 @@ export declare enum CohereConnectorType {
      */
     ID = 2
 }
-declare class CohereConnector$Type extends MessageType<CohereConnector> {
-    constructor();
-}
-/**
- * @generated MessageType for protobuf message cohere.v1.CohereConnector
- */
-export declare const CohereConnector: CohereConnector$Type;
 declare class CohereModelParameters$Type extends MessageType<CohereModelParameters> {
     constructor();
 }

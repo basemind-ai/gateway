@@ -45,6 +45,7 @@ services:
             GOOGLE_APPLICATION_CREDENTIALS: ./.secrets/serviceAccountKey.json
             JWT_SECRET: jeronimo
             OPENAI_CONNECTOR_ADDRESS: openai-connector:8000
+            COHERE_CONNECTOR_ADDRESS: cohere-connector:9000
             REDIS_CONNECTION_STRING: redis://redis:6379
             SERVER_HOST: localhost
             SERVER_PORT: 4000

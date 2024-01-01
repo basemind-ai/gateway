@@ -24,10 +24,11 @@ INSERT INTO prompt_request_record (
     duration_ms,
     prompt_config_id,
     provider_model_pricing_id,
-    error_log
+    error_log,
+    finish_reason
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-RETURNING id, is_stream_response, request_tokens, response_tokens, request_tokens_cost, response_tokens_cost, start_time, finish_time, duration_ms, prompt_config_id, error_log, created_at, deleted_at, provider_model_pricing_id
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+RETURNING id, is_stream_response, request_tokens, response_tokens, request_tokens_cost, response_tokens_cost, start_time, finish_time, finish_reason, duration_ms, prompt_config_id, error_log, created_at, deleted_at, provider_model_pricing_id
 `
 
 type CreatePromptRequestRecordParams struct {
@@ -42,6 +43,7 @@ type CreatePromptRequestRecordParams struct {
 	PromptConfigID         pgtype.UUID        `json:"promptConfigId"`
 	ProviderModelPricingID pgtype.UUID        `json:"providerModelPricingId"`
 	ErrorLog               pgtype.Text        `json:"errorLog"`
+	FinishReason           PromptFinishReason `json:"finishReason"`
 }
 
 // -- prompt request record
@@ -58,6 +60,7 @@ func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromp
 		arg.PromptConfigID,
 		arg.ProviderModelPricingID,
 		arg.ErrorLog,
+		arg.FinishReason,
 	)
 	var i PromptRequestRecord
 	err := row.Scan(
@@ -69,6 +72,7 @@ func (q *Queries) CreatePromptRequestRecord(ctx context.Context, arg CreatePromp
 		&i.ResponseTokensCost,
 		&i.StartTime,
 		&i.FinishTime,
+		&i.FinishReason,
 		&i.DurationMs,
 		&i.PromptConfigID,
 		&i.ErrorLog,

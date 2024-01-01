@@ -15,7 +15,6 @@
     <plugin id="intellij.prettierJS" />
     <plugin id="intellij.vitejs" />
     <plugin id="intellij.webpack" />
-    <plugin id="lechuck.intellij-plugin.task" />
     <plugin id="mdx.js" />
     <plugin id="org.intellij.plugins.hcl" />
     <plugin id="org.intellij.plugins.postcss" />

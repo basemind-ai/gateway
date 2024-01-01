@@ -54,6 +54,7 @@ export function createServer<
 		// of TLS.
 		ServerCredentials.createInsecure(),
 		(error: Error | null) => {
+			/* c8 ignore next */
 			if (error) {
 				logger.error('Server failed to start');
 				throw error;
@@ -118,4 +119,15 @@ export function extractProviderAPIKeyFromMetadata(
 ): string | undefined {
 	const md = call.metadata.get('X-API-Key');
 	return md.length ? (md[0] as string) : undefined;
+}
+
+/**
+ * Creates an internal gRPC error from the given error.
+ * */
+export function createInternalGrpcError(error: Error): GrpcError {
+	return new GrpcError({
+		code: Status.INTERNAL,
+		details: error.message,
+		message: 'an error has occurred communicating with the provider',
+	});
 }
