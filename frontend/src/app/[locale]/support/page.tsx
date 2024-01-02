@@ -20,7 +20,7 @@ export default function Support() {
 	}, [initialized]);
 
 	return (
-		<div
+		<main
 			data-testid="support-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
@@ -36,6 +36,6 @@ export default function Support() {
 					<ContactForm isAuthenticated={!!user} />
 				</div>
 			</div>
-		</div>
+		</main>
 	);
 }

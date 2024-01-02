@@ -35,6 +35,8 @@ describe('CreateProjectForm tests', () => {
 				allowCancel={false}
 				validateApplicationName={() => true}
 				validateProjectName={() => true}
+				isLoading={false}
+				setLoading={vi.fn()}
 			/>,
 		);
 		const submitButton = screen.getByTestId('create-project-submit-button');
@@ -60,6 +62,8 @@ describe('CreateProjectForm tests', () => {
 				allowCancel={false}
 				validateApplicationName={() => true}
 				validateProjectName={() => true}
+				isLoading={false}
+				setLoading={vi.fn()}
 			/>,
 		);
 
@@ -78,34 +82,6 @@ describe('CreateProjectForm tests', () => {
 		});
 	});
 
-	it('submit shows a loading spinner during submit', async () => {
-		render(
-			<CreateProjectForm
-				handleCancel={vi.fn()}
-				allowCancel={false}
-				validateApplicationName={() => true}
-				validateProjectName={() => true}
-			/>,
-		);
-		const submitButton = screen.getByTestId('create-project-submit-button');
-		const nameInput = screen.getByTestId('create-project-name-input');
-
-		fireEvent.change(nameInput, { target: { value: 'test' } });
-		const applicationNameInput = screen.getByTestId(
-			'create-application-name-input',
-		);
-		fireEvent.change(applicationNameInput, {
-			target: { value: 'test_app' },
-		});
-		fireEvent.click(submitButton);
-
-		const loadingSpinner = screen.getByTestId('loading-spinner');
-		expect(loadingSpinner).toBeInTheDocument();
-		await waitFor(() => {
-			expect(loadingSpinner).not.toBeInTheDocument();
-		});
-	});
-
 	it('handle submit error should show the error toast', async () => {
 		createProjectSpy.mockRejectedValueOnce(
 			new ApiError('failed', {
@@ -118,6 +94,8 @@ describe('CreateProjectForm tests', () => {
 			<CreateProjectForm
 				handleCancel={vi.fn()}
 				allowCancel={false}
+				isLoading={false}
+				setLoading={vi.fn()}
 				validateApplicationName={() => true}
 				validateProjectName={() => true}
 			/>,
@@ -144,6 +122,8 @@ describe('CreateProjectForm tests', () => {
 		render(
 			<CreateProjectForm
 				handleCancel={vi.fn()}
+				isLoading={false}
+				setLoading={vi.fn()}
 				allowCancel={false}
 				validateApplicationName={() => true}
 				validateProjectName={() => true}
@@ -176,6 +156,8 @@ describe('CreateProjectForm tests', () => {
 			<CreateProjectForm
 				handleCancel={vi.fn()}
 				allowCancel={false}
+				isLoading={false}
+				setLoading={vi.fn()}
 				validateApplicationName={() => true}
 				validateProjectName={() => true}
 			/>,
@@ -202,6 +184,8 @@ describe('CreateProjectForm tests', () => {
 			<CreateProjectForm
 				handleCancel={vi.fn()}
 				allowCancel={false}
+				isLoading={false}
+				setLoading={vi.fn()}
 				validateApplicationName={() => true}
 				validateProjectName={() => true}
 			/>,
@@ -237,6 +221,8 @@ describe('CreateProjectForm tests', () => {
 			<CreateProjectForm
 				handleCancel={handleCancel}
 				allowCancel={allowCancel}
+				isLoading={false}
+				setLoading={vi.fn()}
 				validateProjectName={validateProjectName}
 				validateApplicationName={validateApplicationName}
 			/>,
@@ -275,6 +261,8 @@ describe('CreateProjectForm tests', () => {
 			<CreateProjectForm
 				handleCancel={handleCancel}
 				allowCancel={allowCancel}
+				isLoading={false}
+				setLoading={vi.fn()}
 				validateProjectName={validateProjectName}
 				validateApplicationName={validateApplicationName}
 			/>,
@@ -311,6 +299,8 @@ describe('CreateProjectForm tests', () => {
 			<CreateProjectForm
 				handleCancel={handleCancel}
 				allowCancel={allowCancel}
+				isLoading={false}
+				setLoading={vi.fn()}
 				validateProjectName={validateProjectName}
 				validateApplicationName={validateApplicationName}
 			/>,

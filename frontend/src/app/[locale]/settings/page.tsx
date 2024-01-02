@@ -20,7 +20,7 @@ export default function UserSettings() {
 	}, [initialized]);
 
 	return (
-		<div
+		<main
 			data-testid="user-settings-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
@@ -36,6 +36,6 @@ export default function UserSettings() {
 					<DeleteAccountView user={user} />
 				</div>
 			</div>
-		</div>
+		</main>
 	);
 }

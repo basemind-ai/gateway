@@ -95,7 +95,7 @@ export default function Application({
 	const TabComponent = tabComponents[selectedTab];
 
 	return (
-		<div
+		<main
 			data-testid="application-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
@@ -114,6 +114,6 @@ export default function Application({
 				<div className="card-divider" />
 				<TabComponent />
 			</div>
-		</div>
+		</main>
 	);
 }

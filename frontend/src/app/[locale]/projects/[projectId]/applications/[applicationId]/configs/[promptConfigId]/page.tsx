@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { memo, useEffect, useState } from 'react';
 import { Gear, RocketTakeoff, Speedometer2 } from 'react-bootstrap-icons';
+import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
@@ -66,12 +67,12 @@ export default function PromptConfiguration({
 
 	if (isLoading) {
 		return (
-			<div
+			<main
 				data-testid="prompt-config-page-loading"
 				className="h-full w-full flex items-center justify-center"
 			>
-				<span className="loading loading-spinner loading-md text-base-content" />
-			</div>
+				<Oval height="50vh" width="50vw" className="m-auto" />
+			</main>
 		);
 	}
 

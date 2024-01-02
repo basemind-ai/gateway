@@ -1,165 +1,225 @@
-'use client';
-import 'firebaseui/dist/firebaseui.css';
-
-import { GithubAuthProvider, GoogleAuthProvider } from '@firebase/auth';
-import firebaseui from 'firebaseui';
+import { FirebaseError } from '@firebase/app';
+import {
+	Auth,
+	AuthProvider,
+	EmailAuthProvider,
+	GithubAuthProvider,
+	GoogleAuthProvider,
+	sendEmailVerification,
+	sendPasswordResetEmail,
+	signInWithPopup,
+	User,
+} from '@firebase/auth';
+import { useClickAway } from '@uidotdev/usehooks';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { LegacyRef, useEffect, useState } from 'react';
 
-import { Loader } from '@/components/sign-in/loader';
-import { Navigation } from '@/constants';
+import { Modal } from '@/components/modal';
+import { PasswordResetModal } from '@/components/sign-in/password-reset-modal';
+import { Dimensions, Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useSetUser } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
+import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { getEnv } from '@/utils/env';
 import { getFirebaseAuth } from '@/utils/firebase';
 
-const microsoftAuthProvider = {
-	buttonColor: '#00a2ed',
-	customParameters: {
-		prompt: 'consent',
-		tenant: getEnv().NEXT_PUBLIC_FIREBASE_MICROSOFT_TENANT_ID,
-	},
-	iconUrl:
-		'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
-	provider: 'microsoft.com',
-	providerName: 'Microsoft',
-};
+const host = getEnv().NEXT_PUBLIC_FRONTEND_HOST;
 
-const siteName = 'BaseMind.AI';
-
-const privacyPolicyUrl =
-	getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.PrivacyPolicy;
-
-const tosUrl = getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.TOS;
-
-const firebaseUIConfig = {
-	//popupMode: true,
-	privacyPolicyUrl,
-	signInFlow: 'popup',
-	signInOptions: [
-		GithubAuthProvider.PROVIDER_ID,
-		GoogleAuthProvider.PROVIDER_ID,
-		microsoftAuthProvider,
-	],
-	siteName,
-	tosUrl,
-} satisfies firebaseui.auth.Config;
-
-export function FirebaseLogin() {
+export function FirebaseLogin({
+	setLoading,
+	isInitialized,
+}: {
+	isInitialized: boolean;
+	setLoading: (value: boolean) => void;
+}) {
 	const t = useTranslations('signin');
 
 	const router = useRouter();
 	const setUser = useSetUser();
 	const showError = useShowError();
+	const showSuccess = useShowSuccess();
 	const { identify, track } = useAnalytics();
 
-	const [uiRendered, setIsUIRendered] = useState(false);
-	const [isSignedIn, setIsSignedIn] = useState(false);
+	const [auth, setAuth] = useState<Auth | null>(null);
+	const [resetPWModalOpen, setResetPWModalOpen] = useState(false);
 
-	/* firebaseui cannot be imported in SSR mode, so we have to import it only when the browser loads. */
+	const ref = useClickAway(() => {
+		setResetPWModalOpen(false);
+	});
+
 	useEffect(() => {
-		(async () => {
-			try {
+		if (isInitialized) {
+			(async () => {
+				setLoading(true);
+
 				const auth = await getFirebaseAuth();
+				setAuth(auth);
 
 				if (auth.currentUser) {
 					setUser(auth.currentUser);
-					router.replace(Navigation.Projects);
+
 					identify(auth.currentUser.uid, auth.currentUser);
 					track('login');
-					return null;
+
+					router.replace(Navigation.Projects);
+					return;
 				}
 
-				const firebaseUI = await import('firebaseui');
+				setLoading(false);
+			})();
+		}
+	}, [isInitialized]);
 
-				const ui =
-					firebaseUI.auth.AuthUI.getInstance() ??
-					/* c8 ignore next */
-					new firebaseUI.auth.AuthUI(auth);
+	const handleLogin = async (
+		provider: AuthProvider,
+		cb?: (user: User) => Promise<void>,
+	) => {
+		setLoading(true);
+		try {
+			const { user } = await signInWithPopup(auth!, provider);
+			setUser(user);
 
-				// noinspection JSUnusedGlobalSymbols
-				ui.start('#firebaseui-auth-container', {
-					...firebaseUIConfig,
-
-					callbacks: {
-						signInFailure(
-							error: firebaseui.auth.AuthUIError,
-						): Promise<void> | void {
-							showError(error.message);
-							setIsUIRendered(false);
-						},
-						signInSuccessWithAuthResult: () => {
-							setUser(auth.currentUser);
-							setIsSignedIn(true);
-
-							identify(auth.currentUser!.uid, auth.currentUser!);
-							track('signup');
-
-							// prevent the UI from redirecting the user using a preconfigured redirect-url
-							return false;
-						},
-						uiShown: () => {
-							setIsUIRendered(true);
-						},
-					},
-				});
-			} catch (e: unknown) {
-				showError((e as Error).message);
-				setIsUIRendered(false);
+			if (cb) {
+				await cb(user);
 			}
-		})();
-	}, []);
 
-	useEffect(() => {
-		if (isSignedIn) {
+			identify(user.uid, user);
+			track('login');
+
 			router.replace(Navigation.Projects);
+		} catch (error) {
+			setLoading(false);
+			showError((error as Error).message);
 		}
-	}, [isSignedIn]);
+	};
 
-	useEffect(() => {
-		if (uiRendered) {
-			document
-				.querySelector('.firebaseui-card-footer')
-				?.classList.add('m-8');
-
-			document
-				.querySelector('.firebaseui-tos')
-				?.classList.add('text-base-content');
+	const handleResetPassword = async (email: string) => {
+		try {
+			await sendPasswordResetEmail(auth!, email);
+			showSuccess(t('passwordResetEmailSent'));
+		} catch (error) {
+			if ((error as FirebaseError).code === 'auth/user-not-found') {
+				showError(t('unknownEmail'));
+			} else {
+				showError((error as Error).message);
+			}
+		} finally {
+			setResetPWModalOpen(false);
 		}
-	}, [uiRendered]);
+	};
 
-	const isLoading = !uiRendered || isSignedIn;
+	const authProviders: {
+		key: string;
+		provider: AuthProvider;
+		size: Dimensions;
+	}[] = [
+		{
+			key: 'Google',
+			provider: new GoogleAuthProvider(),
+			size: Dimensions.Eight,
+		},
+		{
+			key: 'GitHub',
+			provider: new GithubAuthProvider(),
+			size: Dimensions.Eight,
+		},
+	];
+
+	const emailProvider = new EmailAuthProvider();
 
 	return (
-		<main
+		<div
 			data-testid="firebase-login-container"
 			className="flex items-center h-full w-full justify-center"
 		>
-			<div className="shadow transition-all duration-700 ease-in-out h-full items-center self-center">
-				{isLoading && <Loader />}
-				{!isSignedIn && (
-					<div className="flex items-center h-full">
-						<div id="firebaseui-auth-container">
-							<div
-								data-testid="firebase-login-greeting-container"
-								className={`m-8 ${uiRendered ? '' : 'hidden'}`}
-							>
-								<h1 className="text-2xl md:text-4xl 2xl:text-5xl font-bold text-center text-base-content mb-2.5">
-									{t('authHeader')}{' '}
-									<span className="text-primary">
-										{t('basemind')}
-									</span>
-								</h1>
-								<p className="text-center text-base-content md:text-lg font-medium mt-3">
-									<span>{t('authSubtitle')} </span>
-								</p>
-							</div>
-						</div>
-					</div>
-				)}
+			<div className="flex flex-col justify-center gap-3 h-fit border-2 rounded border-neutral p-12">
+				<button
+					data-testid="email-login-button"
+					className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
+					onClick={() => {
+						void handleLogin(emailProvider, sendEmailVerification);
+					}}
+				>
+					<Image
+						src="/images/email-logo.svg"
+						alt="Email logo"
+						height={Dimensions.Seven}
+						width={Dimensions.Seven}
+					/>
+					<span className="font-bold">Login with Email</span>
+				</button>
+				<div className="flex justify-end">
+					<button
+						className="btn btn-xs btn-link"
+						data-testid="reset-password-button"
+						onClick={() => {
+							setResetPWModalOpen(true);
+						}}
+					>
+						{t('forgotPassword')}
+					</button>
+				</div>
+				<div className="card-section-divider" />
+				{authProviders.map(({ key, provider, size }) => (
+					<button
+						key={key.toLowerCase()}
+						data-testid={`${key.toLowerCase()}-login-button`}
+						className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
+						onClick={() => {
+							void handleLogin(provider);
+						}}
+					>
+						<Image
+							src={`/images/${key.toLowerCase()}-logo.svg`}
+							alt={`${key} logo`}
+							height={size}
+							width={size}
+						/>
+						<span className="font-bold">{`Login with ${key}`}</span>
+					</button>
+				))}
+				<div className="card-section-divider" />
+				<div
+					data-testid="tos-and-privacy-policy-container"
+					className="text-xs text-center"
+				>
+					<span>{t('userAgreementMessage')}</span>
+					<a
+						className="link link-primary"
+						href={host + Navigation.TOS}
+						data-testid="tos-link"
+					>
+						{t('tos')}
+					</a>
+					<span>{` ${t('and')} `}</span>
+					<a
+						className="link link-primary"
+						href={host + Navigation.PrivacyPolicy}
+						data-testid="privacy-policy-link"
+					>
+						{t('privacyPolicy')}
+					</a>
+					<span>.</span>
+				</div>
+				<div ref={ref as LegacyRef<HTMLDivElement>}>
+					<Modal
+						modalOpen={resetPWModalOpen}
+						dataTestId="reset-password-modal"
+						onClose={() => {
+							setResetPWModalOpen(false);
+						}}
+					>
+						<PasswordResetModal
+							handleCloseModal={() => {
+								setResetPWModalOpen(false);
+							}}
+							handleResetPassword={handleResetPassword}
+						/>
+					</Modal>
+				</div>
 			</div>
-		</main>
+		</div>
 	);
 }

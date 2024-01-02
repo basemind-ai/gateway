@@ -1,166 +1,155 @@
-import locales from 'public/messages/en.json';
-import { routerReplaceMock } from 'tests/mocks';
-import { render, screen, waitFor } from 'tests/test-utils';
-import { Mock } from 'vitest';
+import {
+	EmailAuthProvider,
+	GithubAuthProvider,
+	GoogleAuthProvider,
+	signInWithPopup,
+} from '@firebase/auth';
+import { UserFactory } from 'tests/factories';
+import { mockIdentify, mockTrack, routerReplaceMock } from 'tests/mocks';
+import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
+import { expect, MockInstance } from 'vitest';
 
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';
 import { Navigation } from '@/constants';
+import { getEnv } from '@/utils/env';
 import { getFirebaseAuth } from '@/utils/firebase';
 
-const signinLocales = locales.signin;
-
 vi.mock('@/utils/firebase');
+vi.mock('@firebase/auth');
+
+const mockGetAuth = (
+	getFirebaseAuth as unknown as MockInstance
+).mockResolvedValue({
+	currentUser: null,
+});
+const mockSignInWithPopup = signInWithPopup as unknown as MockInstance;
 
 describe('FirebaseLogin tests', () => {
-	it('renders Loader', async () => {
-		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
-			return {
-				currentUser: { displayName: 'test' },
-			};
-		});
-		render(<FirebaseLogin />);
+	beforeEach(() => {
+		mockSignInWithPopup.mockReset();
+	});
+
+	it('renders correctly', async () => {
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={false} />);
 
 		await waitFor(() => {
-			const loader = screen.getByTestId('loader-anim');
-			expect(loader).toBeInTheDocument();
+			expect(
+				screen.getByTestId('firebase-login-container'),
+			).toBeInTheDocument();
 		});
+
+		expect(screen.getByTestId('email-login-button')).toBeInTheDocument();
+		expect(screen.getByTestId('github-login-button')).toBeInTheDocument();
+		expect(screen.getByTestId('google-login-button')).toBeInTheDocument();
+
+		expect(
+			screen.getByTestId('tos-and-privacy-policy-container'),
+		).toBeInTheDocument();
+		expect(screen.getByTestId('tos-link')).toBeInTheDocument();
+		expect(screen.getByTestId('privacy-policy-link')).toBeInTheDocument();
 	});
 
 	it('redirects to dashboard when user is already logged in', async () => {
-		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
-			return {
-				currentUser: { displayName: 'test' },
-			};
+		mockGetAuth.mockResolvedValueOnce({
+			currentUser: UserFactory.buildSync(),
 		});
 
-		render(<FirebaseLogin />);
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
 
 		await waitFor(() => {
 			expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);
 		});
+
+		expect(mockTrack).toHaveBeenCalled();
+		expect(mockIdentify).toHaveBeenCalled();
 	});
 
-	it('renders custom ui after firebase ui loads and hides loader', async () => {
-		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
-			return {
-				currentUser: null,
-			};
+	it.each([
+		['email-login-button', EmailAuthProvider],
+		['github-login-button', GithubAuthProvider],
+		['google-login-button', GoogleAuthProvider],
+	])(
+		`calls signInWithPopup with %s and redirects the user correctly on success`,
+		async (buttonTestId, provider) => {
+			mockSignInWithPopup.mockResolvedValueOnce({
+				user: UserFactory.buildSync(),
+			});
+
+			render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
+
+			let button: HTMLButtonElement;
+
+			await waitFor(() => {
+				button = screen.getByTestId(buttonTestId);
+				expect(button).toBeInTheDocument();
+			});
+
+			fireEvent.click(button!);
+
+			await waitFor(() => {
+				expect(mockSignInWithPopup).toHaveBeenCalledWith(
+					{ currentUser: null },
+					expect.any(provider),
+				);
+			});
+
+			await waitFor(() => {
+				expect(routerReplaceMock).toHaveBeenCalledWith(
+					Navigation.Projects,
+				);
+			});
+
+			expect(mockTrack).toHaveBeenCalled();
+			expect(mockIdentify).toHaveBeenCalled();
+		},
+	);
+
+	it('should an error toast on error', async () => {
+		mockSignInWithPopup.mockRejectedValueOnce({
+			message: 'failed',
 		});
 
-		const authGetInstanceMock = vi.fn(
-			(element: string | Element, config: firebaseui.auth.Config) => {
-				expect(element).toBe('#firebaseui-auth-container');
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
 
-				if (config.callbacks?.uiShown) {
-					config.callbacks.uiShown();
-				}
-			},
-		);
-		vi.doMock('firebaseui', () => ({
-			auth: {
-				AuthUI: {
-					getInstance: () => ({ start: authGetInstanceMock }),
-				},
-			},
-		}));
-
-		render(<FirebaseLogin />);
+		let button: HTMLButtonElement;
 
 		await waitFor(() => {
-			expect(authGetInstanceMock).toHaveBeenCalled();
+			button = screen.getByTestId('email-login-button');
+			expect(button).toBeInTheDocument();
 		});
 
-		const greetingContainer = screen.getByTestId(
-			'firebase-login-greeting-container',
-		);
-		expect(greetingContainer).not.toHaveClass('hidden');
+		fireEvent.click(button!);
 
-		const loader = screen.queryByTestId('loader-anim');
-		expect(loader).not.toBeInTheDocument();
-
-		const authHeader = screen.getByText(signinLocales.authHeader);
-		const authSubtitle = screen.getByText(signinLocales.authSubtitle);
-
-		expect(authHeader).toBeInTheDocument();
-		expect(authSubtitle).toBeInTheDocument();
+		await waitFor(() => {
+			const toastMessage = screen.getByTestId('toast-message');
+			expect(toastMessage).toHaveTextContent('failed');
+		});
 	});
 
-	it('redirects to projects after user is logged in', async () => {
-		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
-			return {
-				currentUser: null,
-			};
-		});
-
-		const authGetInstanceMock = vi.fn(
-			(_: string | Element, config: firebaseui.auth.Config) => {
-				try {
-					if (config.callbacks?.signInSuccessWithAuthResult) {
-						config.callbacks.signInSuccessWithAuthResult(true);
-					}
-				} catch {
-					return;
-				}
-			},
+	it('should have the correct tos link', () => {
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
+		const tosLink: HTMLAnchorElement = screen.getByTestId('tos-link');
+		expect(tosLink.href).toBe(
+			getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.TOS,
 		);
-		vi.doMock('firebaseui', () => ({
-			auth: {
-				AuthUI: {
-					getInstance: () => ({ start: authGetInstanceMock }),
-				},
-			},
-		}));
-
-		render(<FirebaseLogin />);
-
-		await waitFor(() => {
-			expect(authGetInstanceMock).toHaveBeenCalled();
-		});
-
-		const greetingContainer = screen.queryByTestId(
-			'firebase-login-greeting-container',
-		);
-		expect(greetingContainer).not.toBeInTheDocument();
-
-		const loader = screen.queryByTestId('loader-anim');
-		expect(loader).toBeInTheDocument();
-
-		expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);
 	});
 
-	it('should add m-8 class', async () => {
-		(getFirebaseAuth as Mock).mockImplementationOnce(() => {
-			return {
-				currentUser: null,
-			};
-		});
-
-		const authGetInstanceMock = vi.fn(
-			(element: string | Element, config: firebaseui.auth.Config) => {
-				expect(element).toBe('#firebaseui-auth-container');
-
-				if (config.callbacks?.uiShown) {
-					config.callbacks.uiShown();
-				}
-			},
+	it('should have the correct privacy policy link', () => {
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
+		const privacyPolicyLink: HTMLAnchorElement = screen.getByTestId(
+			'privacy-policy-link',
 		);
-		vi.doMock('firebaseui', () => ({
-			auth: {
-				AuthUI: {
-					getInstance: () => ({ start: authGetInstanceMock }),
-				},
-			},
-		}));
+		expect(privacyPolicyLink.href).toBe(
+			getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.PrivacyPolicy,
+		);
+	});
 
-		const addClassMock = vi.fn();
-		const mockElement = { classList: { add: addClassMock } };
-
-		vi.spyOn(document, 'querySelector').mockReturnValue(mockElement as any);
-
-		render(<FirebaseLogin />);
-
-		await waitFor(() => {
-			expect(addClassMock).toHaveBeenCalledWith('m-8');
-		});
+	it('should open the reset password modal when the reset password button is clicked', () => {
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
+		const resetPasswordButton: HTMLButtonElement = screen.getByTestId(
+			'reset-password-button',
+		);
+		fireEvent.click(resetPasswordButton);
+		expect(screen.getByTestId('password-reset-modal')).toBeInTheDocument();
 	});
 });

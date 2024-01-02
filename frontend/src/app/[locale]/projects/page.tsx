@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 
 import { handleRetrieveProjects } from '@/api';
@@ -47,13 +48,11 @@ export default function Projects() {
 	}, [selectedProject]);
 
 	return (
-		<div
+		<main
 			className="bg-base-100 flex h-full w-full"
 			data-testid="projects-view-loading"
 		>
-			<div className="flex justify-around w-full">
-				<div className="loading loading-spinner loading-lg text-primary" />
-			</div>
-		</div>
+			<Oval height="50vh" width="50vw" className="m-auto" />
+		</main>
 	);
 }
