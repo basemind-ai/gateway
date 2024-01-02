@@ -143,4 +143,13 @@ describe('FirebaseLogin tests', () => {
 			getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.PrivacyPolicy,
 		);
 	});
+
+	it('should open the reset password modal when the reset password button is clicked', () => {
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
+		const resetPasswordButton: HTMLButtonElement = screen.getByTestId(
+			'reset-password-button',
+		);
+		fireEvent.click(resetPasswordButton);
+		expect(screen.getByTestId('password-reset-modal')).toBeInTheDocument();
+	});
 });

@@ -153,6 +153,7 @@ export function FirebaseLogin({
 				<div className="flex justify-end">
 					<button
 						className="btn btn-xs btn-link"
+						data-testid="reset-password-button"
 						onClick={() => {
 							setResetPWModalOpen(true);
 						}}
@@ -180,12 +181,11 @@ export function FirebaseLogin({
 					</button>
 				))}
 				<div className="card-section-divider" />
-
 				<div
 					data-testid="tos-and-privacy-policy-container"
 					className="text-xs text-center"
 				>
-					<span>{`${t('userAgreementMessage')} `}</span>
+					<span>{t('userAgreementMessage')}</span>
 					<a
 						className="link link-primary"
 						href={host + Navigation.TOS}
