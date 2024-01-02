@@ -142,7 +142,7 @@ describe('ProviderKeyCreateModal', () => {
 		});
 		expect(result.current as any[]).toHaveLength(toastsLength + 1);
 		expect((result.current[toastsLength] as ToastMessage).type).toBe(
-			'alert-error',
+			'error',
 		);
 		expect(addProviderKey).not.toHaveBeenCalled();
 		expect(closeModal).toHaveBeenCalled();

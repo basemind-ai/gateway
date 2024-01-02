@@ -20,13 +20,13 @@ describe('ToastProvider', () => {
 		showInfo('Test message');
 		rerender(<h1>Screen</h1>);
 
-		const toastMessage = screen.getByTestId('toast-message');
+		const toastMessage = screen.getByTestId('toast-message-info');
 		expect(toastMessage).toBeInTheDocument();
 
 		vi.runAllTimers();
 		rerender(<h1>Screen</h1>);
 
-		const toastMessageQuery = screen.queryByTestId('toast-message');
+		const toastMessageQuery = screen.queryByTestId('toast-message-info');
 		expect(toastMessageQuery).not.toBeInTheDocument();
 	});
 
@@ -40,13 +40,14 @@ describe('ToastProvider', () => {
 		showInfo('Test message2');
 		rerender(<h1>Screen</h1>);
 
-		const toastMessages = screen.getAllByTestId('toast-message');
+		const toastMessages = screen.getAllByTestId('toast-message-info');
 		expect(toastMessages.length).toBe(2);
 
 		vi.runAllTimers();
 		rerender(<h1>Screen</h1>);
 
-		const toastMessagesQuery = screen.queryAllByTestId('toast-message');
+		const toastMessagesQuery =
+			screen.queryAllByTestId('toast-message-info');
 		expect(toastMessagesQuery.length).toBe(0);
 	});
 });

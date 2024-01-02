@@ -19,7 +19,7 @@ export function Toast() {
 			{toasts.map(({ type, message }, index) => (
 				<div
 					key={index + type}
-					data-testid="toast-message"
+					data-testid={`toast-message-${type}`}
 					className={`alert ${type}`}
 				>
 					{message}

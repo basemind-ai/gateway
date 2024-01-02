@@ -366,6 +366,7 @@
 		"warning": "Warning"
 	},
 	"signin": {
+		"accountExists": "Account already registered with different auth method",
 		"and": "and",
 		"bannerTitle": "Sign In",
 		"cancel": "Cancel",

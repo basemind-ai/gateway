@@ -48,7 +48,7 @@ div#__next > div {
 
 @layer components {
 	.custom-table {
-		@apply border-white table-auto p-4 border-b;
+		@apply table border-white table-auto p-4 border-b;
 
 		th {
 			@apply text-sm text-neutral-content font-bold pb-2 text-center;

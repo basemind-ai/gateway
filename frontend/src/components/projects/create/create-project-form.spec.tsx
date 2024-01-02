@@ -113,7 +113,7 @@ describe('CreateProjectForm tests', () => {
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
-			const toastMessage = screen.getByTestId('toast-message');
+			const toastMessage = screen.getByTestId('toast-message-error');
 			expect(toastMessage).toHaveTextContent('failed');
 		});
 	});

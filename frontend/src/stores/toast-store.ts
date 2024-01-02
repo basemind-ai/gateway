@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { StateCreator } from 'zustand/vanilla';
 
 export enum ToastType {
-	ERROR = 'alert-error',
-	INFO = 'alert-info',
-	SUCCESS = 'alert-success',
-	WARNING = 'alert-warning',
+	ERROR = 'error',
+	INFO = 'info',
+	SUCCESS = 'success',
+	WARNING = 'warning',
 }
 
 const DEFAULT_TIMEOUT = 4000;

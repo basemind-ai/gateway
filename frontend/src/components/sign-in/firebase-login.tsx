@@ -100,8 +100,13 @@ export function FirebaseLogin({
 			await sendPasswordResetEmail(auth!, email);
 			showSuccess(t('passwordResetEmailSent'));
 		} catch (error) {
-			if ((error as FirebaseError).code === 'auth/user-not-found') {
+			const code = (error as FirebaseError).code;
+			if (code === 'auth/user-not-found') {
 				showError(t('unknownEmail'));
+			} else if (
+				code === 'auth/account-exists-with-different-credential'
+			) {
+				showError(t('accountExists'));
 			} else {
 				showError((error as Error).message);
 			}
