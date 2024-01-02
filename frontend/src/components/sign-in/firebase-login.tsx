@@ -1,28 +1,29 @@
+import { FirebaseError } from '@firebase/app';
 import {
 	Auth,
 	AuthProvider,
 	EmailAuthProvider,
 	GithubAuthProvider,
 	GoogleAuthProvider,
-	OAuthProvider,
+	sendEmailVerification,
+	sendPasswordResetEmail,
 	signInWithPopup,
+	User,
 } from '@firebase/auth';
+import { useClickAway } from '@uidotdev/usehooks';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { LegacyRef, useEffect, useState } from 'react';
 
+import { Modal } from '@/components/modal';
+import { PasswordResetModal } from '@/components/sign-in/password-reset-modal';
 import { Dimensions, Navigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useSetUser } from '@/stores/api-store';
-import { useShowError } from '@/stores/toast-store';
+import { useShowError, useShowSuccess } from '@/stores/toast-store';
 import { getEnv } from '@/utils/env';
 import { getFirebaseAuth } from '@/utils/firebase';
-
-const emailProvider = new EmailAuthProvider();
-const googleAuthProvider = new GoogleAuthProvider();
-const githubAuthProvider = new GithubAuthProvider();
-const microsoftAuthProvider = new OAuthProvider('microsoft.com');
 
 const host = getEnv().NEXT_PUBLIC_FRONTEND_HOST;
 
@@ -38,9 +39,15 @@ export function FirebaseLogin({
 	const router = useRouter();
 	const setUser = useSetUser();
 	const showError = useShowError();
+	const showSuccess = useShowSuccess();
 	const { identify, track } = useAnalytics();
 
 	const [auth, setAuth] = useState<Auth | null>(null);
+	const [resetPWModalOpen, setResetPWModalOpen] = useState(false);
+
+	const ref = useClickAway(() => {
+		setResetPWModalOpen(false);
+	});
 
 	useEffect(() => {
 		if (isInitialized) {
@@ -65,11 +72,18 @@ export function FirebaseLogin({
 		}
 	}, [isInitialized]);
 
-	const handleLogin = async (provider: AuthProvider) => {
+	const handleLogin = async (
+		provider: AuthProvider,
+		cb?: (user: User) => Promise<void>,
+	) => {
 		setLoading(true);
 		try {
 			const { user } = await signInWithPopup(auth!, provider);
 			setUser(user);
+
+			if (cb) {
+				await cb(user);
+			}
 
 			identify(user.uid, user);
 			track('login');
@@ -81,6 +95,40 @@ export function FirebaseLogin({
 		}
 	};
 
+	const handleResetPassword = async (email: string) => {
+		try {
+			await sendPasswordResetEmail(auth!, email);
+			showSuccess(t('passwordResetEmailSent'));
+		} catch (error) {
+			if ((error as FirebaseError).code === 'auth/user-not-found') {
+				showError(t('unknownEmail'));
+			} else {
+				showError((error as Error).message);
+			}
+		} finally {
+			setResetPWModalOpen(false);
+		}
+	};
+
+	const authProviders: {
+		key: string;
+		provider: AuthProvider;
+		size: Dimensions;
+	}[] = [
+		{
+			key: 'Google',
+			provider: new GoogleAuthProvider(),
+			size: Dimensions.Eight,
+		},
+		{
+			key: 'GitHub',
+			provider: new GithubAuthProvider(),
+			size: Dimensions.Eight,
+		},
+	];
+
+	const emailProvider = new EmailAuthProvider();
+
 	return (
 		<div
 			data-testid="firebase-login-container"
@@ -89,9 +137,9 @@ export function FirebaseLogin({
 			<div className="flex flex-col justify-center gap-3 h-fit border-2 rounded border-neutral p-12">
 				<button
 					data-testid="email-login-button"
-					className="btn btn-rounded btn-lg flex border-2 border-base-300 justify-center gap-2"
+					className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
 					onClick={() => {
-						void handleLogin(emailProvider);
+						void handleLogin(emailProvider, sendEmailVerification);
 					}}
 				>
 					<Image
@@ -100,57 +148,39 @@ export function FirebaseLogin({
 						height={Dimensions.Seven}
 						width={Dimensions.Seven}
 					/>
-					<span className="font-bold text-lg">Login with Email</span>
+					<span className="font-bold">Login with Email</span>
 				</button>
+				<div className="flex justify-end">
+					<button
+						className="btn btn-xs btn-link"
+						onClick={() => {
+							setResetPWModalOpen(true);
+						}}
+					>
+						{t('forgotPassword')}
+					</button>
+				</div>
 				<div className="card-section-divider" />
-				<button
-					data-testid="github-login-button"
-					className="btn btn-rounded btn-lg flex border-2 border-base-300 justify-center gap-2"
-					onClick={() => {
-						void handleLogin(githubAuthProvider);
-					}}
-				>
-					<Image
-						src="/images/github-logo.svg"
-						alt="GitHub logo"
-						height={Dimensions.Eight}
-						width={Dimensions.Eight}
-					/>
-					<span className="font-bold text-lg">Login with GitHub</span>
-				</button>
-				<button
-					data-testid="google-login-button"
-					className="btn btn-rounded btn-lg flex border-2 border-base-300 justify-center gap-2"
-					onClick={() => {
-						void handleLogin(googleAuthProvider);
-					}}
-				>
-					<Image
-						src="/images/google-logo.svg"
-						alt="Google logo"
-						height={Dimensions.Eight}
-						width={Dimensions.Eight}
-					/>
-					<span className="font-bold text-lg">Login with Google</span>
-				</button>
-				<button
-					data-testid="microsoft-login-button"
-					className="btn btn-rounded btn-lg flex border-2 border-base-300 justify-center gap-2"
-					onClick={() => {
-						void handleLogin(microsoftAuthProvider);
-					}}
-				>
-					<Image
-						src="/images/microsoft-logo.svg"
-						alt="Microsoft logo"
-						height={Dimensions.Seven}
-						width={Dimensions.Seven}
-					/>
-					<span className="font-bold text-lg">
-						Login with Microsoft
-					</span>
-				</button>
+				{authProviders.map(({ key, provider, size }) => (
+					<button
+						key={key.toLowerCase()}
+						data-testid={`${key.toLowerCase()}-login-button`}
+						className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
+						onClick={() => {
+							void handleLogin(provider);
+						}}
+					>
+						<Image
+							src={`/images/${key.toLowerCase()}-logo.svg`}
+							alt={`${key} logo`}
+							height={size}
+							width={size}
+						/>
+						<span className="font-bold">{`Login with ${key}`}</span>
+					</button>
+				))}
 				<div className="card-section-divider" />
+
 				<div
 					data-testid="tos-and-privacy-policy-container"
 					className="text-xs text-center"
@@ -172,6 +202,22 @@ export function FirebaseLogin({
 						{t('privacyPolicy')}
 					</a>
 					<span>.</span>
+				</div>
+				<div ref={ref as LegacyRef<HTMLDivElement>}>
+					<Modal
+						modalOpen={resetPWModalOpen}
+						dataTestId="reset-password-modal"
+						onClose={() => {
+							setResetPWModalOpen(false);
+						}}
+					>
+						<PasswordResetModal
+							handleCloseModal={() => {
+								setResetPWModalOpen(false);
+							}}
+							handleResetPassword={handleResetPassword}
+						/>
+					</Modal>
 				</div>
 			</div>
 		</div>

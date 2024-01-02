@@ -2,7 +2,6 @@ import {
 	EmailAuthProvider,
 	GithubAuthProvider,
 	GoogleAuthProvider,
-	OAuthProvider,
 	signInWithPopup,
 } from '@firebase/auth';
 import { UserFactory } from 'tests/factories';
@@ -42,9 +41,7 @@ describe('FirebaseLogin tests', () => {
 		expect(screen.getByTestId('email-login-button')).toBeInTheDocument();
 		expect(screen.getByTestId('github-login-button')).toBeInTheDocument();
 		expect(screen.getByTestId('google-login-button')).toBeInTheDocument();
-		expect(
-			screen.getByTestId('microsoft-login-button'),
-		).toBeInTheDocument();
+
 		expect(
 			screen.getByTestId('tos-and-privacy-policy-container'),
 		).toBeInTheDocument();
@@ -71,7 +68,6 @@ describe('FirebaseLogin tests', () => {
 		['email-login-button', EmailAuthProvider],
 		['github-login-button', GithubAuthProvider],
 		['google-login-button', GoogleAuthProvider],
-		['microsoft-login-button', OAuthProvider],
 	])(
 		`calls signInWithPopup with %s and redirects the user correctly on success`,
 		async (buttonTestId, provider) => {

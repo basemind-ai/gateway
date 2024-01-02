@@ -225,7 +225,7 @@
 		"admin": "Admin",
 		"emailAddress": "Email Address",
 		"emailAddresses": "Email address(es)",
-		"emailPlaceholder": "you@site.com",
+		"emailPlaceholder": "moishe.zuchmir@example.com",
 		"invitationSent": "Invitation Sent",
 		"invite": "Invite",
 		"member": "Member",
@@ -368,8 +368,15 @@
 	"signin": {
 		"and": "and",
 		"bannerTitle": "Sign In",
+		"cancel": "Cancel",
+		"emailLabel": "What's your email?",
+		"emailPlaceholder": "moishe.zuchmir@example.com",
+		"forgotPassword": "reset password",
+		"passwordResetEmailSent": "Password reset email sent!",
 		"privacyPolicy": "Privacy Policy",
+		"resetPassword": "Reset Password",
 		"tos": "Terms of Service",
+		"unknownEmail": "User does not exist",
 		"userAgreementMessage": "By continuing you are agreeing to our"
 	},
 	"support": {

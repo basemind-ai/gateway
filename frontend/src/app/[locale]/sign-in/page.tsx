@@ -1,5 +1,4 @@
 'use client';
-import 'firebaseui/dist/firebaseui.css';
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
