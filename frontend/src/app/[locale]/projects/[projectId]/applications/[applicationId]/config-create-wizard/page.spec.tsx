@@ -28,7 +28,7 @@ import {
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
 import { useToasts } from '@/stores/toast-store';
-import { PromptTestRecord } from '@/types';
+import { OpenAIPromptMessageRole, PromptTestRecord } from '@/types';
 
 vi.mock('@/hooks/use-prompt-testing', () => ({
 	usePromptTesting: vi.fn(() => ({
@@ -208,7 +208,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		const store = getStore();
 		act(() => {
 			store.setConfigName(faker.lorem.word());
-			store.setMessages([{ content: 'test', role: 'user' }]);
+			store.setMessages([
+				{ content: 'test', role: OpenAIPromptMessageRole.User },
+			]);
 		});
 
 		render(

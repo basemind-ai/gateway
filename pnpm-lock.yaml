@@ -118,6 +118,15 @@ importers:
 
     frontend:
         dependencies:
+            '@dnd-kit/core':
+                specifier: ^6.1.0
+                version: 6.1.0(react-dom@18.2.0)(react@18.2.0)
+            '@dnd-kit/sortable':
+                specifier: ^8.0.0
+                version: 8.0.0(@dnd-kit/core@6.1.0)(react@18.2.0)
+            '@dnd-kit/utilities':
+                specifier: ^3.2.2
+                version: 3.2.2(react@18.2.0)
             '@firebase/analytics':
                 specifier: ^0.10.0
                 version: 0.10.0(@firebase/app@0.9.25)
@@ -145,6 +154,9 @@ importers:
             firebase:
                 specifier: ^10.7.1
                 version: 10.7.1
+            nanoid:
+                specifier: ^5.0.4
+                version: 5.0.4
             next:
                 specifier: 14.0.4
                 version: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7)
@@ -2076,6 +2088,61 @@ packages:
             }
         engines: { node: '>=10.0.0' }
         dev: true
+
+    /@dnd-kit/accessibility@3.1.0(react@18.2.0):
+        resolution:
+            {
+                integrity: sha512-ea7IkhKvlJUv9iSHJOnxinBcoOI3ppGnnL+VDJ75O45Nss6HtZd8IdN8touXPDtASfeI2T2LImb8VOZcL47wjQ==,
+            }
+        peerDependencies:
+            react: '>=16.8.0'
+        dependencies:
+            react: 18.2.0
+            tslib: 2.6.2
+        dev: false
+
+    /@dnd-kit/core@6.1.0(react-dom@18.2.0)(react@18.2.0):
+        resolution:
+            {
+                integrity: sha512-J3cQBClB4TVxwGo3KEjssGEXNJqGVWx17aRTZ1ob0FliR5IjYgTxl5YJbKTzA6IzrtelotH19v6y7uoIRUZPSg==,
+            }
+        peerDependencies:
+            react: '>=16.8.0'
+            react-dom: '>=16.8.0'
+        dependencies:
+            '@dnd-kit/accessibility': 3.1.0(react@18.2.0)
+            '@dnd-kit/utilities': 3.2.2(react@18.2.0)
+            react: 18.2.0
+            react-dom: 18.2.0(react@18.2.0)
+            tslib: 2.6.2
+        dev: false
+
+    /@dnd-kit/sortable@8.0.0(@dnd-kit/core@6.1.0)(react@18.2.0):
+        resolution:
+            {
+                integrity: sha512-U3jk5ebVXe1Lr7c2wU7SBZjcWdQP+j7peHJfCspnA81enlu88Mgd7CC8Q+pub9ubP7eKVETzJW+IBAhsqbSu/g==,
+            }
+        peerDependencies:
+            '@dnd-kit/core': ^6.1.0
+            react: '>=16.8.0'
+        dependencies:
+            '@dnd-kit/core': 6.1.0(react-dom@18.2.0)(react@18.2.0)
+            '@dnd-kit/utilities': 3.2.2(react@18.2.0)
+            react: 18.2.0
+            tslib: 2.6.2
+        dev: false
+
+    /@dnd-kit/utilities@3.2.2(react@18.2.0):
+        resolution:
+            {
+                integrity: sha512-+MKAJEOfaBe5SmV6t34p80MMKhjvUz0vRrvVJbPT0WElzaOJ/1xs+D+KDv+tD/NE5ujfrChEcshd4fLn0wpiqg==,
+            }
+        peerDependencies:
+            react: '>=16.8.0'
+        dependencies:
+            react: 18.2.0
+            tslib: 2.6.2
+        dev: false
 
     /@emnapi/runtime@0.44.0:
         resolution:
@@ -11020,6 +11087,15 @@ packages:
             }
         engines: { node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1 }
         hasBin: true
+
+    /nanoid@5.0.4:
+        resolution:
+            {
+                integrity: sha512-vAjmBf13gsmhXSgBrtIclinISzFFy22WwCYoyilZlsrRXNIHSwgFQ1bEdjRwMT3aoadeIF6HMuDRlOxzfXV8ig==,
+            }
+        engines: { node: ^18 || >=20 }
+        hasBin: true
+        dev: false
 
     /natural-compare-lite@1.4.0:
         resolution:

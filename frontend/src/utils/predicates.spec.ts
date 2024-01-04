@@ -1,4 +1,8 @@
-import { OpenAIContentMessage, OpenAIFunctionMessage } from '@/types';
+import {
+	OpenAIContentMessage,
+	OpenAIFunctionMessage,
+	OpenAIPromptMessageRole,
+} from '@/types';
 import { isOpenAIContentMessage } from '@/utils/predicates';
 
 describe('predicate utils tests', () => {
@@ -7,7 +11,7 @@ describe('predicate utils tests', () => {
 			const message = {
 				content: 'test',
 				name: undefined,
-				role: 'user',
+				role: OpenAIPromptMessageRole.User,
 				templateVariables: [],
 			} satisfies OpenAIContentMessage;
 			expect(isOpenAIContentMessage(message)).toBe(true);
@@ -16,7 +20,7 @@ describe('predicate utils tests', () => {
 			const message = {
 				functionArguments: ['a', 'b'],
 				name: 'myFunction',
-				role: 'function',
+				role: OpenAIPromptMessageRole.Function,
 			} satisfies OpenAIFunctionMessage;
 			expect(isOpenAIContentMessage(message)).toBe(false);
 		});

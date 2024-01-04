@@ -6,10 +6,8 @@ import {
 	CohereModelParametersForm,
 	CoherePromptTemplate,
 } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-form-components';
-import {
-	OpenAIModelParametersForm,
-	OpenAIPromptTemplate,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-form-components';
+import { OpenAIModelParametersForm } from '@/components/prompt-display-components/openai-components/openai-form-model-parameters-form';
+import { OpenAIPromptTemplateForm } from '@/components/prompt-display-components/openai-components/openai-prompt-template-form';
 import { Dimensions } from '@/constants';
 import {
 	CohereModelParameters,
@@ -76,7 +74,7 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 			);
 		}
 		return (
-			<OpenAIPromptTemplate
+			<OpenAIPromptTemplateForm
 				messages={(messages ?? []) as OpenAIContentMessage[]}
 				setMessages={
 					setMessages as (messages: OpenAIContentMessage[]) => void
