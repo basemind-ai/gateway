@@ -117,7 +117,6 @@ export function OpenAIModelParametersForm({
 
 	return (
 		<div data-testid="openai-model-parameters-form">
-			<h2 className="card-header">{t('modelParameters')}</h2>
 			<div className="rounded-dark-card  columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8">
 				{inputs.map(ParameterSlider)}
 			</div>
@@ -128,7 +127,7 @@ export function OpenAIModelParametersForm({
 export const OPEN_AI_DRAFT_MESSAGE = {
 	content: '',
 	name: '',
-	role: OpenAIPromptMessageRole.System,
+	role: OpenAIPromptMessageRole.User,
 } satisfies OpenAIContentMessage;
 
 export function OpenAIMessageItem({
@@ -215,7 +214,6 @@ export function OpenAIPromptTemplate({
 
 	return (
 		<div data-testid="openai-prompt-template-form">
-			<h2 className="card-header">{t('promptMessages')}</h2>
 			<div className="rounded-dark-card flex flex-col gap-4">
 				<div className=" p-4 flex items-start content-start gap-4 self-stretch flex-wrap pt-4 pb-4">
 					{messages.map((message, index) => (
@@ -270,7 +268,7 @@ export function OpenAIPromptTemplate({
 								</span>
 							</label>
 							<select
-								className="card-select"
+								className="select select-bordered select-sm rounded bg-neutral text-neutral-content text-xs"
 								value={draftMessage.role}
 								onChange={handleChange(handleRoleChange)}
 								data-testid="parameters-and-prompt-form-message-role-select"
@@ -288,7 +286,7 @@ export function OpenAIPromptTemplate({
 								)}
 							</select>
 						</div>
-						<div className="form-control">
+						<div className="form-control hidden">
 							<label
 								className="label"
 								data-testid="parameters-and-prompt-form-new-message-name-label"

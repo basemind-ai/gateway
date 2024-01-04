@@ -88,7 +88,6 @@ export function PromptConfigBaseForm({
 			{showConfigNameInput && (
 				<>
 					<div data-testid="prompt-config-name-input-form-container">
-						<h2 className="card-header">{t('configName')}</h2>
 						<div className="rounded-dark-card flex flex-col">
 							<EntityNameInput
 								dataTestId="create-prompt-base-form-name-input"
@@ -103,11 +102,10 @@ export function PromptConfigBaseForm({
 							/>
 						</div>
 					</div>
-					<div className="card-section-divider" />
+					<div className="card-divider" />
 				</>
 			)}
 			<div data-testid="prompt-config-model-select-form-container">
-				<h2 className="card-header">{t('modelSelection')}</h2>
 				<div className="rounded-dark-card grid grid-cols-2 items-center gap-4">
 					<div className="form-control">
 						<label className="label">

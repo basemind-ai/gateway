@@ -125,12 +125,6 @@ export function CohereModelParametersForm({
 
 	return (
 		<div data-testid="cohere-model-parameters-form-container">
-			<h2
-				className="card-header"
-				data-testid="cohere-model-parameters-form-header"
-			>
-				{t('modelParameters')}
-			</h2>
 			<div
 				className="rounded-dark-card columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8"
 				data-testid="cohere-model-parameters-form-inputs-container"
@@ -161,12 +155,6 @@ export function CoherePromptTemplate({
 
 	return (
 		<div data-testid="cohere-prompt-template-form-container">
-			<h2
-				className="card-header"
-				data-testid="cohere-prompt-template-form-header"
-			>
-				{t('promptTemplate')}
-			</h2>
 			<div
 				className="form-control"
 				data-testid="cohere-prompt-template-form"
