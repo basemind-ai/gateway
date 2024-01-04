@@ -147,13 +147,13 @@ importers:
                 version: 10.7.1
             next:
                 specifier: 14.0.4
-                version: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.6)
+                version: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7)
             next-intl:
-                specifier: ^3.4.0
-                version: 3.4.0(next@14.0.4)(react@18.2.0)
+                specifier: ^3.4.1
+                version: 3.4.1(next@14.0.4)(react@18.2.0)
             persist-and-sync:
-                specifier: ^1.2.0
-                version: 1.2.0(zustand@4.4.7)
+                specifier: ^1.2.1
+                version: 1.2.1(zustand@4.4.7)
             react:
                 specifier: 18.2.0
                 version: 18.2.0
@@ -201,8 +201,8 @@ importers:
                 specifier: ^9.3.3
                 version: 9.3.3
             '@testing-library/jest-dom':
-                specifier: ^6.1.6
-                version: 6.1.6(vitest@1.1.1)
+                specifier: ^6.2.0
+                version: 6.2.0(vitest@1.1.1)
             '@testing-library/react':
                 specifier: ^14.1.2
                 version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
@@ -225,8 +225,8 @@ importers:
                 specifier: ^10.4.16
                 version: 10.4.16(postcss@8.4.32)
             daisyui:
-                specifier: ^4.4.24
-                version: 4.4.24(postcss@8.4.32)
+                specifier: ^4.5.0
+                version: 4.5.0(postcss@8.4.32)
             jsdom:
                 specifier: ^23.0.1
                 version: 23.0.1
@@ -237,8 +237,8 @@ importers:
                 specifier: 8.4.32
                 version: 8.4.32
             sass:
-                specifier: ^1.69.6
-                version: 1.69.6
+                specifier: ^1.69.7
+                version: 1.69.7
             tailwindcss:
                 specifier: 3.4.0
                 version: 3.4.0(ts-node@10.9.2)
@@ -5636,7 +5636,7 @@ packages:
             '@svgr/core': 8.1.0(typescript@5.3.3)
             cosmiconfig: 8.3.6(typescript@5.3.3)
             deepmerge: 4.3.1
-            svgo: 3.1.0
+            svgo: 3.2.0
         transitivePeerDependencies:
             - typescript
         dev: true
@@ -5714,10 +5714,10 @@ packages:
             pretty-format: 27.5.1
         dev: true
 
-    /@testing-library/jest-dom@6.1.6(vitest@1.1.1):
+    /@testing-library/jest-dom@6.2.0(vitest@1.1.1):
         resolution:
             {
-                integrity: sha512-YwuiOdYEcxhfC2u5iNKlvg2Q5MgbutovP6drq7J1HrCbvR+G58BbtoCoq+L/kNlrNFsu2Kt3jaFAviLVxYHJZg==,
+                integrity: sha512-+BVQlJ9cmEn5RDMUS8c2+TU6giLvzaHZ8sU/x0Jj7fk+6/46wPdwlgOPcpxS17CjcanBi/3VmGMqVr2rmbUmNw==,
             }
         engines: { node: '>=14', npm: '>=6', yarn: '>=1' }
         peerDependencies:
@@ -5740,7 +5740,7 @@ packages:
             aria-query: 5.3.0
             chalk: 3.0.0
             css.escape: 1.5.1
-            dom-accessibility-api: 0.5.16
+            dom-accessibility-api: 0.6.3
             lodash: 4.17.21
             redent: 3.0.0
             vitest: 1.1.1(@types/node@20.10.6)
@@ -5903,14 +5903,14 @@ packages:
                 integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==,
             }
         dependencies:
-            '@types/eslint': 8.56.0
+            '@types/eslint': 8.56.1
             '@types/estree': 1.0.5
         dev: true
 
-    /@types/eslint@8.56.0:
+    /@types/eslint@8.56.1:
         resolution:
             {
-                integrity: sha512-FlsN0p4FhuYRjIxpbdXovvHQhtlG05O1GG/RNWvdAxTboR438IOTwmrY/vLA+Xfgg06BTkP045M3vpFwTMv1dg==,
+                integrity: sha512-18PLWRzhy9glDQp3+wOgfLYRWlhgX0azxgJ63rdpoUHyrC9z0f5CkFburjQx4uD7ZCruw85ZtMt6K+L+R8fLJQ==,
             }
         dependencies:
             '@types/estree': 1.0.5
@@ -6381,7 +6381,7 @@ packages:
             '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.7)
             '@types/babel__core': 7.20.5
             react-refresh: 0.14.0
-            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.6)
+            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.7)
         transitivePeerDependencies:
             - supports-color
         dev: true
@@ -7058,7 +7058,7 @@ packages:
             postcss: ^8.1.0
         dependencies:
             browserslist: 4.22.2
-            caniuse-lite: 1.0.30001572
+            caniuse-lite: 1.0.30001574
             fraction.js: 4.3.7
             normalize-range: 0.1.2
             picocolors: 1.0.0
@@ -7206,8 +7206,8 @@ packages:
         engines: { node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7 }
         hasBin: true
         dependencies:
-            caniuse-lite: 1.0.30001572
-            electron-to-chromium: 1.4.616
+            caniuse-lite: 1.0.30001574
+            electron-to-chromium: 1.4.620
             node-releases: 2.0.14
             update-browserslist-db: 1.0.13(browserslist@4.22.2)
 
@@ -7296,10 +7296,10 @@ packages:
         engines: { node: '>=10' }
         dev: true
 
-    /caniuse-lite@1.0.30001572:
+    /caniuse-lite@1.0.30001574:
         resolution:
             {
-                integrity: sha512-1Pbh5FLmn5y4+QhNyJE9j3/7dK44dGB83/ZMjv/qJk86TvDbjk0LosiZo0i0WB0Vx607qMX9jYrn1VLHCkN4rw==,
+                integrity: sha512-BtYEK4r/iHt/txm81KBudCUcTy7t+s9emrIaHqjYurQ10x71zJ5VQ9x1dYPcz/b+pKSp4y/v1xSI67A+LzpNyg==,
             }
 
     /chai@4.3.10:
@@ -7758,10 +7758,10 @@ packages:
         engines: { node: ^12.20.0 || ^14.13.1 || >=16.0.0 }
         dev: true
 
-    /daisyui@4.4.24(postcss@8.4.32):
+    /daisyui@4.5.0(postcss@8.4.32):
         resolution:
             {
-                integrity: sha512-u/B3484J08V7N0rIYymnC+SyxOjlYQL+2vyhHWV+/KC+VaUcbEF2Z3H06eCPgdTiZ0J+ml44aH7wBhIymPFQ+g==,
+                integrity: sha512-RWQCPQ0vBUaxGy768O7Ku8SRQgwdoto1lDzuKeVOcMtYghuSbUY7NoPoMK+k8JH4s1J02OvpNAgtB9MeKpZIwg==,
             }
         engines: { node: '>=16.9.0' }
         dependencies:
@@ -8037,6 +8037,13 @@ packages:
             }
         dev: true
 
+    /dom-accessibility-api@0.6.3:
+        resolution:
+            {
+                integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==,
+            }
+        dev: true
+
     /dom-serializer@2.0.0:
         resolution:
             {
@@ -8101,10 +8108,10 @@ packages:
             }
         dev: true
 
-    /electron-to-chromium@1.4.616:
+    /electron-to-chromium@1.4.620:
         resolution:
             {
-                integrity: sha512-1n7zWYh8eS0L9Uy+GskE0lkBUNK83cXTVJI0pU3mGprFsbfSdAc15VTFbo+A+Bq4pwstmL30AVcEU3Fo463lNg==,
+                integrity: sha512-a2fcSHOHrqBJsPNXtf6ZCEZpXrFCcbK1FBxfX3txoqWzNgtEDG1f3M59M98iwxhRW4iMKESnSjbJ310/rkrp0g==,
             }
 
     /emoji-regex@8.0.0:
@@ -11052,10 +11059,10 @@ packages:
             '@segment/isodate': 1.0.3
         dev: false
 
-    /next-intl@3.4.0(next@14.0.4)(react@18.2.0):
+    /next-intl@3.4.1(next@14.0.4)(react@18.2.0):
         resolution:
             {
-                integrity: sha512-pccnuQq6N6iyPi0Foiajp9JgZp99w7gRxHhBxmtBdjsCmrsik7QflKWq2a/US2kFP734JSsSoY98xK+acjozeQ==,
+                integrity: sha512-z8gY7uCe1cDHpH3rAD4uxZ5qEvt0WZX4bdKu7km2COPUIEXAXF1puwNAbtTC8b5clWGd87QwBy1+VS7ZElyU8g==,
             }
         peerDependencies:
             next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
@@ -11063,12 +11070,12 @@ packages:
         dependencies:
             '@formatjs/intl-localematcher': 0.2.32
             negotiator: 0.6.3
-            next: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.6)
+            next: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7)
             react: 18.2.0
-            use-intl: 3.4.0(react@18.2.0)
+            use-intl: 3.4.1(react@18.2.0)
         dev: false
 
-    /next@14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.6):
+    /next@14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7):
         resolution:
             {
                 integrity: sha512-qbwypnM7327SadwFtxXnQdGiKpkuhaRLE2uq62/nRul9cj9KhQ5LhHmlziTNqUidZotw/Q1I9OjirBROdUJNgA==,
@@ -11089,12 +11096,12 @@ packages:
             '@next/env': 14.0.4
             '@swc/helpers': 0.5.2
             busboy: 1.6.0
-            caniuse-lite: 1.0.30001572
+            caniuse-lite: 1.0.30001574
             graceful-fs: 4.2.11
             postcss: 8.4.31
             react: 18.2.0
             react-dom: 18.2.0(react@18.2.0)
-            sass: 1.69.6
+            sass: 1.69.7
             styled-jsx: 5.1.1(@babel/core@7.23.7)(react@18.2.0)
             watchpack: 2.4.0
         optionalDependencies:
@@ -11608,10 +11615,10 @@ packages:
             }
         dev: true
 
-    /persist-and-sync@1.2.0(zustand@4.4.7):
+    /persist-and-sync@1.2.1(zustand@4.4.7):
         resolution:
             {
-                integrity: sha512-hApzP8QYJ56KiLUi+Y1YfYH7vP00o1cru1x/GudhFT9k5U+w98XDfSwI9G9rJ2WmeNXpnGMmn8wCWxnT2rB0Wg==,
+                integrity: sha512-McPXNsMKYnMJGFuAEy//EezrKFuI1sq4TjcSNKbDegkA0mG1RzgVcRzI1qyFgPC+Qao8eHlH65Ck7Awp9u2dUg==,
             }
         peerDependencies:
             zustand: ^3 || ^4
@@ -12547,10 +12554,10 @@ packages:
             }
         dev: true
 
-    /sass@1.69.6:
+    /sass@1.69.7:
         resolution:
             {
-                integrity: sha512-qbRr3k9JGHWXCvZU77SD2OTwUlC+gNT+61JOLcmLm+XqH4h/5D+p4IIsxvpkB89S9AwJOyb5+rWNpIucaFxSFQ==,
+                integrity: sha512-rzj2soDeZ8wtE2egyLXgOOHQvaC2iosZrkF6v3EUG+tBwEvhqUCzm0VP3k9gHF9LXbSrRhT5SksoI56Iw8NPnQ==,
             }
         engines: { node: '>=14.0.0' }
         hasBin: true
@@ -13137,10 +13144,10 @@ packages:
             }
         dev: true
 
-    /svgo@3.1.0:
+    /svgo@3.2.0:
         resolution:
             {
-                integrity: sha512-R5SnNA89w1dYgNv570591F66v34b3eQShpIBcQtZtM5trJwm1VvxbIoMpRYY3ybTAutcKTLEmTsdnaknOHbiQA==,
+                integrity: sha512-4PP6CMW/V7l/GmKRKzsLR8xxjdHTV4IMvhTnpuHwwBazSIlw5W/5SmPjN8Dwyt7lKbSJrRDgp4t9ph0HgChFBQ==,
             }
         engines: { node: '>=14.0.0' }
         hasBin: true
@@ -13835,10 +13842,10 @@ packages:
             requires-port: 1.0.0
         dev: true
 
-    /use-intl@3.4.0(react@18.2.0):
+    /use-intl@3.4.1(react@18.2.0):
         resolution:
             {
-                integrity: sha512-vFwyAm9RDXjQN83wle9LjmE5PB/k0vOU0FetHffjr7/wLW8xlX2tAABxIyG1gy9eS5IYixAezvJXYr8g6fRIXA==,
+                integrity: sha512-Z2SWvtFXXytpKCTMeyNX6Un8HC8mmu1RxYIHOwI01rMSy6mGBFaO9T1a/0xDL1CLNLP4NzHdzRNsuhDcrw2/VQ==,
             }
         peerDependencies:
             react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -13915,7 +13922,7 @@ packages:
             debug: 4.3.4
             pathe: 1.1.1
             picocolors: 1.0.0
-            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.6)
+            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.7)
         transitivePeerDependencies:
             - '@types/node'
             - less
@@ -13936,8 +13943,8 @@ packages:
             vite: '>= 3.0.0'
         dependencies:
             magic-string: 0.30.5
-            svgo: 3.1.0
-            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.6)
+            svgo: 3.2.0
+            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.7)
             xml2js: 0.6.2
         dev: true
 
@@ -13960,7 +13967,7 @@ packages:
             - typescript
         dev: true
 
-    /vite@5.0.10(@types/node@20.10.6)(sass@1.69.6):
+    /vite@5.0.10(@types/node@20.10.6)(sass@1.69.7):
         resolution:
             {
                 integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==,
@@ -13995,7 +14002,7 @@ packages:
             esbuild: 0.19.11
             postcss: 8.4.32
             rollup: 4.9.2
-            sass: 1.69.6
+            sass: 1.69.7
         optionalDependencies:
             fsevents: 2.3.3
         dev: true
@@ -14061,7 +14068,7 @@ packages:
             strip-literal: 1.3.0
             tinybench: 2.5.1
             tinypool: 0.8.1
-            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.6)
+            vite: 5.0.10(@types/node@20.10.6)(sass@1.69.7)
             vite-node: 1.1.1(@types/node@20.10.6)
             why-is-node-running: 2.2.2
         transitivePeerDependencies:
