@@ -6,7 +6,7 @@ import {
 	CohereModelParametersForm,
 	CoherePromptTemplate,
 } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-form-components';
-import { OpenAIModelParametersForm } from '@/components/prompt-display-components/openai-components/openai-form-model-parameters-form';
+import { OpenAIModelParametersForm } from '@/components/prompt-display-components/openai-components/openai-model-parameters-form';
 import { OpenAIPromptTemplateForm } from '@/components/prompt-display-components/openai-components/openai-prompt-template-form';
 import { Dimensions } from '@/constants';
 import {

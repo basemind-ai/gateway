@@ -49,12 +49,11 @@ function shouldAllowContinue(store: PromptConfigWizardStore) {
 		if (store.modelVendor === ModelVendor.Cohere) {
 			const [message] = store.messages as CoherePromptMessage[];
 			return message.message.trim().length;
-		} else {
-			return store.messages.every(
-				(message) =>
-					(message as OpenAIContentMessage).content.trim().length,
-			);
 		}
+		return store.messages.every(
+			(message) =>
+				(message as OpenAIContentMessage).content.trim().length,
+		);
 	}
 
 	return true;

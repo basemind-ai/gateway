@@ -256,12 +256,12 @@
 		"deleteMessage": "Remove Message",
 		"message": "Message",
 		"messageContent": "Message Content",
+		"messageContentPlaceholder": "Example of a template: The user favourite albums are: '{favouriteAlbums'}. The user disliked albums are: '{dislikedAlbums'}. Please suggest 5 new albums for the user.",
 		"messageName": "Name",
 		"messageNameInputPlaceholder": "E.g. bot-instruction",
 		"messageRole": "Role",
 		"newMessage": "+ New Message",
 		"optional": "* optional",
-		"promptMessagePlaceholder": "Example of a template: The user favourite albums are: '{favouriteAlbums'}. The user disliked albums are: '{dislikedAlbums'}. Please suggest 5 new albums for the user.",
 		"saveMessage": "Add Message",
 		"wrapVariable": "use '{ '} to wrap a variable"
 	},
