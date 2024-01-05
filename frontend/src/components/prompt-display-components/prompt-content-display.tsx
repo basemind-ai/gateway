@@ -16,7 +16,7 @@ const openAIRoleElementMapper: Record<
 		<span>
 			[
 			<span className={`text-${openAIRoleColorMap.assistant}`}>
-				assistant
+				{`${OpenAIPromptMessageRole.Assistant} message`}
 			</span>
 			]: <span className="text-base-content">{message}</span>
 		</span>
@@ -25,21 +25,27 @@ const openAIRoleElementMapper: Record<
 		<span>
 			[
 			<span className={`text-${openAIRoleColorMap.function}`}>
-				function
+				{`${OpenAIPromptMessageRole.Function} message`}
 			</span>
 			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 	[OpenAIPromptMessageRole.System]: ({ message }) => (
 		<span>
-			[<span className={`text-${openAIRoleColorMap.system}`}>system</span>
+			[
+			<span
+				className={`text-${openAIRoleColorMap.system}`}
+			>{`${OpenAIPromptMessageRole.System} message`}</span>
 			]: ]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 	[OpenAIPromptMessageRole.User]: ({ message }) => (
 		<span>
-			[<span className={`text-${openAIRoleColorMap.user}`}>user</span>]:{' '}
-			<span className="text-base-content">{message}</span>
+			[
+			<span
+				className={`text-${openAIRoleColorMap.user}`}
+			>{`${OpenAIPromptMessageRole.User} message`}</span>
+			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 };

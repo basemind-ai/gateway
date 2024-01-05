@@ -128,6 +128,7 @@
 		"promptConfigNameInputPlaceholder": "For example: Default",
 		"promptConfigVendorSelectLabel": "Provider",
 		"promptMessagePlaceholder": "Example of a template: The user favourite albums are: '{favouriteAlbums'}. The user disliked albums are: '{dislikedAlbums'}. Please suggest 5 new albums for the user.",
+		"promptTemplate": "Prompt Template",
 		"requestTokens": "Request Tokens",
 		"requestTokensCost": "Request Tokens Cost",
 		"responseTokens": "Response Tokens",

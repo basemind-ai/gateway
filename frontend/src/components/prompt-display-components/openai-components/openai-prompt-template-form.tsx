@@ -1,18 +1,9 @@
-import { closestCenter, useDraggable, useDroppable } from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core/dist/types';
-import {
-	SortableContext,
-	verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { nanoid } from 'nanoid';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { Plus, XCircle } from 'react-bootstrap-icons';
+import React, { useEffect, useState } from 'react';
+import { ArrowDown, ArrowUp, Plus, XCircle } from 'react-bootstrap-icons';
 
 import { Dimensions } from '@/constants';
 import { openAIRoleColorMap } from '@/constants/models';
-import { DnDContext } from '@/context/dnd';
 import {
 	OpenAIContentMessage,
 	OpenAIContentMessageRole,
@@ -29,8 +20,14 @@ export function OpenAIMessageForm({
 	content,
 	setContent,
 	handleDeleteMessage,
+	handleArrowUp,
+	handleArrowDown,
+	showArrowUp,
+	showArrowDown,
 }: {
 	content: string;
+	handleArrowDown: () => void;
+	handleArrowUp: () => void;
 	handleDeleteMessage: (id: string) => void;
 	id: string;
 	name?: string;
@@ -38,29 +35,42 @@ export function OpenAIMessageForm({
 	setContent: (content: string) => void;
 	setName: (name: string) => void;
 	setRole: (role: OpenAIContentMessageRole) => void;
+	showArrowDown: boolean;
+	showArrowUp: boolean;
 }) {
 	const t = useTranslations('openaiPromptTemplate');
 
-	const borderColor = `border-${openAIRoleColorMap[role]}`;
-
-	const { attributes, listeners, setNodeRef, transform } = useDraggable({
-		id,
-	});
-	const style = {
-		transform: CSS.Translate.toString(transform),
-	};
+	const roleColor = `text-${openAIRoleColorMap[role]}`;
 
 	return (
 		<div
-			ref={setNodeRef}
-			style={style}
-			{...listeners}
-			{...attributes}
 			data-test-it={`openai-message-container-${id}`}
 			className="rounded-dark-card flex cursor-grab"
 		>
 			<div
-				className={`w-full p-4 border-2 rounded ${borderColor} border-opacity-50 border-double hover:border-opacity-100 flex gap-4`}
+				className={`flex flex-col justify-${
+					showArrowUp ? 'between' : 'end'
+				} items-center pr-2`}
+			>
+				{showArrowUp && (
+					<button
+						className="btn btn-ghost p-0 text-accent/70 hover:text-accent ${showArrowUp ?'' : 'hidden'}}"
+						onClick={handleArrowUp}
+					>
+						<ArrowUp height={Dimensions.Five} />
+					</button>
+				)}
+				{showArrowDown && (
+					<button
+						className="btn btn-ghost p-0 text-accent/70 hover:text-accent "
+						onClick={handleArrowDown}
+					>
+						<ArrowDown height={Dimensions.Five} />
+					</button>
+				)}
+			</div>
+			<div
+				className={`grow p-3 border-2 rounded border-neutral border-opacity-50 border-double hover:border-opacity-100 flex gap-4`}
 			>
 				<div className="flex flex-col gap-2">
 					<div className="form-control" data-no-dnd="true">
@@ -73,7 +83,7 @@ export function OpenAIMessageForm({
 							</span>
 						</label>
 						<select
-							className="select select-bordered select-sm rounded bg-neutral text-neutral-content text-xs"
+							className={`select select-bordered select-sm rounded bg-neutral ${roleColor} text-xs`}
 							value={role}
 							onChange={handleChange(setRole)}
 							data-test-it={`openai-message-role-select-${id}`}
@@ -145,7 +155,7 @@ export function OpenAIMessageForm({
 				</div>
 			</div>
 			<button
-				className="btn btn-ghost self-center text-error"
+				className="btn btn-ghost self-center text-warning hover:text-error"
 				onClick={() => {
 					handleDeleteMessage(id);
 				}}
@@ -163,13 +173,7 @@ export function OpenAIPromptTemplateForm({
 	messages: OpenAIContentMessage[];
 	setMessages: (messages: OpenAIContentMessage[]) => void;
 }) {
-	const { setNodeRef } = useDroppable({
-		id: nanoid(),
-	});
-
-	const [formMessages, setFormMessages] = useState(
-		messages.map((m) => ({ ...m, id: nanoid() })),
-	);
+	const [formMessages, setFormMessages] = useState(messages);
 
 	const cursor = 'cursor-grabbing';
 
@@ -189,7 +193,6 @@ export function OpenAIPromptTemplateForm({
 			setFormMessages([
 				{
 					content: '',
-					id: nanoid(),
 					role: OpenAIPromptMessageRole.User,
 				},
 			]);
@@ -220,7 +223,6 @@ export function OpenAIPromptTemplateForm({
 			...formMessages,
 			{
 				content: '',
-				id: nanoid(),
 				role: OpenAIPromptMessageRole.User,
 			},
 		]);
@@ -230,70 +232,60 @@ export function OpenAIPromptTemplateForm({
 		setFormMessages(formMessages.splice(index, 1));
 	};
 
-	const handleDragEnd = (event: DragEndEvent) => {
-		if (event.over) {
-			const oldIndex = formMessages.findIndex(
-				(el) => el.id === event.active.id,
-			);
-			const newIndex = formMessages.findIndex(
-				(el) => el.id === event.over!.id,
-			);
+	const handleArrowUp = (index: number) => {
+		const copiedFormMessages = [...formMessages];
+		const replaced = copiedFormMessages[index];
+		copiedFormMessages[index] = copiedFormMessages[index - 1];
+		copiedFormMessages[index - 1] = replaced;
+		setFormMessages(copiedFormMessages);
+	};
 
-			const replacedMessage = formMessages[newIndex];
-			const copiedFormMessages = [...formMessages];
-
-			copiedFormMessages[newIndex] = formMessages[oldIndex];
-			copiedFormMessages[oldIndex] = replacedMessage;
-
-			setFormMessages(copiedFormMessages);
-		}
+	const handleArrowDown = (index: number) => {
+		const copiedFormMessages = [...formMessages];
+		const replaced = copiedFormMessages[index];
+		copiedFormMessages[index] = copiedFormMessages[index + 1];
+		copiedFormMessages[index + 1] = replaced;
+		setFormMessages(copiedFormMessages);
 	};
 
 	return (
 		<div data-testid="openai-prompt-template-form">
-			<DnDContext
-				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
-			>
-				<SortableContext
-					strategy={verticalListSortingStrategy}
-					items={Object.keys(formMessages)}
-				>
-					<div
-						className={`flex flex-col gap-4 ${cursor}`}
-						ref={setNodeRef}
+			<div className={`flex flex-col gap-4 ${cursor}`}>
+				{Object.entries(formMessages).map(([id, message], i) => (
+					<OpenAIMessageForm
+						key={id}
+						id={id}
+						content={message.content}
+						name={message.name}
+						role={message.role}
+						setContent={handleSetMessageContent(i)}
+						setName={handleSetMessageName(i)}
+						setRole={handleSetMessageRole(i)}
+						handleDeleteMessage={() => {
+							handleDeleteMessage(i);
+						}}
+						showArrowDown={
+							formMessages.length > 1 &&
+							i !== formMessages.length - 1
+						}
+						showArrowUp={formMessages.length > 1 && i !== 0}
+						handleArrowDown={() => {
+							handleArrowDown(i);
+						}}
+						handleArrowUp={() => {
+							handleArrowUp(i);
+						}}
+					/>
+				))}
+				<div className="self-center">
+					<button
+						className="btn btn-ghost text-blue-500"
+						onClick={handleAddMessage}
 					>
-						{Object.entries(formMessages).map(
-							([id, message], i) => (
-								<OpenAIMessageForm
-									key={id}
-									id={id}
-									content={message.content}
-									name={message.name}
-									role={message.role}
-									setContent={handleSetMessageContent(i)}
-									setName={handleSetMessageName(i)}
-									setRole={handleSetMessageRole(i)}
-									handleDeleteMessage={() => {
-										handleDeleteMessage(i);
-									}}
-								/>
-							),
-						)}
-						<div className="self-center">
-							<button
-								className="btn btn-ghost text-blue-500"
-								onClick={handleAddMessage}
-							>
-								<Plus
-									height={Dimensions.Ten}
-									width={Dimensions.Ten}
-								/>
-							</button>
-						</div>
-					</div>
-				</SortableContext>
-			</DnDContext>
+						<Plus height={Dimensions.Ten} width={Dimensions.Ten} />
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 }

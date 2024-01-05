@@ -22,14 +22,44 @@ import {
 	usePromptConfigs,
 } from '@/stores/api-store';
 import {
+	PromptConfigWizardStore,
 	usePromptWizardStore,
 	WizardStage,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
+import {
+	CoherePromptMessage,
+	ModelVendor,
+	OpenAIContentMessage,
+} from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
 const stepColor = 'step-secondary';
 const stepper = Object.values(WizardStage).filter((v) => typeof v === 'number');
+
+function shouldAllowContinue(store: PromptConfigWizardStore) {
+	if (!store.configName.length) {
+		return false;
+	}
+
+	if (store.wizardStage === 1) {
+		if (!store.messages.length) {
+			return false;
+		}
+		if (store.modelVendor === ModelVendor.Cohere) {
+			const [message] = store.messages as CoherePromptMessage[];
+			return message.message.trim().length;
+		} else {
+			return store.messages.every(
+				(message) =>
+					(message as OpenAIContentMessage).content.trim().length,
+			);
+		}
+	}
+
+	return true;
+}
+
 export default function PromptConfigCreateWizard({
 	params: { applicationId, projectId },
 }: {
@@ -278,10 +308,7 @@ export default function PromptConfigCreateWizard({
 											className="btn btn-primary"
 											disabled={
 												!nameIsValid ||
-												(store.wizardStage === 0 &&
-													!store.configName.length) ||
-												(store.wizardStage === 1 &&
-													!store.messages.length)
+												!shouldAllowContinue(store)
 											}
 										>
 											{t('continueButtonText')}
