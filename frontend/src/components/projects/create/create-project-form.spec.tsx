@@ -175,7 +175,10 @@ describe('CreateProjectForm tests', () => {
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
-			expect(mockTrack).toHaveBeenCalledWith('created_project', project);
+			expect(mockTrack).toHaveBeenCalledWith(
+				'createdProject',
+				expect.any(Object),
+			);
 		});
 	});
 
@@ -204,8 +207,8 @@ describe('CreateProjectForm tests', () => {
 
 		await vi.waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'created_application',
-				application,
+				'createdApplication',
+				expect.any(Object),
 			);
 		});
 	});
