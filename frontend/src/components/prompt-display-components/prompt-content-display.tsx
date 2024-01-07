@@ -27,7 +27,7 @@ const openAIRoleElementMapper: Record<
 			<span
 				className={`text-${openAIRoleColorMap.system}`}
 			>{`${OpenAIPromptMessageRole.System} message`}</span>
-			]: ]: <span className="text-base-content">{message}</span>
+			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
 	[OpenAIPromptMessageRole.User]: ({ message }) => (
@@ -73,12 +73,14 @@ export function PromptContentDisplay<T extends ModelVendor>({
 
 	return (
 		<div data-testid="prompt-content-display-container">
-			<h2
-				className="card-header"
-				data-testid="prompt-content-display-title"
-			>
-				{t('promptTemplate')}
-			</h2>
+			<div className="flex justify-between">
+				<h2
+					className="card-header"
+					data-testid="prompt-content-display-title"
+				>
+					{t('promptTemplate')}
+				</h2>
+			</div>
 			<div
 				className="rounded-data-card"
 				data-testid="prompt-content-display-messages"
