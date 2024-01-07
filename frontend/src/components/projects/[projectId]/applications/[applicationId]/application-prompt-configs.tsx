@@ -9,9 +9,7 @@ import { ApplicationPromptConfigsTable } from '@/components/projects/[projectId]
 import { Navigation } from '@/constants';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { usePromptConfigs, useSetPromptConfigs } from '@/stores/api-store';
-import { useShowSuccess } from '@/stores/toast-store';
 import { Application } from '@/types';
-import { copyToClipboard } from '@/utils/helpers';
 import { setRouteParams } from '@/utils/navigation';
 
 export function ApplicationPromptConfigs({
@@ -28,7 +26,6 @@ export function ApplicationPromptConfigs({
 	const promptConfigs = usePromptConfigs();
 
 	const handleError = useHandleError();
-	const showSuccess = useShowSuccess();
 
 	const { isLoading } = useSWR(
 		{
@@ -61,10 +58,6 @@ export function ApplicationPromptConfigs({
 						applicationId={application.id}
 						promptConfigs={promptConfigs[application.id] ?? []}
 						projectId={projectId}
-						handlePromptConfigIdCopy={(promptConfigId: string) => {
-							copyToClipboard(promptConfigId);
-							showSuccess(t('copiedToClipboard'));
-						}}
 					/>
 				)}
 				<button

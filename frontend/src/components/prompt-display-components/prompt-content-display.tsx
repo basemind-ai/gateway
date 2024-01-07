@@ -21,11 +21,11 @@ const openAIRoleElementMapper: Record<
 			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
-	[OpenAIPromptMessageRole.Function]: ({ message }) => (
+	[OpenAIPromptMessageRole.Tool]: ({ message }) => (
 		<span>
 			[
-			<span className={`text-${openAIRoleColorMap.function}`}>
-				{`${OpenAIPromptMessageRole.Function} message`}
+			<span className={`text-${openAIRoleColorMap.tool}`}>
+				{`${OpenAIPromptMessageRole.Tool} message`}
 			</span>
 			]: <span className="text-base-content">{message}</span>
 		</span>

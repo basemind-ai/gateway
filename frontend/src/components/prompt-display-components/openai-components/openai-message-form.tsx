@@ -1,11 +1,14 @@
 import { useTranslations } from 'next-intl';
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowDown, ArrowUp, XCircle } from 'react-bootstrap-icons';
 
+import { TooltipIcon } from '@/components/input-label-with-tooltip';
 import { Dimensions } from '@/constants';
 import { openAIRoleColorMap } from '@/constants/models';
 import { OpenAIContentMessageRole, OpenAIPromptMessageRole } from '@/types';
 import { handleChange } from '@/utils/events';
+
+const messageNameRegex = /^[\w-]{1,64}$/;
 
 export function OpenAIMessageForm({
 	role,
@@ -35,6 +38,18 @@ export function OpenAIMessageForm({
 	const t = useTranslations('openaiPromptTemplate');
 
 	const roleColor = `text-${openAIRoleColorMap[role]}`;
+
+	const [nameIsValid, setNameIsValid] = useState(true);
+
+	const handleSetName = (name: string) => {
+		const valid = !name || messageNameRegex.test(name);
+
+		if (valid) {
+			setName(name);
+		}
+
+		setNameIsValid(valid);
+	};
 
 	return (
 		<div
@@ -87,8 +102,7 @@ export function OpenAIMessageForm({
 							{Object.entries(OpenAIPromptMessageRole)
 								.filter(
 									(v) =>
-										v[1] !==
-										OpenAIPromptMessageRole.Function,
+										v[1] !== OpenAIPromptMessageRole.Tool,
 								)
 								.map(([key, value]) => (
 									<option
@@ -106,8 +120,12 @@ export function OpenAIMessageForm({
 							className="label"
 							data-testid="openai-message-name-input-label"
 						>
-							<span className="label-text">
+							<span className="label-text flex gap-1">
 								{t('messageName')}
+								<TooltipIcon
+									tooltip={t('messageNameTooltip')}
+									dataTestId="openai-message-name-tooltip"
+								/>
 							</span>
 							<span className="label-text-alt">
 								{t('optional')}
@@ -116,11 +134,22 @@ export function OpenAIMessageForm({
 						<input
 							type="text"
 							placeholder={t('messageNameInputPlaceholder')}
-							className="input input-bordered input-sm rounded bg-neutral text-neutral-content text-xs"
+							className={`input input-bordered input-sm rounded bg-neutral text-neutral-content text-xs ${
+								!nameIsValid && 'input-error'
+							}`}
 							data-testid="openai-message-name-input"
-							value={name ?? ''}
-							onChange={handleChange(setName)}
+							value={name}
+							maxLength={64}
+							onChange={handleChange(handleSetName)}
 						/>
+						{!nameIsValid && (
+							<span
+								className="text-center text-error text-xs"
+								data-testid="invalid-name-error-message"
+							>
+								{t('invalidNameMessage')}
+							</span>
+						)}
 					</div>
 				</div>
 				<div

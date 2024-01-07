@@ -26,8 +26,9 @@ export function EntityNameInput({
 	const t = useTranslations('entityNameInput');
 
 	const initialValue = useRef(value);
-	const isNameValid = validateValue(value);
-	const isLengthValid = value.trim().length >= MIN_NAME_LENGTH;
+	const isEmpty = !initialValue.current && !value;
+	const isNameValid = isEmpty || validateValue(value);
+	const isLengthValid = isEmpty || value.trim().length >= MIN_NAME_LENGTH;
 
 	useEffect(() => {
 		if (setIsValid) {

@@ -20,7 +20,7 @@ export function ProjectApplicationsListTable({
 
 	return (
 		<table
-			className="custom-table mb-16"
+			className="table mb-16"
 			data-testid="project-application-list-table-container"
 		>
 			<thead>

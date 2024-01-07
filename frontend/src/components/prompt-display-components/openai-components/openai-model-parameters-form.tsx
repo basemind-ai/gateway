@@ -69,7 +69,7 @@ export function OpenAIModelParametersForm({
 			max: 1,
 			min: 0,
 			setter: setTopP,
-			step: 0.1,
+			step: 0.01,
 			toolTipText: t('openaiParametersTopPTooltip'),
 			value: topP,
 		},

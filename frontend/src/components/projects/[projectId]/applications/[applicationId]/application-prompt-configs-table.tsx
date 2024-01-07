@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { CheckCircle, Front, PencilFill, Search } from 'react-bootstrap-icons';
+import { PencilFill, Search } from 'react-bootstrap-icons';
 
 import { Navigation, PromptConfigPageTab } from '@/constants';
 import {
@@ -14,10 +14,8 @@ export function ApplicationPromptConfigsTable({
 	promptConfigs,
 	projectId,
 	applicationId,
-	handlePromptConfigIdCopy,
 }: {
 	applicationId: string;
-	handlePromptConfigIdCopy: (promptConfigId: string) => void;
 	projectId: string;
 	promptConfigs: PromptConfig<any>[];
 }) {
@@ -46,16 +44,14 @@ export function ApplicationPromptConfigsTable({
 
 	return (
 		<table
-			className="custom-table mb-16"
+			className="table mb-4"
 			data-testid="application-prompt-configs-table-container"
 		>
 			<thead>
 				<tr>
-					<th>{t('default')}</th>
 					<th>{t('name')}</th>
 					<th>{t('vendor')}</th>
 					<th>{t('model')}</th>
-					<th>ID</th>
 					<th>{t('test')}</th>
 					<th>{t('edit')}</th>
 				</tr>
@@ -74,13 +70,6 @@ export function ApplicationPromptConfigsTable({
 							data-testid="application-prompt-configs-table-row"
 						>
 							<td>
-								<div className="pl-3">
-									{isDefault ? (
-										<CheckCircle className="w-3.5 h-3.5 text-info" />
-									) : null}
-								</div>
-							</td>
-							<td>
 								<button
 									data-testid="application-prompt-configs-table-config-name-button"
 									className="btn-link"
@@ -91,7 +80,11 @@ export function ApplicationPromptConfigsTable({
 										});
 									}}
 								>
-									{name}
+									<span>
+										{isDefault
+											? `${name} (${t('defaultConfig')})`
+											: name}
+									</span>
 								</button>
 							</td>
 							<td>
@@ -107,18 +100,6 @@ export function ApplicationPromptConfigsTable({
 								<span className="text-info">
 									{modelTypeToLocaleMap[modelType]}
 								</span>
-							</td>
-							<td>
-								<button
-									data-testid="application-prompt-configs-table-config-id-copy-button"
-									onClick={() => {
-										handlePromptConfigIdCopy(
-											promptConfigId,
-										);
-									}}
-								>
-									<Front className="w-3.5 h-3.5 text-secondary" />
-								</button>
 							</td>
 							<td>
 								<button

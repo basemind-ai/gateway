@@ -529,6 +529,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setParameters(promptConfig[0].modelParameters);
 			store.setModelType(promptConfig[0].modelType);
 			store.setModelVendor(promptConfig[0].modelVendor);
+			store.setMessages([]);
 		});
 
 		render(
@@ -537,41 +538,33 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		await waitFor(() => {
 			expect(mockReady).toHaveBeenCalled();
 		});
-		await waitFor(() => {
-			expect(mockPage).toBeCalledWith(
-				'createConfigWizard-stage0',
-				expect.any(Object),
-			);
+
+		expect(mockPage).toBeCalledWith('createConfigWizard', {
+			path: '',
+			stage: 0,
+			userId: undefined,
 		});
 
 		act(() => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard-stage1`,
-				expect.any(Object),
-			);
+			expect(mockPage).toHaveBeenCalledWith(`createConfigWizard`, {
+				path: '',
+				stage: 1,
+				userId: undefined,
+			});
 		});
 
 		act(() => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard-stage2`,
-				expect.any(Object),
-			);
-		});
-
-		act(() => {
-			store.setNextWizardStage();
-		});
-		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard-stage3`,
-				expect.any(Object),
-			);
+			expect(mockPage).toHaveBeenCalledWith(`createConfigWizard`, {
+				path: '',
+				stage: 2,
+				userId: undefined,
+			});
 		});
 	});
 

@@ -47,24 +47,6 @@ div#__next > div {
 }
 
 @layer components {
-	.custom-table {
-		@apply table-auto p-4 w-full border-b border-neutral;
-
-		th {
-			@apply text-sm text-neutral-content font-bold pb-2 text-center;
-		}
-
-		tbody {
-			tr {
-				@apply text-center text-xs;
-			}
-		}
-
-		td {
-			@apply text-neutral-content;
-		}
-	}
-
 	.card-divider {
 		@apply mt-8;
 	}

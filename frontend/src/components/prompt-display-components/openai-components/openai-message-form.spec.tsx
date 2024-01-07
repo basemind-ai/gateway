@@ -203,6 +203,45 @@ describe('OpenAIMessageForm', () => {
 		expect(setName).toHaveBeenCalledWith('msg-2');
 	});
 
+	it('should show name error message for invalid name', async () => {
+		const name = '';
+		const setName = vi.fn();
+
+		render(
+			<OpenAIMessageForm
+				role={OpenAIPromptMessageRole.User}
+				setRole={vi.fn()}
+				name={name}
+				setName={setName}
+				content={''}
+				setContent={vi.fn()}
+				handleDeleteMessage={vi.fn()}
+				handleArrowUp={vi.fn()}
+				handleArrowDown={vi.fn()}
+				showArrowUp={true}
+				showArrowDown={true}
+			/>,
+		);
+
+		await waitFor(() => {
+			const container = screen.getByTestId(`openai-message-container`);
+			expect(container).toBeInTheDocument();
+		});
+
+		const messageNameInput: HTMLInputElement = screen.getByTestId(
+			`openai-message-name-input`,
+		);
+		expect(messageNameInput).toHaveValue('');
+
+		fireEvent.change(messageNameInput, { target: { value: 'msg 2@' } });
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('invalid-name-error-message'),
+			).toBeInTheDocument();
+		});
+	});
+
 	it('should set message content', async () => {
 		const content = '';
 		const setContent = vi.fn();

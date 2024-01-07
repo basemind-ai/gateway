@@ -20,7 +20,7 @@ describe('predicate utils tests', () => {
 			const message = {
 				functionArguments: ['a', 'b'],
 				name: 'myFunction',
-				role: OpenAIPromptMessageRole.Function,
+				role: OpenAIPromptMessageRole.Tool,
 			} satisfies OpenAIFunctionMessage;
 			expect(isOpenAIContentMessage(message)).toBe(false);
 		});

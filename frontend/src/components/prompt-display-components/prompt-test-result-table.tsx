@@ -34,7 +34,7 @@ export function PromptTestResultTable<T extends ModelVendor>({
 
 	return (
 		<div data-testid="prompt-test-result-table">
-			<table className="custom-table w-full mb-5 text-xs">
+			<table className="table w-full mb-5 text-xs">
 				<thead>
 					<tr>
 						<th>{t('modelVendor')}</th>

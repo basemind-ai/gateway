@@ -1,20 +1,18 @@
 import {
 	CohereMessageFactory,
-	OpenAIPromptMessageFactory,
+	OpenAIContentMessageFactory,
 } from 'tests/factories';
 import { getLocaleNamespace, render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
-import { ModelVendor, OpenAIPromptMessage } from '@/types';
-import { isOpenAIContentMessage } from '@/utils/predicates';
+import { ModelVendor } from '@/types';
 
 describe('PromptContentDisplay', () => {
 	const namespace = getLocaleNamespace('createConfigWizard');
 
 	it('should display an array of openAI messages correctly', () => {
-		const messages: OpenAIPromptMessage[] =
-			OpenAIPromptMessageFactory.batchSync(100);
+		const messages = OpenAIContentMessageFactory.batchSync(10);
 
 		render(
 			<PromptContentDisplay
@@ -27,12 +25,10 @@ describe('PromptContentDisplay', () => {
 			'prompt-content-display-messages',
 		);
 		expect(messageContainer).toBeInTheDocument();
-		expect(messageContainer.children.length).toBe(100);
+		expect(messageContainer.children.length).toBe(10);
 
 		for (const [i, message] of messages.entries()) {
-			const content = `[${message.role} message]: ${
-				isOpenAIContentMessage(message) ? message.content : message.name
-			}`;
+			const content = `[${message.role} message]: ${message.content}`;
 			expect(content).toBe(messageContainer.children[i].textContent);
 		}
 	});

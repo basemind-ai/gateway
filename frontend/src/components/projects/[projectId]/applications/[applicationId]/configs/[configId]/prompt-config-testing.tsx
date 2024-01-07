@@ -155,7 +155,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 
 	useEffect(() => {
 		if (initialized) {
-			page('config_testing', {
+			page('configTesting', {
 				applicationId,
 				projectId,
 				promptConfigId: promptConfig.id,

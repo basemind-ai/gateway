@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { memo, useEffect, useState } from 'react';
-import { Gear, KeyFill, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 
 import { Navbar } from '@/components/navbar';
 import { ApplicationAnalytics } from '@/components/projects/[projectId]/applications/[applicationId]/application-analytics';
@@ -38,11 +38,6 @@ export default function Application({
 			text: t('overview'),
 		},
 		{
-			icon: <KeyFill className="w-3.5 h-3.5" />,
-			id: ApplicationPageTabNames.API_KEYS,
-			text: t('apiKeys'),
-		},
-		{
 			icon: <Gear className="w-3.5 h-3.5" />,
 			id: ApplicationPageTabNames.SETTINGS,
 			text: t('settings'),
@@ -66,17 +61,15 @@ export default function Application({
 					application={application}
 					projectId={projectId}
 				/>
+				<ApplicationApiKeys
+					application={application}
+					projectId={projectId}
+				/>
 				<ApplicationPromptConfigs
 					application={application}
 					projectId={projectId}
 				/>
 			</>
-		)),
-		[ApplicationPageTabNames.API_KEYS]: memo(() => (
-			<ApplicationApiKeys
-				application={application}
-				projectId={projectId}
-			/>
 		)),
 		[ApplicationPageTabNames.SETTINGS]: memo(() => (
 			<>

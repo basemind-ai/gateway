@@ -16,23 +16,12 @@ export function OpenAIPromptTemplateForm({
 	messages: OpenAIContentMessage[];
 	setMessages: (messages: OpenAIContentMessage[]) => void;
 }) {
-	const [formMessages, setFormMessages] = useState(messages);
-
 	const cursor = 'cursor-grabbing';
 
-	useEffect(() => {
-		setMessages(
-			formMessages.map(({ name, content, role, templateVariables }) => ({
-				content,
-				name,
-				role,
-				templateVariables,
-			})),
-		);
-	}, [formMessages]);
+	const [formMessages, setFormMessages] = useState([...messages]);
 
 	useEffect(() => {
-		if (!Object.keys(formMessages).length) {
+		if (!formMessages.length) {
 			setFormMessages([
 				{
 					content: '',
@@ -42,23 +31,30 @@ export function OpenAIPromptTemplateForm({
 		}
 	}, [formMessages]);
 
+	useEffect(() => {
+		setMessages([...formMessages]);
+	}, [formMessages]);
+
 	const handleSetMessageContent = (index: number) => (content: string) => {
-		const copiedFormMessages = [...formMessages];
-		copiedFormMessages[index].content = content;
-		setFormMessages(copiedFormMessages);
+		const copied = [...formMessages];
+		copied[index].content = content;
+
+		setFormMessages(copied);
 	};
 
 	const handleSetMessageName = (index: number) => (name: string) => {
-		const copiedFormMessages = [...formMessages];
-		copiedFormMessages[index].name = name;
-		setFormMessages(copiedFormMessages);
+		const copied = [...formMessages];
+		copied[index].name = name;
+
+		setFormMessages(copied);
 	};
 
 	const handleSetMessageRole =
 		(index: number) => (role: OpenAIContentMessageRole) => {
-			const copiedFormMessages = [...formMessages];
-			copiedFormMessages[index].role = role;
-			setFormMessages(copiedFormMessages);
+			const copied = [...formMessages];
+			copied[index].role = role;
+
+			setFormMessages(copied);
 		};
 
 	const handleAddMessage = () => {
@@ -76,19 +72,19 @@ export function OpenAIPromptTemplateForm({
 	};
 
 	const handleArrowUp = (index: number) => {
-		const copiedFormMessages = [...formMessages];
-		const replaced = copiedFormMessages[index];
-		copiedFormMessages[index] = copiedFormMessages[index - 1];
-		copiedFormMessages[index - 1] = replaced;
-		setFormMessages(copiedFormMessages);
+		const copied = [...formMessages];
+		const replaced = copied[index];
+		copied[index] = copied[index - 1];
+		copied[index - 1] = replaced;
+		setFormMessages(copied);
 	};
 
 	const handleArrowDown = (index: number) => {
-		const copiedFormMessages = [...formMessages];
-		const replaced = copiedFormMessages[index];
-		copiedFormMessages[index] = copiedFormMessages[index + 1];
-		copiedFormMessages[index + 1] = replaced;
-		setFormMessages(copiedFormMessages);
+		const copied = [...formMessages];
+		const replaced = copied[index];
+		copied[index] = copied[index + 1];
+		copied[index + 1] = replaced;
+		setFormMessages(copied);
 	};
 
 	return (
@@ -96,9 +92,7 @@ export function OpenAIPromptTemplateForm({
 			<div className={`flex flex-col gap-4 ${cursor}`}>
 				{formMessages.map((message, i) => (
 					<OpenAIMessageForm
-						key={`${i}${message.role}${message.content}${
-							message.name ?? ''
-						}`}
+						key={i}
 						content={message.content}
 						name={message.name}
 						role={message.role}

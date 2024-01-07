@@ -145,9 +145,6 @@ importers:
             firebase:
                 specifier: ^10.7.1
                 version: 10.7.1
-            nanoid:
-                specifier: ^5.0.4
-                version: 5.0.4
             next:
                 specifier: 14.0.4
                 version: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7)
@@ -193,7 +190,7 @@ importers:
                 version: 14.0.4
             '@svgr/webpack':
                 specifier: ^8.1.0
-                version: 8.1.0(typescript@5.3.3)
+                version: 8.1.0
             '@tailwindcss/forms':
                 specifier: ^0.5.7
                 version: 0.5.7(tailwindcss@3.4.1)
@@ -205,7 +202,7 @@ importers:
                 version: 9.3.3
             '@testing-library/jest-dom':
                 specifier: ^6.2.0
-                version: 6.2.0(vitest@1.1.3)
+                version: 6.2.0
             '@testing-library/react':
                 specifier: ^14.1.2
                 version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
@@ -244,7 +241,7 @@ importers:
                 version: 1.69.7
             tailwindcss:
                 specifier: 3.4.1
-                version: 3.4.1(ts-node@10.9.2)
+                version: 3.4.1
             vite-plugin-magical-svg:
                 specifier: ^1.1.1
                 version: 1.1.1(vite@5.0.11)
@@ -5581,7 +5578,7 @@ packages:
             '@svgr/babel-plugin-transform-svg-component': 8.0.0(@babel/core@7.23.7)
         dev: true
 
-    /@svgr/core@8.1.0(typescript@5.3.3):
+    /@svgr/core@8.1.0:
         resolution:
             {
                 integrity: sha512-8QqtOQT5ACVlmsvKOJNEaWmRPmcojMOzCz4Hs2BGG/toAp/K38LcsMRyLp349glq5AzJbCEeimEoxaX6v/fLrA==,
@@ -5591,7 +5588,7 @@ packages:
             '@babel/core': 7.23.7
             '@svgr/babel-preset': 8.1.0(@babel/core@7.23.7)
             camelcase: 6.3.0
-            cosmiconfig: 8.3.6(typescript@5.3.3)
+            cosmiconfig: 8.3.6
             snake-case: 3.0.4
         transitivePeerDependencies:
             - supports-color
@@ -5620,14 +5617,14 @@ packages:
         dependencies:
             '@babel/core': 7.23.7
             '@svgr/babel-preset': 8.1.0(@babel/core@7.23.7)
-            '@svgr/core': 8.1.0(typescript@5.3.3)
+            '@svgr/core': 8.1.0
             '@svgr/hast-util-to-babel-ast': 8.0.0
             svg-parser: 2.0.4
         transitivePeerDependencies:
             - supports-color
         dev: true
 
-    /@svgr/plugin-svgo@8.1.0(@svgr/core@8.1.0)(typescript@5.3.3):
+    /@svgr/plugin-svgo@8.1.0(@svgr/core@8.1.0):
         resolution:
             {
                 integrity: sha512-Ywtl837OGO9pTLIN/onoWLmDQ4zFUycI1g76vuKGEz6evR/ZTJlJuz3G/fIkb6OVBJ2g0o6CGJzaEjfmEo3AHA==,
@@ -5636,15 +5633,15 @@ packages:
         peerDependencies:
             '@svgr/core': '*'
         dependencies:
-            '@svgr/core': 8.1.0(typescript@5.3.3)
-            cosmiconfig: 8.3.6(typescript@5.3.3)
+            '@svgr/core': 8.1.0
+            cosmiconfig: 8.3.6
             deepmerge: 4.3.1
             svgo: 3.2.0
         transitivePeerDependencies:
             - typescript
         dev: true
 
-    /@svgr/webpack@8.1.0(typescript@5.3.3):
+    /@svgr/webpack@8.1.0:
         resolution:
             {
                 integrity: sha512-LnhVjMWyMQV9ZmeEy26maJk+8HTIbd59cH4F2MJ439k9DqejRisfFNGAPvRYlKETuh9LrImlS8aKsBgKjMA8WA==,
@@ -5656,9 +5653,9 @@ packages:
             '@babel/preset-env': 7.23.7(@babel/core@7.23.7)
             '@babel/preset-react': 7.23.3(@babel/core@7.23.7)
             '@babel/preset-typescript': 7.23.3(@babel/core@7.23.7)
-            '@svgr/core': 8.1.0(typescript@5.3.3)
+            '@svgr/core': 8.1.0
             '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0)
-            '@svgr/plugin-svgo': 8.1.0(@svgr/core@8.1.0)(typescript@5.3.3)
+            '@svgr/plugin-svgo': 8.1.0(@svgr/core@8.1.0)
         transitivePeerDependencies:
             - supports-color
             - typescript
@@ -5682,7 +5679,7 @@ packages:
             tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
         dependencies:
             mini-svg-data-uri: 1.4.4
-            tailwindcss: 3.4.1(ts-node@10.9.2)
+            tailwindcss: 3.4.1
         dev: true
 
     /@tailwindcss/typography@0.5.10(tailwindcss@3.4.1):
@@ -5697,7 +5694,7 @@ packages:
             lodash.isplainobject: 4.0.6
             lodash.merge: 4.6.2
             postcss-selector-parser: 6.0.10
-            tailwindcss: 3.4.1(ts-node@10.9.2)
+            tailwindcss: 3.4.1
         dev: true
 
     /@testing-library/dom@9.3.3:
@@ -5717,7 +5714,7 @@ packages:
             pretty-format: 27.5.1
         dev: true
 
-    /@testing-library/jest-dom@6.2.0(vitest@1.1.3):
+    /@testing-library/jest-dom@6.2.0:
         resolution:
             {
                 integrity: sha512-+BVQlJ9cmEn5RDMUS8c2+TU6giLvzaHZ8sU/x0Jj7fk+6/46wPdwlgOPcpxS17CjcanBi/3VmGMqVr2rmbUmNw==,
@@ -5746,7 +5743,6 @@ packages:
             dom-accessibility-api: 0.6.3
             lodash: 4.17.21
             redent: 3.0.0
-            vitest: 1.1.3(@types/node@20.10.6)
         dev: true
 
     /@testing-library/react@14.1.2(react-dom@18.2.0)(react@18.2.0):
@@ -6384,7 +6380,7 @@ packages:
             '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.7)
             '@types/babel__core': 7.20.5
             react-refresh: 0.14.0
-            vite: 5.0.11(@types/node@20.10.6)(sass@1.69.7)
+            vite: 5.0.11(sass@1.69.7)
         transitivePeerDependencies:
             - supports-color
         dev: true
@@ -7610,6 +7606,24 @@ packages:
             }
         dependencies:
             browserslist: 4.22.2
+        dev: true
+
+    /cosmiconfig@8.3.6:
+        resolution:
+            {
+                integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==,
+            }
+        engines: { node: '>=14' }
+        peerDependencies:
+            typescript: '>=4.9.5'
+        peerDependenciesMeta:
+            typescript:
+                optional: true
+        dependencies:
+            import-fresh: 3.3.0
+            js-yaml: 4.1.0
+            parse-json: 5.2.0
+            path-type: 4.0.0
         dev: true
 
     /cosmiconfig@8.3.6(typescript@5.3.3):
@@ -11034,15 +11048,6 @@ packages:
         engines: { node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1 }
         hasBin: true
 
-    /nanoid@5.0.4:
-        resolution:
-            {
-                integrity: sha512-vAjmBf13gsmhXSgBrtIclinISzFFy22WwCYoyilZlsrRXNIHSwgFQ1bEdjRwMT3aoadeIF6HMuDRlOxzfXV8ig==,
-            }
-        engines: { node: ^18 || >=20 }
-        hasBin: true
-        dev: false
-
     /natural-compare-lite@1.4.0:
         resolution:
             {
@@ -11804,7 +11809,7 @@ packages:
             postcss: 8.4.33
         dev: true
 
-    /postcss-load-config@4.0.2(postcss@8.4.33)(ts-node@10.9.2):
+    /postcss-load-config@4.0.2(postcss@8.4.33):
         resolution:
             {
                 integrity: sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==,
@@ -11821,7 +11826,6 @@ packages:
         dependencies:
             lilconfig: 3.0.0
             postcss: 8.4.33
-            ts-node: 10.9.2(@types/node@20.10.6)(typescript@5.3.3)
             yaml: 2.3.4
         dev: true
 
@@ -13216,7 +13220,7 @@ packages:
             tslib: 2.6.2
         dev: true
 
-    /tailwindcss@3.4.1(ts-node@10.9.2):
+    /tailwindcss@3.4.1:
         resolution:
             {
                 integrity: sha512-qAYmXRfk3ENzuPBakNK0SRrUDipP8NQnEY6772uDhflcQz5EhRdD7JNZxyrFHVQNCwULPBn6FNPp9brpO7ctcA==,
@@ -13241,7 +13245,7 @@ packages:
             postcss: 8.4.33
             postcss-import: 15.1.0(postcss@8.4.33)
             postcss-js: 4.0.1(postcss@8.4.33)
-            postcss-load-config: 4.0.2(postcss@8.4.33)(ts-node@10.9.2)
+            postcss-load-config: 4.0.2(postcss@8.4.33)
             postcss-nested: 6.0.1(postcss@8.4.33)
             postcss-selector-parser: 6.0.15
             resolve: 1.22.8
@@ -13968,7 +13972,7 @@ packages:
         dependencies:
             magic-string: 0.30.5
             svgo: 3.2.0
-            vite: 5.0.11(@types/node@20.10.6)(sass@1.69.7)
+            vite: 5.0.11(sass@1.69.7)
             xml2js: 0.6.2
         dev: true
 
@@ -14023,6 +14027,45 @@ packages:
                 optional: true
         dependencies:
             '@types/node': 20.10.6
+            esbuild: 0.19.11
+            postcss: 8.4.33
+            rollup: 4.9.4
+            sass: 1.69.7
+        optionalDependencies:
+            fsevents: 2.3.3
+        dev: true
+
+    /vite@5.0.11(sass@1.69.7):
+        resolution:
+            {
+                integrity: sha512-XBMnDjZcNAw/G1gEiskiM1v6yzM4GE5aMGvhWTlHAYYhxb7S3/V1s3m2LDHa8Vh6yIWYYB0iJwsEaS523c4oYA==,
+            }
+        engines: { node: ^18.0.0 || >=20.0.0 }
+        hasBin: true
+        peerDependencies:
+            '@types/node': ^18.0.0 || >=20.0.0
+            less: '*'
+            lightningcss: ^1.21.0
+            sass: '*'
+            stylus: '*'
+            sugarss: '*'
+            terser: ^5.4.0
+        peerDependenciesMeta:
+            '@types/node':
+                optional: true
+            less:
+                optional: true
+            lightningcss:
+                optional: true
+            sass:
+                optional: true
+            stylus:
+                optional: true
+            sugarss:
+                optional: true
+            terser:
+                optional: true
+        dependencies:
             esbuild: 0.19.11
             postcss: 8.4.33
             rollup: 4.9.4

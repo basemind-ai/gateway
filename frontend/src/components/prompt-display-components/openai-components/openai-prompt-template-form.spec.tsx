@@ -22,15 +22,11 @@ describe('OpenAIPromptTemplateForm test', () => {
 			).toBeInTheDocument();
 		});
 
-		expect(setMessages).toHaveBeenCalledWith([]);
-
 		await waitFor(() => {
 			expect(setMessages).toHaveBeenCalledWith([
 				{
 					content: '',
-					name: undefined,
 					role: 'user',
-					templateVariables: undefined,
 				},
 			]);
 		});
@@ -41,41 +37,33 @@ describe('OpenAIPromptTemplateForm test', () => {
 
 		fireEvent.click(addMessageButton);
 
-		expect(setMessages).toHaveBeenCalledWith([
-			{
-				content: '',
-				name: undefined,
-				role: 'user',
-				templateVariables: undefined,
-			},
-			{
-				content: '',
-				name: undefined,
-				role: 'user',
-				templateVariables: undefined,
-			},
-		]);
+		await waitFor(() => {
+			expect(setMessages).toHaveBeenCalledWith([
+				{
+					content: '',
+					role: 'user',
+				},
+				{
+					content: '',
+					role: 'user',
+				},
+			]);
+		});
 
 		fireEvent.click(addMessageButton);
 
 		expect(setMessages).toHaveBeenCalledWith([
 			{
 				content: '',
-				name: undefined,
 				role: 'user',
-				templateVariables: undefined,
 			},
 			{
 				content: '',
-				name: undefined,
 				role: 'user',
-				templateVariables: undefined,
 			},
 			{
 				content: '',
-				name: undefined,
 				role: 'user',
-				templateVariables: undefined,
 			},
 		]);
 
@@ -208,10 +196,10 @@ describe('OpenAIPromptTemplateForm test', () => {
 			).toBeInTheDocument();
 		});
 
-		const input = screen.getAllByTestId(
-			'openai-message-content-textarea',
-		)[0];
-		fireEvent.change(input, { target: { value: 'Test' } });
+		const inputs = screen.getAllByTestId('openai-message-content-textarea');
+		expect(inputs).toHaveLength(3);
+
+		fireEvent.change(inputs[0], { target: { value: 'Test' } });
 
 		await waitFor(() => {
 			expect(setMessages).toHaveBeenCalledWith([

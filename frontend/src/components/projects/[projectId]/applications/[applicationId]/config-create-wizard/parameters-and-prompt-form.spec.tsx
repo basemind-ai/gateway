@@ -1,11 +1,12 @@
 import {
+	CohereMessageFactory,
 	OpenAIPromptMessageFactory,
 	OpenAIPromptParametersFactory,
 } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
-import { ModelVendor, OpenAIModelType } from '@/types';
+import { CohereModelType, ModelVendor, OpenAIModelType } from '@/types';
 
 describe('PromptConfigParametersAndPromptForm tests', () => {
 	it('should render the OpenAIModelParametersForm and OpenAIPromptTemplateForm when is OpenAI', async () => {
@@ -44,8 +45,8 @@ describe('PromptConfigParametersAndPromptForm tests', () => {
 		render(
 			<PromptConfigParametersAndPromptForm
 				modelVendor={ModelVendor.Cohere}
-				modelType={OpenAIModelType.Gpt35Turbo}
-				messages={OpenAIPromptMessageFactory.batchSync(2)}
+				modelType={CohereModelType.Command}
+				messages={CohereMessageFactory.batchSync(2)}
 				existingParameters={OpenAIPromptParametersFactory.buildSync()}
 				setParameters={vi.fn()}
 				setMessages={vi.fn()}

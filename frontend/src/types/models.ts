@@ -24,7 +24,7 @@ export interface OpenAIContentMessage {
 export interface OpenAIFunctionMessage {
 	functionArguments: string[];
 	name: string;
-	role: OpenAIPromptMessageRole.Function;
+	role: OpenAIPromptMessageRole.Tool;
 	templateVariables?: string[];
 }
 

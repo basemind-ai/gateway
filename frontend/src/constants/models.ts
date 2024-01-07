@@ -55,7 +55,7 @@ export enum UnavailableModelVendor {
 
 export const openAIRoleColorMap: Record<OpenAIPromptMessageRole, string> = {
 	[OpenAIPromptMessageRole.Assistant]: 'info',
-	[OpenAIPromptMessageRole.Function]: 'accent',
+	[OpenAIPromptMessageRole.Tool]: 'accent',
 	[OpenAIPromptMessageRole.System]: 'secondary',
 	[OpenAIPromptMessageRole.User]: 'success',
 };

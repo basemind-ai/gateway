@@ -182,7 +182,7 @@ export default function PromptConfigCreateWizard({
 
 	useEffect(() => {
 		if (initialized) {
-			page(`createConfigWizard-stage${store.wizardStage}`);
+			page('createConfigWizard', { stage: store.wizardStage });
 		}
 	}, [initialized, store.wizardStage]);
 
