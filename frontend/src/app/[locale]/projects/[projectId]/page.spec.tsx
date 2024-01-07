@@ -121,7 +121,7 @@ describe('ProjectOverview', () => {
 
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'project_overview',
+				'projectOverview',
 				expect.any(Object),
 			);
 		});

@@ -46,7 +46,7 @@ export default function Application({
 
 	useEffect(() => {
 		if (initialized) {
-			page('application_overview');
+			page('applicationOverview', { applicationId, projectId });
 		}
 	}, [initialized]);
 

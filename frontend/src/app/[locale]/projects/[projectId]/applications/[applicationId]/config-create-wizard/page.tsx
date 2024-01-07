@@ -27,11 +27,7 @@ import {
 	WizardStage,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
-import {
-	CoherePromptMessage,
-	ModelVendor,
-	OpenAIContentMessage,
-} from '@/types';
+import { CoherePromptMessage, ModelVendor, OpenAIPromptMessage } from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
 const stepColor = 'step-secondary';
@@ -51,8 +47,7 @@ function shouldAllowContinue(store: PromptConfigWizardStore) {
 			return message.message.trim().length;
 		}
 		return store.messages.every(
-			(message) =>
-				(message as OpenAIContentMessage).content.trim().length,
+			(message) => (message as OpenAIPromptMessage).content.trim().length,
 		);
 	}
 
@@ -182,7 +177,11 @@ export default function PromptConfigCreateWizard({
 
 	useEffect(() => {
 		if (initialized) {
-			page('createConfigWizard', { stage: store.wizardStage });
+			page('createConfigWizard', {
+				applicationId,
+				projectId,
+				stage: store.wizardStage,
+			});
 		}
 	}, [initialized, store.wizardStage]);
 
@@ -201,7 +200,7 @@ export default function PromptConfigCreateWizard({
 				},
 				projectId,
 			});
-			track('create_config', {
+			track('createConfig', {
 				messageLength: store.messages.length,
 				name: store.configName,
 				parameters: store.parameters,

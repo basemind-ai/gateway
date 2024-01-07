@@ -6,7 +6,6 @@ import {
 	OpenAIPromptMessageRole,
 	ProviderMessageType,
 } from '@/types';
-import { isOpenAIContentMessage } from '@/utils/predicates';
 
 const openAIRoleElementMapper: Record<
 	OpenAIPromptMessageRole,
@@ -21,15 +20,7 @@ const openAIRoleElementMapper: Record<
 			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
-	[OpenAIPromptMessageRole.Tool]: ({ message }) => (
-		<span>
-			[
-			<span className={`text-${openAIRoleColorMap.tool}`}>
-				{`${OpenAIPromptMessageRole.Tool} message`}
-			</span>
-			]: <span className="text-base-content">{message}</span>
-		</span>
-	),
+
 	[OpenAIPromptMessageRole.System]: ({ message }) => (
 		<span>
 			[
@@ -65,7 +56,7 @@ const contentMapper: Record<
 	),
 	[ModelVendor.OpenAI]: (m: ProviderMessageType<ModelVendor.OpenAI>) =>
 		openAIRoleElementMapper[m.role]({
-			message: isOpenAIContentMessage(m) ? m.content : m.name,
+			message: m.content,
 		}),
 };
 

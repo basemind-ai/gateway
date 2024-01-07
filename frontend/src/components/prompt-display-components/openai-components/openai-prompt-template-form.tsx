@@ -4,8 +4,8 @@ import { Plus } from 'react-bootstrap-icons';
 import { OpenAIMessageForm } from '@/components/prompt-display-components/openai-components/openai-message-form';
 import { Dimensions } from '@/constants';
 import {
-	OpenAIContentMessage,
 	OpenAIContentMessageRole,
+	OpenAIPromptMessage,
 	OpenAIPromptMessageRole,
 } from '@/types';
 
@@ -13,8 +13,8 @@ export function OpenAIPromptTemplateForm({
 	messages,
 	setMessages,
 }: {
-	messages: OpenAIContentMessage[];
-	setMessages: (messages: OpenAIContentMessage[]) => void;
+	messages: OpenAIPromptMessage[];
+	setMessages: (messages: OpenAIPromptMessage[]) => void;
 }) {
 	const cursor = 'cursor-grabbing';
 

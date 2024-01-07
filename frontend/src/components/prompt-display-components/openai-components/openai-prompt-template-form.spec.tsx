@@ -1,13 +1,13 @@
-import { OpenAIContentMessageFactory } from 'tests/factories';
+import { OpenAIPromptMessageFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import { OpenAIPromptTemplateForm } from '@/components/prompt-display-components/openai-components/openai-prompt-template-form';
-import { OpenAIContentMessage, OpenAIPromptMessageRole } from '@/types';
+import { OpenAIPromptMessage, OpenAIPromptMessageRole } from '@/types';
 
 describe('OpenAIPromptTemplateForm test', () => {
 	it('should render multiple messages correctly', async () => {
 		const setMessages = vi.fn();
-		const messages = [] as OpenAIContentMessage[];
+		const messages = [] as OpenAIPromptMessage[];
 
 		render(
 			<OpenAIPromptTemplateForm
@@ -98,7 +98,7 @@ describe('OpenAIPromptTemplateForm test', () => {
 
 	it('allows message reordering', async () => {
 		const setMessages = vi.fn();
-		const messages = OpenAIContentMessageFactory.batchSync(3);
+		const messages = OpenAIPromptMessageFactory.batchSync(3);
 
 		messages[0].role = OpenAIPromptMessageRole.User;
 		messages[1].role = OpenAIPromptMessageRole.System;
@@ -145,7 +145,7 @@ describe('OpenAIPromptTemplateForm test', () => {
 
 	it('allows message deletion', async () => {
 		const setMessages = vi.fn();
-		const messages = OpenAIContentMessageFactory.batchSync(3);
+		const messages = OpenAIPromptMessageFactory.batchSync(3);
 
 		messages[0].role = OpenAIPromptMessageRole.User;
 		messages[1].role = OpenAIPromptMessageRole.System;
@@ -178,7 +178,7 @@ describe('OpenAIPromptTemplateForm test', () => {
 
 	it('allows message content editing', async () => {
 		const setMessages = vi.fn();
-		const messages = OpenAIContentMessageFactory.batchSync(3);
+		const messages = OpenAIPromptMessageFactory.batchSync(3);
 
 		messages[0].role = OpenAIPromptMessageRole.User;
 		messages[1].role = OpenAIPromptMessageRole.System;
@@ -215,7 +215,7 @@ describe('OpenAIPromptTemplateForm test', () => {
 
 	it('allows message name editing', async () => {
 		const setMessages = vi.fn();
-		const messages = OpenAIContentMessageFactory.batchSync(3);
+		const messages = OpenAIPromptMessageFactory.batchSync(3);
 
 		messages[0].role = OpenAIPromptMessageRole.User;
 		messages[1].role = OpenAIPromptMessageRole.System;
@@ -250,7 +250,7 @@ describe('OpenAIPromptTemplateForm test', () => {
 
 	it('allows message role editing', async () => {
 		const setMessages = vi.fn();
-		const messages = OpenAIContentMessageFactory.batchSync(3);
+		const messages = OpenAIPromptMessageFactory.batchSync(3);
 
 		messages[0].role = OpenAIPromptMessageRole.User;
 		messages[1].role = OpenAIPromptMessageRole.System;

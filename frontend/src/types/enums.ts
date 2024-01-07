@@ -24,6 +24,5 @@ export enum AccessPermission {
 export enum OpenAIPromptMessageRole {
 	Assistant = 'assistant',
 	System = 'system',
-	Tool = 'tool',
 	User = 'user',
 }

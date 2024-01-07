@@ -1,4 +1,4 @@
-import { OpenAIContentMessage, OpenAIPromptMessageRole } from '@/types';
+import { OpenAIPromptMessage, OpenAIPromptMessageRole } from '@/types';
 import {
 	extractTemplateVariables,
 	updateTemplateVariablesRecord,
@@ -48,7 +48,7 @@ describe('model utils tests', () => {
 
 	describe('updateTemplateVariablesRecord tests', () => {
 		it('should update template variables record correctly', () => {
-			const messages: OpenAIContentMessage[] = [
+			const messages: OpenAIPromptMessage[] = [
 				{
 					content: 'Hello {user}, your order {order_id} is ready.',
 					role: OpenAIPromptMessageRole.User,
@@ -79,7 +79,7 @@ describe('model utils tests', () => {
 		});
 
 		it('should not remove existing variables with values', () => {
-			const messages: OpenAIContentMessage[] = [
+			const messages: OpenAIPromptMessage[] = [
 				{
 					content: 'Hello {user}!',
 					role: OpenAIPromptMessageRole.User,
@@ -101,7 +101,7 @@ describe('model utils tests', () => {
 		});
 
 		it('should handle an empty array of messages without errors', () => {
-			const messages: OpenAIContentMessage[] = [];
+			const messages: OpenAIPromptMessage[] = [];
 			const existingVars: Record<string, string> = {
 				some_var: 'some value',
 			};
@@ -115,7 +115,7 @@ describe('model utils tests', () => {
 		});
 
 		it('should handle messages without variables', () => {
-			const messages: OpenAIContentMessage[] = [
+			const messages: OpenAIPromptMessage[] = [
 				{
 					content: 'Just a plain message.',
 					role: OpenAIPromptMessageRole.User,

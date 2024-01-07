@@ -46,14 +46,14 @@ export function CreateProjectForm({
 				data: { name: projectName },
 			});
 			addProject(project);
-			track('created_project', project);
+			track('createdProject', { projectName: project.name });
 
 			const application = await handleCreateApplication({
 				data: { name: applicationName },
 				projectId: project.id,
 			});
 			addApplication(project.id, application);
-			track('created_application', application);
+			track('createdApplication', { projectId: project.id });
 
 			router.replace(
 				setRouteParams(Navigation.ConfigCreateWizard, {

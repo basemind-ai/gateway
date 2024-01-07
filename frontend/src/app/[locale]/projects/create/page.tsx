@@ -29,7 +29,7 @@ export default function CreateProjectPage() {
 
 	useEffect(() => {
 		if (initialized) {
-			page('create_project');
+			page('createProject');
 		}
 	}, [initialized]);
 

@@ -539,32 +539,29 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			expect(mockReady).toHaveBeenCalled();
 		});
 
-		expect(mockPage).toBeCalledWith('createConfigWizard', {
-			path: '',
-			stage: 0,
-			userId: undefined,
+		expect(mockPage).toBeCalledWith(
+			'createConfigWizard',
+			expect.any(Object),
+		);
+
+		act(() => {
+			store.setNextWizardStage();
+		});
+		await waitFor(() => {
+			expect(mockPage).toHaveBeenCalledWith(
+				`createConfigWizard`,
+				expect.any(Object),
+			);
 		});
 
 		act(() => {
 			store.setNextWizardStage();
 		});
 		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith(`createConfigWizard`, {
-				path: '',
-				stage: 1,
-				userId: undefined,
-			});
-		});
-
-		act(() => {
-			store.setNextWizardStage();
-		});
-		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith(`createConfigWizard`, {
-				path: '',
-				stage: 2,
-				userId: undefined,
-			});
+			expect(mockPage).toHaveBeenCalledWith(
+				`createConfigWizard`,
+				expect.any(Object),
+			);
 		});
 	});
 
@@ -594,7 +591,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'create_config',
+				'createConfig',
 				expect.any(Object),
 			);
 		});

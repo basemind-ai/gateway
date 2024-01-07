@@ -14,21 +14,12 @@ export type OpenAIContentMessageRole =
 	| OpenAIPromptMessageRole.User
 	| OpenAIPromptMessageRole.Assistant;
 
-export interface OpenAIContentMessage {
+export interface OpenAIPromptMessage {
 	content: string;
 	name?: string;
 	role: OpenAIContentMessageRole;
 	templateVariables?: string[];
 }
-
-export interface OpenAIFunctionMessage {
-	functionArguments: string[];
-	name: string;
-	role: OpenAIPromptMessageRole.Tool;
-	templateVariables?: string[];
-}
-
-export type OpenAIPromptMessage = OpenAIContentMessage | OpenAIFunctionMessage;
 
 // Provider Model Parameters
 

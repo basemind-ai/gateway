@@ -9,7 +9,6 @@ import {
 	CohereModelParameters,
 	CoherePromptMessage,
 	ModelVendor,
-	OpenAIContentMessage,
 	OpenAIModelParameters,
 	OpenAIModelType,
 	OpenAIPromptMessage,
@@ -49,23 +48,13 @@ export const ApplicationFactory = new TypeFactory<Application>(() => ({
 }));
 
 export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
-	(i) =>
-		i % 4 === 0
-			? {
-					functionArguments: ['a', 'b'],
-					name: 'myFunction',
-					role: 'function',
-				}
-			: OpenAIContentMessageFactory.buildSync(),
-);
-
-export const OpenAIContentMessageFactory =
-	new TypeFactory<OpenAIContentMessage>(() => ({
+	() => ({
 		content: faker.lorem.sentence(),
 		name: undefined,
 		role: TypeFactory.iterate(['user', 'system', 'assistant']),
 		templateVariables: [],
-	}));
+	}),
+);
 
 export const OpenAIPromptParametersFactory =
 	new TypeFactory<OpenAIModelParameters>(() => ({

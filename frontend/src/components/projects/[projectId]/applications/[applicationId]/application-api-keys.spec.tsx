@@ -188,7 +188,7 @@ describe('API Keys tests', () => {
 		fireEvent.click(submitBtn);
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'add_app_key',
+				'addAppKey',
 				expect.any(Object),
 			);
 		});

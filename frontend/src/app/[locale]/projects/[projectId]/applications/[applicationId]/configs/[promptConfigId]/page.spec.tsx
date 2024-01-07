@@ -199,7 +199,7 @@ describe('PromptConfiguration', () => {
 
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'config_overview',
+				'configOverview',
 				expect.any(Object),
 			);
 		});

@@ -99,12 +99,8 @@ export function OpenAIMessageForm({
 							onChange={handleChange(setRole)}
 							data-testid="openai-message-role-select"
 						>
-							{Object.entries(OpenAIPromptMessageRole)
-								.filter(
-									(v) =>
-										v[1] !== OpenAIPromptMessageRole.Tool,
-								)
-								.map(([key, value]) => (
+							{Object.entries(OpenAIPromptMessageRole).map(
+								([key, value]) => (
 									<option
 										key={value}
 										id={value}
@@ -112,7 +108,8 @@ export function OpenAIMessageForm({
 									>
 										{`${key} ${t('message')}`}
 									</option>
-								))}
+								),
+							)}
 						</select>
 					</div>
 					<div className="form-control" data-no-dnd="true">

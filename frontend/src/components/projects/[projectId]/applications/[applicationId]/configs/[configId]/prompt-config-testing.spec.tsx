@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import {
 	ApplicationFactory,
 	OpenAIPromptConfigFactory,
+	OpenAIPromptMessageFactory,
 	ProjectFactory,
 } from 'tests/factories';
 import { mockPage, mockReady, routerReplaceMock } from 'tests/mocks';
@@ -23,7 +24,9 @@ import { OpenAIModelType, PromptConfig } from '@/types';
 describe('PromptConfigTesting tests', () => {
 	const project = ProjectFactory.buildSync();
 	const application = ApplicationFactory.buildSync();
-	const promptConfigs = OpenAIPromptConfigFactory.batchSync(3);
+	const promptConfigs = OpenAIPromptConfigFactory.batchSync(3, {
+		providerPromptMessages: OpenAIPromptMessageFactory.batchSync(1),
+	});
 	const promptConfig = promptConfigs[0];
 
 	let handleCreatePromptConfigSpy: MockInstance;
@@ -271,17 +274,11 @@ describe('PromptConfigTesting tests', () => {
 		);
 
 		const draftMessageInput = screen.getByTestId(
-			'parameters-and-prompt-form-message-textarea',
+			'openai-message-content-textarea',
 		);
 		fireEvent.change(draftMessageInput, {
-			target: { value: '{userInput}' },
+			target: { value: '{xxx}' },
 		});
-
-		const saveMsgButton = screen.getByTestId(
-			'parameters-and-prompt-form-save-message-button',
-		);
-		expect(saveMsgButton).toBeEnabled();
-		fireEvent.click(saveMsgButton);
 
 		const updatePromptConfigButton = screen.getByTestId(
 			'prompt-config-test-update-button',
@@ -305,7 +302,7 @@ describe('PromptConfigTesting tests', () => {
 		);
 
 		const draftMessageInput = screen.getByTestId(
-			'parameters-and-prompt-form-message-textarea',
+			'openai-message-content-textarea',
 		);
 		fireEvent.change(draftMessageInput, {
 			target: { value: '{userInput}' },
@@ -338,7 +335,7 @@ describe('PromptConfigTesting tests', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'config_testing',
+				'configTesting',
 				expect.any(Object),
 			);
 		});

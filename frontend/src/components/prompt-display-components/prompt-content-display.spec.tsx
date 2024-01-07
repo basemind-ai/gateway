@@ -1,6 +1,6 @@
 import {
 	CohereMessageFactory,
-	OpenAIContentMessageFactory,
+	OpenAIPromptMessageFactory,
 } from 'tests/factories';
 import { getLocaleNamespace, render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
@@ -12,7 +12,7 @@ describe('PromptContentDisplay', () => {
 	const namespace = getLocaleNamespace('createConfigWizard');
 
 	it('should display an array of openAI messages correctly', () => {
-		const messages = OpenAIContentMessageFactory.batchSync(10);
+		const messages = OpenAIPromptMessageFactory.batchSync(10);
 
 		render(
 			<PromptContentDisplay

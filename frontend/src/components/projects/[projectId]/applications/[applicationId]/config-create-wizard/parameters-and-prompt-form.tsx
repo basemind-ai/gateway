@@ -14,9 +14,9 @@ import {
 	ModelParameters,
 	ModelType,
 	ModelVendor,
-	OpenAIContentMessage,
 	OpenAIModelParameters,
 	OpenAIModelType,
+	OpenAIPromptMessage,
 	ProviderMessageType,
 } from '@/types';
 
@@ -70,9 +70,9 @@ function TemplateForm<T extends ModelVendor>({
 	}
 	return (
 		<OpenAIPromptTemplateForm
-			messages={messages as OpenAIContentMessage[]}
+			messages={messages as OpenAIPromptMessage[]}
 			setMessages={
-				setMessages as (messages: OpenAIContentMessage[]) => void
+				setMessages as (messages: OpenAIPromptMessage[]) => void
 			}
 		/>
 	);

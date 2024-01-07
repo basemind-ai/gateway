@@ -55,7 +55,7 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 			});
 			emails.forEach((email) => {
 				if (initialized) {
-					track('invite_user', {
+					track('inviteUser', {
 						newMemberEmail: email,
 						...project,
 						permission,

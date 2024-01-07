@@ -31,10 +31,12 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	promptConfig: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
+
 	const handleError = useHandleError();
 	const promptConfigs = usePromptConfigs();
 	const router = useRouter();
 	const setPromptConfigs = useSetPromptConfigs();
+
 	const { initialized, page } = useAnalytics();
 
 	const initialValuesRef = useRef(structuredClone(promptConfig));

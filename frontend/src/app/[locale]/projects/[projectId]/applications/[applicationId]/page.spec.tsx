@@ -1,5 +1,4 @@
 import {
-	APIKeyFactory,
 	ApplicationFactory,
 	OpenAIPromptConfigFactory,
 	ProjectFactory,
@@ -14,7 +13,6 @@ import {
 } from 'tests/test-utils';
 import { expect } from 'vitest';
 
-import * as APIKeysAPI from '@/api/api-keys-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import ApplicationPage from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/page';
 import { useSetProjectApplications, useSetProjects } from '@/stores/api-store';
@@ -23,10 +21,6 @@ describe('ApplicationPage', () => {
 	const handleRetrievePromptConfigsSpy = vi.spyOn(
 		PromptConfigAPI,
 		'handleRetrievePromptConfigs',
-	);
-	const handleRetrieveAPIKeysSpy = vi.spyOn(
-		APIKeysAPI,
-		'handleRetrieveAPIKeys',
 	);
 
 	it('returns null when application is not present', () => {
@@ -87,8 +81,8 @@ describe('ApplicationPage', () => {
 		expect(promptConfig).toBeInTheDocument();
 
 		const tabs = screen.getAllByTestId('tab-navigation-btn');
-		expect(tabs.length).toBe(3);
-		const [, apiKeysTab, settingsTab] = tabs;
+		expect(tabs.length).toBe(2);
+		const [, settingsTab] = tabs;
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
 		fireEvent.click(settingsTab);
 		const settingsContainer = screen.getByTestId(
@@ -102,17 +96,6 @@ describe('ApplicationPage', () => {
 			'application-deletion-container',
 		);
 		expect(appDeletion).toBeInTheDocument();
-
-		handleRetrieveAPIKeysSpy.mockResolvedValueOnce(
-			await APIKeyFactory.batch(2),
-		);
-		fireEvent.click(apiKeysTab);
-		const apiKeysContainer = screen.getByTestId(
-			'application-api-keys-container',
-		);
-		await waitFor(() => {
-			expect(apiKeysContainer).toBeInTheDocument();
-		});
 	});
 
 	it('call page analytics event when initialized', async () => {
@@ -144,7 +127,7 @@ describe('ApplicationPage', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'application_overview',
+				'applicationOverview',
 				expect.any(Object),
 			);
 		});
