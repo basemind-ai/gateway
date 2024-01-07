@@ -1,13 +1,12 @@
-import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
-import {
-	CohereModelParametersForm,
-	CoherePromptTemplate,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-form-components';
-import {
-	OpenAIModelParametersForm,
-	OpenAIPromptTemplate,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/openai-form-components';
+import { CohereModelParametersForm } from '@/components/prompt-display-components/cohere-components/cohere-model-parameters-form';
+import { CoherePromptTemplate } from '@/components/prompt-display-components/cohere-components/cohere-prompt-template';
+import { OpenAIModelParametersForm } from '@/components/prompt-display-components/openai-components/openai-model-parameters-form';
+import { OpenAIPromptTemplateForm } from '@/components/prompt-display-components/openai-components/openai-prompt-template-form';
+import { Dimensions } from '@/constants';
 import {
 	CohereModelParameters,
 	CohereModelType,
@@ -15,11 +14,69 @@ import {
 	ModelParameters,
 	ModelType,
 	ModelVendor,
-	OpenAIContentMessage,
 	OpenAIModelParameters,
 	OpenAIModelType,
+	OpenAIPromptMessage,
 	ProviderMessageType,
 } from '@/types';
+
+function ParametersForm<T extends ModelVendor>({
+	existingParameters,
+	setParameters,
+	modelType,
+	modelVendor,
+}: {
+	existingParameters?: ModelParameters<T>;
+	modelType: ModelType<T>;
+	modelVendor: T;
+	setParameters: (parameters: ModelParameters<T>) => void;
+}) {
+	if (modelVendor === ModelVendor.Cohere) {
+		return (
+			<CohereModelParametersForm
+				modelType={modelType as CohereModelType}
+				setParameters={setParameters}
+				existingParameters={existingParameters as CohereModelParameters}
+			/>
+		);
+	}
+	return (
+		<OpenAIModelParametersForm
+			modelType={modelType as OpenAIModelType}
+			setParameters={setParameters}
+			existingParameters={existingParameters as OpenAIModelParameters}
+		/>
+	);
+}
+
+function TemplateForm<T extends ModelVendor>({
+	setMessages,
+	modelVendor,
+	messages,
+}: {
+	messages: ProviderMessageType<T>[];
+	modelVendor: T;
+	setMessages: (messages: ProviderMessageType<T>[]) => void;
+}) {
+	if (modelVendor === ModelVendor.Cohere) {
+		return (
+			<CoherePromptTemplate
+				messages={messages as CoherePromptMessage[]}
+				setMessages={
+					setMessages as (messages: CoherePromptMessage[]) => void
+				}
+			/>
+		);
+	}
+	return (
+		<OpenAIPromptTemplateForm
+			messages={messages as OpenAIPromptMessage[]}
+			setMessages={
+				setMessages as (messages: OpenAIPromptMessage[]) => void
+			}
+		/>
+	);
+}
 
 export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 	modelVendor,
@@ -36,55 +93,49 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 	setMessages: (messages: ProviderMessageType<T>[]) => void;
 	setParameters: (parameters: ModelParameters<T>) => void;
 }) {
-	const parametersForm = useMemo(() => {
-		if (modelVendor === ModelVendor.Cohere) {
-			return (
-				<CohereModelParametersForm
-					modelType={modelType as CohereModelType}
-					setParameters={setParameters}
-					existingParameters={
-						existingParameters as CohereModelParameters
-					}
-				/>
-			);
-		}
-		return (
-			<OpenAIModelParametersForm
-				modelType={modelType as OpenAIModelType}
-				setParameters={setParameters}
-				existingParameters={existingParameters as OpenAIModelParameters}
-			/>
-		);
-	}, [modelVendor]);
+	const t = useTranslations('createConfigWizard');
+
+	const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
 	return (
 		<div
 			className="flex flex-col"
 			data-testid="parameters-and-prompt-form-container"
 		>
-			<div>{parametersForm}</div>
+			<TemplateForm
+				messages={messages ?? []}
+				modelVendor={modelVendor}
+				setMessages={setMessages}
+			/>
 			<div className="card-divider" />
-			<div>
-				{modelVendor === ModelVendor.Cohere ? (
-					<CoherePromptTemplate
-						messages={(messages ?? []) as CoherePromptMessage[]}
-						setMessages={
-							setMessages as (
-								messages: CoherePromptMessage[],
-							) => void
-						}
+			<button
+				data-testid="advanced-options-toggle"
+				className="flex w-fit justify-between items-center gap-2"
+				onClick={() => {
+					setShowAdvancedOptions(!showAdvancedOptions);
+				}}
+			>
+				<span>{t('advancedOptions')}</span>
+				{showAdvancedOptions ? (
+					<ChevronUp
+						height={Dimensions.Four}
+						width={Dimensions.Four}
 					/>
 				) : (
-					<OpenAIPromptTemplate
-						messages={(messages ?? []) as OpenAIContentMessage[]}
-						setMessages={
-							setMessages as (
-								messages: OpenAIContentMessage[],
-							) => void
-						}
+					<ChevronDown
+						height={Dimensions.Four}
+						width={Dimensions.Four}
 					/>
 				)}
-			</div>
+			</button>
+			{showAdvancedOptions && (
+				<ParametersForm
+					existingParameters={existingParameters}
+					modelType={modelType}
+					modelVendor={modelVendor}
+					setParameters={setParameters}
+				/>
+			)}
 		</div>
 	);
 }

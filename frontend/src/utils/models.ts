@@ -1,4 +1,4 @@
-import { OpenAIContentMessage } from '@/types';
+import { OpenAIPromptMessage } from '@/types';
 
 export const curlyBracketsRe = /{([^}]+)}/g;
 export function extractTemplateVariables(messageContent: string) {
@@ -10,7 +10,7 @@ export function extractTemplateVariables(messageContent: string) {
 }
 
 export function updateTemplateVariablesRecord(
-	messages: OpenAIContentMessage[],
+	messages: OpenAIPromptMessage[],
 	existingTemplateVariables: Record<string, string>,
 ): Record<string, string> {
 	const updatedVariables: Record<string, string> = {};

@@ -48,7 +48,7 @@ export default function ProjectOverview({
 
 	useEffect(() => {
 		if (initialized) {
-			page('project_overview');
+			page('projectOverview', { projectId });
 		}
 	}, [initialized]);
 

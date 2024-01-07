@@ -61,7 +61,7 @@ export function FirebaseLogin({
 					setUser(auth.currentUser);
 
 					identify(auth.currentUser.uid, auth.currentUser);
-					track('login');
+					track('login', { providerId: auth.currentUser.providerId });
 
 					router.replace(Navigation.Projects);
 					return;
@@ -86,7 +86,7 @@ export function FirebaseLogin({
 			}
 
 			identify(user.uid, user);
-			track('login');
+			track('login', { providerId: user.providerId });
 
 			router.replace(Navigation.Projects);
 		} catch (error) {

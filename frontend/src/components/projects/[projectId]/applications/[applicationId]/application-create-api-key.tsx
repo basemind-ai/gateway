@@ -47,7 +47,7 @@ export function CreateApplicationAPIKeyModal({
 				projectId,
 			});
 			if (initialized) {
-				track('add_app_key', { applicationId, projectId });
+				track('addAppKey', { applicationId, projectId });
 			}
 			setAPIKeyHash(apiKey.hash);
 		} catch (e) {

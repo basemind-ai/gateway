@@ -59,7 +59,7 @@ export function CreateApplication({
 				application.id,
 			);
 			if (initialized) {
-				track('create_application', {
+				track('createApplication', {
 					applicationId: application.id,
 					projectId,
 				});

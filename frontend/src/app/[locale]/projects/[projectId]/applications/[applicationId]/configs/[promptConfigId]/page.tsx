@@ -61,7 +61,11 @@ export default function PromptConfiguration({
 
 	useEffect(() => {
 		if (initialized) {
-			page('config_overview');
+			page('configOverview', {
+				applicationId,
+				projectId,
+				promptConfigId,
+			});
 		}
 	}, [initialized]);
 

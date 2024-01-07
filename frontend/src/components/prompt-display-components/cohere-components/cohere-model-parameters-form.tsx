@@ -3,15 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { ParameterSlider } from '@/components/prompt-display-components/parameter-slider';
 import { DEFAULT_MAX_TOKENS } from '@/constants/models';
-import {
-	CohereModelType,
-	CoherePromptMessage,
-	ModelParameters,
-	ModelVendor,
-	ProviderMessageType,
-} from '@/types';
-import { handleChange } from '@/utils/events';
-import { extractTemplateVariables } from '@/utils/models';
+import { CohereModelType, ModelParameters, ModelVendor } from '@/types';
 
 const COHERE_MAX_TOKENS = 4096;
 
@@ -124,77 +116,12 @@ export function CohereModelParametersForm({
 	}, [maxTokens, frequencyPenalty, presencePenalty, temperature, p, k]);
 
 	return (
-		<div data-testid="cohere-model-parameters-form-container">
-			<h2
-				className="card-header"
-				data-testid="cohere-model-parameters-form-header"
-			>
-				{t('modelParameters')}
-			</h2>
+		<div data-testid="cohere-model-parameters-form">
 			<div
 				className="rounded-dark-card columns-1 md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 gap-8	gap-y-8"
 				data-testid="cohere-model-parameters-form-inputs-container"
 			>
 				{inputs.map(ParameterSlider)}
-			</div>
-		</div>
-	);
-}
-
-export function CoherePromptTemplate({
-	messages,
-	setMessages,
-}: {
-	messages: ProviderMessageType<ModelVendor.Cohere>[];
-	setMessages: (messages: ProviderMessageType<ModelVendor.Cohere>[]) => void;
-}) {
-	const t = useTranslations('createConfigWizard');
-
-	const handleSetMessages = (message: string) => {
-		setMessages([
-			{
-				message,
-				templateVariables: extractTemplateVariables(message),
-			} satisfies CoherePromptMessage,
-		]);
-	};
-
-	return (
-		<div data-testid="cohere-prompt-template-form-container">
-			<h2
-				className="card-header"
-				data-testid="cohere-prompt-template-form-header"
-			>
-				{t('promptTemplate')}
-			</h2>
-			<div
-				className="form-control"
-				data-testid="cohere-prompt-template-form"
-			>
-				<label
-					className="label"
-					data-testid="cohere-prompt-template-form-label"
-				>
-					<span
-						className="label-text"
-						data-testid="cohere-prompt-template-form-label-text"
-					>
-						{t('messageContent')}
-					</span>
-					<span
-						className="text-info label-text-alt text-sm"
-						data-testid="cohere-prompt-template-form-label-alt-text"
-					>
-						{t('wrapVariable')}
-					</span>
-				</label>
-				<textarea
-					className="card-textarea"
-					placeholder={t('promptMessagePlaceholder')}
-					value={messages[0]?.message ?? ''}
-					onChange={handleChange(handleSetMessages)}
-					data-testid="cohere-prompt-template-form-textarea"
-				/>
 			</div>
 		</div>
 	);

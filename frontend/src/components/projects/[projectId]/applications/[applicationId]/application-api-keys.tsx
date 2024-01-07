@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Eraser, Plus } from 'react-bootstrap-icons';
+import { Plus, XCircle } from 'react-bootstrap-icons';
 import useSWR, { useSWRConfig } from 'swr';
 
 import { handleDeleteAPIKey, handleRetrieveAPIKeys } from '@/api';
@@ -105,12 +105,12 @@ export function ApplicationApiKeys({
 		}
 
 		return (
-			<table className="custom-table mb-16">
+			<table className="table mb-4">
 				<thead>
 					<tr>
 						<th>{t('name')}</th>
-						<th>{t('createdAt')}</th>
-						<th>{t('delete')}</th>
+						<th>{t('creationDate')}</th>
+						<th className="text-right">{t('revoke')}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -124,14 +124,15 @@ export function ApplicationApiKeys({
 									{dayjs(createdAt).format(dateFormat)}
 								</span>
 							</td>
-							<td>
+							<td className="text-end">
 								<button
 									data-testid="api-key-delete-btn"
+									className="pr-4"
 									onClick={() => {
 										openDeleteConfirmationPopup(id, name);
 									}}
 								>
-									<Eraser className="w-3.5 h-3.5 text-error" />
+									<XCircle className="w-3.5 h-3.5 text-warning" />
 								</button>
 							</td>
 						</tr>
@@ -142,7 +143,7 @@ export function ApplicationApiKeys({
 	}
 
 	return (
-		<div data-testid="application-api-keys-container">
+		<div data-testid="application-api-keys-container" className="mt-9">
 			<CardHeaderWithTooltip
 				dataTestId={t('apiKeys')}
 				headerText={t('apiKeys')}

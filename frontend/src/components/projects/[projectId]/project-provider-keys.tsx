@@ -80,7 +80,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 			/>
 			<div className="rounded-data-card flex flex-col">
 				<table
-					className="custom-table mb-16"
+					className="table mb-16"
 					data-testid="provider-keys-table"
 				>
 					<thead>

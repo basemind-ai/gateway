@@ -31,10 +31,12 @@ export function PromptConfigTesting<T extends ModelVendor>({
 	promptConfig: PromptConfig<T>;
 }) {
 	const t = useTranslations('promptConfig');
+
 	const handleError = useHandleError();
 	const promptConfigs = usePromptConfigs();
 	const router = useRouter();
 	const setPromptConfigs = useSetPromptConfigs();
+
 	const { initialized, page } = useAnalytics();
 
 	const initialValuesRef = useRef(structuredClone(promptConfig));
@@ -155,7 +157,7 @@ export function PromptConfigTesting<T extends ModelVendor>({
 
 	useEffect(() => {
 		if (initialized) {
-			page('config_testing', {
+			page('configTesting', {
 				applicationId,
 				projectId,
 				promptConfigId: promptConfig.id,

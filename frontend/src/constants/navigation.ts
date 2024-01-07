@@ -24,7 +24,6 @@ export enum PromptConfigPageTab {
 
 export enum ApplicationPageTabNames {
 	OVERVIEW,
-	API_KEYS,
 	SETTINGS,
 }
 

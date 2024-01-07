@@ -10,9 +10,9 @@ import {
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
 	ModelVendor,
-	OpenAIContentMessage,
 	OpenAIModelParameters,
 	OpenAIModelType,
+	OpenAIPromptMessage,
 	PromptTestRecord,
 } from '@/types';
 
@@ -48,7 +48,7 @@ describe('PromptConfigTesting tests', () => {
 	const messages = [
 		{ content: 'you are a bot', name: 'SystemMessage', role: 'system' },
 		{ content: 'Hello', name: 'UserMessage', role: 'user' },
-	] as OpenAIContentMessage[];
+	] as OpenAIPromptMessage[];
 
 	let handleErrorMock: Mock;
 	let setTemplateVariablesMock: Mock;
@@ -91,7 +91,7 @@ describe('PromptConfigTesting tests', () => {
 				role: 'user',
 				templateVariables: ['userInput'],
 			},
-		] as OpenAIContentMessage[];
+		] as OpenAIPromptMessage[];
 
 		render(
 			<PromptConfigTestingForm
@@ -142,7 +142,7 @@ describe('PromptConfigTesting tests', () => {
 				role: 'user',
 				templateVariables: ['userInput'],
 			},
-		] as OpenAIContentMessage[];
+		] as OpenAIPromptMessage[];
 
 		render(
 			<PromptConfigTestingForm
@@ -172,7 +172,7 @@ describe('PromptConfigTesting tests', () => {
 				role: 'user',
 				templateVariables: ['userInput'],
 			},
-		] as OpenAIContentMessage[];
+		] as OpenAIPromptMessage[];
 
 		const { rerender } = render(
 			<PromptConfigTestingForm

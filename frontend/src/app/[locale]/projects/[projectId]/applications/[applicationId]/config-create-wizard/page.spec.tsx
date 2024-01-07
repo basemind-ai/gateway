@@ -28,7 +28,7 @@ import {
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
 import { useToasts } from '@/stores/toast-store';
-import { PromptTestRecord } from '@/types';
+import { OpenAIPromptMessageRole, PromptTestRecord } from '@/types';
 
 vi.mock('@/hooks/use-prompt-testing', () => ({
 	usePromptTesting: vi.fn(() => ({
@@ -208,7 +208,9 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		const store = getStore();
 		act(() => {
 			store.setConfigName(faker.lorem.word());
-			store.setMessages([{ content: 'test', role: 'user' }]);
+			store.setMessages([
+				{ content: 'test', role: OpenAIPromptMessageRole.User },
+			]);
 		});
 
 		render(
@@ -527,6 +529,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setParameters(promptConfig[0].modelParameters);
 			store.setModelType(promptConfig[0].modelType);
 			store.setModelVendor(promptConfig[0].modelVendor);
+			store.setMessages([]);
 		});
 
 		render(
@@ -535,9 +538,18 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		await waitFor(() => {
 			expect(mockReady).toHaveBeenCalled();
 		});
+
+		expect(mockPage).toBeCalledWith(
+			'createConfigWizard',
+			expect.any(Object),
+		);
+
+		act(() => {
+			store.setNextWizardStage();
+		});
 		await waitFor(() => {
-			expect(mockPage).toBeCalledWith(
-				'createConfigWizard-stage0',
+			expect(mockPage).toHaveBeenCalledWith(
+				`createConfigWizard`,
 				expect.any(Object),
 			);
 		});
@@ -547,27 +559,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard-stage1`,
-				expect.any(Object),
-			);
-		});
-
-		act(() => {
-			store.setNextWizardStage();
-		});
-		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard-stage2`,
-				expect.any(Object),
-			);
-		});
-
-		act(() => {
-			store.setNextWizardStage();
-		});
-		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard-stage3`,
+				`createConfigWizard`,
 				expect.any(Object),
 			);
 		});
@@ -599,7 +591,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'create_config',
+				'createConfig',
 				expect.any(Object),
 			);
 		});

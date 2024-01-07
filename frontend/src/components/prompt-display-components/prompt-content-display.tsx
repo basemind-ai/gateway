@@ -1,35 +1,42 @@
 import { useTranslations } from 'next-intl';
 
 import { openAIRoleColorMap } from '@/constants/models';
-import { ModelVendor, OpenAIMessageRole, ProviderMessageType } from '@/types';
-import { isOpenAIContentMessage } from '@/utils/predicates';
+import {
+	ModelVendor,
+	OpenAIPromptMessageRole,
+	ProviderMessageType,
+} from '@/types';
 
 const openAIRoleElementMapper: Record<
-	OpenAIMessageRole,
+	OpenAIPromptMessageRole,
 	React.FC<{ message: string }>
 > = {
-	assistant: ({ message }) => (
+	[OpenAIPromptMessageRole.Assistant]: ({ message }) => (
 		<span>
-			[<span className={openAIRoleColorMap.assistant}>assistant</span>
+			[
+			<span className={`text-${openAIRoleColorMap.assistant}`}>
+				{`${OpenAIPromptMessageRole.Assistant} message`}
+			</span>
 			]: <span className="text-base-content">{message}</span>
 		</span>
 	),
-	function: ({ message }) => (
+
+	[OpenAIPromptMessageRole.System]: ({ message }) => (
 		<span>
-			[<span className={openAIRoleColorMap.function}>function</span>
+			[
+			<span
+				className={`text-${openAIRoleColorMap.system}`}
+			>{`${OpenAIPromptMessageRole.System} message`}</span>
+			]: ]: <span className="text-base-content">{message}</span>
+		</span>
+	),
+	[OpenAIPromptMessageRole.User]: ({ message }) => (
+		<span>
+			[
+			<span
+				className={`text-${openAIRoleColorMap.user}`}
+			>{`${OpenAIPromptMessageRole.User} message`}</span>
 			]: <span className="text-base-content">{message}</span>
-		</span>
-	),
-	system: ({ message }) => (
-		<span>
-			[<span className={openAIRoleColorMap.system}>system</span>]:{' '}
-			<span className="text-base-content">{message}</span>
-		</span>
-	),
-	user: ({ message }) => (
-		<span>
-			[<span className={openAIRoleColorMap.user}>user</span>]:{' '}
-			<span className="text-base-content">{message}</span>
 		</span>
 	),
 };
@@ -49,7 +56,7 @@ const contentMapper: Record<
 	),
 	[ModelVendor.OpenAI]: (m: ProviderMessageType<ModelVendor.OpenAI>) =>
 		openAIRoleElementMapper[m.role]({
-			message: isOpenAIContentMessage(m) ? m.content : m.name,
+			message: m.content,
 		}),
 };
 

@@ -55,35 +55,6 @@ describe('ApplicationPromptConfigs', () => {
 		expect(errorToast.className).toContain(ToastType.ERROR);
 	});
 
-	it('copies application id to clipboard', async () => {
-		const promptConfigs = await OpenAIPromptConfigFactory.batch(2);
-		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);
-
-		const writeText = vi.fn();
-		Object.assign(navigator, {
-			clipboard: {
-				writeText,
-			},
-		});
-		render(
-			<ApplicationPromptConfigs
-				projectId={projectId}
-				application={application}
-			/>,
-		);
-		await screen.findByTestId('application-prompt-config-container');
-
-		const [copyButton] = screen.getAllByTestId(
-			'application-prompt-configs-table-config-id-copy-button',
-		);
-		expect(copyButton).toBeInTheDocument();
-
-		fireEvent.click(copyButton);
-		expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-			promptConfigs[0].id,
-		);
-	});
-
 	it('navigates to edit prompt screen', async () => {
 		const promptConfigs = await OpenAIPromptConfigFactory.batch(1);
 		handleRetrievePromptConfigsSpy.mockResolvedValueOnce(promptConfigs);

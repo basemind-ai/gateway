@@ -2,8 +2,8 @@ import {
 	CohereModelType,
 	ModelType,
 	ModelVendor,
-	OpenAIMessageRole,
 	OpenAIModelType,
+	OpenAIPromptMessageRole,
 } from '@/types';
 
 const openAIIcon = 'openAI-icon.svg';
@@ -53,9 +53,8 @@ export enum UnavailableModelVendor {
 	Google = 'GOOGLE',
 }
 
-export const openAIRoleColorMap: Record<OpenAIMessageRole, string> = {
-	assistant: 'text-warning/80',
-	function: 'text-secondary',
-	system: 'text-accent',
-	user: 'text-success/80',
+export const openAIRoleColorMap: Record<OpenAIPromptMessageRole, string> = {
+	[OpenAIPromptMessageRole.Assistant]: 'info',
+	[OpenAIPromptMessageRole.System]: 'secondary',
+	[OpenAIPromptMessageRole.User]: 'success',
 };

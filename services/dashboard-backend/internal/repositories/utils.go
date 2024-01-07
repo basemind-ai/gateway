@@ -65,7 +65,7 @@ func parseOpenAIMessages( //nolint: revive
 	return expectedVariables, marshalledMessages, nil
 }
 
-func parseCohereMessage(
+func parseCohereMessage( //nolint: revive
 	promptMessages *json.RawMessage,
 ) ([]string, *json.RawMessage, error) {
 	var coherePromptMessages []*datatypes.CoherePromptMessageDTO
@@ -102,7 +102,11 @@ func parseCohereMessage(
 		promptMessage.TemplateVariables = &templateVariables
 	}
 
-	marshalledMessage := ptr.To(json.RawMessage(serialization.SerializeJSON(promptMessage)))
+	marshalledMessage := ptr.To(
+		json.RawMessage(
+			serialization.SerializeJSON([]*datatypes.CoherePromptMessageDTO{promptMessage}),
+		),
+	)
 
 	return expectedVariables, marshalledMessage, nil
 }

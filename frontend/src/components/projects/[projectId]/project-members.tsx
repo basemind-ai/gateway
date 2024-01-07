@@ -223,7 +223,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 					</div>
 				)}
 				{!isLoading && (
-					<table className="custom-table">
+					<table className="table">
 						<thead>
 							<tr>
 								<th>{t('name')}</th>

@@ -80,7 +80,7 @@ export function PromptConfigCodeSnippet({
 	const handleDocClick = (tab: FrameworkTab) => {
 		return () => {
 			if (initialized) {
-				track('click_view_docs', {
+				track('clickViewDocs', {
 					category: 'config-code-snippet',
 					framework: tab.framework,
 				});

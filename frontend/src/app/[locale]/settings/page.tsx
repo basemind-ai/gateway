@@ -15,7 +15,7 @@ export default function UserSettings() {
 	const { initialized, page } = useAnalytics();
 	useEffect(() => {
 		if (initialized) {
-			page('user-settings');
+			page('userSettings');
 		}
 	}, [initialized]);
 

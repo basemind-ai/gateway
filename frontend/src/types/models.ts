@@ -2,25 +2,24 @@
 
 import { Record } from 'react-bootstrap-icons';
 
-import { CohereModelType, ModelVendor, OpenAIModelType } from '@/types/enums';
+import {
+	CohereModelType,
+	ModelVendor,
+	OpenAIModelType,
+	OpenAIPromptMessageRole,
+} from '@/types/enums';
 
-export type OpenAIMessageRole = 'system' | 'user' | 'assistant' | 'function';
+export type OpenAIContentMessageRole =
+	| OpenAIPromptMessageRole.System
+	| OpenAIPromptMessageRole.User
+	| OpenAIPromptMessageRole.Assistant;
 
-export interface OpenAIContentMessage {
+export interface OpenAIPromptMessage {
 	content: string;
 	name?: string;
-	role: 'system' | 'user' | 'assistant';
+	role: OpenAIContentMessageRole;
 	templateVariables?: string[];
 }
-
-export interface OpenAIFunctionMessage {
-	functionArguments: string[];
-	name: string;
-	role: 'function';
-	templateVariables?: string[];
-}
-
-export type OpenAIPromptMessage = OpenAIContentMessage | OpenAIFunctionMessage;
 
 // Provider Model Parameters
 

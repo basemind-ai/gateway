@@ -92,7 +92,11 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 		try {
 			await sendMessage(config);
 			if (initialized) {
-				track('run_config_test', config);
+				track('runConfigTest', {
+					applicationId,
+					projectId,
+					promptConfigId,
+				});
 			}
 		} catch (e) {
 			handleError(e);
