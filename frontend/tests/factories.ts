@@ -9,6 +9,8 @@ import {
 	CohereModelParameters,
 	CoherePromptMessage,
 	ModelVendor,
+	OpenAIContentMessage,
+	OpenAIModelParameters,
 	OpenAIModelType,
 	OpenAIPromptMessage,
 	Project,
@@ -54,13 +56,25 @@ export const OpenAIPromptMessageFactory = new TypeFactory<OpenAIPromptMessage>(
 					name: 'myFunction',
 					role: 'function',
 				}
-			: {
-					content: faker.lorem.sentence(),
-					name: undefined,
-					role: TypeFactory.sample(['user', 'system', 'assistant']),
-					templateVariables: [],
-				},
+			: OpenAIContentMessageFactory.buildSync(),
 );
+
+export const OpenAIContentMessageFactory =
+	new TypeFactory<OpenAIContentMessage>(() => ({
+		content: faker.lorem.sentence(),
+		name: undefined,
+		role: TypeFactory.iterate(['user', 'system', 'assistant']),
+		templateVariables: [],
+	}));
+
+export const OpenAIPromptParametersFactory =
+	new TypeFactory<OpenAIModelParameters>(() => ({
+		frequencyPenalty: faker.number.float({ max: 2, min: -2 }),
+		maxTokens: faker.number.float({ max: 4096, min: 1 }),
+		presencePenalty: faker.number.float({ max: 2, min: -2 }),
+		temperature: faker.number.float({ max: 1, min: 0 }),
+		topP: faker.number.float({ max: 0.99, min: 0 }),
+	}));
 
 export const OpenAIPromptConfigFactory = new TypeFactory<
 	PromptConfig<ModelVendor.OpenAI>
@@ -69,7 +83,7 @@ export const OpenAIPromptConfigFactory = new TypeFactory<
 	expectedTemplateVariables: [],
 	id: faker.string.uuid(),
 	isDefault: false,
-	modelParameters: {},
+	modelParameters: OpenAIPromptParametersFactory.buildSync(),
 	modelType: TypeFactory.sample(Object.values(OpenAIModelType)),
 	modelVendor: ModelVendor.OpenAI,
 	name: faker.lorem.word({ length: 5 }),

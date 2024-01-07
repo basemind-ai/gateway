@@ -2,10 +2,8 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
-import {
-	CohereModelParametersForm,
-	CoherePromptTemplate,
-} from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/cohere-form-components';
+import { CohereModelParametersForm } from '@/components/prompt-display-components/cohere-components/cohere-model-parameters-form';
+import { CoherePromptTemplate } from '@/components/prompt-display-components/cohere-components/cohere-prompt-template';
 import { OpenAIModelParametersForm } from '@/components/prompt-display-components/openai-components/openai-model-parameters-form';
 import { OpenAIPromptTemplateForm } from '@/components/prompt-display-components/openai-components/openai-prompt-template-form';
 import { Dimensions } from '@/constants';
@@ -91,6 +89,7 @@ export function PromptConfigParametersAndPromptForm<T extends ModelVendor>({
 			<div>{promptTemplateForm}</div>
 			<div className="card-divider" />
 			<button
+				data-testid="advanced-options-toggle"
 				className="flex w-fit justify-between items-center gap-2"
 				onClick={() => {
 					setShowAdvancedOptions(!showAdvancedOptions);

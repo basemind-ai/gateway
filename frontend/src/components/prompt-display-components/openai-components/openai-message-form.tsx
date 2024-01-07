@@ -8,7 +8,6 @@ import { OpenAIContentMessageRole, OpenAIPromptMessageRole } from '@/types';
 import { handleChange } from '@/utils/events';
 
 export function OpenAIMessageForm({
-	id,
 	role,
 	setRole,
 	name,
@@ -24,8 +23,7 @@ export function OpenAIMessageForm({
 	content: string;
 	handleArrowDown: () => void;
 	handleArrowUp: () => void;
-	handleDeleteMessage: (id: string) => void;
-	id: string;
+	handleDeleteMessage: () => void;
 	name?: string;
 	role: OpenAIContentMessageRole;
 	setContent: (content: string) => void;
@@ -40,7 +38,7 @@ export function OpenAIMessageForm({
 
 	return (
 		<div
-			data-testid={`openai-message-container-${id}`}
+			data-testid="openai-message-container"
 			className="rounded-dark-card flex cursor-grab"
 		>
 			<div
@@ -50,7 +48,7 @@ export function OpenAIMessageForm({
 			>
 				{showArrowUp && (
 					<button
-						data-testid={`openai-message-arrow-up-${id}`}
+						data-testid="openai-message-arrow-up"
 						className="btn btn-ghost p-0 text-accent/70 hover:text-accent ${showArrowUp ?'' : 'hidden'}}"
 						onClick={handleArrowUp}
 					>
@@ -59,7 +57,7 @@ export function OpenAIMessageForm({
 				)}
 				{showArrowDown && (
 					<button
-						data-testid={`openai-message-arrow-down-${id}`}
+						data-testid="openai-message-arrow-down"
 						className="btn btn-ghost p-0 text-accent/70 hover:text-accent "
 						onClick={handleArrowDown}
 					>
@@ -74,7 +72,7 @@ export function OpenAIMessageForm({
 					<div className="form-control" data-no-dnd="true">
 						<label
 							className="label"
-							data-testid={`openai-message-role-select-label-${id}`}
+							data-testid="openai-message-role-select-label"
 						>
 							<span className="label-text">
 								{t('messageRole')}
@@ -84,7 +82,7 @@ export function OpenAIMessageForm({
 							className={`select select-bordered select-sm rounded bg-neutral ${roleColor} text-xs`}
 							value={role}
 							onChange={handleChange(setRole)}
-							data-testid={`openai-message-role-select-${id}`}
+							data-testid="openai-message-role-select"
 						>
 							{Object.entries(OpenAIPromptMessageRole)
 								.filter(
@@ -106,7 +104,7 @@ export function OpenAIMessageForm({
 					<div className="form-control" data-no-dnd="true">
 						<label
 							className="label"
-							data-testid={`openai-message-name-input-label-${id}`}
+							data-testid="openai-message-name-input-label"
 						>
 							<span className="label-text">
 								{t('messageName')}
@@ -119,7 +117,7 @@ export function OpenAIMessageForm({
 							type="text"
 							placeholder={t('messageNameInputPlaceholder')}
 							className="input input-bordered input-sm rounded bg-neutral text-neutral-content text-xs"
-							data-testid={`openai-message-name-input-${id}`}
+							data-testid="openai-message-name-input"
 							value={name ?? ''}
 							onChange={handleChange(setName)}
 						/>
@@ -131,7 +129,7 @@ export function OpenAIMessageForm({
 				>
 					<label
 						className="label"
-						data-testid={`openai-message-content-textarea-label-${id}`}
+						data-testid="openai-message-content-textarea-label"
 					>
 						<span className="label-text">
 							{t('messageContent')}
@@ -145,15 +143,15 @@ export function OpenAIMessageForm({
 						placeholder={t('messageContentPlaceholder')}
 						value={content}
 						onChange={handleChange(setContent)}
-						data-testid={`openai-message-content-textarea-${id}`}
+						data-testid="openai-message-content-textarea"
 					/>
 				</div>
 			</div>
 			<button
 				className="btn btn-ghost self-center text-warning hover:text-error"
-				data-testid={`openai-message-delete-button-${id}`}
+				data-testid="openai-message-delete-button"
 				onClick={() => {
-					handleDeleteMessage(id);
+					handleDeleteMessage();
 				}}
 			>
 				<XCircle height={Dimensions.Four} width={Dimensions.Four} />

@@ -30,7 +30,7 @@ describe('PromptContentDisplay', () => {
 		expect(messageContainer.children.length).toBe(100);
 
 		for (const [i, message] of messages.entries()) {
-			const content = `[${message.role}]: ${
+			const content = `[${message.role} message]: ${
 				isOpenAIContentMessage(message) ? message.content : message.name
 			}`;
 			expect(content).toBe(messageContainer.children[i].textContent);

@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import {
 	fireEvent,
 	getLocaleNamespace,
@@ -15,14 +14,12 @@ describe('OpenAIMessageForm', () => {
 	const locales = getLocaleNamespace('openaiPromptTemplate');
 
 	it('should render the message form with the passed in values', async () => {
-		const id = nanoid();
 		const content = 'you are a beautiful bot';
 		const name = 'msg-1';
 		const role = OpenAIPromptMessageRole.User;
 
 		render(
 			<OpenAIMessageForm
-				id={id}
 				role={role}
 				setRole={vi.fn()}
 				name={'msg-1'}
@@ -38,46 +35,44 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		await waitFor(() => {
-			const container = screen.getByTestId(
-				`openai-message-container-${id}`,
-			);
+			const container = screen.getByTestId(`openai-message-container`);
 			expect(container).toBeInTheDocument();
 		});
 
-		const arrowUp = screen.getByTestId(`openai-message-arrow-up-${id}`);
+		const arrowUp = screen.getByTestId(`openai-message-arrow-up`);
 		expect(arrowUp).toBeInTheDocument();
 
-		const arrowDown = screen.getByTestId(`openai-message-arrow-down-${id}`);
+		const arrowDown = screen.getByTestId(`openai-message-arrow-down`);
 		expect(arrowDown).toBeInTheDocument();
 
 		const roleSelectLabel = screen.getByTestId(
-			`openai-message-role-select-label-${id}`,
+			`openai-message-role-select-label`,
 		);
 		expect(roleSelectLabel).toBeInTheDocument();
 		expect(roleSelectLabel).toHaveTextContent(locales.messageRole);
 
 		const roleSelect: HTMLSelectElement = screen.getByTestId(
-			`openai-message-role-select-${id}`,
+			`openai-message-role-select`,
 		);
 		expect(roleSelect).toBeInTheDocument();
 		expect(roleSelect).toHaveValue(role);
 		expect(roleSelect.options).toHaveLength(3);
 
 		const nameInputLabel = screen.getByTestId(
-			`openai-message-name-input-label-${id}`,
+			`openai-message-name-input-label`,
 		);
 		expect(nameInputLabel).toBeInTheDocument();
 		expect(nameInputLabel).toHaveTextContent(locales.messageName);
 		expect(nameInputLabel).toHaveTextContent(locales.optional);
 
 		const messageNameInput: HTMLInputElement = screen.getByTestId(
-			`openai-message-name-input-${id}`,
+			`openai-message-name-input`,
 		);
 		expect(messageNameInput).toBeInTheDocument();
 		expect(messageNameInput).toHaveValue(name);
 
 		const messageContentLabel = screen.getByTestId(
-			`openai-message-content-textarea-label-${id}`,
+			`openai-message-content-textarea-label`,
 		);
 		expect(messageContentLabel).toBeInTheDocument();
 		expect(messageContentLabel).toHaveTextContent(locales.messageContent);
@@ -86,24 +81,22 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		const messageContentTextarea: HTMLTextAreaElement = screen.getByTestId(
-			`openai-message-content-textarea-${id}`,
+			`openai-message-content-textarea`,
 		);
 		expect(messageContentTextarea).toBeInTheDocument();
 		expect(messageContentTextarea).toHaveValue(content);
 
 		const deleteMessageButton = screen.getByTestId(
-			`openai-message-delete-button-${id}`,
+			`openai-message-delete-button`,
 		);
 		expect(deleteMessageButton).toBeInTheDocument();
 	});
 
 	it('should render the expected placeholder values', async () => {
-		const id = nanoid();
 		const role = OpenAIPromptMessageRole.User;
 
 		render(
 			<OpenAIMessageForm
-				id={id}
 				role={role}
 				setRole={vi.fn()}
 				name={undefined}
@@ -119,13 +112,11 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		await waitFor(() => {
-			const container = screen.getByTestId(
-				`openai-message-container-${id}`,
-			);
+			const container = screen.getByTestId(`openai-message-container`);
 			expect(container).toBeInTheDocument();
 		});
 		const messageNameInput: HTMLInputElement = screen.getByTestId(
-			`openai-message-name-input-${id}`,
+			`openai-message-name-input`,
 		);
 		expect(messageNameInput).toBeInTheDocument();
 		expect(messageNameInput.placeholder).toBe(
@@ -133,7 +124,7 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		const messageContentTextarea: HTMLTextAreaElement = screen.getByTestId(
-			`openai-message-content-textarea-${id}`,
+			`openai-message-content-textarea`,
 		);
 		expect(messageContentTextarea).toBeInTheDocument();
 		expect(messageContentTextarea.placeholder).toBe(
@@ -142,14 +133,12 @@ describe('OpenAIMessageForm', () => {
 	});
 
 	it('should set message role', async () => {
-		const id = nanoid();
 		const role = OpenAIPromptMessageRole.User;
 
 		const setRole = vi.fn();
 
 		render(
 			<OpenAIMessageForm
-				id={id}
 				role={role}
 				setRole={setRole}
 				name={''}
@@ -165,14 +154,12 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		await waitFor(() => {
-			const container = screen.getByTestId(
-				`openai-message-container-${id}`,
-			);
+			const container = screen.getByTestId(`openai-message-container`);
 			expect(container).toBeInTheDocument();
 		});
 
 		const roleSelect: HTMLSelectElement = screen.getByTestId(
-			`openai-message-role-select-${id}`,
+			`openai-message-role-select`,
 		);
 		expect(roleSelect).toHaveValue(role);
 
@@ -183,13 +170,11 @@ describe('OpenAIMessageForm', () => {
 	});
 
 	it('should set message name', async () => {
-		const id = nanoid();
 		const name = '';
 		const setName = vi.fn();
 
 		render(
 			<OpenAIMessageForm
-				id={id}
 				role={OpenAIPromptMessageRole.User}
 				setRole={vi.fn()}
 				name={name}
@@ -205,14 +190,12 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		await waitFor(() => {
-			const container = screen.getByTestId(
-				`openai-message-container-${id}`,
-			);
+			const container = screen.getByTestId(`openai-message-container`);
 			expect(container).toBeInTheDocument();
 		});
 
 		const messageNameInput: HTMLInputElement = screen.getByTestId(
-			`openai-message-name-input-${id}`,
+			`openai-message-name-input`,
 		);
 		expect(messageNameInput).toHaveValue('');
 
@@ -221,13 +204,11 @@ describe('OpenAIMessageForm', () => {
 	});
 
 	it('should set message content', async () => {
-		const id = nanoid();
 		const content = '';
 		const setContent = vi.fn();
 
 		render(
 			<OpenAIMessageForm
-				id={id}
 				role={OpenAIPromptMessageRole.User}
 				setRole={vi.fn()}
 				name={''}
@@ -243,14 +224,12 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		await waitFor(() => {
-			const container = screen.getByTestId(
-				`openai-message-container-${id}`,
-			);
+			const container = screen.getByTestId(`openai-message-container`);
 			expect(container).toBeInTheDocument();
 		});
 
 		const messageContentTextarea: HTMLTextAreaElement = screen.getByTestId(
-			`openai-message-content-textarea-${id}`,
+			`openai-message-content-textarea`,
 		);
 		expect(messageContentTextarea).toHaveValue('');
 
@@ -261,12 +240,10 @@ describe('OpenAIMessageForm', () => {
 	});
 
 	it('should delete message', async () => {
-		const id = nanoid();
 		const handleDeleteMessage = vi.fn();
 
 		render(
 			<OpenAIMessageForm
-				id={id}
 				role={OpenAIPromptMessageRole.User}
 				setRole={vi.fn()}
 				name={''}
@@ -282,14 +259,12 @@ describe('OpenAIMessageForm', () => {
 		);
 
 		await waitFor(() => {
-			const container = screen.getByTestId(
-				`openai-message-container-${id}`,
-			);
+			const container = screen.getByTestId(`openai-message-container`);
 			expect(container).toBeInTheDocument();
 		});
 
 		const deleteMessageButton = screen.getByTestId(
-			`openai-message-delete-button-${id}`,
+			`openai-message-delete-button`,
 		);
 		expect(deleteMessageButton).toBeInTheDocument();
 

@@ -72,7 +72,7 @@ export function OpenAIPromptTemplateForm({
 	};
 
 	const handleDeleteMessage = (index: number) => {
-		setFormMessages(formMessages.splice(index, 1));
+		setFormMessages(formMessages.toSpliced(index, 1));
 	};
 
 	const handleArrowUp = (index: number) => {
@@ -94,10 +94,11 @@ export function OpenAIPromptTemplateForm({
 	return (
 		<div data-testid="openai-prompt-template-form">
 			<div className={`flex flex-col gap-4 ${cursor}`}>
-				{Object.entries(formMessages).map(([id, message], i) => (
+				{formMessages.map((message, i) => (
 					<OpenAIMessageForm
-						key={id}
-						id={id}
+						key={`${i}${message.role}${message.content}${
+							message.name ?? ''
+						}`}
 						content={message.content}
 						name={message.name}
 						role={message.role}
@@ -122,6 +123,7 @@ export function OpenAIPromptTemplateForm({
 				))}
 				<div className="self-center">
 					<button
+						data-testid="openai-prompt-template-form-add-message-button"
 						className="btn btn-ghost text-blue-500"
 						onClick={handleAddMessage}
 					>
