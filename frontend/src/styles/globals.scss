@@ -76,10 +76,10 @@ div#__next > div {
 	}
 
 	.rounded-data-card {
-		@apply mt-3.5 rounded-4xl w-full bg-base-200 py-8 px-16;
+		@apply mt-3.5 rounded-4xl w-full bg-base-200 px-16;
 	}
 	.rounded-dark-card {
-		@apply mt-3.5 rounded-4xl w-full bg-base-300 py-8 px-16 shadow-xl;
+		@apply mt-3.5 rounded-4xl w-full bg-base-300 px-16 shadow-xl;
 	}
 
 	.analytics {

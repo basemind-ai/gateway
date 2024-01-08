@@ -82,7 +82,7 @@ export function PromptContentDisplay<T extends ModelVendor>({
 				</h2>
 			</div>
 			<div
-				className="rounded-data-card"
+				className="rounded-dark-card"
 				data-testid="prompt-content-display-messages"
 			>
 				{messageContent.map((msg, i) => (

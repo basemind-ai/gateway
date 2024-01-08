@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { ChevronRight, PlayFill, Record, Repeat } from 'react-bootstrap-icons';
+import { PlayFill, Record, Repeat } from 'react-bootstrap-icons';
 
 import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
@@ -42,7 +42,6 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 	modelType,
 	parameters,
 	promptConfigId,
-	showPromptTemplateDisplay = true,
 }: {
 	applicationId: string;
 	handleError: (error: unknown) => void;
@@ -50,11 +49,10 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 	modelType: ModelType<T>;
 	modelVendor: T;
 	parameters: ModelParameters<T>;
-	projectCredits?: string;
+	projectCredits: string;
 	projectId: string;
 	promptConfigId?: string;
 	setTemplateVariables: (templateVariables: Record<string, string>) => void;
-	showPromptTemplateDisplay?: boolean;
 	templateVariables: Record<string, string>;
 }) {
 	const t = useTranslations('createConfigWizard');
@@ -121,21 +119,38 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 		}
 	};
 
+	const responseContent = modelResponses
+		.map((message) => message.content)
+		.join('');
+
 	return (
 		<div
 			className="flex flex-col justify-evenly"
 			data-testid="prompt-config-testing-form"
 		>
-			{showPromptTemplateDisplay && (
+			<span className="text-info text-xl text-center pt-2">
+				{`${t('credits') + projectCredits}$`}
+			</span>
+			<div className="flex justify-between">
 				<PromptContentDisplay
 					modelVendor={modelVendor}
 					messages={messages}
 				/>
-			)}
+				<button
+					disabled={!allExpectedVariablesHaveLength || isRunningTest}
+					data-testid="run-test-button"
+					className="btn btn-wide btn-success self-start"
+					onClick={testFinishReason ? resetState : handleRunTest}
+				>
+					{renderButtonIcon()}
+					{t('runTest')}
+				</button>
+			</div>
 			{expectedVariables.length > 0 && (
 				<>
+					<div className="card-divider" />
 					<CardHeaderWithTooltip
-						headerText={t('variables')}
+						headerText={t('testInputs')}
 						tooltipText={t('variablesTooltip')}
 						dataTestId="test-inputs-header"
 					/>
@@ -149,44 +164,36 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					</div>
 				</>
 			)}
-			<div className="card-section-divider" />
-			<button
-				disabled={!allExpectedVariablesHaveLength || isRunningTest}
-				data-testid="run-test-button"
-				className="btn btn-wide btn-primary bg-base-content text-base-100 self-center"
-				onClick={testFinishReason ? resetState : handleRunTest}
-			>
-				{renderButtonIcon()}
-				{t('runTest')}
-			</button>
-
-			{projectCredits && (
-				<span className="text-neutral-content text-sm text-center pt-2">
-					{`${t('credits') + projectCredits}$`}
-				</span>
+			{responseContent && (
+				<>
+					<div className="card-divider" />
+					<h2 className="card-header">{t('modelResponse')}</h2>
+					<div className="rounded-dark-card">
+						<div
+							className="flex gap-2 pt-5 pb-5  content-center items-center"
+							data-testid="model-response-container"
+						>
+							<span className="text-success">
+								{responseContent}
+							</span>
+						</div>
+					</div>
+				</>
 			)}
-			<div className="card-section-divider" />
-			<h2 className="card-header">{t('testResults')}</h2>
-			<div className="rounded-dark-card">
-				<PromptTestResultTable
-					modelVendor={modelVendor}
-					modelType={modelType}
-					testFinishReason={testFinishReason}
-					testRecord={testRecord}
-				/>
-				<div
-					className="flex gap-2 pl-4 content-center items-center"
-					data-testid="model-response-container"
-				>
-					<ChevronRight className="h-4 w-4" />
-					<span className="text-info">
-						{modelResponses
-							.map((message) => message.content)
-							.join('')}
-					</span>
-				</div>
-				<div className="card-section-divider" />
-			</div>
+			{(testRecord ?? testFinishReason) && (
+				<>
+					<div className="card-divider" />
+					<h2 className="card-header">{t('testResults')}</h2>
+					<div className="rounded-dark-card">
+						<PromptTestResultTable
+							modelVendor={modelVendor}
+							modelType={modelType}
+							testFinishReason={testFinishReason}
+							testRecord={testRecord}
+						/>
+					</div>
+				</>
+			)}
 		</div>
 	);
 }

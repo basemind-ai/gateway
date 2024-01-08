@@ -203,7 +203,6 @@ export function PromptConfigTesting<T extends ModelVendor>({
 				setTemplateVariables={setTemplateVariables}
 				handleError={handleError}
 				messages={messages}
-				showPromptTemplateDisplay={false}
 			/>
 			<div className="card-divider" />
 			<div
