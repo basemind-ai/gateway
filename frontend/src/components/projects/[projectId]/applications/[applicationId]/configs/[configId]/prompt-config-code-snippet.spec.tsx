@@ -1,5 +1,4 @@
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
-import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-code-snippet';
@@ -37,18 +36,6 @@ describe('PromptConfigCodeSnippet', () => {
 		expect(kotlinCodeSnippet).toBeInTheDocument();
 	});
 
-	it('should disable and not allow selection of a tab when its framework is not active', () => {
-		render(
-			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
-			/>,
-		);
-		const reactTab = screen.getByTestId('tab-React Native');
-
-		expect(reactTab).toBeDisabled();
-	});
-
 	it('should not display the code snippet when the language is not supported', () => {
 		render(
 			<PromptConfigCodeSnippet
@@ -83,6 +70,7 @@ describe('PromptConfigCodeSnippet', () => {
 	});
 
 	it('should route to the docs page when the user clicks the view docs button in android', () => {
+		const openMock = (window.open = vi.fn());
 		render(
 			<PromptConfigCodeSnippet
 				projectId={project.id}
@@ -93,10 +81,12 @@ describe('PromptConfigCodeSnippet', () => {
 			'code-snippet-view-docs-button-kotlin',
 		);
 		fireEvent.click(viewDocsButtonKotlin);
-		expect(routerPushMock).toHaveBeenCalled();
+		expect(openMock).toHaveBeenCalled();
 	});
 
 	it('should route to the docs page when the user clicks the view docs button in swift', () => {
+		const openMock = (window.open = vi.fn());
+
 		render(
 			<PromptConfigCodeSnippet
 				projectId={project.id}
@@ -107,7 +97,23 @@ describe('PromptConfigCodeSnippet', () => {
 			'code-snippet-view-docs-button-swift',
 		);
 		fireEvent.click(viewDocsButtonSwift);
-		expect(routerPushMock).toHaveBeenCalled();
+		expect(openMock).toHaveBeenCalled();
+	});
+
+	it('should route to the docs page when the user clicks the view docs button in flutter', () => {
+		const openMock = (window.open = vi.fn());
+
+		render(
+			<PromptConfigCodeSnippet
+				projectId={project.id}
+				applicationId={application.id}
+			/>,
+		);
+		const viewDocsButtonDart = screen.getByTestId(
+			'code-snippet-view-docs-button-dart',
+		);
+		fireEvent.click(viewDocsButtonDart);
+		expect(openMock).toHaveBeenCalled();
 	});
 
 	it('should open create API key model when the user clicks the create API key button', async () => {

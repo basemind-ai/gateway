@@ -1,4 +1,3 @@
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Fragment, useState } from 'react';
 import { Github, KeyFill } from 'react-bootstrap-icons';
@@ -56,12 +55,12 @@ const tabs: FrameworkTab[] = [
 		isActive: true,
 		language: 'dart',
 	},
-	{
-		docs: undefined,
-		framework: 'React Native',
-		isActive: false,
-		language: 'typescript',
-	},
+	// {
+	// 	docs: undefined,
+	// 	framework: 'React Native',
+	// 	isActive: false,
+	// 	language: 'typescript',
+	// },
 ];
 
 export function PromptConfigCodeSnippet({
@@ -73,7 +72,6 @@ export function PromptConfigCodeSnippet({
 }) {
 	const [selectedFramework, setSelectedFramework] = useState('Android');
 	const t = useTranslations('configCodeSnippet');
-	const router = useRouter();
 	const { initialized, track } = useAnalytics();
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -85,7 +83,7 @@ export function PromptConfigCodeSnippet({
 					framework: tab.framework,
 				});
 			}
-			router.push(tab.docs!);
+			window.open(tab.docs, '_blank')?.focus();
 		};
 	};
 	const openCreationPopup = () => {
