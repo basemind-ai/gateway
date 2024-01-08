@@ -42,9 +42,11 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 	modelType,
 	parameters,
 	promptConfigId,
+	handleRefreshProject,
 }: {
 	applicationId: string;
 	handleError: (error: unknown) => void;
+	handleRefreshProject: () => Promise<void>;
 	messages: ProviderMessageType<T>[];
 	modelType: ModelType<T>;
 	modelVendor: T;
@@ -69,6 +71,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 		handleError: () => {
 			handleError(new WebsocketError(t('runningTestError')));
 		},
+		handleRefreshProject,
 		projectId,
 	});
 
@@ -128,24 +131,34 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 			className="flex flex-col justify-evenly"
 			data-testid="prompt-config-testing-form"
 		>
-			<span className="text-info text-xl text-center pt-2">
+			<div className="text-info text-xl text-center pb-5">
 				{`${t('credits') + projectCredits}$`}
-			</span>
-			<div className="flex justify-between">
+			</div>
+			<>
+				<div className="flex justify-between">
+					<h2
+						className="card-header self-end"
+						data-testid="prompt-content-display-title"
+					>
+						{t('promptTemplate')}
+					</h2>
+					<button
+						disabled={
+							!allExpectedVariablesHaveLength || isRunningTest
+						}
+						data-testid="run-test-button"
+						className="btn btn-wide btn-success self-start"
+						onClick={testFinishReason ? resetState : handleRunTest}
+					>
+						{renderButtonIcon()}
+						{t('runTest')}
+					</button>
+				</div>
 				<PromptContentDisplay
 					modelVendor={modelVendor}
 					messages={messages}
 				/>
-				<button
-					disabled={!allExpectedVariablesHaveLength || isRunningTest}
-					data-testid="run-test-button"
-					className="btn btn-wide btn-success self-start"
-					onClick={testFinishReason ? resetState : handleRunTest}
-				>
-					{renderButtonIcon()}
-					{t('runTest')}
-				</button>
-			</div>
+			</>
 			{expectedVariables.length > 0 && (
 				<>
 					<div className="card-divider" />

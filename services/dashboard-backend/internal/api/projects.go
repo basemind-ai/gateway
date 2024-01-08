@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"time"
 
@@ -52,6 +53,8 @@ func handleRetrieveProjects(w http.ResponseWriter, r *http.Request) {
 	for i, project := range projects {
 		id := project.ID
 		credits := exc.MustResult(db.NumericToDecimal(project.Credits))
+
+		log.Debug().Str("credits", credits.String()).Msg("credits")
 
 		data[i] = dto.ProjectDTO{
 			ID:          db.UUIDToString(&id),

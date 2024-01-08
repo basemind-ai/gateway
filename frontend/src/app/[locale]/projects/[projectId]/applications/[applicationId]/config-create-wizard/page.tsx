@@ -7,7 +7,7 @@ import { Record } from 'react-bootstrap-icons';
 import { Oval } from 'react-loading-icons';
 import { shallow } from 'zustand/shallow';
 
-import { handleCreatePromptConfig } from '@/api';
+import { handleCreatePromptConfig, handleRetrieveProjects } from '@/api';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
@@ -20,6 +20,7 @@ import {
 	useApplication,
 	useProject,
 	usePromptConfigs,
+	useSetProjects,
 } from '@/stores/api-store';
 import {
 	PromptConfigWizardStore,
@@ -66,6 +67,7 @@ export default function PromptConfigCreateWizard({
 	const project = useProject(projectId);
 	const promptConfigs = usePromptConfigs();
 	const router = useRouter();
+	const setProjects = useSetProjects();
 	const user = useAuthenticatedUser();
 
 	const { initialized, page, track } = useAnalytics();
@@ -108,6 +110,15 @@ export default function PromptConfigCreateWizard({
 		store.setTemplateVariables,
 		[store.setTemplateVariables],
 	);
+
+	const handleRefreshProject = useCallback(async () => {
+		try {
+			const projects = await handleRetrieveProjects();
+			setProjects(projects);
+		} catch {
+			handleError(t('errorRefreshingProject'));
+		}
+	}, [setProjects]);
 
 	const wizardStageComponentMap: Record<WizardStage, React.ReactElement> = {
 		[WizardStage.NAME_AND_MODEL]: useMemo(
@@ -165,12 +176,14 @@ export default function PromptConfigCreateWizard({
 					modelVendor={store.modelVendor}
 					parameters={store.parameters}
 					handleError={handleError}
+					handleRefreshProject={handleRefreshProject}
 				/>
 			),
 			[
 				store.messages,
 				store.templateVariables,
 				handleTemplateVariablesChange,
+				project,
 			],
 		),
 	};
@@ -215,8 +228,8 @@ export default function PromptConfigCreateWizard({
 					promptConfigId,
 				}),
 			);
-		} catch (e) {
-			handleError(e);
+		} catch {
+			handleError(t('errorCreatingConfig'));
 			setIsLoading(false);
 		}
 	};

@@ -339,7 +339,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		} = renderHook(useToasts);
 
 		await waitFor(() => {
-			expect(toasts[0].message).toBe('failed');
+			expect(toasts[0].message).toBe('Something went wrong');
 		});
 	});
 

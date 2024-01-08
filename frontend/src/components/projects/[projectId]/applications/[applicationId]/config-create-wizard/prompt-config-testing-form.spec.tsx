@@ -68,7 +68,9 @@ describe('PromptConfigTesting tests', () => {
 				templateVariables={templateVariables}
 				parameters={parameters}
 				messages={messages}
+				projectCredits={'1.0'}
 				handleError={handleErrorMock}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);
@@ -102,7 +104,9 @@ describe('PromptConfigTesting tests', () => {
 				templateVariables={templateVariables}
 				parameters={parameters}
 				messages={messagesWithVariables}
+				projectCredits={'1.0'}
 				handleError={handleErrorMock}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);
@@ -123,7 +127,9 @@ describe('PromptConfigTesting tests', () => {
 				templateVariables={templateVariables}
 				parameters={parameters}
 				messages={messages}
+				projectCredits={'1.0'}
 				handleError={handleErrorMock}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);
@@ -153,7 +159,9 @@ describe('PromptConfigTesting tests', () => {
 				templateVariables={templateVariables}
 				parameters={parameters}
 				messages={messagesWithVariables}
+				projectCredits={'1.0'}
 				handleError={handleErrorMock}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);
@@ -183,7 +191,9 @@ describe('PromptConfigTesting tests', () => {
 				templateVariables={{}}
 				parameters={parameters}
 				messages={messagesWithVariables}
+				projectCredits={'1.0'}
 				handleError={handleErrorMock}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);
@@ -211,7 +221,9 @@ describe('PromptConfigTesting tests', () => {
 				templateVariables={{ userInput: 'test' }}
 				parameters={parameters}
 				messages={messagesWithVariables}
+				projectCredits={'1.0'}
 				handleError={handleErrorMock}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);
@@ -232,6 +244,8 @@ describe('PromptConfigTesting tests', () => {
 				parameters={parameters}
 				messages={messages}
 				handleError={handleErrorMock}
+				projectCredits={'1.0'}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);
@@ -274,6 +288,8 @@ describe('PromptConfigTesting tests', () => {
 				parameters={parameters}
 				messages={messages}
 				handleError={handleErrorMock as any}
+				projectCredits={'1.0'}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock as any}
 			/>,
 		);
@@ -308,6 +324,8 @@ describe('PromptConfigTesting tests', () => {
 				parameters={parameters}
 				messages={messages}
 				handleError={handleErrorMock}
+				projectCredits={'1.0'}
+				handleRefreshProject={vi.fn()}
 				setTemplateVariables={setTemplateVariablesMock}
 			/>,
 		);

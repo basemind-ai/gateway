@@ -201,8 +201,10 @@ export function PromptConfigTesting<T extends ModelVendor>({
 				parameters={parameters}
 				templateVariables={templateVariables}
 				setTemplateVariables={setTemplateVariables}
+				projectCredits={'1.0'}
 				handleError={handleError}
 				messages={messages}
+				handleRefreshProject={() => Promise.resolve()}
 			/>
 			<div className="card-divider" />
 			<div

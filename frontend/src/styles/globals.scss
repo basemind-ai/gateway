@@ -63,20 +63,24 @@ div#__next > div {
 		@apply btn btn-sm rounded-full capitalize;
 	}
 
+	.base-form-element {
+		@apply rounded bg-neutral text-neutral-content max-w-md disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
+	}
+
 	.card-input {
-		@apply input  rounded bg-neutral text-neutral-content max-w-md disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
+		@apply input base-form-element;
 	}
 
 	.card-textarea {
-		@apply textarea rounded bg-neutral text-neutral-content disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
+		@apply textarea base-form-element;
 	}
 
 	.card-select {
-		@apply select select-bordered rounded bg-neutral text-neutral-content max-w-md disabled:bg-gray-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50;
+		@apply select select-bordered base-form-element;
 	}
 
 	.rounded-data-card {
-		@apply mt-3.5 rounded-4xl w-full bg-base-200 px-16;
+		@apply mt-3.5 rounded-4xl w-full bg-base-200 px-16 pt-5 pb-5;
 	}
 	.rounded-dark-card {
 		@apply mt-3.5 rounded-4xl w-full bg-base-300 px-16 shadow-xl;

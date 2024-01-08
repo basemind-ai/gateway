@@ -1,5 +1,3 @@
-import { useTranslations } from 'next-intl';
-
 import { openAIRoleColorMap } from '@/constants/models';
 import {
 	ModelVendor,
@@ -67,34 +65,22 @@ export function PromptContentDisplay<T extends ModelVendor>({
 	messages: ProviderMessageType<T>[];
 	modelVendor: ModelVendor;
 }) {
-	const t = useTranslations('createConfigWizard');
-
 	const messageContent = messages.map(contentMapper[modelVendor]);
 
 	return (
-		<div data-testid="prompt-content-display-container">
-			<div className="flex justify-between">
-				<h2
-					className="card-header"
-					data-testid="prompt-content-display-title"
+		<div
+			className="rounded-dark-card pt-2 pb-2"
+			data-testid="prompt-content-display-container"
+		>
+			{messageContent.map((msg, i) => (
+				<p
+					className="text-base-content"
+					data-testid="message-content-paragraph"
+					key={i}
 				>
-					{t('promptTemplate')}
-				</h2>
-			</div>
-			<div
-				className="rounded-dark-card"
-				data-testid="prompt-content-display-messages"
-			>
-				{messageContent.map((msg, i) => (
-					<p
-						className="text-base-content"
-						data-testid="message-content-paragraph"
-						key={i}
-					>
-						{msg}
-					</p>
-				))}
-			</div>
+					{msg}
+				</p>
+			))}
 		</div>
 	);
 }

@@ -124,27 +124,32 @@ export async function openAIStream(
 			}
 		}
 
-		call.end({
-			content: '',
-			finishReason: getFinishReason(finishReason),
-			requestTokensCount: getTokenCount(
-				call.request.messages.map((m) => m.content ?? '').join(''),
-				getOpenAIModel(call.request.model),
-			),
-			responseTokensCount: getTokenCount(
-				responseContent,
-				getOpenAIModel(call.request.model),
-			),
-		});
-
-		const finishTime = Date.now();
-		logger.debug(
-			{ finishTime, startTime },
-			'OpenAI streaming request completed',
+		call.write(
+			{
+				content: '',
+				finishReason: getFinishReason(finishReason),
+				requestTokensCount: getTokenCount(
+					call.request.messages.map((m) => m.content ?? '').join(''),
+					getOpenAIModel(call.request.model),
+				),
+				responseTokensCount: getTokenCount(
+					responseContent,
+					getOpenAIModel(call.request.model),
+				),
+			},
+			() => {
+				const finishTime = Date.now();
+				logger.debug(
+					{ finishTime, startTime },
+					'OpenAI streaming request completed',
+				);
+			},
 		);
 	} catch (error: unknown) {
 		call.destroy(createInternalGrpcError(error as Error));
 		logger.error(error as Error, 'error communicating with OpenAI');
 		return;
 	}
+
+	call.end();
 }

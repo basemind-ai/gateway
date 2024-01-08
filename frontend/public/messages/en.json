@@ -106,6 +106,8 @@
 		"credits": "Free Credits Left: ",
 		"duration": "Duration",
 		"durationTooltip": "Duration: Total time for complete output. Output streams automatically, with the first response occurring almost immediately.",
+		"errorCreatingConfig": "An error occurred creating the config",
+		"errorRefreshingProject": "An error occurred refreshing the project",
 		"finishReason": "Finish Reason",
 		"message": "Message",
 		"messageContent": "Prompt Template",
