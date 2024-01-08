@@ -35,8 +35,10 @@ export default function PromptConfiguration({
 	};
 }) {
 	const user = useAuthenticatedUser();
+
 	const { page, initialized } = useAnalytics();
 	const t = useTranslations('promptConfig');
+
 	const handleError = useHandleError();
 
 	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
@@ -105,12 +107,14 @@ export default function PromptConfiguration({
 	const tabComponents: Record<PromptConfigPageTab, React.FC> = {
 		[PromptConfigPageTab.OVERVIEW]: memo(() => (
 			<>
+				<PromptConfigGeneralInfo promptConfig={promptConfig} />
+				<div className="card-divider" />
 				<PromptConfigCodeSnippet
 					projectId={projectId}
 					applicationId={applicationId}
+					promptConfigId={promptConfigId}
+					isDefaultConfig={promptConfig.isDefault ?? false}
 				/>
-				<div className="card-divider" />
-				<PromptConfigGeneralInfo promptConfig={promptConfig} />
 			</>
 		)),
 		[PromptConfigPageTab.TESTING]: memo(() => (

@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
@@ -9,13 +10,19 @@ const writeTextMock = vi.fn();
 navigator.clipboard = { writeText: writeTextMock };
 
 describe('PromptConfigCodeSnippet', () => {
+	const supportedLanguages = ['kotlin', 'swift', 'dart'];
+
 	const project = ProjectFactory.buildSync();
 	const application = ApplicationFactory.buildSync();
+	const promptConfigId = faker.string.uuid();
+
 	it('should render the component with the default framework selected', () => {
 		render(
 			<PromptConfigCodeSnippet
 				projectId={project.id}
 				applicationId={application.id}
+				promptConfigId={promptConfigId}
+				isDefaultConfig={true}
 			/>,
 		);
 		const defaultFrameworkTab = screen.getByTestId('tab-Android');
@@ -24,37 +31,48 @@ describe('PromptConfigCodeSnippet', () => {
 		expect(defaultFrameworkTab).toHaveClass('tab-active');
 	});
 
-	it('should display the code snippet for the selected framework', () => {
-		render(
-			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
-			/>,
-		);
-		const kotlinCodeSnippet = screen.getByTestId('code-snippet-kotlin');
+	it.each(['kotlin', 'swift', 'dart'])(
+		'should display the default code snippet for %s',
+		(language: string) => {
+			render(
+				<PromptConfigCodeSnippet
+					projectId={project.id}
+					applicationId={application.id}
+					promptConfigId={promptConfigId}
+					isDefaultConfig={true}
+				/>,
+			);
+			const snippet = screen.getByTestId(`code-snippet-${language}`);
 
-		expect(kotlinCodeSnippet).toBeInTheDocument();
-	});
+			expect(snippet).toBeInTheDocument();
+		},
+	);
 
-	it('should not display the code snippet when the language is not supported', () => {
-		render(
-			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
-			/>,
-		);
-		const reactNativeCodeSnippet = screen.queryByTestId(
-			'code-snippet-react-native',
-		);
+	it.each(supportedLanguages)(
+		'should display the code snippet with prompt config ID for %s',
+		(language: string) => {
+			render(
+				<PromptConfigCodeSnippet
+					projectId={project.id}
+					applicationId={application.id}
+					promptConfigId={promptConfigId}
+					isDefaultConfig={false}
+				/>,
+			);
+			const snippet = screen.getByTestId(`code-snippet-${language}`);
 
-		expect(reactNativeCodeSnippet).not.toBeInTheDocument();
-	});
+			expect(snippet).toBeInTheDocument();
+			expect(snippet.textContent).toContain(promptConfigId);
+		},
+	);
 
 	it('should copy the code snippet to the clipboard when the user clicks the copy button', async () => {
 		render(
 			<PromptConfigCodeSnippet
 				projectId={project.id}
 				applicationId={application.id}
+				promptConfigId={promptConfigId}
+				isDefaultConfig={true}
 			/>,
 		);
 		const copyButtonKotlin = screen.getByTestId(
@@ -69,58 +87,33 @@ describe('PromptConfigCodeSnippet', () => {
 		expect(writeTextMock).toHaveBeenCalledWith(expect.any(String));
 	});
 
-	it('should route to the docs page when the user clicks the view docs button in android', () => {
-		const openMock = (window.open = vi.fn());
-		render(
-			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
-			/>,
-		);
-		const viewDocsButtonKotlin = screen.getByTestId(
-			'code-snippet-view-docs-button-kotlin',
-		);
-		fireEvent.click(viewDocsButtonKotlin);
-		expect(openMock).toHaveBeenCalled();
-	});
-
-	it('should route to the docs page when the user clicks the view docs button in swift', () => {
-		const openMock = (window.open = vi.fn());
-
-		render(
-			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
-			/>,
-		);
-		const viewDocsButtonSwift = screen.getByTestId(
-			'code-snippet-view-docs-button-swift',
-		);
-		fireEvent.click(viewDocsButtonSwift);
-		expect(openMock).toHaveBeenCalled();
-	});
-
-	it('should route to the docs page when the user clicks the view docs button in flutter', () => {
-		const openMock = (window.open = vi.fn());
-
-		render(
-			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
-			/>,
-		);
-		const viewDocsButtonDart = screen.getByTestId(
-			'code-snippet-view-docs-button-dart',
-		);
-		fireEvent.click(viewDocsButtonDart);
-		expect(openMock).toHaveBeenCalled();
-	});
+	it.each(supportedLanguages)(
+		'should route to the %s docs page when the user clicks the view docs button',
+		(language: string) => {
+			const openMock = (window.open = vi.fn());
+			render(
+				<PromptConfigCodeSnippet
+					projectId={project.id}
+					applicationId={application.id}
+					promptConfigId={promptConfigId}
+					isDefaultConfig={true}
+				/>,
+			);
+			const docsButton = screen.getByTestId(
+				`code-snippet-view-docs-button-${language}`,
+			);
+			fireEvent.click(docsButton);
+			expect(openMock).toHaveBeenCalled();
+		},
+	);
 
 	it('should open create API key model when the user clicks the create API key button', async () => {
 		render(
 			<PromptConfigCodeSnippet
 				projectId={project.id}
 				applicationId={application.id}
+				promptConfigId={promptConfigId}
+				isDefaultConfig={true}
 			/>,
 		);
 		const createAPIKeyButton = screen.getByTestId(
@@ -136,6 +129,8 @@ describe('PromptConfigCodeSnippet', () => {
 			<PromptConfigCodeSnippet
 				projectId={project.id}
 				applicationId={application.id}
+				promptConfigId={promptConfigId}
+				isDefaultConfig={true}
 			/>,
 		);
 		const iosTab = screen.getByTestId('tab-iOS');
@@ -151,6 +146,8 @@ describe('PromptConfigCodeSnippet', () => {
 			<PromptConfigCodeSnippet
 				projectId={project.id}
 				applicationId={application.id}
+				promptConfigId={promptConfigId}
+				isDefaultConfig={true}
 			/>,
 		);
 

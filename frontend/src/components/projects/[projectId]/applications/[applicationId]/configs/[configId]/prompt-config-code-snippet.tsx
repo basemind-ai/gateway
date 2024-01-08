@@ -14,31 +14,61 @@ interface FrameworkTab {
 	language: supportedLanguages;
 }
 
-type supportedLanguages = 'kotlin' | 'dart' | 'typescript' | 'swift';
+type supportedLanguages = 'kotlin' | 'dart' | 'swift';
+
+/*
+ * Kotlin
+ * */
 
 const docsKotlin =
 	'https://github.com/basemind-ai/sdk-android/tree/main?tab=readme-ov-file#basemindai-android-sdk';
+
 const snippetKotlin = `import ai.basemind.client.BaseMindClient
+
+val client = BaseMindClient.getInstance("<API_KEY", promptConfigId = "CONFIG_ID")
+`;
+
+const snippetKotlinDefaultConfig = `import ai.basemind.client.BaseMindClient
 
 val client = BaseMindClient.getInstance('<API_KEY>')
 `;
+
+/*
+ * Swift
+ * */
 
 const docsSwift =
 	'https://github.com/basemind-ai/sdk-ios?tab=readme-ov-file#basemindai-swift-iosmacos-sdk';
 const snippetSwift = `import BaseMindClient
 
+let client = BaseMindClient(apiKey: "<MyApiKey>", options: ClientOptions(promptConfigId: "CONFIG_ID"))`;
+
+const snippetSwiftDefaultConfig = `import BaseMindClient
+
 let client = BaseMindClient(apiKey: "<MyApiKey>")`;
 
-const docsFlutter = 'https://pub.dev/packages/basemind';
+/*
+ * Dart
+ * */
+
+const docsDart = 'https://pub.dev/packages/basemind';
 const snippetDart = `import 'package:basemind/client.dart';
+
+final client = BaseMindClient('<API_KEY>', "CONFIG_ID");`;
+
+const snippetDartDefaultConfig = `import 'package:basemind/client.dart';
 
 final client = BaseMindClient('<API_KEY>');`;
 
-const languageSnippetMap: Record<supportedLanguages, string | null> = {
-	dart: snippetDart,
-	kotlin: snippetKotlin,
-	swift: snippetSwift,
-	typescript: null,
+// ---
+
+const languageSnippetMap: Record<
+	supportedLanguages,
+	[defaultConfigSnippet: string, withConfigIdSnippet: string]
+> = {
+	dart: [snippetDartDefaultConfig, snippetDart],
+	kotlin: [snippetKotlinDefaultConfig, snippetKotlin],
+	swift: [snippetSwiftDefaultConfig, snippetSwift],
 };
 
 const tabs: FrameworkTab[] = [
@@ -50,7 +80,7 @@ const tabs: FrameworkTab[] = [
 	},
 	{ docs: docsSwift, framework: 'iOS', isActive: true, language: 'swift' },
 	{
-		docs: docsFlutter,
+		docs: docsDart,
 		framework: 'Flutter',
 		isActive: true,
 		language: 'dart',
@@ -66,13 +96,18 @@ const tabs: FrameworkTab[] = [
 export function PromptConfigCodeSnippet({
 	projectId,
 	applicationId,
+	isDefaultConfig,
+	promptConfigId,
 }: {
 	applicationId: string;
+	isDefaultConfig: boolean;
 	projectId: string;
+	promptConfigId: string;
 }) {
-	const [selectedFramework, setSelectedFramework] = useState('Android');
 	const t = useTranslations('configCodeSnippet');
 	const { initialized, track } = useAnalytics();
+
+	const [selectedFramework, setSelectedFramework] = useState('Android');
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
 	const handleDocClick = (tab: FrameworkTab) => {
@@ -102,7 +137,16 @@ export function PromptConfigCodeSnippet({
 				data-testid="prompt-code-snippet-container"
 			>
 				{tabs.map((tab) => {
-					const snippet = languageSnippetMap[tab.language];
+					const [defaultSnippet, snippetWithConfigId] =
+						languageSnippetMap[tab.language];
+
+					const snippet = isDefaultConfig
+						? defaultSnippet
+						: snippetWithConfigId.replace(
+								'CONFIG_ID',
+								promptConfigId,
+							);
+
 					return (
 						<Fragment key={tab.framework}>
 							<button
@@ -156,13 +200,11 @@ export function PromptConfigCodeSnippet({
 										</button>
 									</div>
 									<div className="flex justify-center">
-										{snippet ? (
-											<CodeSnippet
-												codeText={snippet}
-												language={tab.language}
-												allowCopy={true}
-											/>
-										) : null}
+										<CodeSnippet
+											codeText={snippet}
+											language={tab.language}
+											allowCopy={true}
+										/>
 									</div>
 								</div>
 							</div>

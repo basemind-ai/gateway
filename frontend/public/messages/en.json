@@ -347,6 +347,7 @@
 		"name": "Name",
 		"overview": "Overview",
 		"promptDeleted": "Model Configuration Deleted",
+		"promptTemplate": "Prompt Template",
 		"save": "Save",
 		"saveAsNew": "Save as New",
 		"settings": "Settings",

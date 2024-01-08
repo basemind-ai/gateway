@@ -61,7 +61,9 @@ const contentMapper: Record<
 export function PromptContentDisplay<T extends ModelVendor>({
 	messages,
 	modelVendor,
+	className = 'rounded-dark-card pt-2 pb-2',
 }: {
+	className?: string;
 	messages: ProviderMessageType<T>[];
 	modelVendor: ModelVendor;
 }) {
@@ -69,7 +71,7 @@ export function PromptContentDisplay<T extends ModelVendor>({
 
 	return (
 		<div
-			className="rounded-dark-card pt-2 pb-2"
+			className={className}
 			data-testid="prompt-content-display-container"
 		>
 			{messageContent.map((msg, i) => (
