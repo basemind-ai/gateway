@@ -64,9 +64,14 @@
 		"submit": "Submit"
 	},
 	"configCodeSnippet": {
-		"createAPIKey": "Create API Key",
+		"dartInstallationText": "Add the dependency to your application's pubspec.yaml file:",
 		"documentation": "Documentation",
-		"implement": "Implement"
+		"implement": "Implement",
+		"importText": "You can now import and initialize the client in your code:",
+		"kotlinInstallationText": "Add the dependency to your application's build.gradle.kts file:",
+		"swiftInstallationText": "Add the dependency to your application's Package.swift:",
+		"usageRequestText": "Use the client to request a prompt using the config:",
+		"usageStreamText": "Or request a streaming response using the config:"
 	},
 	"createApplication": {
 		"applicationCreated": "Application Created",
@@ -322,6 +327,7 @@
 		"promptHeader": "Prompt Testing",
 		"savedPromptConfig": "Saved Templates"
 	},
+
 	"promptConfig": {
 		"apiCalls": "API Calls",
 		"cancel": "Cancel",

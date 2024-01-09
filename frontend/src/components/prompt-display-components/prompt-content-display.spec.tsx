@@ -1,9 +1,8 @@
-import { waitFor } from '@testing-library/react';
 import {
 	CohereMessageFactory,
 	OpenAIPromptMessageFactory,
 } from 'tests/factories';
-import { render, screen } from 'tests/test-utils';
+import { render, screen, waitFor } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
@@ -80,7 +79,7 @@ describe('PromptContentDisplay', () => {
 		expect(variables[2]).toHaveTextContent('{var3}');
 	});
 
-	it('should parse template variables correctly for OpenAI messages', async () => {
+	it('should parse template variables correctly for Cohere messages', async () => {
 		const message = CohereMessageFactory.buildSync({
 			message: `
 			Hello {var1}

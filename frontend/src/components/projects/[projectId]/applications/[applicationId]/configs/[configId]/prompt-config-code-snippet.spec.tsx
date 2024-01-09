@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-code-snippet';
@@ -11,16 +10,11 @@ navigator.clipboard = { writeText: writeTextMock };
 
 describe('PromptConfigCodeSnippet', () => {
 	const supportedLanguages = ['kotlin', 'swift', 'dart'];
-
-	const project = ProjectFactory.buildSync();
-	const application = ApplicationFactory.buildSync();
 	const promptConfigId = faker.string.uuid();
 
 	it('should render the component with the default framework selected', () => {
 		render(
 			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
 			/>,
@@ -36,8 +30,6 @@ describe('PromptConfigCodeSnippet', () => {
 		(language: string) => {
 			render(
 				<PromptConfigCodeSnippet
-					projectId={project.id}
-					applicationId={application.id}
 					promptConfigId={promptConfigId}
 					isDefaultConfig={true}
 				/>,
@@ -53,8 +45,6 @@ describe('PromptConfigCodeSnippet', () => {
 		(language: string) => {
 			render(
 				<PromptConfigCodeSnippet
-					projectId={project.id}
-					applicationId={application.id}
 					promptConfigId={promptConfigId}
 					isDefaultConfig={false}
 				/>,
@@ -69,8 +59,6 @@ describe('PromptConfigCodeSnippet', () => {
 	it('should copy the code snippet to the clipboard when the user clicks the copy button', async () => {
 		render(
 			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
 			/>,
@@ -93,8 +81,6 @@ describe('PromptConfigCodeSnippet', () => {
 			const openMock = (window.open = vi.fn());
 			render(
 				<PromptConfigCodeSnippet
-					projectId={project.id}
-					applicationId={application.id}
 					promptConfigId={promptConfigId}
 					isDefaultConfig={true}
 				/>,
@@ -110,8 +96,6 @@ describe('PromptConfigCodeSnippet', () => {
 	it('should open create API key model when the user clicks the create API key button', async () => {
 		render(
 			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
 			/>,
@@ -127,8 +111,6 @@ describe('PromptConfigCodeSnippet', () => {
 	it('should change the selected framework when a different tab is clicked', () => {
 		render(
 			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
 			/>,
@@ -144,8 +126,6 @@ describe('PromptConfigCodeSnippet', () => {
 	it('should close the create API key modal when the cancel button is clicked', async () => {
 		render(
 			<PromptConfigCodeSnippet
-				projectId={project.id}
-				applicationId={application.id}
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
 			/>,

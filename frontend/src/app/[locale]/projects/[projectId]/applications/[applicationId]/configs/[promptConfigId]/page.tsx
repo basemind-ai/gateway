@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { memo, useEffect, useState } from 'react';
-import { Gear, RocketTakeoff, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 
@@ -12,7 +12,6 @@ import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/appli
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
-import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { PromptConfigPageTab } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -93,11 +92,6 @@ export default function PromptConfiguration({
 			text: t('overview'),
 		},
 		{
-			icon: <RocketTakeoff className="w-3.5 h-3.5" />,
-			id: PromptConfigPageTab.TESTING,
-			text: t('test'),
-		},
-		{
 			icon: <Gear className="w-3.5 h-3.5" />,
 			id: PromptConfigPageTab.SETTINGS,
 			text: t('settings'),
@@ -110,19 +104,10 @@ export default function PromptConfiguration({
 				<PromptConfigGeneralInfo promptConfig={promptConfig} />
 				<div className="card-divider" />
 				<PromptConfigCodeSnippet
-					projectId={projectId}
-					applicationId={applicationId}
 					promptConfigId={promptConfigId}
 					isDefaultConfig={promptConfig.isDefault ?? false}
 				/>
 			</>
-		)),
-		[PromptConfigPageTab.TESTING]: memo(() => (
-			<PromptConfigTesting
-				projectId={projectId}
-				applicationId={applicationId}
-				promptConfig={promptConfig}
-			/>
 		)),
 		[PromptConfigPageTab.SETTINGS]: memo(() => (
 			<>

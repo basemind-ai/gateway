@@ -63,3 +63,4 @@ repos:
       hooks:
           - id: codespell
             additional_dependencies: ['tomli']
+            exclude: 'go.*'

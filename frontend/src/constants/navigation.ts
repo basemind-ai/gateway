@@ -18,7 +18,6 @@ export const SUPPORT_EMAIL = 'support@basemind.ai';
 
 export enum PromptConfigPageTab {
 	OVERVIEW,
-	TESTING,
 	SETTINGS,
 }
 
