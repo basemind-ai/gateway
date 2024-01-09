@@ -1,80 +1,114 @@
+import { ReactNode, useEffect, useState } from 'react';
+import reactStringReplace from 'react-string-replace';
+
 import { openAIRoleColorMap } from '@/constants/models';
 import {
 	ModelVendor,
 	OpenAIPromptMessageRole,
 	ProviderMessageType,
 } from '@/types';
+import { curlyBracketsRe } from '@/utils/models';
 
 const openAIRoleElementMapper: Record<
 	OpenAIPromptMessageRole,
-	React.FC<{ message: string }>
+	React.FC<{ message: string; templateVariables?: Record<string, string> }>
 > = {
-	[OpenAIPromptMessageRole.Assistant]: ({ message }) => (
+	[OpenAIPromptMessageRole.Assistant]: ({ message, templateVariables }) => (
 		<span>
 			[
 			<span className={`text-${openAIRoleColorMap.assistant}`}>
 				{`${OpenAIPromptMessageRole.Assistant} message`}
 			</span>
-			]: <span className="text-base-content">{message}</span>
+			]:{' '}
+			<span className="text-base-content">
+				{parseTemplateVariables(message, templateVariables)}
+			</span>
 		</span>
 	),
 
-	[OpenAIPromptMessageRole.System]: ({ message }) => (
+	[OpenAIPromptMessageRole.System]: ({ message, templateVariables }) => (
 		<span>
 			[
 			<span
 				className={`text-${openAIRoleColorMap.system}`}
 			>{`${OpenAIPromptMessageRole.System} message`}</span>
-			]: <span className="text-base-content">{message}</span>
+			]:{' '}
+			<span className="text-base-content">
+				{parseTemplateVariables(message, templateVariables)}
+			</span>
 		</span>
 	),
-	[OpenAIPromptMessageRole.User]: ({ message }) => (
+	[OpenAIPromptMessageRole.User]: ({ message, templateVariables }) => (
 		<span>
 			[
 			<span
 				className={`text-${openAIRoleColorMap.user}`}
 			>{`${OpenAIPromptMessageRole.User} message`}</span>
-			]: <span className="text-base-content">{message}</span>
+			]:{' '}
+			<span className="text-base-content">
+				{parseTemplateVariables(message, templateVariables)}
+			</span>
 		</span>
 	),
 };
 
 const contentMapper: Record<
 	ModelVendor,
-	(message: any, index: number) => React.ReactNode
+	(
+		templateVariables?: Record<string, string>,
+	) => (message: any, index: number) => React.ReactNode
 > = {
-	[ModelVendor.Cohere]: (
-		m: ProviderMessageType<ModelVendor.Cohere>,
-		i: number,
-	) => (
-		<span>
-			[<span className="text-accent">{i}</span>]:{' '}
-			<span className="text-info">{m.message}</span>
+	[ModelVendor.Cohere]:
+		(templateVariables?: Record<string, string>) =>
+		(m: ProviderMessageType<ModelVendor.Cohere>) => (
+			<span className="text-info">
+				{parseTemplateVariables(m.message, templateVariables)}
+			</span>
+		),
+	[ModelVendor.OpenAI]:
+		(templateVariables?: Record<string, string>) =>
+		(m: ProviderMessageType<ModelVendor.OpenAI>) =>
+			openAIRoleElementMapper[m.role]({
+				message: m.content,
+				templateVariables,
+			}),
+};
+
+const parseTemplateVariables = (
+	content: string,
+	templateVariables?: Record<string, string>,
+) => {
+	return reactStringReplace(content, curlyBracketsRe, (match, i) => (
+		<span key={i} className="text-primary" data-testid="template-variable">
+			{templateVariables?.[match] ?? `{${match}}`}
 		</span>
-	),
-	[ModelVendor.OpenAI]: (m: ProviderMessageType<ModelVendor.OpenAI>) =>
-		openAIRoleElementMapper[m.role]({
-			message: m.content,
-		}),
+	));
 };
 
 export function PromptContentDisplay<T extends ModelVendor>({
 	messages,
 	modelVendor,
 	className = 'rounded-dark-card pt-2 pb-2',
+	templateVariables,
 }: {
 	className?: string;
 	messages: ProviderMessageType<T>[];
 	modelVendor: ModelVendor;
+	templateVariables?: Record<string, string>;
 }) {
-	const messageContent = messages.map(contentMapper[modelVendor]);
+	const [parsedMessages, setParsedMessages] = useState<ReactNode[]>([]);
+
+	useEffect(() => {
+		const mapper = contentMapper[modelVendor](templateVariables);
+		setParsedMessages(messages.map(mapper));
+	}, [messages, modelVendor, templateVariables]);
 
 	return (
 		<div
 			className={className}
 			data-testid="prompt-content-display-container"
 		>
-			{messageContent.map((msg, i) => (
+			{parsedMessages.map((msg, i) => (
 				<p
 					className="text-base-content"
 					data-testid="message-content-paragraph"

@@ -1,16 +1,15 @@
+import { waitFor } from '@testing-library/react';
 import {
 	CohereMessageFactory,
 	OpenAIPromptMessageFactory,
 } from 'tests/factories';
-import { getLocaleNamespace, render, screen } from 'tests/test-utils';
+import { render, screen } from 'tests/test-utils';
 import { expect } from 'vitest';
 
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
 import { ModelVendor } from '@/types';
 
 describe('PromptContentDisplay', () => {
-	const namespace = getLocaleNamespace('createConfigWizard');
-
 	it('should display an array of openAI messages correctly', () => {
 		const messages = OpenAIPromptMessageFactory.batchSync(10);
 
@@ -22,7 +21,7 @@ describe('PromptContentDisplay', () => {
 		);
 
 		const messageContainer = screen.getByTestId(
-			'prompt-content-display-messages',
+			'prompt-content-display-container',
 		);
 		expect(messageContainer).toBeInTheDocument();
 		expect(messageContainer.children.length).toBe(10);
@@ -33,36 +32,86 @@ describe('PromptContentDisplay', () => {
 		}
 	});
 
-	it('should display an array of cohere messages correctly', () => {
-		const messages = CohereMessageFactory.batchSync(5);
+	it('should display a cohere message correctly', () => {
+		const message = CohereMessageFactory.buildSync();
 		render(
 			<PromptContentDisplay
-				messages={messages}
+				messages={[message]}
 				modelVendor={ModelVendor.Cohere}
 			/>,
 		);
 		const messageContainer = screen.getByTestId(
-			'prompt-content-display-messages',
+			'prompt-content-display-container',
 		);
 		expect(messageContainer).toBeInTheDocument();
-		expect(messageContainer.children.length).toBe(5);
-
-		for (const [i, message] of messages.entries()) {
-			const content = `[${i}]: ${message.message}`;
-			expect(content).toBe(messageContainer.children[i].textContent);
-		}
+		expect(messageContainer).toHaveTextContent(message.message);
 	});
 
-	it('should have the correct title', () => {
-		const messages = CohereMessageFactory.batchSync(5);
+	it('should parse template variables correctly for OpenAI messages', async () => {
+		const messages = OpenAIPromptMessageFactory.batchSync(3);
+		messages[0].content = 'Hello {var1}';
+		messages[1].content = 'Hello {var2}';
+		messages[2].content = 'Hello {var3}';
+
+		const templateVariables = {
+			var1: 'world',
+			var2: 'there',
+		};
+
 		render(
 			<PromptContentDisplay
 				messages={messages}
-				modelVendor={ModelVendor.Cohere}
+				modelVendor={ModelVendor.OpenAI}
+				templateVariables={templateVariables}
 			/>,
 		);
-		const title = screen.getByTestId('prompt-content-display-title');
-		expect(title).toBeInTheDocument();
-		expect(title.textContent).toBe(namespace.promptTemplate);
+		const messageContainer = screen.getByTestId(
+			'prompt-content-display-container',
+		);
+		expect(messageContainer).toBeInTheDocument();
+
+		const variables = screen.queryAllByTestId('template-variable');
+		await waitFor(() => {
+			expect(variables.length).toBe(3);
+		});
+
+		expect(variables[0]).toHaveTextContent('world');
+		expect(variables[1]).toHaveTextContent('there');
+		expect(variables[2]).toHaveTextContent('{var3}');
+	});
+
+	it('should parse template variables correctly for OpenAI messages', async () => {
+		const message = CohereMessageFactory.buildSync({
+			message: `
+			Hello {var1}
+			Hello {var2}
+			Hello {var3}
+			`,
+		});
+		const templateVariables = {
+			var1: 'world',
+			var2: 'there',
+		};
+
+		render(
+			<PromptContentDisplay
+				messages={[message]}
+				modelVendor={ModelVendor.Cohere}
+				templateVariables={templateVariables}
+			/>,
+		);
+		const messageContainer = screen.getByTestId(
+			'prompt-content-display-container',
+		);
+		expect(messageContainer).toBeInTheDocument();
+
+		const variables = screen.queryAllByTestId('template-variable');
+		await waitFor(() => {
+			expect(variables.length).toBe(3);
+		});
+
+		expect(variables[0]).toHaveTextContent('world');
+		expect(variables[1]).toHaveTextContent('there');
+		expect(variables[2]).toHaveTextContent('{var3}');
 	});
 });

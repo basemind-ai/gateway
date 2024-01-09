@@ -157,6 +157,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 				<PromptContentDisplay
 					modelVendor={modelVendor}
 					messages={messages}
+					templateVariables={templateVariables}
 				/>
 			</>
 			{expectedVariables.length > 0 && (

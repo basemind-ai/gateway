@@ -15,7 +15,7 @@ export function PromptTestInputs({
 				{expectedVariables.map((variable) => (
 					<div key={variable} className="form-control">
 						<textarea
-							className="card-textarea textarea-info bg-neutral placeholder-info"
+							className="card-textarea textarea-info bg-neutral placeholder-info min-w-full"
 							data-testid={`input-variable-input-${variable}`}
 							value={templateVariables[variable] ?? ''}
 							placeholder={`{${variable}}`}
