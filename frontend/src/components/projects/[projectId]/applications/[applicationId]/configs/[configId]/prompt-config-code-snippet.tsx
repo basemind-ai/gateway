@@ -1,18 +1,35 @@
 import { useTranslations } from 'next-intl';
-import { Fragment, memo, useState } from 'react';
+import { Fragment, memo, useMemo, useState } from 'react';
 import { Github } from 'react-bootstrap-icons';
 
 import { CodeSnippet } from '@/components/code-snippet';
 import { useAnalytics } from '@/hooks/use-analytics';
+
+interface ReplacerMap {
+	invokeReplacer: (
+		value: string,
+		expectedTemplateVariables: string[],
+	) => string;
+	parametersReplacer: (
+		value: string,
+		expectedTemplateVariables: string[],
+	) => string;
+}
 
 interface FrameworkTab {
 	docs: string;
 	framework: string;
 	isActive: boolean;
 	language: supportedLanguages;
+	replacers: ReplacerMap;
 }
-
 type supportedLanguages = 'kotlin' | 'dart' | 'swift';
+
+const apiKey = '<API_KEY>';
+const configId = '<CONFIG_ID>';
+const functionInvoke = '<FUNCTION_INVOKE>';
+const functionParameters = '<FUNCTION_PARAMETERS>';
+const input = '<INPUT>';
 
 /*
  * Kotlin
@@ -28,29 +45,27 @@ const kotlinInstallationSnippet = `dependencies {
 const kotlinInitSnippet = `import ai.basemind.client.BaseMindClient
 
 val client = BaseMindClient.getInstance(
-	"<API_KEY",
-	promptConfigId = "CONFIG_ID",
+	"${apiKey}",
+	promptConfigId = "${configId}",
 )
 `;
 
 const kotlinDefaultInitSnippet = `import ai.basemind.client.BaseMindClient
 
-val client = BaseMindClient.getInstance('<API_KEY>')
+val client = BaseMindClient.getInstance('${apiKey}')
 `;
 
-const kotlinRequestSnippet = `fun handlePromptRequest(userInput: String): String {
-    val map = mapOf("userInput" to userInput)
-    val response = client.requestPrompt(map)
+const kotlinRequestSnippet = `fun handlePromptRequest(${functionParameters}): String {
+    val response = client.requestPrompt(templateVariables)
 
     return response.content
 }
 
-val prompt = handlePromptRequest("Hello World!")
+val prompt = handlePromptRequest(${functionInvoke})
 `;
 
-const kotlinStreamSnippet = `fun handlePromptStream(userInput: String): MutableList<String> {
-    val map = mapOf("userInput" to userInput)
-    val response = client.requestStream(map)
+const kotlinStreamSnippet = `fun handlePromptStream(${functionParameters}): MutableList<String> {
+    val response = client.requestStream(templateVariables)
 
     val chunks: MutableList<String> = mutableListOf()
     response.collect { chunk -> chunks.add(chunk.content) }
@@ -58,8 +73,27 @@ const kotlinStreamSnippet = `fun handlePromptStream(userInput: String): MutableL
     return chunks
 }
 
-val chunks = handlePromptStream("Hello World!")
+val chunks = handlePromptStream(${functionInvoke})
 `;
+
+const kotlinPlaceholderReplacers: ReplacerMap = {
+	invokeReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionInvoke,
+			expectedTemplateVariables.length
+				? `mapOf(\n${expectedTemplateVariables
+						.map((v) => `\t"${v}" to "${input}"`)
+						.join(', \n')}\n)`
+				: '',
+		),
+	parametersReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionParameters,
+			expectedTemplateVariables.length
+				? 'templateVariables: Map<String, String>'
+				: '',
+		),
+};
 
 /*
  * Swift
@@ -81,26 +115,24 @@ targets: [
 const swiftInitSnippet = `import BaseMindClient
 
 let client = BaseMindClient(
-	apiKey: "<MyApiKey>",
-	options: ClientOptions(promptConfigId: "CONFIG_ID"),
+	apiKey: "${apiKey}",
+	options: ClientOptions(promptConfigId: "${configId}"),
 )`;
 
 const swiftDefaultInitSnippet = `import BaseMindClient
 
-let client = BaseMindClient(apiKey: "<MyApiKey>")`;
+let client = BaseMindClient(apiKey: "${apiKey}")`;
 
-const swiftRequestSnippet = `func handlePromptRequest(userInput: String) async throws -> String {
-    let templateVariables = ["userInput": userInput]
+const swiftRequestSnippet = `func handlePromptRequest(${functionParameters}) async throws -> String {
     let response = try client.requestPrompt(templateVariables)
 
     return response.content
 }
 
-let prompt = try await handlePromptRequest("Hello World!")
+let prompt = try await handlePromptRequest(${functionInvoke})
 `;
 
-const swiftStreamSnippet = `func handlePromptStream(userInput: String) async throws -> [String] {
-    let templateVariables = ["userInput": userInput]
+const swiftStreamSnippet = `func handlePromptStream(${functionParameters}) async throws -> [String] {
     let stream = try client.requestStream(templateVariables)
 
     var chunks: [String] = []
@@ -111,8 +143,28 @@ const swiftStreamSnippet = `func handlePromptStream(userInput: String) async thr
     return chunks
 }
 
-let chunks = try await handlePromptStream("Hello World!")
+let chunks = try await handlePromptStream(${functionInvoke})
 `;
+
+const swiftPlaceholderReplacers: ReplacerMap = {
+	invokeReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionInvoke,
+			expectedTemplateVariables.length
+				? `[
+${expectedTemplateVariables
+	.map((v) => `\t"${v}": "${input}"`)
+	.join(', \n')},\n]`
+				: '',
+		),
+	parametersReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionParameters,
+			expectedTemplateVariables.length
+				? 'templateVariables: [String: String]'
+				: '',
+		),
+};
 
 /*
  * Dart
@@ -129,35 +181,51 @@ const dartInstallationSnippet = `flutter pub add basemind
 const dartInitSnippet = `import 'package:basemind/client.dart';
 
 final client = BaseMindClient(
-	'<API_KEY>',
-	"CONFIG_ID",
+	'${apiKey}',
+	"${configId}",
 );`;
 
 const dartDefaultInitSnippet = `import 'package:basemind/client.dart';
 import * as url from 'url';
 
-final client = BaseMindClient('<API_KEY>');`;
+final client = BaseMindClient('${apiKey}');`;
 
-const dartRequestSnippet = `Future<String> handlePromptRequest(String userInput) async {
-	final templateVariables = {'userInput': userInput};
+const dartRequestSnippet = `Future<String> handlePromptRequest(${functionParameters}) async {
 	final response = await client.requestPrompt(templateVariables);
 
 	return response.content;
 }
 
-final prompt = await handlePromptRequest('Hello World!');
+final prompt = await handlePromptRequest(${functionInvoke});
 `;
 
-const dartStreamSnippet = `handlePromptStream(String userInput,) {
-  final stream = client.requestStream({'userInput': userInput});
+const dartStreamSnippet = `handlePromptStream(${functionParameters}) {
+  final stream = client.requestStream(templateVariables);
   stream.listen((response) {
     print(response.content);
   });
 }
 
-handlePromptStream('Hello World!');
+handlePromptStream(${functionInvoke});
 `;
 
+const dartPlaceholderReplacers: ReplacerMap = {
+	invokeReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionInvoke,
+			expectedTemplateVariables.length
+				? `{
+${expectedTemplateVariables.map((v) => `\t'${v}': '${input}'`).join(',\n')},\n}`
+				: '',
+		),
+	parametersReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionParameters,
+			expectedTemplateVariables.length
+				? 'Map<String, String> templateVariables'
+				: '',
+		),
+};
 // ---
 
 const tabs: FrameworkTab[] = [
@@ -166,13 +234,21 @@ const tabs: FrameworkTab[] = [
 		framework: 'Android',
 		isActive: true,
 		language: 'kotlin',
+		replacers: kotlinPlaceholderReplacers,
 	},
-	{ docs: swiftDocs, framework: 'iOS', isActive: true, language: 'swift' },
+	{
+		docs: swiftDocs,
+		framework: 'iOS',
+		isActive: true,
+		language: 'swift',
+		replacers: swiftPlaceholderReplacers,
+	},
 	{
 		docs: dartDocs,
 		framework: 'Flutter',
 		isActive: true,
 		language: 'dart',
+		replacers: dartPlaceholderReplacers,
 	},
 ];
 
@@ -195,10 +271,7 @@ const importSnippetMap: Record<
 				codeText={
 					isDefault
 						? dartDefaultInitSnippet
-						: dartInitSnippet.replaceAll(
-								'CONFIG_ID',
-								promptConfigId,
-							)
+						: dartInitSnippet.replaceAll(configId, promptConfigId)
 				}
 				language="dart"
 				allowCopy={true}
@@ -217,10 +290,7 @@ const importSnippetMap: Record<
 				codeText={
 					isDefault
 						? kotlinDefaultInitSnippet
-						: kotlinInitSnippet.replaceAll(
-								'CONFIG_ID',
-								promptConfigId,
-							)
+						: kotlinInitSnippet.replaceAll(configId, promptConfigId)
 				}
 				language="kotlin"
 				allowCopy={true}
@@ -239,10 +309,7 @@ const importSnippetMap: Record<
 				codeText={
 					isDefault
 						? swiftDefaultInitSnippet
-						: swiftInitSnippet.replaceAll(
-								'CONFIG_ID',
-								promptConfigId,
-							)
+						: swiftInitSnippet.replaceAll(configId, promptConfigId)
 				}
 				language="swift"
 				allowCopy={true}
@@ -275,48 +342,58 @@ const installationSnippetMap: Record<supportedLanguages, React.FC> = {
 	)),
 };
 
-const promptRequestSnippetMap: Record<supportedLanguages, React.FC> = {
-	dart: memo(() => (
+const promptRequestSnippetMap: Record<
+	supportedLanguages,
+	React.FC<{
+		replacer: (value: string) => string;
+	}>
+> = {
+	dart: memo(({ replacer }) => (
 		<CodeSnippet
-			codeText={dartRequestSnippet}
+			codeText={replacer(dartRequestSnippet)}
 			language="dart"
 			allowCopy={true}
 		/>
 	)),
-	kotlin: memo(() => (
+	kotlin: memo(({ replacer }) => (
 		<CodeSnippet
-			codeText={kotlinRequestSnippet}
+			codeText={replacer(kotlinRequestSnippet)}
 			language="kotlin"
 			allowCopy={true}
 		/>
 	)),
-	swift: memo(() => (
+	swift: memo(({ replacer }) => (
 		<CodeSnippet
-			codeText={swiftRequestSnippet}
+			codeText={replacer(swiftRequestSnippet)}
 			language="swift"
 			allowCopy={true}
 		/>
 	)),
 };
 
-const promptStreamSnippetMap: Record<supportedLanguages, React.FC> = {
-	dart: memo(() => (
+const promptStreamSnippetMap: Record<
+	supportedLanguages,
+	React.FC<{
+		replacer: (value: string) => string;
+	}>
+> = {
+	dart: memo(({ replacer }) => (
 		<CodeSnippet
-			codeText={dartStreamSnippet}
+			codeText={replacer(dartStreamSnippet)}
 			language="dart"
 			allowCopy={true}
 		/>
 	)),
-	kotlin: memo(() => (
+	kotlin: memo(({ replacer }) => (
 		<CodeSnippet
-			codeText={kotlinStreamSnippet}
+			codeText={replacer(kotlinStreamSnippet)}
 			language="kotlin"
 			allowCopy={true}
 		/>
 	)),
-	swift: memo(() => (
+	swift: memo(({ replacer }) => (
 		<CodeSnippet
-			codeText={swiftStreamSnippet}
+			codeText={replacer(swiftStreamSnippet)}
 			language="swift"
 			allowCopy={true}
 		/>
@@ -326,7 +403,9 @@ const promptStreamSnippetMap: Record<supportedLanguages, React.FC> = {
 export function PromptConfigCodeSnippet({
 	isDefaultConfig,
 	promptConfigId,
+	expectedVariables,
 }: {
+	expectedVariables: string[];
 	isDefaultConfig: boolean;
 	promptConfigId: string;
 }) {
@@ -347,6 +426,136 @@ export function PromptConfigCodeSnippet({
 		};
 	};
 
+	const mappedTabs = useMemo(
+		() =>
+			tabs.map((tab) => {
+				const InstallationSnippet =
+					installationSnippetMap[tab.language];
+				const ImportSnippet = importSnippetMap[tab.language];
+				const RequestSnippet = promptRequestSnippetMap[tab.language];
+				const StreamSnippet = promptStreamSnippetMap[tab.language];
+				const replacer = (value: string) => {
+					value = tab.replacers.parametersReplacer(
+						tab.replacers.invokeReplacer(value, expectedVariables),
+						expectedVariables,
+					);
+
+					if (!expectedVariables.length) {
+						value = value.replaceAll('templateVariables', '');
+					}
+
+					return value;
+				};
+
+				return (
+					<Fragment key={tab.framework}>
+						<button
+							name="tabs"
+							data-testid={`tab-${tab.framework}`}
+							className={`tab [--tab-bg:bg-base-100] text-base-content rounded-b-none hover:bg-neutral ${
+								selectedFramework === tab.framework &&
+								'tab-active bg-base-200 border-base-300 hover:bg-base-300'
+							}`}
+							aria-label={tab.framework}
+							disabled={!tab.isActive}
+							onClick={() => {
+								setSelectedFramework(tab.framework);
+							}}
+						>
+							<span
+								className="text-info"
+								data-testid={`tab-text-${tab.framework}`}
+							>
+								{tab.framework}
+							</span>
+						</button>
+						<div
+							className="tab-content rounded-data-card rounded-tl-none mt-0  w-full p-6"
+							data-testid={`tab-content-${tab.framework}-container`}
+						>
+							<div className="flex flex-col">
+								<button
+									className="btn btn-sm btn-wide btn-neutral mb-5"
+									disabled={!tab.docs}
+									onClick={handleDocClick(tab)}
+									data-testid={`code-snippet-view-docs-button-${tab.language}`}
+								>
+									<Github className="w-4 h-4" />
+									<span className="text-sm">
+										{t('documentation')}
+									</span>
+								</button>
+								<div className="sm:flex sm:flex-col md:grid md:grid-cols-2 sm:gap-4 md:gap-8">
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												1
+											</span>
+											<span
+												className="text-info font-bold
+												"
+											>
+												{t(
+													`${tab.language}InstallationText`,
+												)}
+											</span>
+										</div>
+										<InstallationSnippet />
+									</div>
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												2
+											</span>
+											<span
+												className="text-info font-bold
+												"
+											>
+												{t('importText')}
+											</span>
+										</div>
+										<ImportSnippet
+											isDefault={isDefaultConfig}
+											promptConfigId={promptConfigId}
+										/>
+									</div>
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												3
+											</span>
+											<span
+												className="text-info font-bold
+												"
+											>
+												{t('usageRequestText')}
+											</span>
+										</div>
+										<RequestSnippet replacer={replacer} />
+									</div>
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												4
+											</span>
+											<span
+												className="text-info font-bold
+												"
+											>
+												{t('usageStreamText')}
+											</span>
+										</div>
+										<StreamSnippet replacer={replacer} />
+									</div>
+								</div>
+							</div>
+						</div>
+					</Fragment>
+				);
+			}),
+		[expectedVariables, initialized, selectedFramework],
+	);
+
 	return (
 		<>
 			<h2 className="card-header">{t('implement')}</h2>
@@ -354,120 +563,7 @@ export function PromptConfigCodeSnippet({
 				className="tabs tabs-lifted mt-3.5"
 				data-testid="prompt-code-snippet-container"
 			>
-				{tabs.map((tab) => {
-					const InstallationSnippet =
-						installationSnippetMap[tab.language];
-					const ImportSnippet = importSnippetMap[tab.language];
-					const RequestSnippet =
-						promptRequestSnippetMap[tab.language];
-					const StreamSnippet = promptStreamSnippetMap[tab.language];
-
-					return (
-						<Fragment key={tab.framework}>
-							<button
-								name="tabs"
-								data-testid={`tab-${tab.framework}`}
-								className={`tab [--tab-bg:bg-base-100] text-base-content rounded-b-none hover:bg-neutral ${
-									selectedFramework === tab.framework &&
-									'tab-active bg-base-200 border-base-300 hover:bg-base-300'
-								}`}
-								aria-label={tab.framework}
-								disabled={!tab.isActive}
-								onClick={() => {
-									setSelectedFramework(tab.framework);
-								}}
-							>
-								<span
-									className="text-info"
-									data-testid={`tab-text-${tab.framework}`}
-								>
-									{tab.framework}
-								</span>
-							</button>
-							<div
-								className="tab-content rounded-data-card rounded-tl-none mt-0  w-full p-6"
-								data-testid={`tab-content-${tab.framework}-container`}
-							>
-								<div className="flex flex-col">
-									<button
-										className="btn btn-sm btn-wide btn-neutral mb-5"
-										disabled={!tab.docs}
-										onClick={handleDocClick(tab)}
-										data-testid={`code-snippet-view-docs-button-${tab.language}`}
-									>
-										<Github className="w-4 h-4" />
-										<span className="text-sm">
-											{t('documentation')}
-										</span>
-									</button>
-									<div className="sm:flex sm:flex-col md:grid md:grid-cols-2 sm:gap-4 md:gap-8">
-										<div className="flex flex-col gap-2">
-											<div className="pb-2 flex items-center gap-2">
-												<span className="badge badge-outline badge-info text-xl font-bold">
-													1
-												</span>
-												<span
-													className="text-info font-bold
-												"
-												>
-													{t(
-														`${tab.language}InstallationText`,
-													)}
-												</span>
-											</div>
-											<InstallationSnippet />
-										</div>
-										<div className="flex flex-col gap-2">
-											<div className="pb-2 flex items-center gap-2">
-												<span className="badge badge-outline badge-info text-xl font-bold">
-													2
-												</span>
-												<span
-													className="text-info font-bold
-												"
-												>
-													{t('importText')}
-												</span>
-											</div>
-											<ImportSnippet
-												isDefault={isDefaultConfig}
-												promptConfigId={promptConfigId}
-											/>
-										</div>
-										<div className="flex flex-col gap-2">
-											<div className="pb-2 flex items-center gap-2">
-												<span className="badge badge-outline badge-info text-xl font-bold">
-													3
-												</span>
-												<span
-													className="text-info font-bold
-												"
-												>
-													{t('usageRequestText')}
-												</span>
-											</div>
-											<RequestSnippet />
-										</div>
-										<div className="flex flex-col gap-2">
-											<div className="pb-2 flex items-center gap-2">
-												<span className="badge badge-outline badge-info text-xl font-bold">
-													4
-												</span>
-												<span
-													className="text-info font-bold
-												"
-												>
-													{t('usageStreamText')}
-												</span>
-											</div>
-											<StreamSnippet />
-										</div>
-									</div>
-								</div>
-							</div>
-						</Fragment>
-					);
-				})}
+				{mappedTabs}
 			</div>
 		</>
 	);

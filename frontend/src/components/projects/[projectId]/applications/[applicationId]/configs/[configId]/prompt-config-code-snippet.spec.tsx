@@ -17,6 +17,7 @@ describe('PromptConfigCodeSnippet', () => {
 			<PromptConfigCodeSnippet
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
+				expectedVariables={[]}
 			/>,
 		);
 		const defaultFrameworkTab = screen.getByTestId('tab-Android');
@@ -32,6 +33,7 @@ describe('PromptConfigCodeSnippet', () => {
 				<PromptConfigCodeSnippet
 					promptConfigId={promptConfigId}
 					isDefaultConfig={true}
+					expectedVariables={[]}
 				/>,
 			);
 			const snippet = screen.getByTestId(`code-snippet-${language}`);
@@ -47,6 +49,7 @@ describe('PromptConfigCodeSnippet', () => {
 				<PromptConfigCodeSnippet
 					promptConfigId={promptConfigId}
 					isDefaultConfig={false}
+					expectedVariables={[]}
 				/>,
 			);
 			const snippet = screen.getByTestId(`code-snippet-${language}`);
@@ -61,6 +64,7 @@ describe('PromptConfigCodeSnippet', () => {
 			<PromptConfigCodeSnippet
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
+				expectedVariables={[]}
 			/>,
 		);
 		const copyButtonKotlin = screen.getByTestId(
@@ -83,6 +87,7 @@ describe('PromptConfigCodeSnippet', () => {
 				<PromptConfigCodeSnippet
 					promptConfigId={promptConfigId}
 					isDefaultConfig={true}
+					expectedVariables={[]}
 				/>,
 			);
 			const docsButton = screen.getByTestId(
@@ -98,6 +103,7 @@ describe('PromptConfigCodeSnippet', () => {
 			<PromptConfigCodeSnippet
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
+				expectedVariables={[]}
 			/>,
 		);
 		const createAPIKeyButton = screen.getByTestId(
@@ -113,6 +119,7 @@ describe('PromptConfigCodeSnippet', () => {
 			<PromptConfigCodeSnippet
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
+				expectedVariables={[]}
 			/>,
 		);
 		const iosTab = screen.getByTestId('tab-iOS');
@@ -128,6 +135,7 @@ describe('PromptConfigCodeSnippet', () => {
 			<PromptConfigCodeSnippet
 				promptConfigId={promptConfigId}
 				isDefaultConfig={true}
+				expectedVariables={[]}
 			/>,
 		);
 

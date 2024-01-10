@@ -106,6 +106,7 @@ export default function PromptConfiguration({
 				<PromptConfigCodeSnippet
 					promptConfigId={promptConfigId}
 					isDefaultConfig={promptConfig.isDefault ?? false}
+					expectedVariables={promptConfig.expectedTemplateVariables}
 				/>
 			</>
 		)),
