@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-nested-template-literals */
 import { useTranslations } from 'next-intl';
 import { Fragment, memo, useMemo, useState } from 'react';
 import { Github } from 'react-bootstrap-icons';
@@ -23,6 +24,7 @@ interface FrameworkTab {
 	language: supportedLanguages;
 	replacers: ReplacerMap;
 }
+
 type supportedLanguages = 'kotlin' | 'dart' | 'swift';
 
 const apiKey = '<API_KEY>';
@@ -275,6 +277,11 @@ const importSnippetMap: Record<
 				}
 				language="dart"
 				allowCopy={true}
+				dataTestId={
+					isDefault
+						? 'default-init-code-snippet-dart'
+						: 'init-code-snippet-dart'
+				}
 			/>
 		),
 	),
@@ -294,6 +301,11 @@ const importSnippetMap: Record<
 				}
 				language="kotlin"
 				allowCopy={true}
+				dataTestId={
+					isDefault
+						? 'default-init-code-snippet-kotlin'
+						: 'init-code-snippet-kotlin'
+				}
 			/>
 		),
 	),
@@ -313,6 +325,11 @@ const importSnippetMap: Record<
 				}
 				language="swift"
 				allowCopy={true}
+				dataTestId={
+					isDefault
+						? 'default-init-code-snippet-swift'
+						: 'init-code-snippet-swift'
+				}
 			/>
 		),
 	),
@@ -324,6 +341,7 @@ const installationSnippetMap: Record<supportedLanguages, React.FC> = {
 			codeText={dartInstallationSnippet}
 			language="bash"
 			allowCopy={true}
+			dataTestId="installation-code-snippet-dart"
 		/>
 	)),
 	kotlin: memo(() => (
@@ -331,6 +349,7 @@ const installationSnippetMap: Record<supportedLanguages, React.FC> = {
 			codeText={kotlinInstallationSnippet}
 			language="kotlin"
 			allowCopy={true}
+			dataTestId="installation-code-snippet-kotlin"
 		/>
 	)),
 	swift: memo(() => (
@@ -338,6 +357,7 @@ const installationSnippetMap: Record<supportedLanguages, React.FC> = {
 			codeText={swiftInstallationSnippet}
 			language="swift"
 			allowCopy={true}
+			dataTestId="installation-code-snippet-swift"
 		/>
 	)),
 };
@@ -353,6 +373,7 @@ const promptRequestSnippetMap: Record<
 			codeText={replacer(dartRequestSnippet)}
 			language="dart"
 			allowCopy={true}
+			dataTestId="request-code-snippet-dart"
 		/>
 	)),
 	kotlin: memo(({ replacer }) => (
@@ -360,6 +381,7 @@ const promptRequestSnippetMap: Record<
 			codeText={replacer(kotlinRequestSnippet)}
 			language="kotlin"
 			allowCopy={true}
+			dataTestId="request-code-snippet-kotlin"
 		/>
 	)),
 	swift: memo(({ replacer }) => (
@@ -367,6 +389,7 @@ const promptRequestSnippetMap: Record<
 			codeText={replacer(swiftRequestSnippet)}
 			language="swift"
 			allowCopy={true}
+			dataTestId="request-code-snippet-swift"
 		/>
 	)),
 };
@@ -382,6 +405,7 @@ const promptStreamSnippetMap: Record<
 			codeText={replacer(dartStreamSnippet)}
 			language="dart"
 			allowCopy={true}
+			dataTestId="stream-code-snippet-dart"
 		/>
 	)),
 	kotlin: memo(({ replacer }) => (
@@ -389,6 +413,7 @@ const promptStreamSnippetMap: Record<
 			codeText={replacer(kotlinStreamSnippet)}
 			language="kotlin"
 			allowCopy={true}
+			dataTestId="stream-code-snippet-kotlin"
 		/>
 	)),
 	swift: memo(({ replacer }) => (
@@ -396,6 +421,7 @@ const promptStreamSnippetMap: Record<
 			codeText={replacer(swiftStreamSnippet)}
 			language="swift"
 			allowCopy={true}
+			dataTestId="stream-code-snippet-swift"
 		/>
 	)),
 };
@@ -470,7 +496,7 @@ export function PromptConfigCodeSnippet({
 							</span>
 						</button>
 						<div
-							className="tab-content rounded-data-card rounded-tl-none mt-0  w-full p-6"
+							className="tab-content rounded-data-card rounded-tl-none mt-0 w-full p-6"
 							data-testid={`tab-content-${tab.framework}-container`}
 						>
 							<div className="flex flex-col">
@@ -491,10 +517,7 @@ export function PromptConfigCodeSnippet({
 											<span className="badge badge-outline badge-info text-xl font-bold">
 												1
 											</span>
-											<span
-												className="text-info font-bold
-												"
-											>
+											<span className="text-info font-bold">
 												{t(
 													`${tab.language}InstallationText`,
 												)}
@@ -507,10 +530,7 @@ export function PromptConfigCodeSnippet({
 											<span className="badge badge-outline badge-info text-xl font-bold">
 												2
 											</span>
-											<span
-												className="text-info font-bold
-												"
-											>
+											<span className="text-info font-bold">
 												{t('importText')}
 											</span>
 										</div>
@@ -524,10 +544,7 @@ export function PromptConfigCodeSnippet({
 											<span className="badge badge-outline badge-info text-xl font-bold">
 												3
 											</span>
-											<span
-												className="text-info font-bold
-												"
-											>
+											<span className="text-info font-bold">
 												{t('usageRequestText')}
 											</span>
 										</div>
@@ -538,10 +555,7 @@ export function PromptConfigCodeSnippet({
 											<span className="badge badge-outline badge-info text-xl font-bold">
 												4
 											</span>
-											<span
-												className="text-info font-bold
-												"
-											>
+											<span className="text-info font-bold">
 												{t('usageStreamText')}
 											</span>
 										</div>

@@ -12,9 +12,11 @@ export function CodeSnippet({
 	codeText,
 	language,
 	allowCopy,
+	dataTestId = `code-snippet-${language}`,
 }: {
 	allowCopy: boolean;
 	codeText: string;
+	dataTestId?: string;
 	language: string;
 }) {
 	const showSuccess = useShowSuccess();
@@ -22,7 +24,7 @@ export function CodeSnippet({
 
 	return (
 		<div
-			data-testid={`code-snippet-${language}`}
+			data-testid={dataTestId}
 			className="flex flex-wrap rounded-3xl bg-base-300 w-fit p-6"
 		>
 			<SyntaxHighlighter

@@ -78,9 +78,9 @@ describe('PromptConfiguration', () => {
 		expect(promptName).toHaveTextContent(promptConfig.name);
 
 		const tabs = screen.getAllByTestId('tab-navigation-btn');
-		expect(tabs.length).toBe(3);
+		expect(tabs.length).toBe(2);
 
-		const settingsTab = tabs[2];
+		const settingsTab = tabs[1];
 
 		fireEvent.click(settingsTab);
 		const settingsContainer = screen.getByTestId(

@@ -1,18 +1,19 @@
 import { faker } from '@faker-js/faker';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
+import { expect } from 'vitest';
 
 import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-code-snippet';
-
-const writeTextMock = vi.fn();
-
-// @ts-expect-error
-navigator.clipboard = { writeText: writeTextMock };
 
 describe('PromptConfigCodeSnippet', () => {
 	const supportedLanguages = ['kotlin', 'swift', 'dart'];
 	const promptConfigId = faker.string.uuid();
 
-	it('should render the component with the default framework selected', () => {
+	const writeTextMock = vi.fn();
+
+	// @ts-expect-error
+	navigator.clipboard = { writeText: writeTextMock };
+
+	it('should render the component with the default framework selected', async () => {
 		render(
 			<PromptConfigCodeSnippet
 				promptConfigId={promptConfigId}
@@ -20,15 +21,21 @@ describe('PromptConfigCodeSnippet', () => {
 				expectedVariables={[]}
 			/>,
 		);
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('prompt-code-snippet-container'),
+			).toBeInTheDocument();
+		});
 		const defaultFrameworkTab = screen.getByTestId('tab-Android');
 
 		expect(defaultFrameworkTab).toBeInTheDocument();
 		expect(defaultFrameworkTab).toHaveClass('tab-active');
 	});
 
-	it.each(['kotlin', 'swift', 'dart'])(
-		'should display the default code snippet for %s',
-		(language: string) => {
+	it.each(supportedLanguages)(
+		'should display the installation snippet for %s',
+		async (language: string) => {
 			render(
 				<PromptConfigCodeSnippet
 					promptConfigId={promptConfigId}
@@ -36,15 +43,47 @@ describe('PromptConfigCodeSnippet', () => {
 					expectedVariables={[]}
 				/>,
 			);
-			const snippet = screen.getByTestId(`code-snippet-${language}`);
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('prompt-code-snippet-container'),
+				).toBeInTheDocument();
+			});
+
+			const snippet = screen.getByTestId(
+				`installation-code-snippet-${language}`,
+			);
 
 			expect(snippet).toBeInTheDocument();
 		},
 	);
 
 	it.each(supportedLanguages)(
-		'should display the code snippet with prompt config ID for %s',
-		(language: string) => {
+		'should display the default init code snippet for %s when isDefaultConfig is true',
+		async (language: string) => {
+			render(
+				<PromptConfigCodeSnippet
+					promptConfigId={promptConfigId}
+					isDefaultConfig={true}
+					expectedVariables={[]}
+				/>,
+			);
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('prompt-code-snippet-container'),
+				).toBeInTheDocument();
+			});
+
+			const snippet = screen.getByTestId(
+				`default-init-code-snippet-${language}`,
+			);
+
+			expect(snippet).toBeInTheDocument();
+		},
+	);
+
+	it.each(supportedLanguages)(
+		'should display the non-default init code snippet for %s when isDefaultConfig is false',
+		async (language: string) => {
 			render(
 				<PromptConfigCodeSnippet
 					promptConfigId={promptConfigId}
@@ -52,36 +91,94 @@ describe('PromptConfigCodeSnippet', () => {
 					expectedVariables={[]}
 				/>,
 			);
-			const snippet = screen.getByTestId(`code-snippet-${language}`);
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('prompt-code-snippet-container'),
+				).toBeInTheDocument();
+			});
+
+			const snippet = screen.getByTestId(`init-code-snippet-${language}`);
 
 			expect(snippet).toBeInTheDocument();
 			expect(snippet.textContent).toContain(promptConfigId);
 		},
 	);
 
-	it('should copy the code snippet to the clipboard when the user clicks the copy button', async () => {
-		render(
-			<PromptConfigCodeSnippet
-				promptConfigId={promptConfigId}
-				isDefaultConfig={true}
-				expectedVariables={[]}
-			/>,
-		);
-		const copyButtonKotlin = screen.getByTestId(
-			'code-snippet-code-copy-button-kotlin',
-		);
-		fireEvent.click(copyButtonKotlin);
-		expect(writeTextMock).toHaveBeenCalledWith(expect.any(String));
-		const copyButtonSwift = screen.getByTestId(
-			'code-snippet-code-copy-button-swift',
-		);
-		fireEvent.click(copyButtonSwift);
-		expect(writeTextMock).toHaveBeenCalledWith(expect.any(String));
-	});
+	it.each(supportedLanguages)(
+		'should display the usage snippets without template variables when no template variables are defined',
+		async (language: string) => {
+			render(
+				<PromptConfigCodeSnippet
+					promptConfigId={promptConfigId}
+					isDefaultConfig={false}
+					expectedVariables={[]}
+				/>,
+			);
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('prompt-code-snippet-container'),
+				).toBeInTheDocument();
+			});
+
+			const requestSnippet = screen.getByTestId(
+				`request-code-snippet-${language}`,
+			);
+
+			expect(requestSnippet).toBeInTheDocument();
+			expect(requestSnippet.textContent).not.toContain(
+				'templateVariables',
+			);
+
+			const streamSnippet = screen.getByTestId(
+				`stream-code-snippet-${language}`,
+			);
+
+			expect(streamSnippet).toBeInTheDocument();
+			expect(streamSnippet.textContent).not.toContain(
+				'templateVariables',
+			);
+		},
+	);
+
+	it.each(supportedLanguages)(
+		'should display the usage snippets with template variables when template variables are defined',
+		async (language: string) => {
+			render(
+				<PromptConfigCodeSnippet
+					promptConfigId={promptConfigId}
+					isDefaultConfig={false}
+					expectedVariables={['var1', 'var2']}
+				/>,
+			);
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('prompt-code-snippet-container'),
+				).toBeInTheDocument();
+			});
+
+			const requestSnippet = screen.getByTestId(
+				`request-code-snippet-${language}`,
+			);
+
+			expect(requestSnippet).toBeInTheDocument();
+			expect(requestSnippet.textContent).toContain('templateVariables');
+			expect(requestSnippet.textContent).toContain('var1');
+			expect(requestSnippet.textContent).toContain('var2');
+
+			const streamSnippet = screen.getByTestId(
+				`stream-code-snippet-${language}`,
+			);
+
+			expect(streamSnippet).toBeInTheDocument();
+			expect(streamSnippet.textContent).toContain('templateVariables');
+			expect(streamSnippet.textContent).toContain('var1');
+			expect(streamSnippet.textContent).toContain('var2');
+		},
+	);
 
 	it.each(supportedLanguages)(
 		'should route to the %s docs page when the user clicks the view docs button',
-		(language: string) => {
+		async (language: string) => {
 			const openMock = (window.open = vi.fn());
 			render(
 				<PromptConfigCodeSnippet
@@ -90,6 +187,12 @@ describe('PromptConfigCodeSnippet', () => {
 					expectedVariables={[]}
 				/>,
 			);
+
+			await waitFor(() => {
+				expect(
+					screen.getByTestId('prompt-code-snippet-container'),
+				).toBeInTheDocument();
+			});
 			const docsButton = screen.getByTestId(
 				`code-snippet-view-docs-button-${language}`,
 			);
@@ -98,7 +201,7 @@ describe('PromptConfigCodeSnippet', () => {
 		},
 	);
 
-	it('should open create API key model when the user clicks the create API key button', async () => {
+	it('should change the selected framework when a different tab is clicked', async () => {
 		render(
 			<PromptConfigCodeSnippet
 				promptConfigId={promptConfigId}
@@ -106,57 +209,14 @@ describe('PromptConfigCodeSnippet', () => {
 				expectedVariables={[]}
 			/>,
 		);
-		const createAPIKeyButton = screen.getByTestId(
-			'code-snippet-create-api-key-button-kotlin',
-		);
-		fireEvent.click(createAPIKeyButton);
-		expect(
-			screen.getByTestId('create-api-key-modal-container'),
-		).toBeInTheDocument();
-	});
-	it('should change the selected framework when a different tab is clicked', () => {
-		render(
-			<PromptConfigCodeSnippet
-				promptConfigId={promptConfigId}
-				isDefaultConfig={true}
-				expectedVariables={[]}
-			/>,
-		);
+		await waitFor(() => {
+			expect(
+				screen.getByTestId('prompt-code-snippet-container'),
+			).toBeInTheDocument();
+		});
 		const iosTab = screen.getByTestId('tab-iOS');
 		expect(iosTab).not.toHaveClass('tab-active');
 		fireEvent.click(iosTab);
 		expect(iosTab).toHaveClass('tab-active');
-		const iosCodeSnippet = screen.getByTestId('code-snippet-swift');
-		expect(iosCodeSnippet).toBeInTheDocument();
-	});
-
-	it('should close the create API key modal when the cancel button is clicked', async () => {
-		render(
-			<PromptConfigCodeSnippet
-				promptConfigId={promptConfigId}
-				isDefaultConfig={true}
-				expectedVariables={[]}
-			/>,
-		);
-
-		// Open the modal
-		const createAPIKeyButton = screen.getByTestId(
-			'code-snippet-create-api-key-button-kotlin',
-		);
-		fireEvent.click(createAPIKeyButton);
-
-		// Expect the modal to be present
-		expect(
-			screen.getByTestId('create-api-key-modal-container'),
-		).toBeInTheDocument();
-
-		// Find and click the cancel button in the modal
-		const cancelButton = screen.getByTestId('create-api-key-close-btn'); // Replace 'cancel-button-id' with the actual test ID of the cancel button
-		fireEvent.click(cancelButton);
-
-		// Expect the modal to be closed
-		await waitFor(() => {
-			screen.queryByTestId('create-api-key-modal-container');
-		});
 	});
 });
