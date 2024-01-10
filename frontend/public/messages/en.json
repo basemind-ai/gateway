@@ -162,6 +162,7 @@
 		"createApiKey": "Create API Key",
 		"createApiKeyPlaceholder": "Provide a name for your new API key",
 		"invalidLengthErrorMessage": "Name must be at least {numCharacters} characters long",
+		"invalidNameErrorMessage": "Name must be unique",
 		"nameInputAltLabel": "* must be unique",
 		"optional": "optional",
 		"projectInputLabel": "Project Name",

@@ -4,8 +4,8 @@
 	"description": "monorepo for basemind services",
 	"private": true,
 	"scripts": {
-		"test:coverage": "vitest run --coverage",
-		"test": "vitest",
+		"test:coverage": "NODE_OPTIONS='--no-deprecation --max_old_space_size=4096' vitest run --coverage",
+		"test": "NODE_OPTIONS='--no-deprecation --max_old_space_size=4096' vitest",
 		"build:frontend": "cd frontend && pnpm run build && cd .."
 	},
 	"devDependencies": {
