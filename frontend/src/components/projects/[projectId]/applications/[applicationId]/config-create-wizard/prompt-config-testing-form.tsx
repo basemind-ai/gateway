@@ -134,32 +134,28 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 			<div className="text-info text-xl text-center pb-5">
 				{`${t('credits') + projectCredits}$`}
 			</div>
-			<>
-				<div className="flex justify-between">
-					<h2
-						className="card-header self-end"
-						data-testid="prompt-content-display-title"
-					>
-						{t('promptTemplate')}
-					</h2>
-					<button
-						disabled={
-							!allExpectedVariablesHaveLength || isRunningTest
-						}
-						data-testid="run-test-button"
-						className="btn btn-wide btn-success self-start"
-						onClick={testFinishReason ? resetState : handleRunTest}
-					>
-						{renderButtonIcon()}
-						{t('runTest')}
-					</button>
-				</div>
-				<PromptContentDisplay
-					modelVendor={modelVendor}
-					messages={messages}
-					templateVariables={templateVariables}
-				/>
-			</>
+			<div className="flex justify-between">
+				<h2
+					className="card-header self-end"
+					data-testid="prompt-content-display-title"
+				>
+					{t('promptTemplate')}
+				</h2>
+				<button
+					disabled={!allExpectedVariablesHaveLength || isRunningTest}
+					data-testid="run-test-button"
+					className="btn btn-wide btn-success self-start"
+					onClick={testFinishReason ? resetState : handleRunTest}
+				>
+					{renderButtonIcon()}
+					{t('runTest')}
+				</button>
+			</div>
+			<PromptContentDisplay
+				modelVendor={modelVendor}
+				messages={messages}
+				templateVariables={templateVariables}
+			/>
 			{expectedVariables.length > 0 && (
 				<>
 					<div className="card-divider" />

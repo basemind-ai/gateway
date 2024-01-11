@@ -23,6 +23,46 @@ import {
 	usePromptConfig,
 	useSetPromptConfigs,
 } from '@/stores/api-store';
+import { ModelVendor, PromptConfig } from '@/types';
+
+const TabComponent = memo(
+	<T extends ModelVendor>({
+		promptConfig,
+		projectId,
+		applicationId,
+		selectedTab,
+	}: {
+		applicationId: string;
+		projectId: string;
+		promptConfig: PromptConfig<T>;
+		selectedTab: PromptConfigPageTab;
+	}) =>
+		selectedTab === PromptConfigPageTab.OVERVIEW ? (
+			<>
+				<PromptConfigGeneralInfo promptConfig={promptConfig} />
+				<div className="card-divider" />
+				<PromptConfigCodeSnippet
+					promptConfigId={promptConfig.id}
+					isDefaultConfig={promptConfig.isDefault ?? false}
+					expectedVariables={promptConfig.expectedTemplateVariables}
+				/>
+			</>
+		) : (
+			<>
+				<PromptConfigGeneralSettings
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+				/>
+				<div className="h-4" />
+				<PromptConfigDeletion
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+				/>
+			</>
+		),
+);
 
 export default function PromptConfiguration({
 	params: { projectId, applicationId, promptConfigId },
@@ -98,37 +138,6 @@ export default function PromptConfiguration({
 		},
 	];
 
-	const tabComponents: Record<PromptConfigPageTab, React.FC> = {
-		[PromptConfigPageTab.OVERVIEW]: memo(() => (
-			<>
-				<PromptConfigGeneralInfo promptConfig={promptConfig} />
-				<div className="card-divider" />
-				<PromptConfigCodeSnippet
-					promptConfigId={promptConfigId}
-					isDefaultConfig={promptConfig.isDefault ?? false}
-					expectedVariables={promptConfig.expectedTemplateVariables}
-				/>
-			</>
-		)),
-		[PromptConfigPageTab.SETTINGS]: memo(() => (
-			<>
-				<PromptConfigGeneralSettings
-					projectId={projectId}
-					applicationId={applicationId}
-					promptConfig={promptConfig}
-				/>
-				<div className="h-4" />
-				<PromptConfigDeletion
-					projectId={projectId}
-					applicationId={applicationId}
-					promptConfig={promptConfig}
-				/>
-			</>
-		)),
-	};
-
-	const TabComponent = tabComponents[selectedTab];
-
 	return (
 		<main
 			data-testid="prompt-page-container"
@@ -148,8 +157,12 @@ export default function PromptConfiguration({
 					trailingLine={true}
 				/>
 				<div className="card-divider" />
-
-				<TabComponent />
+				<TabComponent
+					promptConfig={promptConfig}
+					projectId={projectId}
+					applicationId={applicationId}
+					selectedTab={selectedTab}
+				/>
 			</div>
 		</main>
 	);

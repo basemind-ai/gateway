@@ -2,8 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Record } from 'react-bootstrap-icons';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { Oval } from 'react-loading-icons';
 import { shallow } from 'zustand/shallow';
 
@@ -28,7 +27,16 @@ import {
 	WizardStage,
 	wizardStoreSelector,
 } from '@/stores/prompt-config-wizard-store';
-import { CoherePromptMessage, ModelVendor, OpenAIPromptMessage } from '@/types';
+import {
+	CohereModelType,
+	CoherePromptMessage,
+	ModelParameters,
+	ModelType,
+	ModelVendor,
+	OpenAIModelType,
+	OpenAIPromptMessage,
+	ProviderMessageType,
+} from '@/types';
 import { setRouteParams } from '@/utils/navigation';
 
 const stepColor = 'step-secondary';
@@ -54,6 +62,79 @@ function shouldAllowContinue(store: PromptConfigWizardStore) {
 
 	return true;
 }
+
+const WizardStageComponent = memo(
+	<T extends ModelVendor>({
+		store,
+		validateConfigName,
+		setNameIsValid,
+		handleConfigNameChange,
+		handleModelTypeChange,
+		handleModelVendorChange,
+		handleParametersChange,
+		handleMessagesChange,
+		handleTemplateVariablesChange,
+		applicationId,
+		projectId,
+		credits,
+		handleError,
+		handleRefreshProject,
+	}: {
+		applicationId: string;
+		credits: string;
+		handleConfigNameChange: (value: string) => void;
+		handleError: (error: unknown) => void;
+		handleMessagesChange: (value: ProviderMessageType<T>[]) => void;
+		handleModelTypeChange: (value: ModelType<T>) => void;
+		handleModelVendorChange: (value: ModelVendor) => void;
+		handleParametersChange: (value: ModelParameters<T>) => void;
+		handleRefreshProject: () => Promise<void>;
+		handleTemplateVariablesChange: (value: Record<string, string>) => void;
+		projectId: string;
+		setNameIsValid: (value: boolean) => void;
+		store: PromptConfigWizardStore;
+		validateConfigName: (value: string) => boolean;
+	}) =>
+		store.wizardStage === WizardStage.NAME_AND_MODEL ? (
+			<PromptConfigBaseForm
+				validateConfigName={validateConfigName}
+				configName={store.configName}
+				modelType={store.modelType}
+				modelVendor={store.modelVendor}
+				setIsValid={setNameIsValid}
+				setConfigName={handleConfigNameChange}
+				setModelType={
+					handleModelTypeChange as (
+						value: OpenAIModelType | CohereModelType,
+					) => void
+				}
+				setVendor={handleModelVendorChange}
+			/>
+		) : store.wizardStage === WizardStage.PARAMETERS_AND_PROMPT ? (
+			<PromptConfigParametersAndPromptForm
+				modelVendor={store.modelVendor as T}
+				messages={store.messages as ProviderMessageType<T>[]}
+				setParameters={handleParametersChange}
+				setMessages={handleMessagesChange}
+				existingParameters={undefined}
+				modelType={store.modelType as ModelType<T>}
+			/>
+		) : (
+			<PromptConfigTestingForm
+				messages={store.messages}
+				templateVariables={store.templateVariables}
+				setTemplateVariables={handleTemplateVariablesChange}
+				applicationId={applicationId}
+				projectId={projectId}
+				projectCredits={credits}
+				modelType={store.modelType}
+				modelVendor={store.modelVendor}
+				parameters={store.parameters}
+				handleError={handleError}
+				handleRefreshProject={handleRefreshProject}
+			/>
+		),
+);
 
 export default function PromptConfigCreateWizard({
 	params: { applicationId, projectId },
@@ -119,74 +200,6 @@ export default function PromptConfigCreateWizard({
 			handleError(t('errorRefreshingProject'));
 		}
 	}, [setProjects]);
-
-	const wizardStageComponentMap: Record<WizardStage, React.ReactElement> = {
-		[WizardStage.NAME_AND_MODEL]: useMemo(
-			() => (
-				<PromptConfigBaseForm
-					validateConfigName={validateConfigName}
-					configName={store.configName}
-					modelType={store.modelType}
-					modelVendor={store.modelVendor}
-					setIsValid={setNameIsValid}
-					setConfigName={handleConfigNameChange}
-					setModelType={handleModelTypeChange}
-					setVendor={handleModelVendorChange}
-				/>
-			),
-			[
-				store.configName,
-				handleConfigNameChange,
-				store.modelType,
-				store.modelVendor,
-				handleModelTypeChange,
-				handleModelVendorChange,
-				promptConfigs,
-			],
-		),
-		[WizardStage.PARAMETERS_AND_PROMPT]: useMemo(
-			() => (
-				<PromptConfigParametersAndPromptForm
-					modelVendor={store.modelVendor}
-					messages={store.messages}
-					setParameters={handleParametersChange}
-					setMessages={handleMessagesChange}
-					existingParameters={undefined}
-					modelType={store.modelType}
-				/>
-			),
-			[
-				store.modelVendor,
-				store.messages,
-				store.parameters,
-				handleParametersChange,
-				handleMessagesChange,
-			],
-		),
-		[WizardStage.TEST]: useMemo(
-			() => (
-				<PromptConfigTestingForm
-					messages={store.messages}
-					templateVariables={store.templateVariables}
-					setTemplateVariables={handleTemplateVariablesChange}
-					applicationId={applicationId}
-					projectId={projectId}
-					projectCredits={project?.credits ?? '1'}
-					modelType={store.modelType}
-					modelVendor={store.modelVendor}
-					parameters={store.parameters}
-					handleError={handleError}
-					handleRefreshProject={handleRefreshProject}
-				/>
-			),
-			[
-				store.messages,
-				store.templateVariables,
-				handleTemplateVariablesChange,
-				project,
-			],
-		),
-	};
 
 	useEffect(() => {
 		if (initialized) {
@@ -265,7 +278,26 @@ export default function PromptConfigCreateWizard({
 							</ul>
 						</div>
 						<div className="transform transition-transform duration-300 ease-in-out rounded-data-card shadow-xl">
-							{wizardStageComponentMap[store.wizardStage]}
+							<WizardStageComponent
+								applicationId={applicationId}
+								credits={project?.credits ?? '1'}
+								handleConfigNameChange={handleConfigNameChange}
+								handleError={handleError}
+								handleMessagesChange={handleMessagesChange}
+								handleModelTypeChange={handleModelTypeChange}
+								handleModelVendorChange={
+									handleModelVendorChange
+								}
+								handleParametersChange={handleParametersChange}
+								handleRefreshProject={handleRefreshProject}
+								handleTemplateVariablesChange={
+									handleTemplateVariablesChange
+								}
+								projectId={projectId}
+								setNameIsValid={setNameIsValid}
+								store={store}
+								validateConfigName={validateConfigName}
+							/>
 							<div className="divider divide-accent" />
 							<div className="items-center justify-end px-5 modal-action">
 								<div className="flex justify-between gap-4">
