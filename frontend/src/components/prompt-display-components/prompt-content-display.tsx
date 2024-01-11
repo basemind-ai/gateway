@@ -78,11 +78,18 @@ const parseTemplateVariables = (
 	content: string,
 	templateVariables?: Record<string, string>,
 ) => {
-	return reactStringReplace(content, curlyBracketsRe, (match, i) => (
-		<span key={i} className="text-primary" data-testid="template-variable">
-			{templateVariables?.[match] ?? `{${match}}`}
-		</span>
-	));
+	return reactStringReplace(content, curlyBracketsRe, (match, i) => {
+		const value = templateVariables?.[match] ?? '';
+		return (
+			<span
+				key={i}
+				className="text-primary"
+				data-testid="template-variable"
+			>
+				{value || `{${match}}`}
+			</span>
+		);
+	});
 };
 
 export function PromptContentDisplay<T extends ModelVendor>({

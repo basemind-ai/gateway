@@ -41,7 +41,7 @@ export default function CreateProjectPage() {
 			data-testid="create-projects-container"
 		>
 			{isLoading ? (
-				<Oval height="50vh" width="50vw" className="m-auto" />
+				<Oval height="33vh" width="33vw" className="m-auto" />
 			) : (
 				<div className="page-content-container">
 					<div

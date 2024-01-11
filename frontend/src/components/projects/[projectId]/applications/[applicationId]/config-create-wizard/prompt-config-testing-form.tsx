@@ -164,7 +164,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 						tooltipText={t('variablesTooltip')}
 						dataTestId="test-inputs-header"
 					/>
-					<div className="rounded-dark-card">
+					<div className="rounded-dark-card pb-3">
 						<div className="card-section-divider" />
 						<PromptTestInputs
 							setTemplateVariables={setTemplateVariables}

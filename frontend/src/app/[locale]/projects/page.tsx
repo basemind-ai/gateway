@@ -52,7 +52,7 @@ export default function Projects() {
 			className="bg-base-100 flex h-full w-full"
 			data-testid="projects-view-loading"
 		>
-			<Oval height="50vh" width="50vw" className="m-auto" />
+			<Oval height="33vh" width="33vw" className="m-auto" />
 		</main>
 	);
 }

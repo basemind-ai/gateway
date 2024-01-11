@@ -116,7 +116,7 @@ export default function PromptConfiguration({
 				data-testid="prompt-config-page-loading"
 				className="h-full w-full flex items-center justify-center"
 			>
-				<Oval height="50vh" width="50vw" className="m-auto" />
+				<Oval height="33vh" width="33vw" className="m-auto" />
 			</main>
 		);
 	}
