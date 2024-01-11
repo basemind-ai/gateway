@@ -5,7 +5,6 @@ import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
 import { PromptTestInputs } from '@/components/prompt-display-components/prompt-test-inputs';
 import { PromptTestResultTable } from '@/components/prompt-display-components/prompt-test-result-table';
-import { WebsocketError } from '@/errors';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
@@ -68,10 +67,10 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 		resetState,
 	} = usePromptTesting({
 		applicationId,
-		handleError: () => {
-			handleError(new WebsocketError(t('runningTestError')));
+		onError: () => {
+			handleError(t('runningTestError'));
 		},
-		handleRefreshProject,
+		onFinish: handleRefreshProject,
 		projectId,
 	});
 

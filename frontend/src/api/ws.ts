@@ -47,6 +47,7 @@ export function createWebsocketURL({
 
 export interface WebsocketHandler<T extends ModelVendor> {
 	closeSocket: () => void;
+	isClosed: () => boolean;
 	sendMessage: (message: PromptConfigTest<T>) => Promise<void>;
 }
 
@@ -59,7 +60,7 @@ export async function createWebsocket<T extends ModelVendor>({
 }: {
 	applicationId: string;
 	handleClose: (isError: boolean, reason: string) => void;
-	handleError: (event: Event) => void;
+	handleError: (error: WebsocketError) => void;
 	handleMessage: (event: MessageEvent<PromptConfigTestResultChunk>) => void;
 	projectId: string;
 }): Promise<WebsocketHandler<T>> {
@@ -84,22 +85,26 @@ export async function createWebsocket<T extends ModelVendor>({
 		clearInterval(pingInterval);
 		handleClose(code !== WS_STATUS_OK, reason);
 	});
-	websocket.addEventListener('error', handleError);
+	websocket.addEventListener('error', (event) => {
+		handleError(new WebsocketError('an error has occurred', event));
+	});
 	websocket.addEventListener('message', (event: MessageEvent<string>) => {
 		const data = JSON.parse(event.data) as PromptConfigTestResultChunk;
 		handleMessage({ ...event, data });
 	});
+
+	const isClosed = () =>
+		websocket.readyState === WebSocket.CLOSED ||
+		websocket.readyState === WebSocket.CLOSING;
 
 	return {
 		closeSocket: () => {
 			clearInterval(pingInterval);
 			websocket.close(WS_STATUS_OK, 'user action');
 		},
+		isClosed,
 		sendMessage: async (message: PromptConfigTest<T>) => {
-			if (
-				websocket.readyState === WebSocket.CLOSED ||
-				websocket.readyState === WebSocket.CLOSING
-			) {
+			if (isClosed()) {
 				throw new WebsocketError('websocket is closed');
 			}
 

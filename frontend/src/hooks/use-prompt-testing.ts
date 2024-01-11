@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { StreamFinishReason } from 'shared/constants';
 
 import { createWebsocket, WebsocketHandler } from '@/api';
 import { handleRetrievePromptTestRecordById } from '@/api/prompt-test-record-api';
+import { WebsocketError } from '@/errors';
 import {
 	ModelVendor,
 	PromptConfigTest,
@@ -27,12 +29,12 @@ import {
 export function usePromptTesting<T extends ModelVendor>({
 	applicationId,
 	projectId,
-	handleError,
-	handleRefreshProject,
+	onError,
+	onFinish,
 }: {
 	applicationId: string;
-	handleError: (error: unknown) => void;
-	handleRefreshProject: () => Promise<void>;
+	onError: (errorMessage: string) => void;
+	onFinish: () => Promise<void>;
 	projectId: string;
 }): {
 	isReady: boolean;
@@ -40,87 +42,106 @@ export function usePromptTesting<T extends ModelVendor>({
 	modelResponses: PromptConfigTestResultChunk[];
 	resetState: () => void;
 	sendMessage: (testConfig: PromptConfigTest<T>) => Promise<void>;
-	testFinishReason: string;
+	testFinishReason: StreamFinishReason | null;
 	testRecord: PromptTestRecord<T> | null;
 } {
-	const [testFinishReason, setTestFinishReason] = useState('');
-	const [promptTestRecordId, setPromptTestRecordId] = useState<
-		string | undefined
-	>(undefined);
+	const [testFinishReason, setTestFinishReason] =
+		useState<StreamFinishReason | null>(null);
 	const [modelResponses, setModelResponses] = useState<
 		PromptConfigTestResultChunk[]
 	>([]);
 	const [isRunningTest, setIsRunningTest] = useState(false);
-
 	const [testRecord, setTestRecord] = useState<PromptTestRecord<T> | null>(
 		null,
 	);
-	const [websocketHandler, setWebsocketHandler] =
-		useState<null | WebsocketHandler<T>>(null);
+	const handlerRef = useRef<WebsocketHandler<T> | null>(null);
 
-	const handlerRef: { value: null | WebsocketHandler<T> } = { value: null };
+	const handleMessage = ({
+		data,
+	}: MessageEvent<PromptConfigTestResultChunk>) => {
+		if (data.finishReason) {
+			setIsRunningTest(false);
+			setTestFinishReason(data.finishReason as StreamFinishReason);
 
-	useEffect(() => {
-		resetState();
-		(async () => {
-			const handler = (handlerRef.value = await createWebsocket<T>({
-				applicationId,
-				handleClose: () => {
-					setWebsocketHandler(null);
-				},
-				handleError,
-				handleMessage: ({
-					data,
-				}: MessageEvent<PromptConfigTestResultChunk>) => {
-					if (data.finishReason) {
-						setIsRunningTest(false);
-						setTestFinishReason(data.finishReason);
-						setPromptTestRecordId(data.promptTestRecordId);
-					}
-					setModelResponses((oldResults) => [...oldResults, data]);
-				},
-				projectId,
-			}));
-			setWebsocketHandler(handler);
-		})();
-
-		return () => {
-			handlerRef.value?.closeSocket();
-		};
-	}, [applicationId, projectId]);
-
-	useEffect(() => {
-		if (promptTestRecordId) {
 			(async () => {
 				const [record] = await Promise.all([
 					handleRetrievePromptTestRecordById<T>({
 						applicationId,
 						projectId,
-						promptTestRecordId,
+						promptTestRecordId: data.promptTestRecordId!,
 					}),
-					handleRefreshProject(),
+					onFinish(),
 				]);
+
 				setTestRecord(record);
 			})();
 		}
-	}, [promptTestRecordId, applicationId, projectId]);
+		setModelResponses((oldResults) => [...oldResults, data]);
+	};
+
+	const handleClose = (isError: boolean, reason: string) => {
+		if (isError) {
+			onError(reason);
+		}
+		if (isRunningTest) {
+			setIsRunningTest(false);
+			setTestFinishReason(isError ? StreamFinishReason.ERROR : null);
+		}
+		handlerRef.current = null;
+	};
+	const handleError = (error: WebsocketError) => {
+		setIsRunningTest(false);
+		setTestFinishReason(StreamFinishReason.ERROR);
+		onError(error.message);
+	};
+
+	useEffect(() => {
+		resetState();
+
+		(async () => {
+			handlerRef.current = await createWebsocket<T>({
+				applicationId,
+				handleClose,
+				handleError,
+				handleMessage,
+				projectId,
+			});
+		})();
+
+		return () => {
+			handlerRef.current?.closeSocket();
+			handlerRef.current = null;
+		};
+	}, [applicationId, projectId]);
 
 	const resetState = useCallback(() => {
 		setIsRunningTest(false);
 		setModelResponses([]);
-		setTestFinishReason('');
+		setTestFinishReason(null);
 		setTestRecord(null);
 	}, []);
 
 	const sendMessage = async (testConfig: PromptConfigTest<T>) => {
+		if (handlerRef.current?.isClosed()) {
+			resetState();
+
+			handlerRef.current = await createWebsocket<T>({
+				applicationId,
+				handleClose,
+				handleError,
+				handleMessage,
+				projectId,
+			});
+		}
+
 		setIsRunningTest(true);
 		setModelResponses([]);
 
-		await websocketHandler?.sendMessage(testConfig);
+		await handlerRef.current?.sendMessage(testConfig);
 	};
 
 	return {
-		isReady: !!websocketHandler,
+		isReady: !handlerRef.current?.isClosed(),
 		isRunningTest,
 		modelResponses,
 		resetState,

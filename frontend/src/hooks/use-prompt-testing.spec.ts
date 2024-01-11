@@ -5,6 +5,7 @@ import { act, renderHook, waitFor } from 'tests/test-utils';
 import { beforeEach, expect, MockInstance } from 'vitest';
 
 import * as ws from '@/api/ws';
+import { WebsocketHandler } from '@/api/ws';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import { ModelVendor, OpenAIModelType, PromptConfigTest } from '@/types';
 
@@ -23,7 +24,11 @@ describe('usePromptTesting tests', () => {
 
 	const promptTestRecord = PromptTestRecordFactory.buildSync();
 
-	const mockWebsocketHandler = { closeSocket: vi.fn(), sendMessage: vi.fn() };
+	const mockWebsocketHandler = {
+		closeSocket: vi.fn(),
+		isClosed: vi.fn().mockReturnValue(false),
+		sendMessage: vi.fn(),
+	} satisfies WebsocketHandler<any>;
 
 	let createWebsocketSpy: MockInstance;
 	beforeEach(() => {
@@ -36,8 +41,8 @@ describe('usePromptTesting tests', () => {
 		renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject: vi.fn(),
+				onError: vi.fn(),
+				onFinish: vi.fn(),
 				projectId,
 			}),
 		);
@@ -54,18 +59,18 @@ describe('usePromptTesting tests', () => {
 		const { result } = renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject: vi.fn(),
+				onError: vi.fn(),
+				onFinish: vi.fn(),
 				projectId,
 			}),
 		);
 		expect(result.current).toEqual({
-			isReady: false,
+			isReady: true,
 			isRunningTest: false,
 			modelResponses: [],
 			resetState: expect.any(Function),
 			sendMessage: expect.any(Function),
-			testFinishReason: '',
+			testFinishReason: null,
 			testRecord: null,
 		});
 	});
@@ -74,13 +79,13 @@ describe('usePromptTesting tests', () => {
 		const { result } = renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject: vi.fn(),
+				onError: vi.fn(),
+				onFinish: vi.fn(),
 				projectId,
 			}),
 		);
 		await waitFor(() => {
-			expect(result.current.isReady).toBe(true);
+			expect(result.current.isReady).toBeTruthy();
 		});
 		act(() => {
 			result.current.sendMessage(wsData);
@@ -89,20 +94,20 @@ describe('usePromptTesting tests', () => {
 			expect(mockWebsocketHandler.sendMessage).toHaveBeenCalled();
 		});
 
-		expect(result.current.isRunningTest).toBe(true);
+		expect(result.current.isRunningTest).toBeTruthy();
 	});
 
 	it('updates model response when a message is sent via the websocket', async () => {
 		const { result } = renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject: vi.fn(),
+				onError: vi.fn(),
+				onFinish: vi.fn(),
 				projectId,
 			}),
 		);
 		await waitFor(() => {
-			expect(result.current.isReady).toBe(true);
+			expect(result.current.isReady).toBeTruthy();
 		});
 
 		const { handleMessage } = createWebsocketSpy.mock.calls[0][0];
@@ -122,13 +127,13 @@ describe('usePromptTesting tests', () => {
 		const { result } = renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject: vi.fn(),
+				onError: vi.fn(),
+				onFinish: vi.fn(),
 				projectId,
 			}),
 		);
 		await waitFor(() => {
-			expect(result.current.isReady).toBe(true);
+			expect(result.current.isReady).toBeTruthy();
 		});
 
 		const { handleMessage } = createWebsocketSpy.mock.calls[0][0];
@@ -146,21 +151,21 @@ describe('usePromptTesting tests', () => {
 		});
 
 		expect(mockFetch).toHaveBeenCalled();
-		expect(result.current.isRunningTest).toBe(false);
+		expect(result.current.isRunningTest).toBeFalsy();
 	});
 
 	it('calls closeSocket when unloading', async () => {
 		const { result, unmount } = renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject: vi.fn(),
+				onError: vi.fn(),
+				onFinish: vi.fn(),
 				projectId,
 			}),
 		);
 
 		await waitFor(() => {
-			expect(result.current.isReady).toBe(true);
+			expect(result.current.isReady).toBeTruthy();
 		});
 
 		act(() => {
@@ -176,8 +181,8 @@ describe('usePromptTesting tests', () => {
 		const { result } = renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject: vi.fn(),
+				onError: vi.fn(),
+				onFinish: vi.fn(),
 				projectId,
 			}),
 		);
@@ -186,9 +191,9 @@ describe('usePromptTesting tests', () => {
 			result.current.resetState();
 		});
 
-		expect(result.current.isRunningTest).toBe(false);
+		expect(result.current.isRunningTest).toBeFalsy();
 		expect(result.current.modelResponses).toEqual([]);
-		expect(result.current.testFinishReason).toBe('');
+		expect(result.current.testFinishReason).toBeNull();
 		expect(result.current.testRecord).toBeNull();
 	});
 
@@ -203,13 +208,13 @@ describe('usePromptTesting tests', () => {
 		const { result } = renderHook(() =>
 			usePromptTesting({
 				applicationId,
-				handleError: vi.fn(),
-				handleRefreshProject,
+				onError: vi.fn(),
+				onFinish: handleRefreshProject,
 				projectId,
 			}),
 		);
 		await waitFor(() => {
-			expect(result.current.isReady).toBe(true);
+			expect(result.current.isReady).toBeTruthy();
 		});
 
 		const { handleMessage } = createWebsocketSpy.mock.calls[0][0];

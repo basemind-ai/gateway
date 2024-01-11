@@ -29,7 +29,6 @@ func New(opts Options) chi.Router {
 			AllowedHeaders:   []string{"X-Request-Id", "Authorization", "Content-Type", "Accept"},
 			AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 			AllowedOrigins:   []string{"https://*", "http://*"},
-			Debug:            opts.Environment == "development",
 			MaxAge:           3600,
 		}))
 		router.Use(httplog.RequestLogger(log.With().Str("service", opts.ServiceName).Logger()))

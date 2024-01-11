@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import { useTranslations } from 'next-intl';
+import { StreamFinishReason } from 'shared/constants';
 
 import { TooltipIcon } from '@/components/input-label-with-tooltip';
 import {
@@ -16,7 +17,7 @@ export function PromptTestResultTable<T extends ModelVendor>({
 }: {
 	modelType: ModelType<T>;
 	modelVendor: T;
-	testFinishReason?: string;
+	testFinishReason?: StreamFinishReason | null;
 	testRecord: PromptTestRecord<T> | null;
 }) {
 	const t = useTranslations('createConfigWizard');
