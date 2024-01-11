@@ -20,6 +20,43 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useProject, useSetProjectApplications } from '@/stores/api-store';
+import { Project } from '@/types';
+
+const TabComponent = memo(
+	({
+		project,
+		selectedTab,
+	}: {
+		project: Project;
+		selectedTab: ProjectPageTabNames;
+	}) =>
+		selectedTab === ProjectPageTabNames.OVERVIEW ? (
+			<div data-testid="project-overview-tab">
+				<ProjectAnalytics project={project} />
+				<div className="card-divider">
+					<ProjectApplicationsList project={project} />
+				</div>
+			</div>
+		) : selectedTab === ProjectPageTabNames.MEMBERS ? (
+			<div data-testid="project-members-tab">
+				<InviteProjectMembers project={project} />
+				<div className="card-divider">
+					<ProjectMembers project={project} />
+				</div>
+			</div>
+		) : selectedTab === ProjectPageTabNames.PROVIDER_KEYS ? (
+			<div data-testid="project-provider-keys-tab">
+				<ProjectProviderKeys project={project} />
+			</div>
+		) : (
+			<div data-testid="project-settings-tab">
+				<ProjectGeneralSettings project={project} />
+				<div className="card-divider">
+					<ProjectDeletion project={project} />
+				</div>
+			</div>
+		),
+);
 
 export default function ProjectOverview({
 	params: { projectId },
@@ -79,40 +116,6 @@ export default function ProjectOverview({
 		return null;
 	}
 
-	const tabComponents: Record<ProjectPageTabNames, React.FC> = {
-		[ProjectPageTabNames.OVERVIEW]: memo(() => (
-			<div data-testid="project-overview-tab">
-				<ProjectAnalytics project={project} />
-				<div className="card-divider">
-					<ProjectApplicationsList project={project} />
-				</div>
-			</div>
-		)),
-		[ProjectPageTabNames.MEMBERS]: memo(() => (
-			<div data-testid="project-members-tab">
-				<InviteProjectMembers project={project} />
-				<div className="card-divider">
-					<ProjectMembers project={project} />
-				</div>
-			</div>
-		)),
-		[ProjectPageTabNames.PROVIDER_KEYS]: memo(() => (
-			<div data-testid="project-provider-keys-tab">
-				<ProjectProviderKeys project={project} />
-			</div>
-		)),
-		[ProjectPageTabNames.SETTINGS]: memo(() => (
-			<div data-testid="project-settings-tab">
-				<ProjectGeneralSettings project={project} />
-				<div className="card-divider">
-					<ProjectDeletion project={project} />
-				</div>
-			</div>
-		)),
-	};
-
-	const TabComponent = tabComponents[selectedTab];
-
 	return (
 		<main
 			className="flex flex-col min-h-screen w-full bg-base-100"
@@ -127,7 +130,7 @@ export default function ProjectOverview({
 					trailingLine={true}
 				/>
 				<div className="card-divider" />
-				<TabComponent />
+				<TabComponent project={project} selectedTab={selectedTab} />
 			</div>
 		</main>
 	);

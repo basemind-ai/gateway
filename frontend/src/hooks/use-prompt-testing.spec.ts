@@ -37,6 +37,7 @@ describe('usePromptTesting tests', () => {
 			usePromptTesting({
 				applicationId,
 				handleError: vi.fn(),
+				handleRefreshProject: vi.fn(),
 				projectId,
 			}),
 		);
@@ -54,6 +55,7 @@ describe('usePromptTesting tests', () => {
 			usePromptTesting({
 				applicationId,
 				handleError: vi.fn(),
+				handleRefreshProject: vi.fn(),
 				projectId,
 			}),
 		);
@@ -73,6 +75,7 @@ describe('usePromptTesting tests', () => {
 			usePromptTesting({
 				applicationId,
 				handleError: vi.fn(),
+				handleRefreshProject: vi.fn(),
 				projectId,
 			}),
 		);
@@ -94,6 +97,7 @@ describe('usePromptTesting tests', () => {
 			usePromptTesting({
 				applicationId,
 				handleError: vi.fn(),
+				handleRefreshProject: vi.fn(),
 				projectId,
 			}),
 		);
@@ -119,6 +123,7 @@ describe('usePromptTesting tests', () => {
 			usePromptTesting({
 				applicationId,
 				handleError: vi.fn(),
+				handleRefreshProject: vi.fn(),
 				projectId,
 			}),
 		);
@@ -149,6 +154,7 @@ describe('usePromptTesting tests', () => {
 			usePromptTesting({
 				applicationId,
 				handleError: vi.fn(),
+				handleRefreshProject: vi.fn(),
 				projectId,
 			}),
 		);
@@ -171,6 +177,7 @@ describe('usePromptTesting tests', () => {
 			usePromptTesting({
 				applicationId,
 				handleError: vi.fn(),
+				handleRefreshProject: vi.fn(),
 				projectId,
 			}),
 		);
@@ -183,5 +190,44 @@ describe('usePromptTesting tests', () => {
 		expect(result.current.modelResponses).toEqual([]);
 		expect(result.current.testFinishReason).toBe('');
 		expect(result.current.testRecord).toBeNull();
+	});
+
+	it('calls handleRefreshProject when a testRecordId is present', async () => {
+		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(promptTestRecord),
+			ok: true,
+		});
+
+		const handleRefreshProject = vi.fn();
+
+		const { result } = renderHook(() =>
+			usePromptTesting({
+				applicationId,
+				handleError: vi.fn(),
+				handleRefreshProject,
+				projectId,
+			}),
+		);
+		await waitFor(() => {
+			expect(result.current.isReady).toBe(true);
+		});
+
+		const { handleMessage } = createWebsocketSpy.mock.calls[0][0];
+
+		act(() => {
+			handleMessage({
+				data: {
+					finishReason: 'done',
+					promptTestRecordId: promptTestRecord.id,
+				},
+			});
+		});
+		await waitFor(() => {
+			expect(result.current.testRecord).toEqual(promptTestRecord);
+		});
+
+		expect(mockFetch).toHaveBeenCalled();
+
+		expect(handleRefreshProject).toHaveBeenCalled();
 	});
 });

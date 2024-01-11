@@ -33,7 +33,6 @@ describe('ApplicationPromptConfigsTable', () => {
 		expect(screen.getByText(namespace.name)).toBeInTheDocument();
 		expect(screen.getByText(namespace.vendor)).toBeInTheDocument();
 		expect(screen.getByText(namespace.model)).toBeInTheDocument();
-		expect(screen.getByText(namespace.test)).toBeInTheDocument();
 		expect(screen.getByText(namespace.edit)).toBeInTheDocument();
 		expect(
 			screen.getAllByTestId('application-prompt-configs-table-row'),
@@ -132,27 +131,5 @@ describe('ApplicationPromptConfigsTable', () => {
 		expect(
 			screen.queryByTestId('application-prompt-configs-table-row'),
 		).not.toBeInTheDocument();
-	});
-
-	it('should navigate to the prompt config detail page testing tab when pressing the test button', () => {
-		const promptConfigs = OpenAIPromptConfigFactory.batchSync(2);
-		const projectId = faker.string.uuid();
-		const applicationId = faker.string.uuid();
-
-		render(
-			<ApplicationPromptConfigsTable
-				promptConfigs={promptConfigs}
-				projectId={projectId}
-				applicationId={applicationId}
-			/>,
-		);
-
-		fireEvent.click(
-			screen.getAllByTestId(
-				'application-prompt-configs-table-config-test-button',
-			)[0],
-		);
-
-		expect(routerPushMock).toHaveBeenCalled();
 	});
 });

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { PencilFill, Search } from 'react-bootstrap-icons';
+import { PencilFill } from 'react-bootstrap-icons';
 
 import { Navigation, PromptConfigPageTab } from '@/constants';
 import {
@@ -52,7 +52,6 @@ export function ApplicationPromptConfigsTable({
 					<th>{t('name')}</th>
 					<th>{t('vendor')}</th>
 					<th>{t('model')}</th>
-					<th>{t('test')}</th>
 					<th>{t('edit')}</th>
 				</tr>
 			</thead>
@@ -100,19 +99,6 @@ export function ApplicationPromptConfigsTable({
 								<span className="text-info">
 									{modelTypeToLocaleMap[modelType]}
 								</span>
-							</td>
-							<td>
-								<button
-									data-testid="application-prompt-configs-table-config-test-button"
-									onClick={() => {
-										pushToTab({
-											promptConfigId,
-											tab: PromptConfigPageTab.TESTING,
-										});
-									}}
-								>
-									<Search className="w-3.5 h-3.5 text-secondary" />
-								</button>
 							</td>
 							<td>
 								<button

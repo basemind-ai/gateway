@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { memo, useEffect, useState } from 'react';
-import { Gear, RocketTakeoff, Speedometer2 } from 'react-bootstrap-icons';
+import { Gear, Speedometer2 } from 'react-bootstrap-icons';
 import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 
@@ -12,7 +12,6 @@ import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/appli
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
-import { PromptConfigTesting } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-testing';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { PromptConfigPageTab } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -24,6 +23,46 @@ import {
 	usePromptConfig,
 	useSetPromptConfigs,
 } from '@/stores/api-store';
+import { ModelVendor, PromptConfig } from '@/types';
+
+const TabComponent = memo(
+	<T extends ModelVendor>({
+		promptConfig,
+		projectId,
+		applicationId,
+		selectedTab,
+	}: {
+		applicationId: string;
+		projectId: string;
+		promptConfig: PromptConfig<T>;
+		selectedTab: PromptConfigPageTab;
+	}) =>
+		selectedTab === PromptConfigPageTab.OVERVIEW ? (
+			<>
+				<PromptConfigGeneralInfo promptConfig={promptConfig} />
+				<div className="card-divider" />
+				<PromptConfigCodeSnippet
+					promptConfigId={promptConfig.id}
+					isDefaultConfig={promptConfig.isDefault ?? false}
+					expectedVariables={promptConfig.expectedTemplateVariables}
+				/>
+			</>
+		) : (
+			<>
+				<PromptConfigGeneralSettings
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+				/>
+				<div className="h-4" />
+				<PromptConfigDeletion
+					projectId={projectId}
+					applicationId={applicationId}
+					promptConfig={promptConfig}
+				/>
+			</>
+		),
+);
 
 export default function PromptConfiguration({
 	params: { projectId, applicationId, promptConfigId },
@@ -35,8 +74,10 @@ export default function PromptConfiguration({
 	};
 }) {
 	const user = useAuthenticatedUser();
+
 	const { page, initialized } = useAnalytics();
 	const t = useTranslations('promptConfig');
+
 	const handleError = useHandleError();
 
 	const promptConfig = usePromptConfig<any>(applicationId, promptConfigId);
@@ -91,53 +132,11 @@ export default function PromptConfiguration({
 			text: t('overview'),
 		},
 		{
-			icon: <RocketTakeoff className="w-3.5 h-3.5" />,
-			id: PromptConfigPageTab.TESTING,
-			text: t('test'),
-		},
-		{
 			icon: <Gear className="w-3.5 h-3.5" />,
 			id: PromptConfigPageTab.SETTINGS,
 			text: t('settings'),
 		},
 	];
-
-	const tabComponents: Record<PromptConfigPageTab, React.FC> = {
-		[PromptConfigPageTab.OVERVIEW]: memo(() => (
-			<>
-				<PromptConfigCodeSnippet
-					projectId={projectId}
-					applicationId={applicationId}
-				/>
-				<div className="card-divider" />
-				<PromptConfigGeneralInfo promptConfig={promptConfig} />
-			</>
-		)),
-		[PromptConfigPageTab.TESTING]: memo(() => (
-			<PromptConfigTesting
-				projectId={projectId}
-				applicationId={applicationId}
-				promptConfig={promptConfig}
-			/>
-		)),
-		[PromptConfigPageTab.SETTINGS]: memo(() => (
-			<>
-				<PromptConfigGeneralSettings
-					projectId={projectId}
-					applicationId={applicationId}
-					promptConfig={promptConfig}
-				/>
-				<div className="h-4" />
-				<PromptConfigDeletion
-					projectId={projectId}
-					applicationId={applicationId}
-					promptConfig={promptConfig}
-				/>
-			</>
-		)),
-	};
-
-	const TabComponent = tabComponents[selectedTab];
 
 	return (
 		<main
@@ -158,8 +157,12 @@ export default function PromptConfiguration({
 					trailingLine={true}
 				/>
 				<div className="card-divider" />
-
-				<TabComponent />
+				<TabComponent
+					promptConfig={promptConfig}
+					projectId={projectId}
+					applicationId={applicationId}
+					selectedTab={selectedTab}
+				/>
 			</div>
 		</main>
 	);

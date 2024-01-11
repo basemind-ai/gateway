@@ -1,81 +1,444 @@
-import { useRouter } from 'next/navigation';
+/* eslint-disable sonarjs/no-nested-template-literals */
 import { useTranslations } from 'next-intl';
-import { Fragment, useState } from 'react';
-import { Github, KeyFill } from 'react-bootstrap-icons';
+import { Fragment, memo, useMemo, useState } from 'react';
+import { Github } from 'react-bootstrap-icons';
 
 import { CodeSnippet } from '@/components/code-snippet';
-import { Modal } from '@/components/modal';
-import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { useAnalytics } from '@/hooks/use-analytics';
 
+interface ReplacerMap {
+	invokeReplacer: (
+		value: string,
+		expectedTemplateVariables: string[],
+	) => string;
+	parametersReplacer: (
+		value: string,
+		expectedTemplateVariables: string[],
+	) => string;
+}
+
 interface FrameworkTab {
-	docs?: string;
+	docs: string;
 	framework: string;
 	isActive: boolean;
 	language: supportedLanguages;
+	replacers: ReplacerMap;
 }
 
-type supportedLanguages = 'kotlin' | 'dart' | 'typescript' | 'swift';
+type supportedLanguages = 'kotlin' | 'dart' | 'swift';
 
-const docsKotlin =
+const apiKey = '<API_KEY>';
+const configId = '<CONFIG_ID>';
+const functionInvoke = '<FUNCTION_INVOKE>';
+const functionParameters = '<FUNCTION_PARAMETERS>';
+const input = '<INPUT>';
+
+/*
+ * Kotlin
+ * */
+
+const kotlinDocs =
 	'https://github.com/basemind-ai/sdk-android/tree/main?tab=readme-ov-file#basemindai-android-sdk';
-const snippetKotlin = `import ai.basemind.client.BaseMindClient
 
-val client = BaseMindClient.getInstance('<API_KEY>')
+const kotlinInstallationSnippet = `dependencies {
+    implementation("ai.basemind:client:1.0.0")
+}`;
+
+const kotlinInitSnippet = `import ai.basemind.client.BaseMindClient
+
+val client = BaseMindClient.getInstance(
+	"${apiKey}",
+	promptConfigId = "${configId}",
+)
 `;
 
-const docsSwift =
-	'https://github.com/basemind-ai/sdk-ios?tab=readme-ov-file#basemindai-swift-iosmacos-sdk';
-const snippetSwift = `import BaseMindClient
+const kotlinDefaultInitSnippet = `import ai.basemind.client.BaseMindClient
 
-let client = BaseMindClient(apiKey: "<MyApiKey>")`;
+val client = BaseMindClient.getInstance('${apiKey}')
+`;
 
-const docsFlutter = 'https://pub.dev/packages/basemind';
-const snippetDart = `import 'package:basemind/client.dart';
+const kotlinRequestSnippet = `fun handlePromptRequest(${functionParameters}): String {
+    val response = client.requestPrompt(templateVariables)
 
-final client = BaseMindClient('<API_KEY>');`;
+    return response.content
+}
 
-const languageSnippetMap: Record<supportedLanguages, string | null> = {
-	dart: snippetDart,
-	kotlin: snippetKotlin,
-	swift: snippetSwift,
-	typescript: null,
+val prompt = handlePromptRequest(${functionInvoke})
+`;
+
+const kotlinStreamSnippet = `fun handlePromptStream(${functionParameters}): MutableList<String> {
+    val response = client.requestStream(templateVariables)
+
+    val chunks: MutableList<String> = mutableListOf()
+    response.collect { chunk -> chunks.add(chunk.content) }
+
+    return chunks
+}
+
+val chunks = handlePromptStream(${functionInvoke})
+`;
+
+const kotlinPlaceholderReplacers: ReplacerMap = {
+	invokeReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionInvoke,
+			expectedTemplateVariables.length
+				? `mapOf(\n${expectedTemplateVariables
+						.map((v) => `\t"${v}" to "${input}"`)
+						.join(', \n')}\n)`
+				: '',
+		),
+	parametersReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionParameters,
+			expectedTemplateVariables.length
+				? 'templateVariables: Map<String, String>'
+				: '',
+		),
 };
+
+/*
+ * Swift
+ * */
+
+const swiftDocs =
+	'https://github.com/basemind-ai/sdk-ios?tab=readme-ov-file#basemindai-swift-iosmacos-sdk';
+
+const swiftInstallationSnippet = `dependencies: [
+	.package(url: "https://github.com/basemind-ai/sdk-ios.git", from: "1.0.0"),
+],
+targets: [
+	.target(
+		name: "MyApp", // your target name here
+		dependencies: ["BaseMindClient"]
+	),
+]`;
+
+const swiftInitSnippet = `import BaseMindClient
+
+let client = BaseMindClient(
+	apiKey: "${apiKey}",
+	options: ClientOptions(promptConfigId: "${configId}"),
+)`;
+
+const swiftDefaultInitSnippet = `import BaseMindClient
+
+let client = BaseMindClient(apiKey: "${apiKey}")`;
+
+const swiftRequestSnippet = `func handlePromptRequest(${functionParameters}) async throws -> String {
+    let response = try client.requestPrompt(templateVariables)
+
+    return response.content
+}
+
+let prompt = try await handlePromptRequest(${functionInvoke})
+`;
+
+const swiftStreamSnippet = `func handlePromptStream(${functionParameters}) async throws -> [String] {
+    let stream = try client.requestStream(templateVariables)
+
+    var chunks: [String] = []
+    for try await response in stream {
+        chunks.append(response.content)
+    }
+
+    return chunks
+}
+
+let chunks = try await handlePromptStream(${functionInvoke})
+`;
+
+const swiftPlaceholderReplacers: ReplacerMap = {
+	invokeReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionInvoke,
+			expectedTemplateVariables.length
+				? `[
+${expectedTemplateVariables
+	.map((v) => `\t"${v}": "${input}"`)
+	.join(', \n')},\n]`
+				: '',
+		),
+	parametersReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionParameters,
+			expectedTemplateVariables.length
+				? 'templateVariables: [String: String]'
+				: '',
+		),
+};
+
+/*
+ * Dart
+ * */
+
+const dartDocs = 'https://pub.dev/packages/basemind';
+
+const dartInstallationSnippet = `flutter pub add basemind
+
+# or using dart
+# dart pub add basemind
+`;
+
+const dartInitSnippet = `import 'package:basemind/client.dart';
+
+final client = BaseMindClient(
+	'${apiKey}',
+	"${configId}",
+);`;
+
+const dartDefaultInitSnippet = `import 'package:basemind/client.dart';
+import * as url from 'url';
+
+final client = BaseMindClient('${apiKey}');`;
+
+const dartRequestSnippet = `Future<String> handlePromptRequest(${functionParameters}) async {
+	final response = await client.requestPrompt(templateVariables);
+
+	return response.content;
+}
+
+final prompt = await handlePromptRequest(${functionInvoke});
+`;
+
+const dartStreamSnippet = `handlePromptStream(${functionParameters}) {
+  final stream = client.requestStream(templateVariables);
+  stream.listen((response) {
+    print(response.content);
+  });
+}
+
+handlePromptStream(${functionInvoke});
+`;
+
+const dartPlaceholderReplacers: ReplacerMap = {
+	invokeReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionInvoke,
+			expectedTemplateVariables.length
+				? `{
+${expectedTemplateVariables.map((v) => `\t'${v}': '${input}'`).join(',\n')},\n}`
+				: '',
+		),
+	parametersReplacer: (value: string, expectedTemplateVariables: string[]) =>
+		value.replace(
+			functionParameters,
+			expectedTemplateVariables.length
+				? 'Map<String, String> templateVariables'
+				: '',
+		),
+};
+// ---
 
 const tabs: FrameworkTab[] = [
 	{
-		docs: docsKotlin,
+		docs: kotlinDocs,
 		framework: 'Android',
 		isActive: true,
 		language: 'kotlin',
+		replacers: kotlinPlaceholderReplacers,
 	},
-	{ docs: docsSwift, framework: 'iOS', isActive: true, language: 'swift' },
 	{
-		docs: docsFlutter,
+		docs: swiftDocs,
+		framework: 'iOS',
+		isActive: true,
+		language: 'swift',
+		replacers: swiftPlaceholderReplacers,
+	},
+	{
+		docs: dartDocs,
 		framework: 'Flutter',
 		isActive: true,
 		language: 'dart',
-	},
-	{
-		docs: undefined,
-		framework: 'React Native',
-		isActive: false,
-		language: 'typescript',
+		replacers: dartPlaceholderReplacers,
 	},
 ];
 
+const importSnippetMap: Record<
+	supportedLanguages,
+	React.FC<{
+		isDefault: boolean;
+		promptConfigId: string;
+	}>
+> = {
+	dart: memo(
+		({
+			promptConfigId,
+			isDefault,
+		}: {
+			isDefault: boolean;
+			promptConfigId: string;
+		}) => (
+			<CodeSnippet
+				codeText={
+					isDefault
+						? dartDefaultInitSnippet
+						: dartInitSnippet.replaceAll(configId, promptConfigId)
+				}
+				language="dart"
+				allowCopy={true}
+				dataTestId={
+					isDefault
+						? 'default-init-code-snippet-dart'
+						: 'init-code-snippet-dart'
+				}
+			/>
+		),
+	),
+	kotlin: memo(
+		({
+			promptConfigId,
+			isDefault,
+		}: {
+			isDefault: boolean;
+			promptConfigId: string;
+		}) => (
+			<CodeSnippet
+				codeText={
+					isDefault
+						? kotlinDefaultInitSnippet
+						: kotlinInitSnippet.replaceAll(configId, promptConfigId)
+				}
+				language="kotlin"
+				allowCopy={true}
+				dataTestId={
+					isDefault
+						? 'default-init-code-snippet-kotlin'
+						: 'init-code-snippet-kotlin'
+				}
+			/>
+		),
+	),
+	swift: memo(
+		({
+			promptConfigId,
+			isDefault,
+		}: {
+			isDefault: boolean;
+			promptConfigId: string;
+		}) => (
+			<CodeSnippet
+				codeText={
+					isDefault
+						? swiftDefaultInitSnippet
+						: swiftInitSnippet.replaceAll(configId, promptConfigId)
+				}
+				language="swift"
+				allowCopy={true}
+				dataTestId={
+					isDefault
+						? 'default-init-code-snippet-swift'
+						: 'init-code-snippet-swift'
+				}
+			/>
+		),
+	),
+};
+
+const installationSnippetMap: Record<supportedLanguages, React.FC> = {
+	dart: memo(() => (
+		<CodeSnippet
+			codeText={dartInstallationSnippet}
+			language="bash"
+			allowCopy={true}
+			dataTestId="installation-code-snippet-dart"
+		/>
+	)),
+	kotlin: memo(() => (
+		<CodeSnippet
+			codeText={kotlinInstallationSnippet}
+			language="kotlin"
+			allowCopy={true}
+			dataTestId="installation-code-snippet-kotlin"
+		/>
+	)),
+	swift: memo(() => (
+		<CodeSnippet
+			codeText={swiftInstallationSnippet}
+			language="swift"
+			allowCopy={true}
+			dataTestId="installation-code-snippet-swift"
+		/>
+	)),
+};
+
+const promptRequestSnippetMap: Record<
+	supportedLanguages,
+	React.FC<{
+		replacer: (value: string) => string;
+	}>
+> = {
+	dart: memo(({ replacer }) => (
+		<CodeSnippet
+			codeText={replacer(dartRequestSnippet)}
+			language="dart"
+			allowCopy={true}
+			dataTestId="request-code-snippet-dart"
+		/>
+	)),
+	kotlin: memo(({ replacer }) => (
+		<CodeSnippet
+			codeText={replacer(kotlinRequestSnippet)}
+			language="kotlin"
+			allowCopy={true}
+			dataTestId="request-code-snippet-kotlin"
+		/>
+	)),
+	swift: memo(({ replacer }) => (
+		<CodeSnippet
+			codeText={replacer(swiftRequestSnippet)}
+			language="swift"
+			allowCopy={true}
+			dataTestId="request-code-snippet-swift"
+		/>
+	)),
+};
+
+const promptStreamSnippetMap: Record<
+	supportedLanguages,
+	React.FC<{
+		replacer: (value: string) => string;
+	}>
+> = {
+	dart: memo(({ replacer }) => (
+		<CodeSnippet
+			codeText={replacer(dartStreamSnippet)}
+			language="dart"
+			allowCopy={true}
+			dataTestId="stream-code-snippet-dart"
+		/>
+	)),
+	kotlin: memo(({ replacer }) => (
+		<CodeSnippet
+			codeText={replacer(kotlinStreamSnippet)}
+			language="kotlin"
+			allowCopy={true}
+			dataTestId="stream-code-snippet-kotlin"
+		/>
+	)),
+	swift: memo(({ replacer }) => (
+		<CodeSnippet
+			codeText={replacer(swiftStreamSnippet)}
+			language="swift"
+			allowCopy={true}
+			dataTestId="stream-code-snippet-swift"
+		/>
+	)),
+};
+
 export function PromptConfigCodeSnippet({
-	projectId,
-	applicationId,
+	isDefaultConfig,
+	promptConfigId,
+	expectedVariables,
 }: {
-	applicationId: string;
-	projectId: string;
+	expectedVariables: string[];
+	isDefaultConfig: boolean;
+	promptConfigId: string;
 }) {
-	const [selectedFramework, setSelectedFramework] = useState('Android');
 	const t = useTranslations('configCodeSnippet');
-	const router = useRouter();
 	const { initialized, track } = useAnalytics();
-	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+	const [selectedFramework, setSelectedFramework] = useState('Android');
 
 	const handleDocClick = (tab: FrameworkTab) => {
 		return () => {
@@ -85,16 +448,127 @@ export function PromptConfigCodeSnippet({
 					framework: tab.framework,
 				});
 			}
-			router.push(tab.docs!);
+			window.open(tab.docs, '_blank')?.focus();
 		};
 	};
-	const openCreationPopup = () => {
-		setIsCreateModalOpen(true);
-	};
 
-	const closeCreationPopup = () => {
-		setIsCreateModalOpen(false);
-	};
+	const mappedTabs = useMemo(
+		() =>
+			tabs.map((tab) => {
+				const InstallationSnippet =
+					installationSnippetMap[tab.language];
+				const ImportSnippet = importSnippetMap[tab.language];
+				const RequestSnippet = promptRequestSnippetMap[tab.language];
+				const StreamSnippet = promptStreamSnippetMap[tab.language];
+				const replacer = (value: string) => {
+					value = tab.replacers.parametersReplacer(
+						tab.replacers.invokeReplacer(value, expectedVariables),
+						expectedVariables,
+					);
+
+					if (!expectedVariables.length) {
+						value = value.replaceAll('templateVariables', '');
+					}
+
+					return value;
+				};
+
+				return (
+					<Fragment key={tab.framework}>
+						<button
+							name="tabs"
+							data-testid={`tab-${tab.framework}`}
+							className={`tab [--tab-bg:bg-base-100] text-base-content rounded-b-none hover:bg-neutral ${
+								selectedFramework === tab.framework &&
+								'tab-active bg-base-200 border-base-300 hover:bg-base-300'
+							}`}
+							aria-label={tab.framework}
+							disabled={!tab.isActive}
+							onClick={() => {
+								setSelectedFramework(tab.framework);
+							}}
+						>
+							<span
+								className="text-info"
+								data-testid={`tab-text-${tab.framework}`}
+							>
+								{tab.framework}
+							</span>
+						</button>
+						<div
+							className="tab-content rounded-data-card rounded-tl-none mt-0 w-full p-6"
+							data-testid={`tab-content-${tab.framework}-container`}
+						>
+							<div className="flex flex-col">
+								<button
+									className="btn btn-sm btn-wide btn-neutral mb-5"
+									disabled={!tab.docs}
+									onClick={handleDocClick(tab)}
+									data-testid={`code-snippet-view-docs-button-${tab.language}`}
+								>
+									<Github className="w-4 h-4" />
+									<span className="text-sm">
+										{t('documentation')}
+									</span>
+								</button>
+								<div className="sm:flex sm:flex-col md:grid md:grid-cols-2 sm:gap-4 md:gap-8">
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												1
+											</span>
+											<span className="text-info font-bold">
+												{t(
+													`${tab.language}InstallationText`,
+												)}
+											</span>
+										</div>
+										<InstallationSnippet />
+									</div>
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												2
+											</span>
+											<span className="text-info font-bold">
+												{t('importText')}
+											</span>
+										</div>
+										<ImportSnippet
+											isDefault={isDefaultConfig}
+											promptConfigId={promptConfigId}
+										/>
+									</div>
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												3
+											</span>
+											<span className="text-info font-bold">
+												{t('usageRequestText')}
+											</span>
+										</div>
+										<RequestSnippet replacer={replacer} />
+									</div>
+									<div className="flex flex-col gap-2">
+										<div className="pb-2 flex items-center gap-2">
+											<span className="badge badge-outline badge-info text-xl font-bold">
+												4
+											</span>
+											<span className="text-info font-bold">
+												{t('usageStreamText')}
+											</span>
+										</div>
+										<StreamSnippet replacer={replacer} />
+									</div>
+								</div>
+							</div>
+						</div>
+					</Fragment>
+				);
+			}),
+		[expectedVariables, initialized, selectedFramework],
+	);
 
 	return (
 		<>
@@ -103,85 +577,8 @@ export function PromptConfigCodeSnippet({
 				className="tabs tabs-lifted mt-3.5"
 				data-testid="prompt-code-snippet-container"
 			>
-				{tabs.map((tab) => {
-					const snippet = languageSnippetMap[tab.language];
-					return (
-						<Fragment key={tab.framework}>
-							<button
-								name="tabs"
-								data-testid={`tab-${tab.framework}`}
-								className={`tab [--tab-bg:bg-base-100] text-base-content rounded-b-none hover:bg-neutral ${
-									selectedFramework === tab.framework &&
-									'tab-active bg-base-200 border-base-300 hover:bg-base-300'
-								}`}
-								aria-label={tab.framework}
-								disabled={!tab.isActive}
-								onClick={() => {
-									setSelectedFramework(tab.framework);
-								}}
-							>
-								<span
-									className="text-info"
-									data-testid={`tab-text-${tab.framework}`}
-								>
-									{tab.framework}
-								</span>
-							</button>
-							<div
-								className="tab-content rounded-data-card rounded-tl-none mt-0  w-full p-6"
-								data-testid={`tab-content-${tab.framework}-container`}
-							>
-								<div className="flex flex-col lg:flex-row content-center">
-									<div className="flex lg:flex-col px-8 justify-evenly text-left pb-4 lg:pb-0">
-										<button
-											className="btn btn-sm btn-neutral h-fit"
-											disabled={!tab.docs}
-											onClick={handleDocClick(tab)}
-											data-testid={`code-snippet-view-docs-button-${tab.language}`}
-										>
-											<Github className="w-4 h-4" />
-											<span className="text-sm">
-												{t('documentation')}
-											</span>
-										</button>
-										<button
-											className="btn btn-sm btn-neutral"
-											onClick={() => {
-												openCreationPopup();
-											}}
-											data-testid={`code-snippet-create-api-key-button-${tab.language}`}
-										>
-											<KeyFill className="w-4 h-4" />
-											<span className="text-sm">
-												{t('createAPIKey')}
-											</span>
-										</button>
-									</div>
-									<div className="flex justify-center">
-										{snippet ? (
-											<CodeSnippet
-												codeText={snippet}
-												language={tab.language}
-												allowCopy={true}
-											/>
-										) : null}
-									</div>
-								</div>
-							</div>
-						</Fragment>
-					);
-				})}
+				{mappedTabs}
 			</div>
-			<Modal modalOpen={isCreateModalOpen}>
-				<CreateApplicationAPIKeyModal
-					projectId={projectId}
-					applicationId={applicationId}
-					onCancel={closeCreationPopup}
-					onSubmit={() => {
-						closeCreationPopup();
-					}}
-				/>
-			</Modal>
 		</>
 	);
 }

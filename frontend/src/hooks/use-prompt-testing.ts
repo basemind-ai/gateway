@@ -28,9 +28,11 @@ export function usePromptTesting<T extends ModelVendor>({
 	applicationId,
 	projectId,
 	handleError,
+	handleRefreshProject,
 }: {
 	applicationId: string;
 	handleError: (error: unknown) => void;
+	handleRefreshProject: () => Promise<void>;
 	projectId: string;
 }): {
 	isReady: boolean;
@@ -90,11 +92,14 @@ export function usePromptTesting<T extends ModelVendor>({
 	useEffect(() => {
 		if (promptTestRecordId) {
 			(async () => {
-				const record = await handleRetrievePromptTestRecordById<T>({
-					applicationId,
-					projectId,
-					promptTestRecordId,
-				});
+				const [record] = await Promise.all([
+					handleRetrievePromptTestRecordById<T>({
+						applicationId,
+						projectId,
+						promptTestRecordId,
+					}),
+					handleRefreshProject(),
+				]);
 				setTestRecord(record);
 			})();
 		}

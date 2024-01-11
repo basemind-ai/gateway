@@ -377,14 +377,16 @@ describe('handlers tests', () => {
 						content: '9',
 					},
 				],
+				[
+					{
+						content: '',
+						finishReason: 'DONE',
+						requestTokensCount: 1,
+						responseTokensCount: 4,
+					},
+					expect.any(Function),
+				],
 			]);
-
-			expect(call.end).toHaveBeenCalledWith({
-				content: '',
-				finishReason: StreamFinishReason.DONE,
-				requestTokensCount: 1,
-				responseTokensCount: 4,
-			});
 		});
 
 		it('should handle errors', async () => {

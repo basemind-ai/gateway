@@ -1,3 +1,4 @@
+import { act } from 'react-dom/test-utils';
 import { render, renderHook, screen } from 'tests/test-utils';
 
 import { useShowInfo } from '@/stores/toast-store';
@@ -12,12 +13,15 @@ describe('ToastProvider', () => {
 	});
 
 	it('renders a toast and pops it', () => {
-		const { rerender } = render(<h1>Screen</h1>);
-
 		const {
 			result: { current: showInfo },
 		} = renderHook(useShowInfo);
-		showInfo('Test message');
+
+		const { rerender } = render(<h1>Screen</h1>);
+
+		act(() => {
+			showInfo('Test message');
+		});
 		rerender(<h1>Screen</h1>);
 
 		const toastMessage = screen.getByTestId('toast-message');
@@ -31,13 +35,17 @@ describe('ToastProvider', () => {
 	});
 
 	it('renders multiple timers and pops them', () => {
-		const { rerender } = render(<h1>Screen</h1>);
-
 		const {
 			result: { current: showInfo },
 		} = renderHook(useShowInfo);
-		showInfo('Test message');
-		showInfo('Test message2');
+
+		const { rerender } = render(<h1>Screen</h1>);
+
+		act(() => {
+			showInfo('Test message');
+			showInfo('Test message2');
+		});
+
 		rerender(<h1>Screen</h1>);
 
 		const toastMessages = screen.getAllByTestId('toast-message');

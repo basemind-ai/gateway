@@ -15,6 +15,46 @@ import { ApplicationPageTabNames } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useApplication, useProject } from '@/stores/api-store';
+import { Application } from '@/types';
+
+const TabComponent = memo(
+	({
+		selectedTab,
+		application,
+		projectId,
+	}: {
+		application: Application;
+		projectId: string;
+		selectedTab: ApplicationPageTabNames;
+	}) =>
+		selectedTab === ApplicationPageTabNames.OVERVIEW ? (
+			<>
+				<ApplicationAnalytics
+					application={application}
+					projectId={projectId}
+				/>
+				<ApplicationApiKeys
+					application={application}
+					projectId={projectId}
+				/>
+				<ApplicationPromptConfigs
+					application={application}
+					projectId={projectId}
+				/>
+			</>
+		) : (
+			<>
+				<ApplicationGeneralSettings
+					application={application}
+					projectId={projectId}
+				/>
+				<ApplicationDeletion
+					application={application}
+					projectId={projectId}
+				/>
+			</>
+		),
+);
 
 export default function Application({
 	params: { projectId, applicationId },
@@ -54,39 +94,6 @@ export default function Application({
 		return null;
 	}
 
-	const tabComponents: Record<ApplicationPageTabNames, React.FC> = {
-		[ApplicationPageTabNames.OVERVIEW]: memo(() => (
-			<>
-				<ApplicationAnalytics
-					application={application}
-					projectId={projectId}
-				/>
-				<ApplicationApiKeys
-					application={application}
-					projectId={projectId}
-				/>
-				<ApplicationPromptConfigs
-					application={application}
-					projectId={projectId}
-				/>
-			</>
-		)),
-		[ApplicationPageTabNames.SETTINGS]: memo(() => (
-			<>
-				<ApplicationGeneralSettings
-					application={application}
-					projectId={projectId}
-				/>
-				<ApplicationDeletion
-					application={application}
-					projectId={projectId}
-				/>
-			</>
-		)),
-	};
-
-	const TabComponent = tabComponents[selectedTab];
-
 	return (
 		<main
 			data-testid="application-page"
@@ -105,7 +112,11 @@ export default function Application({
 					trailingLine={true}
 				/>
 				<div className="card-divider" />
-				<TabComponent />
+				<TabComponent
+					application={application}
+					projectId={projectId}
+					selectedTab={selectedTab}
+				/>
 			</div>
 		</main>
 	);

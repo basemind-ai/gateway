@@ -25,7 +25,7 @@ export function CoherePromptTemplate({
 	return (
 		<div data-testid="cohere-prompt-template-form-container">
 			<div
-				className="form-control"
+				className="form-control w-full h-full"
 				data-testid="cohere-prompt-template-form"
 			>
 				<label
@@ -46,7 +46,7 @@ export function CoherePromptTemplate({
 					</span>
 				</label>
 				<textarea
-					className="card-textarea"
+					className="card-textarea min-w-full sm:min-h-60 md:min-h-80 lg:min-h-96"
 					placeholder={t('promptMessagePlaceholder')}
 					value={messages[0]?.message ?? ''}
 					onChange={handleChange(handleSetMessages)}

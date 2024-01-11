@@ -64,9 +64,14 @@
 		"submit": "Submit"
 	},
 	"configCodeSnippet": {
-		"createAPIKey": "Create API Key",
+		"dartInstallationText": "Add the dependency to your application's pubspec.yaml file:",
 		"documentation": "Documentation",
-		"implement": "Implement"
+		"implement": "Implement",
+		"importText": "You can now import and initialize the client in your code:",
+		"kotlinInstallationText": "Add the dependency to your application's build.gradle.kts file:",
+		"swiftInstallationText": "Add the dependency to your application's Package.swift:",
+		"usageRequestText": "Use the client to request a prompt using the config:",
+		"usageStreamText": "Or request a streaming response using the config:"
 	},
 	"createApplication": {
 		"applicationCreated": "Application Created",
@@ -103,12 +108,15 @@
 		"continueButtonText": "Continue",
 		"createConfig": "Create Configuration",
 		"createPromptConfigTitle": "New Model Configuration",
-		"credits": "Credits Left: ",
+		"credits": "Free Credits Left: ",
 		"duration": "Duration",
 		"durationTooltip": "Duration: Total time for complete output. Output streams automatically, with the first response occurring almost immediately.",
+		"errorCreatingConfig": "An error occurred creating the config",
+		"errorRefreshingProject": "An error occurred refreshing the project",
 		"finishReason": "Finish Reason",
 		"message": "Message",
 		"messageContent": "Prompt Template",
+		"modelResponse": "Model Response",
 		"modelResponse": "Model Response",
 		"modelType": "Model",
 		"modelVendor": "Provider",
@@ -139,11 +147,11 @@
 		"saveButtonText": "Save",
 		"saveMessage": "Add Message",
 		"skipAndSaveButtonText": "Skip Testing and Save",
+		"testInputs": "Test Inputs",
 		"testName": "Test Name",
 		"testResults": "Test Results",
 		"totalCost": "Total Cost",
-		"variables": "Variables",
-		"variablesTooltip": "Required test inputs. Please add the values for the template variables.",
+		"variablesTooltip": "Required test inputs. Please add the values for the template variables. Variables are values defined inside '{'} in the template",
 		"wrapVariable": "use '{ '} to wrap a variable"
 	},
 	"createProject": {
@@ -154,6 +162,7 @@
 		"createApiKey": "Create API Key",
 		"createApiKeyPlaceholder": "Provide a name for your new API key",
 		"invalidLengthErrorMessage": "Name must be at least {numCharacters} characters long",
+		"invalidNameErrorMessage": "Name must be unique",
 		"nameInputAltLabel": "* must be unique",
 		"optional": "optional",
 		"projectInputLabel": "Project Name",
@@ -319,6 +328,7 @@
 		"promptHeader": "Prompt Testing",
 		"savedPromptConfig": "Saved Templates"
 	},
+
 	"promptConfig": {
 		"apiCalls": "API Calls",
 		"cancel": "Cancel",
@@ -344,6 +354,7 @@
 		"name": "Name",
 		"overview": "Overview",
 		"promptDeleted": "Model Configuration Deleted",
+		"promptTemplate": "Prompt Template",
 		"save": "Save",
 		"saveAsNew": "Save as New",
 		"settings": "Settings",

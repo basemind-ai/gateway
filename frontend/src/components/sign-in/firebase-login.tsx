@@ -27,6 +27,25 @@ import { getFirebaseAuth } from '@/utils/firebase';
 
 const host = getEnv().NEXT_PUBLIC_FRONTEND_HOST;
 
+const authProviders: {
+	key: string;
+	provider: AuthProvider;
+	size: Dimensions;
+}[] = [
+	{
+		key: 'Google',
+		provider: new GoogleAuthProvider(),
+		size: Dimensions.Eight,
+	},
+	{
+		key: 'GitHub',
+		provider: new GithubAuthProvider(),
+		size: Dimensions.Eight,
+	},
+];
+
+const emailProvider = new EmailAuthProvider();
+
 export function FirebaseLogin({
 	setLoading,
 	isInitialized,
@@ -109,25 +128,6 @@ export function FirebaseLogin({
 			setResetPWModalOpen(false);
 		}
 	};
-
-	const authProviders: {
-		key: string;
-		provider: AuthProvider;
-		size: Dimensions;
-	}[] = [
-		{
-			key: 'Google',
-			provider: new GoogleAuthProvider(),
-			size: Dimensions.Eight,
-		},
-		{
-			key: 'GitHub',
-			provider: new GithubAuthProvider(),
-			size: Dimensions.Eight,
-		},
-	];
-
-	const emailProvider = new EmailAuthProvider();
 
 	return (
 		<div

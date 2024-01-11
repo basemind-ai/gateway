@@ -8,6 +8,7 @@ import {
 	OpenAIPromptMessage,
 	OpenAIPromptMessageRole,
 } from '@/types';
+import { extractTemplateVariables } from '@/utils/models';
 
 export function OpenAIPromptTemplateForm({
 	messages,
@@ -38,6 +39,7 @@ export function OpenAIPromptTemplateForm({
 	const handleSetMessageContent = (index: number) => (content: string) => {
 		const copied = [...formMessages];
 		copied[index].content = content;
+		copied[index].templateVariables = extractTemplateVariables(content);
 
 		setFormMessages(copied);
 	};
