@@ -75,8 +75,11 @@ func (c *Client) StreamPromptTest( //nolint: revive
 		db.UUIDToString(apiKeyID),
 	))
 
+	timeoutContext, cancel := context.WithTimeout(ctx, time.Minute)
+	defer cancel()
+
 	contextWithMetadata := metadata.AppendToOutgoingContext(
-		ctx,
+		timeoutContext,
 		"authorization",
 		fmt.Sprintf("bearer %s", jwt),
 	)

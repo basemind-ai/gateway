@@ -30,8 +30,8 @@ export default function SignIn() {
 	return (
 		<main data-testid="login-container" className="flex bg-base-100 h-full">
 			<Oval
-				height="50vh"
-				width="50vw"
+				height="33vh"
+				width="33vw"
 				className={`m-auto ${!isLoading && 'hidden'}`}
 			/>
 			<div className={`flex grow ${isLoading && 'hidden'}`}>

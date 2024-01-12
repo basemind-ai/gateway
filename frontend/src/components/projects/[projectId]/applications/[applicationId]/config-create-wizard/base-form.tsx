@@ -2,11 +2,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useMemo } from 'react';
 
 import { EntityNameInput } from '@/components/entity-name-input';
-import {
-	modelTypeToLocaleMap,
-	modelVendorTypeMap,
-	UnavailableModelVendor,
-} from '@/constants/models';
+import { modelTypeToLocaleMap, modelVendorTypeMap } from '@/constants/models';
 import {
 	CohereModelType,
 	ModelType,
@@ -54,16 +50,6 @@ export function PromptConfigBaseForm({
 		[],
 	);
 
-	const invalidModelVendors = useMemo(
-		() =>
-			Object.entries(UnavailableModelVendor).map(([key, value]) => (
-				<option disabled key={value} value={value}>
-					{key}
-				</option>
-			)),
-		[],
-	);
-
 	useEffect(() => {
 		if (
 			modelVendor === ModelVendor.Cohere &&
@@ -106,7 +92,7 @@ export function PromptConfigBaseForm({
 				</>
 			)}
 			<div data-testid="prompt-config-model-select-form-container">
-				<div className="rounded-dark-card grid grid-cols-2 items-center gap-4">
+				<div className="rounded-dark-card grid grid-cols-2 items-center gap-4 pb-6">
 					<div className="form-control">
 						<label className="label">
 							<span className="label-text">
@@ -120,7 +106,6 @@ export function PromptConfigBaseForm({
 							data-testid="create-prompt-base-form-vendor-select"
 						>
 							{activeModelVendor}
-							{invalidModelVendors}
 						</select>
 					</div>
 					<div className="form-control">

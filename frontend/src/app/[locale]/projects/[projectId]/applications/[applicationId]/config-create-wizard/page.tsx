@@ -253,7 +253,7 @@ export default function PromptConfigCreateWizard({
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
 			{isLoading ? (
-				<Oval height="50vh" width="50vw" className="m-auto" />
+				<Oval height="33vh" width="33vw" className="m-auto" />
 			) : (
 				<>
 					<div className="page-content-container">

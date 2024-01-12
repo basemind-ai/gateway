@@ -46,13 +46,6 @@ export const modelVendorTypeMap: Record<ModelVendor, TModelType> = {
 	[ModelVendor.Cohere]: CohereModelType,
 };
 
-export enum UnavailableModelVendor {
-	A21Labs = 'A21_LABS',
-	Anthropic = 'ANTHROPIC',
-	Cohere = 'COHERE',
-	Google = 'GOOGLE',
-}
-
 export const openAIRoleColorMap: Record<OpenAIPromptMessageRole, string> = {
 	[OpenAIPromptMessageRole.Assistant]: 'info',
 	[OpenAIPromptMessageRole.System]: 'secondary',

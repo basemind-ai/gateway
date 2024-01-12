@@ -1,3 +1,4 @@
+import { StreamFinishReason } from 'shared/constants';
 import { PromptTestRecordFactory } from 'tests/factories';
 import { render, screen } from 'tests/test-utils';
 
@@ -12,7 +13,7 @@ describe('PromptTestResultTable', () => {
 	it('should render a table with the test results', () => {
 		const modelVendor = ModelVendor.OpenAI;
 		const modelType = OpenAIModelType.Gpt35Turbo;
-		const testFinishReason = 'finish reason';
+		const testFinishReason = StreamFinishReason.DONE;
 		const testRecord = PromptTestRecordFactory.buildSync({
 			durationMs: 1000,
 			requestTokens: 10,
@@ -50,7 +51,7 @@ describe('PromptTestResultTable', () => {
 	it('should display the vendor and type of the model being tested', () => {
 		const modelVendor = ModelVendor.OpenAI;
 		const modelType = OpenAIModelType.Gpt35Turbo;
-		const testFinishReason = 'finish reason';
+		const testFinishReason = StreamFinishReason.DONE;
 		const testRecord = PromptTestRecordFactory.buildSync({
 			durationMs: 1000,
 			requestTokens: 10,
@@ -79,7 +80,7 @@ describe('PromptTestResultTable', () => {
 	it('should display the finish reason of the test or "N/A"', () => {
 		const modelVendor = ModelVendor.OpenAI;
 		const modelType = OpenAIModelType.Gpt35Turbo;
-		const testFinishReason = 'finish reason';
+		const testFinishReason = StreamFinishReason.DONE;
 		const testRecord = PromptTestRecordFactory.buildSync();
 
 		render(
@@ -138,7 +139,7 @@ describe('PromptTestResultTable', () => {
 	it('should display the duration of the test in milliseconds', () => {
 		const modelVendor = ModelVendor.OpenAI;
 		const modelType = OpenAIModelType.Gpt35Turbo;
-		const testFinishReason = 'finish reason';
+		const testFinishReason = StreamFinishReason.DONE;
 		const testRecord = PromptTestRecordFactory.buildSync({
 			durationMs: 1000,
 			requestTokens: 10,

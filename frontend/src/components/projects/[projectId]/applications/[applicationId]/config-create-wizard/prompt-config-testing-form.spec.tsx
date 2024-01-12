@@ -135,7 +135,7 @@ describe('PromptConfigTesting tests', () => {
 		);
 		expect(handleErrorMock).not.toHaveBeenCalled();
 
-		mockHook.mock.calls.at(-1)?.[0].handleError('test error');
+		mockHook.mock.calls.at(-1)?.[0].onError('test error');
 
 		expect(handleErrorMock).toHaveBeenCalled();
 	});
