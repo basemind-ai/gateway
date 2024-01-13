@@ -18,7 +18,7 @@ describe('ProjectMembers', () => {
 
 	const handleUpdateUserToPermissionSpy = vi.spyOn(
 		ProjectUsersAPI,
-		'handleUpdateUserToPermission',
+		'handleUpdateUserPermission',
 	);
 	const handleRetrieveProjectUsersSpy = vi.spyOn(
 		ProjectUsersAPI,
@@ -54,7 +54,7 @@ describe('ProjectMembers', () => {
 			const email = screen.getByText(projectUser.email);
 			expect(email).toBeInTheDocument();
 		}
-		const editButtons = screen.getAllByTestId('remove-member-btn');
+		const editButtons = screen.getAllByTestId('remove-project-user-button');
 		expect(editButtons.length).not.toBe(0);
 	});
 
@@ -67,8 +67,9 @@ describe('ProjectMembers', () => {
 
 		render(<ProjectMembers project={project} />);
 
-		const removeMemberButtons =
-			screen.queryAllByTestId('remove-member-btn');
+		const removeMemberButtons = screen.queryAllByTestId(
+			'remove-project-user-button',
+		);
 		expect(removeMemberButtons.length).toBe(0);
 
 		const permissionSelects = screen.queryAllByTestId('permission-select');
@@ -85,8 +86,9 @@ describe('ProjectMembers', () => {
 		render(<ProjectMembers project={project} />);
 
 		await waitFor(() => {
-			const removeMemberButtons =
-				screen.queryAllByTestId('remove-member-btn');
+			const removeMemberButtons = screen.queryAllByTestId(
+				'remove-project-user-button',
+			);
 			expect(removeMemberButtons.length).toBe(0);
 		});
 
@@ -154,7 +156,9 @@ describe('ProjectMembers', () => {
 
 		let removeMemberButton: HTMLButtonElement;
 		await waitFor(() => {
-			const [button] = screen.getAllByTestId('remove-member-btn');
+			const [button] = screen.getAllByTestId(
+				'remove-project-user-button',
+			);
 
 			expect(button).toBeInTheDocument();
 			removeMemberButton = button as HTMLButtonElement;
@@ -185,7 +189,9 @@ describe('ProjectMembers', () => {
 		let removeMemberButton: HTMLButtonElement;
 
 		await waitFor(() => {
-			const [button] = screen.getAllByTestId('remove-member-btn');
+			const [button] = screen.getAllByTestId(
+				'remove-project-user-button',
+			);
 			expect(button).toBeInTheDocument();
 			removeMemberButton = button as HTMLButtonElement;
 		});

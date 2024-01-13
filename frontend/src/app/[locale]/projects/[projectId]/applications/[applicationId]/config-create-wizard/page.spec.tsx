@@ -179,29 +179,38 @@ describe('PromptConfigCreateWizard Page tests', () => {
 	});
 
 	it('does not allow the user to save the config if messages are empty', async () => {
+		const promptConfig = OpenAIPromptConfigFactory.buildSync();
+		mockFetch.mockResolvedValue({
+			json: () => Promise.resolve(promptConfig),
+			ok: true,
+		});
+
 		const store = getStore();
 		act(() => {
 			store.setConfigName(faker.lorem.word());
+			store.setMessages([]);
+			store.setParameters(promptConfig.modelParameters);
+			store.setModelType(promptConfig.modelType);
+			store.setModelVendor(promptConfig.modelVendor);
+			store.setNextWizardStage();
+			store.setNextWizardStage();
 		});
 
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
 		);
 
-		const continueButton = screen.getByTestId(
-			'config-create-wizard-continue-button',
-		);
-		expect(continueButton).toBeInTheDocument();
-		fireEvent.click(continueButton);
-
 		await waitFor(() => {
 			expect(
-				screen.getByTestId('parameters-and-prompt-form-container'),
+				screen.getByTestId('prompt-config-testing-form'),
 			).toBeInTheDocument();
 		});
 
-		expect(continueButton).toBeInTheDocument();
-		expect(continueButton).toBeDisabled();
+		const saveButton = screen.getByTestId(
+			'config-create-wizard-save-button',
+		);
+		expect(saveButton).toBeInTheDocument();
+		expect(saveButton).toBeDisabled();
 	});
 
 	it('allows the user to continue to the third stage if messages are not empty', async () => {
@@ -260,6 +269,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 			store.setNextWizardStage();
 			store.setNextWizardStage();
 		});
+
 		render(
 			<PromptConfigCreateWizard params={{ applicationId, projectId }} />,
 		);

@@ -7,12 +7,12 @@ import useSWR from 'swr';
 
 import { handleRetrieveApplications } from '@/api';
 import { Navbar } from '@/components/navbar';
-import { InviteProjectMembers } from '@/components/projects/[projectId]/invite-project-members';
 import { ProjectAnalytics } from '@/components/projects/[projectId]/project-analytics';
 import { ProjectApplicationsList } from '@/components/projects/[projectId]/project-applications-list';
 import { ProjectDeletion } from '@/components/projects/[projectId]/project-deletion';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
 import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
+import { ProjectMembersInvitationForm } from '@/components/projects/[projectId]/project-members-invitation-form';
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ProjectPageTabNames } from '@/constants';
@@ -39,7 +39,7 @@ const TabComponent = memo(
 			</div>
 		) : selectedTab === ProjectPageTabNames.MEMBERS ? (
 			<div data-testid="project-members-tab">
-				<InviteProjectMembers project={project} />
+				<ProjectMembersInvitationForm project={project} />
 				<div className="card-divider">
 					<ProjectMembers project={project} />
 				</div>

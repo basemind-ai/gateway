@@ -31,7 +31,7 @@ export async function handleAddUsersToProject({
 	});
 }
 
-export async function handleUpdateUserToPermission({
+export async function handleUpdateUserPermission({
 	projectId,
 	data,
 }: {

@@ -19,6 +19,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -66,12 +67,20 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
 
 	baseURL := fmt.Sprintf(
-		"https://%s:%d/v1%s?projectId=%s",
+		"https://%s/v1%s?projectId=%s",
 		cfg.ServerHost,
-		cfg.ServerPort,
 		InviteUserWebhookEndpoint,
 		db.UUIDToString(&projectID),
 	)
+
+	if cfg.Environment == "development" && cfg.ServerHost == "localhost" {
+		baseURL = strings.Replace(
+			"https://localhost",
+			fmt.Sprintf("http://%s:%d", cfg.ServerHost, cfg.ServerPort),
+			baseURL,
+			1,
+		)
+	}
 
 	var wg sync.WaitGroup
 

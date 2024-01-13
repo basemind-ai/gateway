@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Eraser } from 'react-bootstrap-icons';
+import { PencilFill, XCircle } from 'react-bootstrap-icons';
 import useSWR from 'swr';
 
 import {
 	handleRemoveUserFromProject,
 	handleRetrieveProjectUsers,
-	handleUpdateUserToPermission,
+	handleUpdateUserPermission,
 } from '@/api';
 import { Modal } from '@/components/modal';
 import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
@@ -21,65 +21,10 @@ import {
 	useUser,
 } from '@/stores/api-store';
 import { useShowInfo } from '@/stores/toast-store';
-import { AccessPermission, Project } from '@/types';
+import { AccessPermission, Project, ProjectUserAccount } from '@/types';
 import { handleChange } from '@/utils/events';
 
 const DEFAULT_AVATAR = '/images/avatar.svg';
-
-function UserCard({
-	photoUrl,
-	displayName,
-	email,
-}: {
-	displayName: string;
-	email: string;
-	photoUrl: string;
-}) {
-	return (
-		<div className="flex flex-row gap-3.5 items-center">
-			<Image
-				src={photoUrl || DEFAULT_AVATAR}
-				alt={displayName}
-				height={Dimensions.Twelve}
-				width={Dimensions.Twelve}
-				className="rounded-full"
-			/>
-			<div>
-				<p className="font-semibold text-base-content">{displayName}</p>
-				<p className="text-neutral-content font-medium">{email}</p>
-			</div>
-		</div>
-	);
-}
-
-function PermissionSelect({
-	permission,
-	onChange,
-}: {
-	onChange: (value: AccessPermission) => void;
-	permission: AccessPermission;
-}) {
-	const t = useTranslations('members');
-
-	return (
-		<select
-			data-testid="permission-select"
-			className="text-sm font-medium bg-transparent select pl-1 pt-1 pb-1 min-h-0 h-full"
-			value={permission}
-			onChange={handleChange(onChange)}
-		>
-			{Object.values(AccessPermission).map((permission) => (
-				<option
-					key={permission}
-					className="text-base-content text-sm font-medium capitalize bg-base-100"
-					value={permission}
-				>
-					{t(permission.toLowerCase())}
-				</option>
-			))}
-		</select>
-	);
-}
 
 export function ProjectMembers({ project }: { project: Project }) {
 	const t = useTranslations('members');
@@ -93,7 +38,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 	const handleError = useHandleError();
 	const showInfo = useShowInfo();
 
-	const { isLoading } = useSWR(
+	const { isLoading: isSwrLoading } = useSWR(
 		{
 			projectId: project.id,
 		},
@@ -106,153 +51,241 @@ export function ProjectMembers({ project }: { project: Project }) {
 		},
 	);
 
-	const [isRemoveMemberModalOpen, setIsRemoveMemberModalOpen] =
-		useState(false);
-	const [removalUserId, setRemovalUserId] = useState<string | null>(null);
-	const [removeUserLoading, setRemoveUserLoading] = useState(false);
+	const [subjectUser, setSubjectUser] = useState<ProjectUserAccount | null>(
+		null,
+	);
+	const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [newMemberPermission, setNewMemberPermission] =
+		useState<AccessPermission | null>(null);
 
 	const currentUser = projectUsers?.find(
 		(projectUser) => projectUser.email === user?.email,
 	);
 	const isAdmin = currentUser?.permission === AccessPermission.ADMIN;
 
-	const showRemoveMemberColumn =
+	const showActionColumns =
 		isAdmin && projectUsers && projectUsers.length > 1;
-	const canChangePermission = (memberId: string) =>
-		isAdmin && currentUser.id !== memberId;
-	const canRemoveMember = (memberId: string) =>
-		isAdmin && currentUser.id !== memberId;
 
-	async function updatePermission(
-		userId: string,
-		permission: AccessPermission,
-	) {
-		const updatedProjectUser = await handleUpdateUserToPermission({
-			data: {
-				permission,
-				userId,
-			},
-			projectId: project.id,
-		});
-		updateProjectUser(project.id, updatedProjectUser);
-		showInfo(t('roleUpdated'));
-	}
-
-	function markUserForRemoval(userId: string) {
-		setRemovalUserId(userId);
-		setIsRemoveMemberModalOpen(true);
-	}
-
-	async function removeUser() {
-		if (!removalUserId || removeUserLoading) {
-			return;
-		}
+	async function handleUpdatePermission() {
+		setIsLoading(true);
 
 		try {
-			setRemoveUserLoading(true);
+			const updatedProjectUser = await handleUpdateUserPermission({
+				data: {
+					permission: subjectUser!.permission,
+					userId: subjectUser!.id,
+				},
+				projectId: project.id,
+			});
+			updateProjectUser(project.id, updatedProjectUser);
+			showInfo(t('roleUpdated'));
+		} catch (e) {
+			handleError(e);
+		} finally {
+			setSubjectUser(null);
+			setNewMemberPermission(null);
+			setIsEditModalOpen(false);
+			setIsLoading(false);
+		}
+	}
+
+	const handleRemoveUser = async () => {
+		setIsLoading(true);
+
+		try {
 			await handleRemoveUserFromProject({
 				projectId: project.id,
-				userId: removalUserId,
+				userId: subjectUser!.id,
 			});
-			removeProjectUser(project.id, removalUserId);
+			removeProjectUser(project.id, subjectUser!.id);
 			showInfo(t('userRemoved'));
 		} catch (e) {
 			handleError(e);
 		} finally {
-			setRemovalUserId(null);
-			setIsRemoveMemberModalOpen(false);
-			setRemoveUserLoading(false);
+			setSubjectUser(null);
+			setIsRemoveModalOpen(false);
+			setIsLoading(false);
 		}
-	}
-
-	function renderProjectUsers() {
-		return projectUsers?.map(
-			({ displayName, id: memberId, permission, photoUrl, email }) => {
-				return (
-					<tr key={memberId}>
-						<td>
-							<UserCard
-								photoUrl={photoUrl}
-								email={email}
-								displayName={displayName}
-							/>
-						</td>
-						<td>
-							{canChangePermission(memberId) && (
-								<PermissionSelect
-									permission={permission}
-									onChange={(value) =>
-										void updatePermission(
-											memberId,
-											value as AccessPermission,
-										)
-									}
-								/>
-							)}
-							{!canChangePermission(memberId) && (
-								<p className="font-semibold text-base-content">
-									{t(permission.toLowerCase())}
-								</p>
-							)}
-						</td>
-						{canRemoveMember(memberId) && (
-							<td className="text-center">
-								<button
-									data-testid="remove-member-btn"
-									onClick={() => {
-										markUserForRemoval(memberId);
-									}}
-								>
-									<Eraser className="w-3.5 h-3.5 text-accent" />
-								</button>
-							</td>
-						)}
-					</tr>
-				);
-			},
-		);
-	}
+	};
 
 	return (
 		<div data-testid="project-members-container">
 			<h2 className="card-header">{t('members')}</h2>
-			<div className="rounded-data-card flex flex-col">
-				{isLoading && (
+			<div className="rounded-data-card">
+				{isSwrLoading ? (
 					<div className="w-full flex">
 						<span className="loading loading-bars mx-auto" />
 					</div>
-				)}
-				{!isLoading && (
+				) : (
 					<table className="table">
 						<thead>
 							<tr>
+								<th></th>
 								<th>{t('name')}</th>
-								<th>{t('roles')}</th>
-								{showRemoveMemberColumn && (
-									<th>{t('removeMember')}</th>
+								<th>{t('emailAddress')}</th>
+								<th>{t('role')}</th>
+								{showActionColumns && (
+									<>
+										<th>{t('edit')}</th>
+										<th>{t('remove')}</th>
+									</>
 								)}
 							</tr>
 						</thead>
-						<tbody>{renderProjectUsers()}</tbody>
+						<tbody>
+							{projectUsers?.map((projectUser) => (
+								<tr key={projectUser.id}>
+									<th data-testid="project-user-image">
+										<Image
+											src={
+												projectUser.photoUrl ||
+												DEFAULT_AVATAR
+											}
+											alt={projectUser.displayName}
+											height={Dimensions.Nine}
+											width={Dimensions.Nine}
+											className="rounded-full"
+										/>
+									</th>
+									<td
+										className="text-info"
+										data-testid="project-user-name"
+									>
+										{projectUser.displayName}
+									</td>
+									<td data-testid="project-user-email">
+										{projectUser.email}
+									</td>
+									<td
+										data-testid="project-user-permission"
+										className="font-semibold text-base-content"
+									>
+										{t(
+											projectUser.permission.toLowerCase(),
+										)}
+									</td>
+									{showActionColumns && (
+										<>
+											<td>
+												{projectUser.id !==
+													currentUser.id && (
+													<button
+														data-testid="edit-project-user-button"
+														className="btn btn-ghost btn-sm"
+														onClick={() => {
+															setSubjectUser(
+																projectUser,
+															);
+															setIsEditModalOpen(
+																true,
+															);
+														}}
+													>
+														<PencilFill className="w-4 h-4 text-secondary" />
+													</button>
+												)}
+											</td>
+											<td>
+												{projectUser.id !==
+													currentUser.id && (
+													<button
+														data-testid="remove-project-user-button"
+														className="btn btn-ghost btn-sm"
+														onClick={() => {
+															setSubjectUser(
+																projectUser,
+															);
+															setIsRemoveModalOpen(
+																true,
+															);
+														}}
+													>
+														<XCircle className="w-4 h-4 text-warning" />
+													</button>
+												)}
+											</td>
+										</>
+									)}
+								</tr>
+							))}
+						</tbody>
 					</table>
 				)}
 			</div>
-			<Modal modalOpen={isRemoveMemberModalOpen}>
+			<Modal modalOpen={isRemoveModalOpen}>
 				<ResourceDeletionBanner
-					title={t('warning')}
-					description={t('warningMessage')}
+					description={t('removeUserWarningMessage', {
+						projectName: project.name,
+						username: subjectUser?.displayName ?? '',
+					})}
 					onCancel={() => {
-						setIsRemoveMemberModalOpen(false);
+						setIsRemoveModalOpen(false);
+						setSubjectUser(null);
 					}}
-					onConfirm={() => void removeUser()}
+					onConfirm={() => void handleRemoveUser()}
 					confirmCTA={
-						removeUserLoading ? (
+						isLoading ? (
 							<span className="loading loading-spinner text-base-content loading-xs mx-1.5" />
 						) : (
-							t('ok')
+							t('continue')
 						)
 					}
 				/>
+			</Modal>
+			<Modal
+				modalOpen={isEditModalOpen}
+				onClose={() => {
+					setIsEditModalOpen(false);
+					setSubjectUser(null);
+				}}
+			>
+				<div className="flex flex-col min-h-24">
+					<div className="form-control">
+						<select
+							data-testid="permission-select"
+							className="select active:border-none focus:border-none focus:outline-none w-full"
+							value={subjectUser?.permission}
+							onChange={handleChange(setNewMemberPermission)}
+						>
+							{Object.values(AccessPermission).map(
+								(permission) => (
+									<option
+										key={permission}
+										className="text-base-content text-sm font-medium capitalize bg-base-100"
+										value={permission}
+									>
+										{t(permission.toLowerCase())}
+									</option>
+								),
+							)}
+						</select>
+					</div>
+					<div className="border-t-2 border-neutral flex justify-end gap-2 p-2">
+						<button
+							data-testid="close-edit-modal-btn"
+							className="btn btn-outline btn-sm mt-4"
+							onClick={() => {
+								setIsEditModalOpen(false);
+								setSubjectUser(null);
+								setNewMemberPermission(null);
+							}}
+						>
+							{t('cancel')}
+						</button>
+						<button
+							data-testid="close-edit-modal-btn"
+							className="btn btn-secondary btn-sm mt-4"
+							disabled={isLoading || !newMemberPermission}
+							onClick={() => {
+								void handleUpdatePermission();
+							}}
+						>
+							{t('continue')}
+						</button>
+					</div>
+				</div>
 			</Modal>
 		</div>
 	);

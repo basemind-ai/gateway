@@ -3,18 +3,6 @@ import { useState } from 'react';
 
 import { handleChange } from '@/utils/events';
 
-export interface ResourceDeletionBannerProps {
-	confirmCTA?: string | React.ReactElement;
-	description: string;
-	errorMessage?: string;
-	isDisabled?: boolean;
-	onCancel: () => void;
-	onConfirm: () => void;
-	placeholder?: string;
-	resourceName?: string;
-	title: string;
-}
-
 export function ResourceDeletionBanner({
 	title,
 	description,
@@ -25,7 +13,17 @@ export function ResourceDeletionBanner({
 	confirmCTA,
 	isDisabled,
 	errorMessage,
-}: ResourceDeletionBannerProps) {
+}: {
+	confirmCTA?: string | React.ReactElement;
+	description: string;
+	errorMessage?: string;
+	isDisabled?: boolean;
+	onCancel: () => void;
+	onConfirm: () => void;
+	placeholder?: string;
+	resourceName?: string;
+	title?: string;
+}) {
 	const t = useTranslations('deletionBanner');
 	const [confirmText, setConfirmText] = useState('');
 
@@ -39,12 +37,14 @@ export function ResourceDeletionBanner({
 					resourceName && 'border-b border-neutral'
 				}`}
 			>
-				<h1
-					data-testid="resource-deletion-title"
-					className="text-error font-bold text-3xl pb-5"
-				>
-					{title}
-				</h1>
+				{title && (
+					<h1
+						data-testid="resource-deletion-title"
+						className="text-warning font-bold text-3xl pb-5"
+					>
+						{title}
+					</h1>
+				)}
 				<p
 					data-testid="resource-deletion-description"
 					className="text-base-content mt-2.5 text-lg"
@@ -93,7 +93,7 @@ export function ResourceDeletionBanner({
 						data-testid="resource-deletion-delete-btn"
 						onClick={onConfirm}
 						disabled={disabled}
-						className="btn btn-error capitalize"
+						className="btn btn-warning capitalize"
 					>
 						{confirmCTA ?? t('delete')}
 					</button>

@@ -1,12 +1,9 @@
 import { fireEvent, render, screen } from 'tests/test-utils';
 
-import {
-	ResourceDeletionBanner,
-	ResourceDeletionBannerProps,
-} from '@/components/resource-deletion-banner';
+import { ResourceDeletionBanner } from '@/components/resource-deletion-banner';
 
 describe('ResourceDeletionBanner tests', () => {
-	const props: ResourceDeletionBannerProps = {
+	const props = {
 		description: 'description',
 		onCancel: vi.fn(),
 		onConfirm: vi.fn(),

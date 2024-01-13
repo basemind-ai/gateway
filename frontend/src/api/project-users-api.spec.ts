@@ -5,7 +5,7 @@ import {
 	handleAddUsersToProject,
 	handleRemoveUserFromProject,
 	handleRetrieveProjectUsers,
-	handleUpdateUserToPermission,
+	handleUpdateUserPermission,
 } from '@/api/index';
 import { HttpMethod } from '@/constants';
 import { AddUserToProjectBody } from '@/types';
@@ -99,7 +99,7 @@ describe('project users API tests', () => {
 				userId: userAccount.id,
 			};
 
-			const data = await handleUpdateUserToPermission({
+			const data = await handleUpdateUserPermission({
 				data: body,
 				projectId: project.id,
 			});
