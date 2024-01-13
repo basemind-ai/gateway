@@ -63,10 +63,11 @@ export function ProjectMembers({ project }: { project: Project }) {
 	const currentUser = projectUsers?.find(
 		(projectUser) => projectUser.email === user?.email,
 	);
-	const isAdmin = currentUser?.permission === AccessPermission.ADMIN;
 
 	const showActionColumns =
-		isAdmin && projectUsers && projectUsers.length > 1;
+		currentUser?.permission === AccessPermission.ADMIN &&
+		projectUsers &&
+		projectUsers.length > 1;
 
 	async function handleUpdatePermission() {
 		setIsLoading(true);
@@ -241,10 +242,13 @@ export function ProjectMembers({ project }: { project: Project }) {
 					setSubjectUser(null);
 				}}
 			>
-				<div className="flex flex-col min-h-24">
+				<div
+					className="flex flex-col min-h-24"
+					data-testid="edit-project-user-modal"
+				>
 					<div className="form-control">
 						<select
-							data-testid="permission-select"
+							data-testid="edit-project-user-modal-permission-select"
 							className="select active:border-none focus:border-none focus:outline-none w-full"
 							value={subjectUser?.permission}
 							onChange={handleChange(setNewMemberPermission)}
@@ -264,7 +268,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 					</div>
 					<div className="border-t-2 border-neutral flex justify-end gap-2 p-2">
 						<button
-							data-testid="close-edit-modal-btn"
+							data-testid="edit-project-user-modal-cancel-button"
 							className="btn btn-outline btn-sm mt-4"
 							onClick={() => {
 								setIsEditModalOpen(false);
@@ -275,7 +279,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 							{t('cancel')}
 						</button>
 						<button
-							data-testid="close-edit-modal-btn"
+							data-testid="edit-project-user-modal-continue-button"
 							className="btn btn-secondary btn-sm mt-4"
 							disabled={isLoading || !newMemberPermission}
 							onClick={() => {
