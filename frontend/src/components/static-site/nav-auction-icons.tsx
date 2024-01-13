@@ -15,7 +15,7 @@ export const NavAuctionIconsList = [
 	{
 		icon: <Github />,
 		name: 'github-btn',
-		url: getEnv().NEXT_PUBLIC_GITHUB_URL,
+		url: getEnv().NEXT_PUBLIC_URL_GITHUB,
 	},
 	{
 		icon: <Book />,
