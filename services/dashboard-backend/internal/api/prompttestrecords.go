@@ -57,7 +57,7 @@ func handleRetrievePromptTestRecords(w http.ResponseWriter, r *http.Request) {
 
 // handleRetrievePromptTestRecord - retrieves a single prompt test record by its ID.
 func handleRetrievePromptTestRecord(w http.ResponseWriter, r *http.Request) {
-	testRecordID := r.Context().Value(middleware.PromptTestRecordID).(pgtype.UUID)
+	testRecordID := r.Context().Value(middleware.PromptTestRecordIDKey).(pgtype.UUID)
 
 	record, retrievalErr := db.GetQueries().RetrievePromptTestRecord(r.Context(), testRecordID)
 	if retrievalErr != nil {
@@ -96,7 +96,7 @@ func handleRetrievePromptTestRecord(w http.ResponseWriter, r *http.Request) {
 
 // handleDeletePromptTestRecord - deletes a prompt test record by its ID.
 func handleDeletePromptTestRecord(w http.ResponseWriter, r *http.Request) {
-	testRecordID := r.Context().Value(middleware.PromptTestRecordID).(pgtype.UUID)
+	testRecordID := r.Context().Value(middleware.PromptTestRecordIDKey).(pgtype.UUID)
 
 	exc.Must(db.GetQueries().DeletePromptTestRecord(r.Context(), testRecordID))
 

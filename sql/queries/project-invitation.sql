@@ -8,7 +8,8 @@ SELECT
 FROM project_invitation AS up
 LEFT JOIN project AS p ON up.project_id = p.id
 WHERE
-    up.project_id = $1 AND p.deleted_at IS NULL;
+    up.project_id = $1 AND p.deleted_at IS NULL
+ORDER BY up.created_at;
 
 -- name: RetrieveProjectInvitationByID :one
 SELECT
@@ -18,7 +19,6 @@ SELECT
     up.project_id
 FROM project_invitation AS up
 LEFT JOIN project AS p ON up.project_id = p.id
-
 WHERE up.id = $1 AND p.deleted_at IS NULL;
 
 -- name: DeleteProjectInvitation :exec
