@@ -4,6 +4,7 @@ sql:
       queries:
           - './sql/queries/api-key.sql'
           - './sql/queries/application.sql'
+          - './sql/queries/project-invitation.sql'
           - './sql/queries/project.sql'
           - './sql/queries/prompt-config.sql'
           - './sql/queries/prompt-request-record.sql'
