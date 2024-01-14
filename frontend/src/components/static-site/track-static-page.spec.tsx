@@ -4,7 +4,7 @@ import { describe } from 'vitest';
 
 import { TrackStaticPage } from '@/components/static-site/track-static-page';
 
-describe('track static page component', () => {
+describe('track static page component Tests', () => {
 	it('calls page tracking hook', async () => {
 		render(<TrackStaticPage pageName="test" />);
 		await waitFor(() => {

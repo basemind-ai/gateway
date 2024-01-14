@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { ArrowDown } from 'react-bootstrap-icons';
 
-import MarketingCodeSnippet from '@/components/static-site/marketing-code-snippet';
+import { MarketingCodeSnippet } from '@/components/static-site/marketing-code-snippet';
 
 export function HeroSection() {
 	const t = useTranslations('landingPage');

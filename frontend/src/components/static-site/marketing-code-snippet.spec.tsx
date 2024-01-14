@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from 'tests/test-utils';
 
-import MarketingCodeSnippet from '@/components/static-site/marketing-code-snippet';
+import { MarketingCodeSnippet } from '@/components/static-site/marketing-code-snippet';
 
-describe('MarketingCodeSnippet', () => {
+describe('MarketingCodeSnippet Tests', () => {
 	it('should render the component correctly', () => {
 		render(<MarketingCodeSnippet />);
 

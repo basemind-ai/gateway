@@ -2,11 +2,11 @@ import { mockTrack, routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { describe, expect } from 'vitest';
 
-import PricingCard from '@/components/static-site/pricing-card';
+import { PricingCard } from '@/components/static-site/pricing-card';
 import { firstPackagePerks } from '@/components/static-site/pricing-section';
 import { Navigation } from '@/constants';
 
-describe('PricingCard', () => {
+describe('PricingCard Tests', () => {
 	global.open = vi.fn();
 	it('clicking on cta should send analytic event', async () => {
 		render(

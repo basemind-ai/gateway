@@ -1,0 +1,35 @@
+@keyframes grow-and-fade {
+	0% {
+		transform: translate(-50%, -50%) scale(0.1);
+		opacity: 0.7;
+	}
+	90% {
+		transform: translate(-50%, -50%) scale(2.4);
+		opacity: 0.1;
+	}
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) scale(2.4);
+	}
+}
+
+@keyframes slideUp {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(-100%);
+	}
+}
+
+.marketing-card {
+	@apply card shadow-2xl shadow-info-content hover:shadow-info rounded-4xl bg-base-300 text-base-content/90 hover:text-base-content transition-shadow duration-700;
+}
+
+.gradient-headline {
+	@apply text-transparent bg-gradient-to-r from-base-content/50 via-base-content/90 to-base-content/50 hover:text-neutral-content transition-colors ease-in-out duration-500 bg-clip-text;
+}
+
+.animate-slideUp {
+	animation: slideUp 42s linear infinite;
+}

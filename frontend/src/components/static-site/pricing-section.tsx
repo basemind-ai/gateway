@@ -10,7 +10,7 @@ import {
 	Slack,
 } from 'react-bootstrap-icons';
 
-import PricingCard, { Perk } from '@/components/static-site/pricing-card';
+import { Perk, PricingCard } from '@/components/static-site/pricing-card';
 import { Navigation } from '@/constants';
 import { getEnv } from '@/utils/env';
 
@@ -26,7 +26,7 @@ const secondPackagePerks: Perk[] = [
 	{ icon: Boxes, title: 'Unlimited volumes' },
 	{ icon: Slack, title: 'Implementation specialist' },
 ];
-export default function PricingSection() {
+export function PricingSection() {
 	const t = useTranslations('landingPage');
 	return (
 		<section

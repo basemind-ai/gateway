@@ -53,7 +53,7 @@ const tabs: FrameworkTab[] = [
 	},
 ];
 
-export default function MarketingCodeSnippet() {
+export function MarketingCodeSnippet() {
 	const [selectedFramework, setSelectedFramework] = useState('Android');
 
 	return (

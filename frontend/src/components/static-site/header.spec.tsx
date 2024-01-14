@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from 'tests/test-utils';
 import { StaticPageHeader } from '@/components/static-site/header';
 import { Navigation } from '@/constants';
 
-describe('LandingPageHeader', () => {
+describe('LandingPageHeader Tests', () => {
 	it('should render a header component with a logo and a sign-up button', () => {
 		render(<StaticPageHeader />);
 		const header = screen.getByTestId('static-site-header');

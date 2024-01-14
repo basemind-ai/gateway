@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 
 import { Dimensions } from '@/constants';
 
-const ModelsCardData = [
+const ModelsCardData: { alt: string; src: string }[] = [
 	{ alt: 'Hugging Face Logo', src: '/images/hugging-face-logo.svg' },
 	{ alt: 'GCP Logo', src: '/images/gcp-logo.svg' },
 	{ alt: 'Azure Logo', src: '/images/azure-logo.svg' },
@@ -86,7 +86,6 @@ export function FeatureSection() {
 						{t('featureVendorAgnosticTitle')}
 					</h2>
 					<p className="text-neutral-content text-sm">
-						{' '}
 						{t('featureVendorAgnosticDescription')}
 					</p>
 				</div>

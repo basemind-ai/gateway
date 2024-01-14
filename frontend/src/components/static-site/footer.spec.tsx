@@ -2,7 +2,7 @@ import { render, screen } from 'tests/test-utils';
 
 import { Footer, FooterLinks } from '@/components/static-site/footer';
 
-describe('Footer', () => {
+describe('Footer Tests', () => {
 	it('should render footer with logo', () => {
 		render(<Footer />);
 

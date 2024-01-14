@@ -9,22 +9,22 @@ import { getEnv } from '@/utils/env';
 export const NavAuctionIconsList = [
 	{
 		icon: <Discord />,
-		name: 'discord-btn',
+		name: 'discord-button',
 		url: getEnv().NEXT_PUBLIC_DISCORD_INVITE_URL,
 	},
 	{
 		icon: <Github />,
-		name: 'github-btn',
+		name: 'github-button',
 		url: getEnv().NEXT_PUBLIC_URL_GITHUB,
 	},
 	{
 		icon: <Book />,
-		name: 'docs-btn',
+		name: 'docs-button',
 		url: Navigation.Docs,
 	},
 	{
 		icon: <Telephone />,
-		name: 'schedule-meeting-btn',
+		name: 'schedule-meeting-button',
 		url: getEnv().NEXT_PUBLIC_SCHEDULE_MEETING_URL,
 	},
 ];

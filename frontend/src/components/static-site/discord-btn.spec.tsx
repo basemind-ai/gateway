@@ -2,7 +2,7 @@ import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen } from 'tests/test-utils';
 import { describe } from 'vitest';
 
-import DiscordButton from '@/components/static-site/discord-button';
+import { DiscordButton } from '@/components/static-site/discord-button';
 
 describe('discord-btn tests', () => {
 	it('should render the discord button', () => {

@@ -7,7 +7,7 @@ import {
 	NavAuctionIconsList,
 } from '@/components/static-site/nav-auction-icons';
 
-describe('NavAuctionIcons', () => {
+describe('NavAuctionIcons Tests', () => {
 	global.open = vi.fn();
 	it('should render a list of icons', () => {
 		render(<NavAuctionIcons />);

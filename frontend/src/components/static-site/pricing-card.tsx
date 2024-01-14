@@ -15,7 +15,7 @@ export interface PricingCardProps {
 	title: string;
 	url: string;
 }
-export default function PricingCard({
+export function PricingCard({
 	title,
 	perks,
 	cta,
