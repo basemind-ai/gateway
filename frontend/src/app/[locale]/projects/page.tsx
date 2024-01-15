@@ -16,6 +16,7 @@ import {
 } from '@/stores/api-store';
 
 export default function Projects() {
+	console.log('loading page');
 	const user = useAuthenticatedUser();
 
 	const router = useRouter();

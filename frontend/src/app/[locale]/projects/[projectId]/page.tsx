@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { memo, useEffect, useState } from 'react';
 import { Gear, Key, People, Speedometer2 } from 'react-bootstrap-icons';
@@ -15,7 +16,7 @@ import { ProjectMembers } from '@/components/projects/[projectId]/project-member
 import { ProjectMembersInvitationForm } from '@/components/projects/[projectId]/project-members-invitation-form';
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
-import { ProjectPageTabNames } from '@/constants';
+import { Navigation, ProjectPageTabNames } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -65,6 +66,7 @@ export default function ProjectOverview({
 }) {
 	const t = useTranslations('projectOverview');
 
+	const router = useRouter();
 	const handleError = useHandleError();
 	const setProjectApplications = useSetProjectApplications();
 	const user = useAuthenticatedUser();
@@ -113,6 +115,7 @@ export default function ProjectOverview({
 	];
 
 	if (!project) {
+		router.replace(Navigation.Projects);
 		return null;
 	}
 

@@ -51,11 +51,12 @@ export function ProjectMembers({ project }: { project: Project }) {
 		},
 	);
 
-	const [subjectUser, setSubjectUser] = useState<ProjectUserAccount | null>(
+	const [userToUpdate, setUserToUpdate] = useState<ProjectUserAccount | null>(
 		null,
 	);
-	const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
-	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	const [userToRemove, setUserToRemove] = useState<ProjectUserAccount | null>(
+		null,
+	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [newMemberPermission, setNewMemberPermission] =
 		useState<AccessPermission | null>(null);
@@ -75,8 +76,8 @@ export function ProjectMembers({ project }: { project: Project }) {
 		try {
 			const updatedProjectUser = await handleUpdateUserPermission({
 				data: {
-					permission: subjectUser!.permission,
-					userId: subjectUser!.id,
+					permission: newMemberPermission!,
+					userId: userToUpdate!.id,
 				},
 				projectId: project.id,
 			});
@@ -85,9 +86,8 @@ export function ProjectMembers({ project }: { project: Project }) {
 		} catch (e) {
 			handleError(e);
 		} finally {
-			setSubjectUser(null);
+			setUserToUpdate(null);
 			setNewMemberPermission(null);
-			setIsEditModalOpen(false);
 			setIsLoading(false);
 		}
 	}
@@ -98,15 +98,14 @@ export function ProjectMembers({ project }: { project: Project }) {
 		try {
 			await handleRemoveUserFromProject({
 				projectId: project.id,
-				userId: subjectUser!.id,
+				userId: userToRemove!.id,
 			});
-			removeProjectUser(project.id, subjectUser!.id);
+			removeProjectUser(project.id, userToRemove!.id);
 			showInfo(t('userRemoved'));
 		} catch (e) {
 			handleError(e);
 		} finally {
-			setSubjectUser(null);
-			setIsRemoveModalOpen(false);
+			setUserToRemove(null);
 			setIsLoading(false);
 		}
 	};
@@ -176,11 +175,8 @@ export function ProjectMembers({ project }: { project: Project }) {
 														data-testid="edit-project-user-button"
 														className="btn btn-ghost btn-sm"
 														onClick={() => {
-															setSubjectUser(
+															setUserToUpdate(
 																projectUser,
-															);
-															setIsEditModalOpen(
-																true,
 															);
 														}}
 													>
@@ -195,11 +191,8 @@ export function ProjectMembers({ project }: { project: Project }) {
 														data-testid="remove-project-user-button"
 														className="btn btn-ghost btn-sm"
 														onClick={() => {
-															setSubjectUser(
+															setUserToRemove(
 																projectUser,
-															);
-															setIsRemoveModalOpen(
-																true,
 															);
 														}}
 													>
@@ -215,15 +208,14 @@ export function ProjectMembers({ project }: { project: Project }) {
 					</table>
 				)}
 			</div>
-			<Modal modalOpen={isRemoveModalOpen}>
+			<Modal modalOpen={!!userToRemove}>
 				<ResourceDeletionBanner
 					description={t('removeUserWarningMessage', {
 						projectName: project.name,
-						username: subjectUser?.displayName ?? '',
+						username: userToRemove?.displayName ?? '',
 					})}
 					onCancel={() => {
-						setIsRemoveModalOpen(false);
-						setSubjectUser(null);
+						setUserToRemove(null);
 					}}
 					onConfirm={() => void handleRemoveUser()}
 					confirmCTA={
@@ -236,10 +228,9 @@ export function ProjectMembers({ project }: { project: Project }) {
 				/>
 			</Modal>
 			<Modal
-				modalOpen={isEditModalOpen}
+				modalOpen={!!userToUpdate}
 				onClose={() => {
-					setIsEditModalOpen(false);
-					setSubjectUser(null);
+					setUserToUpdate(null);
 				}}
 			>
 				<div
@@ -250,7 +241,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 						<select
 							data-testid="edit-project-user-modal-permission-select"
 							className="select active:border-none focus:border-none focus:outline-none w-full"
-							value={subjectUser?.permission}
+							value={userToUpdate?.permission}
 							onChange={handleChange(setNewMemberPermission)}
 						>
 							{Object.values(AccessPermission).map(
@@ -271,8 +262,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 							data-testid="edit-project-user-modal-cancel-button"
 							className="btn btn-outline btn-sm mt-4"
 							onClick={() => {
-								setIsEditModalOpen(false);
-								setSubjectUser(null);
+								setUserToUpdate(null);
 								setNewMemberPermission(null);
 							}}
 						>

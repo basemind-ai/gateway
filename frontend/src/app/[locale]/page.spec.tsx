@@ -6,7 +6,7 @@ import { Navigation } from '@/constants';
 
 describe('Landing Page', () => {
 	it('should replace the route to Sign-In when clicking on the Sign-In button', () => {
-		render(<LandingPage />);
+		render(<LandingPage params={{ locale: 'en' }} />);
 		const button = screen.getByTestId('header-sign-in-button');
 		button.click();
 		expect(routerPushMock).toHaveBeenCalledWith(
@@ -21,7 +21,7 @@ describe('Landing Page', () => {
 	});
 
 	it('calls page tracking hook', async () => {
-		render(<LandingPage />);
+		render(<LandingPage params={{ locale: 'en' }} />);
 		await waitFor(() => {
 			expect(mockReady).toHaveBeenCalled();
 		});
@@ -43,7 +43,7 @@ describe('Landing Page', () => {
 			'landing-page-cta',
 			'static-site-footer',
 		];
-		render(<LandingPage />);
+		render(<LandingPage params={{ locale: 'en' }} />);
 		sections.forEach((section) => {
 			expect(screen.getByTestId(section)).toBeInTheDocument();
 		});
