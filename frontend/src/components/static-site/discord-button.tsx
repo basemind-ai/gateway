@@ -5,7 +5,7 @@ import { Discord } from 'react-bootstrap-icons';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { getEnv } from '@/utils/env';
 
-export default function DiscordButton() {
+export function DiscordButton() {
 	const router = useRouter();
 	const analytics = useAnalytics();
 

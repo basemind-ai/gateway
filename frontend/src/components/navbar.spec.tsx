@@ -25,7 +25,7 @@ describe('Navbar tests', () => {
 		const project = ProjectFactory.buildSync();
 		render(<Navbar project={project} />);
 
-		const logo = screen.getByTestId('logo-image');
+		const logo = screen.getByTestId('logo-component');
 		expect(logo).toBeInTheDocument();
 	});
 

@@ -1,142 +1,145 @@
-'use client';
-
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
-import { CodeSnippet } from '@/components/code-snippet';
-import { FeatureCard } from '@/components/static-site/feature-card';
-import { Section } from '@/components/static-site/section';
 import { Dimensions } from '@/constants';
 
-export const KotlinCode = `suspend fun getPrompt(userInput: String): String {
-	val client = BaseMindClient.getInstance(apiToken = "myToken")
+const ModelsCardData: { alt: string; src: string }[] = [
+	{ alt: 'Hugging Face Logo', src: '/images/hugging-face-logo.svg' },
+	{ alt: 'GCP Logo', src: '/images/gcp-logo.svg' },
+	{ alt: 'Azure Logo', src: '/images/azure-logo.svg' },
+	{ alt: 'AWS Logo', src: '/images/aws-logo.svg' },
+	{ alt: 'Anthropic Logo', src: '/images/anthropic-logo.svg' },
+	{ alt: 'OpenAI Logo', src: '/images/openai-logo.svg' },
+	{ alt: 'Cohere Logo', src: '/images/cohere-logo.svg' },
+	{ alt: 'PaLM2 Logo', src: '/images/palm2-logo.svg' },
+];
 
-	val templateVariables = mutableMapOf<String, String>()
-	templateVariables["userInput"] = userInput
-
-	val result = client.requestPrompt(templateVariables)
-	return result.content'
-}`;
-
-export function FeaturesSection() {
+export function FeatureSection() {
 	const t = useTranslations('landingPage');
+	const ServerLessCard = () => {
+		return (
+			<>
+				<figure className="lg:pl-24 ">
+					<Image
+						priority
+						width={Dimensions.Twelve}
+						height={Dimensions.Twelve}
+						src="/images/hero.svg"
+						alt="Hero Image"
+						className="py-8 w-2/3 h-fit z-10"
+					/>
+				</figure>
+
+				<div className="card-body my-auto">
+					<h2 className="card-title">
+						{t('featureServerlessTitle')} -{' '}
+						{t('featureServerlessSubtitle')}
+					</h2>
+					<p className="text-neutral-content text-sm">
+						{t('featureServerlessDescription')}
+					</p>
+				</div>
+			</>
+		);
+	};
+
+	const StreamingCard = () => {
+		return (
+			<>
+				<figure className="flex flex-grow content-center justify-center h-full ">
+					<Image
+						priority
+						width={Dimensions.Twelve}
+						height={Dimensions.Twelve}
+						src="/images/grpc.svg"
+						alt="Streaming Image"
+						className="px-24 pt-8 md:px-6 lg:h-1/2 w-full lg:w-fit z-10"
+					/>
+				</figure>
+				<div className="card-body my-auto md:pl-0">
+					<h2 className="card-title">{t('featureStreamingTitle')}</h2>
+					<p className="text-neutral-content text-sm">
+						{t('featureStreamingDescription')}
+					</p>
+				</div>
+			</>
+		);
+	};
+	const ModelsCard = () => {
+		return (
+			<>
+				<figure className="pt-2">
+					<div className="grid grid-cols-4 place-items-center gap-12 md:gap-4 px-4 ">
+						{ModelsCardData.map(({ src, alt }) => (
+							<Image
+								width={Dimensions.Twelve}
+								height={Dimensions.Twelve}
+								src={src}
+								alt={alt}
+								className="w-20 z-10"
+							/>
+						))}
+					</div>
+				</figure>
+				<div className="card-body">
+					<h2 className="card-title">
+						{t('featureVendorAgnosticTitle')}
+					</h2>
+					<p className="text-neutral-content text-sm">
+						{t('featureVendorAgnosticDescription')}
+					</p>
+				</div>
+			</>
+		);
+	};
+
+	const PromptManagementCard = () => {
+		return (
+			<>
+				<figure className="bg-base-100 h-full">
+					<Image
+						alt="Prompt Management"
+						src="/images/prompt-mangment.svg"
+						width={80}
+						height={80}
+						className="w-full z-10"
+					/>
+				</figure>
+				<div className="card-body my-auto">
+					<h2 className="card-title">{t('featureDashboardTitle')}</h2>
+					<p className="text-neutral-content text-sm">
+						{' '}
+						{t('featureDashboardDescription')}
+					</p>
+				</div>
+			</>
+		);
+	};
 
 	return (
-		<Section name="features">
-			<div className="flex flex-col mx-auto gap-8 md:gap-20 xl:gap-28 2xl:gap-32">
-				<FeatureCard
-					title={t('featureServerlessTitle')}
-					subtitle={t('featureServerlessSubtitle')}
-					description={t('featureServerlessDescription')}
-					name="serverless"
-					reverse={true}
-				>
-					<Image
-						width={Dimensions.ThirtySix}
-						height={Dimensions.Twenty}
-						src="/images/stats-feature.svg"
-						alt="Stats FeatureCard"
-						className="w-full z-10"
-						priority={true}
-					/>
-				</FeatureCard>
-				<FeatureCard
-					title={t('featureDashboardTitle')}
-					subtitle={t('featureDashboardSubtitle')}
-					description={t('featureDashboardDescription')}
-					name="dashboard"
-				>
-					<Image
-						width={Dimensions.ThirtySix}
-						height={Dimensions.Twenty}
-						src="/images/prompt-testing-feature.svg"
-						alt="Prompt Testing FeatureCard"
-						className="w-full z-10"
-					/>
-				</FeatureCard>
-				<FeatureCard
-					title={t('featureVendorAgnosticTitle')}
-					subtitle={t('featureVendorAgnosticSubtitle')}
-					description={t('featureVendorAgnosticDescription')}
-					reverse={true}
-					name="vendor-agnostic"
-				>
-					<div className="grid grid-cols-4 gap-12 w-full lg:p-8">
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/hugging-face-logo.svg"
-							alt="Hugging Face Logo"
-							className="w-full z-10"
-						/>
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/gcp-logo.svg"
-							alt="GCP Logo"
-							className="w-full pt-2 z-10"
-						/>
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/azure-logo.svg"
-							alt="Azure Logo"
-							className="w-full z-10"
-						/>
+		<section
+			className="z-0 px-8 bg-base-200 relative py-24"
+			data-testid="landing-page-features"
+		>
+			<h2 className=" text-4xl xl:text-5xl 2xl:text-6xl font-bold bg-gradient-to-r from-neutral-content/50 via-neutral-content/90 to-neutral-content/50 hover:text-neutral-content transition-colors ease-in-out duration-500 bg-clip-text text-center pb-16 text-transparent">
+				{t('featureSectionTitle')}
+			</h2>
+			<div className="grid md:grid-cols-12 container mx-auto gap-8">
+				<div className="marketing-card md:col-span-7 md:card-side  md:flex-row ">
+					<ServerLessCard />
+				</div>
 
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/aws-logo.svg"
-							alt="AWS Logo"
-							className="w-full z-10"
-						/>
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/anthropic-logo.svg"
-							alt="Anthropic Logo"
-							className="w-full z-10"
-						/>
+				<div className="marketing-card md:col-span-5 lg:card-side  lg:flex-row">
+					<StreamingCard />
+				</div>
 
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/palm2-logo.svg"
-							alt="PaLM2 Logo"
-							className="w-full z-10"
-						/>
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/cohere-logo.svg"
-							alt="Cohere Logo"
-							className="w-full z-10"
-						/>
-						<Image
-							width={Dimensions.Twenty}
-							height={Dimensions.Twenty}
-							src="/images/openai-logo.svg"
-							alt="OpenAI Logo"
-							className="w-full z-10"
-						/>
-					</div>
-				</FeatureCard>
-				<div className="hidden lg:block">
-					<FeatureCard
-						title={t('featureSdkTitle')}
-						subtitle={t('featureSdkSubtitle')}
-						description={t('featureSdkDescription')}
-						name="sdk"
-					>
-						<CodeSnippet
-							codeText={KotlinCode}
-							language="kotlin"
-							allowCopy={false}
-						/>
-					</FeatureCard>
+				<div className="marketing-card md:col-span-6 lg:col-span-5 max-h-min">
+					<ModelsCard />
+				</div>
+				<div className="marketing-card md:col-span-6 lg:col-span-7 lg:card-side">
+					<PromptManagementCard />
 				</div>
 			</div>
-		</Section>
+		</section>
 	);
 }

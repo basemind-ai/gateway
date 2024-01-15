@@ -1,61 +1,27 @@
-import { routerPushMock } from 'tests/mocks';
-import { fireEvent, render, screen } from 'tests/test-utils';
+import { render, screen } from 'tests/test-utils';
 
-import {
-	Footer,
-	GeneralFooterLinks,
-	LegalFooterLinks,
-} from '@/components/static-site/footer';
+import { Footer, FooterLinks } from '@/components/static-site/footer';
 
-describe('Footer', () => {
-	it('should render a footer copyright', () => {
+describe('Footer Tests', () => {
+	it('should render footer with logo', () => {
 		render(<Footer />);
 
 		const footerElement = screen.getByTestId('static-site-footer');
 		expect(footerElement).toBeInTheDocument();
-		const footerCopyrightElement = screen.getByTestId('footer-copyright');
-		expect(footerCopyrightElement).toBeInTheDocument();
+		const logoElement = screen.getByTestId('logo-component');
+		expect(logoElement).toBeInTheDocument();
 	});
-	it('should render legal links', () => {
+	it('should render footer with links', () => {
 		render(<Footer />);
-
-		LegalFooterLinks.forEach(({ href, title }) => {
+		FooterLinks.forEach(({ title, href }) => {
 			const linkElement = screen.getByTestId(`footer-${title}`);
 			expect(linkElement).toBeInTheDocument();
-			fireEvent.click(linkElement);
-			expect(routerPushMock).toHaveBeenCalledWith(href, href, {
-				locale: 'en',
-				scroll: true,
-				shallow: undefined,
-			});
+			expect(linkElement).toHaveAttribute('href', href);
 		});
 	});
-	it('should render general links', () => {
+	it('should render footer with auction icons', () => {
 		render(<Footer />);
-		GeneralFooterLinks.forEach(({ href, title }) => {
-			const linkElement = screen.getByTestId(`footer-${title}`);
-			expect(linkElement).toBeInTheDocument();
-			fireEvent.click(linkElement);
-			expect(routerPushMock).toHaveBeenCalledWith(href, href, {
-				locale: 'en',
-				scroll: true,
-				shallow: undefined,
-			});
-		});
-	});
-
-	it('should render social', () => {
-		render(<Footer />);
-
-		const socialElement = screen.getByTestId('footer-social');
-		expect(socialElement).toBeInTheDocument();
-
-		const discordBtnElement = screen.getByTestId('discord-btn');
-		expect(discordBtnElement).toBeInTheDocument();
-		fireEvent.click(discordBtnElement);
-
-		expect(routerPushMock).toHaveBeenCalledWith(
-			process.env.NEXT_PUBLIC_DISCORD_INVITE_URL,
-		);
+		const auctionIcons = screen.getByTestId('nav-auction-icons');
+		expect(auctionIcons).toBeInTheDocument();
 	});
 });
