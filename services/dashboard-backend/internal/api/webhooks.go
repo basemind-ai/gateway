@@ -11,17 +11,6 @@ import (
 	"net/http"
 )
 
-func parsePermissionType(permission string) models.AccessPermissionType {
-	switch permission {
-	case "MEMBER":
-		return models.AccessPermissionTypeMEMBER
-	case "ADMIN":
-		return models.AccessPermissionTypeADMIN
-	default:
-		return ""
-	}
-}
-
 func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 	// the signer verify method expects a full url, including the schema.
 	url := fmt.Sprintf("%s%s", r.Host, r.URL.String())
@@ -30,27 +19,16 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	projectID, parseErr := db.StringToUUID(r.URL.Query().Get("projectId"))
+	invitationID, parseErr := db.StringToUUID(r.URL.Query().Get("invitationId"))
 	if parseErr != nil {
-		apierror.BadRequest("invalid project id").Render(w)
+		apierror.BadRequest("invalid invitation id").Render(w)
 		return
 	}
 
-	email := r.URL.Query().Get("email")
-	if email == "" {
-		apierror.BadRequest("invalid email").Render(w)
-		return
-	}
-
-	permission := parsePermissionType(r.URL.Query().Get("permission"))
-	if permission == "" {
-		apierror.BadRequest("invalid permission").Render(w)
-		return
-	}
-
-	project, projectRetrievalErr := db.GetQueries().RetrieveProject(r.Context(), *projectID)
-	if projectRetrievalErr != nil {
-		apierror.BadRequest("project does not exist or is deleted").Render(w)
+	invitation, retrievalErr := db.GetQueries().
+		RetrieveProjectInvitationByID(r.Context(), *invitationID)
+	if retrievalErr != nil {
+		apierror.BadRequest("invitation does not exist").Render(w)
 		return
 	}
 
@@ -60,8 +38,8 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 
 	if exc.MustResult(
 		db.GetQueries().CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
-			Email:     email,
-			ProjectID: project.ID,
+			Email:     invitation.Email,
+			ProjectID: invitation.ProjectID,
 		}),
 	) {
 		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
@@ -73,22 +51,25 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 
 	queries := db.GetQueries().WithTx(tx)
 
-	userAccount, userRetrievalErr := queries.RetrieveUserAccountByEmail(r.Context(), email)
+	userAccount, userRetrievalErr := queries.RetrieveUserAccountByEmail(
+		r.Context(),
+		invitation.Email,
+	)
 	if userRetrievalErr != nil {
 		createdUserAccount := exc.MustResult(
 			queries.CreateUserAccount(r.Context(), models.CreateUserAccountParams{
-				Email: email,
+				Email: invitation.Email,
 			}),
 		)
 		userAccount = createdUserAccount
 	}
 
 	exc.MustResult(queries.CreateUserProject(r.Context(), models.CreateUserProjectParams{
-		ProjectID:  project.ID,
+		ProjectID:  invitation.ProjectID,
 		UserID:     userAccount.ID,
-		Permission: permission,
+		Permission: invitation.Permission,
 	}))
-
+	exc.Must(queries.DeleteProjectInvitation(r.Context(), invitation.ID))
 	exc.Must(tx.Commit(r.Context()))
 
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)

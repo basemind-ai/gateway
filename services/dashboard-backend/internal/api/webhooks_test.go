@@ -42,14 +42,11 @@ func TestWebhooksAPI(t *testing.T) {
 	t.Setenv("FRONTEND_BASE_URL", frontendServer.BaseURL)
 	config.Get(context.Background()).FrontendBaseURL = frontendServer.BaseURL
 
-	createSignedURL := func(permission models.AccessPermissionType, email string, projectId string) string {
+	createSignedURL := func(invitationID string) string {
 		url := fmt.Sprintf(
-			"%s/v1%s?projectId=%s&permission=%s&email=%s",
+			"%s/v1%s?invitationId=%s",
 			testClient.BaseURL,
-			api.InviteUserWebhookEndpoint,
-			projectId,
-			permission,
-			email,
+			api.InviteUserWebhookEndpoint, invitationID,
 		)
 		signedURL := exc.MustResult(urlutils.SignURL(context.TODO(), url))
 		urlWithoutBase, _ := strings.CutPrefix(signedURL, testClient.BaseURL)
@@ -59,11 +56,17 @@ func TestWebhooksAPI(t *testing.T) {
 	t.Run(fmt.Sprintf("GET: %s", api.InviteUserWebhookEndpoint), func(t *testing.T) {
 		t.Run("should create user and redirect when user does not exist", func(t *testing.T) {
 			email := "moishe1@zuchmir.com"
-			signedURL := createSignedURL(
-				models.AccessPermissionTypeMEMBER,
-				email,
-				db.UUIDToString(&project.ID),
-			)
+
+			invitation, err := db.GetQueries().
+				UpsertProjectInvitation(context.TODO(), models.UpsertProjectInvitationParams{
+					Email:      email,
+					Permission: models.AccessPermissionTypeMEMBER,
+					ProjectID:  project.ID,
+				})
+			assert.NoError(t, err)
+
+			invitationID := db.UUIDToString(&invitation.ID)
+			signedURL := createSignedURL(invitationID)
 
 			response, requestErr := testClient.Get(
 				context.TODO(),
@@ -92,11 +95,17 @@ func TestWebhooksAPI(t *testing.T) {
 			"should create a user-project and redirect when a user exists without a user-project",
 			func(t *testing.T) {
 				userAccount, _ := factories.CreateUserAccount(context.TODO())
-				signedURL := createSignedURL(
-					models.AccessPermissionTypeADMIN,
-					userAccount.Email,
-					db.UUIDToString(&project.ID),
-				)
+
+				invitation, err := db.GetQueries().
+					UpsertProjectInvitation(context.TODO(), models.UpsertProjectInvitationParams{
+						Email:      userAccount.Email,
+						Permission: models.AccessPermissionTypeADMIN,
+						ProjectID:  project.ID,
+					})
+				assert.NoError(t, err)
+
+				invitationID := db.UUIDToString(&invitation.ID)
+				signedURL := createSignedURL(invitationID)
 
 				response, requestErr := testClient.Get(
 					context.TODO(),
@@ -124,11 +133,16 @@ func TestWebhooksAPI(t *testing.T) {
 				Permission: models.AccessPermissionTypeADMIN,
 			})
 
-			signedURL := createSignedURL(
-				models.AccessPermissionTypeADMIN,
-				userAccount.Email,
-				db.UUIDToString(&project.ID),
-			)
+			invitation, err := db.GetQueries().
+				UpsertProjectInvitation(context.TODO(), models.UpsertProjectInvitationParams{
+					Email:      userAccount.Email,
+					Permission: models.AccessPermissionTypeADMIN,
+					ProjectID:  project.ID,
+				})
+			assert.NoError(t, err)
+
+			invitationID := db.UUIDToString(&invitation.ID)
+			signedURL := createSignedURL(invitationID)
 
 			response, requestErr := testClient.Get(
 				context.TODO(),
@@ -138,25 +152,24 @@ func TestWebhooksAPI(t *testing.T) {
 			assert.Equal(t, http.StatusOK, response.StatusCode)
 		})
 
-		t.Run("responds with 400 BAD REQUEST when the project ID is invalid", func(t *testing.T) {
-			email := "moishe1@zuchmir.com"
-			signedURL := createSignedURL(models.AccessPermissionTypeADMIN, email, "invalid")
+		t.Run(
+			"responds with 400 BAD REQUEST when the invitation ID is invalid",
+			func(t *testing.T) {
+				signedURL := createSignedURL("invalid")
 
-			response, requestErr := testClient.Get(
-				context.TODO(),
-				signedURL,
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
+				response, requestErr := testClient.Get(
+					context.TODO(),
+					signedURL,
+				)
+				assert.NoError(t, requestErr)
+				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+			},
+		)
 
 		t.Run(
-			"responds with 400 BAD REQUEST when no project exists with the given ID",
+			"responds with 400 BAD REQUEST when no invite exists with the given ID",
 			func(t *testing.T) {
-				email := "moishe1@zuchmir.com"
 				signedURL := createSignedURL(
-					models.AccessPermissionTypeADMIN,
-					email,
 					"b50e5477-f74a-4e80-be29-ae67eb6ada95",
 				)
 
@@ -169,49 +182,35 @@ func TestWebhooksAPI(t *testing.T) {
 			},
 		)
 
-		t.Run("responds with 400 BAD REQUEST when the permission is invalid", func(t *testing.T) {
-			email := "moishe1@zuchmir.com"
-			signedURL := createSignedURL(
-				models.AccessPermissionType("invalid"),
-				email,
-				db.UUIDToString(&project.ID),
-			)
-
-			response, requestErr := testClient.Get(
-				context.TODO(),
-				signedURL,
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
-
-		t.Run("responds with 400 BAD REQUEST when the email is invalid", func(t *testing.T) {
-			signedURL := createSignedURL(
-				models.AccessPermissionTypeMEMBER,
-				"",
-				db.UUIDToString(&project.ID),
-			)
-
-			response, requestErr := testClient.Get(
-				context.TODO(),
-				signedURL,
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusBadRequest, response.StatusCode)
-		})
-
 		t.Run(
-			"responds with 403 FORBIDDEN if the signed URL has manipulated email",
+			"responds with 403 FORBIDDEN if the signed URL has manipulated invitationID",
 			func(t *testing.T) {
 				userAccount, _ := factories.CreateUserAccount(context.TODO())
-				signedURL := strings.ReplaceAll(
-					createSignedURL(
-						models.AccessPermissionTypeADMIN,
-						userAccount.Email,
-						db.UUIDToString(&project.ID),
-					),
-					"zuchmir",
-					"x",
+
+				invitation, err := db.GetQueries().
+					UpsertProjectInvitation(context.TODO(), models.UpsertProjectInvitationParams{
+						Email:      userAccount.Email,
+						Permission: models.AccessPermissionTypeADMIN,
+						ProjectID:  project.ID,
+					})
+				assert.NoError(t, err)
+
+				invitationID := db.UUIDToString(&invitation.ID)
+				signedURL := createSignedURL(invitationID)
+
+				secondInvitation := exc.MustResult(
+					db.GetQueries().
+						UpsertProjectInvitation(context.TODO(), models.UpsertProjectInvitationParams{
+							Email:      "some@email.com",
+							Permission: models.AccessPermissionTypeMEMBER,
+							ProjectID:  project.ID,
+						}),
+				)
+
+				signedURL = strings.ReplaceAll(
+					signedURL,
+					invitationID,
+					db.UUIDToString(&secondInvitation.ID),
 				)
 
 				response, requestErr := testClient.Get(
@@ -222,49 +221,5 @@ func TestWebhooksAPI(t *testing.T) {
 				assert.Equal(t, http.StatusForbidden, response.StatusCode)
 			},
 		)
-
-		t.Run(
-			"responds with 403 FORBIDDEN if the signed URL has manipulated permission",
-			func(t *testing.T) {
-				userAccount, _ := factories.CreateUserAccount(context.TODO())
-				signedURL := strings.ReplaceAll(
-					createSignedURL(
-						models.AccessPermissionTypeMEMBER,
-						userAccount.Email,
-						db.UUIDToString(&project.ID),
-					),
-					string(models.AccessPermissionTypeMEMBER),
-					string(models.AccessPermissionTypeADMIN),
-				)
-
-				response, requestErr := testClient.Get(
-					context.TODO(),
-					signedURL,
-				)
-				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusForbidden, response.StatusCode)
-			},
-		)
-
-		t.Run("responds with 403 FORBIDDEN if the project ID is manipulated", func(t *testing.T) {
-			userAccount, _ := factories.CreateUserAccount(context.TODO())
-			newProject, _ := factories.CreateProject(context.TODO())
-			signedURL := strings.ReplaceAll(
-				createSignedURL(
-					models.AccessPermissionTypeMEMBER,
-					userAccount.Email,
-					db.UUIDToString(&project.ID),
-				),
-				db.UUIDToString(&project.ID),
-				db.UUIDToString(&newProject.ID),
-			)
-
-			response, requestErr := testClient.Get(
-				context.TODO(),
-				signedURL,
-			)
-			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusForbidden, response.StatusCode)
-		})
 	})
 }

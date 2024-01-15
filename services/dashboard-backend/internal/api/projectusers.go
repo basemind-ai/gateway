@@ -60,28 +60,6 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cfg := config.Get(r.Context())
-	project := exc.MustResult(db.GetQueries().RetrieveProject(r.Context(), projectID))
-
-	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
-
-	baseURL := fmt.Sprintf(
-		"https://%s:%d/v1%s?projectId=%s",
-		cfg.ServerHost,
-		cfg.ServerPort,
-		InviteUserWebhookEndpoint,
-		db.UUIDToString(&projectID),
-	)
-
-	var wg sync.WaitGroup
-
-	publishContext, cancel := context.WithTimeout(
-		context.Background(),
-		1*time.Minute,
-	)
-
-	defer cancel()
-
 	for _, datum := range data {
 		if validationErr := validate.Struct(datum); validationErr != nil {
 			log.Error().Err(validationErr).Msg("failed to validate request body")
@@ -97,10 +75,57 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 				Render(w)
 			return
 		}
+	}
+
+	cfg := config.Get(r.Context())
+	project := exc.MustResult(db.GetQueries().RetrieveProject(r.Context(), projectID))
+
+	topic := pubsubutils.GetTopic(r.Context(), pubsubutils.EmailSenderPubSubTopicID)
+
+	baseURL := fmt.Sprintf(
+		"https://%s/v1%s",
+		cfg.ServerHost,
+		InviteUserWebhookEndpoint,
+	)
+
+	if cfg.ServerHost == "localhost" {
+		baseURL = fmt.Sprintf(
+			"http://%s:%d/v1%s",
+			cfg.ServerHost,
+			cfg.ServerPort,
+			InviteUserWebhookEndpoint,
+		)
+	}
+
+	var wg sync.WaitGroup
+
+	publishContext, cancel := context.WithTimeout(
+		context.Background(),
+		1*time.Minute,
+	)
+
+	defer cancel()
+
+	for _, datum := range data {
+		toName := ""
+		pictureURL := ""
+		if invitedUser, retrievalErr := db.GetQueries().RetrieveUserAccountByEmail(r.Context(), datum.Email); retrievalErr == nil {
+			toName = invitedUser.DisplayName
+			pictureURL = invitedUser.PhotoUrl
+		}
+
+		invitation := exc.MustResult(db.GetQueries().
+			UpsertProjectInvitation(r.Context(), models.UpsertProjectInvitationParams{
+				ProjectID:  projectID,
+				Email:      datum.Email,
+				Permission: datum.Permission,
+			}))
+
+		invitationID := db.UUIDToString(&invitation.ID)
 
 		signedURL, err := urlutils.SignURL(
 			r.Context(),
-			fmt.Sprintf("%s&permission=%s&email=%s", baseURL, datum.Permission, datum.Email),
+			fmt.Sprintf("%s?invitationId=%s", baseURL, invitationID),
 		)
 		if err != nil {
 			log.Error().Err(err).Msg("failed to sign url")
@@ -111,13 +136,14 @@ func handleInviteUsersToProject(w http.ResponseWriter, r *http.Request) {
 		pubsubMessageData := exc.MustResult(json.Marshal(emailsender.SendEmailRequestDTO{
 			FromName:    "BaseMind.AI",
 			FromAddress: SupportEmailAddress,
-			ToName:      "",
+			ToName:      toName,
 			ToAddress:   datum.Email,
 			TemplateID:  UserInvitationEmailTemplateID,
 			TemplateVariables: map[string]string{
-				"invitingUserFullName": userAccount.DisplayName,
-				"projectName":          project.Name,
 				"invitationUrl":        signedURL,
+				"invitingUserFullName": userAccount.DisplayName,
+				"pictureUrl":           pictureURL,
+				"projectName":          project.Name,
 			},
 		}))
 

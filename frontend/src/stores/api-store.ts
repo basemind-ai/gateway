@@ -301,11 +301,10 @@ export const useAddPromptConfig = () => useApiStore((s) => s.addPromptConfig);
 export const useApiKeys = (applicationId: string) =>
 	useApiStore((s) => s.apiKeys[applicationId]);
 export const useApplication = (projectId: string, applicationId: string) =>
-	useApiStore(
-		(s) =>
-			s.applications[projectId]?.find(
-				(application) => application.id === applicationId,
-			),
+	useApiStore((s) =>
+		s.applications[projectId]?.find(
+			(application) => application.id === applicationId,
+		),
 	);
 export const useApplications = (projectId?: string) =>
 	useApiStore((s) => (projectId ? s.applications[projectId] : undefined));

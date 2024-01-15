@@ -13,6 +13,7 @@ import {
 	OpenAIModelType,
 	OpenAIPromptMessage,
 	Project,
+	ProjectInvitation,
 	ProjectUserAccount,
 	PromptConfig,
 	PromptTestRecord,
@@ -144,5 +145,15 @@ export const PromptTestRecordFactory = new TypeFactory<PromptTestRecord<any>>(
 		startTime: faker.date.past().toISOString(),
 		totalTokensCost: '0.00002',
 		userInput: { userInput: 'what am I?' },
+	}),
+);
+
+export const ProjectInvitationFactory = new TypeFactory<ProjectInvitation>(
+	() => ({
+		createdAt: faker.date.past().toISOString(),
+		email: faker.internet.email(),
+		id: faker.string.uuid(),
+		permission: AccessPermission.ADMIN,
+		updatedAt: faker.date.past().toISOString(),
 	}),
 );

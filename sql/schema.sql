@@ -47,6 +47,20 @@ CREATE TABLE user_project
 CREATE INDEX idx_user_project_user_id ON user_project (user_id);
 CREATE INDEX idx_user_project_project_id ON user_project (project_id);
 
+-- project-invitation many-to-many
+CREATE TABLE project_invitation
+(
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    email varchar(320) NOT NULL,
+    project_id uuid NOT NULL,
+    permission access_permission_type NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX idx_project_invitation_email_project_id ON project_invitation (email, project_id);
+
+
 -- application
 CREATE TABLE application
 (

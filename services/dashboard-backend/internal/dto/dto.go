@@ -151,3 +151,12 @@ type PromptTestRecordDTO struct {
 	TotalTokensCost        decimal.Decimal    `json:"totalTokensCost"`
 	UserInput              json.RawMessage    `json:"userInput"`
 }
+
+// ProjectInvitationDTO - DTO for serializing project invitation data.
+type ProjectInvitationDTO struct { // skipcq: TCV-001
+	ID         string    `json:"id"`
+	CreatedAt  time.Time `json:"createdAt"`
+	Email      string    `json:"email"`
+	Permission string    `json:"permission"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+}

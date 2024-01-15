@@ -39,6 +39,30 @@ func RegisterHandlers(mux *chi.Mux) {
 			subRouter.Patch("/", handleUpdateProject)
 		})
 
+		router.Route(ProjectInvitationListEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodGet: allPermissions,
+					},
+				),
+			)
+			subRouter.Get("/", handleRetrieveProjectInvitations)
+		})
+
+		router.Route(ProjectInvitationDetailEndpoint, func(subRouter chi.Router) {
+			subRouter.Use(middleware.PathParameterMiddleware("projectId", "projectInvitationId"))
+			subRouter.Use(
+				middleware.AuthorizationMiddleware(
+					middleware.MethodPermissionMap{
+						http.MethodDelete: adminOnly,
+					},
+				),
+			)
+			subRouter.Delete("/", handleDeleteProjectInvitation)
+		})
+
 		router.Route(ProjectOTPEndpoint, func(subRouter chi.Router) {
 			subRouter.Use(
 				middleware.PathParameterMiddleware("projectId"),

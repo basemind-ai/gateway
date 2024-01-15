@@ -6,7 +6,7 @@
 		factoryName="Go Test"
 		nameIsGenerated="true"
 	>
-    <module name="BaseMind.AI" />
+    <module name="monorepo" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />
     <package

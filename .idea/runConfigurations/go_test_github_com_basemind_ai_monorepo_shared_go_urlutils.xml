@@ -5,7 +5,7 @@
 		type="GoTestRunConfiguration"
 		factoryName="Go Test"
 	>
-    <module name="BaseMind.AI" />
+    <module name="monorepo" />
     <working_directory value="$PROJECT_DIR$" />
     <kind value="PACKAGE" />
     <package value="github.com/basemind-ai/monorepo/shared/go/urlutils" />

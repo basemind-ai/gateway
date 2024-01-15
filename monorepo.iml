@@ -9,6 +9,8 @@
       <excludeFolder url="file://$MODULE_DIR$/.idea/modules" />
       <excludeFolder url="file://$MODULE_DIR$/services/cohere-connector/dist" />
       <excludeFolder url="file://$MODULE_DIR$/services/openai-connector/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/coverage" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

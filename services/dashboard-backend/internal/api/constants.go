@@ -10,6 +10,8 @@ const (
 	ProjectAnalyticsEndpoint         = "/projects/{projectId}/analytics"
 	ProjectDetailEndpoint            = "/projects/{projectId}"
 	ProjectOTPEndpoint               = "/projects/{projectId}/otp"
+	ProjectInvitationListEndpoint    = "/projects/{projectId}/invitation"
+	ProjectInvitationDetailEndpoint  = "/projects/{projectId}/invitation/{projectInvitationId}"
 	ProjectProviderKeyDetailEndpoint = "/projects/{projectId}/provider-keys/{providerKeyId}"
 	ProjectProviderKeyListEndpoint   = "/projects/{projectId}/provider-keys"
 	ProjectUserDetailEndpoint        = "/projects/{projectId}/users/{userId}"

@@ -1,5 +1,6 @@
+import { useClickAway } from '@uidotdev/usehooks';
 import { useTranslations } from 'next-intl';
-import { KeyboardEvent, useState } from 'react';
+import { KeyboardEvent, LegacyRef, useState } from 'react';
 import { XCircleFill } from 'react-bootstrap-icons';
 import isEmail from 'validator/es/lib/isEmail';
 
@@ -18,33 +19,36 @@ function EmailChip({
 	email: string;
 	onRemove: () => void;
 }) {
-	const emailValid = isEmail(email);
-
 	return (
-		<div
-			className={`flex gap-1 items-center badge ${
-				emailValid ? 'badge-info' : 'badge-error'
-			} `}
-		>
-			{email}
+		<div className="flex gap-1 items-center text-lg badge badge-lg badge-info">
+			<span>{email}</span>
 			<button data-testid="remove-email-btn" onClick={onRemove}>
-				<XCircleFill className={`w-3.5 h-3.5 text-neutral`} />
+				<XCircleFill className={`w-4 h-4 text-neutral`} />
 			</button>
 		</div>
 	);
 }
 
-export function InviteProjectMembers({ project }: { project: Project }) {
+export function ProjectMembersInvitationForm({
+	project,
+}: {
+	project: Project;
+}) {
 	const t = useTranslations('members');
 	const setProjectUsers = useSetProjectUsers();
 	const handleError = useHandleError();
 	const showInfo = useShowInfo();
+
 	const { initialized, track } = useAnalytics();
 
 	const [emails, setEmails] = useState<string[]>([]);
 	const [currentEmail, setCurrentEmail] = useState('');
 	const [permission, setPermission] = useState(AccessPermission.MEMBER);
 	const [isLoading, setIsLoading] = useState(false);
+
+	const ref = useClickAway(() => {
+		handleDeselect();
+	});
 
 	async function sendEmailInvites() {
 		setIsLoading(true);
@@ -79,19 +83,14 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 		}
 	}
 
-	function addEmailToList() {
-		if (currentEmail && isEmail(currentEmail)) {
-			if (!emails.includes(currentEmail)) {
-				setEmails([...emails, currentEmail]);
-			}
-
+	const handleDeselect = () => {
+		if (
+			currentEmail &&
+			isEmail(currentEmail) &&
+			!emails.includes(currentEmail)
+		) {
+			setEmails([...emails, currentEmail]);
 			setCurrentEmail('');
-		}
-	}
-
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Enter') {
-			addEmailToList();
 		}
 	};
 
@@ -113,9 +112,9 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 								{t('emailAddresses')}
 							</span>
 						</label>
-						<div className="flex flex-wrap bg-neutral rounded-lg">
+						<div className="flex bg-neutral rounded-lg items-center gap-2 pl-2 pr-2">
 							{emails.length !== 0 && (
-								<div className="flex pl-4 py-4 pr-2 flex-wrap items-center gap-2 text-neutral-content font-medium">
+								<div className="flex gap-2">
 									{emails.map((email) => (
 										<EmailChip
 											key={email}
@@ -128,14 +127,21 @@ export function InviteProjectMembers({ project }: { project: Project }) {
 								</div>
 							)}
 							<input
+								ref={ref as LegacyRef<HTMLInputElement>}
 								type="email"
 								id="email-address-input"
 								data-testid="invite-email-input"
-								className="flex flex-1 input w-full bg-neutral text-neutral-content min-w-[9rem]"
-								placeholder={t('emailPlaceholder')}
+								className="input p-0 w-full bg-neutral text-neutral-content min-w-[9rem] border-none outline-none active:border-none"
+								placeholder={
+									emails.length ? '' : t('emailPlaceholder')
+								}
 								value={currentEmail}
-								onKeyDown={handleKeyDown}
-								onBlur={addEmailToList}
+								onKeyDown={(event: KeyboardEvent) => {
+									if (event.key === 'Enter') {
+										handleDeselect();
+									}
+								}}
+								onBlur={handleDeselect}
 								onChange={handleChange(setCurrentEmail)}
 							/>
 						</div>

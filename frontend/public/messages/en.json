@@ -225,6 +225,9 @@
 	},
 	"members": {
 		"admin": "Admin",
+		"cancel": "Cancel",
+		"continue": "Continue",
+		"edit": "Edit",
 		"emailAddress": "Email Address",
 		"emailAddresses": "Email address(es)",
 		"emailPlaceholder": "moishe.zuchmir@example.com",
@@ -233,16 +236,13 @@
 		"member": "Member",
 		"members": "Members",
 		"name": "Name",
-		"ok": "Ok",
-		"removeMember": "Remove Member",
+		"remove": "Remove",
+		"removeUserWarningMessage": "Are you sure you want to remove {username} from the {projectName} project?",
 		"role": "Role",
 		"roleUpdated": "Role Updated",
-		"roles": "Roles",
 		"sendInvite": "Send Invite",
 		"userRemoved": "User Removed",
-		"usersInvited": "User(s) Invited",
-		"warning": "Warning",
-		"warningMessage": "Your about to remove a user access from this project"
+		"usersInvited": "User(s) Invited"
 	},
 	"navbar": {
 		"createNewProject": "Create New Project",

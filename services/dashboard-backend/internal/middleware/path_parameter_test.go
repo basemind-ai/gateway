@@ -50,7 +50,11 @@ func TestPathParameterMiddleware(t *testing.T) {
 			},
 			{
 				Key:        "promptTestRecordId",
-				ContextKey: middleware.PromptTestRecordID,
+				ContextKey: middleware.PromptTestRecordIDKey,
+			},
+			{
+				Key:        "projectInvitationId",
+				ContextKey: middleware.ProjectInvitationIDContextKey,
 			},
 		}
 

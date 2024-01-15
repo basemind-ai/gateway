@@ -1,3 +1,4 @@
+import { act } from 'react-dom/test-utils';
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import {
 	fireEvent,
@@ -16,18 +17,11 @@ import { AccessPermission } from '@/types';
 describe('ProjectMembers', () => {
 	const project = ProjectFactory.buildSync();
 
-	const handleUpdateUserToPermissionSpy = vi.spyOn(
-		ProjectUsersAPI,
-		'handleUpdateUserToPermission',
-	);
 	const handleRetrieveProjectUsersSpy = vi.spyOn(
 		ProjectUsersAPI,
 		'handleRetrieveProjectUsers',
 	);
-	const handleRemoveUserFromProjectSpy = vi.spyOn(
-		ProjectUsersAPI,
-		'handleRemoveUserFromProject',
-	);
+
 	const projectUsers = ProjectUserAccountFactory.batchSync(2);
 
 	projectUsers[0].permission = AccessPermission.ADMIN;
@@ -40,7 +34,11 @@ describe('ProjectMembers', () => {
 		const {
 			result: { current: setUser },
 		} = renderHook(useSetUser);
-		setUser(adminUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
 		render(<ProjectMembers project={project} />);
@@ -54,107 +52,33 @@ describe('ProjectMembers', () => {
 			const email = screen.getByText(projectUser.email);
 			expect(email).toBeInTheDocument();
 		}
-		const editButtons = screen.getAllByTestId('remove-member-btn');
+		const editButtons = screen.getAllByTestId('remove-project-user-button');
 		expect(editButtons.length).not.toBe(0);
 	});
 
-	it('does not render edit button or permission select for non admins', async () => {
-		const {
-			result: { current: setUser },
-		} = renderHook(useSetUser);
-		setUser(memberUser);
-		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
-
-		render(<ProjectMembers project={project} />);
-
-		const removeMemberButtons =
-			screen.queryAllByTestId('remove-member-btn');
-		expect(removeMemberButtons.length).toBe(0);
-
-		const permissionSelects = screen.queryAllByTestId('permission-select');
-		expect(permissionSelects.length).toBe(0);
-	});
-
-	it('does not render edit button or permission select for current admin user', async () => {
-		const {
-			result: { current: setUser },
-		} = renderHook(useSetUser);
-		setUser(adminUser);
-		handleRetrieveProjectUsersSpy.mockResolvedValueOnce([projectUsers[0]]);
-
-		render(<ProjectMembers project={project} />);
-
-		await waitFor(() => {
-			const removeMemberButtons =
-				screen.queryAllByTestId('remove-member-btn');
-			expect(removeMemberButtons.length).toBe(0);
-		});
-
-		const permissionSelects = screen.queryAllByTestId('permission-select');
-		expect(permissionSelects.length).toBe(0);
-	});
-
-	it('changes permission of a user by selecting one from dropdown', async () => {
-		const {
-			result: { current: setUser },
-		} = renderHook(useSetUser);
-		setUser(adminUser);
-		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
-
-		render(<ProjectMembers project={project} />);
-
-		let permissionSelect: HTMLSelectElement;
-
-		await waitFor(() => {
-			const [select] = screen.getAllByTestId('permission-select');
-			expect(select).toBeInTheDocument();
-			permissionSelect = select as HTMLSelectElement;
-		});
-
-		fireEvent.change(permissionSelect!, {
-			target: { value: AccessPermission.ADMIN },
-		});
-
-		handleUpdateUserToPermissionSpy.mockResolvedValueOnce(memberUser);
-
-		expect(handleUpdateUserToPermissionSpy).toHaveBeenCalledWith({
-			data: {
-				permission: AccessPermission.ADMIN,
-				userId: memberUser.id,
-			},
-			projectId: project.id,
-		});
-	});
-
-	it('does not remove a user if removalUserId is null', async () => {
-		const {
-			result: { current: setUser },
-		} = renderHook(useSetUser);
-		setUser(adminUser);
-		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
-
-		render(<ProjectMembers project={project} />);
-
-		const confirmButton = screen.getByTestId(
-			'resource-deletion-delete-btn',
-		);
-		fireEvent.click(confirmButton);
-
-		expect(handleRemoveUserFromProjectSpy).not.toHaveBeenCalled();
-	});
-
 	it('removes a user from project', async () => {
+		const handleRemoveUserFromProjectSpy = vi.spyOn(
+			ProjectUsersAPI,
+			'handleRemoveUserFromProject',
+		);
+
 		const {
 			result: { current: setUser },
 		} = renderHook(useSetUser);
-		setUser(adminUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
 		render(<ProjectMembers project={project} />);
 
 		let removeMemberButton: HTMLButtonElement;
 		await waitFor(() => {
-			const [button] = screen.getAllByTestId('remove-member-btn');
+			const [button] = screen.getAllByTestId(
+				'remove-project-user-button',
+			);
 
 			expect(button).toBeInTheDocument();
 			removeMemberButton = button as HTMLButtonElement;
@@ -174,10 +98,18 @@ describe('ProjectMembers', () => {
 	});
 
 	it('shows error when unable to remove user', async () => {
+		const handleRemoveUserFromProjectSpy = vi.spyOn(
+			ProjectUsersAPI,
+			'handleRemoveUserFromProject',
+		);
 		const {
 			result: { current: setUser },
 		} = renderHook(useSetUser);
-		setUser(adminUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+
 		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
 
 		render(<ProjectMembers project={project} />);
@@ -185,7 +117,9 @@ describe('ProjectMembers', () => {
 		let removeMemberButton: HTMLButtonElement;
 
 		await waitFor(() => {
-			const [button] = screen.getAllByTestId('remove-member-btn');
+			const [button] = screen.getAllByTestId(
+				'remove-project-user-button',
+			);
 			expect(button).toBeInTheDocument();
 			removeMemberButton = button as HTMLButtonElement;
 		});
@@ -204,6 +138,200 @@ describe('ProjectMembers', () => {
 		fireEvent.click(confirmButton);
 
 		const errorToast = screen.getByText('unable to remove user');
+		expect(errorToast).toBeInTheDocument();
+	});
+
+	it('closes the remove user modal when pressing cancel', async () => {
+		const handleRemoveUserFromProjectSpy = vi.spyOn(
+			ProjectUsersAPI,
+			'handleRemoveUserFromProject',
+		);
+		const {
+			result: { current: setUser },
+		} = renderHook(useSetUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
+
+		render(<ProjectMembers project={project} />);
+
+		let removeMemberButton: HTMLButtonElement;
+		await waitFor(() => {
+			const [button] = screen.getAllByTestId(
+				'remove-project-user-button',
+			);
+
+			expect(button).toBeInTheDocument();
+			removeMemberButton = button as HTMLButtonElement;
+		});
+
+		fireEvent.click(removeMemberButton!);
+
+		const cancelButton = screen.getByTestId('resource-deletion-cancel-btn');
+		fireEvent.click(cancelButton);
+
+		expect(handleRemoveUserFromProjectSpy).not.toHaveBeenCalled();
+	});
+
+	it('opens the edit user permission modal when pressing edit', async () => {
+		const {
+			result: { current: setUser },
+		} = renderHook(useSetUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
+
+		render(<ProjectMembers project={project} />);
+
+		let editMemberButton: HTMLButtonElement;
+		await waitFor(() => {
+			const [button] = screen.getAllByTestId('edit-project-user-button');
+
+			expect(button).toBeInTheDocument();
+			editMemberButton = button as HTMLButtonElement;
+		});
+
+		fireEvent.click(editMemberButton!);
+
+		const editModal = screen.getByTestId('edit-project-user-modal');
+		expect(editModal).toBeInTheDocument();
+	});
+
+	it('closes the edit user permission modal when pressing cancel', async () => {
+		const handleUpdateUserToPermissionSpy = vi.spyOn(
+			ProjectUsersAPI,
+			'handleUpdateUserPermission',
+		);
+		const {
+			result: { current: setUser },
+		} = renderHook(useSetUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
+
+		render(<ProjectMembers project={project} />);
+
+		let editMemberButton: HTMLButtonElement;
+		await waitFor(() => {
+			const [button] = screen.getAllByTestId('edit-project-user-button');
+
+			expect(button).toBeInTheDocument();
+			editMemberButton = button as HTMLButtonElement;
+		});
+
+		fireEvent.click(editMemberButton!);
+
+		const cancelButton = screen.getByTestId(
+			'edit-project-user-modal-cancel-button',
+		);
+		fireEvent.click(cancelButton);
+
+		expect(handleUpdateUserToPermissionSpy).not.toHaveBeenCalled();
+	});
+
+	it('updates user permission when pressing continue', async () => {
+		const handleUpdateUserToPermissionSpy = vi.spyOn(
+			ProjectUsersAPI,
+			'handleUpdateUserPermission',
+		);
+		const {
+			result: { current: setUser },
+		} = renderHook(useSetUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
+
+		render(<ProjectMembers project={project} />);
+
+		let editMemberButton: HTMLButtonElement;
+		await waitFor(() => {
+			const [button] = screen.getAllByTestId('edit-project-user-button');
+
+			expect(button).toBeInTheDocument();
+			editMemberButton = button as HTMLButtonElement;
+		});
+
+		fireEvent.click(editMemberButton!);
+
+		const permissionSelect = screen.getByTestId(
+			'edit-project-user-modal-permission-select',
+		);
+		fireEvent.change(permissionSelect, {
+			target: { value: AccessPermission.MEMBER },
+		});
+
+		const continueButton = screen.getByTestId(
+			'edit-project-user-modal-continue-button',
+		);
+		fireEvent.click(continueButton);
+
+		expect(handleUpdateUserToPermissionSpy).toHaveBeenCalledWith({
+			data: {
+				permission: AccessPermission.MEMBER,
+				userId: memberUser.id,
+			},
+			projectId: project.id,
+		});
+	});
+
+	it('shows error when unable to update user permission', async () => {
+		const handleUpdateUserToPermissionSpy = vi.spyOn(
+			ProjectUsersAPI,
+			'handleUpdateUserPermission',
+		);
+		const {
+			result: { current: setUser },
+		} = renderHook(useSetUser);
+
+		act(() => {
+			setUser(adminUser);
+		});
+
+		handleRetrieveProjectUsersSpy.mockResolvedValueOnce(projectUsers);
+
+		render(<ProjectMembers project={project} />);
+
+		let editMemberButton: HTMLButtonElement;
+		await waitFor(() => {
+			const [button] = screen.getAllByTestId('edit-project-user-button');
+
+			expect(button).toBeInTheDocument();
+			editMemberButton = button as HTMLButtonElement;
+		});
+
+		fireEvent.click(editMemberButton!);
+
+		const permissionSelect = screen.getByTestId(
+			'edit-project-user-modal-permission-select',
+		);
+		fireEvent.change(permissionSelect, {
+			target: { value: AccessPermission.MEMBER },
+		});
+
+		handleUpdateUserToPermissionSpy.mockImplementationOnce(() => {
+			throw new ApiError('unable to update user permission', {
+				statusCode: 401,
+				statusText: 'Bad Request',
+			});
+		});
+
+		const continueButton = screen.getByTestId(
+			'edit-project-user-modal-continue-button',
+		);
+		fireEvent.click(continueButton);
+
+		const errorToast = screen.getByText('unable to update user permission');
 		expect(errorToast).toBeInTheDocument();
 	});
 });
