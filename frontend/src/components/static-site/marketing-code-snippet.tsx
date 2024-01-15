@@ -17,18 +17,23 @@ const docsKotlin =
 const snippetKotlin = `import ai.basemind.client.BaseMindClient
 
 val client = BaseMindClient.getInstance("<API_KEY")
+val response = client.requestPrompt(templateVariables)
 `;
 
 const docsSwift =
 	'https://github.com/basemind-ai/sdk-ios?tab=readme-ov-file#basemindai-swift-iosmacos-sdk';
 const snippetSwift = `import BaseMindClient
 
-let client = BaseMindClient(apiKey: "<MyApiKey>")`;
+let client = BaseMindClient(apiKey: "<MyApiKey>")
+let response = try client.requestPrompt(templateVariables)
+`;
 
 const docsFlutter = 'https://pub.dev/packages/basemind';
 const snippetDart = `import 'package:basemind/client.dart';
 
-final client = BaseMindClient('<API_KEY>');`;
+final client = BaseMindClient('<API_KEY>');
+final response = await client.requestPrompt(templateVariables);
+`;
 
 const languageSnippetMap: Record<supportedLanguages, string | null> = {
 	dart: snippetDart,
@@ -38,13 +43,13 @@ const languageSnippetMap: Record<supportedLanguages, string | null> = {
 };
 
 const tabs: FrameworkTab[] = [
+	{ docs: docsSwift, framework: 'iOS', isActive: true, language: 'swift' },
 	{
 		docs: docsKotlin,
 		framework: 'Android',
 		isActive: true,
 		language: 'kotlin',
 	},
-	{ docs: docsSwift, framework: 'iOS', isActive: true, language: 'swift' },
 	{
 		docs: docsFlutter,
 		framework: 'Flutter',
@@ -54,7 +59,7 @@ const tabs: FrameworkTab[] = [
 ];
 
 export function MarketingCodeSnippet() {
-	const [selectedFramework, setSelectedFramework] = useState('Android');
+	const [selectedFramework, setSelectedFramework] = useState('iOS');
 
 	return (
 		<Fragment>
