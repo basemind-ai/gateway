@@ -3,9 +3,11 @@ import { render, waitFor } from 'tests/test-utils';
 
 import PrivacyPolicyPage from '@/app/[locale]/privacy-policy/page';
 
+vi.mock('next-intl/server');
+
 describe('Privacy Policy Page', () => {
 	it('calls page track', async () => {
-		render(<PrivacyPolicyPage />);
+		render(<PrivacyPolicyPage params={{ locale: 'en' }} />);
 		await waitFor(() => {
 			expect(mockReady).toHaveBeenCalled();
 		});
