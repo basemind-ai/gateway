@@ -72,7 +72,7 @@ export function FeatureSection() {
 					<div className="grid grid-cols-4 place-items-center gap-12 md:gap-4 px-4 ">
 						{ModelsCardData.map(({ src, alt }) => (
 							<Image
-								key={src}
+								key={alt}
 								width={Dimensions.Twelve}
 								height={Dimensions.Twelve}
 								src={src}
@@ -101,15 +101,14 @@ export function FeatureSection() {
 					<Image
 						alt="Prompt Management"
 						src="/images/prompt-mangment.svg"
-						width={80}
-						height={80}
+						width={Dimensions.Twelve}
+						height={Dimensions.Twelve}
 						className="w-full z-10"
 					/>
 				</figure>
 				<div className="card-body my-auto">
 					<h2 className="card-title">{t('featureDashboardTitle')}</h2>
 					<p className="text-neutral-content text-sm">
-						{' '}
 						{t('featureDashboardDescription')}
 					</p>
 				</div>
@@ -137,7 +136,7 @@ export function FeatureSection() {
 				<div className="marketing-card md:col-span-6 lg:col-span-5 max-h-min">
 					<ModelsCard />
 				</div>
-				<div className="marketing-card md:col-span-6 lg:col-span-7 lg:card-side">
+				<div className="marketing-card md:col-span-6 lg:col-span-7 card-side lg:flex-row">
 					<PromptManagementCard />
 				</div>
 			</div>

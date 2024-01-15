@@ -25,18 +25,12 @@ const HaloAnimation = () => {
 									y1="100%"
 									y2="0%"
 								>
-									<stop
-										offset="0%"
-										stopColor="#A855F7"
-									></stop>
+									<stop offset="0%" stopColor="#A855F7" />
 									<stop
 										offset="76.382%"
 										stopColor="#FAF5FF"
-									></stop>
-									<stop
-										offset="100%"
-										stopColor="#6366F1"
-									></stop>
+									/>
+									<stop offset="100%" stopColor="#6366F1" />
 								</linearGradient>
 							</defs>
 							<g
@@ -51,17 +45,17 @@ const HaloAnimation = () => {
 									fill="url(#pulse-a)"
 									fillRule="evenodd"
 									d="M240,0 C372.5484,0 480,107.4516 480,240 C480,372.5484 372.5484,480 240,480 C107.4516,480 0,372.5484 0,240 C0,107.4516 107.4516,0 240,0 Z M240,88.8 C156.4944,88.8 88.8,156.4944 88.8,240 C88.8,323.5056 156.4944,391.2 240,391.2 C323.5056,391.2 391.2,323.5056 391.2,240 C391.2,156.4944 323.5056,88.8 240,88.8 Z"
-								></path>
+								/>
 								<path
 									fill="url(#pulse-a)"
 									fillRule="evenodd"
 									d="M240,0 C372.5484,0 480,107.4516 480,240 C480,372.5484 372.5484,480 240,480 C107.4516,480 0,372.5484 0,240 C0,107.4516 107.4516,0 240,0 Z M240,88.8 C156.4944,88.8 88.8,156.4944 88.8,240 C88.8,323.5056 156.4944,391.2 240,391.2 C323.5056,391.2 391.2,323.5056 391.2,240 C391.2,156.4944 323.5056,88.8 240,88.8 Z"
-								></path>
+								/>
 								<path
 									fill="url(#pulse-a)"
 									fillRule="evenodd"
 									d="M240,0 C372.5484,0 480,107.4516 480,240 C480,372.5484 372.5484,480 240,480 C107.4516,480 0,372.5484 0,240 C0,107.4516 107.4516,0 240,0 Z M240,88.8 C156.4944,88.8 88.8,156.4944 88.8,240 C88.8,323.5056 156.4944,391.2 240,391.2 C323.5056,391.2 391.2,323.5056 391.2,240 C391.2,156.4944 323.5056,88.8 240,88.8 Z"
-								></path>
+								/>
 							</g>
 						</svg>
 					</>
@@ -83,12 +77,12 @@ const AnimatedGrid = () => {
 						<div className="grid grid-cols-8 gap-4 animate-slideUp">
 							{gridItems.map((_, itemIndex) => (
 								<div
-									key={itemIndex}
+									key={`${index}+${itemIndex}`}
 									className="w-full aspect-square bg-transparent border border-secondary"
-								></div>
+								/>
 							))}
 						</div>
-						<div className="h-4"></div>
+						<div className="h-4" />
 					</Fragment>
 				))}
 			</div>

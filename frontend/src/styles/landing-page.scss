@@ -23,7 +23,7 @@
 }
 
 .marketing-card {
-	@apply card shadow-2xl shadow-info-content hover:shadow-info rounded-4xl bg-base-300 text-base-content/90 hover:text-base-content transition-shadow duration-700;
+	@apply card shadow-xl shadow-info-content hover:shadow-info rounded-4xl bg-base-300 text-base-content/90 hover:text-base-content transition-shadow duration-700;
 }
 
 .gradient-headline {

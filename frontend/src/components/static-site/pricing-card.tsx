@@ -46,9 +46,9 @@ export function PricingCard({
 			<div className=" bg-gradient-to-tr from-accent to-primary opacity-15 md:opacity-0 group-hover:opacity-20 right-0 pointer-events-none absolute aspect-square w-1/2  rounded-full blur-3xl transition duration-700 ease-in-out" />
 
 			<div className="flex flex-col">
-				{perks.map((perk, index: number) => (
+				{perks.map((perk) => (
 					<div
-						key={index}
+						key={perk.title}
 						className="flex items-center py-2 gap-1.5 self-stretch"
 					>
 						<perk.icon className="h-3 w-3 2xl:h-4 2xl:w-4" />
