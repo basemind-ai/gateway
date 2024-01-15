@@ -40,7 +40,7 @@ export function ProjectDeletion({ project }: { project: Project }) {
 	return (
 		<div data-testid="project-deletion-container" className="card-divider">
 			<h2 className="card-header">{t('deleteProjectTitle')}</h2>
-			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
+			<div className="rounded-data-card flex items-center justify-between text-neutral-content w-full">
 				<div>
 					<h6 className="text-base-content font-medium ">
 						{t('deleteProjectSubtitle')}
@@ -59,25 +59,25 @@ export function ProjectDeletion({ project }: { project: Project }) {
 				>
 					{t('delete')}
 				</button>
-				<Modal modalOpen={isDeleteModalOpen}>
-					<ResourceDeletionBanner
-						title={t('warning')}
-						description={t('warningMessageProject')}
-						placeholder={t('deletionPlaceholder')}
-						resourceName={project.name}
-						isDisabled={isLoading}
-						onCancel={() => {
-							setIsDeleteModalOpen(false);
-						}}
-						onConfirm={() => void deleteProject()}
-						confirmCTA={
-							isLoading ? (
-								<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
-							) : undefined
-						}
-					/>
-				</Modal>
 			</div>
+			<Modal modalOpen={isDeleteModalOpen}>
+				<ResourceDeletionBanner
+					title={t('warning')}
+					description={t('warningMessageProject')}
+					placeholder={t('deletionPlaceholder')}
+					resourceName={project.name}
+					isDisabled={isLoading}
+					onCancel={() => {
+						setIsDeleteModalOpen(false);
+					}}
+					onConfirm={() => void deleteProject()}
+					confirmCTA={
+						isLoading ? (
+							<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
+						) : undefined
+					}
+				/>
+			</Modal>
 		</div>
 	);
 }

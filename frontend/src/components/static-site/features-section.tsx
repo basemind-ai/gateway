@@ -72,6 +72,7 @@ export function FeatureSection() {
 					<div className="grid grid-cols-4 place-items-center gap-12 md:gap-4 px-4 ">
 						{ModelsCardData.map(({ src, alt }) => (
 							<Image
+								key={src}
 								width={Dimensions.Twelve}
 								height={Dimensions.Twelve}
 								src={src}
