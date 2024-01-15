@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google';
-import { notFound } from 'next/navigation';
-import { NextIntlClientProvider, useMessages } from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
+import en from 'public/messages/en.json';
 
 import { ToastWrapper } from '@/components/toast';
 
@@ -19,17 +19,12 @@ export default function LocaleLayout({
 	children: React.ReactNode;
 	params: { locale: string };
 }) {
-	if (locale && !supportedLocales.includes(locale)) {
-		notFound();
-	}
 	unstable_setRequestLocale(locale);
-
-	const messages = useMessages();
 
 	return (
 		<html lang={locale}>
 			<body className={inter.className}>
-				<NextIntlClientProvider locale={locale} messages={messages}>
+				<NextIntlClientProvider locale={locale} messages={en}>
 					<ToastWrapper>{children}</ToastWrapper>
 				</NextIntlClientProvider>
 			</body>

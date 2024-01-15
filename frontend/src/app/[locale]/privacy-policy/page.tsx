@@ -1,3 +1,5 @@
+import { unstable_setRequestLocale } from 'next-intl/server';
+
 import {
 	LegalDocument,
 	LegalDocumentView,
@@ -6,7 +8,12 @@ import { Footer } from '@/components/static-site/footer';
 import { StaticPageHeader } from '@/components/static-site/header';
 import { TrackStaticPage } from '@/components/static-site/track-static-page';
 
-export default function PrivacyPolicyPage() {
+export default function PrivacyPolicyPage({
+	params: { locale },
+}: {
+	params: { locale: string };
+}) {
+	unstable_setRequestLocale(locale);
 	return (
 		<div className="w-screen bg-base-100">
 			<TrackStaticPage pageName="privacy_policy" />

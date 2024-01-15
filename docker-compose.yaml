@@ -152,6 +152,7 @@ services:
         environment:
             NEXT_PUBLIC_BACKEND_URL: http://localhost:4100
             NEXT_PUBLIC_FRONTEND_HOST: http://localhost
+            NEXT_PUBLIC_SCHEDULE_MEETING_URL: https://meetings-eu1.hubspot.com/tcohen
             NODE_ENV: development
             REACT_EDITOR: code
         working_dir: /app/frontend

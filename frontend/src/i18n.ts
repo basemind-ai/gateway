@@ -1,8 +1,18 @@
+import { notFound } from 'next/navigation';
 import { getRequestConfig } from 'next-intl/server';
 
-export default getRequestConfig(async ({ locale }) => ({
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-	messages:
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,unicorn/no-await-expression-member
-		(await import(`../public/messages/${locale}.json`)).default,
-}));
+const locales = new Set(['en']);
+
+export default getRequestConfig(async ({ locale }) => {
+	if (!locales.has(locale)) {
+		notFound();
+	}
+
+	const { default: messages } = (await import(
+		`../public/messages/${locale}.json`
+	)) as { default: Record<string, any> };
+
+	return {
+		messages,
+	};
+});
