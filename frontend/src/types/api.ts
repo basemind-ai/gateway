@@ -165,3 +165,13 @@ export interface PromptTestRecord<T extends ModelVendor> {
 	totalTokensCost: string;
 	userInput: Record<string, string>;
 }
+
+// Project Invitation
+
+export interface ProjectInvitation {
+	createdAt: string;
+	email: string;
+	id: string;
+	permission: AccessPermission;
+	updatedAt: string;
+}
