@@ -35,7 +35,6 @@ export const mockEnv = {
 	NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'devlingo-demo',
 	NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'devlingo-demo.appspot.com',
 	NEXT_PUBLIC_FRONTEND_HOST: 'http://localhost:3000',
-	NEXT_PUBLIC_GITHUB_URL: 'http://www.example.com',
 	NEXT_PUBLIC_SCHEDULE_MEETING_URL: 'http://www.example.com',
 	NEXT_PUBLIC_SEGMENT_WRITE_KEY: faker.string.uuid(),
 } satisfies Env;
