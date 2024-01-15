@@ -15,5 +15,11 @@ func CreateTestHTTPClient(t *testing.T, handler http.Handler) httpclient.Client 
 		server.Close()
 	})
 
-	return httpclient.New(server.URL, server.Client())
+	client := server.Client()
+	// we want to test that redirects are returned correctly by the API
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+
+	return httpclient.New(server.URL, client)
 }

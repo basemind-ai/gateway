@@ -8,6 +8,7 @@ import (
 	"github.com/basemind-ai/monorepo/shared/go/db/models"
 	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"github.com/basemind-ai/monorepo/shared/go/urlutils"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -25,24 +26,19 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	invitation, retrievalErr := db.GetQueries().
-		RetrieveProjectInvitationByID(r.Context(), *invitationID)
-	if retrievalErr != nil {
-		apierror.BadRequest("invitation does not exist").Render(w)
-		return
-	}
-
 	cfg := config.Get(r.Context())
 	// TODO: when we support localisation, we should pass locale as a query param as well.
 	redirectURL := fmt.Sprintf("%s/en/sign-in", cfg.FrontendBaseURL)
 
-	if exc.MustResult(
-		db.GetQueries().CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
-			Email:     invitation.Email,
-			ProjectID: invitation.ProjectID,
-		}),
-	) {
-		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	invitation, retrievalErr := db.GetQueries().
+		RetrieveProjectInvitationByID(r.Context(), *invitationID)
+
+	if retrievalErr != nil {
+		log.Debug().
+			Err(retrievalErr).
+			Str("redirectURL", redirectURL).
+			Msg("failed to retrieve invitation, redirecting to sign in page")
+		http.Redirect(w, r, redirectURL, http.StatusPermanentRedirect)
 		return
 	}
 
@@ -51,26 +47,38 @@ func handleUserInvitationWebhook(w http.ResponseWriter, r *http.Request) {
 
 	queries := db.GetQueries().WithTx(tx)
 
-	userAccount, userRetrievalErr := queries.RetrieveUserAccountByEmail(
-		r.Context(),
-		invitation.Email,
-	)
-	if userRetrievalErr != nil {
-		createdUserAccount := exc.MustResult(
-			queries.CreateUserAccount(r.Context(), models.CreateUserAccountParams{
-				Email: invitation.Email,
-			}),
+	if !exc.MustResult(
+		db.GetQueries().CheckUserProjectExists(r.Context(), models.CheckUserProjectExistsParams{
+			Email:     invitation.Email,
+			ProjectID: invitation.ProjectID,
+		}),
+	) {
+		userAccount, userRetrievalErr := queries.RetrieveUserAccountByEmail(
+			r.Context(),
+			invitation.Email,
 		)
-		userAccount = createdUserAccount
+		if userRetrievalErr != nil {
+			createdUserAccount := exc.MustResult(
+				queries.CreateUserAccount(r.Context(), models.CreateUserAccountParams{
+					Email: invitation.Email,
+				}),
+			)
+			userAccount = createdUserAccount
+		}
+
+		exc.MustResult(queries.CreateUserProject(r.Context(), models.CreateUserProjectParams{
+			ProjectID:  invitation.ProjectID,
+			UserID:     userAccount.ID,
+			Permission: invitation.Permission,
+		}))
 	}
 
-	exc.MustResult(queries.CreateUserProject(r.Context(), models.CreateUserProjectParams{
-		ProjectID:  invitation.ProjectID,
-		UserID:     userAccount.ID,
-		Permission: invitation.Permission,
-	}))
 	exc.Must(queries.DeleteProjectInvitation(r.Context(), invitation.ID))
 	exc.Must(tx.Commit(r.Context()))
-
-	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	http.Redirect(w, r, redirectURL, http.StatusPermanentRedirect)
+	log.Debug().
+		Str("redirectURL", redirectURL).
+		Str("email", invitation.Email).
+		Str("projectId", db.UUIDToString(&invitation.ProjectID)).
+		Msg("user invitation handled")
 }

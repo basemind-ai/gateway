@@ -73,7 +73,7 @@ func TestWebhooksAPI(t *testing.T) {
 				signedURL,
 			)
 			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusOK, response.StatusCode)
+			assert.Equal(t, http.StatusPermanentRedirect, response.StatusCode)
 
 			userAccount, retrievalErr := db.GetQueries().
 				RetrieveUserAccountByEmail(context.TODO(), email)
@@ -112,7 +112,7 @@ func TestWebhooksAPI(t *testing.T) {
 					signedURL,
 				)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusOK, response.StatusCode)
+				assert.Equal(t, http.StatusPermanentRedirect, response.StatusCode)
 
 				exists, checkErr := db.GetQueries().
 					CheckUserProjectExists(context.TODO(), models.CheckUserProjectExistsParams{
@@ -149,7 +149,7 @@ func TestWebhooksAPI(t *testing.T) {
 				signedURL,
 			)
 			assert.NoError(t, requestErr)
-			assert.Equal(t, http.StatusOK, response.StatusCode)
+			assert.Equal(t, http.StatusPermanentRedirect, response.StatusCode)
 		})
 
 		t.Run(
@@ -167,7 +167,7 @@ func TestWebhooksAPI(t *testing.T) {
 		)
 
 		t.Run(
-			"responds with 400 BAD REQUEST when no invite exists with the given ID",
+			"responds with 308 Permanent Redirect and redirect the user when no invite exists with the given ID",
 			func(t *testing.T) {
 				signedURL := createSignedURL(
 					"b50e5477-f74a-4e80-be29-ae67eb6ada95",
@@ -178,7 +178,7 @@ func TestWebhooksAPI(t *testing.T) {
 					signedURL,
 				)
 				assert.NoError(t, requestErr)
-				assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+				assert.Equal(t, http.StatusPermanentRedirect, response.StatusCode)
 			},
 		)
 
