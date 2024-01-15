@@ -4,7 +4,6 @@ export enum Navigation {
 	Billing = '/en/projects/:projectId/billing',
 	ConfigCreateWizard = '/en/projects/:projectId/applications/:applicationId/config-create-wizard',
 	CreateProject = '/en/projects/create',
-	Docs = 'https://docs.basemind.ai/',
 	PrivacyPolicy = '/en/privacy-policy',
 	ProjectDetail = '/en/projects/:projectId',
 	Projects = '/en/projects',
@@ -14,6 +13,11 @@ export enum Navigation {
 	Support = '/en/support',
 	TOS = '/en/terms-of-service',
 	Testing = '/en/projects/:projectId/testing',
+}
+
+export enum ExternalNavigation {
+	Docs = 'https://docs.basemind.ai/',
+	Github = 'https://github.com/orgs/basemind-ai/repositories',
 }
 export const SUPPORT_EMAIL = 'support@basemind.ai';
 

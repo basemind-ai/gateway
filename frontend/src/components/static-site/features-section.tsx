@@ -136,7 +136,7 @@ export function FeatureSection() {
 				<div className="marketing-card md:col-span-6 lg:col-span-5 max-h-min">
 					<ModelsCard />
 				</div>
-				<div className="marketing-card md:col-span-6 lg:col-span-7 card-side lg:flex-row">
+				<div className="marketing-card md:col-span-6 lg:col-span-7 lg:card-side lg:flex-row">
 					<PromptManagementCard />
 				</div>
 			</div>
