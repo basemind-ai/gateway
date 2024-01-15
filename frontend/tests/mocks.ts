@@ -173,3 +173,15 @@ beforeEach(() => {
 	mockGroup.mockReset();
 	process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY = 'test';
 });
+export const unstableSetRequestLocaleMock = vi.fn();
+
+vi.mock(
+	'next-intl/server',
+	async (importOriginal: () => Promise<Record<string, any>>) => {
+		const original = importOriginal();
+		return {
+			...original,
+			unstable_setRequestLocale: unstableSetRequestLocaleMock,
+		};
+	},
+);

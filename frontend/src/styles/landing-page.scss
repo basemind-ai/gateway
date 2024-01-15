@@ -22,14 +22,6 @@
 	}
 }
 
-.marketing-card {
-	@apply card shadow-xl shadow-info-content hover:shadow-info rounded-4xl bg-base-300 text-base-content/90 hover:text-base-content transition-shadow duration-700;
-}
-
-.gradient-headline {
-	@apply text-transparent bg-gradient-to-r from-base-content/50 via-base-content/90 to-base-content/50 hover:text-neutral-content transition-colors ease-in-out duration-500 bg-clip-text;
-}
-
 .animate-slideUp {
 	animation: slideUp 42s linear infinite;
 }
