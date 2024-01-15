@@ -13,15 +13,16 @@ describe('MarketingCodeSnippet Tests', () => {
 
 	it('should display the correct initial tab as active', () => {
 		render(<MarketingCodeSnippet />);
-		const androidTab = screen.getByTestId('tab-Android');
-		expect(androidTab).toHaveClass('tab-active');
+		const iosTab = screen.getByTestId('tab-iOS');
+		expect(iosTab).toHaveClass('tab-active');
 	});
 
 	it('should switch to the iOS tab when clicked', () => {
 		render(<MarketingCodeSnippet />);
-		const iosTab = screen.getByTestId('tab-iOS');
-		fireEvent.click(iosTab);
-		expect(iosTab).toHaveClass('tab-active');
+		const androidTab = screen.getByTestId('tab-Android');
+
+		fireEvent.click(androidTab);
+		expect(androidTab).toHaveClass('tab-active');
 	});
 
 	it('should display the code snippet for Android framework', () => {
