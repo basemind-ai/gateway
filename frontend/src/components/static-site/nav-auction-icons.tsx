@@ -15,7 +15,7 @@ export const NavAuctionIconsList = [
 	{
 		icon: <Github />,
 		name: 'github-button',
-		url: getEnv().NEXT_PUBLIC_URL_GITHUB,
+		url: 'https://github.com/orgs/basemind-ai/repositories',
 	},
 	{
 		icon: <Book />,

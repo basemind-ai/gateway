@@ -12,7 +12,6 @@ export interface Env {
 	NEXT_PUBLIC_FRONTEND_HOST: string;
 	NEXT_PUBLIC_SCHEDULE_MEETING_URL: string;
 	NEXT_PUBLIC_SEGMENT_WRITE_KEY: string;
-	NEXT_PUBLIC_URL_GITHUB: string;
 }
 
 /*
@@ -52,7 +51,6 @@ export function getEnv(): Env {
 			process.env.NEXT_PUBLIC_SCHEDULE_MEETING_URL ?? '',
 		NEXT_PUBLIC_SEGMENT_WRITE_KEY:
 			process.env.NEXT_PUBLIC_SEGMENT_WRITE_KEY ?? '',
-		NEXT_PUBLIC_URL_GITHUB: process.env.NEXT_PUBLIC_URL_GITHUB ?? '',
 	} satisfies Env;
 
 	if (process.env.NODE_ENV !== 'test') {

@@ -61,6 +61,7 @@ jobs:
                       FIREBASE_PROJECT_ID=${{vars.GCP_PROJECT_ID}}
                       FIREBASE_STORAGE_BUCKET=${{vars.FIREBASE_STORAGE_BUCKET}}
                       FRONTEND_HOST=${{vars.FRONTEND_HOST}}
+                      SCHEDULE_MEETING_URL=${{vars.SCHEDULE_MEETING_URL}}
                       SEGMENT_WRITE_KEY=${{secrets.SEGMENT_WRITE_KEY}}
                       SERVICE_NAME=${{env.SERVICE_NAME}}
                   tags: |
