@@ -20,14 +20,20 @@ import { Navigation, ProjectPageTabNames } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
-import { useProject, useSetProjectApplications } from '@/stores/api-store';
-import { Project } from '@/types';
+import {
+	useProject,
+	useProjectUsers,
+	useSetProjectApplications,
+} from '@/stores/api-store';
+import { AccessPermission, Project, ProjectUserAccount } from '@/types';
 
 const TabComponent = memo(
 	({
 		project,
 		selectedTab,
+		currentUser,
 	}: {
+		currentUser?: ProjectUserAccount;
 		project: Project;
 		selectedTab: ProjectPageTabNames;
 	}) =>
@@ -40,7 +46,9 @@ const TabComponent = memo(
 			</div>
 		) : selectedTab === ProjectPageTabNames.MEMBERS ? (
 			<div data-testid="project-members-tab">
-				<ProjectMembersInvitationForm project={project} />
+				{currentUser?.permission === AccessPermission.ADMIN && (
+					<ProjectMembersInvitationForm project={project} />
+				)}
 				<div className="card-divider">
 					<ProjectMembers project={project} />
 				</div>
@@ -71,6 +79,12 @@ export default function ProjectOverview({
 	const setProjectApplications = useSetProjectApplications();
 	const user = useAuthenticatedUser();
 	const { page, initialized } = useAnalytics();
+
+	const projectUsers = useProjectUsers(projectId);
+
+	const currentUser = (projectUsers ?? []).find(
+		(projectUser) => projectUser.email === user?.email,
+	)!;
 
 	const [selectedTab, setSelectedTab] = useState(
 		ProjectPageTabNames.OVERVIEW,
@@ -133,7 +147,11 @@ export default function ProjectOverview({
 					trailingLine={true}
 				/>
 				<div className="card-divider" />
-				<TabComponent project={project} selectedTab={selectedTab} />
+				<TabComponent
+					project={project}
+					selectedTab={selectedTab}
+					currentUser={currentUser}
+				/>
 			</div>
 		</main>
 	);
