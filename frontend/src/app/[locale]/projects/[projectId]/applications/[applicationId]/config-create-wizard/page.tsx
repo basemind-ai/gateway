@@ -255,113 +255,108 @@ export default function PromptConfigCreateWizard({
 			{isLoading ? (
 				<Oval height="33vh" width="33vw" className="m-auto" />
 			) : (
-				<>
-					<div className="page-content-container">
-						<Navbar
-							project={project}
-							application={application}
-							userPhotoURL={user?.photoURL}
-						/>
-						<div className="card-divider flex justify-between content-center items-center">
-							<h2 className="card-header">{t('createConfig')}</h2>
-							<ul className="steps z-0">
-								{stepper.map((stage) => (
-									<li
-										key={stage}
-										className={`step ${
-											store.wizardStage === stage &&
-											stepColor
-										}
+				<div className="page-content-container">
+					<Navbar
+						project={project}
+						application={application}
+						userPhotoURL={user?.photoURL}
+					/>
+					<div className="card-divider flex justify-between content-center items-center">
+						<h2 className="card-header">{t('createConfig')}</h2>
+						<ul className="steps z-0">
+							{stepper.map((stage) => (
+								<li
+									key={stage}
+									className={`step ${
+										store.wizardStage === stage && stepColor
+									}
 										}`}
-									/>
-								))}
-							</ul>
-						</div>
-						<div className="transform transition-transform duration-300 ease-in-out rounded-data-card shadow-xl">
-							<WizardStageComponent
-								applicationId={applicationId}
-								credits={project?.credits ?? '1'}
-								handleConfigNameChange={handleConfigNameChange}
-								handleError={handleError}
-								handleMessagesChange={handleMessagesChange}
-								handleModelTypeChange={handleModelTypeChange}
-								handleModelVendorChange={
-									handleModelVendorChange
-								}
-								handleParametersChange={handleParametersChange}
-								handleRefreshProject={handleRefreshProject}
-								handleTemplateVariablesChange={
-									handleTemplateVariablesChange
-								}
-								projectId={projectId}
-								setNameIsValid={setNameIsValid}
-								store={store}
-								validateConfigName={validateConfigName}
-							/>
-							<div className="divider divide-accent" />
-							<div className="items-center justify-end px-5 modal-action">
-								<div className="flex justify-between gap-4">
-									{store.wizardStage === 0 && (
-										<button
-											data-testid="config-create-wizard-cancel-button"
-											onClick={() => {
-												setIsLoading(true);
-												store.resetState();
-												router.push(
-													setRouteParams(
-														Navigation.ApplicationDetail,
-														{
-															applicationId,
-															projectId,
-														},
-													),
-												);
-											}}
-											className="btn btn-neutral"
-										>
-											{t('cancelButtonText')}
-										</button>
-									)}
-									{store.wizardStage > 0 && (
-										<button
-											data-testid="config-create-wizard-back-button"
-											onClick={store.setPrevWizardStage}
-											className="btn btn-neutral"
-											disabled={isLoading}
-										>
-											{t('backButtonText')}
-										</button>
-									)}
-									{store.wizardStage === 2 && (
-										<button
-											data-testid="config-create-wizard-save-button"
-											onClick={() => {
-												void handleConfigSave();
-											}}
-											className="btn btn-primary"
-											disabled={!store.messages.length}
-										>
-											{t('saveButtonText')}
-										</button>
-									)}
-									{store.wizardStage < 2 && (
-										<button
-											data-testid="config-create-wizard-continue-button"
-											onClick={store.setNextWizardStage}
-											className="btn btn-primary"
-											disabled={
-												!nameIsValid ||
-												!shouldAllowContinue(store)
-											}
-										>
-											{t('continueButtonText')}
-										</button>
-									)}
-								</div>
+								/>
+							))}
+						</ul>
+					</div>
+					<div className="transform transition-transform duration-300 ease-in-out rounded-data-card shadow-xl">
+						<WizardStageComponent
+							applicationId={applicationId}
+							credits={project?.credits ?? '1'}
+							handleConfigNameChange={handleConfigNameChange}
+							handleError={handleError}
+							handleMessagesChange={handleMessagesChange}
+							handleModelTypeChange={handleModelTypeChange}
+							handleModelVendorChange={handleModelVendorChange}
+							handleParametersChange={handleParametersChange}
+							handleRefreshProject={handleRefreshProject}
+							handleTemplateVariablesChange={
+								handleTemplateVariablesChange
+							}
+							projectId={projectId}
+							setNameIsValid={setNameIsValid}
+							store={store}
+							validateConfigName={validateConfigName}
+						/>
+						<div className="divider divide-accent" />
+						<div className="items-center justify-end px-5 modal-action">
+							<div className="flex justify-between gap-4">
+								{store.wizardStage === 0 && (
+									<button
+										data-testid="config-create-wizard-cancel-button"
+										onClick={() => {
+											setIsLoading(true);
+											store.resetState();
+											router.push(
+												setRouteParams(
+													Navigation.ApplicationDetail,
+													{
+														applicationId,
+														projectId,
+													},
+												),
+											);
+										}}
+										className="btn btn-neutral"
+									>
+										{t('cancelButtonText')}
+									</button>
+								)}
+								{store.wizardStage > 0 && (
+									<button
+										data-testid="config-create-wizard-back-button"
+										onClick={store.setPrevWizardStage}
+										className="btn btn-neutral"
+										disabled={isLoading}
+									>
+										{t('backButtonText')}
+									</button>
+								)}
+								{store.wizardStage === 2 && (
+									<button
+										data-testid="config-create-wizard-save-button"
+										onClick={() => {
+											void handleConfigSave();
+										}}
+										className="btn btn-primary"
+										disabled={!store.messages.length}
+									>
+										{t('saveButtonText')}
+									</button>
+								)}
+								{store.wizardStage < 2 && (
+									<button
+										data-testid="config-create-wizard-continue-button"
+										onClick={store.setNextWizardStage}
+										className="btn btn-primary"
+										disabled={
+											!nameIsValid ||
+											!shouldAllowContinue(store)
+										}
+									>
+										{t('continueButtonText')}
+									</button>
+								)}
 							</div>
 						</div>
 					</div>
-				</>
+				</div>
 			)}
 		</main>
 	);

@@ -11,5 +11,5 @@ export function TrackStaticPage({ pageName }: { pageName: string }) {
 		}
 	}, [initialized, pageName]);
 
-	return <></>;
+	return null;
 }

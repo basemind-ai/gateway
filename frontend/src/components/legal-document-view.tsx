@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 export interface LegalDocument {
 	Paragraphs: { content: string[]; title: string }[];
 	lastUpdated: string;
@@ -32,11 +34,8 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
 						),
 					)}
 					{document.Paragraphs.map((section, sectionIndex) => (
-						<>
-							<h2
-								className="text-base-content"
-								key={section.title + sectionIndex}
-							>
+						<Fragment key={section.title + sectionIndex}>
+							<h2 className="text-base-content">
 								{section.title}
 							</h2>
 							{section.content.map((paragraph, indexSection) => (
@@ -50,7 +49,7 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
 									{paragraph}
 								</p>
 							))}
-						</>
+						</Fragment>
 					))}
 				</div>
 			</div>

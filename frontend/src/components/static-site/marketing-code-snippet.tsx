@@ -62,48 +62,46 @@ export function MarketingCodeSnippet() {
 	const [selectedFramework, setSelectedFramework] = useState('iOS');
 
 	return (
-		<Fragment>
-			<div
-				className="tabs tabs-lifted mt-3.5"
-				data-testid="prompt-code-snippet-container"
-			>
-				{tabs.map((tab) => {
-					const snippet = languageSnippetMap[tab.language];
-					return (
-						<Fragment key={tab.framework}>
-							<button
-								name="tabs"
-								data-testid={`tab-${tab.framework}`}
-								className={`tab bg-base-200 text-base-content rounded-b-none hover:bg-neutral ${
-									selectedFramework === tab.framework &&
-									'tab-active bg-base-300 text-primary'
-								}`}
-								aria-label={tab.framework}
-								disabled={!tab.isActive}
-								onClick={() => {
-									setSelectedFramework(tab.framework);
-								}}
-							>
-								<span data-testid={`tab-text-${tab.framework}`}>
-									{tab.framework}
-								</span>
-							</button>
-							<div
-								className="tab-content"
-								data-testid={`tab-content-${tab.framework}-container`}
-							>
-								{snippet ? (
-									<CodeSnippet
-										codeText={snippet}
-										language={tab.language}
-										allowCopy={false}
-									/>
-								) : null}
-							</div>
-						</Fragment>
-					);
-				})}
-			</div>
-		</Fragment>
+		<div
+			className="tabs tabs-lifted mt-3.5"
+			data-testid="prompt-code-snippet-container"
+		>
+			{tabs.map((tab) => {
+				const snippet = languageSnippetMap[tab.language];
+				return (
+					<Fragment key={tab.framework}>
+						<button
+							name="tabs"
+							data-testid={`tab-${tab.framework}`}
+							className={`tab bg-base-200 text-base-content rounded-b-none hover:bg-neutral ${
+								selectedFramework === tab.framework &&
+								'tab-active bg-base-300 text-primary'
+							}`}
+							aria-label={tab.framework}
+							disabled={!tab.isActive}
+							onClick={() => {
+								setSelectedFramework(tab.framework);
+							}}
+						>
+							<span data-testid={`tab-text-${tab.framework}`}>
+								{tab.framework}
+							</span>
+						</button>
+						<div
+							className="tab-content"
+							data-testid={`tab-content-${tab.framework}-container`}
+						>
+							{snippet ? (
+								<CodeSnippet
+									codeText={snippet}
+									language={tab.language}
+									allowCopy={false}
+								/>
+							) : null}
+						</div>
+					</Fragment>
+				);
+			})}
+		</div>
 	);
 }
