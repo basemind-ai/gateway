@@ -53,7 +53,7 @@ export function FeatureSection() {
 						height={Dimensions.Twelve}
 						src="/images/grpc.svg"
 						alt="Streaming Image"
-						className="px-24 pt-8 md:px-6 lg:h-1/2 w-full lg:w-fit z-10"
+						className="px-24 md:px-6 pt-8 lg:pt-0  lg:h-1/2 w-full lg:w-fit z-10"
 					/>
 				</figure>
 				<div className="card-body my-auto md:pl-0">
@@ -125,11 +125,11 @@ export function FeatureSection() {
 				{t('featureSectionTitle')}
 			</h2>
 			<div className="grid md:grid-cols-12 container mx-auto gap-8">
-				<div className="marketing-card md:col-span-7 md:card-side  md:flex-row ">
+				<div className="marketing-card md:col-span-7 md:card-side md:flex-row ">
 					<ServerLessCard />
 				</div>
 
-				<div className="marketing-card md:col-span-5 lg:card-side  lg:flex-row">
+				<div className="marketing-card md:col-span-5 lg:card-side lg:flex-row">
 					<StreamingCard />
 				</div>
 
