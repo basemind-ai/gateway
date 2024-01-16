@@ -8,6 +8,7 @@ import { Navigation } from '@/constants';
 
 describe('PricingCard Tests', () => {
 	global.open = vi.fn();
+
 	it('clicking on cta should send analytic event', async () => {
 		render(
 			<PricingCard

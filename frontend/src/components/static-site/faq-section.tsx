@@ -39,10 +39,10 @@ export function FAQSection() {
 					{t('faqTitle')}
 				</h2>
 				<div className="grid sm:grid-cols-2">
-					{faqs.map((faq, index) => (
+					{faqs.map((faq) => (
 						<details
 							className="border-b border-b-neutral"
-							key={index}
+							key={faq.question}
 						>
 							<summary className="collapse-title text-md font-normal text-neutral-content hover:text-base-content">
 								{faq.question}

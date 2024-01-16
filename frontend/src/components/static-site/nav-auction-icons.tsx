@@ -2,7 +2,7 @@
 
 import { Book, Discord, Github, Telephone } from 'react-bootstrap-icons';
 
-import { Navigation } from '@/constants';
+import { ExternalNavigation } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { getEnv } from '@/utils/env';
 
@@ -15,12 +15,12 @@ export const NavAuctionIconsList = [
 	{
 		icon: <Github />,
 		name: 'github-button',
-		url: 'https://github.com/orgs/basemind-ai/repositories',
+		url: ExternalNavigation.Github,
 	},
 	{
 		icon: <Book />,
 		name: 'docs-button',
-		url: Navigation.Docs,
+		url: ExternalNavigation.Docs,
 	},
 	{
 		icon: <Telephone />,

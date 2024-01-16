@@ -32,20 +32,17 @@ describe('Landing Page', () => {
 			);
 		});
 	});
-	it('should render all sections', () => {
-		const sections = [
-			'static-site-header',
-			'landing-page-hero',
-			'landing-page-features',
-			'landing-page-benefits',
-			'landing-page-pricing',
-			'landing-page-faq',
-			'landing-page-cta',
-			'static-site-footer',
-		];
+	it.each([
+		'static-site-header',
+		'landing-page-hero',
+		'landing-page-features',
+		'landing-page-benefits',
+		'landing-page-pricing',
+		'landing-page-faq',
+		'landing-page-cta',
+		'static-site-footer',
+	])('should render section %s', (sectionId) => {
 		render(<LandingPage params={{ locale: 'en' }} />);
-		sections.forEach((section) => {
-			expect(screen.getByTestId(section)).toBeInTheDocument();
-		});
+		expect(screen.getByTestId(sectionId)).toBeInTheDocument();
 	});
 });
