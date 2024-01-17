@@ -11,10 +11,10 @@ describe('NavAuctionIcons Tests', () => {
 	global.open = vi.fn();
 	it('should render a list of icons', () => {
 		render(<NavAuctionIcons />);
-		NavAuctionIconsList.forEach((iconData) => {
+		for (const iconData of NavAuctionIconsList) {
 			const icon = screen.getByTestId(`${iconData.name}-btn`);
 			expect(icon).toBeInTheDocument();
-		});
+		}
 	});
 
 	it('should call track analytics when an icon is clicked', async () => {

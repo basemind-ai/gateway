@@ -67,7 +67,7 @@ export function PromptConfigBaseForm({
 		) {
 			setModelType(OpenAIModelType.Gpt35Turbo);
 		}
-	}, [modelVendor]);
+	}, [setModelType, modelVendor, modelType]);
 
 	return (
 		<div data-testid="base-form-container">

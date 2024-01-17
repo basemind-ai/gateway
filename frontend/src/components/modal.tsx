@@ -28,7 +28,7 @@ export function Modal({
 			dialogRef.current?.close();
 			onClose?.();
 		}
-	}, [modalOpen, dialogRef.current]);
+	}, [onOpen, onClose, modalOpen]);
 
 	return (
 		<div ref={clickAwayRef as LegacyRef<HTMLDivElement>}>

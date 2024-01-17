@@ -89,7 +89,7 @@ export function FirebaseLogin({
 				setLoading(false);
 			})();
 		}
-	}, [isInitialized]);
+	}, [isInitialized, track, identify, router, setLoading, setUser]);
 
 	const handleLogin = async (
 		provider: AuthProvider,

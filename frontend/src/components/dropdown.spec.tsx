@@ -29,9 +29,9 @@ describe('Dropdown component', () => {
 	it('should render headline twice', () => {
 		renderDropDown();
 		const headlines = screen.getAllByText(testHeadline);
-		headlines.forEach((headline) => {
+		for (const headline of headlines) {
 			expect(headline).toBeInTheDocument();
-		});
+		}
 	});
 
 	it('should render all options', () => {

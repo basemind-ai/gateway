@@ -135,13 +135,13 @@ describe('Navbar tests', () => {
 		expect(dropdown).toBeInTheDocument();
 		fireEvent.click(dropdown);
 
-		projects.forEach((project) => {
+		for (const project of projects) {
 			const link = screen.getByTestId(
 				`project-select-link-${project.id}`,
 			);
 			expect(link).toBeInTheDocument();
 			expect(link).toHaveAttribute('href', `/en/projects/${project.id}`);
-		});
+		}
 	});
 
 	it('picking project should set a new selected project', async () => {

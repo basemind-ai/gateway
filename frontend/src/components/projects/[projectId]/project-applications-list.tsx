@@ -50,9 +50,9 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 		{
 			onError: handleError,
 			onSuccess(data) {
-				data.forEach((promptConfig, index) => {
+				for (const [index, promptConfig] of data.entries()) {
 					setPromptConfig(applications![index].id, promptConfig);
-				});
+				}
 			},
 		},
 	);

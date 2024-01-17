@@ -32,8 +32,13 @@ describe('projects page tests', () => {
 			json: () => Promise.resolve([]),
 			ok: true,
 		});
-		const { result: setProjects } = renderHook(() => useSetProjects());
-		setProjects.current([]);
+		const {
+			result: { current: setProjects },
+		} = renderHook(() => useSetProjects());
+
+		act(() => {
+			setProjects([]);
+		});
 
 		render(<Projects />);
 		await waitFor(() => {
@@ -48,8 +53,12 @@ describe('projects page tests', () => {
 			json: () => Promise.resolve([]),
 			ok: true,
 		});
-		const { result: setProjects } = renderHook(() => useSetProjects());
-		setProjects.current([]);
+		const {
+			result: { current: setProjects },
+		} = renderHook(() => useSetProjects());
+		act(() => {
+			setProjects([]);
+		});
 
 		render(<Projects />);
 		await waitFor(() => {
@@ -64,16 +73,24 @@ describe('projects page tests', () => {
 			json: () => Promise.resolve([]),
 			ok: true,
 		});
-		const { result: setProjects } = renderHook(() => useSetProjects());
-		setProjects.current([]);
+		const {
+			result: { current: setProjects },
+		} = renderHook(() => useSetProjects());
+		act(() => {
+			setProjects([]);
+		});
 		render(<Projects />);
 		const projectsViewLoading = screen.getByTestId('projects-view-loading');
 		expect(projectsViewLoading).toBeInTheDocument();
 	});
 
 	it('rendering projects component change store value', async () => {
-		const { result: setProjects } = renderHook(() => useSetProjects());
-		setProjects.current([]);
+		const {
+			result: { current: setProjects },
+		} = renderHook(() => useSetProjects());
+		act(() => {
+			setProjects([]);
+		});
 
 		const projects = await ProjectFactory.batch(3);
 		const applications = await ApplicationFactory.batch(2);

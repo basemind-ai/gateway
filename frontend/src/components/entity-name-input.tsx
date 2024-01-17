@@ -34,13 +34,13 @@ export function EntityNameInput({
 		if (setIsValid) {
 			setIsValid(isLengthValid && isNameValid);
 		}
-	}, [isLengthValid, isNameValid]);
+	}, [setIsValid, isLengthValid, isNameValid]);
 
 	useEffect(() => {
 		if (setIsChanged) {
 			setIsChanged(value !== initialValue.current);
 		}
-	}, [value]);
+	}, [setIsChanged, value]);
 
 	const handleSetValue = (v: string) => {
 		setValue(v.trim());

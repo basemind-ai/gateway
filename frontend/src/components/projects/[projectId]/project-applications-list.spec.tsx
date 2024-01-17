@@ -28,11 +28,11 @@ describe('ApplicationsList', () => {
 		const applications = ApplicationFactory.batchSync(2);
 		handleRetrieveApplicationsSpy.mockResolvedValueOnce(applications);
 		const promptConfigLengths = [2, 3];
-		promptConfigLengths.forEach((configLength) => {
+		for (const configLength of promptConfigLengths) {
 			handleRetrievePromptConfigsSpy.mockReturnValueOnce(
 				OpenAIPromptConfigFactory.batch(configLength),
 			);
-		});
+		}
 
 		render(<ProjectApplicationsList project={project} />);
 		await waitFor(() => {
@@ -60,11 +60,11 @@ describe('ApplicationsList', () => {
 		const applications = ApplicationFactory.batchSync(2);
 		handleRetrieveApplicationsSpy.mockResolvedValueOnce(applications);
 		const promptConfigLengths = [2, 3];
-		promptConfigLengths.forEach((configLength) => {
+		for (const configLength of promptConfigLengths) {
 			handleRetrievePromptConfigsSpy.mockReturnValueOnce(
 				OpenAIPromptConfigFactory.batch(configLength),
 			);
-		});
+		}
 
 		render(<ProjectApplicationsList project={project} />);
 		await waitFor(() => {

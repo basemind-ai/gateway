@@ -59,12 +59,12 @@ describe('InviteMember', () => {
 			expect(sendInviteButton).toBeDisabled();
 
 			const emailInput = screen.getByTestId('invite-email-input');
-			emails.forEach((email) => {
+			for (const email of emails) {
 				fireEvent.change(emailInput, {
 					target: { value: email },
 				});
 				fireEvent.blur(emailInput);
-			});
+			}
 
 			await waitFor(() => {
 				expect(sendInviteButton.disabled).toBe(!valid);

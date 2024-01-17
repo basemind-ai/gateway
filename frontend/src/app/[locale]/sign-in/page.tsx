@@ -19,13 +19,13 @@ export default function SignIn() {
 
 	useEffect(() => {
 		page('auth');
-	}, [initialized]);
+	}, [initialized, page]);
 
 	useEffect(() => {
 		if (user) {
 			router.replace(Navigation.Projects);
 		}
-	}, [user]);
+	}, [user, router]);
 
 	return (
 		<main data-testid="login-container" className="flex bg-base-100 h-full">
