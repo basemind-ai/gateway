@@ -25,11 +25,12 @@ export function TabNavigation<T = string>({
 		const tab = tabs.find(
 			(t) => window.location.hash.slice(1) === `tab-${t.id}`,
 		);
+
 		if (tab) {
 			onTabChange(tab.id);
 			window.location.hash = '';
 		}
-	}, []);
+	}, [onTabChange, tabs]);
 
 	return (
 		<nav className="tabs tabs-boxed bg-base-100">

@@ -113,7 +113,15 @@ export function CohereModelParametersForm({
 			presencePenalty,
 			temperature,
 		});
-	}, [maxTokens, frequencyPenalty, presencePenalty, temperature, p, k]);
+	}, [
+		setParameters,
+		maxTokens,
+		frequencyPenalty,
+		presencePenalty,
+		temperature,
+		p,
+		k,
+	]);
 
 	return (
 		<div data-testid="cohere-model-parameters-form">

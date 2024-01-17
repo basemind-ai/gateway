@@ -34,7 +34,7 @@ export function PromptConfigGeneralSettings<T extends ModelVendor>({
 					?.filter((c) => c.id !== promptConfig.id)
 					.map((c) => c.name) ?? []
 			).includes(value),
-		[promptConfigs, promptConfig],
+		[applicationId, promptConfigs, promptConfig],
 	);
 
 	async function saveSettings() {
