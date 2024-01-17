@@ -26,12 +26,12 @@ describe('AvatarDropdown tests', () => {
 		const avatar = screen.getByTestId('avatar-image');
 		expect(avatar).toBeInTheDocument();
 
-		projects.forEach((project) => {
+		for (const project of projects) {
 			const projectLink = screen.getByTestId(
 				`project-select-link-${project.id}`,
 			);
 			expect(projectLink).toBeInTheDocument();
-		});
+		}
 
 		const settingsLink = screen.getByTestId('setting-link');
 		expect(settingsLink).toBeInTheDocument();
@@ -124,11 +124,11 @@ describe('AvatarDropdown tests', () => {
 			/>,
 		);
 
-		projects.forEach((project) => {
+		for (const project of projects) {
 			const projectLink = screen.getByTestId(
 				`project-select-link-${project.id}`,
 			);
 			expect(projectLink).toHaveTextContent(project.name);
-		});
+		}
 	});
 });

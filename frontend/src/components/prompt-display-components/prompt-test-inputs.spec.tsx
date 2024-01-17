@@ -42,12 +42,12 @@ describe('PromptTestInputs', () => {
 		);
 
 		const inputFields = screen.getAllByTestId(/input-variable-input-.*/);
-		inputFields.forEach((inputField, index) => {
+		for (const [index, inputField] of inputFields.entries()) {
 			expect(inputField).toHaveAttribute(
 				'placeholder',
 				`{${expectedVariables[index]}}`,
 			);
-		});
+		}
 	});
 
 	it('should update the templateVariables state when input values change', () => {

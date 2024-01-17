@@ -13,11 +13,11 @@ describe('Footer Tests', () => {
 	});
 	it('should render footer with links', () => {
 		render(<Footer />);
-		FooterLinks.forEach(({ title, href }) => {
+		for (const { title, href } of FooterLinks) {
 			const linkElement = screen.getByTestId(`footer-${title}`);
 			expect(linkElement).toBeInTheDocument();
 			expect(linkElement).toHaveAttribute('href', href);
-		});
+		}
 	});
 	it('should render footer with auction icons', () => {
 		render(<Footer />);

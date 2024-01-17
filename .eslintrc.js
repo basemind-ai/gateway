@@ -1,4 +1,6 @@
-const rules = {};
+const rules = {
+	'unicorn/no-array-for-each': 2,
+};
 
 const tsWebRules = {
 	...rules,

@@ -14,9 +14,9 @@ describe('Contact component', () => {
 
 	it('renders the topics options', () => {
 		render(<ContactForm isAuthenticated={false} />);
-		Object.values(SupportTopic).forEach((topic) => {
+		for (const topic of Object.values(SupportTopic)) {
 			expect(screen.getByText(topic)).toBeInTheDocument();
-		});
+		}
 	});
 
 	it('submit support button is disabled by default', () => {
