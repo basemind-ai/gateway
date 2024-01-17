@@ -3,10 +3,12 @@ const rules = {};
 const tsWebRules = {
 	...rules,
 	'@next/next/no-html-link-for-pages': 0,
+	'react-hooks/exhaustive-deps': 2,
 };
 
 const tsWebTestRules = {
 	...tsWebRules,
+	'testing-library/no-wait-for-side-effects': 0,
 	'no-restricted-imports': [
 		'error',
 		{
@@ -51,10 +53,10 @@ module.exports = {
 			rules,
 		},
 		{
-			files: ['{frontend,docs}/**/*.{ts,tsx}'],
+			files: ['frontend/**/*.{ts,tsx}'],
 			excludedFiles: [
-				'{frontend,docs}/**/tests/**/*.{ts,tsx}',
-				'{frontend,docs}/**/*.spec.{ts,tsx}',
+				'frontend/**/tests/**/*.{ts,tsx}',
+				'frontend/**/*.spec.{ts,tsx}',
 			],
 			extends: [
 				'@tool-belt/eslint-config/react',
@@ -64,17 +66,14 @@ module.exports = {
 		},
 		{
 			files: [
-				'{frontend,docs}/tests/**/*.{ts,tsx}',
-				'{frontend,docs}/**/*.spec.{ts,tsx}',
+				'frontend/**/tests/**/*.{ts,tsx}',
+				'frontend/**/*.spec.{ts,tsx}',
 			],
 			extends: [
 				'@tool-belt/eslint-config/react',
 				'plugin:vitest/recommended',
 			],
-			rules: {
-				...tsWebTestRules,
-				'testing-library/no-wait-for-side-effects': 0,
-			},
+			rules: tsWebTestRules,
 		},
 	],
 };

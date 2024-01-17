@@ -103,7 +103,7 @@ export default function ProjectOverview({
 		if (initialized) {
 			page('projectOverview', { projectId });
 		}
-	}, [initialized]);
+	}, [projectId, initialized, page]);
 
 	const tabs: TabData<ProjectPageTabNames>[] = [
 		{

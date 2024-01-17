@@ -56,44 +56,59 @@ export function usePromptTesting<T extends ModelVendor>({
 	);
 	const handlerRef = useRef<WebsocketHandler<T> | null>(null);
 
-	const handleMessage = ({
-		data,
-	}: MessageEvent<PromptConfigTestResultChunk>) => {
-		if (data.finishReason) {
+	const handleMessage = useCallback(
+		({ data }: MessageEvent<PromptConfigTestResultChunk>) => {
+			if (data.finishReason) {
+				setIsRunningTest(false);
+				setTestFinishReason(data.finishReason as StreamFinishReason);
+
+				(async () => {
+					const [record] = await Promise.all([
+						handleRetrievePromptTestRecordById<T>({
+							applicationId,
+							projectId,
+							promptTestRecordId: data.promptTestRecordId!,
+						}),
+						onFinish(),
+					]);
+
+					setTestRecord(record);
+				})();
+			}
+			setModelResponses((oldResults) => [...oldResults, data]);
+		},
+		[applicationId, projectId, onFinish],
+	);
+
+	const handleClose = useCallback(
+		(isError: boolean, reason: string) => {
+			if (isError) {
+				onError(reason);
+			}
+			if (isRunningTest) {
+				setIsRunningTest(false);
+				setTestFinishReason(isError ? StreamFinishReason.ERROR : null);
+			}
+			handlerRef.current = null;
+		},
+		[onError, isRunningTest],
+	);
+
+	const handleError = useCallback(
+		(error: WebsocketError) => {
 			setIsRunningTest(false);
-			setTestFinishReason(data.finishReason as StreamFinishReason);
+			setTestFinishReason(StreamFinishReason.ERROR);
+			onError(error.message);
+		},
+		[onError],
+	);
 
-			(async () => {
-				const [record] = await Promise.all([
-					handleRetrievePromptTestRecordById<T>({
-						applicationId,
-						projectId,
-						promptTestRecordId: data.promptTestRecordId!,
-					}),
-					onFinish(),
-				]);
-
-				setTestRecord(record);
-			})();
-		}
-		setModelResponses((oldResults) => [...oldResults, data]);
-	};
-
-	const handleClose = (isError: boolean, reason: string) => {
-		if (isError) {
-			onError(reason);
-		}
-		if (isRunningTest) {
-			setIsRunningTest(false);
-			setTestFinishReason(isError ? StreamFinishReason.ERROR : null);
-		}
-		handlerRef.current = null;
-	};
-	const handleError = (error: WebsocketError) => {
+	const resetState = useCallback(() => {
 		setIsRunningTest(false);
-		setTestFinishReason(StreamFinishReason.ERROR);
-		onError(error.message);
-	};
+		setModelResponses([]);
+		setTestFinishReason(null);
+		setTestRecord(null);
+	}, []);
 
 	useEffect(() => {
 		resetState();
@@ -112,14 +127,14 @@ export function usePromptTesting<T extends ModelVendor>({
 			handlerRef.current?.closeSocket();
 			handlerRef.current = null;
 		};
-	}, [applicationId, projectId]);
-
-	const resetState = useCallback(() => {
-		setIsRunningTest(false);
-		setModelResponses([]);
-		setTestFinishReason(null);
-		setTestRecord(null);
-	}, []);
+	}, [
+		applicationId,
+		projectId,
+		handleClose,
+		handleError,
+		handleMessage,
+		resetState,
+	]);
 
 	const sendMessage = async (testConfig: PromptConfigTest<T>) => {
 		if (handlerRef.current?.isClosed()) {

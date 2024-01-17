@@ -17,7 +17,7 @@ export default function Support() {
 		if (initialized) {
 			page('support');
 		}
-	}, [initialized]);
+	}, [initialized, page]);
 
 	return (
 		<main

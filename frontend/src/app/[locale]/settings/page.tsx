@@ -17,7 +17,7 @@ export default function UserSettings() {
 		if (initialized) {
 			page('userSettings');
 		}
-	}, [initialized]);
+	}, [initialized, page]);
 
 	return (
 		<main

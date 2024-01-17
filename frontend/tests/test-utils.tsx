@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-imports,import/export */
+/* eslint-disable import/export,no-restricted-imports */
 import {
 	render,
 	renderHook,

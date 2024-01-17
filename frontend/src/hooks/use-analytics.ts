@@ -65,7 +65,7 @@ export function useAnalytics(): AnalyticsHandlers {
 
 			void analyticsRef.current?.track(event, properties);
 		},
-		[analyticsRef.current],
+		[user?.uid, pathname],
 	);
 
 	const page = useCallback(
@@ -75,7 +75,7 @@ export function useAnalytics(): AnalyticsHandlers {
 
 			void analyticsRef.current?.page(name, properties);
 		},
-		[analyticsRef.current],
+		[user?.uid, pathname],
 	);
 
 	const identify = useCallback(
@@ -85,7 +85,7 @@ export function useAnalytics(): AnalyticsHandlers {
 				deepmerge(properties, user ?? {}),
 			);
 		},
-		[analyticsRef.current],
+		[user],
 	);
 
 	const group = useCallback(
@@ -93,7 +93,7 @@ export function useAnalytics(): AnalyticsHandlers {
 			properties.userId ??= user?.uid;
 			void analyticsRef.current?.group(groupId, properties);
 		},
-		[analyticsRef.current],
+		[user?.uid],
 	);
 
 	return {
