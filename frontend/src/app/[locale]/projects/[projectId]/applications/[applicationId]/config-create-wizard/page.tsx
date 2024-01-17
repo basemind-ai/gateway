@@ -175,6 +175,15 @@ export default function PromptConfigCreateWizard({
 		}
 	}, [setProjects, handleError, t]);
 
+	const handleChangeModelVendor = useCallback(
+		(vendor: ModelVendor) => {
+			store.setModelVendor(vendor);
+			store.setMessages([]);
+			store.setParameters({});
+		},
+		[store],
+	);
+
 	useEffect(() => {
 		if (initialized) {
 			page('createConfigWizard', {
@@ -257,7 +266,7 @@ export default function PromptConfigCreateWizard({
 							handleError={handleError}
 							handleMessagesChange={store.setMessages}
 							handleModelTypeChange={store.setModelType}
-							handleModelVendorChange={store.setModelVendor}
+							handleModelVendorChange={handleChangeModelVendor}
 							handleParametersChange={store.setParameters}
 							handleRefreshProject={handleRefreshProject}
 							handleTemplateVariablesChange={
