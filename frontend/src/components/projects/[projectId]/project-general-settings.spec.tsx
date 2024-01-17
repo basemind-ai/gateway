@@ -1,5 +1,5 @@
 import { ProjectFactory } from 'tests/factories';
-import { fireEvent, render, renderHook, screen } from 'tests/test-utils';
+import { act, fireEvent, render, renderHook, screen } from 'tests/test-utils';
 
 import * as ProjectAPI from '@/api/projects-api';
 import { ProjectGeneralSettings } from '@/components/projects/[projectId]/project-general-settings';
@@ -20,7 +20,10 @@ describe('ProjectGeneralSettings', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+
+		act(() => {
+			setProjects([project]);
+		});
 
 		render(<ProjectGeneralSettings project={project} />);
 
@@ -43,7 +46,9 @@ describe('ProjectGeneralSettings', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+		act(() => {
+			setProjects([project]);
+		});
 		handleUpdateProjectSpy.mockResolvedValueOnce(project);
 
 		render(<ProjectGeneralSettings project={project} />);
@@ -72,7 +77,9 @@ describe('ProjectGeneralSettings', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+		act(() => {
+			setProjects([project]);
+		});
 
 		render(<ProjectGeneralSettings project={project} />);
 
@@ -102,7 +109,9 @@ describe('ProjectGeneralSettings', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+		act(() => {
+			setProjects([project]);
+		});
 
 		render(<ProjectGeneralSettings project={project} />);
 
@@ -118,7 +127,9 @@ describe('ProjectGeneralSettings', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+		act(() => {
+			setProjects([project]);
+		});
 
 		render(<ProjectGeneralSettings project={project} />);
 
@@ -143,7 +154,9 @@ describe('ProjectGeneralSettings', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+		act(() => {
+			setProjects([project]);
+		});
 
 		render(<ProjectGeneralSettings project={project} />);
 

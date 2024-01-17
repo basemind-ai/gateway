@@ -4,6 +4,7 @@ import {
 	ProjectFactory,
 } from 'tests/factories';
 import {
+	act,
 	fireEvent,
 	render,
 	renderHook,
@@ -31,13 +32,17 @@ describe('PromptGeneralSettings', () => {
 		result: { current: setProjects },
 	} = renderHook(useSetProjects);
 	const project = ProjectFactory.buildSync();
-	setProjects([project]);
+	act(() => {
+		setProjects([project]);
+	});
 
 	const application = ApplicationFactory.buildSync();
 	const {
 		result: { current: setProjectApplications },
 	} = renderHook(useSetProjectApplications);
-	setProjectApplications(project.id, [application]);
+	act(() => {
+		setProjectApplications(project.id, [application]);
+	});
 
 	const promptConfig = OpenAIPromptConfigFactory.buildSync();
 	const {

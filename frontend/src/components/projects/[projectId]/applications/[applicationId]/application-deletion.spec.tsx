@@ -1,5 +1,6 @@
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import {
+	act,
 	fireEvent,
 	render,
 	renderHook,
@@ -23,13 +24,19 @@ describe('ApplicationDeletion tests', () => {
 		result: { current: setProjects },
 	} = renderHook(useSetProjects);
 	const projects = ProjectFactory.batchSync(1);
-	setProjects(projects);
+
+	act(() => {
+		setProjects(projects);
+	});
 
 	const applications = ApplicationFactory.batchSync(2);
 	const {
 		result: { current: setProjectApplications },
 	} = renderHook(useSetProjectApplications);
-	setProjectApplications(projects[0].id, applications);
+
+	act(() => {
+		setProjectApplications(projects[0].id, applications);
+	});
 
 	it('renders application deletion component', () => {
 		render(
