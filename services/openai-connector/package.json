@@ -10,7 +10,7 @@
 		"dev": "webpack --watch"
 	},
 	"dependencies": {
-		"@grpc/grpc-js": "^1.9.13",
+		"@grpc/grpc-js": "^1.9.14",
 		"@protobuf-ts/runtime": "^2.9.3",
 		"@protobuf-ts/runtime-rpc": "^2.9.3",
 		"grpc-health-check": "^2.0.0",
