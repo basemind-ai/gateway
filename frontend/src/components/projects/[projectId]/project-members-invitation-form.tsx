@@ -20,7 +20,7 @@ function EmailChip({
 	onRemove: () => void;
 }) {
 	return (
-		<div className="flex gap-1 items-center text-lg badge badge-lg badge-info">
+		<div className="flex gap-1 items-center text-lg badge badge-lg badge-accent">
 			<span>{email}</span>
 			<button data-testid="remove-email-btn" onClick={onRemove}>
 				<XCircleFill className={`w-4 h-4 text-neutral`} />

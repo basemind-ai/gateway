@@ -43,7 +43,7 @@ export function NavAuctionIcons() {
 			{NavAuctionIconsList.map(({ icon, name, url }) => (
 				<button
 					key={name}
-					className="hover:text-primary join-horizontal btn btn-ghost"
+					className="hover:text-accent join-horizontal btn btn-ghost"
 					data-testid={`${name}-btn`}
 					onClick={() => {
 						handleIconClick(`${name}_click`, url);

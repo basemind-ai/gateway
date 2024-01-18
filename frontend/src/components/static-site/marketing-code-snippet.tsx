@@ -73,9 +73,9 @@ export function MarketingCodeSnippet() {
 						<button
 							name="tabs"
 							data-testid={`tab-${tab.framework}`}
-							className={`tab bg-base-200 text-base-content rounded-b-none hover:bg-neutral ${
+							className={`tab bg-base-200 text-neutral-content rounded-b-none hover:bg-neutral ${
 								selectedFramework === tab.framework &&
-								'tab-active bg-base-300 text-primary'
+								'tab-active bg-base-300 text-accent'
 							}`}
 							aria-label={tab.framework}
 							disabled={!tab.isActive}

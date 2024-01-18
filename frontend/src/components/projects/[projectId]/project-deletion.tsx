@@ -51,7 +51,7 @@ export function ProjectDeletion({ project }: { project: Project }) {
 				</div>
 				<button
 					data-testid="project-delete-btn"
-					className="card-action-button btn-error text-error-content disabled:text-neutral"
+					className="btn-sm btn btn-outline btn-error disabled:text-neutral"
 					disabled={isLoading}
 					onClick={() => {
 						setIsDeleteModalOpen(true);

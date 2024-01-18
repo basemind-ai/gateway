@@ -44,7 +44,7 @@ export function CodeSnippet({
 						showSuccess(t('copied'));
 					}}
 				>
-					<Front className="w-4 h-4 text-secondary" />
+					<Front className="w-4 h-4 text-accent" />
 				</button>
 			)}
 		</div>

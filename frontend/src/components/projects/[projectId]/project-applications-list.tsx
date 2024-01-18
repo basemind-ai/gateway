@@ -81,9 +81,9 @@ export function ProjectApplicationsList({ project }: { project: Project }) {
 					onClick={() => {
 						setIsCreateModalOpen(true);
 					}}
-					className="flex gap-2 items-center text-secondary hover:brightness-90"
+					className="card-action-button-outline btn-primary"
 				>
-					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
+					<Plus className="w-4 h-4 hover:brightness-90" />
 					<span>{t('newApplication')}</span>
 				</button>
 			</div>

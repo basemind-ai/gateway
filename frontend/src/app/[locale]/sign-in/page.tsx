@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Oval } from 'react-loading-icons';
 
+import { LottieLoader } from '@/components/loader';
 import { Logo } from '@/components/logo';
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';
 import { LoginBanner } from '@/components/sign-in/login-banner';
@@ -29,11 +29,7 @@ export default function SignIn() {
 
 	return (
 		<main data-testid="login-container" className="flex bg-base-100 h-full">
-			<Oval
-				height="33vh"
-				width="33vw"
-				className={`m-auto ${!isLoading && 'hidden'}`}
-			/>
+			<LottieLoader size="33" />
 			<div className={`flex grow ${isLoading && 'hidden'}`}>
 				<div className="flex grow px-16 pt-16 pb-24 flex-col">
 					<Logo />

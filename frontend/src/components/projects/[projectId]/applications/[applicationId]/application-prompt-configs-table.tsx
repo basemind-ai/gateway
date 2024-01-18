@@ -71,7 +71,7 @@ export function ApplicationPromptConfigsTable({
 							<td>
 								<button
 									data-testid="application-prompt-configs-table-config-name-button"
-									className="btn-link"
+									className="btn-link text-base-content hover:text-accent"
 									onClick={() => {
 										pushToTab({
 											promptConfigId,
@@ -87,7 +87,7 @@ export function ApplicationPromptConfigsTable({
 								</button>
 							</td>
 							<td>
-								<span className="text-info">
+								<span className="text-base-content">
 									{
 										modelVendorToLocaleMap[
 											modelVendor as ModelVendor
@@ -96,7 +96,7 @@ export function ApplicationPromptConfigsTable({
 								</span>
 							</td>
 							<td>
-								<span className="text-info">
+								<span className="text-base-content">
 									{modelTypeToLocaleMap[modelType]}
 								</span>
 							</td>
@@ -110,7 +110,7 @@ export function ApplicationPromptConfigsTable({
 										});
 									}}
 								>
-									<PencilFill className="w-3.5 h-3.5 text-secondary" />
+									<PencilFill className="w-3.5 h-3.5 hover:text-accent" />
 								</button>
 							</td>
 						</tr>

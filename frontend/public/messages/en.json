@@ -58,6 +58,8 @@
 		"copied": "Copied",
 		"decline": "Decline",
 		"logout": "Logout",
+		"mobileNotSupported": "Oops, Not Mobile-Ready Yet!",
+		"mobileNotSupportedDescription": "Our dashboard shines best on larger screens for now. grab your computer to dive into the full experience.",
 		"open": "Open",
 		"optional": "optional",
 		"signIn": "Sign-In",

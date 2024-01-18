@@ -3,10 +3,10 @@
 import { useTranslations } from 'next-intl';
 import { memo, useEffect, useState } from 'react';
 import { Gear, Speedometer2 } from 'react-bootstrap-icons';
-import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 
 import { handleRetrievePromptConfigs } from '@/api';
+import { LottieLoader } from '@/components/loader';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigCodeSnippet } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-code-snippet';
 import { PromptConfigDeletion } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-deletion';
@@ -116,7 +116,7 @@ export default function PromptConfiguration({
 				data-testid="prompt-config-page-loading"
 				className="h-full w-full flex items-center justify-center"
 			>
-				<Oval height="33vh" width="33vw" className="m-auto" />
+				<LottieLoader />
 			</main>
 		);
 	}

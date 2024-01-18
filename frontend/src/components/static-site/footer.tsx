@@ -31,7 +31,7 @@ export function Footer() {
 					<Link
 						key={title}
 						href={href}
-						className="link link-hover hover:text-secondary"
+						className="link link-hover hover:text-accent"
 						data-testid={`footer-${title}`}
 						locale="en"
 					>

@@ -120,7 +120,7 @@ export function OpenAIPromptTemplateForm({
 				<div className="self-center">
 					<button
 						data-testid="openai-prompt-template-form-add-message-button"
-						className="btn btn-ghost text-blue-500"
+						className="btn btn-ghost text-primary"
 						onClick={handleAddMessage}
 					>
 						<Plus height={Dimensions.Ten} width={Dimensions.Ten} />

@@ -3,10 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { memo, useCallback, useEffect, useState } from 'react';
-import { Oval } from 'react-loading-icons';
 import { shallow } from 'zustand/shallow';
 
 import { handleCreatePromptConfig, handleRetrieveProjects } from '@/api';
+import { LottieLoader } from '@/components/loader';
 import { Navbar } from '@/components/navbar';
 import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/base-form';
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
@@ -253,7 +253,7 @@ export default function PromptConfigCreateWizard({
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
 			{isLoading ? (
-				<Oval height="33vh" width="33vw" className="m-auto" />
+				<LottieLoader />
 			) : (
 				<div className="page-content-container">
 					<Navbar
@@ -268,7 +268,8 @@ export default function PromptConfigCreateWizard({
 								<li
 									key={stage}
 									className={`step ${
-										store.wizardStage === stage && stepColor
+										store.wizardStage >= Number(stage) &&
+										stepColor
 									}
 										}`}
 								/>

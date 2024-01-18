@@ -478,9 +478,9 @@ export function PromptConfigCodeSnippet({
 						<button
 							name="tabs"
 							data-testid={`tab-${tab.framework}`}
-							className={`tab [--tab-bg:bg-base-100] text-base-content rounded-b-none hover:bg-neutral ${
+							className={`tab [--tab-bg:bg-natural] text-base-content rounded-b-none hover:bg-neutral ${
 								selectedFramework === tab.framework &&
-								'tab-active bg-base-200 border-base-300 hover:bg-base-300'
+								'tab-active bg-base-200'
 							}`}
 							aria-label={tab.framework}
 							disabled={!tab.isActive}
@@ -489,7 +489,7 @@ export function PromptConfigCodeSnippet({
 							}}
 						>
 							<span
-								className="text-info"
+								className="text-base-content"
 								data-testid={`tab-text-${tab.framework}`}
 							>
 								{tab.framework}
@@ -500,24 +500,11 @@ export function PromptConfigCodeSnippet({
 							data-testid={`tab-content-${tab.framework}-container`}
 						>
 							<div className="flex flex-col">
-								<button
-									className="btn btn-sm btn-wide btn-neutral mb-5"
-									disabled={!tab.docs}
-									onClick={handleDocClick(tab)}
-									data-testid={`code-snippet-view-docs-button-${tab.language}`}
-								>
-									<Github className="w-4 h-4" />
-									<span className="text-sm">
-										{t('documentation')}
-									</span>
-								</button>
 								<div className="sm:flex sm:flex-col md:grid md:grid-cols-2 sm:gap-4 md:gap-8">
 									<div className="flex flex-col gap-2">
 										<div className="pb-2 flex items-center gap-2">
-											<span className="badge badge-outline badge-info text-xl font-bold">
-												1
-											</span>
-											<span className="text-info font-bold">
+											<span className="text-sm text-neutral-content">
+												1.{'	'}
 												{t(
 													`${tab.language}InstallationText`,
 												)}
@@ -527,10 +514,8 @@ export function PromptConfigCodeSnippet({
 									</div>
 									<div className="flex flex-col gap-2">
 										<div className="pb-2 flex items-center gap-2">
-											<span className="badge badge-outline badge-info text-xl font-bold">
-												2
-											</span>
-											<span className="text-info font-bold">
+											<span className="text-sm text-neutral-content">
+												2.{'	'}
 												{t('importText')}
 											</span>
 										</div>
@@ -541,10 +526,8 @@ export function PromptConfigCodeSnippet({
 									</div>
 									<div className="flex flex-col gap-2">
 										<div className="pb-2 flex items-center gap-2">
-											<span className="badge badge-outline badge-info text-xl font-bold">
-												3
-											</span>
-											<span className="text-info font-bold">
+											<span className="text-sm text-neutral-content">
+												3.{'	'}
 												{t('usageRequestText')}
 											</span>
 										</div>
@@ -552,16 +535,25 @@ export function PromptConfigCodeSnippet({
 									</div>
 									<div className="flex flex-col gap-2">
 										<div className="pb-2 flex items-center gap-2">
-											<span className="badge badge-outline badge-info text-xl font-bold">
-												4
-											</span>
-											<span className="text-info font-bold">
+											<span className="text-sm text-neutral-content">
+												4.{'	'}
 												{t('usageStreamText')}
 											</span>
 										</div>
 										<StreamSnippet replacer={replacer} />
 									</div>
 								</div>
+								<button
+									className="btn btn-sm w-fit btn-primary"
+									disabled={!tab.docs}
+									onClick={handleDocClick(tab)}
+									data-testid={`code-snippet-view-docs-button-${tab.language}`}
+								>
+									<Github className="w-4 h-4" />
+									<span className="text-sm">
+										{t('documentation')}
+									</span>
+								</button>
 							</div>
 						</div>
 					</Fragment>

@@ -61,7 +61,7 @@ const contentMapper: Record<
 	[ModelVendor.Cohere]:
 		(templateVariables?: Record<string, string>) =>
 		(m: ProviderMessageType<ModelVendor.Cohere>) => (
-			<span className="text-info">
+			<span className="text-base-content">
 				{parseTemplateVariables(m.message, templateVariables)}
 			</span>
 		),
@@ -83,7 +83,7 @@ const parseTemplateVariables = (
 		return (
 			<span
 				key={i}
-				className="text-primary"
+				className="text-accent"
 				data-testid="template-variable"
 			>
 				{value || `{${match}}`}
@@ -95,7 +95,7 @@ const parseTemplateVariables = (
 export function PromptContentDisplay<T extends ModelVendor>({
 	messages,
 	modelVendor,
-	className = 'rounded-dark-card pt-2 pb-2',
+	className = 'pt-2 pb-2',
 	templateVariables,
 }: {
 	className?: string;
