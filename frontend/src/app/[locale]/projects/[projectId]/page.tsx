@@ -15,6 +15,7 @@ import { ProjectGeneralSettings } from '@/components/projects/[projectId]/projec
 import { ProjectMembers } from '@/components/projects/[projectId]/project-members';
 import { ProjectMembersInvitationForm } from '@/components/projects/[projectId]/project-members-invitation-form';
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
+import { MobileNotSupported } from '@/components/projects/mobile-not-supported';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { Navigation, ProjectPageTabNames } from '@/constants';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -138,7 +139,10 @@ export default function ProjectOverview({
 			className="flex flex-col min-h-screen w-full bg-base-100"
 			data-testid="project-page"
 		>
-			<div className="page-content-container">
+			<div className="sm:hidden my-auto">
+				<MobileNotSupported />
+			</div>
+			<div className="page-content-container hidden sm:block">
 				<Navbar project={project} userPhotoURL={user?.photoURL} />
 				<TabNavigation<ProjectPageTabNames>
 					tabs={tabs}

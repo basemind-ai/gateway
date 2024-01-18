@@ -130,26 +130,12 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 			className="flex flex-col justify-evenly"
 			data-testid="prompt-config-testing-form"
 		>
-			<div className="text-info text-xl text-center pb-5">
-				{`${t('credits') + projectCredits}$`}
-			</div>
-			<div className="flex justify-between">
-				<h2
-					className="card-header self-end"
-					data-testid="prompt-content-display-title"
-				>
-					{t('promptTemplate')}
-				</h2>
-				<button
-					disabled={!allExpectedVariablesHaveLength || isRunningTest}
-					data-testid="run-test-button"
-					className="btn btn-wide btn-success self-start"
-					onClick={testFinishReason ? resetState : handleRunTest}
-				>
-					{renderButtonIcon()}
-					{t('runTest')}
-				</button>
-			</div>
+			<h2
+				className="card-header self-start"
+				data-testid="prompt-content-display-title"
+			>
+				{t('promptTemplate')}
+			</h2>
 			<PromptContentDisplay
 				modelVendor={modelVendor}
 				messages={messages}
@@ -163,7 +149,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 						tooltipText={t('variablesTooltip')}
 						dataTestId="test-inputs-header"
 					/>
-					<div className="rounded-dark-card pb-3">
+					<div className=" pb-3">
 						<div className="card-section-divider" />
 						<PromptTestInputs
 							setTemplateVariables={setTemplateVariables}
@@ -173,6 +159,19 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 					</div>
 				</>
 			)}
+			<div className="card-divider" />
+			<button
+				disabled={!allExpectedVariablesHaveLength || isRunningTest}
+				data-testid="run-test-button"
+				className="btn btn-secondary w-fit mb-2"
+				onClick={testFinishReason ? resetState : handleRunTest}
+			>
+				{renderButtonIcon()}
+				{t('runTest')}
+			</button>
+			<div className="text-primary text-sm">
+				{`${t('credits') + projectCredits}$`}
+			</div>
 			{responseContent && (
 				<>
 					<div className="card-divider" />

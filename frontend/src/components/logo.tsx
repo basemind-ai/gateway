@@ -9,7 +9,7 @@ export function Logo({ textSize = 'text-2xl' }: { textSize?: string }) {
 			data-testid="logo-component"
 		>
 			<span
-				className={`font-bold text-primary  ${textSize}`}
+				className={`font-bold text-base-content  ${textSize}`}
 				data-testid="logo-text"
 			>
 				{t('basemindName')}

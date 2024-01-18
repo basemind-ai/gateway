@@ -90,20 +90,18 @@ export function BenefitsSection() {
 	const Benefits = [
 		{
 			description: t('benefitsSpeedDescription'),
-			icon: (
-				<Lightning className="absolute left-1 top-1 text-secondary" />
-			),
+			icon: <Lightning className="absolute left-1 top-1 " />,
 			name: t('benefitsSpeedTitle'),
 		},
 		{
 			description: t('benefitsPrivacyDescription'),
-			icon: <LockFill className="absolute left-1 top-1 text-secondary" />,
+			icon: <LockFill className="absolute left-1 top-1 " />,
 			name: t('benefitsPrivacyTitle'),
 		},
 
 		{
 			description: t('benefitsScalabilityDescription'),
-			icon: <Boxes className="absolute left-1 top-1 text-secondary" />,
+			icon: <Boxes className="absolute left-1 top-1 " />,
 			name: t('benefitsScalabilityTitle'),
 		},
 	];
@@ -123,13 +121,16 @@ export function BenefitsSection() {
 									{t('better')}
 								</span>
 							</p>
-							<dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-neutral-content/80 lg:max-w-none">
+							<dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-neutral-content lg:max-w-none">
 								{Benefits.map((feature) => (
 									<div
 										key={feature.name}
 										className="relative pl-8"
 									>
-										<dl> {feature.icon}</dl>
+										<dl className="text-primary">
+											{' '}
+											{feature.icon}
+										</dl>
 										<dt className="inline font-semibold text-primary">
 											{feature.name}
 										</dt>
@@ -141,12 +142,12 @@ export function BenefitsSection() {
 							</dl>
 						</div>
 					</div>
-					<div className=" blur-3xl bg-gradient-to-br from-neutral-content/60 via-primary to-neutral-content/80 w-1/2   absolute aspect-square top-1/2 opacity-10 left-2/3 transform -translate-x-1/2 -translate-y-1/2" />
+					<div className=" blur-3xl bg-gradient-to-br from-neutral-content/60 via-secondary to-neutral-content/80 w-1/2   absolute aspect-square top-1/2 opacity-10 left-2/3 transform -translate-x-1/2 -translate-y-1/2" />
 
 					<div className="flex h-full aspect-square overflow-clip rounded-full">
 						<div className="relative w-full self-center">
 							<div className="z-50 bg-base-300 absolute rounded-box flex items-center justify-center bg-gradient-to-r from-base-300 to-neutral shadow-xl w-16 h-16 rotate-[-14deg] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-								<LockFill className="text-primary rotate-[14deg]" />
+								<LockFill className="text-base-content rotate-[14deg]" />
 							</div>
 							<HaloAnimation />
 							<AnimatedGrid />

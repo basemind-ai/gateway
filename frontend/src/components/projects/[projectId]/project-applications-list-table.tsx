@@ -50,7 +50,7 @@ export function ProjectApplicationsListTable({
 												),
 											);
 										}}
-										className="btn-link"
+										className="btn-link text-base-content hover:text-accent"
 									>
 										<span>{name}</span>
 									</button>
@@ -63,7 +63,7 @@ export function ProjectApplicationsListTable({
 								<td
 									data-testid={`application-prompt-config-count-${applicationId}`}
 								>
-									<span className="text-info">
+									<span className="text-neutral-content">
 										{promptConfigs[applicationId]?.length ??
 											'0'}
 									</span>
@@ -84,7 +84,7 @@ export function ProjectApplicationsListTable({
 											);
 										}}
 									>
-										<PencilFill className="w-3.5 h-3.5 text-secondary" />
+										<PencilFill className="w-3.5 h-3.5 text-base-content hover:text-accent" />
 									</button>
 								</td>
 							</tr>

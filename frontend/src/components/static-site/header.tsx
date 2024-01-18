@@ -26,7 +26,7 @@ export function StaticPageHeader() {
 				<div className="divider divider-horizontal ml-0 my-2 hidden sm:flex" />
 
 				<Link
-					className="btn bg-gradient-to-tr from-accent to-primary text-primary-content  btn-sm m-1"
+					className="btn btn-primary  btn-sm m-1"
 					data-testid="header-sign-in-button"
 					href={Navigation.SignIn}
 				>

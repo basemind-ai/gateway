@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 
 import { handleRetrieveProjects } from '@/api';
+import { LottieLoader } from '@/components/loader';
 import { Navigation } from '@/constants';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -52,7 +52,7 @@ export default function Projects() {
 			className="bg-base-100 flex h-full w-full"
 			data-testid="projects-view-loading"
 		>
-			<Oval height="33vh" width="33vw" className="m-auto" />
+			<LottieLoader />
 		</main>
 	);
 }

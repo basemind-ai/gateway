@@ -131,7 +131,7 @@ export function OpenAIMessageForm({
 						<input
 							type="text"
 							placeholder={t('messageNameInputPlaceholder')}
-							className={`input input-bordered input-sm rounded bg-neutral text-neutral-content text-xs ${
+							className={`input input-bordered input-sm rounded bg-neutral text-neutral-content text-xs placeholder-neutral-content/50 ${
 								!nameIsValid && 'input-error'
 							}`}
 							data-testid="openai-message-name-input"
@@ -160,12 +160,12 @@ export function OpenAIMessageForm({
 						<span className="label-text">
 							{t('messageContent')}
 						</span>
-						<span className="text-info label-text-alt text-sm">
+						<span className="text-accent label-text-alt text-sm">
 							{t('wrapVariable')}
 						</span>
 					</label>
 					<textarea
-						className="textarea rounded bg-neutral text-neutral-content h-full min-h-fit"
+						className="textarea rounded bg-neutral text-neutral-content h-full min-h-fit placeholder-neutral-content/50"
 						placeholder={t('messageContentPlaceholder')}
 						value={content}
 						onChange={handleChange(setContent)}
@@ -174,7 +174,7 @@ export function OpenAIMessageForm({
 				</div>
 			</div>
 			<button
-				className="btn btn-ghost self-center text-warning hover:text-error"
+				className="btn btn-ghost self-center text-neutral-content hover:text-error"
 				data-testid="openai-message-delete-button"
 				onClick={() => {
 					handleDeleteMessage();

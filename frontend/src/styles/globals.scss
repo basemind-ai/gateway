@@ -60,7 +60,11 @@ div#__next > div {
 	}
 
 	.card-action-button {
-		@apply btn btn-sm rounded-full capitalize;
+		@apply btn btn-sm capitalize;
+	}
+
+	.card-action-button-outline {
+		@apply btn  btn-sm btn-outline w-fit;
 	}
 
 	.base-form-element {
@@ -98,10 +102,10 @@ div#__next > div {
 		@apply bg-base-200  #{!important};
 	}
 	.page-content-container {
-		@apply mx-auto  container  px-8 2xl:px-0 pb-8;
+		@apply mx-auto container px-8 2xl:px-0 pb-8;
 	}
 	.marketing-card {
-		@apply card shadow-xl shadow-info-content hover:shadow-info rounded-4xl bg-base-300 text-base-content/90 hover:text-base-content transition-shadow duration-700;
+		@apply card shadow-xl shadow-base-100 hover:shadow-secondary rounded-4xl bg-base-300 text-base-content/90 hover:text-base-content transition-shadow duration-700;
 	}
 
 	.gradient-headline {

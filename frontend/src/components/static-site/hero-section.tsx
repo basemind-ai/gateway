@@ -18,7 +18,7 @@ export function HeroSection() {
 				<p className="text-neutral-content">{t('heroSubtitle')}</p>
 				<MarketingCodeSnippet />
 			</div>
-			<svg className="animate-bounce w-12 h-12 text-neutral-content mx-auto">
+			<svg className="animate-bounce w-12 h-12 text-base-content-darker mx-auto">
 				<ArrowDown />
 			</svg>
 		</main>

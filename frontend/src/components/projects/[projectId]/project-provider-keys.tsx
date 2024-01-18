@@ -110,7 +110,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 									{value.createdAt}
 								</td>
 								<td data-testid="key-actions">
-									<span className="flex justify-center">
+									<span className="flex">
 										<button
 											className="btn btn-ghost"
 											data-testid="delete-provider-key-button"
@@ -121,7 +121,7 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 												setIsDeleteModalOpen(true);
 											}}
 										>
-											<Trash className="text-red-400" />
+											<Trash className="text-warning" />
 										</button>
 									</span>
 								</td>
@@ -135,9 +135,9 @@ export function ProjectProviderKeys({ project }: { project: Project }) {
 						setIsCreateModalOpen(true);
 					}}
 					disabled={!vendorsWithoutKeys.length}
-					className="flex gap-2 items-center text-secondary hover:brightness-90"
+					className="card-action-button-outline btn-primary"
 				>
-					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
+					<Plus className="w-4 h-4" />
 					<span>{t('newProviderKey')}</span>
 				</button>
 			</div>

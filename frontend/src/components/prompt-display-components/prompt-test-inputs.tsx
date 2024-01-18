@@ -11,11 +11,11 @@ export function PromptTestInputs({
 }) {
 	return (
 		<div data-testid="test-inputs-container">
-			<div className="flex flex-col gap-5">
+			<div className="flex flex-col gap-5 w-full">
 				{expectedVariables.map((variable) => (
 					<div key={variable} className="form-control">
 						<textarea
-							className="card-textarea textarea-info bg-neutral placeholder-info min-w-full"
+							className="card-textarea textarea-accent bg-neutral placeholder-accent w-2/3"
 							data-testid={`input-variable-input-${variable}`}
 							value={templateVariables[variable] ?? ''}
 							placeholder={`{${variable}}`}

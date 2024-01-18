@@ -53,7 +53,7 @@ export function FeatureSection() {
 						height={Dimensions.Twelve}
 						src="/images/grpc.svg"
 						alt="Streaming Image"
-						className="px-24 md:px-6 pt-8 lg:pt-0  lg:h-1/2 w-full lg:w-fit z-10"
+						className="px-24 md:px-6 pt-8 lg:pt-0 lg:h-1/2 w-full lg:w-fit z-10"
 					/>
 				</figure>
 				<div className="card-body my-auto md:pl-0">

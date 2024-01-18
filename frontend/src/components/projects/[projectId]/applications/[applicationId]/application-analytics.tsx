@@ -57,14 +57,16 @@ export function ApplicationAnalytics({
 			</div>
 			<div className="analytics">
 				<DataCard
-					imageSrc={<Activity className="text-secondary w-6 h-6" />}
+					imageSrc={
+						<Activity className="text-neutral-content w-6 h-6" />
+					}
 					metric={t('apiCalls')}
 					totalValue={analytics?.totalRequests ?? ''}
 					loading={isLoading}
 				/>
-				<div className="w-px h-12 bg-gray-200 mx-4" />
+				<div className="w-px h-12 bg-neutral mx-4" />
 				<DataCard
-					imageSrc={<Cash className="text-secondary w-6 h-6" />}
+					imageSrc={<Cash className="text-neutral-content w-6 h-6" />}
 					metric={t('modelsCost')}
 					totalValue={`${analytics?.tokensCost ?? ''}$`}
 					loading={isLoading}

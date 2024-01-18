@@ -47,7 +47,7 @@ export const modelVendorTypeMap: Record<ModelVendor, TModelType> = {
 };
 
 export const openAIRoleColorMap: Record<OpenAIPromptMessageRole, string> = {
-	[OpenAIPromptMessageRole.Assistant]: 'info',
-	[OpenAIPromptMessageRole.System]: 'secondary',
-	[OpenAIPromptMessageRole.User]: 'success',
+	[OpenAIPromptMessageRole.Assistant]: 'content',
+	[OpenAIPromptMessageRole.System]: 'content',
+	[OpenAIPromptMessageRole.User]: 'content',
 };

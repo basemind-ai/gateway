@@ -1,7 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
-import { Oval } from 'react-loading-icons';
 
 import { handleCreateApplication, handleCreateProject } from '@/api';
 import { TooltipIcon } from '@/components/input-label-with-tooltip';
@@ -221,7 +220,10 @@ export function CreateProjectForm({
 						data-testid="create-project-submit-button"
 					>
 						{isLoading ? (
-							<Oval className="m-auto" />
+							<svg
+								className="animate-spin h-5 w-5 m-auto"
+								viewBox="0 0 24 24"
+							/>
 						) : (
 							t('submitButton')
 						)}

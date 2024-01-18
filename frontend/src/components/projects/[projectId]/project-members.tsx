@@ -150,7 +150,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 										/>
 									</th>
 									<td
-										className="text-info"
+										className="text-base-content"
 										data-testid="project-user-name"
 									>
 										{projectUser.displayName}
@@ -180,7 +180,7 @@ export function ProjectMembers({ project }: { project: Project }) {
 															);
 														}}
 													>
-														<PencilFill className="w-4 h-4 text-secondary" />
+														<PencilFill className="w-4 h-4 text-base-content hover:text-accent" />
 													</button>
 												)}
 											</td>

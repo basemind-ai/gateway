@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
 import { Navbar } from '@/components/navbar';
+import { MobileNotSupported } from '@/components/projects/mobile-not-supported';
 import { ContactForm } from '@/components/support/contact-form';
 import { GetInTouch } from '@/components/support/get-in-touch';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -24,7 +25,10 @@ export default function Support() {
 			data-testid="support-page"
 			className="flex flex-col min-h-screen w-full bg-base-100"
 		>
-			<div className="page-content-container">
+			<div className="sm:hidden my-auto">
+				<MobileNotSupported />
+			</div>
+			<div className="page-content-container hidden sm:block">
 				<Navbar
 					headline={t('headline')}
 					userPhotoURL={user?.photoURL}

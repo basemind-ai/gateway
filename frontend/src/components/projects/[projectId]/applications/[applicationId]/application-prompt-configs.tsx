@@ -61,7 +61,7 @@ export function ApplicationPromptConfigs({
 					/>
 				)}
 				<button
-					className="flex gap-2 items-center text-secondary hover:brightness-90"
+					className="card-action-button-outline btn-primary"
 					data-testid="application-prompt-config-new-prompt-config-button"
 					onClick={() => {
 						router.push(
@@ -72,7 +72,7 @@ export function ApplicationPromptConfigs({
 						);
 					}}
 				>
-					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
+					<Plus className="w-4 h-4" />
 					<span>{t('newConfiguration')}</span>
 				</button>
 			</div>

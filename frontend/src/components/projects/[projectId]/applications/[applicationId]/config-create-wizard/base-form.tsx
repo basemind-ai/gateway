@@ -74,7 +74,7 @@ export function PromptConfigBaseForm({
 			{showConfigNameInput && (
 				<>
 					<div data-testid="prompt-config-name-input-form-container">
-						<div className="rounded-dark-card flex flex-col">
+						<div className="flex flex-col">
 							<EntityNameInput
 								dataTestId="create-prompt-base-form-name-input"
 								placeholder={t(
@@ -92,7 +92,7 @@ export function PromptConfigBaseForm({
 				</>
 			)}
 			<div data-testid="prompt-config-model-select-form-container">
-				<div className="rounded-dark-card grid grid-cols-2 items-center gap-4 pb-6">
+				<div className="grid grid-cols-2 items-center gap-4 pb-6">
 					<div className="form-control">
 						<label className="label">
 							<span className="label-text">

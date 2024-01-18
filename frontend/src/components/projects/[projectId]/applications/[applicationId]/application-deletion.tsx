@@ -54,7 +54,7 @@ export function ApplicationDeletion({
 			className="card-divider"
 		>
 			<h2 className="card-header">{t('deleteApplicationTitle')}</h2>
-			<div className="rounded-data-card flex items-center justify-between text-neutral-content">
+			<div className="rounded-data-card flex items-center justify-between text-neutral-content w-full">
 				<div>
 					<h6 className="font-medium ">
 						{t('deleteApplicationSubtitle')}
@@ -65,7 +65,7 @@ export function ApplicationDeletion({
 				</div>
 				<button
 					data-testid="application-delete-btn"
-					className="card-action-button btn-error text-error-content disabled:text-neutral"
+					className="btn-sm btn btn-outline btn-error disabled:text-neutral"
 					disabled={isLoading}
 					onClick={() => {
 						setIsDeleteModalOpen(true);
@@ -73,24 +73,24 @@ export function ApplicationDeletion({
 				>
 					{t('delete')}
 				</button>
-				<Modal modalOpen={isDeleteModalOpen}>
-					<ResourceDeletionBanner
-						title={t('warningTitleDeleteApplication')}
-						description={t('warningMessageApplication')}
-						placeholder={t('deletePlaceholderApplication')}
-						resourceName={application.name}
-						onCancel={() => {
-							setIsDeleteModalOpen(false);
-						}}
-						onConfirm={() => void deleteApplication()}
-						confirmCTA={
-							isLoading ? (
-								<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
-							) : undefined
-						}
-					/>
-				</Modal>
 			</div>
+			<Modal modalOpen={isDeleteModalOpen}>
+				<ResourceDeletionBanner
+					title={t('warningTitleDeleteApplication')}
+					description={t('warningMessageApplication')}
+					placeholder={t('deletePlaceholderApplication')}
+					resourceName={application.name}
+					onCancel={() => {
+						setIsDeleteModalOpen(false);
+					}}
+					onConfirm={() => void deleteApplication()}
+					confirmCTA={
+						isLoading ? (
+							<span className="loading loading-spinner loading-xs mx-1.5 text-base-content" />
+						) : undefined
+					}
+				/>
+			</Modal>
 		</div>
 	);
 }

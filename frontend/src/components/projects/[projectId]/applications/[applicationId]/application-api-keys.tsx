@@ -117,10 +117,12 @@ export function ApplicationApiKeys({
 					{apiKeys.map(({ name, createdAt, id }) => (
 						<tr data-testid="api-key-row" key={id}>
 							<td data-testid="api-key-name">
-								<span className="text-info">{name}</span>
+								<span className="text-base-content">
+									{name}
+								</span>
 							</td>
 							<td>
-								<span className="text-info">
+								<span className="text-base-content">
 									{dayjs(createdAt).format(dateFormat)}
 								</span>
 							</td>
@@ -132,7 +134,7 @@ export function ApplicationApiKeys({
 										openDeleteConfirmationPopup(id, name);
 									}}
 								>
-									<XCircle className="w-3.5 h-3.5 text-warning" />
+									<XCircle className="w-3.5 h-3.5 text-warning hover:text-error" />
 								</button>
 							</td>
 						</tr>
@@ -154,9 +156,9 @@ export function ApplicationApiKeys({
 				<button
 					data-testid="api-key-create-btn"
 					onClick={openCreationPopup}
-					className="flex gap-2 items-center text-secondary hover:brightness-90"
+					className="card-action-button-outline btn-primary"
 				>
-					<Plus className="text-secondary w-4 h-4 hover:brightness-90" />
+					<Plus className="w-4 h-4" />
 					<span>{t('newApiKey')}</span>
 				</button>
 				<Modal modalOpen={isDeleteModalOpen}>
