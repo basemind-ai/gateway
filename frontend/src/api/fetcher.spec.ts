@@ -2,7 +2,12 @@ import { mockFetch } from 'tests/mocks';
 
 import { fetcher } from '@/api/index';
 import { HttpMethod } from '@/constants';
-import { ApiError, ConfigurationError, TokenError } from '@/errors';
+import {
+	ApiError,
+	ConfigurationError,
+	PermissionError,
+	TokenError,
+} from '@/errors';
 import * as firebaseUtils from '@/utils/firebase';
 
 describe('fetcher tests', () => {
@@ -119,6 +124,20 @@ describe('fetcher tests', () => {
 				method: HttpMethod.Get,
 			},
 		);
+	});
+
+	it.each([401, 403])('handles a %d', async (status: number) => {
+		const mockResponse = {};
+		mockFetch.mockResolvedValueOnce({
+			json: () => Promise.resolve(mockResponse),
+			ok: false,
+			status,
+			statusText: 'Permission Denied',
+		});
+
+		await expect(
+			fetcher({ method: HttpMethod.Get, url: 'test' }),
+		).rejects.toThrow(PermissionError);
 	});
 
 	it('handles custom headers', async () => {

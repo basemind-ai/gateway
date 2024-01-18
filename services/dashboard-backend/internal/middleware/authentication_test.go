@@ -39,6 +39,15 @@ func TestAuthenticationMiddleware(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, testRecorder.Code)
 	})
 
+	t.Run("skips authorization for webhook calls", func(t *testing.T) {
+		request := httptest.NewRequest(http.MethodPost, "/webhooks", nil)
+		testRecorder := httptest.NewRecorder()
+
+		authMiddleware.ServeHTTP(testRecorder, request)
+
+		assert.Equal(t, http.StatusOK, testRecorder.Code)
+	})
+
 	t.Run("ParseFirebaseToken", func(t *testing.T) {
 		t.Run("returns Unauthorized for auth header without proper prefix", func(t *testing.T) {
 			request := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -87,9 +96,9 @@ func TestAuthenticationMiddleware(t *testing.T) {
 
 			assert.Equal(t, http.StatusOK, testRecorder.Code)
 			assert.Equal(t, 2, len(mockAuth.Calls))
-			assert.Equal(t, 1, len(mockNext.Calls))
+			assert.Equal(t, 2, len(mockNext.Calls))
 
-			newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
+			newRequest := mockNext.Calls[1].Arguments.Get(1).(*http.Request)
 			_, ok := newRequest.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 			assert.True(t, ok)
 		})
@@ -158,7 +167,7 @@ func TestAuthenticationMiddleware(t *testing.T) {
 			authMiddleware.ServeHTTP(testRecorder, request)
 			assert.Equal(t, http.StatusOK, testRecorder.Code)
 
-			newRequest := mockNext.Calls[0].Arguments.Get(1).(*http.Request)
+			newRequest := mockNext.Calls[1].Arguments.Get(1).(*http.Request)
 			_, ok := newRequest.Context().Value(middleware.UserAccountContextKey).(*models.UserAccount)
 			assert.True(t, ok)
 		})
