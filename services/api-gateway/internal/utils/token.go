@@ -16,7 +16,7 @@ func CalculateCosts(
 	responseTokenCount int32,
 	modelPricing datatypes.ProviderModelPricingDTO,
 ) TokenCostResult {
-	// The unit size is the number of token per which we calculate the price. E.g. 0.002$ for 1000 tokens.
+	// The unit size is the number of tokens per which we calculate the price. E.g. 0.002$ for 1000 tokens.
 	unitSize := decimal.NewFromInt32(modelPricing.TokenUnitSize)
 
 	return TokenCostResult{

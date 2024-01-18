@@ -21,6 +21,7 @@ func GetOrCreateUserAccount(ctx context.Context, firebaseID string) *models.User
 	// we created a user account in advance based on an invitation, but the user does not have all the firebase data set.
 	preCreatedUser, retrievalErr := db.GetQueries().
 		RetrieveUserAccountByEmail(ctx, userRecord.Email)
+
 	if retrievalErr == nil {
 		updatedUser := exc.MustResult(
 			db.GetQueries().UpdateUserAccount(ctx, models.UpdateUserAccountParams{

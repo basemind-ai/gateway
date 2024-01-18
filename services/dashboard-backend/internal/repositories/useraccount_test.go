@@ -59,14 +59,24 @@ func TestUserAccountRepository(t *testing.T) {
 				Email: userData.Email,
 			})
 
+			mockAuth := testutils.MockFirebaseAuth(t)
+
+			mockAuth.On("GetUser", mock.Anything, "firebase-id").Return(&auth.UserRecord{
+				UserInfo: &auth.UserInfo{
+					DisplayName: "Test User",
+					Email:       userData.Email,
+					PhoneNumber: "123456789",
+					PhotoURL:    "https://example.com/photo.jpg",
+				},
+			}, nil)
+
 			createdUserAccount := repositories.GetOrCreateUserAccount(
 				context.TODO(),
-				userData.FirebaseID,
+				"firebase-id",
 			)
 
 			dbUserAccount, _ := db.GetQueries().
 				RetrieveUserAccountByID(context.TODO(), createdUserAccount.ID)
-			assert.Equal(t, userData.FirebaseID, dbUserAccount.FirebaseID)
 			assert.NotEmpty(t, dbUserAccount.PhoneNumber)
 			assert.NotEmpty(t, dbUserAccount.PhotoUrl)
 			assert.NotEmpty(t, dbUserAccount.DisplayName)

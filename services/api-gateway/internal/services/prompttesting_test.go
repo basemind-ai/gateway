@@ -85,6 +85,7 @@ func TestPromptTestingService(t *testing.T) {
 			}, mock)
 			assert.Error(t, err)
 		})
+
 		t.Run("should return error if application ID is not a valid UUID", func(t *testing.T) {
 			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
 			err := srv.TestPrompt(&ptesting.PromptTestRequest{
@@ -99,6 +100,7 @@ func TestPromptTestingService(t *testing.T) {
 			}, mock)
 			assert.Error(t, err)
 		})
+
 		t.Run("should return error if promptConfigID is not a valid UUID", func(t *testing.T) {
 			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
 			err := srv.TestPrompt(&ptesting.PromptTestRequest{
@@ -107,6 +109,78 @@ func TestPromptTestingService(t *testing.T) {
 				ModelParameters:        *modelParameters,
 				ProviderPromptMessages: *promptMessages,
 				PromptConfigId:         invalidUUID,
+				TemplateVariables:      nil,
+				ModelVendor:            string(models.ModelVendorOPENAI),
+				ModelType:              string(models.ModelTypeGpt432k),
+			}, mock)
+			assert.Error(t, err)
+		})
+
+		t.Run("should handle project retrieval err", func(t *testing.T) {
+			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
+
+			err := srv.TestPrompt(&ptesting.PromptTestRequest{
+				ProjectId:              "a4460279-c733-420e-868c-af7f204d9fff",
+				ApplicationId:          db.UUIDToString(&application.ID),
+				ModelParameters:        *modelParameters,
+				ProviderPromptMessages: *promptMessages,
+				PromptConfigId:         promptConfigID,
+				TemplateVariables:      nil,
+				ModelVendor:            string(models.ModelVendorOPENAI),
+				ModelType:              string(models.ModelTypeGpt35Turbo),
+			}, mock)
+			assert.Error(t, err)
+		})
+
+		t.Run("should handle project with no credits", func(t *testing.T) {
+			err := factories.CreateProviderPricingModels(context.Background())
+			assert.NoError(t, err)
+
+			newProject, err := factories.CreateProject(context.TODO())
+			assert.NoError(t, err)
+
+			err = db.GetQueries().
+				UpdateProjectCredits(context.Background(), models.UpdateProjectCreditsParams{
+					ID:      newProject.ID,
+					Credits: *exc.MustResult(db.StringToNumeric("-1.0")),
+				})
+			assert.NoError(t, err)
+
+			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
+			err = srv.TestPrompt(&ptesting.PromptTestRequest{
+				ProjectId:              db.UUIDToString(&newProject.ID),
+				ApplicationId:          db.UUIDToString(&application.ID),
+				ModelParameters:        *modelParameters,
+				ProviderPromptMessages: *promptMessages,
+				PromptConfigId:         promptConfigID,
+				TemplateVariables:      nil,
+				ModelVendor:            string(models.ModelVendorOPENAI),
+				ModelType:              string(models.ModelTypeGpt432k),
+			}, mock)
+			assert.Error(t, err)
+		})
+
+		t.Run("should handle project with negative credits", func(t *testing.T) {
+			err := factories.CreateProviderPricingModels(context.Background())
+			assert.NoError(t, err)
+
+			newProject, err := factories.CreateProject(context.TODO())
+			assert.NoError(t, err)
+
+			err = db.GetQueries().
+				UpdateProjectCredits(context.Background(), models.UpdateProjectCreditsParams{
+					ID:      newProject.ID,
+					Credits: *exc.MustResult(db.StringToNumeric("-1.1")),
+				})
+			assert.NoError(t, err)
+
+			mock := MockPromptTestingServerStream{Ctx: context.TODO()}
+			err = srv.TestPrompt(&ptesting.PromptTestRequest{
+				ProjectId:              db.UUIDToString(&newProject.ID),
+				ApplicationId:          db.UUIDToString(&application.ID),
+				ModelParameters:        *modelParameters,
+				ProviderPromptMessages: *promptMessages,
+				PromptConfigId:         promptConfigID,
 				TemplateVariables:      nil,
 				ModelVendor:            string(models.ModelVendorOPENAI),
 				ModelType:              string(models.ModelTypeGpt432k),
