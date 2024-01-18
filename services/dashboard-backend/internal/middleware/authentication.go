@@ -60,6 +60,7 @@ func FirebaseAuthMiddleware(next http.Handler) http.Handler {
 		// webhooks do not have a firebase token in place
 		if strings.Contains(r.URL.String(), "webhooks") {
 			next.ServeHTTP(w, r)
+			return
 		}
 
 		var (

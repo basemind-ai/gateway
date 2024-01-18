@@ -103,7 +103,14 @@ export function OpenAIModelParametersForm({
 			temperature,
 			topP,
 		});
-	}, [maxTokens, frequencyPenalty, presencePenalty, temperature, topP]);
+	}, [
+		setParameters,
+		maxTokens,
+		frequencyPenalty,
+		presencePenalty,
+		temperature,
+		topP,
+	]);
 
 	return (
 		<div data-testid="openai-model-parameters-form">

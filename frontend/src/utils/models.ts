@@ -14,12 +14,12 @@ export function updateTemplateVariablesRecord(
 	existingTemplateVariables: Record<string, string>,
 ): Record<string, string> {
 	const updatedVariables: Record<string, string> = {};
-	new Set(
+	for (const variable of new Set(
 		messages.flatMap(({ content }) => extractTemplateVariables(content)),
-	).forEach((variable) => {
+	)) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		updatedVariables[variable] = existingTemplateVariables[variable] ?? '';
-	});
+	}
 
 	return updatedVariables;
 }

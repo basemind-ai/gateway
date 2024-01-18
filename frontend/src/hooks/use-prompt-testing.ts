@@ -89,11 +89,19 @@ export function usePromptTesting<T extends ModelVendor>({
 		}
 		handlerRef.current = null;
 	};
+
 	const handleError = (error: WebsocketError) => {
 		setIsRunningTest(false);
 		setTestFinishReason(StreamFinishReason.ERROR);
 		onError(error.message);
 	};
+
+	const resetState = useCallback(() => {
+		setIsRunningTest(false);
+		setModelResponses([]);
+		setTestFinishReason(null);
+		setTestRecord(null);
+	}, []);
 
 	useEffect(() => {
 		resetState();
@@ -112,14 +120,8 @@ export function usePromptTesting<T extends ModelVendor>({
 			handlerRef.current?.closeSocket();
 			handlerRef.current = null;
 		};
-	}, [applicationId, projectId]);
-
-	const resetState = useCallback(() => {
-		setIsRunningTest(false);
-		setModelResponses([]);
-		setTestFinishReason(null);
-		setTestRecord(null);
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [applicationId, projectId, resetState]);
 
 	const sendMessage = async (testConfig: PromptConfigTest<T>) => {
 		if (handlerRef.current?.isClosed()) {

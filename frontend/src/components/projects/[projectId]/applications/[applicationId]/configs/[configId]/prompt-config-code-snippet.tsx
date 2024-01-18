@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-nested-template-literals */
 import { useTranslations } from 'next-intl';
-import { Fragment, memo, useMemo, useState } from 'react';
+import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 import { Github } from 'react-bootstrap-icons';
 
 import { CodeSnippet } from '@/components/code-snippet';
@@ -440,17 +440,20 @@ export function PromptConfigCodeSnippet({
 
 	const [selectedFramework, setSelectedFramework] = useState('Android');
 
-	const handleDocClick = (tab: FrameworkTab) => {
-		return () => {
-			if (initialized) {
-				track('clickViewDocs', {
-					category: 'config-code-snippet',
-					framework: tab.framework,
-				});
-			}
-			window.open(tab.docs, '_blank')?.focus();
-		};
-	};
+	const handleDocClick = useCallback(
+		(tab: FrameworkTab) => {
+			return () => {
+				if (initialized) {
+					track('clickViewDocs', {
+						category: 'config-code-snippet',
+						framework: tab.framework,
+					});
+				}
+				window.open(tab.docs, '_blank')?.focus();
+			};
+		},
+		[track, initialized],
+	);
 
 	const mappedTabs = useMemo(
 		() =>
@@ -460,6 +463,7 @@ export function PromptConfigCodeSnippet({
 				const ImportSnippet = importSnippetMap[tab.language];
 				const RequestSnippet = promptRequestSnippetMap[tab.language];
 				const StreamSnippet = promptStreamSnippetMap[tab.language];
+
 				const replacer = (value: string) => {
 					value = tab.replacers.parametersReplacer(
 						tab.replacers.invokeReplacer(value, expectedVariables),
@@ -559,7 +563,14 @@ export function PromptConfigCodeSnippet({
 					</Fragment>
 				);
 			}),
-		[expectedVariables, initialized, selectedFramework],
+		[
+			expectedVariables,
+			selectedFramework,
+			handleDocClick,
+			isDefaultConfig,
+			promptConfigId,
+			t,
+		],
 	);
 
 	return (

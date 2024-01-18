@@ -34,7 +34,7 @@ export function OpenAIPromptTemplateForm({
 
 	useEffect(() => {
 		setMessages([...formMessages]);
-	}, [formMessages]);
+	}, [setMessages, formMessages]);
 
 	const handleSetMessageContent = (index: number) => (content: string) => {
 		const copied = [...formMessages];

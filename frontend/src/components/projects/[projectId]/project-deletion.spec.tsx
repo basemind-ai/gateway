@@ -1,3 +1,4 @@
+import { act } from 'react-dom/test-utils';
 import { ProjectFactory } from 'tests/factories';
 import {
 	fireEvent,
@@ -21,7 +22,9 @@ describe('ProjectDeletion', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+		act(() => {
+			setProjects([project]);
+		});
 
 		render(<ProjectDeletion project={project} />);
 
@@ -33,8 +36,9 @@ describe('ProjectDeletion', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
-
+		act(() => {
+			setProjects([project]);
+		});
 		render(<ProjectDeletion project={project} />);
 
 		const deleteButton = screen.getByTestId('project-delete-btn');
@@ -63,7 +67,9 @@ describe('ProjectDeletion', () => {
 		const {
 			result: { current: setProjects },
 		} = renderHook(useSetProjects);
-		setProjects([project]);
+		act(() => {
+			setProjects([project]);
+		});
 
 		render(<ProjectDeletion project={project} />);
 

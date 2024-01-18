@@ -57,7 +57,7 @@ export function ProjectMembersInvitationForm({
 				data: emails.map((email) => ({ email, permission })),
 				projectId: project.id,
 			});
-			emails.forEach((email) => {
+			for (const email of emails) {
 				if (initialized) {
 					track('inviteUser', {
 						newMemberEmail: email,
@@ -65,7 +65,7 @@ export function ProjectMembersInvitationForm({
 						permission,
 					});
 				}
-			});
+			}
 
 			const projectUsers = await handleRetrieveProjectUsers({
 				projectId: project.id,

@@ -26,13 +26,13 @@ export default function CreateProjectPage() {
 	const handleCancel = useCallback(() => {
 		setIsLoading(true);
 		router.replace(`${Navigation.Projects}/${projects[0].id}`);
-	}, [projects]);
+	}, [projects, router]);
 
 	useEffect(() => {
 		if (initialized) {
 			page('createProject');
 		}
-	}, [initialized]);
+	}, [initialized, page]);
 
 	const isInitialRef = useRef(projects.length > 0);
 

@@ -21,7 +21,7 @@ export function useAuthenticatedUser() {
 				}
 			})();
 		}
-	}, []);
+	});
 
 	return user;
 }

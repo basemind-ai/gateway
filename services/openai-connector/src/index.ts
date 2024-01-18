@@ -16,7 +16,7 @@ const implementation = {
 createServer({
 	implementation,
 	port: process.env.SERVER_PORT
-		? Number.parseInt(process.env.SERVER_PORT!)
+		? Number.parseInt(process.env.SERVER_PORT)
 		: 50_051,
 	service: openAIServiceDefinition,
 });

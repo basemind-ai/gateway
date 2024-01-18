@@ -21,7 +21,7 @@
 		"firebase": "^10.7.1",
 		"lottie-react": "^2.4.0",
 		"next": "14.0.4",
-		"next-intl": "^3.4.2",
+		"next-intl": "^3.4.3",
 		"persist-and-sync": "^1.2.1",
 		"react": "18.2.0",
 		"react-bootstrap-icons": "^1.10.3",

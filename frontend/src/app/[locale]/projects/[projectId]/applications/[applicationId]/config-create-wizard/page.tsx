@@ -158,38 +158,12 @@ export default function PromptConfigCreateWizard({
 
 	const store = usePromptWizardStore(wizardStoreSelector, shallow);
 
-	// callbacks
-	const handleConfigNameChange = useCallback(store.setConfigName, [
-		store.setConfigName,
-	]);
-
-	const handleModelVendorChange = useCallback(store.setModelVendor, [
-		store.setModelVendor,
-	]);
-
-	const handleModelTypeChange = useCallback(store.setModelType, [
-		store.setModelType,
-	]);
-
-	const handleMessagesChange = useCallback(store.setMessages, [
-		store.setMessages,
-	]);
-
-	const handleParametersChange = useCallback(store.setParameters, [
-		store.setParameters,
-	]);
-
 	const validateConfigName = useCallback(
 		(value: string) =>
 			!(promptConfigs[applicationId]?.map((c) => c.name) ?? []).includes(
 				value,
 			),
-		[promptConfigs],
-	);
-
-	const handleTemplateVariablesChange = useCallback(
-		store.setTemplateVariables,
-		[store.setTemplateVariables],
+		[applicationId, promptConfigs],
 	);
 
 	const handleRefreshProject = useCallback(async () => {
@@ -199,7 +173,16 @@ export default function PromptConfigCreateWizard({
 		} catch {
 			handleError(t('errorRefreshingProject'));
 		}
-	}, [setProjects]);
+	}, [setProjects, handleError, t]);
+
+	const handleChangeModelVendor = useCallback(
+		(vendor: ModelVendor) => {
+			store.setModelVendor(vendor);
+			store.setMessages([]);
+			store.setParameters({});
+		},
+		[store],
+	);
 
 	useEffect(() => {
 		if (initialized) {
@@ -209,7 +192,7 @@ export default function PromptConfigCreateWizard({
 				stage: store.wizardStage,
 			});
 		}
-	}, [initialized, store.wizardStage]);
+	}, [applicationId, projectId, page, initialized, store.wizardStage]);
 
 	const handleConfigSave = async () => {
 		setIsLoading(true);
@@ -280,15 +263,15 @@ export default function PromptConfigCreateWizard({
 						<WizardStageComponent
 							applicationId={applicationId}
 							credits={project?.credits ?? '1'}
-							handleConfigNameChange={handleConfigNameChange}
+							handleConfigNameChange={store.setConfigName}
 							handleError={handleError}
-							handleMessagesChange={handleMessagesChange}
-							handleModelTypeChange={handleModelTypeChange}
-							handleModelVendorChange={handleModelVendorChange}
-							handleParametersChange={handleParametersChange}
+							handleMessagesChange={store.setMessages}
+							handleModelTypeChange={store.setModelType}
+							handleModelVendorChange={handleChangeModelVendor}
+							handleParametersChange={store.setParameters}
 							handleRefreshProject={handleRefreshProject}
 							handleTemplateVariablesChange={
-								handleTemplateVariablesChange
+								store.setTemplateVariables
 							}
 							projectId={projectId}
 							setNameIsValid={setNameIsValid}

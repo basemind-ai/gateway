@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"github.com/basemind-ai/monorepo/shared/go/exc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health"
@@ -124,10 +125,7 @@ func NewConnection(host string, opts ...grpc.DialOption) (*grpc.ClientConn, erro
 
 	if os.Getenv("GRPC_USE_TLS") != "" {
 		log.Info().Msg("using TLS for gRPC connection")
-		systemRoots, err := x509.SystemCertPool()
-		if err != nil {
-			return nil, err
-		}
+		systemRoots := exc.MustResult(x509.SystemCertPool())
 		cred := credentials.NewTLS(&tls.Config{ //nolint:gosec
 			RootCAs: systemRoots,
 		})

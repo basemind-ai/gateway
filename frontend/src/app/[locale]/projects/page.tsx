@@ -45,7 +45,7 @@ export default function Projects() {
 		if (selectedProject) {
 			router.replace(`${Navigation.Projects}/${selectedProject.id}`);
 		}
-	}, [selectedProject]);
+	}, [selectedProject, router]);
 
 	return (
 		<main

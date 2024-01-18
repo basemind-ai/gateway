@@ -88,7 +88,7 @@ export default function Application({
 		if (initialized) {
 			page('applicationOverview', { applicationId, projectId });
 		}
-	}, [initialized]);
+	}, [applicationId, projectId, initialized, page]);
 
 	if (!application || !project) {
 		return null;

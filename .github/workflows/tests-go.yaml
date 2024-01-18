@@ -45,7 +45,7 @@ jobs:
               run: curl https://deepsource.io/cli | sh
             - name: Load cached Golang dependencies
               id: cached-go-dependencies
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: |
                       ~/.cache/go-build

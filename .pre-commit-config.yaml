@@ -55,7 +55,7 @@ repos:
           - id: sqlfluff-fix
             exclude: 'sql/migrations'
     - repo: https://github.com/aquasecurity/tfsec
-      rev: v1.28.4
+      rev: v1.28.5
       hooks:
           - id: tfsec
     - repo: https://github.com/codespell-project/codespell

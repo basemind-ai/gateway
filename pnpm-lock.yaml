@@ -14,11 +14,11 @@ importers:
                 specifier: ^8.3.1
                 version: 8.3.1
             '@grpc/grpc-js':
-                specifier: ^1.9.13
-                version: 1.9.13
+                specifier: ^1.9.14
+                version: 1.9.14
             '@prettier/plugin-xml':
                 specifier: ^3.2.2
-                version: 3.2.2(prettier@3.2.2)
+                version: 3.2.2(prettier@3.2.3)
             '@protobuf-ts/plugin':
                 specifier: ^2.9.3
                 version: 2.9.3
@@ -30,10 +30,10 @@ importers:
                 version: 2.9.3
             '@tool-belt/eslint-config':
                 specifier: ^5.0.5
-                version: 5.0.5(@typescript-eslint/eslint-plugin@6.19.0)(@typescript-eslint/parser@6.19.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(prettier@3.2.2)(typescript@5.3.3)
+                version: 5.0.5(@typescript-eslint/eslint-plugin@6.19.0)(@typescript-eslint/parser@6.19.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(prettier@3.2.3)(typescript@5.3.3)
             '@types/node':
-                specifier: 20.11.3
-                version: 20.11.3
+                specifier: 20.11.5
+                version: 20.11.5
             '@types/webpack':
                 specifier: ^5.28.5
                 version: 5.28.5(webpack-cli@5.1.4)
@@ -80,17 +80,17 @@ importers:
                 specifier: ^2.0.0
                 version: 2.0.0(webpack@5.89.0)
             prettier:
-                specifier: ^3.2.2
-                version: 3.2.2
+                specifier: ^3.2.3
+                version: 3.2.3
             prettier-plugin-sort-json:
                 specifier: ^3.1.0
-                version: 3.1.0(prettier@3.2.2)
+                version: 3.1.0(prettier@3.2.3)
             ts-loader:
                 specifier: ^9.5.1
                 version: 9.5.1(typescript@5.3.3)(webpack@5.89.0)
             ts-node:
                 specifier: ^10.9.2
-                version: 10.9.2(@types/node@20.11.3)(typescript@5.3.3)
+                version: 10.9.2(@types/node@20.11.5)(typescript@5.3.3)
             tsconfig-paths-webpack-plugin:
                 specifier: ^4.1.0
                 version: 4.1.0
@@ -98,11 +98,11 @@ importers:
                 specifier: ^5.3.3
                 version: 5.3.3
             vite-tsconfig-paths:
-                specifier: ^4.2.3
-                version: 4.2.3(typescript@5.3.3)
+                specifier: ^4.3.1
+                version: 4.3.1(typescript@5.3.3)
             vitest:
                 specifier: ^1.2.0
-                version: 1.2.0(@types/node@20.11.3)
+                version: 1.2.0(@types/node@20.11.5)
             vitest-mock-extended:
                 specifier: ^1.3.1
                 version: 1.3.1(typescript@5.3.3)(vitest@1.2.0)
@@ -149,8 +149,8 @@ importers:
                 specifier: 14.0.4
                 version: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7)
             next-intl:
-                specifier: ^3.4.2
-                version: 3.4.2(next@14.0.4)(react@18.2.0)
+                specifier: ^3.4.3
+                version: 3.4.3(next@14.0.4)(react@18.2.0)
             persist-and-sync:
                 specifier: ^1.2.1
                 version: 1.2.1(zustand@4.4.7)
@@ -252,8 +252,8 @@ importers:
     services/cohere-connector:
         dependencies:
             '@grpc/grpc-js':
-                specifier: ^1.9.13
-                version: 1.9.13
+                specifier: ^1.9.14
+                version: 1.9.14
             '@protobuf-ts/runtime':
                 specifier: ^2.9.3
                 version: 2.9.3
@@ -273,8 +273,8 @@ importers:
     services/openai-connector:
         dependencies:
             '@grpc/grpc-js':
-                specifier: ^1.9.13
-                version: 1.9.13
+                specifier: ^1.9.14
+                version: 1.9.14
             '@protobuf-ts/runtime':
                 specifier: ^2.9.3
                 version: 2.9.3
@@ -2720,7 +2720,7 @@ packages:
             '@firebase/logger': 0.4.0
             '@firebase/util': 1.9.3
             '@firebase/webchannel-wrapper': 0.10.5
-            '@grpc/grpc-js': 1.9.13
+            '@grpc/grpc-js': 1.9.14
             '@grpc/proto-loader': 0.7.10
             tslib: 2.6.2
             undici: 5.26.5
@@ -3021,13 +3021,13 @@ packages:
             tslib: 2.6.2
         dev: false
 
-    /@formatjs/ecma402-abstract@1.18.1:
+    /@formatjs/ecma402-abstract@1.18.2:
         resolution:
             {
-                integrity: sha512-wANcef+tJ9RFpw4BHWlJ7AElKeIIlm8pOqmuBasKoxQtrlp6kPuiqszUEwp8nJVGJXY98Fcmq5StFG0EKNcbAQ==,
+                integrity: sha512-+QoPW4csYALsQIl8GbN14igZzDbuwzcpWrku9nyMXlaqAlwRBgl5V+p0vWMGFqHOw37czNXaP/lEk4wbLgcmtA==,
             }
         dependencies:
-            '@formatjs/intl-localematcher': 0.5.3
+            '@formatjs/intl-localematcher': 0.5.4
             tslib: 2.6.2
         dev: false
 
@@ -3079,24 +3079,24 @@ packages:
             tslib: 2.6.2
         dev: false
 
-    /@formatjs/intl-localematcher@0.5.3:
+    /@formatjs/intl-localematcher@0.5.4:
         resolution:
             {
-                integrity: sha512-1/X4YCuocNFcnD8t0J6ksiUk1gvI+UIGWicX6HdPvS9GnAoFsTT0pqNBh0jZ1tJY+oSqY/t9aKIGR9FbXD4yjw==,
+                integrity: sha512-zTwEpWOzZ2CiKcB93BLngUX59hQkuZjT2+SAQEscSm52peDW/getsawMcWF1rGRpMCX6D7nSJA3CzJ8gn13N/g==,
             }
         dependencies:
             tslib: 2.6.2
         dev: false
 
-    /@grpc/grpc-js@1.9.13:
+    /@grpc/grpc-js@1.9.14:
         resolution:
             {
-                integrity: sha512-OEZZu9v9AA+7/tghMDE8o5DAMD5THVnwSqDWuh7PPYO5287rTyqy0xEHT6/e4pbqSrhyLPdQFsam4TwFQVVIIw==,
+                integrity: sha512-nOpuzZ2G3IuMFN+UPPpKrC6NsLmWsTqSsm66IRfnBt1D4pwTqE27lmbpcPM+l2Ua4gE7PfjRHI6uedAy7hoXUw==,
             }
         engines: { node: ^8.13.0 || >=10.10.0 }
         dependencies:
             '@grpc/proto-loader': 0.7.10
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
 
     /@grpc/proto-loader@0.7.10:
         resolution:
@@ -3108,7 +3108,7 @@ packages:
         dependencies:
             lodash.camelcase: 4.3.0
             long: 5.2.3
-            protobufjs: 7.2.5
+            protobufjs: 7.2.6
             yargs: 17.7.2
 
     /@humanwhocodes/config-array@0.11.14:
@@ -3777,15 +3777,15 @@ packages:
         dev: true
         optional: true
 
-    /@pkgr/core@0.1.0:
+    /@pkgr/core@0.1.1:
         resolution:
             {
-                integrity: sha512-Zwq5OCzuwJC2jwqmpEQt7Ds1DTi6BWSwoGkbb1n9pO3hzb35BoJELx7c0T23iDkBGkh2e7tvOtjF3tr3OaQHDQ==,
+                integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==,
             }
         engines: { node: ^12.20.0 || ^14.18.0 || >=16.0.0 }
         dev: true
 
-    /@prettier/plugin-xml@3.2.2(prettier@3.2.2):
+    /@prettier/plugin-xml@3.2.2(prettier@3.2.3):
         resolution:
             {
                 integrity: sha512-SoE70SQF1AKIvK7LVK80JcdAe6wrDcbodFFjcoqb1FkOqV0G0oSlgAFDwoRXPqkUE5p/YF2nGsnUbnfm6471sw==,
@@ -3794,7 +3794,7 @@ packages:
             prettier: ^3.0.0
         dependencies:
             '@xml-tools/parser': 1.0.11
-            prettier: 3.2.2
+            prettier: 3.2.3
         dev: true
 
     /@protobuf-ts/plugin-framework@2.9.3:
@@ -5758,7 +5758,7 @@ packages:
             dom-accessibility-api: 0.6.3
             lodash: 4.17.21
             redent: 3.0.0
-            vitest: 1.2.0(@types/node@20.11.3)
+            vitest: 1.2.0(@types/node@20.11.5)
         dev: true
 
     /@testing-library/react@14.1.2(react-dom@18.2.0)(react@18.2.0):
@@ -5778,7 +5778,7 @@ packages:
             react-dom: 18.2.0(react@18.2.0)
         dev: true
 
-    /@tool-belt/eslint-config@5.0.5(@typescript-eslint/eslint-plugin@6.19.0)(@typescript-eslint/parser@6.19.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(prettier@3.2.2)(typescript@5.3.3):
+    /@tool-belt/eslint-config@5.0.5(@typescript-eslint/eslint-plugin@6.19.0)(@typescript-eslint/parser@6.19.0)(eslint-import-resolver-typescript@3.6.1)(eslint@8.56.0)(prettier@3.2.3)(typescript@5.3.3):
         resolution:
             {
                 integrity: sha512-4hIPDxKAdJP6UizWzZM29eMOpyZ6SFbvfIwiLbrccw3cNw48XzNk+SKrrj6ZjwJSWez3sal3uxbdCP82wnaIDQ==,
@@ -5802,7 +5802,7 @@ packages:
             eslint-plugin-markdown: 3.0.1(eslint@8.56.0)
             eslint-plugin-n: 16.6.2(eslint@8.56.0)
             eslint-plugin-optimize-regex: 1.2.1
-            eslint-plugin-prettier: 5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.2)
+            eslint-plugin-prettier: 5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.3)
             eslint-plugin-promise: 6.1.1(eslint@8.56.0)
             eslint-plugin-react: 7.33.2(eslint@8.56.0)
             eslint-plugin-react-hooks: 4.6.0(eslint@8.56.0)
@@ -5813,7 +5813,7 @@ packages:
             eslint-plugin-typescript-sort-keys: 3.1.0(@typescript-eslint/parser@6.19.0)(eslint@8.56.0)(typescript@5.3.3)
             eslint-plugin-unicorn: 50.0.1(eslint@8.56.0)
             eslint-plugin-unused-imports: 3.0.0(@typescript-eslint/eslint-plugin@6.19.0)(eslint@8.56.0)
-            prettier: 3.2.2
+            prettier: 3.2.3
             typescript: 5.3.3
         transitivePeerDependencies:
             - '@types/eslint'
@@ -5978,29 +5978,29 @@ packages:
             '@types/unist': 2.0.10
         dev: true
 
-    /@types/node-fetch@2.6.10:
+    /@types/node-fetch@2.6.11:
         resolution:
             {
-                integrity: sha512-PPpPK6F9ALFTn59Ka3BaL+qGuipRfxNE8qVgkp0bVixeiR2c2/L+IVOiBdu9JhhT22sWnQEp6YyHGI2b2+CMcA==,
+                integrity: sha512-24xFj9R5+rfQJLRyM56qh+wnVSYhyXC2tkoBndtY0U+vubqNsYXGjufB2nn8Q6gt0LrARwL6UBtMCSVCwl4B1g==,
             }
         dependencies:
-            '@types/node': 18.19.7
+            '@types/node': 18.19.8
             form-data: 4.0.0
         dev: false
 
-    /@types/node@18.19.7:
+    /@types/node@18.19.8:
         resolution:
             {
-                integrity: sha512-IGRJfoNX10N/PfrReRZ1br/7SQ+2vF/tK3KXNwzXz82D32z5dMQEoOlFew18nLSN+vMNcLY4GrKfzwi/yWI8/w==,
+                integrity: sha512-g1pZtPhsvGVTwmeVoexWZLTQaOvXwoSq//pTL0DHeNzUDrFnir4fgETdhjhIxjVnN+hKOuh98+E1eMLnUXstFg==,
             }
         dependencies:
             undici-types: 5.26.5
         dev: false
 
-    /@types/node@20.11.3:
+    /@types/node@20.11.5:
         resolution:
             {
-                integrity: sha512-nrlmbvGPNGaj84IJZXMPhQuCMEVTT/hXZMJJG/aIqVL9fKxqk814sGGtJA4GI6hpJSLQjpi6cn0Qx9eOf9SDVg==,
+                integrity: sha512-g557vgQjUUfN76MZAN/dt1z3dzcUsimuysco0KeluHgrPdJXkP/XdAURgyO2W9fZWHRtRBiVKzKn8vyOAwlG+w==,
             }
         dependencies:
             undici-types: 5.26.5
@@ -6011,7 +6011,7 @@ packages:
                 integrity: sha512-vjKuaQOLUA5EY2zkUmWG1ipXbKt9Wd+H/0SiIuHVeH4cHtt6509iRUGH9ZR0iqgUrtj3BrP9KqoTuV3ZCbQcYA==,
             }
         dependencies:
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
         dev: true
 
     /@types/normalize-package-data@2.4.4:
@@ -6087,7 +6087,7 @@ packages:
                 integrity: sha512-8Z3/edqxE3RRlOJwKSgOFxLZRt/i1qFlv/Bi308ZUKo9jh8oGngd9r8GR0ZNKW5AEJq8QNQE3b17CwghTjQ0Uw==,
             }
         dependencies:
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
             webpack: 5.89.0(webpack-cli@5.1.4)
         transitivePeerDependencies:
             - '@swc/core'
@@ -6102,7 +6102,7 @@ packages:
                 integrity: sha512-wR87cgvxj3p6D0Crt1r5avwqffqPXUkNlnQ1mjU93G7gCuFjufZR4I6j8cz5g1F1tTYpfOOFvly+cmIQwL9wvw==,
             }
         dependencies:
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
             tapable: 2.2.1
             webpack: 5.89.0(webpack-cli@5.1.4)
         transitivePeerDependencies:
@@ -6396,7 +6396,7 @@ packages:
             '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.7)
             '@types/babel__core': 7.20.5
             react-refresh: 0.14.0
-            vite: 5.0.11(@types/node@20.11.3)(sass@1.69.7)
+            vite: 5.0.11(@types/node@20.11.5)(sass@1.69.7)
         transitivePeerDependencies:
             - supports-color
         dev: true
@@ -6422,7 +6422,7 @@ packages:
             std-env: 3.7.0
             test-exclude: 6.0.0
             v8-to-istanbul: 9.2.0
-            vitest: 1.2.0(@types/node@20.11.3)
+            vitest: 1.2.0(@types/node@20.11.5)
         transitivePeerDependencies:
             - supports-color
         dev: true
@@ -7074,7 +7074,7 @@ packages:
             postcss: ^8.1.0
         dependencies:
             browserslist: 4.22.2
-            caniuse-lite: 1.0.30001577
+            caniuse-lite: 1.0.30001578
             fraction.js: 4.3.7
             normalize-range: 0.1.2
             picocolors: 1.0.0
@@ -7231,8 +7231,8 @@ packages:
         engines: { node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7 }
         hasBin: true
         dependencies:
-            caniuse-lite: 1.0.30001577
-            electron-to-chromium: 1.4.632
+            caniuse-lite: 1.0.30001578
+            electron-to-chromium: 1.4.633
             node-releases: 2.0.14
             update-browserslist-db: 1.0.13(browserslist@4.22.2)
 
@@ -7321,10 +7321,10 @@ packages:
         engines: { node: '>=10' }
         dev: true
 
-    /caniuse-lite@1.0.30001577:
+    /caniuse-lite@1.0.30001578:
         resolution:
             {
-                integrity: sha512-rs2ZygrG1PNXMfmncM0B5H1hndY5ZCC9b5TkFaVNfZ+AUlyqcMyVIQtc3fsezi0NUCk5XZfDf9WS6WxMxnfdrg==,
+                integrity: sha512-J/jkFgsQ3NEl4w2lCoM9ZPxrD+FoBNJ7uJUpGVjIg/j0OwJosWM36EPDv+Yyi0V4twBk9pPmlFS+PLykgEvUmg==,
             }
 
     /chai@4.4.1:
@@ -8133,10 +8133,10 @@ packages:
             }
         dev: true
 
-    /electron-to-chromium@1.4.632:
+    /electron-to-chromium@1.4.633:
         resolution:
             {
-                integrity: sha512-JGmudTwg7yxMYvR/gWbalqqQiyu7WTFv2Xu3vw4cJHXPFxNgAk0oy8UHaer8nLF4lZJa+rNoj6GsrKIVJTV6Tw==,
+                integrity: sha512-7BvxzXrHFliyQ1oZc6NRMjyEaKOO1Ma1NY98sFZofogWlm+klLWSgrDw7EhatiMgi4R4NV+iWxDdxuIKXtPbOw==,
             }
 
     /emoji-regex@8.0.0:
@@ -8620,7 +8620,7 @@ packages:
             regexp-tree: 0.1.27
         dev: true
 
-    /eslint-plugin-prettier@5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.2):
+    /eslint-plugin-prettier@5.1.3(eslint-config-prettier@9.1.0)(eslint@8.56.0)(prettier@3.2.3):
         resolution:
             {
                 integrity: sha512-C9GCVAs4Eq7ZC/XFQHITLiHJxQngdtraXaM+LoUFoFp/lHNl2Zn8f3WQbe9HvTBBQ9YnKFB0/2Ajdqwo5D1EAw==,
@@ -8639,7 +8639,7 @@ packages:
         dependencies:
             eslint: 8.56.0
             eslint-config-prettier: 9.1.0(eslint@8.56.0)
-            prettier: 3.2.2
+            prettier: 3.2.3
             prettier-linter-helpers: 1.0.0
             synckit: 0.8.8
         dev: true
@@ -8836,7 +8836,7 @@ packages:
             '@typescript-eslint/eslint-plugin': 6.19.0(@typescript-eslint/parser@6.19.0)(eslint@8.56.0)(typescript@5.3.3)
             '@typescript-eslint/utils': 6.19.0(eslint@8.56.0)(typescript@5.3.3)
             eslint: 8.56.0
-            vitest: 1.2.0(@types/node@20.11.3)
+            vitest: 1.2.0(@types/node@20.11.5)
         transitivePeerDependencies:
             - supports-color
             - typescript
@@ -10368,7 +10368,7 @@ packages:
             }
         engines: { node: '>= 10.13.0' }
         dependencies:
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
             merge-stream: 2.0.0
             supports-color: 8.1.1
         dev: true
@@ -11094,10 +11094,10 @@ packages:
             '@segment/isodate': 1.0.3
         dev: false
 
-    /next-intl@3.4.2(next@14.0.4)(react@18.2.0):
+    /next-intl@3.4.3(next@14.0.4)(react@18.2.0):
         resolution:
             {
-                integrity: sha512-DHAMtXfuItIGeNv5pUYqwHRWBmyL47dyuS1BDoG1dRUq+drcV5xk8eygD0n7xicD8yYUhgGcLMhNajEwRwpWNQ==,
+                integrity: sha512-Rgc2+groUlLffk/19m8jkOXv2khKbnO8WlYqYVeIeW4i6XS7HV65OoQogtbiolptdWaztLvigJqo7r+HVAQ95A==,
             }
         peerDependencies:
             next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
@@ -11107,7 +11107,7 @@ packages:
             negotiator: 0.6.3
             next: 14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7)
             react: 18.2.0
-            use-intl: 3.4.2(react@18.2.0)
+            use-intl: 3.4.3(react@18.2.0)
         dev: false
 
     /next@14.0.4(@babel/core@7.23.7)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.7):
@@ -11131,7 +11131,7 @@ packages:
             '@next/env': 14.0.4
             '@swc/helpers': 0.5.2
             busboy: 1.6.0
-            caniuse-lite: 1.0.30001577
+            caniuse-lite: 1.0.30001578
             graceful-fs: 4.2.11
             postcss: 8.4.31
             react: 18.2.0
@@ -11441,8 +11441,8 @@ packages:
             }
         hasBin: true
         dependencies:
-            '@types/node': 18.19.7
-            '@types/node-fetch': 2.6.10
+            '@types/node': 18.19.8
+            '@types/node-fetch': 2.6.11
             abort-controller: 3.0.0
             agentkeepalive: 4.5.0
             digest-fetch: 1.3.0
@@ -11827,7 +11827,7 @@ packages:
         dependencies:
             lilconfig: 3.0.0
             postcss: 8.4.33
-            ts-node: 10.9.2(@types/node@20.11.3)(typescript@5.3.3)
+            ts-node: 10.9.2(@types/node@20.11.5)(typescript@5.3.3)
             yaml: 2.3.4
         dev: true
 
@@ -11915,7 +11915,7 @@ packages:
             fast-diff: 1.3.0
         dev: true
 
-    /prettier-plugin-sort-json@3.1.0(prettier@3.2.2):
+    /prettier-plugin-sort-json@3.1.0(prettier@3.2.3):
         resolution:
             {
                 integrity: sha512-eIDEUjwzekiVd+oKrpd0aoACBTp5zOW71wDTNy+qQ5C9Q8oqt9n9wCm4F+SeRZbXfgblh/WYIguJynImlBXrvQ==,
@@ -11924,13 +11924,13 @@ packages:
         peerDependencies:
             prettier: ^3.0.0
         dependencies:
-            prettier: 3.2.2
+            prettier: 3.2.3
         dev: true
 
-    /prettier@3.2.2:
+    /prettier@3.2.3:
         resolution:
             {
-                integrity: sha512-HTByuKZzw7utPiDO523Tt2pLtEyK7OibUD9suEJQrPUCYQqrHr74GGX6VidMrovbf/I50mPqr8j/II6oBAuc5A==,
+                integrity: sha512-QNhUTBq+mqt1oH1dTfY3phOKNhcDdJkfttHI6u0kj7M2+c+7fmNKlgh2GhnHiqMcbxJ+a0j2igz/2jfl9QKLuw==,
             }
         engines: { node: '>=14' }
         hasBin: true
@@ -12008,10 +12008,10 @@ packages:
             xtend: 4.0.2
         dev: false
 
-    /protobufjs@7.2.5:
+    /protobufjs@7.2.6:
         resolution:
             {
-                integrity: sha512-gGXRSXvxQ7UiPgfw8gevrfRWcTlSbOFg+p/N+JVJEK5VhueL2miT6qTymqAmjr1Q5WbOCyJbyrk6JfWKwlFn6A==,
+                integrity: sha512-dgJaEDDL6x8ASUZ1YqWciTRrdOuYNzoOf27oHNfdyvKqHr5i0FV7FSLU+aIeFjyFgVxrpTOtQUi0BLLBymZaBw==,
             }
         engines: { node: '>=12.0.0' }
         requiresBuild: true
@@ -12026,7 +12026,7 @@ packages:
             '@protobufjs/path': 1.1.2
             '@protobufjs/pool': 1.1.0
             '@protobufjs/utf8': 1.1.0
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
             long: 5.2.3
 
     /psl@1.9.0:
@@ -13236,7 +13236,7 @@ packages:
             }
         engines: { node: ^14.18.0 || >=16.0.0 }
         dependencies:
-            '@pkgr/core': 0.1.0
+            '@pkgr/core': 0.1.1
             tslib: 2.6.2
         dev: true
 
@@ -13514,7 +13514,7 @@ packages:
             webpack: 5.89.0(webpack-cli@5.1.4)
         dev: true
 
-    /ts-node@10.9.2(@types/node@20.11.3)(typescript@5.3.3):
+    /ts-node@10.9.2(@types/node@20.11.5)(typescript@5.3.3):
         resolution:
             {
                 integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==,
@@ -13536,7 +13536,7 @@ packages:
             '@tsconfig/node12': 1.0.11
             '@tsconfig/node14': 1.0.3
             '@tsconfig/node16': 1.0.4
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
             acorn: 8.11.3
             acorn-walk: 8.3.2
             arg: 4.1.3
@@ -13548,15 +13548,15 @@ packages:
             yn: 3.1.1
         dev: true
 
-    /tsconfck@2.1.2(typescript@5.3.3):
+    /tsconfck@3.0.1(typescript@5.3.3):
         resolution:
             {
-                integrity: sha512-ghqN1b0puy3MhhviwO2kGF8SeMDNhEbnKxjK7h6+fvY9JAxqvXi8y5NAHSQv687OVboS2uZIByzGd45/YxrRHg==,
+                integrity: sha512-7ppiBlF3UEddCLeI1JRx5m2Ryq+xk4JrZuq4EuYXykipebaq1dV0Fhgr1hb7CkmHt32QSgOZlcqVLEtHBG4/mg==,
             }
-        engines: { node: ^14.13.1 || ^16 || >=18 }
+        engines: { node: ^18 || >=20 }
         hasBin: true
         peerDependencies:
-            typescript: ^4.3.5 || ^5.0.0
+            typescript: ^5.0.0
         peerDependenciesMeta:
             typescript:
                 optional: true
@@ -13890,15 +13890,15 @@ packages:
             requires-port: 1.0.0
         dev: true
 
-    /use-intl@3.4.2(react@18.2.0):
+    /use-intl@3.4.3(react@18.2.0):
         resolution:
             {
-                integrity: sha512-+9xUu01CqkxV0fqMXmxi08gUNCcWGSDFmSHiMSzodRXWGBPFeXcnhQXQ5UOGoCUQygW6vH+dntyXTKtb4hefYw==,
+                integrity: sha512-Cx+Q8QQtJMwzOfBZMuTUPQSVeBbVdjdAXvK5EfvhufsMyiDT7RT4dLgU/ewPVncyB9ctkRva715h2uCGzYBQ4A==,
             }
         peerDependencies:
             react: ^16.8.0 || ^17.0.0 || ^18.0.0
         dependencies:
-            '@formatjs/ecma402-abstract': 1.18.1
+            '@formatjs/ecma402-abstract': 1.18.2
             intl-messageformat: 9.13.0
             react: 18.2.0
         dev: false
@@ -13958,7 +13958,7 @@ packages:
         engines: { node: '>= 0.10' }
         dev: false
 
-    /vite-node@1.2.0(@types/node@20.11.3):
+    /vite-node@1.2.0(@types/node@20.11.5):
         resolution:
             {
                 integrity: sha512-ETnQTHeAbbOxl7/pyBck9oAPZZZo+kYnFt1uQDD+hPReOc+wCjXw4r4jHriBRuVDB5isHmPXxrfc1yJnfBERqg==,
@@ -13970,7 +13970,7 @@ packages:
             debug: 4.3.4
             pathe: 1.1.2
             picocolors: 1.0.0
-            vite: 5.0.11(@types/node@20.11.3)(sass@1.69.7)
+            vite: 5.0.11(@types/node@20.11.5)(sass@1.69.7)
         transitivePeerDependencies:
             - '@types/node'
             - less
@@ -13992,14 +13992,14 @@ packages:
         dependencies:
             magic-string: 0.30.5
             svgo: 3.2.0
-            vite: 5.0.11(@types/node@20.11.3)(sass@1.69.7)
+            vite: 5.0.11(@types/node@20.11.5)(sass@1.69.7)
             xml2js: 0.6.2
         dev: true
 
-    /vite-tsconfig-paths@4.2.3(typescript@5.3.3):
+    /vite-tsconfig-paths@4.3.1(typescript@5.3.3):
         resolution:
             {
-                integrity: sha512-xVsA2xe6QSlzBujtWF8q2NYexh7PAUYfzJ4C8Axpe/7d2pcERYxuxGgph9F4f0iQO36g5tyGq6eBUYIssdUrVw==,
+                integrity: sha512-cfgJwcGOsIxXOLU/nELPny2/LUD/lcf1IbfyeKTv2bsupVbTH/xpFtdQlBmIP1GEK2CjjLxYhFfB+QODFAx5aw==,
             }
         peerDependencies:
             vite: '*'
@@ -14009,13 +14009,13 @@ packages:
         dependencies:
             debug: 4.3.4
             globrex: 0.1.2
-            tsconfck: 2.1.2(typescript@5.3.3)
+            tsconfck: 3.0.1(typescript@5.3.3)
         transitivePeerDependencies:
             - supports-color
             - typescript
         dev: true
 
-    /vite@5.0.11(@types/node@20.11.3)(sass@1.69.7):
+    /vite@5.0.11(@types/node@20.11.5)(sass@1.69.7):
         resolution:
             {
                 integrity: sha512-XBMnDjZcNAw/G1gEiskiM1v6yzM4GE5aMGvhWTlHAYYhxb7S3/V1s3m2LDHa8Vh6yIWYYB0iJwsEaS523c4oYA==,
@@ -14046,7 +14046,7 @@ packages:
             terser:
                 optional: true
         dependencies:
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
             esbuild: 0.19.11
             postcss: 8.4.33
             rollup: 4.9.5
@@ -14066,10 +14066,10 @@ packages:
         dependencies:
             ts-essentials: 9.4.1(typescript@5.3.3)
             typescript: 5.3.3
-            vitest: 1.2.0(@types/node@20.11.3)
+            vitest: 1.2.0(@types/node@20.11.5)
         dev: true
 
-    /vitest@1.2.0(@types/node@20.11.3):
+    /vitest@1.2.0(@types/node@20.11.5):
         resolution:
             {
                 integrity: sha512-Ixs5m7BjqvLHXcibkzKRQUvD/XLw0E3rvqaCMlrm/0LMsA0309ZqYvTlPzkhh81VlEyVZXFlwWnkhb6/UMtcaQ==,
@@ -14097,7 +14097,7 @@ packages:
             jsdom:
                 optional: true
         dependencies:
-            '@types/node': 20.11.3
+            '@types/node': 20.11.5
             '@vitest/expect': 1.2.0
             '@vitest/runner': 1.2.0
             '@vitest/snapshot': 1.2.0
@@ -14116,8 +14116,8 @@ packages:
             strip-literal: 1.3.0
             tinybench: 2.6.0
             tinypool: 0.8.1
-            vite: 5.0.11(@types/node@20.11.3)(sass@1.69.7)
-            vite-node: 1.2.0(@types/node@20.11.3)
+            vite: 5.0.11(@types/node@20.11.5)(sass@1.69.7)
+            vite-node: 1.2.0(@types/node@20.11.5)
             why-is-node-running: 2.2.2
         transitivePeerDependencies:
             - less

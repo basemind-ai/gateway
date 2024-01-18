@@ -5,11 +5,12 @@ import { useAnalytics } from '@/hooks/use-analytics';
 
 export function TrackStaticPage({ pageName }: { pageName: string }) {
 	const { initialized, page } = useAnalytics();
+
 	useEffect(() => {
 		if (initialized) {
 			page(pageName);
 		}
-	}, [initialized, pageName]);
+	}, [page, initialized, pageName]);
 
 	return null;
 }
