@@ -13,7 +13,7 @@
 		"@grpc/grpc-js": "^1.9.14",
 		"@protobuf-ts/runtime": "^2.9.3",
 		"@protobuf-ts/runtime-rpc": "^2.9.3",
-		"cohere-ai": "^7.6.2",
+		"cohere-ai": "^7.7.3",
 		"grpc-health-check": "^2.0.0",
 		"pino": "^8.17.2"
 	}
