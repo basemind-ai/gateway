@@ -1,6 +1,5 @@
 import { ProjectFactory } from 'tests/factories';
 import { fireEvent, render, screen } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { AvatarDropdown } from '@/components/avatar-dropdown';
 import { defaultProfilePicture, Navigation } from '@/constants';

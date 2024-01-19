@@ -5,7 +5,6 @@ import {
 } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import * as ApplicationAPI from '@/api/applications-api';
 import * as PromptConfigAPI from '@/api/prompt-config-api';

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { PromptTestRecordFactory } from 'tests/factories';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect, Mock, MockInstance } from 'vitest';
+import { Mock, MockInstance } from 'vitest';
 
 import {
 	finishReasonStyle,

@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { render, renderHook, screen } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-info';
 import {

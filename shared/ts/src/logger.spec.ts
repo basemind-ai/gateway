@@ -1,16 +1,12 @@
+import { pino } from 'pino';
 import { createLogger } from 'shared/logger';
+import { MockInstance } from 'vitest';
 
-const mock = vi.fn();
-
-vi.mock('pino', async (importOriginal: () => Promise<Record<string, any>>) => {
-	const original = await importOriginal();
-	return {
-		...original,
-		pino: mock,
-	};
-});
+vi.mock('pino');
 
 describe('logger utils tests', () => {
+	const mock = pino as unknown as MockInstance;
+
 	it('should create an info level logger in production', () => {
 		Reflect.set(process.env, 'NODE_ENV', 'production');
 		createLogger();
@@ -25,7 +21,7 @@ describe('logger utils tests', () => {
 		createLogger();
 
 		expect(mock).toHaveBeenCalledWith({
-			debug: 'info',
+			level: 'debug',
 			transport: {
 				target: 'pino-pretty',
 			},

@@ -1,6 +1,5 @@
 import { mockPage, mockReady } from 'tests/mocks';
 import { render, waitFor } from 'tests/test-utils';
-import { describe } from 'vitest';
 
 import { TrackStaticPage } from '@/components/static-site/track-static-page';
 

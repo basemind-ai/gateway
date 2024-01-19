@@ -29,7 +29,7 @@ export default function SignIn() {
 
 	return (
 		<main data-testid="login-container" className="flex bg-base-100 h-full">
-			<LottieLoader size="33" />
+			<LottieLoader />
 			<div className={`flex grow ${isLoading && 'hidden'}`}>
 				<div className="flex grow px-16 pt-16 pb-24 flex-col">
 					<Logo />

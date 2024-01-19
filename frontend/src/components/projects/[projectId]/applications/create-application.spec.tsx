@@ -1,7 +1,6 @@
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
 import { mockTrack, routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import * as ApplicationAPI from '@/api/applications-api';

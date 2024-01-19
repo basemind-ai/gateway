@@ -3,7 +3,6 @@ import en from 'public/messages/en.json';
 import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { ProjectApplicationsListTable } from '@/components/projects/[projectId]/project-applications-list-table';
 import { PromptConfig } from '@/types';

@@ -1,6 +1,5 @@
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen } from 'tests/test-utils';
-import { describe } from 'vitest';
 
 import { DiscordButton } from '@/components/static-site/discord-button';
 

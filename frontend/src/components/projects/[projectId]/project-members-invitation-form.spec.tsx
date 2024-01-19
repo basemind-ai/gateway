@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker';
 import { ProjectFactory, ProjectUserAccountFactory } from 'tests/factories';
 import { mockTrack } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
 
 import * as ProjectUsersAPI from '@/api/project-users-api';
 import { ProjectMembersInvitationForm } from '@/components/projects/[projectId]/project-members-invitation-form';

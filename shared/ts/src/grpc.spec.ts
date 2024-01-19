@@ -4,7 +4,6 @@ import {
 	createInternalGrpcError,
 	extractProviderAPIKeyFromMetadata,
 } from 'shared/grpc';
-import { it } from 'vitest';
 
 describe('GRPC utils tests', () => {
 	describe('createInternalGrpcError tests', () => {

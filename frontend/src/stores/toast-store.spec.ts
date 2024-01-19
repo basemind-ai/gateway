@@ -1,5 +1,4 @@
 import { renderHook } from 'tests/test-utils';
-import { beforeEach } from 'vitest';
 
 import {
 	ToastType,

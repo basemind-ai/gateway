@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker';
 import { APIKeyFactory, ApplicationFactory } from 'tests/factories';
 import { mockReady, mockTrack } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { it } from 'vitest';
 
 import * as APIKeysAPI from '@/api/api-keys-api';
 import { ApplicationApiKeys } from '@/components/projects/[projectId]/applications/[applicationId]/application-api-keys';

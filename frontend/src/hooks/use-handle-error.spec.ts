@@ -1,6 +1,6 @@
 import { routerReplaceMock } from 'tests/mocks';
 import { renderHook } from 'tests/test-utils';
-import { beforeEach, Mock } from 'vitest';
+import { Mock } from 'vitest';
 
 import { Navigation } from '@/constants';
 import {

@@ -1,7 +1,6 @@
 import { APIKeyFactory } from 'tests/factories';
 import { mockReady, mockTrack } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import * as APIKeyAPI from '@/api/api-keys-api';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';

@@ -8,7 +8,6 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-provider-keys';
 import { modelVendorToLocaleMap } from '@/constants/models';

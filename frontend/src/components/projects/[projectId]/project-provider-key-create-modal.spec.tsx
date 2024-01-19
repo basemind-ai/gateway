@@ -9,7 +9,6 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { ProjectProviderKeyCreateModal } from '@/components/projects/[projectId]/project-provider-key-create-modal';
 import { ApiError } from '@/errors';

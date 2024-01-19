@@ -5,7 +5,6 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { OpenAIMessageForm } from '@/components/prompt-display-components/openai-components/openai-message-form';
 import { OpenAIPromptMessageRole } from '@/types';

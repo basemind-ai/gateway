@@ -1,5 +1,4 @@
 import { loadEnv } from 'shared/env';
-import { afterAll, beforeEach } from 'vitest';
 
 import { createOrDefaultClient, getCohereClient } from '@/client';
 

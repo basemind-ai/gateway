@@ -3,7 +3,6 @@
 import { Server } from '@grpc/grpc-js';
 import { Metadata } from '@grpc/grpc-js/build/src/metadata';
 import { createServer, extractProviderAPIKeyFromMetadata } from 'shared/grpc';
-import { expect } from 'vitest';
 
 describe('gRPC utils tests', () => {
 	describe('createServer', () => {

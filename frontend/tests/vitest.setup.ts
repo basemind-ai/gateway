@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import '@testing-library/react';
+import 'vitest-canvas-mock';
 
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 import * as matchers from '@testing-library/jest-dom/matchers';

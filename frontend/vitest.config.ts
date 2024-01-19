@@ -9,6 +9,11 @@ export default defineConfig({
 		css: true,
 		environment: 'jsdom',
 		globals: true,
+		server: {
+			deps: {
+				inline: ['vitest-canvas-mock'],
+			},
+		},
 		setupFiles: ['./tests/vitest.setup.ts', './tests/mocks.ts'],
 	},
 });

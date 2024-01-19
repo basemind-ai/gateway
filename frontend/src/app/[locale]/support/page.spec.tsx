@@ -10,7 +10,6 @@ import {
 	routerReplaceMock,
 } from 'tests/mocks';
 import { render, renderHook, screen, waitFor } from 'tests/test-utils';
-import { beforeEach, expect } from 'vitest';
 
 import Support from '@/app/[locale]/support/page';
 import { Navigation } from '@/constants';

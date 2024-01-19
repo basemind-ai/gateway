@@ -1,6 +1,5 @@
 import { mockTrack } from 'tests/mocks';
 import { render, screen, waitFor } from 'tests/test-utils';
-import { describe } from 'vitest';
 
 import {
 	NavAuctionIcons,

@@ -1,6 +1,5 @@
 import { mockTrack, routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { describe, expect } from 'vitest';
 
 import { PricingCard } from '@/components/static-site/pricing-card';
 import { firstPackagePerks } from '@/components/static-site/pricing-section';

@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { PromptTestRecordFactory } from 'tests/factories';
 import { mockFetch } from 'tests/mocks';
 import { act, renderHook, waitFor } from 'tests/test-utils';
-import { beforeEach, expect, MockInstance } from 'vitest';
+import { MockInstance } from 'vitest';
 
 import * as ws from '@/api/ws';
 import { WebsocketHandler } from '@/api/ws';

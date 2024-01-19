@@ -1,6 +1,5 @@
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen } from 'tests/test-utils';
-import { describe } from 'vitest';
 
 import { CTASection } from '@/components/static-site/cta-section';
 import { Navigation } from '@/constants';

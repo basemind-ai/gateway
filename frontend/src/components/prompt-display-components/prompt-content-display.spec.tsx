@@ -3,7 +3,6 @@ import {
 	OpenAIPromptMessageFactory,
 } from 'tests/factories';
 import { render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
 import { ModelVendor } from '@/types';

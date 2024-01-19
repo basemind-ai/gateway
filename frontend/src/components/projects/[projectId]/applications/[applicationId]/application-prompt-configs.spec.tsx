@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker';
 import { ApplicationFactory, OpenAIPromptConfigFactory } from 'tests/factories';
 import { routerPushMock } from 'tests/mocks';
 import { fireEvent, render, screen } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';

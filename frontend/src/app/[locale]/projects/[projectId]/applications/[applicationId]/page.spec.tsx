@@ -11,7 +11,6 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import * as PromptConfigAPI from '@/api/prompt-config-api';
 import ApplicationPage from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/page';

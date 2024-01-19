@@ -1,7 +1,7 @@
 import { ApplicationFactory, ProjectFactory } from 'tests/factories';
 import { mockTrack, routerReplaceMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect, MockInstance } from 'vitest';
+import { MockInstance } from 'vitest';
 
 import * as applicationsAPI from '@/api/applications-api';
 import * as projectsAPI from '@/api/projects-api';

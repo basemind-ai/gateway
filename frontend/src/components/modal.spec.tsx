@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { Modal } from '@/components/modal';
 

@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from 'tests/test-utils';
-import { expect } from 'vitest';
 
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 

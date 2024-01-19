@@ -16,7 +16,6 @@ import {
 	screen,
 	waitFor,
 } from 'tests/test-utils';
-import { afterEach, expect } from 'vitest';
 import { shallow } from 'zustand/shallow';
 
 import PromptConfigCreateWizard from '@/app/[locale]/projects/[projectId]/applications/[applicationId]/config-create-wizard/page';

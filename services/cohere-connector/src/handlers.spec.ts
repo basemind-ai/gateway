@@ -17,7 +17,7 @@ import {
 import { StreamFinishReason } from 'shared/constants';
 import { GrpcError } from 'shared/grpc';
 import { wait } from 'shared/time';
-import { beforeEach, Mock, MockInstance } from 'vitest';
+import { Mock, MockInstance } from 'vitest';
 
 import { coherePrompt, cohereStream } from '@/handlers';
 

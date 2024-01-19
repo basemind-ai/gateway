@@ -7,7 +7,7 @@ import {
 import { UserFactory } from 'tests/factories';
 import { mockIdentify, mockTrack, routerReplaceMock } from 'tests/mocks';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
-import { expect, MockInstance } from 'vitest';
+import { MockInstance } from 'vitest';
 
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';
 import { Navigation } from '@/constants';
