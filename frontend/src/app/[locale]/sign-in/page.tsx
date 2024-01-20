@@ -8,24 +8,25 @@ import { Logo } from '@/components/logo';
 import { FirebaseLogin } from '@/components/sign-in/firebase-login';
 import { LoginBanner } from '@/components/sign-in/login-banner';
 import { marketingInfographic, Navigation } from '@/constants';
+import { PageNames } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useUser } from '@/stores/api-store';
 
 export default function SignIn() {
 	const user = useUser();
 	const router = useRouter();
-	const { initialized, page } = useAnalytics();
+	const { initialized, page, identify } = useAnalytics();
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		page('auth');
+		page(PageNames.Auth);
 	}, [initialized, page]);
 
 	useEffect(() => {
 		if (user) {
 			router.replace(Navigation.Projects);
 		}
-	}, [user, router]);
+	}, [user, router, identify]);
 
 	return (
 		<main data-testid="login-container" className="flex bg-base-100 h-full">

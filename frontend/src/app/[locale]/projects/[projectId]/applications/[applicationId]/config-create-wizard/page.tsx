@@ -12,6 +12,7 @@ import { PromptConfigBaseForm } from '@/components/projects/[projectId]/applicat
 import { PromptConfigParametersAndPromptForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/parameters-and-prompt-form';
 import { PromptConfigTestingForm } from '@/components/projects/[projectId]/applications/[applicationId]/config-create-wizard/prompt-config-testing-form';
 import { Navigation } from '@/constants';
+import { PageNames, TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -186,7 +187,7 @@ export default function PromptConfigCreateWizard({
 
 	useEffect(() => {
 		if (initialized) {
-			page('createConfigWizard', {
+			page(PageNames.CreateConfigWizard, {
 				applicationId,
 				projectId,
 				stage: store.wizardStage,
@@ -209,13 +210,17 @@ export default function PromptConfigCreateWizard({
 				},
 				projectId,
 			});
-			track('createConfig', {
-				messageLength: store.messages.length,
-				name: store.configName,
-				parameters: store.parameters,
-				type: store.modelType,
-				vendor: store.modelVendor,
-			});
+			track(
+				TrackEvents.ConfigCreated,
+				{
+					messageLength: store.messages.length,
+					name: store.configName,
+					parameters: store.parameters,
+					type: store.modelType,
+					vendor: store.modelVendor,
+				},
+				{ accountId: projectId, applicationId },
+			);
 			store.resetState();
 			router.replace(
 				setRouteParams(Navigation.PromptConfigDetail, {

@@ -12,6 +12,7 @@ import { ApplicationGeneralSettings } from '@/components/projects/[projectId]/ap
 import { ApplicationPromptConfigs } from '@/components/projects/[projectId]/applications/[applicationId]/application-prompt-configs';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { ApplicationPageTabNames } from '@/constants';
+import { PageNames } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useApplication, useProject } from '@/stores/api-store';
@@ -62,7 +63,7 @@ export default function Application({
 	params: { applicationId: string; projectId: string };
 }) {
 	const user = useAuthenticatedUser();
-	const { page, initialized } = useAnalytics();
+	const { page, initialized, identify } = useAnalytics();
 	const t = useTranslations('application');
 	const application = useApplication(projectId, applicationId);
 	const project = useProject(projectId);
@@ -86,9 +87,17 @@ export default function Application({
 
 	useEffect(() => {
 		if (initialized) {
-			page('applicationOverview', { applicationId, projectId });
+			page(PageNames.ApplicationOverview, { applicationId, projectId });
+			if (user) {
+				identify(user.uid, {
+					avatar: user.photoURL,
+					email: user.email,
+					id: user.uid,
+					name: user.displayName,
+				});
+			}
 		}
-	}, [applicationId, projectId, initialized, page]);
+	}, [applicationId, projectId, initialized, page, user, identify]);
 
 	if (!application || !project) {
 		return null;

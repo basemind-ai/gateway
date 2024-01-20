@@ -22,7 +22,8 @@ describe('NavAuctionIcons Tests', () => {
 		icon.click();
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				`${NavAuctionIconsList[0].name}_click`,
+				`${NavAuctionIconsList[0].name.charAt(0).toUpperCase() + NavAuctionIconsList[0].name.split('-')[0].slice(1)} Clicked`,
+				expect.any(Object),
 				expect.any(Object),
 			);
 		});

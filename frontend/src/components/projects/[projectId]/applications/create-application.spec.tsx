@@ -251,7 +251,8 @@ describe('CreateApplication', () => {
 		fireEvent.click(submitButton);
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'createApplication',
+				'Application Created',
+				expect.any(Object),
 				expect.any(Object),
 			);
 		});

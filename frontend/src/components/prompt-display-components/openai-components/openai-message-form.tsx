@@ -80,9 +80,7 @@ export function OpenAIMessageForm({
 					</button>
 				)}
 			</div>
-			<div
-				className={`grow p-3 border-2 rounded border-neutral border-opacity-50 border-double hover:border-opacity-100 flex gap-4`}
-			>
+			<div className={`grow pt-4 pb-8 rounded flex gap-4`}>
 				<div className="flex flex-col gap-2">
 					<div className="form-control" data-no-dnd="true">
 						<label

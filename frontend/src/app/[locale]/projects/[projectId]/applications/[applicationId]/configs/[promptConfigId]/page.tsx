@@ -14,6 +14,7 @@ import { PromptConfigGeneralInfo } from '@/components/projects/[projectId]/appli
 import { PromptConfigGeneralSettings } from '@/components/projects/[projectId]/applications/[applicationId]/configs/[configId]/prompt-config-general-settings';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { PromptConfigPageTab } from '@/constants';
+import { PageNames } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -75,7 +76,7 @@ export default function PromptConfiguration({
 }) {
 	const user = useAuthenticatedUser();
 
-	const { page, initialized } = useAnalytics();
+	const { page, initialized, identify } = useAnalytics();
 	const t = useTranslations('promptConfig');
 
 	const handleError = useHandleError();
@@ -102,13 +103,29 @@ export default function PromptConfiguration({
 
 	useEffect(() => {
 		if (initialized) {
-			page('configOverview', {
+			page(PageNames.ConfigOverview, {
+				accountId: projectId,
 				applicationId,
-				projectId,
 				promptConfigId,
 			});
+			if (user) {
+				identify(user.uid, {
+					avatar: user.photoURL,
+					email: user.email,
+					id: user.uid,
+					name: user.displayName,
+				});
+			}
 		}
-	}, [applicationId, projectId, promptConfigId, initialized, page]);
+	}, [
+		applicationId,
+		projectId,
+		promptConfigId,
+		initialized,
+		page,
+		user,
+		identify,
+	]);
 
 	if (isLoading) {
 		return (

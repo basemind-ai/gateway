@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import process from 'process';
+import React from 'react';
 import { beforeEach } from 'vitest';
 
 import { Env } from '@/utils/env';
@@ -141,11 +142,18 @@ beforeEach(() => {
 	routerReplaceMock.mockReset();
 });
 
+const MockDotLottiePlayer = () =>
+	React.createElement('div', null, 'Mock DotLottiePlayer');
+
 export const mockReady = vi.fn(async () => true);
 export const mockTrack = vi.fn();
 export const mockIdentify = vi.fn();
 export const mockPage = vi.fn();
 export const mockGroup = vi.fn();
+
+vi.mock('@dotlottie/react-player', () => {
+	return { DotLottiePlayer: MockDotLottiePlayer };
+});
 
 vi.mock(
 	'@segment/analytics-next',

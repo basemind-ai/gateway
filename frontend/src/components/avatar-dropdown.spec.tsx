@@ -9,10 +9,6 @@ describe('AvatarDropdown tests', () => {
 	const projects = ProjectFactory.batchSync(3);
 	const userPhotoURL = defaultProfilePicture;
 
-	beforeEach(() => {
-		vi.resetAllMocks();
-	});
-
 	it('renders AvatarDropdown with projects', () => {
 		render(
 			<AvatarDropdown

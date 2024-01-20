@@ -5,6 +5,7 @@ import { CardHeaderWithTooltip } from '@/components/card-header-with-tooltip';
 import { PromptContentDisplay } from '@/components/prompt-display-components/prompt-content-display';
 import { PromptTestInputs } from '@/components/prompt-display-components/prompt-test-inputs';
 import { PromptTestResultTable } from '@/components/prompt-display-components/prompt-test-result-table';
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { usePromptTesting } from '@/hooks/use-prompt-testing';
 import {
@@ -92,7 +93,7 @@ export function PromptConfigTestingForm<T extends ModelVendor>({
 		try {
 			await sendMessage(config);
 			if (initialized) {
-				track('runConfigTest', {
+				track(TrackEvents.ConfigTested, {
 					applicationId,
 					projectId,
 					promptConfigId,

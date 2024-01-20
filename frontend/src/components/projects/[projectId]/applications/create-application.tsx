@@ -6,6 +6,7 @@ import { InfoCircle } from 'react-bootstrap-icons';
 import { handleCreateAPIKey, handleCreateApplication } from '@/api';
 import { CreateApplicationAPIKeyModal } from '@/components/projects/[projectId]/applications/[applicationId]/application-create-api-key';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useAddApplication } from '@/stores/api-store';
@@ -59,10 +60,16 @@ export function CreateApplication({
 				application.id,
 			);
 			if (initialized) {
-				track('createApplication', {
-					applicationId: application.id,
-					projectId,
-				});
+				track(
+					TrackEvents.ApplicationCreated,
+					{
+						accountId: projectId,
+						applicationId: application.id,
+						applicationName: application.name,
+						isFirst: false,
+					},
+					{ accountId: projectId },
+				);
 			}
 			setRedirectUrl(applicationUrl);
 
