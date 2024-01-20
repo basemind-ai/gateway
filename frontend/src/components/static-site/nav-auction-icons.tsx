@@ -3,6 +3,7 @@
 import { Book, Discord, Github, Telephone } from 'react-bootstrap-icons';
 
 import { ExternalNavigation } from '@/constants';
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { getEnv } from '@/utils/env';
 
@@ -33,7 +34,7 @@ export function NavAuctionIcons() {
 
 	function handleIconClick(event: string, url: string) {
 		if (initialized) {
-			track(event);
+			track(event, { url });
 		}
 		window.open(url);
 	}
@@ -46,7 +47,10 @@ export function NavAuctionIcons() {
 					className="hover:text-accent join-horizontal btn btn-ghost"
 					data-testid={`${name}-btn`}
 					onClick={() => {
-						handleIconClick(`${name}_click`, url);
+						handleIconClick(
+							`${name.charAt(0).toUpperCase() + name.split('-')[0].slice(1)}${TrackEvents.GenericClicked}`,
+							url,
+						);
 					}}
 				>
 					{icon}

@@ -39,7 +39,7 @@ export function CoherePromptTemplate({
 						{t('messageContent')}
 					</span>
 					<span
-						className="text-info label-text-alt text-sm"
+						className="text-accent label-text-alt text-sm"
 						data-testid="cohere-prompt-template-form-label-alt-text"
 					>
 						{t('wrapVariable')}

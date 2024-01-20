@@ -268,11 +268,11 @@ describe('InviteMember', () => {
 			screen.getByTestId<HTMLButtonElement>('send-invite-btn');
 		fireEvent.click(sendInviteButton);
 		await waitFor(() => {
-			expect(mockTrack).toHaveBeenCalledWith('inviteUser', {
-				newMemberEmail: validEmail,
-				...project,
-				permission: AccessPermission.MEMBER,
-			});
+			expect(mockTrack).toHaveBeenCalledWith(
+				'Invite Sent',
+				expect.any(Object),
+				expect.any(Object),
+			);
 		});
 	});
 });

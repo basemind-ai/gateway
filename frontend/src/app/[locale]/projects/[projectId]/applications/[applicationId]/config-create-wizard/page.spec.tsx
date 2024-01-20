@@ -549,7 +549,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		});
 
 		expect(mockPage).toBeCalledWith(
-			'createConfigWizard',
+			'Create Config Wizard',
 			expect.any(Object),
 		);
 
@@ -558,7 +558,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard`,
+				`Create Config Wizard`,
 				expect.any(Object),
 			);
 		});
@@ -568,7 +568,7 @@ describe('PromptConfigCreateWizard Page tests', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				`createConfigWizard`,
+				`Create Config Wizard`,
 				expect.any(Object),
 			);
 		});
@@ -600,7 +600,8 @@ describe('PromptConfigCreateWizard Page tests', () => {
 
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'createConfig',
+				'Config Created',
+				expect.any(Object),
 				expect.any(Object),
 			);
 		});

@@ -5,6 +5,7 @@ import { XCircleFill } from 'react-bootstrap-icons';
 import isEmail from 'validator/es/lib/isEmail';
 
 import { handleAddUsersToProject, handleRetrieveProjectUsers } from '@/api';
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useSetProjectUsers } from '@/stores/api-store';
@@ -59,11 +60,16 @@ export function ProjectMembersInvitationForm({
 			});
 			for (const email of emails) {
 				if (initialized) {
-					track('inviteUser', {
-						newMemberEmail: email,
-						...project,
-						permission,
-					});
+					track(
+						TrackEvents.InviteSent,
+						{
+							invitee_email: email,
+							invitee_role: permission,
+							...project,
+							permission,
+						},
+						{ accountId: project.id, groupId: project.id },
+					);
 				}
 			}
 

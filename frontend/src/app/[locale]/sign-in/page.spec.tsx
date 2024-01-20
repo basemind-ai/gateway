@@ -13,7 +13,7 @@ describe('Sign-in page tests', () => {
 	it('calls page tracking hook', async () => {
 		render(<SignIn />);
 		await waitFor(() => {
-			expect(mockPage).toHaveBeenCalledWith('auth', expect.any(Object));
+			expect(mockPage).toHaveBeenCalledWith('Auth', expect.any(Object));
 		});
 	});
 });

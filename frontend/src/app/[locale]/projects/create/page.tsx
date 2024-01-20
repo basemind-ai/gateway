@@ -8,18 +8,19 @@ import { Logo } from '@/components/logo';
 import { CreateProjectForm } from '@/components/projects/create/create-project-form';
 import { MobileNotSupported } from '@/components/projects/mobile-not-supported';
 import { Navigation } from '@/constants';
+import { PageNames } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useProjects } from '@/stores/api-store';
 
 export default function CreateProjectPage() {
-	useAuthenticatedUser();
+	const user = useAuthenticatedUser();
 
 	const t = useTranslations('createProject');
 
 	const projects = useProjects();
 	const router = useRouter();
-	const { initialized, page } = useAnalytics();
+	const { initialized, page, identify } = useAnalytics();
 
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -30,9 +31,17 @@ export default function CreateProjectPage() {
 
 	useEffect(() => {
 		if (initialized) {
-			page('createProject');
+			page(PageNames.CreateProjectWizard);
+			if (user) {
+				identify(user.uid, {
+					avatar: user.photoURL,
+					email: user.email,
+					id: user.uid,
+					name: user.displayName,
+				});
+			}
 		}
-	}, [initialized, page]);
+	}, [identify, initialized, page, user]);
 
 	const isInitialRef = useRef(projects.length > 0);
 

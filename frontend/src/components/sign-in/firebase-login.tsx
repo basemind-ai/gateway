@@ -19,6 +19,7 @@ import { LegacyRef, useEffect, useState } from 'react';
 import { Modal } from '@/components/modal';
 import { PasswordResetModal } from '@/components/sign-in/password-reset-modal';
 import { Dimensions, Navigation } from '@/constants';
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useSetUser } from '@/stores/api-store';
 import { useShowError, useShowSuccess } from '@/stores/toast-store';
@@ -77,12 +78,11 @@ export function FirebaseLogin({
 				setAuth(auth);
 
 				if (auth.currentUser) {
-					setUser(auth.currentUser);
-
 					identify(auth.currentUser.uid, auth.currentUser);
-					track('login', { providerId: auth.currentUser.providerId });
-
-					router.replace(Navigation.Projects);
+					track(TrackEvents.SignedIn, {
+						providerId: auth.currentUser.providerId,
+					});
+					setUser(auth.currentUser);
 					return;
 				}
 
@@ -98,14 +98,17 @@ export function FirebaseLogin({
 		setLoading(true);
 		try {
 			const { user } = await signInWithPopup(auth!, provider);
+			identify(user.uid, {
+				avatar: user.photoURL,
+				email: user.email,
+				id: user.uid,
+				name: user.displayName,
+			});
+			track(TrackEvents.SignedUp, { providerId: user.providerId });
 			setUser(user);
-
 			if (cb) {
 				await cb(user);
 			}
-
-			identify(user.uid, user);
-			track('login', { providerId: user.providerId });
 
 			router.replace(Navigation.Projects);
 		} catch (error) {

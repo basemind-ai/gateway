@@ -176,7 +176,8 @@ describe('CreateProjectForm tests', () => {
 
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'createdProject',
+				'Account Created',
+				expect.any(Object),
 				expect.any(Object),
 			);
 		});
@@ -207,7 +208,8 @@ describe('CreateProjectForm tests', () => {
 
 		await vi.waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'createdApplication',
+				'Application Created',
+				expect.any(Object),
 				expect.any(Object),
 			);
 		});

@@ -49,7 +49,7 @@ describe('FirebaseLogin tests', () => {
 		expect(screen.getByTestId('privacy-policy-link')).toBeInTheDocument();
 	});
 
-	it('redirects to dashboard when user is already logged in', async () => {
+	it('when user is already logged in calls track and identity', async () => {
 		mockGetAuth.mockResolvedValueOnce({
 			currentUser: UserFactory.buildSync(),
 		});
@@ -57,10 +57,9 @@ describe('FirebaseLogin tests', () => {
 		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
 
 		await waitFor(() => {
-			expect(routerReplaceMock).toHaveBeenCalledWith(Navigation.Projects);
+			expect(mockTrack).toHaveBeenCalled();
 		});
 
-		expect(mockTrack).toHaveBeenCalled();
 		expect(mockIdentify).toHaveBeenCalled();
 	});
 

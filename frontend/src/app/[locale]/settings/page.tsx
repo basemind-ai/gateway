@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Navbar } from '@/components/navbar';
 import { DeleteAccountView } from '@/components/settings/delete-account-view';
 import { UserDetails } from '@/components/settings/user-details';
+import { PageNames } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
@@ -12,12 +13,21 @@ export default function UserSettings() {
 	const user = useAuthenticatedUser();
 	const t = useTranslations('userSettings');
 
-	const { initialized, page } = useAnalytics();
+	const { initialized, page, identify } = useAnalytics();
+
 	useEffect(() => {
 		if (initialized) {
-			page('userSettings');
+			page(PageNames.UserSettings);
+			if (user) {
+				identify(user.uid, {
+					avatar: user.photoURL,
+					email: user.email,
+					id: user.uid,
+					name: user.displayName,
+				});
+			}
 		}
-	}, [initialized, page]);
+	}, [identify, initialized, page, user]);
 
 	return (
 		<main

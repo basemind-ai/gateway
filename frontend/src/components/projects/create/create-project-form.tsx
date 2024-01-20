@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { handleCreateApplication, handleCreateProject } from '@/api';
 import { TooltipIcon } from '@/components/input-label-with-tooltip';
 import { MIN_NAME_LENGTH, Navigation } from '@/constants';
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useHandleError } from '@/hooks/use-handle-error';
 import { useAddApplication, useAddProject } from '@/stores/api-store';
@@ -33,7 +34,7 @@ export function CreateProjectForm({
 	const handleError = useHandleError();
 	const router = useRouter();
 
-	const { track } = useAnalytics();
+	const { track, group } = useAnalytics();
 
 	const [applicationName, setApplicationName] = useState('');
 	const [projectName, setProjectName] = useState('');
@@ -44,16 +45,35 @@ export function CreateProjectForm({
 			const project = await handleCreateProject({
 				data: { name: projectName },
 			});
+			group(project.id, {
+				accountId: project.id,
+				accountName: project.name,
+				accountType: 'project',
+			});
+			track(
+				TrackEvents.AccountCreated,
+				{
+					accountId: project.id,
+					accountName: project.name,
+				},
+				{ accountId: project.id },
+			);
 			addProject(project);
-			track('createdProject', { projectName: project.name });
-
 			const application = await handleCreateApplication({
 				data: { name: applicationName },
 				projectId: project.id,
 			});
+			track(
+				TrackEvents.ApplicationCreated,
+				{
+					accountId: project.id,
+					applicationId: application.id,
+					applicationName: application.name,
+					isFirst: true,
+				},
+				{ accountId: project.id },
+			);
 			addApplication(project.id, application);
-			track('createdApplication', { projectId: project.id });
-
 			router.replace(
 				setRouteParams(Navigation.ConfigCreateWizard, {
 					applicationId: application.id,

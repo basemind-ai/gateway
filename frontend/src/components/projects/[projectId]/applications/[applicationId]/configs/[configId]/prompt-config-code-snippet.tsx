@@ -4,6 +4,7 @@ import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 import { Github } from 'react-bootstrap-icons';
 
 import { CodeSnippet } from '@/components/code-snippet';
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 interface ReplacerMap {
@@ -444,15 +445,16 @@ export function PromptConfigCodeSnippet({
 		(tab: FrameworkTab) => {
 			return () => {
 				if (initialized) {
-					track('clickViewDocs', {
+					track(TrackEvents.DocsClicked, {
 						category: 'config-code-snippet',
+						configId: promptConfigId,
 						framework: tab.framework,
 					});
 				}
 				window.open(tab.docs, '_blank')?.focus();
 			};
 		},
-		[track, initialized],
+		[initialized, track, promptConfigId],
 	);
 
 	const mappedTabs = useMemo(

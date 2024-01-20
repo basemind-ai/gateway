@@ -43,7 +43,7 @@ describe('ProjectCreatePage', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'createProject',
+				'Create Project Wizard',
 				expect.any(Object),
 			);
 		});

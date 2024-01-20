@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { TrackEvents } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 export interface Perk {
@@ -27,7 +28,7 @@ export function PricingCard({
 
 	function handleIconClick() {
 		if (initialized) {
-			track(`${title}_click`);
+			track(`${title}${TrackEvents.GenericClicked}`);
 		}
 		if (url.startsWith('/')) {
 			router.push(url);

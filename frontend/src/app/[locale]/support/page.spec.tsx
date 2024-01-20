@@ -74,7 +74,7 @@ describe('Support Page Tests', () => {
 
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'support',
+				'Support',
 				expect.any(Object),
 			);
 		});

@@ -51,7 +51,7 @@ describe('user settings page tests', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'userSettings',
+				'User Settings',
 				expect.any(Object),
 			);
 		});

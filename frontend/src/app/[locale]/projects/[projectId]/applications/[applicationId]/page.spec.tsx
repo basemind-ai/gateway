@@ -126,7 +126,7 @@ describe('ApplicationPage', () => {
 		});
 		await waitFor(() => {
 			expect(mockPage).toHaveBeenCalledWith(
-				'applicationOverview',
+				'Application Overview',
 				expect.any(Object),
 			);
 		});

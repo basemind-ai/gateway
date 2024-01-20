@@ -17,7 +17,11 @@ export interface AnalyticsHandlers {
 	identify: (userId: string, properties?: Record<string, any>) => void;
 	initialized: boolean;
 	page: (name: string, properties?: Record<string, any>) => void;
-	track: (event: string, properties?: Record<string, any>) => void;
+	track: (
+		event: string,
+		properties?: Record<string, any>,
+		context?: Record<string, any>,
+	) => void;
 }
 
 /*
@@ -59,15 +63,19 @@ export function useAnalytics(): AnalyticsHandlers {
 	 */
 
 	const track = useCallback(
-		(event: string, properties: Record<string, any> = {}) => {
+		(
+			event: string,
+			properties: Record<string, any> = {},
+			context: Record<string, any> = {},
+		) => {
 			properties.userId ??= user?.uid;
 			properties.path = pathname;
 
-			void analyticsRef.current?.track(event, properties);
+			// Now passing context along with properties
+			void analyticsRef.current?.track(event, properties, context);
 		},
 		[user?.uid, pathname],
 	);
-
 	const page = useCallback(
 		(name: string, properties: Record<string, any> = {}) => {
 			properties.userId ??= user?.uid;

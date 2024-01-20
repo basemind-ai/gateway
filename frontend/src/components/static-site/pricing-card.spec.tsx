@@ -22,7 +22,8 @@ describe('PricingCard Tests', () => {
 		fireEvent.click(button);
 		await waitFor(() => {
 			expect(mockTrack).toHaveBeenCalledWith(
-				'test_click',
+				'test Clicked',
+				expect.any(Object),
 				expect.any(Object),
 			);
 		});

@@ -6,19 +6,28 @@ import { Navbar } from '@/components/navbar';
 import { MobileNotSupported } from '@/components/projects/mobile-not-supported';
 import { ContactForm } from '@/components/support/contact-form';
 import { GetInTouch } from '@/components/support/get-in-touch';
+import { PageNames } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 
 export default function Support() {
 	const user = useAuthenticatedUser();
 	const t = useTranslations('support');
-	const { initialized, page } = useAnalytics();
+	const { initialized, page, identify } = useAnalytics();
 
 	useEffect(() => {
 		if (initialized) {
-			page('support');
+			page(PageNames.Support);
+			if (user) {
+				identify(user.uid, {
+					avatar: user.photoURL,
+					email: user.email,
+					id: user.uid,
+					name: user.displayName,
+				});
+			}
 		}
-	}, [initialized, page]);
+	}, [identify, initialized, page, user]);
 
 	return (
 		<main

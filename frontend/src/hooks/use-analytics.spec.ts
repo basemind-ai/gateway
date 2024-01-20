@@ -46,11 +46,15 @@ describe('useAnalytics tests', () => {
 		result.current.track('test', { test: 'test' });
 
 		expect(mockTrack).toHaveBeenCalledTimes(1);
-		expect(mockTrack).toHaveBeenCalledWith('test', {
-			path: '',
-			test: 'test',
-			userId: undefined,
-		});
+		expect(mockTrack).toHaveBeenCalledWith(
+			'test',
+			{
+				path: '',
+				test: 'test',
+				userId: undefined,
+			},
+			{},
+		);
 	});
 
 	it('should call the identify function with the expected arguments', async () => {

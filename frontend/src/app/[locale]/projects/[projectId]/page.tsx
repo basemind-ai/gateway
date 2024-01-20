@@ -18,6 +18,7 @@ import { ProjectProviderKeys } from '@/components/projects/[projectId]/project-p
 import { MobileNotSupported } from '@/components/projects/mobile-not-supported';
 import { TabData, TabNavigation } from '@/components/tab-navigation';
 import { Navigation, ProjectPageTabNames } from '@/constants';
+import { PageNames } from '@/constants/analytics';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useAuthenticatedUser } from '@/hooks/use-authenticated-user';
 import { useHandleError } from '@/hooks/use-handle-error';
@@ -79,7 +80,7 @@ export default function ProjectOverview({
 	const handleError = useHandleError();
 	const setProjectApplications = useSetProjectApplications();
 	const user = useAuthenticatedUser();
-	const { page, initialized } = useAnalytics();
+	const { page, initialized, identify } = useAnalytics();
 
 	const projectUsers = useProjectUsers(projectId);
 
@@ -102,9 +103,20 @@ export default function ProjectOverview({
 
 	useEffect(() => {
 		if (initialized) {
-			page('projectOverview', { projectId });
+			page(PageNames.ProjectOverview, {
+				accountId: projectId,
+				projectId,
+			});
+			if (user) {
+				identify(user.uid, {
+					avatar: user.photoURL,
+					email: user.email,
+					id: user.uid,
+					name: user.displayName,
+				});
+			}
 		}
-	}, [projectId, initialized, page]);
+	}, [projectId, initialized, page, user, identify]);
 
 	const tabs: TabData<ProjectPageTabNames>[] = [
 		{
