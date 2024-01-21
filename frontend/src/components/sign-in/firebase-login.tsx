@@ -2,16 +2,15 @@ import { FirebaseError } from '@firebase/app';
 import {
 	Auth,
 	AuthProvider,
-	EmailAuthProvider,
 	GithubAuthProvider,
 	GoogleAuthProvider,
-	sendEmailVerification,
 	sendPasswordResetEmail,
 	signInWithPopup,
 	User,
 } from '@firebase/auth';
 import { useClickAway } from '@uidotdev/usehooks';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { LegacyRef, useEffect, useState } from 'react';
@@ -44,8 +43,6 @@ const authProviders: {
 		size: Dimensions.Eight,
 	},
 ];
-
-const emailProvider = new EmailAuthProvider();
 
 export function FirebaseLogin({
 	setLoading,
@@ -137,39 +134,19 @@ export function FirebaseLogin({
 			data-testid="firebase-login-container"
 			className="flex items-center h-full w-full justify-center"
 		>
-			<div className="flex flex-col justify-center gap-3 h-fit border-2 rounded border-neutral p-12">
-				<button
-					data-testid="email-login-button"
-					className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
-					onClick={() => {
-						void handleLogin(emailProvider, sendEmailVerification);
-					}}
-				>
-					<Image
-						src="/images/email-logo.svg"
-						alt="Email logo"
-						height={Dimensions.Seven}
-						width={Dimensions.Seven}
-					/>
-					<span className="font-bold">Login with Email</span>
-				</button>
-				<div className="flex justify-end">
-					<button
-						className="btn btn-xs btn-link"
-						data-testid="reset-password-button"
-						onClick={() => {
-							setResetPWModalOpen(true);
-						}}
-					>
-						{t('forgotPassword')}
-					</button>
-				</div>
+			<div className="flex flex-col justify-center gap-3 h-fit border-1 rounded border-neutral p-12">
+				<h3 className="text-4xl font-bold text-center text-neutral-content">
+					{t('welcomeMessage')}
+				</h3>
+				<p className="text-center text-neutral-content">
+					{t('welcomeMessageDescription')}
+				</p>
 				<div className="card-section-divider" />
 				{authProviders.map(({ key, provider, size }) => (
 					<button
 						key={key.toLowerCase()}
 						data-testid={`${key.toLowerCase()}-login-button`}
-						className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
+						className="btn btn-bloc"
 						onClick={() => {
 							void handleLogin(provider);
 						}}
@@ -186,24 +163,24 @@ export function FirebaseLogin({
 				<div className="card-section-divider" />
 				<div
 					data-testid="tos-and-privacy-policy-container"
-					className="text-xs text-center"
+					className="text-xs text-center text-neutral-content max-w-xs mx-auto"
 				>
 					<span>{t('userAgreementMessage')}</span>
-					<a
-						className="link link-primary"
+					<Link
+						className="link hover:link-accent"
 						href={host + Navigation.TOS}
 						data-testid="tos-link"
 					>
 						{t('tos')}
-					</a>
+					</Link>
 					<span>{` ${t('and')} `}</span>
-					<a
-						className="link link-primary"
+					<Link
+						className="link hover:link-accent"
 						href={host + Navigation.PrivacyPolicy}
 						data-testid="privacy-policy-link"
 					>
 						{t('privacyPolicy')}
-					</a>
+					</Link>
 					<span>.</span>
 				</div>
 				<div ref={ref as LegacyRef<HTMLDivElement>}>

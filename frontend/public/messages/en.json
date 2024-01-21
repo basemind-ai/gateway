@@ -422,7 +422,9 @@
 		"resetPassword": "Reset Password",
 		"tos": "Terms of Service",
 		"unknownEmail": "User does not exist",
-		"userAgreementMessage": "By continuing you are agreeing to our"
+		"userAgreementMessage": "By continuing you are agreeing to our ",
+		"welcomeMessage": "Welcome to BaseMind",
+		"welcomeMessageDescription": "Get started with free credits, no credit card required."
 	},
 	"support": {
 		"api": "API",
