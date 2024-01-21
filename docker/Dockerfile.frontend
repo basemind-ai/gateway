@@ -65,7 +65,7 @@ RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 app
 
 COPY --from=build /app/frontend/public ./frontend/public
-COPY --from=build --chown=app:nodejs /app/frontend/.next/standalone ./frontend/
+COPY --from=build --chown=app:nodejs /app/frontend/.next/standalone/frontend ./frontend/
 COPY --from=build --chown=app:nodejs /app/frontend/.next/static ./frontend/.next/static
 
 RUN pnpm install -r --ignore-scripts --prod
