@@ -2,8 +2,10 @@ import { FirebaseError } from '@firebase/app';
 import {
 	Auth,
 	AuthProvider,
+	EmailAuthProvider,
 	GithubAuthProvider,
 	GoogleAuthProvider,
+	sendEmailVerification,
 	sendPasswordResetEmail,
 	signInWithPopup,
 	User,
@@ -43,6 +45,8 @@ const authProviders: {
 		size: Dimensions.Eight,
 	},
 ];
+
+const emailProvider = new EmailAuthProvider();
 
 export function FirebaseLogin({
 	setLoading,
@@ -141,6 +145,32 @@ export function FirebaseLogin({
 				<p className="text-center text-neutral-content">
 					{t('welcomeMessageDescription')}
 				</p>
+				<button
+					data-testid="email-login-button"
+					className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2 hidden"
+					onClick={() => {
+						void handleLogin(emailProvider, sendEmailVerification);
+					}}
+				>
+					<Image
+						src="/images/email-logo.svg"
+						alt="Email logo"
+						height={Dimensions.Seven}
+						width={Dimensions.Seven}
+					/>
+					<span className="font-bold">Login with Email</span>
+				</button>
+				<div className="flex justify-end hidden">
+					<button
+						className="btn btn-xs btn-link"
+						data-testid="reset-password-button"
+						onClick={() => {
+							setResetPWModalOpen(true);
+						}}
+					>
+						{t('forgotPassword')}
+					</button>
+				</div>
 				<div className="card-section-divider" />
 				{authProviders.map(({ key, provider, size }) => (
 					<button

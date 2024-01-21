@@ -1,4 +1,5 @@
 import {
+	EmailAuthProvider,
 	GithubAuthProvider,
 	GoogleAuthProvider,
 	signInWithPopup,
@@ -37,6 +38,7 @@ describe('FirebaseLogin tests', () => {
 			).toBeInTheDocument();
 		});
 
+		expect(screen.getByTestId('email-login-button')).toBeInTheDocument();
 		expect(screen.getByTestId('github-login-button')).toBeInTheDocument();
 		expect(screen.getByTestId('google-login-button')).toBeInTheDocument();
 
@@ -62,6 +64,7 @@ describe('FirebaseLogin tests', () => {
 	});
 
 	it.each([
+		['email-login-button', EmailAuthProvider],
 		['github-login-button', GithubAuthProvider],
 		['google-login-button', GoogleAuthProvider],
 	])(
@@ -138,5 +141,14 @@ describe('FirebaseLogin tests', () => {
 		expect(privacyPolicyLink.href).toBe(
 			getEnv().NEXT_PUBLIC_FRONTEND_HOST + Navigation.PrivacyPolicy,
 		);
+	});
+
+	it('should open the reset password modal when the reset password button is clicked', () => {
+		render(<FirebaseLogin setLoading={vi.fn()} isInitialized={true} />);
+		const resetPasswordButton: HTMLButtonElement = screen.getByTestId(
+			'reset-password-button',
+		);
+		fireEvent.click(resetPasswordButton);
+		expect(screen.getByTestId('password-reset-modal')).toBeInTheDocument();
 	});
 });
