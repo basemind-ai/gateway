@@ -1,6 +1,6 @@
 'use client';
 
-import { Book, Discord, Github, Telephone } from 'react-bootstrap-icons';
+import { Discord, Github, Telephone } from 'react-bootstrap-icons';
 
 import { ExternalNavigation } from '@/constants';
 import { TrackEvents } from '@/constants/analytics';
@@ -18,11 +18,11 @@ export const NavAuctionIconsList = [
 		name: 'github-button',
 		url: ExternalNavigation.Github,
 	},
-	{
-		icon: <Book />,
-		name: 'docs-button',
-		url: ExternalNavigation.Docs,
-	},
+	// {
+	// 	icon: <Book />,
+	// 	name: 'docs-button',
+	// 	url: ExternalNavigation.Docs,
+	// },
 	{
 		icon: <Telephone />,
 		name: 'schedule-meeting-button',

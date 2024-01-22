@@ -113,7 +113,7 @@ describe('FirebaseLogin tests', () => {
 		let button: HTMLButtonElement;
 
 		await waitFor(() => {
-			button = screen.getByTestId('email-login-button');
+			button = screen.getByTestId('github-login-button');
 			expect(button).toBeInTheDocument();
 		});
 

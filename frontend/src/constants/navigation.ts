@@ -12,7 +12,6 @@ export enum Navigation {
 	SignIn = '/en/sign-in',
 	Support = '/en/support',
 	TOS = '/en/terms-of-service',
-	Testing = '/en/projects/:projectId/testing',
 }
 
 export enum ExternalNavigation {

@@ -12,6 +12,7 @@ import {
 } from '@firebase/auth';
 import { useClickAway } from '@uidotdev/usehooks';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { LegacyRef, useEffect, useState } from 'react';
@@ -137,10 +138,16 @@ export function FirebaseLogin({
 			data-testid="firebase-login-container"
 			className="flex items-center h-full w-full justify-center"
 		>
-			<div className="flex flex-col justify-center gap-3 h-fit border-2 rounded border-neutral p-12">
+			<div className="flex flex-col justify-center gap-3 h-fit border-1 rounded border-neutral p-12">
+				<h3 className="text-4xl font-bold text-center text-neutral-content">
+					{t('welcomeMessage')}
+				</h3>
+				<p className="text-center text-neutral-content">
+					{t('welcomeMessageDescription')}
+				</p>
 				<button
 					data-testid="email-login-button"
-					className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
+					className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2 hidden"
 					onClick={() => {
 						void handleLogin(emailProvider, sendEmailVerification);
 					}}
@@ -153,7 +160,7 @@ export function FirebaseLogin({
 					/>
 					<span className="font-bold">Login with Email</span>
 				</button>
-				<div className="flex justify-end">
+				<div className="flex justify-end hidden">
 					<button
 						className="btn btn-xs btn-link"
 						data-testid="reset-password-button"
@@ -169,7 +176,7 @@ export function FirebaseLogin({
 					<button
 						key={key.toLowerCase()}
 						data-testid={`${key.toLowerCase()}-login-button`}
-						className="btn btn-rounded flex border-2 border-base-300 justify-center gap-2"
+						className="btn btn-bloc"
 						onClick={() => {
 							void handleLogin(provider);
 						}}
@@ -186,24 +193,24 @@ export function FirebaseLogin({
 				<div className="card-section-divider" />
 				<div
 					data-testid="tos-and-privacy-policy-container"
-					className="text-xs text-center"
+					className="text-xs text-center text-neutral-content max-w-xs mx-auto"
 				>
 					<span>{t('userAgreementMessage')}</span>
-					<a
-						className="link link-primary"
+					<Link
+						className="link hover:link-accent"
 						href={host + Navigation.TOS}
 						data-testid="tos-link"
 					>
 						{t('tos')}
-					</a>
+					</Link>
 					<span>{` ${t('and')} `}</span>
-					<a
-						className="link link-primary"
+					<Link
+						className="link hover:link-accent"
 						href={host + Navigation.PrivacyPolicy}
 						data-testid="privacy-policy-link"
 					>
 						{t('privacyPolicy')}
-					</a>
+					</Link>
 					<span>.</span>
 				</div>
 				<div ref={ref as LegacyRef<HTMLDivElement>}>
