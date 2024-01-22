@@ -15,6 +15,7 @@ export default function SignIn() {
 	const user = useUser();
 	const router = useRouter();
 	const { initialized, page, identify } = useAnalytics();
+
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {

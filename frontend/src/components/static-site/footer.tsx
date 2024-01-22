@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { Logo } from '@/components/logo';
-import { NavAuctionIcons } from '@/components/static-site/nav-auction-icons';
+import { NavIcons } from '@/components/static-site/nav-icons';
 import { Navigation } from '@/constants';
 
 export const FooterLinks = [
@@ -39,7 +39,7 @@ export function Footer() {
 					</Link>
 				))}
 			</nav>
-			<NavAuctionIcons />
+			<NavIcons />
 		</footer>
 	);
 }

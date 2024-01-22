@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { ChevronRight } from 'react-bootstrap-icons';
 
 import { Logo } from '@/components/logo';
-import { NavAuctionIcons } from '@/components/static-site/nav-auction-icons';
+import { NavIcons } from '@/components/static-site/nav-icons';
 import { Navigation } from '@/constants';
 
 export function StaticPageHeader() {
@@ -21,7 +21,7 @@ export function StaticPageHeader() {
 			</div>
 			<div className="navbar-end">
 				<div className="ml-0 my-2 hidden sm:flex">
-					<NavAuctionIcons />
+					<NavIcons />
 				</div>
 				<div className="divider divider-horizontal ml-0 my-2 hidden sm:flex" />
 
