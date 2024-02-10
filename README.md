@@ -1,6 +1,56 @@
-# BaseMind.AI Monorepo
+# BaseMind Gateway
 
-This is a TypeScript and Golang monorepo, hosting the BaseMind.AI backend services.
+The BaseMind Gateway is a sophisticated SaaS infrastructure that allows users to connect to AI models from different providers.
+
+## How does it work?
+
+![System Diagram](./assets/system-diagram.png 'System Diagram')
+
+The core service is the "API Gateway" written in Golang. It allows gRPC based clients to connect to it and through it
+to AI providers such as OpenAI, Cohere etc.
+
+The architecture is generic, with the client libraries exposing a uniform interface to the API Gateway- regardless of the
+AI provider being used. The API Gateway then translates the requests to the specific AI provider's "connector service".
+The connector services are dedicated services that are responsible for interacting with the given AI provider using its
+official client libraries.
+
+This architecture allows different connector services to be implemented in different languages, and to add additional capabilities as required.
+
+All the configuration required to define an AI prompt is handled via UI using the "Frontend Dashboard". The dashboard allows
+users, and teams of users, to manage the configuration used for a specific application - which model to use, which prompt, whatever additional
+configuration is given, etc. The configuration is then injected into requests provided by the client libraries, without
+needing to set any configuration in code - everything is stored in the database, with an additional layer of Redis caching for
+performance.
+
+<center>
+
+![Request / Response Flow](./assets/request-response-flow.png 'Request Flow Diagram')
+
+</center>
+
+The fundamental idea is to "lift-out" the configuration out of code and inject it into the request.
+
+## Benefits
+
+The concept behind the gateway is to allow client applications to connect to AI models from different providers in an agnostic fashion.
+Basically - if AI models are a commodity, clients should be able to consume them without caring about the implementation details.
+At one point it might make sense to use a model from a specific provider, and in another it would prove smart to switch. Why have vendor lock-in hardcoded?
+
+Also, the Gateway allows a single app to have multiple clients, each with its own provider/model configuration and specific prompts
+
+## Why is this open source?
+
+We started this project as a SaaS product. We eventually understood that as a product - competing against the giants in the market, this is a dead end.
+On the other hand, we invested significant work in making this - and we think people might find value in this code as open source.
+
+Our hope is that people would like to contribute to this, so it can become an open source project. Otherwise, the code is open source and can be reused by others.
+
+### Note on SaaS
+
+At the time of writing this readme, the codebase still reflects our SaaS logic. For example, there is price calculation logic already implemented. User
+invitation logic. Project management logic etc.
+
+Overtime, this should be removed from the codebase to make it more useful for companies that want to deploy it in their own cloud.
 
 ## Repository Structure
 
