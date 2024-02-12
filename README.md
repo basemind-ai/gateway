@@ -1,6 +1,6 @@
 # BaseMind Gateway
 
-The BaseMind Gateway is a sophisticated SaaS infrastructure that allows users to connect to AI models from different providers.
+The BaseMind Gateway is a fully managed backend for using AI models from different providers.
 
 ## How does it work?
 
@@ -51,6 +51,16 @@ At the time of writing this readme, the codebase still reflects our SaaS logic. 
 invitation logic. Project management logic etc.
 
 Overtime, this should be removed from the codebase to make it more useful for companies that want to deploy it in their own cloud.
+
+## Client Libraries
+
+Client libraries are available for different languages. The client libraries are responsible for handling the gRPC communication with the API Gateway.
+Because gRPC is used, its easy to create new client libraries for other languages - its just a matter of generating the gRPC stubs and implementing the logic.
+See:
+
+-   [iOS Client Library](https://github.com/basemind-ai/sdk-ios)
+-   [Android client library](https://github.com/basemind-ai/sdk-android)
+-   [Flutter/Dart client library](https://github.com/basemind-ai/sdk-dart)
 
 ## Repository Structure
 
