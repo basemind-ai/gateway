@@ -100,7 +100,7 @@ root                        # repository root, holding all tooling configuration
 1. Install [TaskFile](https://taskfile.dev/) and the following prerequisites:
 
     - Node >= 20
-    - Go >= 1.21
+    - Go >= 1.22
     - Docker >= 24.0
     - Python >= 3.11
 

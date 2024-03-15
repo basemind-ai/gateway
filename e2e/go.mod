@@ -1,6 +1,6 @@
 module github.com/basemind-ai/monorepo/e2e
 
-go 1.21
+go 1.22
 
 require (
 	github.com/basemind-ai/monorepo v0.0.0
